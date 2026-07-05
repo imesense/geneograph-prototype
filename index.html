@@ -10994,7 +10994,7 @@
         const first = parents[0];
         const last = parents[parents.length - 1];
         const anchorX = parents.length > 1 ? Math.round(((first.x + first.w) + last.x) / 2) : Math.round(first.x + first.w / 2);
-        const anchorY = Math.round(first.y + first.h / 2);
+        const anchorY = Math.round(Math.max(...parents.map(parent => parent.y + parent.h)));
         const existing = familyAnchors[family.id] || {};
         familyAnchors[family.id] = { ...existing, x: anchorX, y: anchorY, family };
       });
@@ -11129,55 +11129,89 @@
 
     function renderParentPlaceholderLines(layout) {
       const paths = [];
+
       Object.entries(layout.parentPlaceholdersByPerson || {}).forEach(([personId, placeholders]) => {
         const child = treeLayoutNode(layout, personId);
         if (!child || !placeholders?.length) return;
-        const parents = placeholders.slice().sort((a, b) => a.leftX - b.leftX);
-        const anchorX = parents.length > 1
-          ? Math.round((parents[0].centerX + parents[1].centerX) / 2)
-          : Math.round(parents[0].centerX);
-        const anchorY = Math.round(parents[0].centerY);
+
+        const childFamilies = (layout.families || []).filter(family =>
+          family.children?.includes(personId)
+        );
+
+        const knownParents = childFamilies
+          .flatMap(family => [treeLayoutNode(layout, family.left), treeLayoutNode(layout, family.right)])
+          .filter(Boolean);
+
+        const parentNodes = [...knownParents, ...placeholders]
+          .filter(Boolean)
+          .sort((a, b) => a.leftX - b.leftX);
+
+        if (!parentNodes.length) return;
+
+        const firstParent = parentNodes[0];
+        const lastParent = parentNodes[parentNodes.length - 1];
+
+        const partnerY = Math.round(
+          parentNodes.reduce((sum, parent) => sum + parent.centerY, 0) / parentNodes.length
+        );
+
+        const anchorX = parentNodes.length > 1
+          ? Math.round((firstParent.rightX + lastParent.leftX) / 2)
+          : Math.round(firstParent.centerX);
+
         const railY = Math.round(child.topY - TREE_CONNECTOR_RAIL_OFFSET);
 
-        if (parents.length > 1) {
-          paths.push(`<path class="tree-line partner" d="M${Math.round(parents[0].rightX)} ${anchorY} H${Math.round(parents[1].leftX)}"/>`);
+        if (parentNodes.length > 1) {
+          paths.push(`<path class="tree-line partner" d="M${Math.round(firstParent.rightX)} ${partnerY} H${Math.round(lastParent.leftX)}"/>`);
         }
-        paths.push(`<path class="tree-line descendant" d="M${anchorX} ${anchorY} V${railY} H${Math.round(child.centerX)} V${Math.round(child.topY)}"/>`);
+
+        paths.push(`<path class="tree-line descendant" d="M${anchorX} ${partnerY} V${railY} H${Math.round(child.centerX)} V${Math.round(child.topY)}"/>`);
       });
+
       return paths;
     }
 
     function renderTreeLines(layout) {
       const familyPaths = renderParentPlaceholderLines(layout);
+      const placeholderHandledChildren = new Set(Object.keys(layout.parentPlaceholdersByPerson || {}));
 
       (layout.families || []).forEach(family => {
-        const parents = [treeLayoutNode(layout, family.left), treeLayoutNode(layout, family.right)].filter(Boolean).sort((a, b) => a.leftX - b.leftX);
+        const parents = [treeLayoutNode(layout, family.left), treeLayoutNode(layout, family.right)]
+          .filter(Boolean)
+          .sort((a, b) => a.leftX - b.leftX);
+
         if (!parents.length) return;
 
+        const partnerY = Math.round(
+          parents.reduce((sum, parent) => sum + parent.centerY, 0) / parents.length
+        );
+
         const anchorX = parents.length > 1
-          ? Math.round((parents[0].centerX + parents[1].centerX) / 2)
+          ? Math.round((parents[0].rightX + parents[parents.length - 1].leftX) / 2)
           : Math.round(parents[0].centerX);
-        const anchorY = parents.length > 1
-          ? Math.round((parents[0].centerY + parents[1].centerY) / 2)
-          : Math.round(parents[0].centerY);
 
         if (parents.length > 1) {
-          familyPaths.push(`<path class="tree-line partner" d="M${Math.round(parents[0].rightX)} ${anchorY} H${Math.round(parents[1].leftX)}"/>`);
+          familyPaths.push(`<path class="tree-line partner" d="M${Math.round(parents[0].rightX)} ${partnerY} H${Math.round(parents[parents.length - 1].leftX)}"/>`);
         }
 
-        if (!family.children.length) return;
+        const childNodes = (family.children || [])
+          .filter(childId => !placeholderHandledChildren.has(childId))
+          .map(childId => treeLayoutNode(layout, childId))
+          .filter(Boolean)
+          .sort((a, b) => a.centerX - b.centerX);
 
-        const childNodes = family.children.map(childId => treeLayoutNode(layout, childId)).filter(Boolean);
         if (!childNodes.length) return;
-        childNodes.sort((a, b) => a.centerX - b.centerX);
+
         const childTopY = Math.min(...childNodes.map(child => child.topY));
         const railY = Math.round(childTopY - TREE_CONNECTOR_RAIL_OFFSET);
+
         const childCenters = childNodes.map(child => Math.round(child.centerX));
         const minChildX = Math.min(...childCenters);
         const maxChildX = Math.max(...childCenters);
 
-        familyPaths.push(`<path class="tree-line descendant" d="M${anchorX} ${anchorY} V${railY}"/>`);
+        familyPaths.push(`<path class="tree-line descendant" d="M${anchorX} ${partnerY} V${railY}"/>`);
         familyPaths.push(`<path class="tree-line descendant" d="M${Math.min(anchorX, minChildX)} ${railY} H${Math.max(anchorX, maxChildX)}"/>`);
+
         childNodes.forEach(child => {
           familyPaths.push(`<path class="tree-line descendant" d="M${Math.round(child.centerX)} ${railY} V${Math.round(child.topY)}"/>`);
         });
