@@ -1,0 +1,13 @@
+# Global attributes for forcing line endings normalization of specific files
+
+* text=auto
+
+# Text files
+*.txt text eol=crlf encoding=utf-8
+
+# Image files
+*.ico binary
+*.png binary
+
+# Markdown files
+*.md text eol=crlf encoding=utf-8
