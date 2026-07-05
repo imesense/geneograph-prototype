@@ -2579,12 +2579,44 @@
     .panel-section.is-open .panel-section-arrow {
       transform: rotate(225deg);
     }
+    .panel-button-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      min-width: 0;
+      line-height: 1;
+    }
+
+    .panel-button-icon {
+      width: 18px;
+      height: 18px;
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 18px;
+      line-height: 1;
+    }
+
+    .panel-button-icon svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+    .panel-button-text {
+      line-height: 20px;
+    }
     .panel-section-extra { display: inline-flex; align-items: center; gap: var(--space-3); color: var(--text-tertiary); font-size: 13px; }
     .panel-section-body { padding: 0 var(--space-4) var(--space-4); }
     .panel-section-action { display: flex; justify-content: flex-end; margin: -2px 0 var(--space-3); }
-    .panel-section-action .link { font-size: 13px; line-height: 1.2; }
+    .panel-section-action .link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
     .panel-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
-    .panel-actions .button { min-height: 42px; justify-content: flex-start; text-align: left; letter-spacing: .01em; padding: 0 var(--space-3); }
+    .panel-actions .button { min-height: 42px; justify-content: flex-start; text-align: left; align-items: center; letter-spacing: .01em; padding: 0 var(--space-3); }
     .panel-actions .button svg { flex: 0 0 auto; }
     .timeline {
       --timeline-date-w: 72px;
@@ -11677,7 +11709,12 @@
       </section>`;
     }
 
-
+    function renderPanelButtonLabel(iconHtml, label) {
+      return `<span class="panel-button-label">
+        <span class="panel-button-icon" aria-hidden="true">${iconHtml}</span>
+        <span class="panel-button-text">${escapeHtml(label)}</span>
+      </span>`;
+    }
 
     function treePersonToPeopleRecordId(person) {
       return person && getPerson(person.id) ? person.id : null;
@@ -11860,10 +11897,18 @@
 
     function renderPersonInspector(person) {
       const actionsContent = `<div class="panel-actions">
-        <button class="button primary" type="button" id="quickEdit">${icon.edit} Quick edit</button>
-        <button class="button secondary" type="button" id="familyMoreActions" aria-haspopup="menu" aria-expanded="false">${icon.more} More actions</button>
-        <button class="button secondary" type="button" id="addRelative">${icon.addperson} Add relative</button>
-        <button class="button secondary" type="button" id="connectRelative">${icon.link} Connect relative</button>
+        <button class="button primary" type="button" id="quickEdit">
+          ${renderPanelButtonLabel(icon.edit, 'Quick edit')}
+        </button>
+        <button class="button secondary" type="button" id="familyMoreActions" aria-haspopup="menu" aria-expanded="false">
+          ${renderPanelButtonLabel(icon.more, 'More actions')}
+        </button>
+        <button class="button secondary" type="button" id="addRelative">
+          ${renderPanelButtonLabel(icon.addperson, 'Add relative')}
+        </button>
+        <button class="button secondary" type="button" id="connectRelative">
+          ${renderPanelButtonLabel(icon.link, 'Connect relative')}
+        </button>
       </div>`;
 
       const timelineContent = renderFamilyTreeTimeline(person.id);
@@ -11893,16 +11938,16 @@
         </div>
         ${renderInspectorSection('actions', 'Actions', '', actionsContent)}
         ${renderInspectorSection('insights', 'Insights', 'No insights found', '<div class="panel-muted">No insights found for this person.</div>')}
-        ${renderInspectorSection('timeline', 'Timeline', '', timelineContent, `<button class="link" type="button" data-toast="Add fact flow will be added later.">${icon.plus} Add fact</button>`)}
+        ${renderInspectorSection('timeline', 'Timeline', '', timelineContent, `<button class="link" type="button" data-toast="Add fact flow will be added later.">${renderPanelButtonLabel(icon.plus, 'Add fact')}</button>`)}
         ${renderInspectorSection(
           'relationships',
           'Relationships',
           `${relationshipsCount} ${relationshipsCount === 1 ? 'person' : 'people'}`,
           relationshipsContent
         )}
-        ${renderInspectorSection('photos', 'Photos', `${person.photos} photos`, photosContent, `<button class="link" type="button" data-toast="Photo linking will be handled in Albums.">${icon.plus} Add photo</button>`)}
-        ${renderInspectorSection('archive', 'Archive', `${person.files} files`, archiveContent, `<button class="link" type="button" data-toast="Archive linking will be added in the Archive tab.">${icon.plus} Add file</button>`)}
-        ${renderInspectorSection('notes', 'Notes', `${person.notes} notes`, notesContent, `<button class="link" type="button" data-toast="Notes module will define the full note editor.">${icon.plus} Add note</button>`)}
+        ${renderInspectorSection('photos', 'Photos', `${person.photos} photos`, photosContent, `<button class="link" type="button" data-toast="Photo linking will be handled in Albums.">${renderPanelButtonLabel(icon.plus, 'Add photo')}</button>`)}
+        ${renderInspectorSection('archive', 'Archive', `${person.files} files`, archiveContent, `<button class="link" type="button" data-toast="Archive linking will be added in the Archive tab.">${renderPanelButtonLabel(icon.plus, 'Add file')}</button>`)}
+        ${renderInspectorSection('notes', 'Notes', `${person.notes} notes`, notesContent, `<button class="link" type="button" data-toast="Notes module will define the full note editor.">${renderPanelButtonLabel(icon.plus, 'Add note')}</button>`)}
       </aside>`;
     }
 
