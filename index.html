@@ -2027,8 +2027,28 @@
       font-size: 13px;
       font-weight: 900;
     }
-    
-    
+    .profile-popover-status {
+      margin-top: 4px;
+      color: var(--brand-green-300);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      line-height: 18px;
+    }
+
+    .profile-popover-status-icon {
+      width: 14px;
+      height: 14px;
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 14px;
+    }
+
+    .profile-popover-status-icon svg {
+      width: 13px;
+      height: 13px;
+      display: block;
+    }
     
 
     .global-settings-modal { width: min(980px, 100%); }
@@ -10434,9 +10454,69 @@
 
     function renderProfilePopover() {
       if (!state.userSignedIn) {
-        return `<div class="profile-popover-head"><div class="profile-popover-avatar">IN</div><div><strong>GeneoGraph account</strong><span>You are not signed in.</span></div></div><div class="topbar-popover-list"><button class="topbar-popover-row" type="button" data-profile-action="sign-in"><span class="topbar-popover-icon">${icon.profile}</span><span class="topbar-popover-copy"><strong>Sign in</strong><span>Connect your GeneoGraph account.</span></span><span class="topbar-popover-arrow">${icon.chevron}</span></button><button class="topbar-popover-row" type="button" data-profile-action="create"><span class="topbar-popover-icon blue">${icon.plus}</span><span class="topbar-popover-copy"><strong>Create account</strong><span>Account creation is visual only.</span></span><span class="topbar-popover-arrow">${icon.chevron}</span></button></div>`;
+        return `<div class="profile-popover-head">
+          <div class="profile-popover-avatar">IN</div>
+          <div>
+            <strong>GeneoGraph account</strong>
+            <span>You are not signed in.</span>
+          </div>
+        </div>
+        <div class="topbar-popover-list">
+          <button class="topbar-popover-row" type="button" data-profile-action="sign-in">
+            <span class="topbar-popover-icon topbar-topic-icon" aria-hidden="true">${icon.profile}</span>
+            <span class="topbar-popover-copy">
+              <strong>Sign in</strong>
+              <span>Connect your GeneoGraph account.</span>
+            </span>
+            <span class="topbar-popover-arrow" aria-hidden="true">${icon.chevron}</span>
+          </button>
+          <button class="topbar-popover-row" type="button" data-profile-action="create">
+            <span class="topbar-popover-icon topbar-topic-icon blue" aria-hidden="true">${icon.plus}</span>
+            <span class="topbar-popover-copy">
+              <strong>Create account</strong>
+              <span>Account creation is visual only.</span>
+            </span>
+            <span class="topbar-popover-arrow" aria-hidden="true">${icon.chevron}</span>
+          </button>
+        </div>`;
       }
-      return `<div class="profile-popover-head"><div class="profile-popover-avatar">MW</div><div><strong>Silver Whiskerfield</strong><span>silver@example.com</span><span style="color:var(--brand-green-300);margin-top:4px">${icon.check} Signed in</span></div></div><div class="topbar-popover-list"><button class="topbar-popover-row" type="button" data-profile-action="account"><span class="topbar-popover-icon">${icon.profile}</span><span class="topbar-popover-copy"><strong>My account</strong><span>Profile, subscription, and account details.</span></span><span class="topbar-popover-arrow">${icon.chevron}</span></button><button class="topbar-popover-row" type="button" data-profile-action="account-settings"><span class="topbar-popover-icon blue">${icon.settings}</span><span class="topbar-popover-copy"><strong>Account settings</strong><span>Manage account preferences.</span></span><span class="topbar-popover-arrow">${icon.chevron}</span></button><div class="topbar-divider"></div><button class="topbar-popover-row" type="button" data-profile-action="sign-out"><span class="topbar-popover-icon warn">${icon.warning}</span><span class="topbar-popover-copy"><strong>Sign out</strong><span>Visual account action only.</span></span><span class="topbar-popover-arrow">${icon.chevron}</span></button></div>`;
+
+      return `<div class="profile-popover-head">
+        <div class="profile-popover-avatar">SW</div>
+        <div>
+          <strong>Silver Whiskerfield</strong>
+          <span>silver@example.com</span>
+            <span>Signed in</span>
+          </span>
+        </div>
+      </div>
+      <div class="topbar-popover-list">
+        <button class="topbar-popover-row" type="button" data-profile-action="account">
+          <span class="topbar-popover-icon topbar-topic-icon" aria-hidden="true">${icon.profile}</span>
+          <span class="topbar-popover-copy">
+            <strong>My account</strong>
+            <span>Profile, subscription, and account details.</span>
+          </span>
+          <span class="topbar-popover-arrow" aria-hidden="true">${icon.chevron}</span>
+        </button>
+        <button class="topbar-popover-row" type="button" data-profile-action="account-settings">
+          <span class="topbar-popover-icon topbar-topic-icon blue" aria-hidden="true">${icon.settings}</span>
+          <span class="topbar-popover-copy">
+            <strong>Account settings</strong>
+            <span>Manage account preferences.</span>
+          </span>
+          <span class="topbar-popover-arrow" aria-hidden="true">${icon.chevron}</span>
+        </button>
+        <div class="topbar-divider"></div>
+        <button class="topbar-popover-row" type="button" data-profile-action="sign-out">
+          <span class="topbar-popover-icon topbar-topic-icon warn" aria-hidden="true">${icon.warning}</span>
+          <span class="topbar-popover-copy">
+            <strong>Sign out</strong>
+            <span>Visual account action only.</span>
+          </span>
+          <span class="topbar-popover-arrow" aria-hidden="true">${icon.chevron}</span>
+        </button>
+      </div>`;
     }
 
     function bindTopbarPopover(popover, type) {
