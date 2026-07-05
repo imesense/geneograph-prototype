@@ -171,7 +171,11 @@
     .icon-rotate-right svg { transform: rotate(0deg); }
     .icon-rotate-down svg { transform: rotate(90deg); }
     .icon-rotate-left svg { transform: rotate(180deg); }
-    .close-button svg,
+    .close-button svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
     .albums-detail-collapse svg,
     .geneo-mini-action svg,
     .archive-row-action svg,
@@ -1359,7 +1363,19 @@
     .modal-header p { margin: 0; color: var(--text-secondary); }
     .modal-body { padding: var(--space-6); }
     .modal-footer { padding: var(--space-4) var(--space-6) var(--space-6); border-top: 1px solid var(--border-default); display: flex; justify-content: flex-end; gap: var(--space-3); }
-    .close-button { width: 36px; height: 36px; border-radius: 9px; border: 1px solid var(--border-default); background: transparent; color: var(--text-secondary); }
+    .close-button {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border-radius: 9px;
+      border: 1px solid var(--border-default);
+      background: transparent;
+      color: var(--text-secondary);
+      display: inline-grid;
+      place-items: center;
+      line-height: 1;
+      flex: 0 0 36px;
+    }
     .close-button:hover { background: var(--surface-card-hover); color: var(--text-primary); }
     .form-grid { display: grid; gap: var(--space-4); }
     .field label, .field legend { display: block; color: var(--text-secondary); font-weight: 800; margin-bottom: var(--space-2); }
@@ -2845,6 +2861,73 @@
     .add-person-header { display: grid; grid-template-columns: 48px 1fr auto; gap: var(--space-4); align-items: start; }
     .add-person-icon { width: 48px; height: 48px; color: var(--brand-green-300); }
     .add-person-grid { display: grid; grid-template-columns: 1fr 310px; gap: var(--space-5); }
+    .add-person-footer {
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-5);
+    }
+
+    .add-person-footer-left {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .add-person-footer-actions {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-3);
+      flex: 0 0 auto;
+    }
+
+    .add-person-repeat {
+      margin-top: 0;
+      align-items: center;
+    }
+
+    .add-person-repeat span {
+      line-height: 1.35;
+    }
+
+    .add-person-repeat .panel-muted {
+      display: inline-block;
+      margin-top: 2px;
+    }
+
+    @media (max-width: 720px) {
+      .add-person-footer {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .add-person-footer-actions {
+        justify-content: flex-end;
+      }
+    }
+
+    .fact-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      line-height: 1;
+      font-weight: 700;
+    }
+
+    .fact-button svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+      flex: 0 0 16px;
+    }
+
+    .fact-button-icon {
+      width: 16px;
+      height: 16px;
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 16px;
+    }
     .form-section-title { font-size: 16px; margin: 0 0 var(--space-3); padding-bottom: var(--space-2); border-bottom: 1px solid var(--border-strong); }
     .two-col-form { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
     .compact-select { height: 42px; border: 1px solid var(--border-default); background: var(--surface-card); color: var(--text-secondary); border-radius: var(--radius-sm); padding: 0 var(--space-3); }
@@ -2860,6 +2943,58 @@
     .match-row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); color: var(--text-secondary); }
     .checkbox-row { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-5); color: var(--text-secondary); }
     .checkbox-row input { width: 22px; height: 22px; accent-color: var(--brand-green-500); }
+
+    .add-person-select-field {
+      position: relative;
+    }
+
+    .add-person-select {
+      width: 100%;
+      appearance: none;
+      padding-right: 42px;
+      background-image: none;
+    }
+
+    .add-person-select-chevron {
+      position: absolute;
+      right: 14px;
+      bottom: 12px;
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      color: var(--text-tertiary);
+      pointer-events: none;
+    }
+
+    .add-person-select-chevron svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+      transform: rotate(90deg);
+    }
+
+    .add-person-status-chevron {
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 18px;
+      color: var(--text-tertiary);
+      pointer-events: none;
+    }
+
+    .add-person-status-chevron svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+      transform: rotate(90deg);
+    }
+    .add-person-status-button:hover .add-person-status-chevron,
+    .add-person-status-button[aria-expanded="true"] .add-person-status-chevron,
+    .add-person-select-field:hover .add-person-select-chevron {
+      color: var(--text-primary);
+    }
 
     .add-person-status-field { position: relative; }
     .add-person-status-button {
@@ -9936,8 +10071,13 @@
     }
 
     function samplePlaceIdFromDisplay(display) {
-      if (!display || display === '-') return null;
-      return sampleData.places.find(place => place.display === display || place.name === display)?.id || 'null';
+      const text = cleanEditFieldValue(display);
+
+      if (!text) return null;
+
+      return sampleData.places.find(place =>
+        place.display === text || place.name === text
+      )?.id || 'place-unknown';
     }
 
     function syncPeopleRecordToSampleData(record) {
@@ -10701,7 +10841,7 @@
       const rows = [
         { module: 'Albums', svg: icon.image, tone: 'red', title: 'Photos added', detail: '4 photos added to Family photos', time: 'Today, 10:42' },
         { module: 'People', svg: icon.people, tone: 'purple', title: 'Person updated', detail: 'Luna Purrington profile updated', time: 'Yesterday, 10:42' },
-        { module: 'Family Tree', svg: icon.file, tone: 'amber', title: 'GEDCOM imported', detail: '17 people imported from GEDCOM', time: 'May 25, 2026' },
+        { module: 'Family Tree', svg: icon.file, tone: 'amber', title: 'GEDCOM imported', detail: '24 people imported from GEDCOM', time: 'May 25, 2026' },
         { module: 'Notes', svg: icon.note, tone: '', title: 'Research note added', detail: 'Surname origin note updated', time: 'May 21, 2026' },
         { module: 'Family Tree', svg: icon.tree, tone: '', title: 'Relationship connected', detail: 'Luna Purrington was connected to the tree', time: 'May 18, 2026' },
         { module: 'Archive', svg: icon.file, tone: 'amber', title: 'Archive file linked', detail: 'Pawford household register linked to Silver Whiskerfield', time: 'May 14, 2026' },
@@ -11177,7 +11317,7 @@
               <div class="view-modes" role="tablist" aria-label="Tree view mode">
                 ${['Classic','Pedigree','Fan'].map(view => `<button class="view-mode ${state.treeView === view ? 'active' : ''}" type="button" role="tab" aria-selected="${state.treeView === view ? 'true' : 'false'}" aria-disabled="${view === 'Classic' ? 'false' : 'true'}" data-tree-view="${view}" title="${view === 'Classic' ? 'Classic view' : view + ' view will be added later'}">${view}</button>`).join('')}
               </div>
-              <span class="people-count">${icon.peoplegroup} 5000 people</span>
+              <span class="people-count">${icon.peoplegroup} 24 people</span>
             </div>
             <div class="tree-toolbar-right">
               <label class="tree-search">${icon.search}<input type="search" placeholder="Search people..." id="treeSearch"></label>
@@ -11222,7 +11362,7 @@
       }));
       main.querySelectorAll('[data-card-edit]').forEach(button => button.addEventListener('click', e => {
         e.stopPropagation();
-        openAddPersonModal('Edit person', `Quick edit ${personById(button.dataset.cardEdit).name}`, { personId: button.dataset.cardEdit });
+        openEditPersonModal(button.dataset.cardEdit);
       }));
       main.querySelectorAll('[data-add-relative]').forEach(button => button.addEventListener('click', () => {
         const target = personById(button.dataset.personId || state.selectedPersonId);
@@ -11243,7 +11383,9 @@
         if (button.dataset.zoom === 'fit') { state.treeZoom = 100; state.treeCenterTargetId = 'silver'; }
         renderFamilyTree();
       }));
-      main.querySelector('#quickEdit')?.addEventListener('click', () => openAddPersonModal('Edit profile', `Quick edit ${selected.name}`, { personId: selected.id }));
+      main.querySelector('#quickEdit')?.addEventListener('click', () => {
+        openEditPersonModal(selected.id);
+      });
       main.querySelector('#familyMoreActions')?.addEventListener('click', e => openFamilyPersonActionsMenu(e.currentTarget, selected));
       main.querySelector('#addRelative')?.addEventListener('click', e => openRelativePopover(e.currentTarget, 'relative'));
       main.querySelector('#connectRelative')?.addEventListener('click', () => showToast('Connect existing person flow will be added in a later iteration.'));
@@ -11640,11 +11782,8 @@
 
       const timelineContent = renderFamilyTreeTimeline(person.id);
 
-      const relationshipsContent = `<div class="relationship-list">
-        <div><div class="relation-group-title">Grandparents</div>${renderRelation('BW','Barnaby Whiskerfield','Paternal grandfather - 14.02.1946','')}${renderRelation('DM','Daisy Milkpaw','Paternal grandmother - 03.06.1949','avatar-purple')}</div>
-        <div><div class="relation-group-title">Partner</div>${renderRelation('LP','Luna Purrington','Spouse - 12.08.1999','avatar-purple')}</div>
-        <div><div class="relation-group-title">Children</div>${renderRelation('OW','Oliver Whiskerfield','Son - 18.05.2024','avatar-amber')}${renderRelation('MO','Mochi Whiskerfield','Daughter - 07.09.2026','avatar-purple')}${renderRelation('CW','Cleo Whiskerfield','Daughter - Unknown','avatar-purple')}</div>
-      </div>`;
+      const relationshipsContent = renderFamilyTreeRelationships(person.id);
+      const relationshipsCount = familyTreeRelationshipCount(person.id);
 
       const photosContent = renderFamilyPhotos(person);
       const archiveContent = renderFamilyArchiveItems(person);
@@ -11669,7 +11808,12 @@
         ${renderInspectorSection('actions', 'Actions', '', actionsContent)}
         ${renderInspectorSection('insights', 'Insights', 'No insights found', '<div class="panel-muted">No insights found for this person.</div>')}
         ${renderInspectorSection('timeline', 'Timeline', '', timelineContent, `<button class="link" type="button" data-toast="Add fact flow will be added later.">${icon.plus} Add fact</button>`)}
-        ${renderInspectorSection('relationships', 'Relationships', '6 people', relationshipsContent)}
+        ${renderInspectorSection(
+          'relationships',
+          'Relationships',
+          `${relationshipsCount} ${relationshipsCount === 1 ? 'person' : 'people'}`,
+          relationshipsContent
+        )}
         ${renderInspectorSection('photos', 'Photos', `${person.photos} photos`, photosContent, `<button class="link" type="button" data-toast="Photo linking will be handled in Albums.">${icon.plus} Add photo</button>`)}
         ${renderInspectorSection('archive', 'Archive', `${person.files} files`, archiveContent, `<button class="link" type="button" data-toast="Archive linking will be added in the Archive tab.">${icon.plus} Add file</button>`)}
         ${renderInspectorSection('notes', 'Notes', `${person.notes} notes`, notesContent, `<button class="link" type="button" data-toast="Notes module will define the full note editor.">${icon.plus} Add note</button>`)}
@@ -11790,8 +11934,112 @@
 
       return escapeHtml(meta);
     }
-    function renderRelation(initials, name, meta, cls) { 
-      return `<div class="relation-row" tabindex="0"><div class="relation-row-main"><div class="small-avatar ${cls}">${initials}</div><div class="relation-row-copy"><strong>${name}</strong><span>${meta}</span></div></div><div class="relation-actions" aria-label="Relationship actions"><button class="relation-action-button relation-link-button" type="button" aria-label="Unlink ${name}" data-toast="Unlink relationship is simulated.">${icon.unlink}</button><button class="relation-action-button" type="button" aria-label="More options for ${name}" aria-haspopup="menu" aria-expanded="false" data-toast="Relationship options menu is simulated.">${icon.more}</button></div></div>`; 
+
+    function renderRelation(person, meta) {
+      if (!person) return '';
+
+      const initials = person.names?.initials || '??';
+      const name = person.names?.display || 'Unnamed person';
+      const avatar = person.avatarClass || 'avatar-green';
+
+      return `<div class="relation-row" tabindex="0" data-relation-person-id="${escapeHtml(person.id)}">
+        <div class="relation-row-main">
+          <div class="small-avatar ${escapeHtml(avatar)}">${escapeHtml(initials)}</div>
+          <div class="relation-row-copy">
+            <strong>${escapeHtml(name)}</strong>
+            <span>${escapeHtml(meta)}</span>
+          </div>
+        </div>
+        <div class="relation-actions" aria-label="Relationship actions">
+          <button class="relation-action-button relation-link-button" type="button" aria-label="Unlink ${escapeHtml(name)}" data-toast="Unlink relationship is simulated.">${icon.unlink}</button>
+          <button class="relation-action-button" type="button" aria-label="More options for ${escapeHtml(name)}" aria-haspopup="menu" aria-expanded="false" data-toast="Relationship options menu is simulated.">${icon.more}</button>
+        </div>
+      </div>`;
+    }
+
+    function relationBirthMeta(person) {
+      return person?.birth?.dateLabel || person?.birth?.date || '';
+    }
+
+    function relationGender(person) {
+      return String(person?.gender || '').toLowerCase();
+    }
+
+    function parentRelationLabel(person) {
+      if (person.parentRole === 'father' || relationGender(person) === 'male') return 'Father';
+      if (person.parentRole === 'mother' || relationGender(person) === 'female') return 'Mother';
+      return 'Parent';
+    }
+
+    function siblingRelationLabel(person) {
+      if (relationGender(person) === 'male') return 'Brother';
+      if (relationGender(person) === 'female') return 'Sister';
+      return 'Sibling';
+    }
+
+    function childRelationLabel(person) {
+      if (relationGender(person) === 'male') return 'Son';
+      if (relationGender(person) === 'female') return 'Daughter';
+      return 'Child';
+    }
+
+    function relationMeta(label, person) {
+      const birth = relationBirthMeta(person);
+      return [label, birth].filter(Boolean).join(' - ');
+    }
+
+    function renderRelationshipGroup(title, rows) {
+      if (!rows.length) return '';
+
+      return `<div>
+        <div class="relation-group-title">${escapeHtml(title)}</div>
+        ${rows.join('')}
+      </div>`;
+    }
+
+    function getFamilyTreeRelationshipGroups(personId) {
+      const parents = getParents(personId);
+      const siblings = getSiblings(personId);
+      const partners = getPartners(personId);
+      const children = getChildren(personId);
+
+      return [
+        {
+          title: 'Parents',
+          rows: parents.map(parent => renderRelation(parent, relationMeta(parentRelationLabel(parent), parent)))
+        },
+        {
+          title: 'Siblings',
+          rows: siblings.map(sibling => renderRelation(sibling, relationMeta(siblingRelationLabel(sibling), sibling)))
+        },
+        {
+          title: 'Partner',
+          rows: partners.map(partner => renderRelation(partner, relationMeta('Spouse', partner)))
+        },
+        {
+          title: 'Children',
+          rows: children.map(child => renderRelation(child, relationMeta(childRelationLabel(child), child)))
+        }
+      ];
+    }
+
+    function familyTreeRelationshipCount(personId) {
+      return getParents(personId).length
+        + getSiblings(personId).length
+        + getPartners(personId).length
+        + getChildren(personId).length;
+    }
+
+    function renderFamilyTreeRelationships(personId) {
+      const groups = getFamilyTreeRelationshipGroups(personId)
+        .map(group => renderRelationshipGroup(group.title, group.rows))
+        .filter(Boolean);
+
+      if (!groups.length) {
+        return `<div class="panel-muted">No immediate relationships recorded for this person.</div>`;
+      }
+
+      return `<div class="relationship-list">${groups.join('')}</div>`;
     }
 
     function getGenderForRelativeType(relativeType) {
@@ -11845,34 +12093,272 @@
       setTimeout(() => document.addEventListener('click', closeMenu), 0);
     }
 
+    function cleanEditFieldValue(value) {
+      const text = String(value || '').trim();
+
+      if (!text) return '';
+      if (text === '-' || text === '—') return '';
+      if (text.toLowerCase() === 'unknown') return '';
+
+      return text;
+    }
+
+    function genderLabelFromPerson(person) {
+      const gender = String(person?.gender || '').toLowerCase();
+
+      if (gender === 'male') return 'Male';
+      if (gender === 'female') return 'Female';
+
+      return 'Unknown';
+    }
+
+    function editDateValue(event) {
+      return cleanEditFieldValue(event?.date || event?.dateLabel || '');
+    }
+
+    function editPlaceValue(placeId) {
+      return placeId ? cleanEditFieldValue(getPlaceDisplay(placeId)) : '';
+    }
+
+    function editPersonFormValues(person) {
+      return {
+        firstName: cleanEditFieldValue(person?.names?.first),
+        lastName: cleanEditFieldValue(person?.names?.last),
+        middleName: cleanEditFieldValue(person?.names?.middle),
+        maidenName: cleanEditFieldValue(person?.names?.maiden),
+
+        gender: genderLabelFromPerson(person),
+        livingStatus: normalizeLivingStatus(person?.livingStatus),
+
+        birthDate: editDateValue(person?.birth),
+        birthPlace: editPlaceValue(person?.birth?.placeId),
+
+        deathDate: editDateValue(person?.death),
+        deathPlace: editPlaceValue(person?.death?.placeId)
+      };
+    }
+
     function openAddPersonModal(title, subtitle, options = {}) {
-      const optionPerson = options.personId ? personById(options.personId) : null;
+      const isEditMode = options.mode === 'edit';
+      const editPerson = isEditMode ? getPerson(options.personId) : null;
+      const editValues = editPersonFormValues(editPerson);
+
       const relativeGender = getGenderForRelativeType(options.relativeType);
-      const initialGender = options.gender || (optionPerson ? (optionPerson.gender === 'female' ? 'Female' : 'Male') : relativeGender) || 'Unknown';
-      const initialStatus = options.livingStatus || (optionPerson ? (optionPerson.status === 'Deceased' ? 'Deceased' : optionPerson.status === 'Unknown' ? 'Unknown' : 'Living') : 'Living');
+
+      const initialGender = options.gender
+        || (isEditMode ? editValues.gender : relativeGender)
+        || 'Unknown';
+
+      const initialStatus = options.livingStatus
+        || (isEditMode ? editValues.livingStatus : 'Living');
       openModal(`<div class="modal add-person-modal" role="dialog" aria-modal="true" aria-labelledby="addPersonTitle">
         <div class="modal-header add-person-header"><div class="add-person-icon">${icon.people}</div><div><h2 id="addPersonTitle">${escapeHtml(title)}</h2><p>${escapeHtml(subtitle)}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div>
         <div class="modal-body add-person-grid">
           <div class="form-grid">
             <section><h3 class="form-section-title">Identity</h3><div class="two-col-form">
-              <div class="field"><label for="addPersonGender">Gender</label><select class="compact-select" id="addPersonGender"><option ${initialGender === 'Male' ? 'selected' : ''}>Male</option><option ${initialGender === 'Female' ? 'selected' : ''}>Female</option><option ${initialGender === 'Unknown' ? 'selected' : ''}>Unknown</option></select></div>
-              <div class="field add-person-status-field"><label>Living status</label><button class="add-person-status-button" type="button" id="addPersonStatusButton" aria-haspopup="listbox" aria-expanded="false"><span class="add-person-status-current"><span class="add-person-status-dot ${statusDotClass(initialStatus)}"></span><span id="addPersonStatusLabel">${initialStatus}</span></span><span class="icon-rotate-down">${icon.chevron}</span></button><input type="hidden" id="addPersonLivingStatus" value="${initialStatus}"><div class="add-person-status-menu" id="addPersonStatusMenu" role="listbox" hidden>${['Living','Deceased','Unknown'].map(status => `<button class="add-person-status-option ${status === initialStatus ? 'active' : ''}" type="button" role="option" aria-selected="${status === initialStatus ? 'true' : 'false'}" data-status-value="${status}"><span><span class="add-person-status-dot ${statusDotClass(status)}"></span>${status}</span><span data-status-check>${status === initialStatus ? icon.check : ''}</span></button>`).join('')}</div></div>
-              <div class="field"><label>First name</label><input placeholder="e.g. Silver"></div><div class="field"><label>Last name</label><input placeholder="e.g. Whiskerfield"></div><div class="field"><label>Middle name / Patronym</label><input placeholder="e.g. Purrington"></div><div class="field add-person-conditional-field" id="maidenNameField"><label>Maiden name</label><input placeholder="e.g. Milkpaw"></div>
+              <div class="field add-person-select-field">
+                <label for="addPersonGender">Gender</label>
+                <select class="compact-select add-person-select" id="addPersonGender">
+                  <option ${initialGender === 'Male' ? 'selected' : ''}>Male</option>
+                  <option ${initialGender === 'Female' ? 'selected' : ''}>Female</option>
+                  <option ${initialGender === 'Unknown' ? 'selected' : ''}>Unknown</option>
+                </select>
+                <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
+              </div>
+              <div class="field add-person-status-field"><label>Living status</label><button class="add-person-status-button" type="button" id="addPersonStatusButton" aria-haspopup="listbox" aria-expanded="false"><span class="add-person-status-current"><span class="add-person-status-dot ${statusDotClass(initialStatus)}"></span><span id="addPersonStatusLabel">${initialStatus}</span></span><span class="add-person-status-chevron" aria-hidden="true">${icon.chevron}</span></button><input type="hidden" id="addPersonLivingStatus" value="${initialStatus}"><div class="add-person-status-menu" id="addPersonStatusMenu" role="listbox" hidden>${['Living','Deceased','Unknown'].map(status => `<button class="add-person-status-option ${status === initialStatus ? 'active' : ''}" type="button" role="option" aria-selected="${status === initialStatus ? 'true' : 'false'}" data-status-value="${status}"><span><span class="add-person-status-dot ${statusDotClass(status)}"></span>${status}</span><span data-status-check>${status === initialStatus ? icon.check : ''}</span></button>`).join('')}</div></div>
+              <div class="field">
+                <label for="addPersonFirstName">First name</label>
+                <input id="addPersonFirstName" value="${escapeHtml(editValues.firstName)}" placeholder="e.g. Silver">
+              </div>
+
+              <div class="field">
+                <label for="addPersonLastName">Last name</label>
+                <input id="addPersonLastName" value="${escapeHtml(editValues.lastName)}" placeholder="e.g. Whiskerfield">
+              </div>
+
+              <div class="field">
+                <label for="addPersonMiddleName">Middle name / Patronym</label>
+                <input id="addPersonMiddleName" value="${escapeHtml(editValues.middleName)}" placeholder="e.g. Purrington">
+              </div>
+
+              <div class="field add-person-conditional-field" id="maidenNameField">
+                <label for="addPersonMaidenName">Maiden name</label>
+                <input id="addPersonMaidenName" value="${escapeHtml(editValues.maidenName)}" placeholder="e.g. Milkpaw">
+              </div>
             </div></section>
-            <section><h3 class="form-section-title">Life events</h3><div class="two-col-form"><div class="field"><label>Birth date</label><input placeholder="e.g. 01.01.1900"></div><div class="field"><label>Birth place</label><input placeholder="e.g. Pawford, England"></div><div class="add-person-death-fields" id="deathFieldsGroup"><div class="field"><label>Death date</label><input placeholder="e.g. 20.10.1926"></div><div class="field"><label>Death place</label><input placeholder="e.g. Meowbridge, England"></div></div></div></section>
-            <section><h3 class="form-section-title">Additional facts</h3><div class="fact-buttons"><button class="fact-button" type="button">${icon.plus} Alternative names</button><button class="fact-button" type="button">${icon.plus} Cause of death</button><button class="fact-button" type="button">${icon.plus} Occupation</button><button class="fact-button" type="button" aria-label="Add another fact">${icon.plus}</button></div></section>
-            <label class="checkbox-row"><input type="checkbox"> <span>Create and add another<br><span class="panel-muted">Add person and reopen this window</span></span></label>
+          <section>
+            <h3 class="form-section-title">Life events</h3>
+            <div class="two-col-form">
+              <div class="field">
+                <label for="addPersonBirthDate">Birth date</label>
+                <input id="addPersonBirthDate" value="${escapeHtml(editValues.birthDate)}" placeholder="e.g. 01.01.1900">
+              </div>
+
+              <div class="field">
+                <label for="addPersonBirthPlace">Birth place</label>
+                <input id="addPersonBirthPlace" value="${escapeHtml(editValues.birthPlace)}" placeholder="e.g. Pawford, England">
+              </div>
+
+              <div class="add-person-death-fields" id="deathFieldsGroup">
+                <div class="field">
+                  <label for="addPersonDeathDate">Death date</label>
+                  <input id="addPersonDeathDate" value="${escapeHtml(editValues.deathDate)}" placeholder="e.g. 20.10.1926">
+                </div>
+
+                <div class="field">
+                  <label for="addPersonDeathPlace">Death place</label>
+                  <input id="addPersonDeathPlace" value="${escapeHtml(editValues.deathPlace)}" placeholder="e.g. Meowbridge, England">
+                </div>
+              </div>
+            </div>
+          </section>
+            <section><h3 class="form-section-title">Additional facts</h3><div class="fact-buttons">
+                <button class="fact-button" type="button">
+                  <span class="fact-button-icon" aria-hidden="true">${icon.plus}</span>
+                  <span>Alternative names</span>
+                </button>
+                <button class="fact-button" type="button">
+                  <span class="fact-button-icon" aria-hidden="true">${icon.plus}</span>
+                  <span>Cause of death</span>
+                </button>
+                <button class="fact-button" type="button">
+                  <span class="fact-button-icon" aria-hidden="true">${icon.plus}</span>
+                  <span>Occupation</span>
+                </button>
+                <button class="fact-button" type="button" aria-label="Add another fact">
+                  <span class="fact-button-icon" aria-hidden="true">${icon.plus}</span>
+                </button>
+              </div>
+              </section>
           </div>
           <aside>
             <div class="modal-side-card"><h3>Attach to this person</h3><button class="attach-row" type="button" data-add-person-attach="photo"><div class="attach-icon">${icon.image}</div><div><strong>Add Photo</strong><br><span class="panel-muted">Link photo</span></div></button><button class="attach-row" type="button" data-add-person-attach="file"><div class="attach-icon file">${icon.file}</div><div><strong>Add File</strong><br><span class="panel-muted">Link archive item or file</span></div></button><button class="attach-row" type="button" data-add-person-attach="note"><div class="attach-icon note">${icon.note}</div><div><strong>Add Note</strong><br><span class="panel-muted">Add note about this person</span></div></button></div>
             <div class="modal-side-card"><h3>Possible matches<br><span class="panel-muted">Similar people in this project</span></h3><button class="match-row" type="button" data-possible-match="Barnaby Whiskerfield"><div class="small-avatar avatar-amber">BW</div><div><strong>Barnaby Whiskerfield</strong><br>14 Feb 1946<br>Pawford, England</div></button><button class="match-row" type="button" data-possible-match="Rupert Purrington"><div class="small-avatar">RP</div><div><strong>Rupert Purrington</strong><br>19 Oct 1951<br>Fishmarket Row, England</div></button></div>
           </aside>
         </div>
-        <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-create-person>Create</button></div>
+        <div class="modal-footer add-person-footer">
+          <div class="add-person-footer-left">
+            ${isEditMode ? '' : `
+              <label class="checkbox-row add-person-repeat">
+                <input type="checkbox" id="addPersonCreateAnother">
+                <span>
+                  Create and add another<br>
+                  <span class="panel-muted">Add person and reopen this window</span>
+                </span>
+              </label>
+            `}
+          </div>
+
+          <div class="add-person-footer-actions">
+            <button class="button secondary" type="button" data-close>Cancel</button>
+            <button class="button primary" type="button" ${isEditMode ? 'data-save-edit-person' : 'data-create-person'}>
+              ${isEditMode ? 'Save changes' : 'Create'}
+            </button>
+          </div>
+        </div>
       </div>`);
       bindAddPersonModalControls();
       updateAddPersonConditionalFields();
-      modalBackdrop.querySelector('[data-create-person]').addEventListener('click', () => { closeModal(); showToast('Person creation simulated.'); });
+      if (isEditMode) {
+        modalBackdrop.querySelector('[data-save-edit-person]')?.addEventListener('click', () => {
+          saveEditPersonModalValues(options.personId);
+        });
+      } else {
+      modalBackdrop.querySelector('[data-create-person]')?.addEventListener('click', () => {
+        const createAnother = modalBackdrop.querySelector('#addPersonCreateAnother')?.checked;
+
+        closeModal();
+        showToast('Person creation simulated.');
+
+        if (createAnother) {
+          requestAnimationFrame(() => {
+            openAddPersonModal('Add person', 'Create a new person in this project');
+          });
+        }
+      });
+      }
+    }
+
+    function readAddPersonModalValue(selector) {
+      return modalBackdrop.querySelector(selector)?.value.trim() || '';
+    }
+
+    function updatePersonInitials(person) {
+      const first = person.names.first || '';
+      const last = person.names.last || '';
+      person.names.initials = `${first[0] || ''}${last[0] || ''}`.toUpperCase() || person.names.initials || '??';
+    }
+
+    function saveEditPersonModalValues(personId) {
+      const person = getPerson(personId);
+
+      if (!person) {
+        closeModal();
+        showToast('Person record was not found.');
+        return;
+      }
+
+      const genderValue = readAddPersonModalValue('#addPersonGender');
+      const livingStatus = readAddPersonModalValue('#addPersonLivingStatus');
+
+      person.names.first = readAddPersonModalValue('#addPersonFirstName');
+      person.names.last = readAddPersonModalValue('#addPersonLastName');
+      person.names.middle = readAddPersonModalValue('#addPersonMiddleName');
+      person.names.maiden = readAddPersonModalValue('#addPersonMaidenName');
+
+      person.names.display = [
+        person.names.first,
+        person.names.middle,
+        person.names.last
+      ].filter(Boolean).join(' ') || person.names.display;
+
+      updatePersonInitials(person);
+
+      person.gender = genderValue === 'Male'
+        ? 'male'
+        : genderValue === 'Female'
+          ? 'female'
+          : 'unknown';
+
+      person.livingStatus = normalizeLivingStatus(livingStatus);
+
+      person.birth.date = readAddPersonModalValue('#addPersonBirthDate');
+      person.birth.dateLabel = person.birth.date;
+      person.birth.placeId = samplePlaceIdFromDisplay(readAddPersonModalValue('#addPersonBirthPlace'));
+
+      if (person.livingStatus === 'Deceased') {
+        person.death.date = readAddPersonModalValue('#addPersonDeathDate');
+        person.death.dateLabel = person.death.date;
+        person.death.dateType = person.death.date ? person.death.dateType || 'Exact date' : 'Unknown';
+        person.death.placeId = samplePlaceIdFromDisplay(readAddPersonModalValue('#addPersonDeathPlace'));
+      } else {
+        person.death.date = '';
+        person.death.dateLabel = '';
+        person.death.dateType = 'Not applicable';
+        person.death.placeId = null;
+        person.death.reason = '';
+        person.death.burialPlaceId = null;
+      }
+
+      person.meta.updated = 'Just now';
+
+      closeModal();
+      renderFamilyTreePreserveScroll?.() || renderFamilyTree();
+      showToast('Person updated.');
+    }
+
+    function openEditPersonModal(personId) {
+      const person = getPerson(personId);
+
+      if (!person) {
+        showToast('Person record was not found.');
+        return;
+      }
+
+      openAddPersonModal('Edit person', person.names.display, {
+        mode: 'edit',
+        personId
+      });
     }
 
     function bindAddPersonModalControls() {
