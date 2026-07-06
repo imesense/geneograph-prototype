@@ -10408,6 +10408,34 @@
       else renderStartup();
     }
 
+    function restoreSearchInputFocus(selector, selectionStart, selectionEnd) {
+      requestAnimationFrame(() => {
+        const input = document.querySelector(selector);
+        if (!input) return;
+        input.focus({ preventScroll: true });
+        if (typeof input.setSelectionRange !== 'function') return;
+        const valueLength = input.value.length;
+        const start = Math.min(selectionStart ?? valueLength, valueLength);
+        const end = Math.min(selectionEnd ?? start, valueLength);
+        input.setSelectionRange(start, end);
+      });
+    }
+
+    function handleSearchInput(event, { stateKey, render, selector }) {
+      const input = event.target;
+      const nextValue = input.value;
+      const fallbackPosition = nextValue.length;
+      const selectionStart = typeof input.selectionStart === 'number' ? input.selectionStart : fallbackPosition;
+      const selectionEnd = typeof input.selectionEnd === 'number' ? input.selectionEnd : selectionStart;
+      state[stateKey] = nextValue;
+      render();
+      restoreSearchInputFocus(selector || `#${input.id}`, selectionStart, selectionEnd);
+    }
+
+    function bindSearchInput(root, selector, stateKey, render) {
+      root.querySelector(selector)?.addEventListener('input', event => handleSearchInput(event, { stateKey, render, selector }));
+    }
+
     function renderTopbar() {
       const showModules = state.projectOpen;
       const signedLabel = state.userSignedIn ? 'SW' : 'IN';
@@ -13953,7 +13981,7 @@
     function bindPeopleControls() {
       bindPeopleSidebar(main);
       bindToasts(main);
-      main.querySelector('#peopleSearch')?.addEventListener('input', e => { state.peopleSearch = e.target.value; renderPeople(); });
+      bindSearchInput(main, '#peopleSearch', 'peopleSearch', renderPeople);
       main.querySelector('#peopleColumnsButton')?.addEventListener('click', e => openPeopleColumnsPopover(e.currentTarget));
       main.querySelector('#peopleFilterButton')?.addEventListener('click', e => openPeopleFilterPopover(e.currentTarget));
       main.querySelector('#peopleClearFilters')?.addEventListener('click', clearPeopleFilters);
@@ -14625,7 +14653,7 @@
 
     function bindAlbumsControls() {
       bindToasts(main);
-      main.querySelector('#albumsSearch')?.addEventListener('input', e => { state.albumsSearch = e.target.value; renderAlbumsMain(); });
+      bindSearchInput(main, '#albumsSearch', 'albumsSearch', renderAlbumsMain);
       main.querySelector('#albumsSort')?.addEventListener('change', e => { state.albumsSort = e.target.value; renderAlbumsMain(); });
       main.querySelector('#albumsFilterButton')?.addEventListener('click', e => openAlbumsFilterPopover(e.currentTarget));
       main.querySelector('#albumsClearFilters')?.addEventListener('click', clearAlbumFilters);
@@ -14953,7 +14981,7 @@
       sidebar.querySelector('[data-geneo-create]')?.addEventListener('click', openCreateGeneographBoardModal);
       sidebar.querySelector('[data-geneo-import]')?.addEventListener('click', () => openSimpleModal('Import board', 'Board import is a placeholder in this iteration. Real .ggboard import can be added later.'));
       sidebar.querySelectorAll('[data-geneo-filter]').forEach(button => button.addEventListener('click', () => { state.geneoBoardFilter = button.dataset.geneoFilter; renderGeneographHome(); }));
-      main.querySelector('#geneoBoardSearch')?.addEventListener('input', e => { state.geneoBoardSearch = e.target.value; renderGeneographHome(); });
+      bindSearchInput(main, '#geneoBoardSearch', 'geneoBoardSearch', renderGeneographHome);
       main.querySelectorAll('[data-geneo-board-view]').forEach(button => button.addEventListener('click', () => { state.geneoBoardViewMode = button.dataset.geneoBoardView; renderGeneographHome(); }));
       main.querySelectorAll('[data-geneo-board-id]').forEach(card => {
         card.addEventListener('click', e => { if (!e.target.closest('button')) openGeneographBoard(card.dataset.geneoBoardId); });
@@ -15339,7 +15367,7 @@
         state.geneoCollapsedGroups[key] = !state.geneoCollapsedGroups[key];
         renderGeneographEditorPreserveScroll();
       }));
-      sidebar.querySelector('#geneoLayerSearch')?.addEventListener('input', e => { state.geneoLayerSearch = e.target.value; renderGeneographEditorPreserveScroll(); });
+      bindSearchInput(sidebar, '#geneoLayerSearch', 'geneoLayerSearch', renderGeneographEditorPreserveScroll);
       main.querySelectorAll('[data-geneo-tool]').forEach(button => button.addEventListener('click', e => { e.stopPropagation(); state.geneoTool = button.dataset.geneoTool; showToast(`${capitalize(state.geneoTool)} mode selected.`); renderGeneographEditorPreserveScroll(); }));
       main.querySelectorAll('[data-geneo-add]').forEach(button => button.addEventListener('click', e => { e.stopPropagation(); addGeneographObject(button.dataset.geneoAdd); }));
       sidebar.querySelectorAll('[data-geneo-add]').forEach(button => button.addEventListener('click', e => { e.stopPropagation(); addGeneographObject(button.dataset.geneoAdd); }));
@@ -15859,7 +15887,7 @@
     function bindArchiveControls() {
       main.querySelector('#archiveCreateSourceInline')?.addEventListener('click', () => openArchiveCreateSourceModal());
       main.querySelector('#archiveCreateFolder')?.addEventListener('click', openArchiveCreateFolderModal);
-      main.querySelector('#archiveSearch')?.addEventListener('input', e => { state.archiveSearch = e.target.value; renderArchiveMain(); });
+      bindSearchInput(main, '#archiveSearch', 'archiveSearch', renderArchiveMain);
       main.querySelector('#archiveSort')?.addEventListener('change', e => { state.archiveSort = e.target.value; renderArchiveMain(); });
       main.querySelectorAll('[data-archive-mode]').forEach(button => button.addEventListener('click', () => { state.archiveViewMode = button.dataset.archiveMode; renderArchiveMain(); }));
       main.querySelectorAll('[data-archive-toggle-folder]').forEach(button => button.addEventListener('click', e => { e.stopPropagation(); const id = button.dataset.archiveToggleFolder; state.archiveExpandedFolders[id] = !state.archiveExpandedFolders[id]; renderArchiveMain(); }));
@@ -16214,7 +16242,7 @@
 
     function bindNotesControls() {
       bindToasts(main);
-      main.querySelector('#notesSearch')?.addEventListener('input', e => { state.notesSearch = e.target.value; renderNotes(); });
+      bindSearchInput(main, '#notesSearch', 'notesSearch', renderNotes);
       main.querySelector('#notesSort')?.addEventListener('change', e => { state.notesSort = e.target.value; renderNotes(); });
       main.querySelector('#notesTypeFilter')?.addEventListener('change', e => { state.notesTypeFilter = e.target.value; renderNotes(); });
       main.querySelector('#notesClearSearch')?.addEventListener('click', () => { state.notesSearch = ''; renderNotes(); });
@@ -16730,7 +16758,7 @@
     }
 
     function bindPlacesEvents() {
-      main.querySelector('#placesSearch')?.addEventListener('input', e => { state.placesSearch = e.target.value; renderPlacesMain(); });
+      bindSearchInput(main, '#placesSearch', 'placesSearch', renderPlacesMain);
       main.querySelector('#placesSort')?.addEventListener('change', e => { state.placesSort = e.target.value; renderPlacesMain(); });
       main.querySelectorAll('[data-places-mode]').forEach(button => button.addEventListener('click', () => { state.placesViewMode = button.dataset.placesMode; renderPlacesMain(); }));
       main.querySelectorAll('[data-place-id]').forEach(button => button.addEventListener('click', e => { if (e.target.closest('.place-more')) return; state.selectedPlaceId = button.dataset.placeId; renderPlacesMain(); }));
@@ -16959,7 +16987,7 @@
             </aside>
           </div>
         </div>`;
-      main.querySelector('#publishSearch')?.addEventListener('input', e => { state.publishSearch = e.target.value; renderPublishHome(); });
+      bindSearchInput(main, '#publishSearch', 'publishSearch', renderPublishHome);
       main.querySelectorAll('[data-publish-type]').forEach(button => button.addEventListener('click', () => openPublishWizard(button.dataset.publishType)));
       main.querySelectorAll('[data-continue-draft]').forEach(button => button.addEventListener('click', () => {
         const draft = publishDrafts.find(d => d.id === button.dataset.continueDraft);
@@ -17340,7 +17368,7 @@
     }
 
     function bindProjectControls() {
-      main.querySelector('#projectSearch')?.addEventListener('input', e => { state.search = e.target.value; renderStartup(); });
+      bindSearchInput(main, '#projectSearch', 'search', renderStartup);
       main.querySelector('#sortProjects')?.addEventListener('change', e => { state.sort = e.target.value; renderStartup(); });
       main.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => { state.viewMode = button.dataset.view; renderStartup(); }));
       main.querySelectorAll('[data-project-id]').forEach(card => {
