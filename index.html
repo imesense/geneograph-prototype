@@ -3226,7 +3226,12 @@
     .add-person-modal { width: min(940px, 100%); }
     .add-person-header { display: grid; grid-template-columns: 48px 1fr auto; gap: var(--space-4); align-items: start; }
     .add-person-icon { width: 48px; height: 48px; color: var(--brand-green-300); }
-    .add-person-grid { display: grid; grid-template-columns: 1fr 310px; gap: var(--space-5); }
+    .add-person-grid {
+      display: grid;
+      grid-template-columns: 1fr 310px;
+      column-gap: var(--space-5);
+      row-gap: var(--space-6);
+    }
     .add-person-footer {
       align-items: center;
       justify-content: space-between;
@@ -3470,8 +3475,8 @@
     .genealogy-date-field:not(.is-between) [data-genealogy-date-to-cell] {
       display: none;
     }
-    .add-person-life-grid > .add-person-additional-section {
-      display: block;
+    .add-person-grid > .add-person-additional-section {
+      grid-column: 1 / -1;
       width: 100%;
       margin-top: var(--space-2);
     }
@@ -3643,6 +3648,41 @@
     .add-person-fact-grid .profile-edit-date-row {
       grid-column: 1 / -1;
     }
+    .add-person-fact-grid .add-person-fact-date-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-3);
+      min-width: 0;
+    }
+
+    .add-person-fact-grid .add-person-fact-date-row .profile-edit-date-cell {
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .add-person-fact-grid .add-person-fact-date-row .genealogy-date-controls {
+      grid-template-columns: minmax(118px, 150px) minmax(0, 1fr) 44px;
+      gap: var(--space-2);
+      min-width: 0;
+    }
+
+    .add-person-fact-grid .add-person-fact-date-row .genealogy-date-type,
+    .add-person-fact-grid .add-person-fact-date-row .genealogy-date-input {
+      min-width: 0;
+      min-height: 52px;
+    }
+
+    .add-person-fact-grid .add-person-fact-date-row .genealogy-date-details-button {
+      width: 44px;
+      min-width: 44px;
+      height: 52px;
+      min-height: 52px;
+      max-height: 52px;
+    }
+
+    .add-person-fact-grid .add-person-fact-date-row .genealogy-date-details-button svg {
+      width: 16px;
+      height: 16px;
+    }
     .attach-row { width: 100%; border: 0; border-bottom: 1px solid var(--border-default); background: transparent; text-align: left; cursor: pointer; transition: background var(--ease), color var(--ease); }
     .attach-row:hover, .attach-row:focus-visible { background: rgba(255,255,255,.035); color: var(--text-primary); }
     .attach-icon { border: 0 !important; background: rgba(212,107,107,.14); color: #ef8e9a; }
@@ -3662,7 +3702,11 @@
     .add-person-mini-choice { min-height: 50px; border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: rgba(255,255,255,.025); color: var(--text-secondary); display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-3); text-align: left; font-weight: 800; }
     .add-person-mini-choice:hover, .add-person-mini-choice:focus-visible { background: var(--surface-card-hover); border-color: var(--border-strong); color: var(--text-primary); }
     .add-person-mini-footer { border-top: 1px solid var(--border-default); padding: var(--space-4) var(--space-5); display: flex; justify-content: flex-end; gap: var(--space-3); }
-
+    @media (max-width: 820px) {
+      .add-person-fact-grid .add-person-fact-date-row {
+        grid-template-columns: 1fr;
+      }
+    }
 
     /* Family Tree fixes and rebuilt concept */
     .workspace.no-sidebar { grid-template-columns: 1fr; }
@@ -8927,6 +8971,40 @@
       align-items: stretch;
       min-width: 0;
     }
+    .person-profile-v2 .profile-range-date-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-4);
+      min-width: 0;
+    }
+
+    .person-profile-v2 .profile-range-date-row .profile-edit-date-cell {
+      min-width: 0;
+    }
+
+    .person-profile-v2 .profile-range-date-row .genealogy-date-controls {
+      grid-template-columns: minmax(120px, 170px) minmax(0, 1fr) 44px;
+      gap: var(--space-2);
+      min-width: 0;
+    }
+
+    .person-profile-v2 .profile-range-date-row .genealogy-date-type,
+    .person-profile-v2 .profile-range-date-row .genealogy-date-input {
+      min-width: 0;
+      min-height: 52px;
+    }
+
+    .person-profile-v2 .profile-range-date-row .genealogy-date-details-button {
+      width: 44px;
+      min-width: 44px;
+      height: 52px;
+      min-height: 52px;
+    }
+
+    .person-profile-v2 .profile-range-date-row .genealogy-date-details-button svg {
+      width: 16px;
+      height: 16px;
+    }
+
     .person-profile-v2 .profile-date-combo .genealogy-date-type,
     .person-profile-v2 .profile-date-combo .genealogy-date-input,
     .person-profile-v2 .profile-date-combo .genealogy-date-details-button,
@@ -8939,6 +9017,11 @@
     .person-profile-v2 .profile-main-edit-grid-v2 .field input,
     .person-profile-v2 .profile-main-edit-grid-v2 .field select {
       min-height: 56px;
+    }
+    @media (max-width: 1180px) {
+      .person-profile-v2 .profile-range-date-row {
+        grid-template-columns: 1fr;
+      }
     }
     @media (max-width: 900px) {
       .profile-edit-date-row,
@@ -9041,6 +9124,8 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
+    
     .profile-family-row-actions {
       display: inline-flex;
       align-items: center;
@@ -10753,7 +10838,7 @@
       popover.className = 'genealogy-date-popover';
       popover.setAttribute('role', 'dialog');
       popover.setAttribute('aria-label', 'Genealogy date details');
-      popover.innerHTML = `<div class="genealogy-date-popover-header"><div><strong>Date details</strong><span>Use smart text or structured parts.</span></div><button class="close-button" type="button" data-genealogy-date-close aria-label="Close date details">${icon.close}</button></div>
+      popover.innerHTML = `<div class="genealogy-date-popover-header"><div><strong>Date details</strong></div><button class="close-button" type="button" data-genealogy-date-close aria-label="Close date details">${icon.close}</button></div>
         <div class="genealogy-date-editor-grid">
           <div class="genealogy-date-part-field full"><label>Smart date</label><input data-editor-smart value="${escapeHtml(formatGenealogyDateLabel(model) || model.originalText || '')}" placeholder="e.g. Between 1910 and 1915"></div>
           <div class="genealogy-date-part-field"><label>Date type</label><select class="compact-select" data-editor-type>${genealogyDateTypeOptions(model.dateType)}</select></div>
@@ -13572,7 +13657,7 @@ function renderTreeCardDateLines(person) {
       }
       if (factId === 'education') {
         return fieldWrap(`<div class="field full"><label for="addPersonFactEducationPlace">Education place</label><input id="addPersonFactEducationPlace" value="${escapeHtml(details.educationPlace || '')}" placeholder="School or learning place"></div>
-          <div class="profile-edit-date-row">
+          <div class="profile-edit-date-row add-person-fact-date-row">
             <div class="profile-edit-date-cell">${renderGenealogyDateField('addPersonFactEducationFrom', 'From', details.educationFromDate, { inputId: 'addPersonFactEducationFromDate', typeId: 'addPersonFactEducationFromDateType', defaultDateType: 'Year only', placeholder: 'e.g. 2004' })}</div>
             <div class="profile-edit-date-cell">${renderGenealogyDateField('addPersonFactEducationTo', 'To', details.educationToDate, { inputId: 'addPersonFactEducationToDate', typeId: 'addPersonFactEducationToDateType', defaultDateType: 'Year only', placeholder: 'e.g. 2015' })}</div>
           </div>
@@ -13581,7 +13666,7 @@ function renderTreeCardDateLines(person) {
       if (factId === 'occupation') {
         return fieldWrap(`<div class="field"><label for="addPersonFactWorkCompany">Company name</label><input id="addPersonFactWorkCompany" value="${escapeHtml(details.workCompany || '')}" placeholder="Company"></div>
           <div class="field"><label for="addPersonFactWorkOccupation">Occupation</label><input id="addPersonFactWorkOccupation" value="${escapeHtml(details.workOccupation || '')}" placeholder="Occupation"></div>
-          <div class="profile-edit-date-row">
+          <div class="profile-edit-date-row add-person-fact-date-row">
             <div class="profile-edit-date-cell">${renderGenealogyDateField('addPersonFactWorkFrom', 'From', details.workFromDate, { inputId: 'addPersonFactWorkFromDate', typeId: 'addPersonFactWorkFromDateType', defaultDateType: 'Unknown', placeholder: 'e.g. 2016' })}</div>
             <div class="profile-edit-date-cell">${renderGenealogyDateField('addPersonFactWorkTo', 'To', details.workToDate, { inputId: 'addPersonFactWorkToDate', typeId: 'addPersonFactWorkToDateType', defaultDateType: 'Unknown', placeholder: 'e.g. 2020' })}</div>
           </div>
@@ -13695,8 +13780,6 @@ function renderTreeCardDateLines(person) {
                   <input id="addPersonDeathPlace" value="${escapeHtml(editValues.deathPlace)}" placeholder="e.g. Meowbridge, England">
                 </div>
               </div>
-
-              ${renderAddPersonAdditionalFacts(editPerson)}
             </div>
           </section>
           </div>
@@ -13704,6 +13787,7 @@ function renderTreeCardDateLines(person) {
             <div class="modal-side-card"><h3>Attach to this person</h3><button class="attach-row" type="button" data-add-person-attach="photo"><div class="attach-icon">${icon.image}</div><div><strong>Add Photo</strong><br><span class="panel-muted">Link photo</span></div></button><button class="attach-row" type="button" data-add-person-attach="file"><div class="attach-icon file">${icon.file}</div><div><strong>Add File</strong><br><span class="panel-muted">Link archive item or file</span></div></button><button class="attach-row" type="button" data-add-person-attach="note"><div class="attach-icon note">${icon.note}</div><div><strong>Add Note</strong><br><span class="panel-muted">Add note about this person</span></div></button></div>
             <div class="modal-side-card"><h3>Possible matches<br><span class="panel-muted">Similar people in this project</span></h3><button class="match-row" type="button" data-possible-match="Barnaby Whiskerfield"><div class="small-avatar avatar-amber">BW</div><div><strong>Barnaby Whiskerfield</strong><br>14 Feb 1946<br>Pawford, England</div></button><button class="match-row" type="button" data-possible-match="Rupert Purrington"><div class="small-avatar">RP</div><div><strong>Rupert Purrington</strong><br>19 Oct 1951<br>Fishmarket Row, England</div></button></div>
           </aside>
+          ${renderAddPersonAdditionalFacts(editPerson)}
         </div>
         <div class="modal-footer add-person-footer">
           <div class="add-person-footer-left">
@@ -14700,7 +14784,7 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
       const details = peopleProfileDetailsFor(person);
       return `<div class="profile-card-edit-grid two">
         <div class="field full"><label for="profileEducationPlace">Education place</label><input id="profileEducationPlace" placeholder="School or university" value="${escapeHtml(details.educationPlace || '')}"></div>
-        <div class="profile-edit-date-row full">
+        <div class="profile-edit-date-row profile-range-date-row full">
           <div class="profile-edit-date-cell">
             ${renderGenealogyDateField('profileEducationFromDate', 'From', details.educationFromDate, {
               inputId: 'profileEducationFromDate',
@@ -14727,7 +14811,7 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
       return `<div class="profile-card-edit-grid two">
         <div class="field"><label for="profileWorkCompany">Company name</label><input id="profileWorkCompany" placeholder="Company" value="${escapeHtml(details.workCompany || '')}"></div>
         <div class="field"><label for="profileWorkOccupation">Occupation</label><input id="profileWorkOccupation" placeholder="Occupation" value="${escapeHtml(details.workOccupation || '')}"></div>
-        <div class="profile-edit-date-row full">
+        <div class="profile-edit-date-row profile-range-date-row full">
           <div class="profile-edit-date-cell">
             ${renderGenealogyDateField('profileWorkFromDate', 'From', details.workFromDate, {
               inputId: 'profileWorkFromDate',
