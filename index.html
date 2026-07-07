@@ -1062,6 +1062,14 @@
     }
     .dropzone svg { width: 34px; height: 34px; color: var(--brand-green-500); }
     .dropzone span { display: block; color: var(--text-tertiary); margin-top: 2px; }
+    .create-gedcom-field {
+      grid-column: 1 / -1;
+    }
+
+    .create-gedcom-dropzone {
+      margin-top: 0;
+      min-height: 140px;
+    }
 
     .project-hero {
       border-radius: var(--radius-sm);
@@ -18974,13 +18982,73 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
       openModal(`
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="createTitle">
           <div class="modal-header"><div><h2 id="createTitle">Create family tree</h2><p>Start a new GeneoGraph project for a family line or research case.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div>
-          <form id="createForm"><div class="modal-body form-grid">
-            <div class="field"><label for="projectName">Project name</label><input id="projectName" required placeholder="e.g. Whiskerfield Family History"></div>
-            <div class="field"><label for="projectDesc">Description</label><textarea id="projectDesc" placeholder="Family line, location, archive focus, or research goal"></textarea></div>
-            <fieldset class="field" style="border:0;padding:0;margin:0"><legend>Starting point</legend><div class="choice-grid"><label class="choice"><input type="radio" name="start" checked><strong>Blank project</strong><span>Add people manually.</span></label><label class="choice"><input type="radio" name="start"><strong>Import GEDCOM</strong><span>Bring an existing tree.</span></label><label class="choice"><input type="radio" name="start"><strong>Start from person</strong><span>Create the first profile now.</span></label></div></fieldset>
-          </div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create project</button></div></form>
+            <form id="createForm"><div class="modal-body form-grid">
+              <div class="field">
+                <label for="projectName">Project name</label>
+                <input id="projectName" required placeholder="e.g. Whiskerfield Family History">
+              </div>
+
+              <div class="field">
+                <label for="projectDesc">Description</label>
+                <textarea id="projectDesc" placeholder="Family line, location, archive focus, or research goal"></textarea>
+              </div>
+
+              <fieldset class="field" style="border:0;padding:0;margin:0">
+                <legend>Starting point</legend>
+                <div class="choice-grid">
+                  <label class="choice">
+                    <input type="radio" name="start" value="blank" checked>
+                    <strong>Blank project</strong>
+                    <span>Add people manually.</span>
+                  </label>
+
+                  <label class="choice">
+                    <input type="radio" name="start" value="gedcom">
+                    <strong>Import GEDCOM</strong>
+                    <span>Bring an existing tree.</span>
+                  </label>
+
+                  <label class="choice">
+                    <input type="radio" name="start" value="person">
+                    <strong>Start from person</strong>
+                    <span>Create the first profile now.</span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <div class="field create-gedcom-field" id="createGedcomField" hidden>
+                <label for="createGedcomFile">GEDCOM file</label>
+
+                <div class="dropzone create-gedcom-dropzone" id="createGedcomDropzone" role="button" tabindex="0" aria-describedby="createGedcomHelp">
+                  ${icon.import}
+                  <div>
+                    <strong>Drop a GEDCOM file here or choose a file</strong>
+                    <span id="createGedcomHelp">Supports .ged and .gedcom files</span>
+                  </div>
+                </div>
+
+                <input id="createGedcomFile" type="file" accept=".ged,.gedcom" hidden>
+              </div>
+            </div><div class="modal-footer">
+                <button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create project</button></div></form>
         </div>`);
       document.getElementById('projectName').focus();
+      const createForm = document.getElementById('createForm');
+      const gedcomField = document.getElementById('createGedcomField');
+      document.getElementById('createGedcomDropzone')?.addEventListener('click', () => {
+        showToast('File picker would open here.');
+      });
+
+      function updateCreateGedcomField() {
+        const selectedStart = createForm.querySelector('input[name="start"]:checked')?.value;
+        gedcomField.hidden = selectedStart !== 'gedcom';
+      }
+
+      createForm.querySelectorAll('input[name="start"]').forEach(input => {
+        input.addEventListener('change', updateCreateGedcomField);
+      });
+
+      updateCreateGedcomField();
       document.getElementById('createForm').addEventListener('submit', e => { e.preventDefault(); closeModal(); showToast('Project creation simulated.'); });
     }
 
