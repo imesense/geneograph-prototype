@@ -3405,135 +3405,15 @@
       display: grid;
       min-width: 0;
     }
-    .genealogy-date-controls.is-between {
-      grid-template-columns: minmax(150px, 190px) minmax(260px, 1fr) 52px;
-      grid-template-rows: auto 56px auto 56px;
-      column-gap: var(--space-3);
-      row-gap: var(--space-2);
-      align-items: start;
-    }
-
-    .genealogy-date-controls.is-between .genealogy-date-range-shell {
-      display: contents;
-    }
-
-    .genealogy-date-controls.is-between .genealogy-date-range-cell {
-      display: contents;
-    }
-
-    .genealogy-date-controls.is-between .genealogy-date-range-cell span {
-      display: block;
-      color: var(--text-tertiary);
-      font-size: 11px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: .04em;
-    }
-
-    .genealogy-date-controls.is-between .genealogy-date-range-cell:first-child span {
-      grid-column: 1 / -1;
-      grid-row: 1;
-      align-self: end;
-    }
-
-    .genealogy-date-controls.is-between [data-genealogy-date-to-cell] span {
-      grid-column: 1 / -1;
-      grid-row: 3;
-      align-self: end;
-      margin-top: var(--space-3);
-    }
-
-    .genealogy-date-controls.is-between .genealogy-date-type {
-      grid-column: 1;
-      grid-row: 2;
-      min-height: 56px;
-    }
-
-    .genealogy-date-controls.is-between [data-genealogy-date-input] {
-      grid-column: 2;
-      grid-row: 2;
-      min-height: 56px;
-    }
-
-    .genealogy-date-controls.is-between .genealogy-date-details-button {
-      grid-column: 3;
-      grid-row: 2;
-      width: 52px;
-      height: 56px;
-      min-height: 56px;
-      max-height: 56px;
-      align-self: start;
-      justify-self: stretch;
-    }
-
-    .genealogy-date-controls.is-between [data-genealogy-date-input-to] {
-      grid-column: 2;
-      grid-row: 4;
-      min-height: 56px;
-    }
-    .add-person-life-event-block .genealogy-date-field.is-between .genealogy-date-controls {
+    .genealogy-date-field.is-between .genealogy-date-controls {
       grid-template-columns: minmax(150px, 190px) minmax(260px, 1fr) 52px;
       grid-template-rows: auto 56px auto 56px;
       gap: var(--space-2) var(--space-3);
       align-items: start;
     }
-
-    .add-person-life-event-block .genealogy-date-field.is-between .genealogy-date-range-shell {
+    .genealogy-date-field.is-between .genealogy-date-range-shell,
+    .genealogy-date-field.is-between .genealogy-date-range-cell {
       display: contents;
-    }
-
-    .add-person-life-event-block .genealogy-date-field.is-between .genealogy-date-range-cell {
-      display: contents;
-    }
-
-    .add-person-life-event-block .genealogy-date-field.is-between .genealogy-date-range-cell span {
-      display: block;
-      color: var(--text-tertiary);
-      font-size: 11px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: .04em;
-    }
-
-    .add-person-life-event-block .genealogy-date-field.is-between .genealogy-date-range-cell:first-child span {
-      grid-column: 1 / -1;
-      grid-row: 1;
-      align-self: end;
-    }
-
-    .add-person-life-event-block .genealogy-date-field.is-between [data-genealogy-date-to-cell] span {
-      grid-column: 1 / -1;
-      grid-row: 3;
-      align-self: end;
-      margin-top: var(--space-3);
-    }
-
-    .add-person-life-event-block .genealogy-date-field.is-between .genealogy-date-type {
-      grid-column: 1;
-      grid-row: 2;
-      min-height: 56px;
-      align-self: start;
-    }
-
-    .add-person-life-event-block .genealogy-date-field.is-between [data-genealogy-date-input] {
-      grid-column: 2;
-      grid-row: 2;
-      min-height: 56px;
-    }
-
-    .add-person-life-event-block .genealogy-date-field.is-between .genealogy-date-details-button {
-      grid-column: 3;
-      grid-row: 2;
-      width: 52px;
-      height: 56px;
-      min-height: 56px;
-      align-self: start;
-    }
-
-    .add-person-life-event-block .genealogy-date-field.is-between [data-genealogy-date-input-to] {
-      grid-column: 2;
-      grid-row: 4;
-      min-height: 56px;
     }
     .genealogy-date-range-cell {
       display: grid;
@@ -3548,14 +3428,47 @@
       text-transform: uppercase;
       letter-spacing: .04em;
     }
-    .genealogy-date-range-shell.is-between .genealogy-date-range-cell span {
+    .genealogy-date-field.is-between .genealogy-date-range-cell span {
       display: block;
     }
-    .genealogy-date-range-shell:not(.is-between) [data-genealogy-date-to-cell] {
-      display: none;
+    .genealogy-date-field.is-between .genealogy-date-range-cell:first-child span {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      align-self: end;
     }
-    .genealogy-date-range-shell.is-between .genealogy-date-input {
-      min-height: 42px;
+    .genealogy-date-field.is-between [data-genealogy-date-to-cell] span {
+      grid-column: 1 / -1;
+      grid-row: 3;
+      align-self: end;
+      margin-top: var(--space-3);
+    }
+    .genealogy-date-field.is-between .genealogy-date-type {
+      grid-column: 1;
+      grid-row: 2;
+      min-height: 56px;
+      align-self: start;
+    }
+    .genealogy-date-field.is-between [data-genealogy-date-input] {
+      grid-column: 2;
+      grid-row: 2;
+      min-height: 56px;
+    }
+    .genealogy-date-field.is-between .genealogy-date-details-button {
+      grid-column: 3;
+      grid-row: 2;
+      width: 52px;
+      height: 56px;
+      min-height: 56px;
+      align-self: start;
+      justify-self: stretch;
+    }
+    .genealogy-date-field.is-between [data-genealogy-date-input-to] {
+      grid-column: 2;
+      grid-row: 4;
+      min-height: 56px;
+    }
+    .genealogy-date-field:not(.is-between) [data-genealogy-date-to-cell] {
+      display: none;
     }
     .add-person-facts-section {
       border: 1px solid var(--border-default);
@@ -3849,7 +3762,7 @@
       .add-person-grid { grid-template-columns: 1fr; }
       .two-col-form { grid-template-columns: 1fr; }
       .add-person-life-event-block .genealogy-date-controls,
-      .genealogy-date-range-shell.is-between,
+      .genealogy-date-field.is-between .genealogy-date-controls,
       .add-person-fact-grid {
         grid-template-columns: 1fr;
       }}
@@ -8844,96 +8757,7 @@
       min-height: 0;
       overflow-y: auto;
     }
-
-
-    /* People profile edit form V6: explicit field placement matching the approved edit layout. */
-    .person-profile-v2 .profile-main-edit-grid-v2 {
-      display: grid;
-      grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) minmax(130px, 160px);
-      gap: 20px 24px;
-      align-items: start;
-      min-width: 0;
-    }
-    .person-profile-v2 .profile-main-edit-grid-v2 .field {
-      min-width: 0;
-    }
-    .person-profile-v2 .profile-main-edit-grid-v2 .field label {
-      margin-bottom: 8px;
-      color: var(--text-secondary);
-      font-weight: 800;
-    }
-    .person-profile-v2 .profile-main-edit-grid-v2 input,
-    .person-profile-v2 .profile-main-edit-grid-v2 select,
-    .person-profile-v2 .profile-main-edit-grid-v2 .add-person-status-button {
-      min-height: 50px;
-      width: 100%;
-    }
-    .person-profile-v2 .profile-field-gender { grid-column: 1; grid-row: 1; }
-    .person-profile-v2 .profile-field-living { grid-column: 2; grid-row: 1; }
-    .person-profile-v2 .profile-field-first { grid-column: 1; grid-row: 2; }
-    .person-profile-v2 .profile-field-last { grid-column: 2; grid-row: 2; }
-    .person-profile-v2 .profile-field-prefix { grid-column: 3; grid-row: 2; }
-    .person-profile-v2 .profile-field-patronym { grid-column: 1; grid-row: 3; }
-    .person-profile-v2 .profile-field-maiden { grid-column: 2; grid-row: 3; }
-    .person-profile-v2 .profile-field-suffix { grid-column: 3; grid-row: 3; }
-    .person-profile-v2 .profile-main-edit-grid-v2.no-maiden .profile-field-patronym { grid-column: 1 / 3; }
-    .person-profile-v2 .profile-main-edit-grid-v2.no-maiden .profile-field-maiden { display: none !important; }
-    .person-profile-v2 .profile-field-birth-date { grid-column: 1; grid-row: 4; }
-    .person-profile-v2 .profile-field-birth-place { grid-column: 2 / 4; grid-row: 4; }
-    .person-profile-v2 .profile-field-death-date { grid-column: 1; grid-row: 5; }
-    .person-profile-v2 .profile-field-death-place { grid-column: 2 / 4; grid-row: 5; }
-    .person-profile-v2 .profile-field-death-reason { grid-column: 1; grid-row: 6; }
-    .person-profile-v2 .profile-field-burial-place { grid-column: 2 / 4; grid-row: 6; }
-    .person-profile-v2 .profile-main-edit-grid-v2:not(.is-deceased) .profile-field-death-date,
-    .person-profile-v2 .profile-main-edit-grid-v2:not(.is-deceased) .profile-field-death-place,
-    .person-profile-v2 .profile-main-edit-grid-v2:not(.is-deceased) .profile-field-death-reason,
-    .person-profile-v2 .profile-main-edit-grid-v2:not(.is-deceased) .profile-field-burial-place,
-    .person-profile-v2 .profile-field-death-date[hidden],
-    .person-profile-v2 .profile-field-death-place[hidden],
-    .person-profile-v2 .profile-field-death-reason[hidden],
-    .person-profile-v2 .profile-field-burial-place[hidden] {
-      display: none !important;
-    }
-    .person-profile-v2 .profile-date-combo {
-      display: grid;
-      gap: 8px;
-    }
-    .person-profile-v2 .profile-date-controls {
-      display: grid;
-      grid-template-columns: minmax(130px, 150px) minmax(0, 1fr);
-      gap: 8px;
-      min-width: 0;
-    }
-    .person-profile-v2 .profile-field-prefix input,
-    .person-profile-v2 .profile-field-suffix input {
-      min-width: 0;
-    }
-    @media (max-width: 1180px) {.person-profile-v2 .profile-main-edit-grid-v2 {
-        grid-template-columns: 1fr;
-      }
-      .person-profile-v2 .profile-field-gender,
-      .person-profile-v2 .profile-field-living,
-      .person-profile-v2 .profile-field-first,
-      .person-profile-v2 .profile-field-last,
-      .person-profile-v2 .profile-field-prefix,
-      .person-profile-v2 .profile-field-patronym,
-      .person-profile-v2 .profile-field-maiden,
-      .person-profile-v2 .profile-field-suffix,
-      .person-profile-v2 .profile-field-birth-date,
-      .person-profile-v2 .profile-field-birth-place,
-      .person-profile-v2 .profile-field-death-date,
-      .person-profile-v2 .profile-field-death-place,
-      .person-profile-v2 .profile-field-death-reason,
-      .person-profile-v2 .profile-field-burial-place {
-        grid-column: 1;
-        grid-row: auto;
-      }
-      .person-profile-v2 .profile-date-controls {
-        grid-template-columns: 1fr;
-      }}
-
-
-    /* People full-profile edit form V6: explicit layout from provided reference. */
+    /* People full-profile edit form: canonical edit layout. */
     .person-profile-v2 .profile-full-card .profile-card-body {
       overflow: visible;
     }
@@ -9002,19 +8826,11 @@
       display: grid;
       gap: 8px;
     }
-    .person-profile-v2 .profile-date-controls {
-      display: grid;
-      grid-template-columns: minmax(130px, 150px) minmax(0, 1fr);
-      gap: 8px;
-      align-items: stretch;
-      min-width: 0;
-    }
     .person-profile-v2 .profile-field-prefix input,
     .person-profile-v2 .profile-field-suffix input {
       min-width: 0;
     }
-    @media (max-width: 1180px) {.person-profile-v2 .profile-main-edit-grid-v2,
-      .person-profile-v2 .profile-date-controls {
+    @media (max-width: 1180px) {.person-profile-v2 .profile-main-edit-grid-v2 {
         grid-template-columns: 1fr;
       }
       .person-profile-v2 .profile-field-gender,
@@ -10327,10 +10143,6 @@
       ]
     };
 
-    function getProject(projectId) {
-      return sampleData.projects.find(project => project.id === projectId) || null;
-    }
-
     function getPeople(projectId) {
       return sampleData.people.filter(person => !projectId || person.projectId === projectId);
     }
@@ -10343,20 +10155,12 @@
       return getPerson(personId)?.names?.display || 'Unknown';
     }
 
-    function getPersonInitials(personId) {
-      return getPerson(personId)?.names?.initials || '??';
-    }
-
     function getPlace(placeId) {
       return sampleData.places.find(place => place.id === placeId) || null;
     }
 
     function getPlaceDisplay(placeId) {
       return placeId ? getPlace(placeId)?.display || '' : '';
-    }
-
-    function getRelationshipsForPerson(personId) {
-      return sampleData.relationships.filter(rel => rel.personAId === personId || rel.personBId === personId || rel.parentId === personId || rel.childId === personId);
     }
 
     function getParents(personId) {
@@ -10367,14 +10171,6 @@
           return parent ? { ...parent, parentRole: rel.parentRole } : null;
         })
         .filter(Boolean);
-    }
-
-    function getFather(personId) {
-      return getParents(personId).find(parent => parent.parentRole === 'father' || parent.gender === 'male') || null;
-    }
-
-    function getMother(personId) {
-      return getParents(personId).find(parent => parent.parentRole === 'mother' || parent.gender === 'female') || null;
     }
 
     function getChildren(personId) {
@@ -10403,27 +10199,6 @@
 
     function getEventsForPerson(personId) {
       return sampleData.events.filter(event => event.personIds?.includes(personId));
-    }
-
-    function getLinksForEntity(entityType, entityId) {
-      return sampleData.links.filter(link => (link.fromType === entityType && link.fromId === entityId) || (link.toType === entityType && link.toId === entityId));
-    }
-
-    function getSampleCollectionByType(entityType) {
-      const map = { project: 'projects', person: 'people', relationship: 'relationships', place: 'places', event: 'events', photo: 'photos', album: 'albums', archiveFile: 'archiveFiles', source: 'sources', note: 'notes', board: 'boards' };
-      return sampleData[map[entityType]] || [];
-    }
-
-    function getLinkedEntities(entityType, entityId, targetType) {
-      return getLinksForEntity(entityType, entityId)
-        .filter(link => !targetType || link.fromType === targetType || link.toType === targetType)
-        .map(link => {
-          const isFromEntity = link.fromType === entityType && link.fromId === entityId;
-          const linkedType = isFromEntity ? link.toType : link.fromType;
-          const linkedId = isFromEntity ? link.toId : link.fromId;
-          return getSampleCollectionByType(linkedType).find(item => item.id === linkedId) || null;
-        })
-        .filter(Boolean);
     }
 
     const GENEALOGY_DATE_TYPES = ['Exact date', 'Year only', 'Month and year', 'About / Circa', 'Before', 'After', 'Between', 'Unknown', 'Not applicable'];
@@ -10741,10 +10516,6 @@
       };
     }
 
-    function genealogyDateFromExisting(input, fallbackType = 'Unknown') {
-      return normalizeGenealogyDateInput(input, fallbackType);
-    }
-
     function formatGenealogyDateLabel(input) {
       const value = normalizeGenealogyDateInput(input);
       return cleanGenealogyDateText(value.dateLabel || value.date || value.originalText);
@@ -10763,11 +10534,6 @@
       return cleanGenealogyDateText(base?.dateLabel || value.date2Label || value.date2 || '');
     }
 
-    function genealogyDateSortValue(input) {
-      const value = normalizeGenealogyDateInput(input);
-      return value.sortDate ? Number(value.sortDate) : Number.POSITIVE_INFINITY;
-    }
-
     function genealogyDatePartsFromModel(model = {}) {
       const value = normalizeGenealogyDateInput(model);
       const first = parseBaseGenealogyDate(value.dateLabel || value.date || value.originalText) || {};
@@ -10781,7 +10547,6 @@
         year2: second.year || ''
       };
     }
-
     function renderGenealogyDateField(fieldId, label, dateInput, options = {}) {
       const defaultDateType = options.defaultDateType || options.defaultType || 'Unknown';
       const model = normalizeGenealogyDateInput(dateInput || emptyGenealogyDate(defaultDateType), defaultDateType);
@@ -10794,9 +10559,9 @@
       const hiddenValue = escapeHtml(JSON.stringify(model));
       return `<div class="field genealogy-date-field ${isBetween ? 'is-between' : ''} ${escapeHtml(fieldClass)}" data-genealogy-date-field="${escapeHtml(fieldId)}">
         <label for="${escapeHtml(inputId)}">${escapeHtml(label)}</label>
-        <div class="genealogy-date-controls ${isBetween ? 'is-between' : ''}">
+        <div class="genealogy-date-controls">
           <select class="compact-select genealogy-date-type" id="${escapeHtml(typeId)}" data-genealogy-date-type>${genealogyDateTypeOptions(model.dateType)}</select>
-          <div class="genealogy-date-range-shell ${isBetween ? 'is-between' : ''}" data-genealogy-date-range-shell>
+          <div class="genealogy-date-range-shell" data-genealogy-date-range-shell>
             <div class="genealogy-date-range-cell">
               <span>From</span>
               <input class="genealogy-date-input" id="${escapeHtml(inputId)}" data-genealogy-date-input value="${escapeHtml(formatGenealogyDateStartLabel(model))}" placeholder="${escapeHtml(placeholder)}">
@@ -11013,8 +10778,7 @@
           type.addEventListener('change', () => {
             const currentModel = readGenealogyDateModel(field);
             const selectedType = normalizeGenealogyDateType(type.value);
-            const rangeShell = field.querySelector('[data-genealogy-date-range-shell]');
-            rangeShell?.classList.toggle('is-between', selectedType === 'Between');
+            field.classList.toggle('is-between', selectedType === 'Between');
             if (selectedType !== 'Between' && inputTo) inputTo.value = '';
             const model = field.querySelector('[data-genealogy-date-model]');
             if (model) model.value = JSON.stringify({ ...currentModel, dateType: selectedType, date2: selectedType === 'Between' ? currentModel.date2 || '' : '', date2Label: selectedType === 'Between' ? currentModel.date2Label || '' : '', sortDate2: selectedType === 'Between' ? currentModel.sortDate2 || '' : '' });
@@ -11032,6 +10796,7 @@
       });
     }
 
+    
     function toTreePerson(person) {
       return {
         id: person.id,
@@ -12467,50 +12232,6 @@
     const PLACEHOLDER_W = 150;
     const PLACEHOLDER_H = 110;
 
-    /*
-      Family Tree layout model
-      ------------------------
-      Nodes live on a predictable generation grid. Every spouse/parent pair is
-      a family unit with a midpoint anchor; children are centered beneath that
-      anchor. This avoids the previous absolute-position drift where cards and
-      lines overlapped after card-size changes.
-    */
-    // Legacy compatibility only. Tree and People now use sampleData through currentTreePeople/currentTreeFamilies/currentPeopleRecords.
-    const treePeople = [
-      { id: 'archibald', name: 'Archibald Whiskerfield', short: 'AW', gender: 'male', birth: '02 Jan 1915', place: 'Pawford, England', status: 'Deceased', avatar: '', x: 40, y: 60, photos: 1, files: 2, notes: 1 },
-      { id: 'edith', name: 'Edith Mackerelton', short: 'EM', gender: 'female', birth: '21 Sep 1918', place: 'Old Cattery, England', status: 'Deceased', avatar: 'avatar-purple', x: 250, y: 60, photos: 1, files: 2, notes: 1 },
-      { id: 'percival', name: 'Percival Milkpaw', short: 'PM', gender: 'male', birth: 'Unknown', place: 'Unknown', status: 'Deceased', avatar: '', x: 470, y: 60, photos: 0, files: 1, notes: 0 },
-      { id: 'nora', name: 'Nora Creamfur', short: 'NC', gender: 'female', birth: '11 Nov 1922', place: 'Meowbridge, England', status: 'Deceased', avatar: 'avatar-purple', x: 680, y: 60, photos: 0, files: 1, notes: 1 },
-      { id: 'algernon', name: 'Algernon Purrington', short: 'AP', gender: 'male', birth: '08 May 1920', place: 'Fishmarket Row, England', status: 'Deceased', avatar: '', x: 930, y: 60, photos: 0, files: 2, notes: 1 },
-      { id: 'beatrice', name: 'Beatrice Threadtail', short: 'BT', gender: 'female', birth: '30 Mar 1924', place: 'Unknown', status: 'Deceased', avatar: 'avatar-purple', x: 1140, y: 60, photos: 0, files: 2, notes: 0 },
-      { id: 'felix', name: 'Felix Softtail', short: 'FS', gender: 'male', birth: '1919', place: 'Unknown', status: 'Deceased', avatar: '', x: 1360, y: 60, photos: 0, files: 1, notes: 0 },
-      { id: 'pearl', name: 'Pearl Velvetpaw', short: 'PV', gender: 'female', birth: '27 Dec 1927', place: 'Old Cattery, England', status: 'Deceased', avatar: 'avatar-purple', x: 1570, y: 60, photos: 1, files: 1, notes: 1 },
-
-      { id: 'barnaby', name: 'Barnaby Whiskerfield', short: 'BW', gender: 'male', birth: '14 Feb 1946', place: 'Pawford, England', status: 'Deceased', avatar: '', x: 170, y: 260, photos: 2, files: 3, notes: 2 },
-      { id: 'daisy', name: 'Daisy Milkpaw', short: 'DM', gender: 'female', birth: '03 Jun 1949', place: 'Unknown', status: 'Deceased', avatar: 'avatar-purple', x: 520, y: 260, photos: 2, files: 3, notes: 1 },
-      { id: 'rupert', name: 'Rupert Purrington', short: 'RP', gender: 'male', birth: '19 Oct 1951', place: 'Fishmarket Row, England', status: 'Deceased', avatar: '', x: 1050, y: 260, photos: 1, files: 2, notes: 1 },
-      { id: 'mabel', name: 'Mabel Softtail', short: 'MS', gender: 'female', birth: '28 Apr 1955', place: 'Meowbridge, England', status: 'Living', avatar: 'avatar-purple', x: 1400, y: 260, photos: 2, files: 2, notes: 2 },
-
-      { id: 'silver', name: 'Silver Whiskerfield', short: 'MW', gender: 'male', birth: '03 Mar 1998', place: 'Pawford, England', status: 'Living', avatar: 'avatar-green', x: 690, y: 520, photos: 3, files: 5, notes: 7 },
-      { id: 'luna', name: 'Luna Purrington', short: 'LP', gender: 'female', birth: '12 Aug 1999', place: 'Meowbridge, England', status: 'Living', avatar: 'avatar-purple', x: 1000, y: 520, photos: 2, files: 2, notes: 3 },
-      { id: 'oliver', name: 'Oliver Whiskerfield', short: 'OW', gender: 'male', birth: '18 May 2024', place: 'Pawford, England', status: 'Living', avatar: 'avatar-amber', x: 530, y: 760, photos: 2, files: 1, notes: 1 },
-      { id: 'mochi', name: 'Mochi Whiskerfield', short: 'MO', gender: 'female', birth: '07 Sep 2026', place: 'Unknown', status: 'Living', avatar: 'avatar-purple', x: 840, y: 760, photos: 1, files: 1, notes: 1 },
-      { id: 'cleo', name: 'Cleo Whiskerfield', short: 'CW', gender: 'female', birth: 'Unknown', place: 'Unknown', status: 'Living', avatar: 'avatar-purple', x: 1150, y: 760, photos: 1, files: 0, notes: 1 }
-    ];
-
-    const treePlaceholders = [];
-
-    // Legacy compatibility only. Derived family units now come from getTreeFamiliesFromSampleData().
-    const treeFamilies = [
-      { id: 'fam-barnaby-parents', left: 'archibald', right: 'edith', children: ['barnaby'] },
-      { id: 'fam-daisy-parents', left: 'percival', right: 'nora', children: ['daisy'] },
-      { id: 'fam-rupert-parents', left: 'algernon', right: 'beatrice', children: ['rupert'] },
-      { id: 'fam-mabel-parents', left: 'felix', right: 'pearl', children: ['mabel'] },
-      { id: 'fam-silver-grandparents', left: 'barnaby', right: 'daisy', children: ['silver'] },
-      { id: 'fam-luna-parents', left: 'rupert', right: 'mabel', children: ['luna'] },
-      { id: 'fam-silver-luna', left: 'silver', right: 'luna', children: ['oliver', 'mochi', 'cleo'] }
-    ];
-
     function personById(id) {
       const centralPerson = getPerson(id);
       if (centralPerson) return toTreePerson(centralPerson);
@@ -12929,7 +12650,6 @@
               <div class="tree-stage" style="width:${treeLayout.stageWidth}px;height:${treeLayout.stageHeight}px;transform: scale(${state.treeZoom / 100});">
                 ${renderTreeLines(treeLayout)}
                 ${treeLayout.parentPlaceholders.map(renderTreeParentPlaceholder).join('')}
-                ${treePlaceholders.map(p => `<button class="add-parent-card" type="button" style="left:${p.x}px;top:${p.y}px" data-person-id="${state.selectedPersonId}" data-add-relative="${p.rel}"><span><span class="add-plus">${icon.plus}</span><span class="add-label">${p.label.replace(' ', '<br>')}</span></span></button>`).join('')}
                 ${treeLayout.positionedPeople.map(renderTreePersonCard).join('')}
               </div>
               <div class="tree-zoom">
@@ -13141,12 +12861,7 @@
 
       return 'unknown-gender';
     }
-    function isUnknownTreeDate(value) {
-      const text = String(value || '').trim();
-      return !text || text === '-' || text.toLowerCase() === 'unknown';
-    }
-
-    function renderTreeCardDateLines(person) {
+function renderTreeCardDateLines(person) {
       const lines = [];
       const status = normalizeLivingStatus(person.status);
 
@@ -13167,19 +12882,6 @@
       return `<span class="status-dot ${statusDotClass(safeStatus)}">
         ${escapeHtml(safeStatus)}
       </span>`;
-    }
-
-    function renderPersonInspectorDeathSummary(person) {
-      if (normalizeLivingStatus(person.status) !== 'Deceased') return '';
-
-      const deathDate = cleanGenealogyDateText(person.death);
-      const deathPlace = cleanEditFieldValue(person.deathPlace);
-      if (!deathDate && !deathPlace) return '';
-
-      return `
-        ${deathDate ? `<div><strong>Died:</strong> ${escapeHtml(deathDate)}</div>` : ''}
-        ${deathPlace ? `<div>${escapeHtml(deathPlace)}</div>` : ''}
-      `;
     }
 
     function sectionIsOpen(id) {
@@ -13957,7 +13659,7 @@
           </div>
         </div>
       </div>`);
-      bindAddPersonModalControls(options.personId || '');
+      bindAddPersonModalControls(options.mode === 'edit' ? options.personId || '' : '');
       updateAddPersonConditionalFields();
       if (isEditMode) {
         modalBackdrop.querySelector('[data-save-edit-person]')?.addEventListener('click', () => {
@@ -14179,6 +13881,10 @@
         };
       }
 
+      const details = peopleProfileDetailsFor(toPeopleRecord(person));
+      details.deathReason = person.death?.reason || '';
+      details.burialPlace = editPlaceValue(person.death?.burialPlaceId);
+
       person.meta.updated = 'Just now';
       sampleData.events = buildSampleEvents();
 
@@ -14279,29 +13985,6 @@
       }));
       overlay.querySelector('[data-mini-apply]')?.addEventListener('click', () => { closeAddPersonAttachOverlay(); showToast(config.toast); });
     }
-
-
-    // Legacy compatibility only. Tree and People now use sampleData through currentTreePeople/currentTreeFamilies/currentPeopleRecords.
-    const peopleRecords = [
-      { id:'silver', initials:'MW', name:'Silver Whiskerfield', first:'Silver', surname:'Whiskerfield', living:'Living', birth:'03.03.1998', birthPlace:'Pawford, England', death:'-', deathPlace:'-', updated:'10 May 2026', gender:'male', relation:'Self', photos:3, files:5, notes:7, branch:'Whiskerfield line', parents:'Barnaby Whiskerfield and Daisy Milkpaw' },
-      { id:'luna', initials:'LP', name:'Luna Purrington', first:'Luna', surname:'Purrington', living:'Living', birth:'12.08.1999', birthPlace:'Meowbridge, England', death:'-', deathPlace:'-', updated:'10 May 2026', gender:'female', relation:'Spouse', photos:2, files:2, notes:3, branch:'Purrington line', parents:'Rupert Purrington and Mabel Softtail' },
-      { id:'oliver', initials:'OW', name:'Oliver Whiskerfield', first:'Oliver', surname:'Whiskerfield', living:'Living', birth:'18.05.2024', birthPlace:'Pawford, England', death:'-', deathPlace:'-', updated:'09 May 2026', gender:'male', relation:'Son', photos:2, files:1, notes:1, branch:'Whiskerfield line', parents:'Silver Whiskerfield and Luna Purrington' },
-      { id:'mochi', initials:'MO', name:'Mochi Whiskerfield', first:'Mochi', surname:'Whiskerfield', living:'Living', birth:'07.09.2026', birthPlace:'Unknown', death:'-', deathPlace:'-', updated:'09 May 2026', gender:'female', relation:'Daughter', photos:1, files:1, notes:1, branch:'Whiskerfield line', parents:'Silver Whiskerfield and Luna Purrington' },
-      { id:'cleo', initials:'CW', name:'Cleo Whiskerfield', first:'Cleo', surname:'Whiskerfield', living:'Living', birth:'Unknown', birthPlace:'Unknown', death:'-', deathPlace:'-', updated:'04 May 2026', gender:'female', relation:'Daughter', photos:1, files:0, notes:1, branch:'Whiskerfield line', parents:'Silver Whiskerfield and Luna Purrington' },
-      { id:'barnaby', initials:'BW', name:'Barnaby Whiskerfield', first:'Barnaby', surname:'Whiskerfield', living:'Deceased', birth:'14.02.1946', birthPlace:'Pawford, England', death:'22.11.2018', deathPlace:'Pawford, England', updated:'04 May 2026', gender:'male', relation:'Paternal grandfather', photos:2, files:3, notes:2, branch:'Whiskerfield line', parents:'Archibald Whiskerfield and Edith Mackerelton' },
-      { id:'daisy', initials:'DM', name:'Daisy Milkpaw', first:'Daisy', surname:'Milkpaw', living:'Deceased', birth:'03.06.1949', birthPlace:'Unknown', death:'04.01.2020', deathPlace:'Meowbridge, England', updated:'04 May 2026', gender:'female', relation:'Paternal grandmother', photos:2, files:3, notes:1, branch:'Milkpaw line', parents:'Percival Milkpaw and Nora Creamfur' },
-      { id:'rupert', initials:'RP', name:'Rupert Purrington', first:'Rupert', surname:'Purrington', living:'Deceased', birth:'19.10.1951', birthPlace:'Fishmarket Row, England', death:'Unknown', deathPlace:'Unknown', updated:'28 Apr 2026', gender:'male', relation:'Maternal grandfather', photos:1, files:2, notes:1, branch:'Purrington line', parents:'Algernon Purrington and Beatrice Threadtail' },
-      { id:'mabel', initials:'MS', name:'Mabel Softtail', first:'Mabel', surname:'Softtail', living:'Living', birth:'28.04.1955', birthPlace:'Meowbridge, England', death:'-', deathPlace:'-', updated:'28 Apr 2026', gender:'female', relation:'Maternal grandmother', photos:2, files:2, notes:2, branch:'Softtail line', parents:'Felix Softtail and Pearl Velvetpaw' },
-      { id:'archibald', initials:'AW', name:'Archibald Whiskerfield', first:'Archibald', surname:'Whiskerfield', living:'Deceased', birth:'02.01.1915', birthPlace:'Pawford, England', death:'17.07.1982', deathPlace:'Pawford, England', updated:'24 Apr 2026', gender:'male', relation:'Great-grandfather', photos:1, files:2, notes:1, branch:'Whiskerfield line', parents:'Unknown parents' },
-      { id:'edith', initials:'EM', name:'Edith Mackerelton', first:'Edith', surname:'Mackerelton', living:'Deceased', birth:'21.09.1918', birthPlace:'Old Cattery, England', death:'03.03.1991', deathPlace:'Unknown', updated:'24 Apr 2026', gender:'female', relation:'Great-grandmother', photos:1, files:2, notes:1, branch:'Mackerelton line', parents:'Unknown parents' },
-      { id:'percival', initials:'PM', name:'Percival Milkpaw', first:'Percival', surname:'Milkpaw', living:'Deceased', birth:'Unknown', birthPlace:'Unknown', death:'1968', deathPlace:'Meowbridge, England', updated:'24 Apr 2026', gender:'male', relation:'Great-grandfather', photos:0, files:1, notes:0, branch:'Milkpaw line', parents:'Unknown parents' },
-      { id:'nora', initials:'NC', name:'Nora Creamfur', first:'Nora', surname:'Creamfur', living:'Deceased', birth:'11.11.1922', birthPlace:'Meowbridge, England', death:'Unknown', deathPlace:'Unknown', updated:'24 Apr 2026', gender:'female', relation:'Great-grandmother', photos:0, files:1, notes:1, branch:'Creamfur line', parents:'Unknown parents' },
-      { id:'algernon', initials:'AP', name:'Algernon Purrington', first:'Algernon', surname:'Purrington', living:'Deceased', birth:'08.05.1920', birthPlace:'Fishmarket Row, England', death:'09.12.1999', deathPlace:'Fishmarket Row, England', updated:'24 Apr 2026', gender:'male', relation:'Great-grandfather', photos:0, files:2, notes:1, branch:'Purrington line', parents:'Unknown parents' },
-      { id:'beatrice', initials:'BT', name:'Beatrice Threadtail', first:'Beatrice', surname:'Threadtail', living:'Deceased', birth:'30.03.1924', birthPlace:'Unknown', death:'15.06.2004', deathPlace:'Meowbridge, England', updated:'24 Apr 2026', gender:'female', relation:'Great-grandmother', photos:0, files:2, notes:0, branch:'Threadtail line', parents:'Unknown parents' },
-      { id:'felix', initials:'FS', name:'Felix Softtail', first:'Felix', surname:'Softtail', living:'Deceased', birth:'1919', birthPlace:'Unknown', death:'Unknown', deathPlace:'Unknown', updated:'24 Apr 2026', gender:'male', relation:'Great-grandfather', photos:0, files:1, notes:0, branch:'Softtail line', parents:'Unknown parents' },
-      { id:'pearl', initials:'PV', name:'Pearl Velvetpaw', first:'Pearl', surname:'Velvetpaw', living:'Deceased', birth:'27.12.1927', birthPlace:'Old Cattery, England', death:'02.02.2011', deathPlace:'Old Cattery, England', updated:'24 Apr 2026', gender:'female', relation:'Great-grandmother', photos:1, files:1, notes:1, branch:'Velvetpaw line', parents:'Unknown parents' }
-    ];
-
     const peopleProfileDetails = {
       silver: { prefix: '', suffix: '', maidenName: '', birthDateType: 'Exact date', deathDateType: 'Exact date', deathReason: '', burialPlace: '' },
       luna: { prefix: '', suffix: '', maidenName: 'Purrington', birthDateType: 'Exact date', deathDateType: 'Exact date', deathReason: '', burialPlace: '' },
@@ -14352,12 +14035,7 @@
     function profileDetailDateLabel(input, fallback = '-') {
       return formatGenealogyDateLabel(input) || fallback;
     }
-
-    function profileDateTypeOptions(selected) {
-      return genealogyDateTypeOptions(selected);
-    }
-
-    const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living: 'Any', branch: '', sourceStatus: '', reviewStatus: '' });
+const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living: 'Any', branch: '', sourceStatus: '', reviewStatus: '' });
     const defaultPeopleColumns = Object.freeze({ living: true, birth: true, birthPlace: true, death: true, deathPlace: true, updated: true });
     const peopleColumnLabels = { living: 'Living', birth: 'Birth date', birthPlace: 'Birth place', death: 'Death date', deathPlace: 'Death place', updated: 'Updated' };
 
@@ -18093,7 +17771,7 @@
     function openNewNoteModal() { const options = Object.entries(noteTemplates).filter(([key]) => key !== 'case').map(([key,t]) => `<label class="notes-template-choice"><input type="radio" name="noteTemplate" value="${key}" ${key === 'note' ? 'checked' : ''}><strong>${escapeHtml(t.label)}</strong><span>${escapeHtml(templateDescription(key))}</span></label>`).join(''); const collectionOptions = `<option value="">No collection</option>` + notesCollections.map(c => `<option value="${c.id}" ${state.notesActiveCollectionId === c.id ? 'selected' : ''}>${escapeHtml(c.name)}</option>`).join(''); openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="newNoteTitle"><div class="modal-header"><div><h2 id="newNoteTitle">Create note</h2><p>Choose a lightweight research note template.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="notesNewNoteForm"><div class="modal-body form-grid"><div class="field"><label>Note title</label><input id="notesNewTitle" placeholder="Untitled research note"></div><div class="field"><label>Collection</label><select class="compact-select" id="notesNewCollectionSelect">${collectionOptions}</select></div><fieldset class="field" style="border:0;padding:0;margin:0"><legend>Template</legend><div class="notes-template-grid">${options}</div></fieldset></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create note</button></div></form></div>`); modalBackdrop.querySelector('#notesNewNoteForm')?.addEventListener('submit', e => { e.preventDefault(); const type = modalBackdrop.querySelector('input[name="noteTemplate"]:checked')?.value || 'note'; const template = noteTemplates[type]; const id = `n${Date.now()}`; const title = modalBackdrop.querySelector('#notesNewTitle').value.trim() || template.label; notesData.unshift({ id,type,title,excerpt:template.body.slice(0,115),body:template.body,status:template.status,collectionId:modalBackdrop.querySelector('#notesNewCollectionSelect').value || null,caseId:null,pinned:false,archived:false,deleted:false,updated:'Just now',created:'Just now',sortRank:12,tags:[],linkedPeople:[],linkedSources:[],linkedPlaces:[],relatedNotes:[],evidence:[],tasks:[] }); state.selectedNoteId = id; state.notesView = 'all'; state.notesRightCollapsed = false; closeModal(); renderNotes(); showToast('Note created.'); }); }
     function openNewCollectionModal() { openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="newCollectionTitle"><div class="modal-header"><div><h2 id="newCollectionTitle">Create collection</h2><p>Collections keep related notes together.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="notesCollectionForm"><div class="modal-body form-grid"><div class="field"><label>Collection name</label><input id="notesCollectionName" required placeholder="e.g. Pawford archive questions"></div><div class="field"><label>Description</label><textarea id="notesCollectionDesc" placeholder="Optional description"></textarea></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create collection</button></div></form></div>`); modalBackdrop.querySelector('#notesCollectionForm')?.addEventListener('submit', e => { e.preventDefault(); const id = `nc-${Date.now()}`; notesCollections.push({ id, name: modalBackdrop.querySelector('#notesCollectionName').value.trim() }); state.notesView = 'collection'; state.notesActiveCollectionId = id; closeModal(); renderNotes(); showToast('Collection created.'); }); }
     function openNewCaseModal() { openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="newCaseTitle"><div class="modal-header"><div><h2 id="newCaseTitle">Create research case</h2><p>Cases track a question, linked evidence, tasks, and a working conclusion.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="notesCaseForm"><div class="modal-body form-grid"><div class="field"><label>Case title</label><input id="notesCaseTitle" required placeholder="e.g. Verify Daisy Milkpaw's father"></div><div class="field"><label>Research question</label><textarea id="notesCaseQuestionNew" placeholder="What are you trying to prove?"></textarea></div><div class="field"><label>Status</label><select class="compact-select" id="notesCaseStatus"><option>Open</option><option selected>In progress</option><option>Probably solved</option><option>Solved</option></select></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create case</button></div></form></div>`); modalBackdrop.querySelector('#notesCaseForm')?.addEventListener('submit', e => { e.preventDefault(); const id = `n${Date.now()}`; const title = modalBackdrop.querySelector('#notesCaseTitle').value.trim(); notesData.unshift({ id,type:'case',title:`Case: ${title}`,excerpt:modalBackdrop.querySelector('#notesCaseQuestionNew').value.trim(),body:noteTemplates.case.body,status:modalBackdrop.querySelector('#notesCaseStatus').value,collectionId:null,caseId:null,pinned:false,archived:false,deleted:false,updated:'Just now',created:'Just now',sortRank:12,tags:['case'],linkedPeople:[],linkedSources:[],linkedPlaces:[],relatedNotes:[],question:modalBackdrop.querySelector('#notesCaseQuestionNew').value.trim(),confidence:'Low',conclusion:'',evidence:[],tasks:[] }); state.notesView = 'cases'; state.selectedNoteId = id; state.notesRightCollapsed = false; closeModal(); renderNotes(); showToast('Research case created.'); }); }
-    function openNotesLinkPersonModal() { const note = selectedNote(); if (!note) return; const choices = peopleRecords.map(p => `<label class="notes-modal-choice"><input type="checkbox" value="${escapeHtml(p.name)}" ${note.linkedPeople?.includes(p.name) ? 'checked' : ''}><span>${escapeHtml(p.name)}</span></label>`).join(''); openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="notesLinkPersonTitle"><div class="modal-header"><div><h2 id="notesLinkPersonTitle">Link people</h2><p>Connect this item to people records.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="notes-modal-list">${choices}</div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" id="notesConfirmPeople">Link selected</button></div></div>`); modalBackdrop.querySelector('#notesConfirmPeople')?.addEventListener('click', () => { note.linkedPeople = [...modalBackdrop.querySelectorAll('.notes-modal-choice input:checked')].map(input => input.value); closeModal(); renderNotes(); showToast('People links updated.'); }); }
+    function openNotesLinkPersonModal() { const note = selectedNote(); if (!note) return; const choices = currentPeopleRecords().map(p => `<label class="notes-modal-choice"><input type="checkbox" value="${escapeHtml(p.name)}" ${note.linkedPeople?.includes(p.name) ? 'checked' : ''}><span>${escapeHtml(p.name)}</span></label>`).join(''); openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="notesLinkPersonTitle"><div class="modal-header"><div><h2 id="notesLinkPersonTitle">Link people</h2><p>Connect this item to people records.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="notes-modal-list">${choices}</div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" id="notesConfirmPeople">Link selected</button></div></div>`); modalBackdrop.querySelector('#notesConfirmPeople')?.addEventListener('click', () => { note.linkedPeople = [...modalBackdrop.querySelectorAll('.notes-modal-choice input:checked')].map(input => input.value); closeModal(); renderNotes(); showToast('People links updated.'); }); }
     function openNotesLinkSourceModal() { const note = selectedNote(); if (!note) return; const choices = archiveFiles.filter(f => !f.deleted).map(f => `<label class="notes-modal-choice"><input type="checkbox" value="${escapeHtml(f.name)}" ${note.linkedSources?.includes(f.name) ? 'checked' : ''}><span>${escapeHtml(f.name)}</span></label>`).join(''); openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="notesLinkSourceTitle"><div class="modal-header"><div><h2 id="notesLinkSourceTitle">Link source or file</h2><p>Attach Archive files or source references.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="notes-modal-list">${choices}</div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" id="notesConfirmSources">Link selected</button></div></div>`); modalBackdrop.querySelector('#notesConfirmSources')?.addEventListener('click', () => { note.linkedSources = [...modalBackdrop.querySelectorAll('.notes-modal-choice input:checked')].map(input => input.value); closeModal(); renderNotes(); showToast('Source links updated.'); }); }
     function templateDescription(type) { return ({ note:'Freeform research note or reminder.', question:'Track an open question and next step.', hypothesis:'Structure a claim with supporting and contradicting evidence.', source:'Analyze a source, scan, citation, or transcription.', interview:'Capture oral history and follow-up questions.', story:'Draft narrative material for publishing.' })[type] || 'Research note template.'; }
 
