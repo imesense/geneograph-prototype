@@ -1453,13 +1453,18 @@
     .genealogy-date-popover {
       position: fixed;
       z-index: 260;
-      width: min(420px, calc(100vw - 32px));
+      left: 50%;
+      top: 50%;
+      width: min(520px, calc(100vw - 32px));
+      max-height: min(720px, calc(100vh - 32px));
+      overflow: auto;
       border: 1px solid var(--border-strong);
       background: var(--surface-card);
       color: var(--text-primary);
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-md);
       box-shadow: var(--shadow-soft);
       padding: var(--space-4);
+      transform: translate(-50%, -50%);
     }
     .genealogy-date-popover-header {
       display: flex;
@@ -3483,11 +3488,162 @@
     .genealogy-date-field:not(.is-between) [data-genealogy-date-to-cell] {
       display: none;
     }
+
+    .add-person-grid > .add-person-relationship-section,
     .add-person-grid > .add-person-additional-section {
       grid-column: 1 / -1;
       width: 100%;
+      min-width: 0;
+    }
+
+    .add-person-grid > .add-person-additional-section .add-person-additional-panel {
+      width: 100%;
+      min-width: 0;
+    }
+    .add-person-grid > .add-person-relationship-section {
+      grid-column: 1 / -1;
+      width: 100%;
+    }
+
+    .add-person-relationship-section {
+      display: grid;
+      gap: var(--space-4);
       margin-top: var(--space-2);
     }
+
+    .add-person-relationship-panel {
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      background: rgba(26, 32, 31, .72);
+      overflow: hidden;
+    }
+
+    .add-person-relationship-header {
+      width: 100%;
+      min-height: 64px;
+      border: 0;
+      border-bottom: 1px solid var(--border-default);
+      background: transparent;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      padding: 0 var(--space-5);
+      text-align: left;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .add-person-relationship-header:hover {
+      background: var(--surface-card-hover);
+    }
+
+    .add-person-relationship-header-main {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      min-width: 0;
+    }
+
+    .add-person-relationship-chevron {
+      width: 18px;
+      height: 18px;
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 18px;
+      color: var(--text-secondary);
+    }
+
+    .add-person-relationship-chevron svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+      transition: transform var(--ease);
+    }
+
+    .add-person-relationship-header[aria-expanded="true"] .add-person-relationship-chevron svg {
+      transform: rotate(90deg);
+    }
+
+    .add-person-relationship-body {
+      display: grid;
+      gap: var(--space-4);
+      padding: var(--space-5);
+    }
+    .add-person-relationship-body[hidden] {
+      display: none;
+    }
+
+    .add-person-relationship-header[aria-expanded="false"] {
+      border-bottom: 0;
+    }
+
+    .add-person-relationship-header[aria-expanded="true"] .add-person-relationship-chevron svg {
+      transform: rotate(90deg);
+    }
+
+    .add-person-relationship-header[aria-expanded="false"] .add-person-relationship-chevron svg {
+      transform: rotate(0deg);
+    }    
+    .add-person-relationship-card {
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      padding: 0;
+      display: grid;
+      gap: var(--space-4);
+    }
+    .add-person-relationship-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-4);
+      align-items: start;
+      min-width: 0;
+    }
+
+    .add-person-relationship-partner {
+      min-height: 42px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,.024);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: 0 var(--space-3);
+      font-weight: 800;
+      min-width: 0;
+    }
+
+    .add-person-relationship-partner .small-avatar {
+      width: 30px;
+      height: 30px;
+      flex: 0 0 30px;
+    }
+
+    .add-person-relationship-partner span:last-child {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+    }
+
+    .add-person-relationship-card .genealogy-date-controls {
+      grid-template-columns: minmax(130px, 180px) minmax(0, 1fr) 52px;
+      min-width: 0;
+    }
+
+    .add-person-relationship-card .genealogy-date-field,
+    .add-person-relationship-card .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .add-person-relationship-card .add-person-select-field,
+    .add-person-relationship-card .field {
+      min-width: 0;
+    }
+
     .add-person-life-event-block > .genealogy-date-field.is-between {
       grid-template-columns: minmax(150px, 190px) minmax(260px, 1fr) 52px;
       grid-template-rows: auto 56px auto 56px;
@@ -3549,13 +3705,15 @@
     .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-validation {
       grid-column: 1 / -1;
     }
-    .add-person-facts-section {
+    .add-person-facts-section,
+    .add-person-relationship-panel {
       border: 1px solid var(--border-default);
       border-radius: var(--radius-sm);
       background: rgba(255,255,255,.018);
       overflow: hidden;
     }
-    .add-person-facts-header {
+    .add-person-facts-header,
+    .add-person-relationship-header {
       width: 100%;
       min-height: 50px;
       border: 0;
@@ -3568,9 +3726,13 @@
       padding: 0 var(--space-4);
       text-align: left;
       font-weight: 900;
+      cursor: pointer;
     }
+
     .add-person-facts-header:hover,
-    .add-person-facts-header:focus-visible {
+    .add-person-facts-header:focus-visible,
+    .add-person-relationship-header:hover,
+    .add-person-relationship-header:focus-visible {
       background: rgba(255,255,255,.035);
     }
     .add-person-facts-header-main,
@@ -3712,6 +3874,13 @@
     .add-person-mini-footer { border-top: 1px solid var(--border-default); padding: var(--space-4) var(--space-5); display: flex; justify-content: flex-end; gap: var(--space-3); }
     @media (max-width: 820px) {
       .add-person-fact-grid .add-person-fact-date-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
+    @media (max-width: 820px) {
+      .add-person-relationship-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -10168,41 +10337,41 @@
         { id: 'p3', name: 'Meowbridge Branch Study', people: 42, created: 'Apr 14, 2025', modified: 'June 2, 2025', status: 'Local project', cover: 'photo', photos: 42, files: 15, notes: 22, desc: 'Extended branch research and family photos collected from relatives.' }
       ],
       people: [
-        { id: 'silver', projectId: 'p1', primaryPhotoId: 'ph1', names: { first: 'Silver', middle: '', last: 'Whiskerfield', maiden: '', display: 'Silver Whiskerfield', initials: 'SW' }, gender: 'male', livingStatus: 'Living', role: 'Self', branch: 'Whiskerfield line', avatarClass: 'avatar-green', birth: { date: '03.03.1998', dateLabel: '03 Mar 1998', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '', dateLabel: '', dateType: 'Not applicable', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 3, files: 5, notes: 7 }, meta: { updated: '10 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'luna', projectId: 'p1', names: { first: 'Luna', middle: '', last: 'Purrington', maiden: 'Purrington', display: 'Luna Purrington', initials: 'LP' }, gender: 'female', livingStatus: 'Living', role: 'Spouse', branch: 'Purrington line', avatarClass: 'avatar-purple', birth: { date: '12.08.1999', dateLabel: '12 Aug 1999', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Not applicable', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 2, files: 2, notes: 3 }, meta: { updated: '10 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'oliver', projectId: 'p1', names: { first: 'Oliver', middle: '', last: 'Whiskerfield', maiden: '', display: 'Oliver Whiskerfield', initials: 'OW' }, gender: 'male', livingStatus: 'Living', role: 'Son', branch: 'Whiskerfield line', avatarClass: 'avatar-amber', birth: { date: '18.05.2024', dateLabel: '18 May 2024', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '', dateLabel: '', dateType: 'Not applicable', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 2, files: 1, notes: 1 }, meta: { updated: '09 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing source' } },
-        { id: 'mochi', projectId: 'p1', names: { first: 'Mochi', middle: '', last: 'Whiskerfield', maiden: '', display: 'Mochi Whiskerfield', initials: 'MO' }, gender: 'female', livingStatus: 'Living', role: 'Daughter', branch: 'Whiskerfield line', avatarClass: 'avatar-purple', birth: { date: '07.09.2026', dateLabel: '07 Sep 2026', dateType: 'Exact date', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Not applicable', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 1, files: 1, notes: 1 }, meta: { updated: '09 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing source' } },
-        { id: 'cleo', projectId: 'p1', names: { first: 'Cleo', middle: '', last: 'Whiskerfield', maiden: '', display: 'Cleo Whiskerfield', initials: 'CW' }, gender: 'female', livingStatus: 'Living', role: 'Daughter', branch: 'Whiskerfield line', avatarClass: 'avatar-purple', birth: { date: '', dateLabel: '', dateType: 'Unknown', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Not applicable', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 1, files: 0, notes: 1 }, meta: { updated: '04 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing facts' } },
+        { id: 'silver', projectId: 'p1', primaryPhotoId: 'ph1', names: { first: 'Silver', middle: '', last: 'Whiskerfield', maiden: '', display: 'Silver Whiskerfield', initials: 'SW' }, gender: 'male', livingStatus: 'Living', role: 'Self', branch: 'Whiskerfield line', avatarClass: 'avatar-green', birth: { date: '03.03.1998', dateLabel: '03 Mar 1998', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 3, files: 5, notes: 7 }, meta: { updated: '10 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'luna', projectId: 'p1', names: { first: 'Luna', middle: '', last: 'Purrington', maiden: 'Purrington', display: 'Luna Purrington', initials: 'LP' }, gender: 'female', livingStatus: 'Living', role: 'Spouse', branch: 'Purrington line', avatarClass: 'avatar-purple', birth: { date: '12.08.1999', dateLabel: '12 Aug 1999', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 2, files: 2, notes: 3 }, meta: { updated: '10 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'oliver', projectId: 'p1', names: { first: 'Oliver', middle: '', last: 'Whiskerfield', maiden: '', display: 'Oliver Whiskerfield', initials: 'OW' }, gender: 'male', livingStatus: 'Living', role: 'Son', branch: 'Whiskerfield line', avatarClass: 'avatar-amber', birth: { date: '18.05.2024', dateLabel: '18 May 2024', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 2, files: 1, notes: 1 }, meta: { updated: '09 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing source' } },
+        { id: 'mochi', projectId: 'p1', names: { first: 'Mochi', middle: '', last: 'Whiskerfield', maiden: '', display: 'Mochi Whiskerfield', initials: 'MO' }, gender: 'female', livingStatus: 'Living', role: 'Daughter', branch: 'Whiskerfield line', avatarClass: 'avatar-purple', birth: { date: '07.09.2026', dateLabel: '07 Sep 2026', dateType: 'Exact date', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 1, files: 1, notes: 1 }, meta: { updated: '09 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing source' } },
+        { id: 'cleo', projectId: 'p1', names: { first: 'Cleo', middle: '', last: 'Whiskerfield', maiden: '', display: 'Cleo Whiskerfield', initials: 'CW' }, gender: 'female', livingStatus: 'Living', role: 'Daughter', branch: 'Whiskerfield line', avatarClass: 'avatar-purple', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 1, files: 0, notes: 1 }, meta: { updated: '04 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing facts' } },
         { id: 'barnaby', projectId: 'p1', names: { first: 'Barnaby', middle: '', last: 'Whiskerfield', maiden: '', display: 'Barnaby Whiskerfield', initials: 'BW' }, gender: 'male', livingStatus: 'Deceased', role: 'Paternal grandfather', branch: 'Whiskerfield line', avatarClass: '', birth: { date: '14.02.1946', dateLabel: '14 Feb 1946', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '22.11.2018', dateLabel: '22 Nov 2018', dateType: 'Exact date', placeId: 'place-pawford', reason: '', burialPlaceId: 'place-pawford' }, counts: { photos: 2, files: 3, notes: 2 }, meta: { updated: '04 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
         { id: 'daisy', projectId: 'p1', names: { first: 'Daisy', middle: '', last: 'Milkpaw', maiden: 'Milkpaw', display: 'Daisy Milkpaw', initials: 'DM' }, gender: 'female', livingStatus: 'Deceased', role: 'Paternal grandmother', branch: 'Milkpaw line', avatarClass: 'avatar-purple', birth: { date: '03.06.1949', dateLabel: '03 Jun 1949', dateType: 'Exact date', placeId: null }, death: { date: '04.01.2020', dateLabel: '04 Jan 2020', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { photos: 2, files: 3, notes: 1 }, meta: { updated: '04 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'rupert', projectId: 'p1', names: { first: 'Rupert', middle: '', last: 'Purrington', maiden: '', display: 'Rupert Purrington', initials: 'RP' }, gender: 'male', livingStatus: 'Deceased', role: 'Maternal grandfather', branch: 'Purrington line', avatarClass: '', birth: { date: '19.10.1951', dateLabel: '19 Oct 1951', dateType: 'Exact date', placeId: 'place-fishmarket-row' }, death: { date: '', dateLabel: '', dateType: 'Unknown', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 1, files: 2, notes: 1 }, meta: { updated: '28 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Missing facts' } },
-        { id: 'mabel', projectId: 'p1', names: { first: 'Mabel', middle: '', last: 'Softtail', maiden: '', display: 'Mabel Softtail', initials: 'MS' }, gender: 'female', livingStatus: 'Living', role: 'Maternal grandmother', branch: 'Softtail line', avatarClass: 'avatar-purple', birth: { date: '28.04.1955', dateLabel: '28 Apr 1955', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Not applicable', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 2, files: 2, notes: 2 }, meta: { updated: '28 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'rupert', projectId: 'p1', names: { first: 'Rupert', middle: '', last: 'Purrington', maiden: '', display: 'Rupert Purrington', initials: 'RP' }, gender: 'male', livingStatus: 'Deceased', role: 'Maternal grandfather', branch: 'Purrington line', avatarClass: '', birth: { date: '19.10.1951', dateLabel: '19 Oct 1951', dateType: 'Exact date', placeId: 'place-fishmarket-row' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 1, files: 2, notes: 1 }, meta: { updated: '28 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Missing facts' } },
+        { id: 'mabel', projectId: 'p1', names: { first: 'Mabel', middle: '', last: 'Softtail', maiden: '', display: 'Mabel Softtail', initials: 'MS' }, gender: 'female', livingStatus: 'Living', role: 'Maternal grandmother', branch: 'Softtail line', avatarClass: 'avatar-purple', birth: { date: '28.04.1955', dateLabel: '28 Apr 1955', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 2, files: 2, notes: 2 }, meta: { updated: '28 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
         { id: 'archibald', projectId: 'p1', names: { first: 'Archibald', middle: '', last: 'Whiskerfield', maiden: '', display: 'Archibald Whiskerfield', initials: 'AW' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', branch: 'Whiskerfield line', avatarClass: '', birth: { date: '02.01.1915', dateLabel: '02 Jan 1915', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '17.07.1982', dateLabel: '17 Jul 1982', dateType: 'Exact date', placeId: 'place-pawford', reason: '', burialPlaceId: 'place-pawford' }, counts: { photos: 1, files: 2, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
         { id: 'edith', projectId: 'p1', names: { first: 'Edith', middle: '', last: 'Mackerelton', maiden: 'Mackerelton', display: 'Edith Mackerelton', initials: 'EM' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', branch: 'Mackerelton line', avatarClass: 'avatar-purple', birth: { date: '21.09.1918', dateLabel: '21 Sep 1918', dateType: 'Exact date', placeId: 'place-old-cattery' }, death: { date: '03.03.1991', dateLabel: '03 Mar 1991', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 1, files: 2, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
-        { id: 'percival', projectId: 'p1', names: { first: 'Percival', middle: '', last: 'Milkpaw', maiden: '', display: 'Percival Milkpaw', initials: 'PM' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', branch: 'Milkpaw line', avatarClass: '', birth: { date: '', dateLabel: '', dateType: 'Unknown', placeId: null }, death: { date: '1968', dateLabel: '1968', dateType: 'Year only', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { photos: 0, files: 1, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
-        { id: 'nora', projectId: 'p1', names: { first: 'Nora', middle: '', last: 'Creamfur', maiden: 'Creamfur', display: 'Nora Creamfur', initials: 'NC' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', branch: 'Creamfur line', avatarClass: 'avatar-purple', birth: { date: '11.11.1922', dateLabel: '11 Nov 1922', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Unknown', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 0, files: 1, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
+        { id: 'percival', projectId: 'p1', names: { first: 'Percival', middle: '', last: 'Milkpaw', maiden: '', display: 'Percival Milkpaw', initials: 'PM' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', branch: 'Milkpaw line', avatarClass: '', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '1968', dateLabel: '1968', dateType: 'Year only', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { photos: 0, files: 1, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
+        { id: 'nora', projectId: 'p1', names: { first: 'Nora', middle: '', last: 'Creamfur', maiden: 'Creamfur', display: 'Nora Creamfur', initials: 'NC' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', branch: 'Creamfur line', avatarClass: 'avatar-purple', birth: { date: '11.11.1922', dateLabel: '11 Nov 1922', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 0, files: 1, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
         { id: 'algernon', projectId: 'p1', names: { first: 'Algernon', middle: '', last: 'Purrington', maiden: '', display: 'Algernon Purrington', initials: 'AP' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', branch: 'Purrington line', avatarClass: '', birth: { date: '08.05.1920', dateLabel: '08 May 1920', dateType: 'Exact date', placeId: 'place-fishmarket-row' }, death: { date: '09.12.1999', dateLabel: '09 Dec 1999', dateType: 'Exact date', placeId: 'place-fishmarket-row', reason: '', burialPlaceId: 'place-fishmarket-row' }, counts: { photos: 0, files: 2, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
         { id: 'beatrice', projectId: 'p1', names: { first: 'Beatrice', middle: '', last: 'Threadtail', maiden: 'Threadtail', display: 'Beatrice Threadtail', initials: 'BT' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', branch: 'Threadtail line', avatarClass: 'avatar-purple', birth: { date: '30.03.1924', dateLabel: '30 Mar 1924', dateType: 'Exact date', placeId: null }, death: { date: '15.06.2004', dateLabel: '15 Jun 2004', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { photos: 0, files: 2, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
-        { id: 'felix', projectId: 'p1', names: { first: 'Felix', middle: '', last: 'Softtail', maiden: '', display: 'Felix Softtail', initials: 'FS' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', branch: 'Softtail line', avatarClass: '', birth: { date: '1919', dateLabel: '1919', dateType: 'Year only', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Unknown', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 0, files: 1, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
+        { id: 'felix', projectId: 'p1', names: { first: 'Felix', middle: '', last: 'Softtail', maiden: '', display: 'Felix Softtail', initials: 'FS' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', branch: 'Softtail line', avatarClass: '', birth: { date: '1919', dateLabel: '1919', dateType: 'Year only', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 0, files: 1, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
         { id: 'pearl', projectId: 'p1', names: { first: 'Pearl', middle: '', last: 'Velvetpaw', maiden: 'Velvetpaw', display: 'Pearl Velvetpaw', initials: 'PV' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', branch: 'Velvetpaw line', avatarClass: 'avatar-purple', birth: { date: '27.12.1927', dateLabel: '27 Dec 1927', dateType: 'Exact date', placeId: 'place-old-cattery' }, death: { date: '02.02.2011', dateLabel: '02 Feb 2011', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { photos: 1, files: 1, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
         { id: 'solomon', projectId: 'p1', names: { first: 'Solomon', middle: '', last: 'Velvetpaw', maiden: '', display: 'Solomon Velvetpaw', initials: 'SV' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Pearl Velvetpaw', branch: 'Softtail / Velvetpaw line', avatarClass: 'avatar-amber', birth: { date: '1896', dateLabel: '1896', dateType: 'Year only', placeId: 'place-old-cattery' }, death: { date: '14.04.1961', dateLabel: '14 Apr 1961', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { photos: 0, files: 1, notes: 1 }, meta: { updated: 'May 24, 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'opal', projectId: 'p1', names: { first: 'Opal', middle: '', last: 'Silktail', maiden: '', display: 'Opal Silktail', initials: 'OS' }, gender: 'female', livingStatus: 'Deceased', role: 'Mother of Pearl Velvetpaw', branch: 'Softtail / Velvetpaw line', avatarClass: 'avatar-purple', birth: { date: '', dateLabel: '', dateType: 'Unknown', placeId: null }, death: { date: '09.09.1970', dateLabel: '09 Sep 1970', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { photos: 0, files: 1, notes: 1 }, meta: { updated: 'May 24, 2026', sourceStatus: 'Needs source', reviewStatus: 'Check birth details' } },
-        { id: 'horatio', projectId: 'p1', names: { first: 'Horatio', middle: '', last: 'Threadtail', maiden: '', display: 'Horatio Threadtail', initials: 'HT' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Beatrice Threadtail', branch: 'Purrington / Threadtail line', avatarClass: 'avatar-blue', birth: { date: '1898', dateLabel: '1898', dateType: 'Year only', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Unknown', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 0, files: 0, notes: 1 }, meta: { updated: 'May 24, 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing death details' } },
+        { id: 'opal', projectId: 'p1', names: { first: 'Opal', middle: '', last: 'Silktail', maiden: '', display: 'Opal Silktail', initials: 'OS' }, gender: 'female', livingStatus: 'Deceased', role: 'Mother of Pearl Velvetpaw', branch: 'Softtail / Velvetpaw line', avatarClass: 'avatar-purple', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '09.09.1970', dateLabel: '09 Sep 1970', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { photos: 0, files: 1, notes: 1 }, meta: { updated: 'May 24, 2026', sourceStatus: 'Needs source', reviewStatus: 'Check birth details' } },
+        { id: 'horatio', projectId: 'p1', names: { first: 'Horatio', middle: '', last: 'Threadtail', maiden: '', display: 'Horatio Threadtail', initials: 'HT' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Beatrice Threadtail', branch: 'Purrington / Threadtail line', avatarClass: 'avatar-blue', birth: { date: '1898', dateLabel: '1898', dateType: 'Year only', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 0, files: 0, notes: 1 }, meta: { updated: 'May 24, 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing death details' } },
         { id: 'clementine', projectId: 'p1', names: { first: 'Clementine', middle: '', last: 'Purrington', maiden: '', display: 'Clementine Purrington', initials: 'CP' }, gender: 'female', livingStatus: 'Deceased', role: 'Mother of Algernon Purrington', branch: 'Purrington line', avatarClass: 'avatar-purple', birth: { date: '1894', dateLabel: '1894', dateType: 'Year only', placeId: 'place-fishmarket-row' }, death: { date: '22.02.1966', dateLabel: '22 Feb 1966', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 0, files: 1, notes: 1 }, meta: { updated: 'May 24, 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Check death place' } },
         { id: 'augustus', projectId: 'p1', names: { first: 'Augustus', middle: '', last: 'Whiskerfield', maiden: '', display: 'Augustus Whiskerfield', initials: 'AW2' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Archibald Whiskerfield', branch: 'Whiskerfield line', avatarClass: 'avatar-green', birth: { date: '1887', dateLabel: '1887', dateType: 'Year only', placeId: 'place-pawford' }, death: { date: '05.05.1954', dateLabel: '05 May 1954', dateType: 'Exact date', placeId: 'place-pawford', reason: '', burialPlaceId: 'place-pawford' }, counts: { photos: 0, files: 1, notes: 1 }, meta: { updated: 'May 24, 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'tobias', projectId: 'p1', names: { first: 'Tobias', middle: '', last: 'Creamfur', maiden: '', display: 'Tobias Creamfur', initials: 'TC' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Nora Creamfur', branch: 'Milkpaw / Creamfur line', avatarClass: 'avatar-amber', birth: { date: '1891', dateLabel: '1891', dateType: 'Year only', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Unknown', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 0, files: 0, notes: 1 }, meta: { updated: 'May 24, 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing death details' } },
-        { id: 'marigold', projectId: 'p1', names: { first: 'Marigold', middle: '', last: 'Butterpaws', maiden: '', display: 'Marigold Butterpaws', initials: 'MB' }, gender: 'female', livingStatus: 'Deceased', role: 'Mother of Nora Creamfur', branch: 'Milkpaw / Creamfur line', avatarClass: 'avatar-purple', birth: { date: '', dateLabel: '', dateType: 'Unknown', placeId: null }, death: { date: '03.08.1968', dateLabel: '03 Aug 1968', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { photos: 0, files: 1, notes: 1 }, meta: { updated: 'May 24, 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Check birth details' } }
+        { id: 'tobias', projectId: 'p1', names: { first: 'Tobias', middle: '', last: 'Creamfur', maiden: '', display: 'Tobias Creamfur', initials: 'TC' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Nora Creamfur', branch: 'Milkpaw / Creamfur line', avatarClass: 'avatar-amber', birth: { date: '1891', dateLabel: '1891', dateType: 'Year only', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { photos: 0, files: 0, notes: 1 }, meta: { updated: 'May 24, 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing death details' } },
+        { id: 'marigold', projectId: 'p1', names: { first: 'Marigold', middle: '', last: 'Butterpaws', maiden: '', display: 'Marigold Butterpaws', initials: 'MB' }, gender: 'female', livingStatus: 'Deceased', role: 'Mother of Nora Creamfur', branch: 'Milkpaw / Creamfur line', avatarClass: 'avatar-purple', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '03.08.1968', dateLabel: '03 Aug 1968', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { photos: 0, files: 1, notes: 1 }, meta: { updated: 'May 24, 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Check birth details' } }
       ],
       relationships: [
-        { id: 'rel-archibald-edith-partner', projectId: 'p1', type: 'partner', personAId: 'archibald', personBId: 'edith', label: 'Spouse', startDate: '', startDateLabel: '', startDateType: 'Unknown', startPlaceId: null },
-        { id: 'rel-percival-nora-partner', projectId: 'p1', type: 'partner', personAId: 'percival', personBId: 'nora', label: 'Spouse', startDate: '', startDateLabel: '', startDateType: 'Unknown', startPlaceId: null },
-        { id: 'rel-algernon-beatrice-partner', projectId: 'p1', type: 'partner', personAId: 'algernon', personBId: 'beatrice', label: 'Spouse', startDate: '', startDateLabel: '', startDateType: 'Unknown', startPlaceId: null },
-        { id: 'rel-felix-pearl-partner', projectId: 'p1', type: 'partner', personAId: 'felix', personBId: 'pearl', label: 'Spouse', startDate: '', startDateLabel: '', startDateType: 'Unknown', startPlaceId: null },
-        { id: 'rel-barnaby-daisy-partner', projectId: 'p1', type: 'partner', personAId: 'barnaby', personBId: 'daisy', label: 'Spouse', startDate: '', startDateLabel: '', startDateType: 'Unknown', startPlaceId: null },
-        { id: 'rel-rupert-mabel-partner', projectId: 'p1', type: 'partner', personAId: 'rupert', personBId: 'mabel', label: 'Spouse', startDate: '', startDateLabel: '', startDateType: 'Unknown', startPlaceId: null },
-        { id: 'rel-silver-luna-partner', projectId: 'p1', type: 'partner', personAId: 'silver', personBId: 'luna', label: 'Spouse', startDate: '18.08.2023', startDateLabel: '18 Aug 2023', startPlaceId: 'place-meowbridge' },
-        { id: 'rel-solomon-opal-partner', projectId: 'p1', type: 'partner', personAId: 'solomon', personBId: 'opal', label: 'Spouse', startDate: '', startDateLabel: '', startDateType: 'Unknown', startPlaceId: 'place-old-cattery' },
-        { id: 'rel-tobias-marigold-partner', projectId: 'p1', type: 'partner', personAId: 'tobias', personBId: 'marigold', label: 'Spouse', startDate: '', startDateLabel: '', startDateType: 'Unknown', startPlaceId: 'place-meowbridge' },
+        { id: 'rel-archibald-edith-partner', projectId: 'p1', type: 'family', gedcomXref: '@FRELARCHIBALDEDITHPARTNER@', partnerAId: 'archibald', partnerBId: 'edith', personAId: 'archibald', personBId: 'edith', partnerARoleHint: '', partnerBRoleHint: '', childrenIds: [], relationshipType: 'Married', relationshipStatus: 'active', events: [{ id: 'rel-archibald-edith-partner-marriage', eventType: 'Marriage', gedcomTag: 'MARR', typeLabel: 'Civil', date: { date: '', dateLabel: '', dateType: 'Exact date', calendar: 'Gregorian', originalText: '' }, placeId: null, placeText: '', sortDate: '', confidence: '' }], nonEvents: [], createdAt: '', updatedAt: '' },
+        { id: 'rel-percival-nora-partner', projectId: 'p1', type: 'family', gedcomXref: '@FRELPERCIVALNORAPARTNER@', partnerAId: 'percival', partnerBId: 'nora', personAId: 'percival', personBId: 'nora', partnerARoleHint: '', partnerBRoleHint: '', childrenIds: [], relationshipType: 'Married', relationshipStatus: 'active', events: [{ id: 'rel-percival-nora-partner-marriage', eventType: 'Marriage', gedcomTag: 'MARR', typeLabel: 'Civil', date: { date: '', dateLabel: '', dateType: 'Exact date', calendar: 'Gregorian', originalText: '' }, placeId: null, placeText: '', sortDate: '', confidence: '' }], nonEvents: [], createdAt: '', updatedAt: '' },
+        { id: 'rel-algernon-beatrice-partner', projectId: 'p1', type: 'family', gedcomXref: '@FRELALGERNONBEATRICEPARTNER@', partnerAId: 'algernon', partnerBId: 'beatrice', personAId: 'algernon', personBId: 'beatrice', partnerARoleHint: '', partnerBRoleHint: '', childrenIds: [], relationshipType: 'Married', relationshipStatus: 'active', events: [{ id: 'rel-algernon-beatrice-partner-marriage', eventType: 'Marriage', gedcomTag: 'MARR', typeLabel: 'Civil', date: { date: '', dateLabel: '', dateType: 'Exact date', calendar: 'Gregorian', originalText: '' }, placeId: null, placeText: '', sortDate: '', confidence: '' }], nonEvents: [], createdAt: '', updatedAt: '' },
+        { id: 'rel-felix-pearl-partner', projectId: 'p1', type: 'family', gedcomXref: '@FRELFELIXPEARLPARTNER@', partnerAId: 'felix', partnerBId: 'pearl', personAId: 'felix', personBId: 'pearl', partnerARoleHint: '', partnerBRoleHint: '', childrenIds: [], relationshipType: 'Married', relationshipStatus: 'active', events: [{ id: 'rel-felix-pearl-partner-marriage', eventType: 'Marriage', gedcomTag: 'MARR', typeLabel: 'Civil', date: { date: '', dateLabel: '', dateType: 'Exact date', calendar: 'Gregorian', originalText: '' }, placeId: null, placeText: '', sortDate: '', confidence: '' }], nonEvents: [], createdAt: '', updatedAt: '' },
+        { id: 'rel-barnaby-daisy-partner', projectId: 'p1', type: 'family', gedcomXref: '@FRELBARNABYDAISYPARTNER@', partnerAId: 'barnaby', partnerBId: 'daisy', personAId: 'barnaby', personBId: 'daisy', partnerARoleHint: '', partnerBRoleHint: '', childrenIds: [], relationshipType: 'Married', relationshipStatus: 'active', events: [{ id: 'rel-barnaby-daisy-partner-marriage', eventType: 'Marriage', gedcomTag: 'MARR', typeLabel: 'Civil', date: { date: '', dateLabel: '', dateType: 'Exact date', calendar: 'Gregorian', originalText: '' }, placeId: null, placeText: '', sortDate: '', confidence: '' }], nonEvents: [], createdAt: '', updatedAt: '' },
+        { id: 'rel-rupert-mabel-partner', projectId: 'p1', type: 'family', gedcomXref: '@FRELRUPERTMABELPARTNER@', partnerAId: 'rupert', partnerBId: 'mabel', personAId: 'rupert', personBId: 'mabel', partnerARoleHint: '', partnerBRoleHint: '', childrenIds: [], relationshipType: 'Married', relationshipStatus: 'active', events: [{ id: 'rel-rupert-mabel-partner-marriage', eventType: 'Marriage', gedcomTag: 'MARR', typeLabel: 'Civil', date: { date: '', dateLabel: '', dateType: 'Exact date', calendar: 'Gregorian', originalText: '' }, placeId: null, placeText: '', sortDate: '', confidence: '' }], nonEvents: [], createdAt: '', updatedAt: '' },
+        { id: 'rel-silver-luna-partner', projectId: 'p1', type: 'family', gedcomXref: '@FRELSILVERLUNAPARTNER@', partnerAId: 'silver', partnerBId: 'luna', personAId: 'silver', personBId: 'luna', partnerARoleHint: '', partnerBRoleHint: '', childrenIds: [], relationshipType: 'Married', relationshipStatus: 'active', events: [{ id: 'rel-silver-luna-partner-marriage', eventType: 'Marriage', gedcomTag: 'MARR', typeLabel: 'Civil', date: { date: '18.08.2023', dateLabel: '18 Aug 2023', dateType: 'Exact date', calendar: 'Gregorian', originalText: '18 Aug 2023' }, placeId: 'place-meowbridge', placeText: '', sortDate: '', confidence: '' }], nonEvents: [], createdAt: '', updatedAt: '' },
+        { id: 'rel-solomon-opal-partner', projectId: 'p1', type: 'family', gedcomXref: '@FRELSOLOMONOPALPARTNER@', partnerAId: 'solomon', partnerBId: 'opal', personAId: 'solomon', personBId: 'opal', partnerARoleHint: '', partnerBRoleHint: '', childrenIds: [], relationshipType: 'Married', relationshipStatus: 'active', events: [{ id: 'rel-solomon-opal-partner-marriage', eventType: 'Marriage', gedcomTag: 'MARR', typeLabel: 'Civil', date: { date: '', dateLabel: '', dateType: 'Exact date', calendar: 'Gregorian', originalText: '' }, placeId: 'place-old-cattery', placeText: '', sortDate: '', confidence: '' }], nonEvents: [], createdAt: '', updatedAt: '' },
+        { id: 'rel-tobias-marigold-partner', projectId: 'p1', type: 'family', gedcomXref: '@FRELTOBIASMARIGOLDPARTNER@', partnerAId: 'tobias', partnerBId: 'marigold', personAId: 'tobias', personBId: 'marigold', partnerARoleHint: '', partnerBRoleHint: '', childrenIds: [], relationshipType: 'Married', relationshipStatus: 'active', events: [{ id: 'rel-tobias-marigold-partner-marriage', eventType: 'Marriage', gedcomTag: 'MARR', typeLabel: 'Civil', date: { date: '', dateLabel: '', dateType: 'Exact date', calendar: 'Gregorian', originalText: '' }, placeId: 'place-meowbridge', placeText: '', sortDate: '', confidence: '' }], nonEvents: [], createdAt: '', updatedAt: '' },
         { id: 'rel-archibald-barnaby-parent', projectId: 'p1', type: 'parentChild', parentId: 'archibald', childId: 'barnaby', parentRole: 'father' },
         { id: 'rel-edith-barnaby-parent', projectId: 'p1', type: 'parentChild', parentId: 'edith', childId: 'barnaby', parentRole: 'mother' },
         { id: 'rel-percival-daisy-parent', projectId: 'p1', type: 'parentChild', parentId: 'percival', childId: 'daisy', parentRole: 'father' },
@@ -10339,11 +10508,87 @@
         .filter(Boolean);
     }
 
-    function getPartners(personId) {
+    function isFamilyRelationship(rel) {
+      return rel?.type === 'family' || rel?.type === 'partner';
+    }
+
+    function relationshipPartnerAId(rel) {
+      return rel?.partnerAId || rel?.personAId || '';
+    }
+
+    function relationshipPartnerBId(rel) {
+      return rel?.partnerBId || rel?.personBId || '';
+    }
+
+    function relationshipIncludesPerson(rel, personId) {
+      return isFamilyRelationship(rel) && (relationshipPartnerAId(rel) === personId || relationshipPartnerBId(rel) === personId);
+    }
+
+    function getPartnerRelationships(personId) {
       return sampleData.relationships
-        .filter(rel => rel.type === 'partner' && (rel.personAId === personId || rel.personBId === personId))
-        .map(rel => getPerson(rel.personAId === personId ? rel.personBId : rel.personAId))
+        .filter(rel => relationshipIncludesPerson(rel, personId));
+    }
+
+    function getRelationshipPartnerId(rel, personId) {
+      return relationshipPartnerAId(rel) === personId ? relationshipPartnerBId(rel) : relationshipPartnerAId(rel);
+    }
+
+    function getRelationshipPartner(rel, personId) {
+      return getPerson(getRelationshipPartnerId(rel, personId));
+    }
+
+    function getPartners(personId) {
+      return getPartnerRelationships(personId)
+        .map(rel => getRelationshipPartner(rel, personId))
         .filter(Boolean);
+    }
+
+    function relationshipTypeLabel(type) {
+      const value = String(type || '').trim();
+      return value || 'Partner';
+    }
+
+    function relationshipPersonLabel(type) {
+      const value = relationshipTypeLabel(type);
+      if (value === 'Married') return 'Spouse';
+      if (value === 'Divorced') return 'Former spouse';
+      if (value === 'Annulled') return 'Former spouse';
+      if (value === 'Engaged') return 'Engaged partner';
+      if (value === 'Unmarried partner') return 'Partner';
+      if (value === 'Former partner') return 'Former partner';
+      return 'Partner';
+    }
+
+    function relationshipTypeFromLegacy(rel) {
+      if (rel?.relationshipType) return rel.relationshipType;
+      const label = String(rel?.label || '').toLowerCase();
+      if (label.includes('spouse') || label.includes('married')) return 'Married';
+      if (label.includes('former')) return 'Former partner';
+      return 'Partner';
+    }
+
+    function relationshipEventByTag(rel, tag) {
+      return (rel?.events || []).find(event => event.gedcomTag === tag) || null;
+    }
+
+    function relationshipHasMeaningfulEvent(event) {
+      const date = normalizeGenealogyDateInput(event?.date || {}, 'Exact date');
+      return Boolean(formatGenealogyDateLabel(date) || cleanDatePlaceId(event?.placeId) || cleanEditFieldValue(event?.placeText));
+    }
+
+    function createRelationshipEvent(tag, eventType, values = {}) {
+      const date = normalizeGenealogyDateInput(values.date || {}, 'Exact date');
+      return {
+        id: values.id || `event-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        eventType,
+        gedcomTag: tag,
+        typeLabel: values.typeLabel || '',
+        date,
+        placeId: cleanDatePlaceId(values.placeId),
+        placeText: values.placeText || '',
+        sortDate: date.sortDate || '',
+        confidence: values.confidence || ''
+      };
     }
 
     function getSiblings(personId) {
@@ -10360,7 +10605,7 @@
       return sampleData.events.filter(event => event.personIds?.includes(personId));
     }
 
-    const GENEALOGY_DATE_TYPES = ['Exact date', 'Year only', 'Month and year', 'About / Circa', 'Before', 'After', 'Between', 'Unknown', 'Not applicable'];
+    const GENEALOGY_DATE_TYPES = ['Exact date', 'Year only', 'About / Circa', 'Before', 'After', 'Between'];
     const GENEALOGY_MONTHS = [
       ['01', 'Jan', 'January'],
       ['02', 'Feb', 'February'],
@@ -10397,20 +10642,14 @@
         'exact date': 'Exact date',
         year: 'Year only',
         'year only': 'Year only',
-        'month year': 'Month and year',
-        'month and year': 'Month and year',
         about: 'About / Circa',
         circa: 'About / Circa',
         'about / circa': 'About / Circa',
         before: 'Before',
         after: 'After',
         between: 'Between',
-        unknown: 'Unknown',
-        'not applicable': 'Not applicable',
-        na: 'Not applicable',
-        'n/a': 'Not applicable'
       };
-      return aliases[text] || (GENEALOGY_DATE_TYPES.includes(type) ? type : 'Unknown');
+      return aliases[text] || (GENEALOGY_DATE_TYPES.includes(type) ? type : 'Exact date');
     }
 
     function cleanGenealogyDateText(value) {
@@ -10427,7 +10666,7 @@
       return !text || text === 'null' || text === '-' || text === '—' ? null : text;
     }
 
-    function emptyGenealogyDate(dateType = 'Unknown') {
+    function emptyGenealogyDate(dateType = 'Exact date') {
       return {
         date: '',
         dateLabel: '',
@@ -10472,8 +10711,12 @@
 
     function dateLabelFromParts(year, month = '', day = '') {
       const y = String(year || '').trim();
-      const m = String(month || '').padStart(2, '0');
-      const d = String(day || '').padStart(2, '0');
+      const rawMonth = String(month || '').trim();
+      const rawDay = String(day || '').trim();
+
+      const m = rawMonth ? rawMonth.padStart(2, '0') : '';
+      const d = rawDay ? rawDay.padStart(2, '0') : '';
+
       if (d && m && y) return `${d} ${monthShort(m)} ${y}`;
       if (m && y) return `${monthShort(m)} ${y}`;
       return y;
@@ -10481,8 +10724,12 @@
 
     function dateValueFromParts(year, month = '', day = '') {
       const y = String(year || '').trim();
-      const m = String(month || '').padStart(2, '0');
-      const d = String(day || '').padStart(2, '0');
+      const rawMonth = String(month || '').trim();
+      const rawDay = String(day || '').trim();
+
+      const m = rawMonth ? rawMonth.padStart(2, '0') : '';
+      const d = rawDay ? rawDay.padStart(2, '0') : '';
+
       if (d && m && y) return `${d}.${m}.${y}`;
       if (m && y) return `${m}.${y}`;
       return y;
@@ -10544,8 +10791,9 @@
         Before: 'Before',
         After: 'After'
       };
-      if (normalizedType === 'Exact date' && base.precision !== 'day') return { valid: false, message: 'Exact dates need day, month, and year.' };
-      if (normalizedType === 'Month and year' && base.precision === 'year') return { valid: false, message: 'Month and year dates need a month and a year.' };
+      if (normalizedType === 'Exact date' && !['day', 'month'].includes(base.precision)) {
+        return { valid: false, message: 'Exact dates need at least a month and year. Use Year only for year-only dates.' };
+      }
       if (normalizedType === 'Year only' && base.precision !== 'year') return { valid: false, message: 'Year only dates should contain only a year.' };
 
       const value = {
@@ -10573,11 +10821,8 @@
       const normalizedType = normalizeGenealogyDateType(type);
       const raw = cleanGenealogyDateText(text);
       const calendar = options.calendar || 'Gregorian';
-      if (normalizedType === 'Unknown' || normalizedType === 'Not applicable') {
-        return { valid: true, value: emptyGenealogyDate(normalizedType) };
-      }
       if (!raw) {
-        return { valid: false, message: 'Enter a date or choose Unknown.' };
+        return { valid: true, value: emptyGenealogyDate(normalizedType) };
       }
 
       if (normalizedType === 'Between') {
@@ -10594,9 +10839,8 @@
 
     function parseGenealogyDateText(text) {
       const raw = cleanGenealogyDateText(text);
-      if (!raw) return { valid: true, value: emptyGenealogyDate('Unknown') };
-      if (/^(unknown)$/i.test(raw)) return { valid: true, value: emptyGenealogyDate('Unknown') };
-      if (/^(not applicable|n\/a)$/i.test(raw)) return { valid: true, value: emptyGenealogyDate('Not applicable') };
+      if (!raw) return { valid: true, value: emptyGenealogyDate('Exact date') };
+      if (/^(unknown|not applicable|n\/a)$/i.test(raw)) return { valid: false, message: 'Enter a date.' };
       if (/^between\s+/i.test(raw)) return parseGenealogyDateTextAsType(raw, 'Between');
       if (/^(about|circa|ca\.?)\s+/i.test(raw)) return parseGenealogyDateTextAsType(raw, 'About / Circa');
       if (/^before\s+/i.test(raw)) return parseGenealogyDateTextAsType(raw, 'Before');
@@ -10604,13 +10848,12 @@
 
       const base = parseBaseGenealogyDate(raw);
       if (!base || base.invalid) return { valid: false, message: base?.message || 'Enter a supported genealogy date.' };
-      const type = base.precision === 'day' ? 'Exact date' : base.precision === 'month' ? 'Month and year' : 'Year only';
+      const type = base.precision === 'year' ? 'Year only' : 'Exact date';
       return genealogyDateFromBase(base, type, raw);
     }
 
     function buildGenealogyDateFromParts(type, parts = {}) {
       const normalizedType = normalizeGenealogyDateType(type);
-      if (normalizedType === 'Unknown' || normalizedType === 'Not applicable') return { valid: true, value: emptyGenealogyDate(normalizedType) };
       const firstYear = String(parts.year || '').trim();
       const firstMonth = String(parts.month || '').trim();
       const firstDay = String(parts.day || '').trim();
@@ -10634,16 +10877,13 @@
       });
     }
 
-    function normalizeGenealogyDateInput(input, fallbackType = 'Unknown') {
+    function normalizeGenealogyDateInput(input, fallbackType = 'Exact date') {
       if (!input) return emptyGenealogyDate(fallbackType);
       if (typeof input === 'string') {
         const parsed = parseGenealogyDateText(input);
         return parsed.valid ? parsed.value : { ...emptyGenealogyDate(fallbackType), originalText: cleanGenealogyDateText(input) };
       }
       const explicitType = normalizeGenealogyDateType(input.dateType || fallbackType);
-      if (explicitType === 'Unknown' || explicitType === 'Not applicable') {
-        return { ...emptyGenealogyDate(explicitType), placeId: cleanDatePlaceId(input.placeId), reason: input.reason || '', burialPlaceId: cleanDatePlaceId(input.burialPlaceId) };
-      }
       const text = cleanGenealogyDateText(input.originalText || input.dateLabel || input.date);
       if (!text) {
         return {
@@ -10707,7 +10947,7 @@
       };
     }
     function renderGenealogyDateField(fieldId, label, dateInput, options = {}) {
-      const defaultDateType = options.defaultDateType || options.defaultType || 'Unknown';
+      const defaultDateType = options.defaultDateType || options.defaultType || 'Exact date';
       const model = normalizeGenealogyDateInput(dateInput || emptyGenealogyDate(defaultDateType), defaultDateType);
       const inputId = options.inputId || `${fieldId}Date`;
       const typeId = options.typeId || `${fieldId}DateType`;
@@ -10813,20 +11053,23 @@
 
     function updateGenealogyDateEditorVisibility(popover) {
       const type = normalizeGenealogyDateType(popover.querySelector('[data-editor-type]')?.value);
-      const isEmptyType = type === 'Unknown' || type === 'Not applicable';
-      const needsDay = type === 'Exact date' || type === 'Before' || type === 'After' || type === 'Between';
-      const needsMonth = type === 'Exact date' || type === 'Month and year' || type === 'About / Circa' || type === 'Before' || type === 'After' || type === 'Between';
+      const needsDateParts = type === 'Exact date'
+        || type === 'About / Circa'
+        || type === 'Before'
+        || type === 'After'
+        || type === 'Between';
+
+      const needsDay = needsDateParts;
+      const needsMonth = needsDateParts;
       const firstRow = popover.querySelector('[data-editor-first-date-row]');
-      if (firstRow) firstRow.hidden = isEmptyType;
+      if (firstRow) firstRow.hidden = false;
       popover.querySelectorAll('[data-editor-day-field]').forEach(field => { field.hidden = !needsDay; });
       popover.querySelectorAll('[data-editor-month-field]').forEach(field => { field.hidden = !needsMonth; });
       const second = popover.querySelector('.genealogy-date-second-date');
       if (second) second.hidden = type !== 'Between';
       const note = popover.querySelector('[data-editor-note]');
       if (note) {
-        note.textContent = isEmptyType
-          ? 'No date parts are needed for Unknown or Not applicable dates.'
-          : 'Julian calendar can be stored; conversion is not implemented in this prototype.';
+        note.textContent = 'Julian calendar can be stored; conversion is not implemented in this prototype.';
       }
     }
 
@@ -10869,11 +11112,7 @@
         <div class="genealogy-date-actions"><button class="button secondary" type="button" data-genealogy-date-close>Cancel</button><button class="button primary" type="button" data-genealogy-date-apply>Apply</button></div>`;
       document.body.appendChild(popover);
       genealogyDatePopover = popover;
-      const rect = anchor.getBoundingClientRect();
-      const left = Math.min(window.innerWidth - popover.offsetWidth - 16, Math.max(16, rect.right - popover.offsetWidth));
-      const top = Math.min(window.innerHeight - popover.offsetHeight - 16, Math.max(16, rect.bottom + 8));
-      popover.style.left = `${left}px`;
-      popover.style.top = `${top}px`;
+
       updateGenealogyDateEditorVisibility(popover);
       popover.querySelector('[data-editor-type]')?.addEventListener('change', () => updateGenealogyDateEditorVisibility(popover));
       popover.querySelectorAll('[data-genealogy-date-close]').forEach(button => button.addEventListener('click', closeGenealogyDateEditor));
@@ -11017,8 +11256,8 @@
       const parentLinksByChild = new Map();
 
       const pairKey = (a, b) => `${a || 'missing-father'}|${b || 'missing-mother'}`;
-      projectRelationships.filter(rel => rel.type === 'partner').forEach(rel => {
-        partnerByPair.set(pairKey(rel.personAId, rel.personBId), rel);
+      projectRelationships.filter(isFamilyRelationship).forEach(rel => {
+        partnerByPair.set(pairKey(relationshipPartnerAId(rel), relationshipPartnerBId(rel)), rel);
       });
       projectRelationships.filter(rel => rel.type === 'parentChild').forEach(rel => {
         if (!parentLinksByChild.has(rel.childId)) parentLinksByChild.set(rel.childId, []);
@@ -11042,9 +11281,9 @@
       });
 
       partnerByPair.forEach((rel, key) => {
-        const reverseKey = pairKey(rel.personBId, rel.personAId);
+        const reverseKey = pairKey(relationshipPartnerBId(rel), relationshipPartnerAId(rel));
         if (!familyByKey.has(key) && !familyByKey.has(reverseKey)) {
-          familyByKey.set(key, { id: `fam-${rel.personAId}-${rel.personBId}`, left: rel.personAId, right: rel.personBId, children: [], missingFather: false, missingMother: false });
+          familyByKey.set(key, { id: `fam-${relationshipPartnerAId(rel)}-${relationshipPartnerBId(rel)}`, left: relationshipPartnerAId(rel), right: relationshipPartnerBId(rel), children: rel.childrenIds || [], missingFather: false, missingMother: false });
         }
       });
 
@@ -11060,7 +11299,7 @@
 
         if (person.livingStatus === 'Living') {
           person.death = {
-            ...emptyGenealogyDate('Not applicable'),
+            ...emptyGenealogyDate('Exact date'),
             placeId: null,
             reason: '',
             burialPlaceId: null
@@ -11075,28 +11314,73 @@
         }
       });
 
+      const childIdsByFamily = new Map();
+      sampleData.relationships
+        .filter(rel => rel.type === 'parentChild')
+        .forEach(rel => {
+          const parents = sampleData.relationships.find(candidate =>
+            isFamilyRelationship(candidate)
+              && (relationshipPartnerAId(candidate) === rel.parentId || relationshipPartnerBId(candidate) === rel.parentId)
+          );
+          if (!parents) return;
+          if (!childIdsByFamily.has(parents.id)) childIdsByFamily.set(parents.id, new Set());
+          childIdsByFamily.get(parents.id).add(rel.childId);
+        });
+
       sampleData.relationships.forEach(rel => {
-        if (rel.type !== 'partner') return;
+        if (!isFamilyRelationship(rel)) return;
+
+        const partnerAId = relationshipPartnerAId(rel);
+        const partnerBId = relationshipPartnerBId(rel);
+        const relationshipType = relationshipTypeFromLegacy(rel);
         const startDate = normalizeGenealogyDateInput({
           date: rel.startDate,
           dateLabel: rel.startDateLabel,
-          dateType: rel.startDateType || (cleanGenealogyDateText(rel.startDate || rel.startDateLabel) ? 'Exact date' : 'Unknown'),
+          dateType: rel.startDateType || (cleanGenealogyDateText(rel.startDate || rel.startDateLabel) ? 'Exact date' : 'Exact date'),
+          sortDate: rel.startSortDate,
           calendar: rel.startCalendar,
           originalText: rel.startOriginalText
-        }, 'Unknown');
+        }, 'Exact date');
+
+        rel.type = 'family';
+        rel.relationshipType = relationshipType;
+        rel.relationshipStatus = rel.relationshipStatus || 'active';
+        rel.partnerAId = partnerAId;
+        rel.partnerBId = partnerBId;
+        rel.personAId = partnerAId;
+        rel.personBId = partnerBId;
+        rel.partnerARoleHint = rel.partnerARoleHint || (getPerson(partnerAId)?.gender === 'male' ? 'HUSB' : getPerson(partnerAId)?.gender === 'female' ? 'WIFE' : '');
+        rel.partnerBRoleHint = rel.partnerBRoleHint || (getPerson(partnerBId)?.gender === 'male' ? 'HUSB' : getPerson(partnerBId)?.gender === 'female' ? 'WIFE' : '');
+        rel.gedcomXref = rel.gedcomXref || `@F${rel.id.replace(/[^a-z0-9]/gi, '').toUpperCase()}@`;
+        rel.childrenIds = Array.from(new Set([...(rel.childrenIds || []), ...Array.from(childIdsByFamily.get(rel.id) || [])]));
+        rel.nonEvents = rel.nonEvents || [];
+        rel.events = Array.isArray(rel.events) ? rel.events : [];
+
         rel.startDate = startDate.date;
         rel.startDateLabel = startDate.dateLabel;
         rel.startDateType = startDate.dateType;
         rel.startSortDate = startDate.sortDate;
         rel.startCalendar = startDate.calendar;
         rel.startOriginalText = startDate.originalText;
-        rel.endDate = rel.endDate || '';
-        rel.endDateLabel = rel.endDateLabel || '';
-        rel.endDateType = rel.endDateType || 'Unknown';
-        rel.endSortDate = rel.endSortDate || '';
-        rel.endCalendar = rel.endCalendar || 'Gregorian';
-        rel.endOriginalText = rel.endOriginalText || '';
         rel.startPlaceId = cleanDatePlaceId(rel.startPlaceId);
+
+        let marriage = relationshipEventByTag(rel, 'MARR');
+        if (!marriage) {
+          marriage = createRelationshipEvent('MARR', 'Marriage', {
+            id: `${rel.id}-marriage`,
+            typeLabel: rel.marriageType || 'Civil',
+            date: startDate,
+            placeId: rel.startPlaceId,
+            placeText: getPlaceDisplay(rel.startPlaceId)
+          });
+          if (relationshipType === 'Married' || formatGenealogyDateLabel(startDate) || rel.startPlaceId) rel.events.push(marriage);
+        } else {
+          marriage.date = normalizeGenealogyDateInput(marriage.date || startDate, 'Exact date');
+          marriage.placeId = cleanDatePlaceId(marriage.placeId || rel.startPlaceId);
+          marriage.placeText = marriage.placeText || getPlaceDisplay(marriage.placeId);
+          marriage.typeLabel = marriage.typeLabel || rel.marriageType || 'Civil';
+          marriage.sortDate = marriage.date.sortDate || '';
+        }
       });
     }
 
@@ -11134,31 +11418,29 @@
       });
 
       sampleData.relationships
-        .filter(rel => rel.type === 'partner')
+        .filter(isFamilyRelationship)
         .forEach(rel => {
-          const personA = getPerson(rel.personAId);
-          const personB = getPerson(rel.personBId);
+          const personA = getPerson(relationshipPartnerAId(rel));
+          const personB = getPerson(relationshipPartnerBId(rel));
           if (!personA || !personB) return;
-          const startDate = eventDateFields({
-            date: rel.startDate,
-            dateLabel: rel.startDateLabel,
-            dateType: rel.startDateType,
-            sortDate: rel.startSortDate,
-            calendar: rel.startCalendar,
-            originalText: rel.startOriginalText
-          });
 
-          events.push({
-            id: `event-${rel.id}-marriage`,
-            projectId: rel.projectId,
-            type: 'marriage',
-            personIds: [rel.personAId, rel.personBId],
-            relatedPersonIds: [rel.personAId, rel.personBId],
-            ...startDate,
-            placeId: rel.startPlaceId || null,
-            title: 'Marriage',
-            description: `Marriage of ${personA.names.display} and ${personB.names.display}`
-          });
+          (rel.events || [])
+            .filter(event => event.gedcomTag === 'MARR' && relationshipHasMeaningfulEvent(event))
+            .forEach(event => {
+              const eventDate = eventDateFields(event.date);
+
+              events.push({
+                id: `event-${rel.id}-${event.id || 'marriage'}`,
+                projectId: rel.projectId,
+                type: 'marriage',
+                personIds: [relationshipPartnerAId(rel), relationshipPartnerBId(rel)],
+                relatedPersonIds: [relationshipPartnerAId(rel), relationshipPartnerBId(rel)],
+                ...eventDate,
+                placeId: event.placeId || null,
+                title: event.typeLabel ? `${event.typeLabel} marriage` : 'Marriage',
+                description: `Marriage of ${personA.names.display} and ${personB.names.display}`
+              });
+            });
         });
 
       sampleData.relationships
@@ -11238,10 +11520,14 @@
       });
 
       sampleData.relationships.forEach(rel => {
-        if (rel.type === 'partner') {
-          if (!personIds.has(rel.personAId)) warn(`Relationship ${rel.id} points to missing person ${rel.personAId}`);
-          if (!personIds.has(rel.personBId)) warn(`Relationship ${rel.id} points to missing person ${rel.personBId}`);
-          if (rel.startPlaceId && !placeIds.has(rel.startPlaceId)) warn(`Relationship ${rel.id} points to missing place ${rel.startPlaceId}`);
+        if (isFamilyRelationship(rel)) {
+          const partnerAId = relationshipPartnerAId(rel);
+          const partnerBId = relationshipPartnerBId(rel);
+          if (!personIds.has(partnerAId)) warn(`Relationship ${rel.id} points to missing person ${partnerAId}`);
+          if (!personIds.has(partnerBId)) warn(`Relationship ${rel.id} points to missing person ${partnerBId}`);
+          (rel.events || []).forEach(event => {
+            if (event.placeId && !placeIds.has(event.placeId)) warn(`Relationship event ${event.id} points to missing place ${event.placeId}`);
+          });
         }
         if (rel.type === 'parentChild') {
           if (!personIds.has(rel.parentId)) warn(`Relationship ${rel.id} points to missing parent ${rel.parentId}`);
@@ -11447,7 +11733,7 @@
         };
       } else {
         person.death = {
-          ...emptyGenealogyDate('Not applicable'),
+          ...emptyGenealogyDate('Exact date'),
           placeId: null,
           reason: '',
           burialPlaceId: null
@@ -13485,7 +13771,7 @@ function renderTreeCardDateLines(person) {
     function getFamilyTreeRelationshipGroups(personId) {
       const parents = getParents(personId);
       const siblings = getSiblings(personId);
-      const partners = getPartners(personId);
+      const partnerRelationships = getPartnerRelationships(personId);
       const children = getChildren(personId);
 
       return [
@@ -13499,7 +13785,10 @@ function renderTreeCardDateLines(person) {
         },
         {
           title: 'Partner',
-          rows: partners.map(partner => renderRelation(partner, relationMeta('Spouse', partner)))
+          rows: partnerRelationships.map(rel => {
+            const partner = getRelationshipPartner(rel, personId);
+            return renderRelation(partner, relationMeta(relationshipPersonLabel(rel.relationshipType), partner));
+          })
         },
         {
           title: 'Children',
@@ -13511,7 +13800,7 @@ function renderTreeCardDateLines(person) {
     function familyTreeRelationshipCount(personId) {
       return getParents(personId).length
         + getSiblings(personId).length
-        + getPartners(personId).length
+        + getPartnerRelationships(personId).length
         + getChildren(personId).length;
     }
 
@@ -13572,7 +13861,7 @@ function renderTreeCardDateLines(person) {
       popover.querySelectorAll('[data-rel]').forEach(button => button.addEventListener('click', () => {
         const rel = button.dataset.rel;
         closeMenu();
-        openAddPersonModal(`Add ${rel}`, `Create a new person and add as ${person.name.split(' ')[0]}'s ${rel}`, { relativeType: rel });
+        openAddPersonModal(`Add ${rel}`, `Create a new person and add as ${person.name.split(' ')[0]}'s ${rel}`, { relativeType: rel, personId: person.id });
       }));
       popover.querySelector('[data-connect-existing]').addEventListener('click', () => { closeMenu(); showToast('Connect existing person flow will be added in a later iteration.'); });
       setTimeout(() => document.addEventListener('click', closeMenu), 0);
@@ -13625,16 +13914,27 @@ function renderTreeCardDateLines(person) {
       };
     }
 
-    function addPersonFactDefinitions() {
-      return [
-        { id: 'causeOfDeath', label: 'Cause of death', icon: icon.warning || icon.plus },
+    function addPersonFactDefinitions(options = {}) {
+      const facts = [
+                { id: 'causeOfDeath', label: 'Cause of death', icon: icon.warning || icon.plus },
         { id: 'burialPlace', label: 'Burial place', icon: icon.mapPin || icon.plus },
         { id: 'education', label: 'Education', icon: icon.education || icon.plus },
         { id: 'occupation', label: 'Occupation', icon: icon.work || icon.placeholder || icon.plus },
         { id: 'religion', label: 'Religion', icon: icon.info || icon.plus },
         { id: 'baptism', label: 'Baptism', icon: icon.calendar || icon.plus },
-        { id: 'alternativeNames', label: 'Alternative names', icon: icon.people || icon.plus }
+        { id: 'alternativeNames', label: 'Alternative names', icon: icon.people || icon.plus },
+        { id: 'marriageType', label: 'Marriage type', icon: icon.link}
       ];
+
+      if (options.includeRelationshipFacts) {
+        facts.push({
+          id: 'marriageType',
+          label: 'Marriage type',
+          icon: icon.link
+        });
+      }
+
+      return facts;
     }
 
     function addPersonAddedFactsFromPerson(person) {
@@ -13675,8 +13975,8 @@ function renderTreeCardDateLines(person) {
         return fieldWrap(`<div class="field"><label for="addPersonFactWorkCompany">Company name</label><input id="addPersonFactWorkCompany" value="${escapeHtml(details.workCompany || '')}" placeholder="Company"></div>
           <div class="field"><label for="addPersonFactWorkOccupation">Occupation</label><input id="addPersonFactWorkOccupation" value="${escapeHtml(details.workOccupation || '')}" placeholder="Occupation"></div>
           <div class="profile-edit-date-row add-person-fact-date-row">
-            <div class="profile-edit-date-cell">${renderGenealogyDateField('addPersonFactWorkFrom', 'From', details.workFromDate, { inputId: 'addPersonFactWorkFromDate', typeId: 'addPersonFactWorkFromDateType', defaultDateType: 'Unknown', placeholder: 'e.g. 2016' })}</div>
-            <div class="profile-edit-date-cell">${renderGenealogyDateField('addPersonFactWorkTo', 'To', details.workToDate, { inputId: 'addPersonFactWorkToDate', typeId: 'addPersonFactWorkToDateType', defaultDateType: 'Unknown', placeholder: 'e.g. 2020' })}</div>
+            <div class="profile-edit-date-cell">${renderGenealogyDateField('addPersonFactWorkFrom', 'From', details.workFromDate, { inputId: 'addPersonFactWorkFromDate', typeId: 'addPersonFactWorkFromDateType', defaultDateType: 'Exact date', placeholder: 'e.g. 2016' })}</div>
+            <div class="profile-edit-date-cell">${renderGenealogyDateField('addPersonFactWorkTo', 'To', details.workToDate, { inputId: 'addPersonFactWorkToDate', typeId: 'addPersonFactWorkToDateType', defaultDateType: 'Exact date', placeholder: 'e.g. 2020' })}</div>
           </div>
           <div class="field full"><label for="addPersonFactWorkNotes">Notes</label><textarea id="addPersonFactWorkNotes" placeholder="Work notes">${escapeHtml(details.workNotes || '')}</textarea></div>`);
       }
@@ -13685,15 +13985,28 @@ function renderTreeCardDateLines(person) {
       }
       if (factId === 'baptism') {
         return fieldWrap(`<div class="field full"><label for="addPersonFactBaptismPlace">Baptism place</label><input id="addPersonFactBaptismPlace" value="${escapeHtml(details.baptismPlace || '')}" placeholder="Baptism place"></div>
-          ${renderGenealogyDateField('addPersonFactBaptism', 'Baptism date', details.baptismDate, { inputId: 'addPersonFactBaptismDate', typeId: 'addPersonFactBaptismDateType', className: 'full', defaultDateType: 'Unknown', placeholder: 'e.g. 14 Feb 1946' })}`);
+          ${renderGenealogyDateField('addPersonFactBaptism', 'Baptism date', details.baptismDate, { inputId: 'addPersonFactBaptismDate', typeId: 'addPersonFactBaptismDateType', className: 'full', defaultDateType: 'Exact date', placeholder: 'e.g. 14 Feb 1946' })}`);
+      }
+      if (factId === 'marriageType') {
+        return fieldWrap(`
+          <div class="field full add-person-select-field">
+            <label for="addPersonRelationship0MarriageType">Marriage type</label>
+            <select class="compact-select add-person-select" id="addPersonRelationship0MarriageType" data-add-person-marriage-type>
+              ${addPersonMarriageTypeOptions('Civil')}
+            </select>
+            <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
+          </div>
+        `);
       }
       return fieldWrap(`<div class="field full"><label for="addPersonFactAlternativeNames">Alternative names</label><input id="addPersonFactAlternativeNames" value="${escapeHtml(details.alternativeNames || '')}" placeholder="Nickname, spelling variant, or former name"></div>`);
     }
 
-    function renderAddPersonAdditionalFacts(person = null) {
+    function renderAddPersonAdditionalFacts(person = null, options = {}) {
       const activeFacts = addPersonAddedFactsFromPerson(person);
       const expanded = activeFacts.length > 0;
-      const definitions = addPersonFactDefinitions();
+      const definitions = addPersonFactDefinitions({
+        includeRelationshipFacts: options.includeRelationshipFacts
+      });
       return `<section class="add-person-additional-section">
         <div class="add-person-facts-section" data-add-person-facts>
           <button class="add-person-facts-header" type="button" data-add-person-facts-toggle aria-expanded="${expanded ? 'true' : 'false'}">
@@ -13710,10 +14023,309 @@ function renderTreeCardDateLines(person) {
       </section>`;
     }
 
+
+    const ADD_PERSON_RELATIONSHIP_TYPES = ['Married', 'Partner', 'Unmarried partner', 'Former partner', 'Separated', 'Divorced', 'Annulled', 'Engaged', 'Unknown relationship'];
+    const ADD_PERSON_MARRIAGE_TYPES = ['Civil', 'Religious', 'Common law', 'Customary', 'Tribal custom', 'Unknown'];
+
+    function addPersonRelationshipTypeOptions(selected = 'Married') {
+      const active = ADD_PERSON_RELATIONSHIP_TYPES.includes(selected) ? selected : 'Married';
+      return ADD_PERSON_RELATIONSHIP_TYPES.map(value => `<option value="${escapeHtml(value)}" ${value === active ? 'selected' : ''}>${escapeHtml(value)}</option>`).join('');
+    }
+
+    function addPersonMarriageTypeOptions(selected = 'Civil') {
+      const active = ADD_PERSON_MARRIAGE_TYPES.includes(selected) ? selected : 'Civil';
+      return ADD_PERSON_MARRIAGE_TYPES.map(value => `<option value="${escapeHtml(value)}" ${value === active ? 'selected' : ''}>${escapeHtml(value)}</option>`).join('');
+    }
+
+    function relationshipBlockShouldShow(options = {}, editPerson = null) {
+      if (options.relativeType === 'partner') return true;
+      if (options.mode === 'edit' && editPerson) return getPartnerRelationships(editPerson.id).length > 0;
+      return false;
+    }
+
+    function addPersonRelationshipPartnerAvatar(person) {
+      const initials = person?.names?.initials || '??';
+      const avatar = person?.avatarClass || 'avatar-green';
+      return `<span class="small-avatar ${escapeHtml(avatar)}">${escapeHtml(initials)}</span>`;
+    }
+
+    function renderAddPersonRelationshipCard({ relationship = null, personId = '', partner = null, index = 0, mode = 'edit' } = {}) {
+      const relationshipType = relationshipTypeFromLegacy(relationship) || (mode === 'addPartner' ? 'Married' : 'Partner');
+      const marriage = relationshipEventByTag(relationship, 'MARR') || createRelationshipEvent('MARR', 'Marriage', {
+        id: `${relationship?.id || 'new-relationship'}-marriage`,
+        typeLabel: relationship?.marriageType || 'Civil',
+        date: emptyGenealogyDate('Exact date'),
+        placeId: null,
+        placeText: ''
+      });
+      const partnerLabel = relationshipPersonLabel(relationshipType);
+      const partnerName = partner?.names?.display || (mode === 'addPartner' ? 'Selected person' : 'Unknown person');
+      const fieldPrefix = `addPersonRelationship${index}`;
+      const marriagePlace = editPlaceValue(marriage.placeId) || marriage.placeText || '';
+
+      return `<div class="add-person-relationship-card" data-add-person-relationship-card data-relationship-id="${escapeHtml(relationship?.id || '')}" data-partner-id="${escapeHtml(partner?.id || '')}" data-relationship-index="${index}">
+        <div class="add-person-relationship-grid">
+          <div class="field add-person-select-field">
+            <label for="${fieldPrefix}Type">Relationship type</label>
+            <select class="compact-select add-person-select" id="${fieldPrefix}Type" data-add-person-relationship-type>
+              ${addPersonRelationshipTypeOptions(relationshipType)}
+            </select>
+            <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
+          </div>
+
+          <div class="field">
+            <label data-add-person-partner-label>${escapeHtml(partnerLabel)}</label>
+            <div class="add-person-relationship-partner">
+              ${addPersonRelationshipPartnerAvatar(partner)}
+              <span>${escapeHtml(partnerName)}</span>
+            </div>
+          </div>
+
+          ${renderGenealogyDateField(`${fieldPrefix}MarriageDate`, 'Marriage date', marriage.date || emptyGenealogyDate('Exact date'), {
+            inputId: `${fieldPrefix}MarriageDateInput`,
+            typeId: `${fieldPrefix}MarriageDateType`,
+            placeholder: 'e.g. 18 Aug 2023',
+            defaultDateType: 'Exact date'
+          })}
+
+          <div class="field full">
+            <label for="${fieldPrefix}MarriagePlace">Marriage place</label>
+            <input id="${fieldPrefix}MarriagePlace" data-add-person-marriage-place value="${escapeHtml(marriagePlace)}" placeholder="e.g. Meowbridge, England">
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function renderAddPersonRelationshipBlock(options = {}, editPerson = null) {
+      const isPartnerMode = options.relativeType === 'partner';
+      const anchorPerson = isPartnerMode ? getPerson(options.personId || state.selectedPersonId) : null;
+      const relationships = editPerson ? getPartnerRelationships(editPerson.id) : [];
+      const cards = isPartnerMode
+        ? [renderAddPersonRelationshipCard({ relationship: null, personId: '', partner: anchorPerson, index: 0, mode: 'addPartner' })]
+        : relationships.map((relationship, index) => renderAddPersonRelationshipCard({
+          relationship,
+          personId: editPerson?.id || '',
+          partner: getRelationshipPartner(relationship, editPerson?.id),
+          index,
+          mode: 'edit'
+        }));
+
+      if (!cards.length) return '';
+
+      return `<section class="add-person-relationship-section" data-add-person-relationship-section>
+        <div class="add-person-relationship-panel">
+          <button class="add-person-relationship-header" type="button" data-add-person-relationship-toggle aria-expanded="true">
+            <span class="add-person-relationship-header-main">
+              <span class="add-person-relationship-chevron" aria-hidden="true">${icon.chevron}</span>
+              <span>Relationship</span>
+            </span>
+          </button>
+
+          <div class="add-person-relationship-body" data-add-person-relationship-body>
+            ${cards.join('')}
+          </div>
+        </div>
+      </section>`;
+    }
+
+    function bindAddPersonRelationshipBlock() {
+      modalBackdrop?.querySelectorAll('[data-add-person-relationship-toggle]').forEach(button => {
+        if (button.dataset.relationshipToggleBound === 'true') return;
+        button.dataset.relationshipToggleBound = 'true';
+
+        const section = button.closest('[data-add-person-relationship-section]');
+        const body = section?.querySelector('[data-add-person-relationship-body]');
+
+        button.addEventListener('click', () => {
+          const isExpanded = button.getAttribute('aria-expanded') === 'true';
+          button.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+
+          if (body) {
+            body.hidden = isExpanded;
+          }
+        });
+      });
+      modalBackdrop?.querySelectorAll('[data-add-person-relationship-type]').forEach(select => {
+        const card = select.closest('[data-add-person-relationship-card]');
+        const updateLabel = () => {
+          const label = card?.querySelector('[data-add-person-partner-label]');
+          if (label) label.textContent = relationshipPersonLabel(select.value);
+        };
+        select.addEventListener('change', updateLabel);
+        updateLabel();
+      });
+    }
+
+    function collectAddPersonRelationshipBlock() {
+      const cards = Array.from(modalBackdrop?.querySelectorAll('[data-add-person-relationship-card]') || []);
+      const relationships = [];
+
+      for (const card of cards) {
+        const index = card.dataset.relationshipIndex || '0';
+        const fieldId = `addPersonRelationship${index}MarriageDate`;
+        const marriageDate = collectGenealogyDateField(fieldId);
+        if (!marriageDate) return { invalid: true, message: 'Check the marriage date before saving.' };
+
+        relationships.push({
+          relationshipId: card.dataset.relationshipId || '',
+          partnerId: card.dataset.partnerId || '',
+          relationshipType: card.querySelector('[data-add-person-relationship-type]')?.value || 'Married',
+          marriageType:
+            card.querySelector('[data-add-person-marriage-type]')?.value
+            || modalBackdrop?.querySelector('[data-add-person-marriage-type]')?.value
+            || 'Civil',
+          marriageDate,
+          marriagePlace: card.querySelector('[data-add-person-marriage-place]')?.value.trim() || ''
+        });
+      }
+
+      return { invalid: false, relationships };
+    }
+
+    function relationshipIdForPartners(personAId, personBId) {
+      const left = String(personAId || 'person-a').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '');
+      const right = String(personBId || 'person-b').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '');
+      return `rel-${left}-${right}-family`;
+    }
+
+    function upsertMarriageEvent(relationship, relationshipValues) {
+      relationship.events = Array.isArray(relationship.events) ? relationship.events : [];
+      const date = normalizeGenealogyDateInput(relationshipValues.marriageDate, 'Exact date');
+      const placeId = samplePlaceIdFromDisplay(relationshipValues.marriagePlace);
+      let marriage = relationshipEventByTag(relationship, 'MARR');
+
+      if (!marriage) {
+        marriage = createRelationshipEvent('MARR', 'Marriage', {
+          id: `${relationship.id}-marriage`,
+          typeLabel: relationshipValues.marriageType || 'Civil',
+          date,
+          placeId,
+          placeText: relationshipValues.marriagePlace || getPlaceDisplay(placeId)
+        });
+        relationship.events.push(marriage);
+      } else {
+        marriage.eventType = 'Marriage';
+        marriage.gedcomTag = 'MARR';
+        marriage.typeLabel = relationshipValues.marriageType || marriage.typeLabel || 'Civil';
+        marriage.date = date;
+        marriage.placeId = placeId;
+        marriage.placeText = relationshipValues.marriagePlace || getPlaceDisplay(placeId);
+        marriage.sortDate = date.sortDate || '';
+      }
+
+      relationship.startDate = date.date;
+      relationship.startDateLabel = date.dateLabel;
+      relationship.startDateType = date.dateType;
+      relationship.startSortDate = date.sortDate;
+      relationship.startCalendar = date.calendar;
+      relationship.startOriginalText = date.originalText;
+      relationship.startPlaceId = placeId;
+    }
+
+    function savePersonRelationshipBlock(personId, collected) {
+      if (!collected || collected.invalid || !collected.relationships?.length) return;
+
+      collected.relationships.forEach(values => {
+        const relationship = sampleData.relationships.find(rel => rel.id === values.relationshipId && isFamilyRelationship(rel));
+        if (!relationship) return;
+
+        relationship.relationshipType = values.relationshipType || 'Partner';
+        relationship.relationshipStatus = relationship.relationshipStatus || 'active';
+        upsertMarriageEvent(relationship, values);
+        relationship.updatedAt = 'Just now';
+      });
+    }
+
+    function createPersonIdFromName(firstName, lastName) {
+      const base = [firstName, lastName].filter(Boolean).join('-').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'person';
+      let id = base;
+      let counter = 2;
+      while (getPerson(id)) {
+        id = `${base}-${counter}`;
+        counter += 1;
+      }
+      return id;
+    }
+
+    function relativeCreateRoleLabel(relativeType) {
+      const map = {
+        father: 'Father',
+        mother: 'Mother',
+        son: 'Son',
+        daughter: 'Daughter',
+        brother: 'Brother',
+        sister: 'Sister',
+        partner: 'Partner'
+      };
+      return map[String(relativeType || '').toLowerCase()] || 'Relative';
+    }
+
+    function createPersonFromAddPersonModal(options = {}, additionalFacts = {}) {
+      const firstName = readAddPersonModalValue('#addPersonFirstName') || 'New';
+      const lastName = readAddPersonModalValue('#addPersonLastName') || 'Person';
+      const middleName = readAddPersonModalValue('#addPersonMiddleName');
+      const maidenName = readAddPersonModalValue('#addPersonMaidenName');
+      const id = createPersonIdFromName(firstName, lastName);
+      const genderValue = readAddPersonModalValue('#addPersonGender');
+      const livingStatus = normalizeLivingStatus(readAddPersonModalValue('#addPersonLivingStatus'));
+      const birthDate = collectGenealogyDateField('addPersonBirth') || emptyGenealogyDate('Exact date');
+      const deathDate = livingStatus === 'Deceased' ? collectGenealogyDateField('addPersonDeath') || emptyGenealogyDate('Exact date') : emptyGenealogyDate('Exact date');
+      const display = [firstName, middleName, lastName].filter(Boolean).join(' ');
+      const initials = `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase() || 'NP';
+
+      const person = {
+        id,
+        projectId: state.currentProjectId || state.selectedProjectId || 'p1',
+        names: { first: firstName, middle: middleName, last: lastName, maiden: maidenName, display, initials },
+        gender: genderValue === 'Male' ? 'male' : genderValue === 'Female' ? 'female' : 'unknown',
+        livingStatus,
+        role: options.relativeType ? relativeCreateRoleLabel(options.relativeType) : 'Relative',
+        branch: 'New entries',
+        avatarClass: genderValue === 'Female' ? 'avatar-purple' : genderValue === 'Male' ? 'avatar-green' : '',
+        birth: { ...birthDate, placeId: samplePlaceIdFromDisplay(readAddPersonModalValue('#addPersonBirthPlace')) },
+        death: { ...deathDate, placeId: livingStatus === 'Deceased' ? samplePlaceIdFromDisplay(readAddPersonModalValue('#addPersonDeathPlace')) : null, reason: additionalFacts.deathReason || '', burialPlaceId: additionalFacts.burialPlace ? samplePlaceIdFromDisplay(additionalFacts.burialPlace) : null },
+        counts: { photos: 0, files: 0, notes: 0 },
+        meta: { updated: 'Just now', sourceStatus: 'Unsourced', reviewStatus: 'New record' }
+      };
+
+      sampleData.people.push(person);
+      return person;
+    }
+
+    function createPartnerRelationshipForNewPerson(anchorPersonId, newPersonId, collected) {
+      const values = collected?.relationships?.[0];
+      if (!anchorPersonId || !newPersonId || !values) return null;
+      const id = relationshipIdForPartners(anchorPersonId, newPersonId);
+      const relationship = {
+        id,
+        projectId: state.currentProjectId || state.selectedProjectId || 'p1',
+        type: 'family',
+        gedcomXref: `@F${id.replace(/[^a-z0-9]/gi, '').toUpperCase()}@`,
+        partnerAId: anchorPersonId,
+        partnerBId: newPersonId,
+        personAId: anchorPersonId,
+        personBId: newPersonId,
+        partnerARoleHint: getPerson(anchorPersonId)?.gender === 'male' ? 'HUSB' : getPerson(anchorPersonId)?.gender === 'female' ? 'WIFE' : '',
+        partnerBRoleHint: getPerson(newPersonId)?.gender === 'male' ? 'HUSB' : getPerson(newPersonId)?.gender === 'female' ? 'WIFE' : '',
+        childrenIds: [],
+        relationshipType: values.relationshipType || 'Married',
+        relationshipStatus: 'active',
+        events: [],
+        nonEvents: [],
+        createdAt: 'Just now',
+        updatedAt: 'Just now'
+      };
+      upsertMarriageEvent(relationship, values);
+      sampleData.relationships.push(relationship);
+      return relationship;
+    }
+
     function openAddPersonModal(title, subtitle, options = {}) {
       const isEditMode = options.mode === 'edit';
       const editPerson = isEditMode ? getPerson(options.personId) : null;
       const editValues = editPersonFormValues(editPerson);
+      const isPartnerMode = options.relativeType === 'partner';
+      const showRelationshipBlock = relationshipBlockShouldShow(options, editPerson);
 
       const relativeGender = getGenderForRelativeType(options.relativeType);
 
@@ -13776,11 +14388,11 @@ function renderTreeCardDateLines(person) {
               </div>
 
               <div class="add-person-life-event-block add-person-death-fields" id="deathFieldsGroup">
-                ${renderGenealogyDateField('addPersonDeath', 'Death date', editPerson?.death || emptyGenealogyDate(initialStatus === 'Deceased' ? 'Exact date' : 'Not applicable'), {
+                ${renderGenealogyDateField('addPersonDeath', 'Death date', editPerson?.death || emptyGenealogyDate('Exact date'), {
                   inputId: 'addPersonDeathDate',
                   typeId: 'addPersonDeathDateType',
                   placeholder: 'e.g. 20 Oct 1926',
-                  defaultDateType: initialStatus === 'Deceased' ? 'Exact date' : 'Not applicable'
+                  defaultDateType: 'Exact date'
                 })}
 
                 <div class="field">
@@ -13795,7 +14407,8 @@ function renderTreeCardDateLines(person) {
             <div class="modal-side-card"><h3>Attach to this person</h3><button class="attach-row" type="button" data-add-person-attach="photo"><div class="attach-icon">${icon.image}</div><div><strong>Add Photo</strong><br><span class="panel-muted">Link photo</span></div></button><button class="attach-row" type="button" data-add-person-attach="file"><div class="attach-icon file">${icon.file}</div><div><strong>Add File</strong><br><span class="panel-muted">Link archive item or file</span></div></button><button class="attach-row" type="button" data-add-person-attach="note"><div class="attach-icon note">${icon.note}</div><div><strong>Add Note</strong><br><span class="panel-muted">Add note about this person</span></div></button></div>
             <div class="modal-side-card"><h3>Possible matches<br><span class="panel-muted">Similar people in this project</span></h3><button class="match-row" type="button" data-possible-match="Barnaby Whiskerfield"><div class="small-avatar avatar-amber">BW</div><div><strong>Barnaby Whiskerfield</strong><br>14 Feb 1946<br>Pawford, England</div></button><button class="match-row" type="button" data-possible-match="Rupert Purrington"><div class="small-avatar">RP</div><div><strong>Rupert Purrington</strong><br>19 Oct 1951<br>Fishmarket Row, England</div></button></div>
           </aside>
-          ${renderAddPersonAdditionalFacts(editPerson)}
+          ${showRelationshipBlock ? renderAddPersonRelationshipBlock(options, editPerson) : ''}
+          ${renderAddPersonAdditionalFacts(editPerson, { includeRelationshipFacts: showRelationshipBlock })}
         </div>
         <div class="modal-footer add-person-footer">
           <div class="add-person-footer-left">
@@ -13827,9 +14440,29 @@ function renderTreeCardDateLines(person) {
       } else {
       modalBackdrop.querySelector('[data-create-person]')?.addEventListener('click', () => {
         const createAnother = modalBackdrop.querySelector('#addPersonCreateAnother')?.checked;
+        const additionalFacts = collectAddPersonAdditionalFacts('');
+        if (additionalFacts.invalid) {
+          showToast(additionalFacts.message || 'Check the additional facts before creating.');
+          return;
+        }
+        const relationshipValues = collectAddPersonRelationshipBlock();
+        if (relationshipValues.invalid) {
+          showToast(relationshipValues.message || 'Check the relationship details before creating.');
+          return;
+        }
+        const newPerson = createPersonFromAddPersonModal(options, additionalFacts);
+        if (isPartnerMode) createPartnerRelationshipForNewPerson(options.personId || state.selectedPersonId, newPerson.id, relationshipValues);
+        sampleData.events = buildSampleEvents();
+        state.selectedPersonId = newPerson.id;
+        state.selectedPeopleId = newPerson.id;
 
         closeModal();
-        showToast('Person creation simulated.');
+        if (state.activeModule === 'Family Tree') {
+          renderFamilyTreePreserveScroll?.() || renderFamilyTree();
+        } else {
+          render();
+        }
+        showToast(isPartnerMode ? 'Person and relationship created.' : 'Person created.');
 
         if (createAnother) {
           requestAnimationFrame(() => {
@@ -14009,6 +14642,12 @@ function renderTreeCardDateLines(person) {
         return;
       }
 
+      const relationshipValues = collectAddPersonRelationshipBlock();
+      if (relationshipValues.invalid) {
+        showToast(relationshipValues.message || 'Check the relationship details before saving.');
+        return;
+      }
+
       const birthDate = collectGenealogyDateField('addPersonBirth');
       if (!birthDate) {
         showToast('Check the birth date before saving.');
@@ -14033,12 +14672,14 @@ function renderTreeCardDateLines(person) {
         };
       } else {
         person.death = {
-          ...emptyGenealogyDate('Not applicable'),
+          ...emptyGenealogyDate('Exact date'),
           placeId: null,
           reason: '',
           burialPlaceId: null
         };
       }
+
+      savePersonRelationshipBlock(personId, relationshipValues);
 
       const details = peopleProfileDetailsFor(toPeopleRecord(person));
       details.deathReason = person.death?.reason || '';
@@ -14048,7 +14689,11 @@ function renderTreeCardDateLines(person) {
       sampleData.events = buildSampleEvents();
 
       closeModal();
-      renderFamilyTreePreserveScroll?.() || renderFamilyTree();
+      if (state.activeModule === 'Family Tree') {
+        renderFamilyTreePreserveScroll?.() || renderFamilyTree();
+      } else {
+        render();
+      }
       showToast('Person updated.');
     }
 
@@ -14069,6 +14714,7 @@ function renderTreeCardDateLines(person) {
     function bindAddPersonModalControls(personId = '') {
       bindGenealogyDateFields(modalBackdrop);
       bindAddPersonAdditionalFacts(personId);
+      bindAddPersonRelationshipBlock();
       const gender = modalBackdrop.querySelector('#addPersonGender');
       const statusButton = modalBackdrop.querySelector('#addPersonStatusButton');
       const statusMenu = modalBackdrop.querySelector('#addPersonStatusMenu');
@@ -14096,12 +14742,13 @@ function renderTreeCardDateLines(person) {
         const deathModel = modalBackdrop.querySelector('[data-genealogy-date-field="addPersonDeath"] [data-genealogy-date-model]');
         if (deathModel) {
           const currentDeath = normalizeGenealogyDateInput(JSON.parse(deathModel.value || '{}'));
-          if (status === 'Deceased' && currentDeath.dateType === 'Not applicable') {
-            applyGenealogyDateToField('addPersonDeath', emptyGenealogyDate('Exact date'));
-          }
-          if (status !== 'Deceased') {
-            applyGenealogyDateToField('addPersonDeath', emptyGenealogyDate('Not applicable'));
-          }
+            if (status === 'Deceased' && !currentDeath.date && !currentDeath.dateLabel) {
+              applyGenealogyDateToField('addPersonDeath', emptyGenealogyDate('Exact date'));
+            }
+
+            if (status !== 'Deceased') {
+              applyGenealogyDateToField('addPersonDeath', emptyGenealogyDate('Exact date'));
+            }
         }
         updateAddPersonConditionalFields();
       }));
@@ -14170,11 +14817,11 @@ function renderTreeCardDateLines(person) {
         workCompany: '',
         workOccupation: '',
         workNotes: 'No work facts recorded yet.',
-        workFromDate: emptyGenealogyDate('Unknown'),
-        workToDate: emptyGenealogyDate('Unknown'),
+        workFromDate: emptyGenealogyDate('Exact date'),
+        workToDate: emptyGenealogyDate('Exact date'),
         religion: 'Unknown',
         baptismPlace: '',
-        baptismDate: emptyGenealogyDate('Unknown')
+        baptismDate: emptyGenealogyDate('Exact date')
       };
     }
 
@@ -14185,9 +14832,9 @@ function renderTreeCardDateLines(person) {
       const details = peopleProfileDetails[id];
       details.educationFromDate = normalizeGenealogyDateInput(details.educationFromDate, 'Year only');
       details.educationToDate = normalizeGenealogyDateInput(details.educationToDate, 'Year only');
-      details.workFromDate = normalizeGenealogyDateInput(details.workFromDate, 'Unknown');
-      details.workToDate = normalizeGenealogyDateInput(details.workToDate, 'Unknown');
-      details.baptismDate = normalizeGenealogyDateInput(details.baptismDate, 'Unknown');
+      details.workFromDate = normalizeGenealogyDateInput(details.workFromDate, 'Exact date');
+      details.workToDate = normalizeGenealogyDateInput(details.workToDate, 'Exact date');
+      details.baptismDate = normalizeGenealogyDateInput(details.baptismDate, 'Exact date');
       return peopleProfileDetails[id];
     }
 
@@ -14750,7 +15397,7 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
       const deathPlaceValue = person.deathPlace === '-' ? '' : (person.deathPlace || '');
       const centralPerson = getPerson(person.id);
       const birthDateModel = centralPerson?.birth || { date: person.birth, dateLabel: person.birth, dateType: details.birthDateType || 'Unknown' };
-      const deathDateModel = centralPerson?.death || { date: person.death, dateLabel: person.death, dateType: details.deathDateType || (isDeceased ? 'Unknown' : 'Not applicable') };
+      const deathDateModel = centralPerson?.death || { date: person.death, dateLabel: person.death, dateType: details.deathDateType || 'Exact date' };
       return `<div class="profile-main-edit-grid-v2 ${isFemale ? 'has-maiden' : 'no-maiden'} ${isDeceased ? 'is-deceased' : ''}">
         <div class="field profile-field-gender"><label>Gender</label><select class="compact-select" id="profileInlineGender"><option ${genderValue === 'Male' ? 'selected' : ''}>Male</option><option ${genderValue === 'Female' ? 'selected' : ''}>Female</option><option ${genderValue === 'Unknown' ? 'selected' : ''}>Unknown</option></select></div>
         <div class="field add-person-status-field profile-status-field profile-field-living"><label>Living status</label><button class="add-person-status-button" type="button" id="profileStatusButton" aria-haspopup="listbox" aria-expanded="false"><span class="add-person-status-current"><span class="add-person-status-dot ${statusDotClass(currentStatus)}"></span><span id="profileStatusLabel">${escapeHtml(currentStatus)}</span></span><span class="icon-rotate-down">${icon.chevron}</span></button><input type="hidden" id="profileInlineLiving" value="${escapeHtml(currentStatus)}"><div class="add-person-status-menu" id="profileStatusMenu" role="listbox" hidden>${['Living','Deceased','Unknown'].map(status => `<button class="add-person-status-option ${status === currentStatus ? 'active' : ''}" type="button" role="option" aria-selected="${status === currentStatus ? 'true' : 'false'}" data-profile-status-value="${status}"><span><span class="add-person-status-dot ${statusDotClass(status)}"></span>${status}</span><span data-profile-status-check>${status === currentStatus ? icon.check : ''}</span></button>`).join('')}</div></div>
@@ -14777,7 +15424,7 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
             typeId: 'profileInlineDeathType',
             className: 'profile-date-combo profile-field-death-date',
             placeholder: 'e.g. 20 Oct 1926',
-            defaultDateType: isDeceased ? 'Exact date' : 'Not applicable'
+            defaultDateType: 'Exact date'
           })}
           <div class="field profile-field-death-place"><label>Death Place</label><input id="profileInlineDeathPlace" value="${escapeHtml(deathPlaceValue)}"></div>
         </div>
@@ -15024,11 +15671,11 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
         const deathModel = main.querySelector('[data-genealogy-date-field="profileInlineDeathField"] [data-genealogy-date-model]');
         if (deathModel) {
           const currentDeath = normalizeGenealogyDateInput(JSON.parse(deathModel.value || '{}'));
-          if (isDeceased && currentDeath.dateType === 'Not applicable') {
+          if (isDeceased && !currentDeath.date && !currentDeath.dateLabel) {
             applyGenealogyDateToField('profileInlineDeathField', emptyGenealogyDate('Exact date'));
           }
           if (!isDeceased) {
-            applyGenealogyDateToField('profileInlineDeathField', emptyGenealogyDate('Not applicable'));
+            applyGenealogyDateToField('profileInlineDeathField', emptyGenealogyDate('Exact date'));
           }
         }
         const group = main.querySelector('#profileInlineDeathFields');
@@ -15115,7 +15762,7 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
         }
         const deathDate = living === 'Deceased'
           ? collectGenealogyDateField('profileInlineDeathField')
-          : emptyGenealogyDate('Not applicable');
+          : emptyGenealogyDate('Exact date');
         if (!deathDate) {
           showToast('Check the death date before saving.');
           return;
@@ -15159,7 +15806,7 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
             };
           } else {
             centralPerson.death = {
-              ...emptyGenealogyDate('Not applicable'),
+              ...emptyGenealogyDate('Exact date'),
               placeId: null,
               reason: '',
               burialPlaceId: null
