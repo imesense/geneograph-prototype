@@ -1422,15 +1422,21 @@
     .genealogy-date-details-button svg { width: 18px; height: 18px; display: block; }
     .genealogy-date-standard-status,
     .genealogy-date-validation {
-      min-height: 16px;
+      min-height: 0;
       color: var(--text-tertiary);
       font-size: 12px;
       line-height: 1.35;
-    }
-    .genealogy-date-validation {
-      color: var(--danger);
       display: none;
     }
+
+    .genealogy-date-standard-status:not(:empty) {
+      display: block;
+    }
+
+    .genealogy-date-validation {
+      color: var(--danger);
+    }
+
     .genealogy-date-field.has-error .genealogy-date-input,
     .genealogy-date-field.has-error .genealogy-date-type {
       border-color: rgba(255, 111, 111, .65);
@@ -3378,11 +3384,12 @@
     .add-person-death-fields { display: contents; }
     .add-person-life-grid {
       display: grid;
-      gap: 28px;
+      gap: var(--space-8);
     }
+
     .add-person-life-event-block {
       display: grid;
-      gap: 12px;
+      gap: var(--space-4);
       min-width: 0;
     }
     .add-person-life-event-block.add-person-death-fields {
@@ -3398,9 +3405,135 @@
       display: grid;
       min-width: 0;
     }
-    .genealogy-date-range-shell.is-between {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: var(--space-3);
+    .genealogy-date-controls.is-between {
+      grid-template-columns: minmax(150px, 190px) minmax(260px, 1fr) 52px;
+      grid-template-rows: auto 56px auto 56px;
+      column-gap: var(--space-3);
+      row-gap: var(--space-2);
+      align-items: start;
+    }
+
+    .genealogy-date-controls.is-between .genealogy-date-range-shell {
+      display: contents;
+    }
+
+    .genealogy-date-controls.is-between .genealogy-date-range-cell {
+      display: contents;
+    }
+
+    .genealogy-date-controls.is-between .genealogy-date-range-cell span {
+      display: block;
+      color: var(--text-tertiary);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .genealogy-date-controls.is-between .genealogy-date-range-cell:first-child span {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      align-self: end;
+    }
+
+    .genealogy-date-controls.is-between [data-genealogy-date-to-cell] span {
+      grid-column: 1 / -1;
+      grid-row: 3;
+      align-self: end;
+      margin-top: var(--space-3);
+    }
+
+    .genealogy-date-controls.is-between .genealogy-date-type {
+      grid-column: 1;
+      grid-row: 2;
+      min-height: 56px;
+    }
+
+    .genealogy-date-controls.is-between [data-genealogy-date-input] {
+      grid-column: 2;
+      grid-row: 2;
+      min-height: 56px;
+    }
+
+    .genealogy-date-controls.is-between .genealogy-date-details-button {
+      grid-column: 3;
+      grid-row: 2;
+      width: 52px;
+      height: 56px;
+      min-height: 56px;
+      max-height: 56px;
+      align-self: start;
+      justify-self: stretch;
+    }
+
+    .genealogy-date-controls.is-between [data-genealogy-date-input-to] {
+      grid-column: 2;
+      grid-row: 4;
+      min-height: 56px;
+    }
+    .add-person-life-event-block .genealogy-date-field.is-between .genealogy-date-controls {
+      grid-template-columns: minmax(150px, 190px) minmax(260px, 1fr) 52px;
+      grid-template-rows: auto 56px auto 56px;
+      gap: var(--space-2) var(--space-3);
+      align-items: start;
+    }
+
+    .add-person-life-event-block .genealogy-date-field.is-between .genealogy-date-range-shell {
+      display: contents;
+    }
+
+    .add-person-life-event-block .genealogy-date-field.is-between .genealogy-date-range-cell {
+      display: contents;
+    }
+
+    .add-person-life-event-block .genealogy-date-field.is-between .genealogy-date-range-cell span {
+      display: block;
+      color: var(--text-tertiary);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .add-person-life-event-block .genealogy-date-field.is-between .genealogy-date-range-cell:first-child span {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      align-self: end;
+    }
+
+    .add-person-life-event-block .genealogy-date-field.is-between [data-genealogy-date-to-cell] span {
+      grid-column: 1 / -1;
+      grid-row: 3;
+      align-self: end;
+      margin-top: var(--space-3);
+    }
+
+    .add-person-life-event-block .genealogy-date-field.is-between .genealogy-date-type {
+      grid-column: 1;
+      grid-row: 2;
+      min-height: 56px;
+      align-self: start;
+    }
+
+    .add-person-life-event-block .genealogy-date-field.is-between [data-genealogy-date-input] {
+      grid-column: 2;
+      grid-row: 2;
+      min-height: 56px;
+    }
+
+    .add-person-life-event-block .genealogy-date-field.is-between .genealogy-date-details-button {
+      grid-column: 3;
+      grid-row: 2;
+      width: 52px;
+      height: 56px;
+      min-height: 56px;
+      align-self: start;
+    }
+
+    .add-person-life-event-block .genealogy-date-field.is-between [data-genealogy-date-input-to] {
+      grid-column: 2;
+      grid-row: 4;
+      min-height: 56px;
     }
     .genealogy-date-range-cell {
       display: grid;
@@ -10637,7 +10770,7 @@
 
     function genealogyDatePartsFromModel(model = {}) {
       const value = normalizeGenealogyDateInput(model);
-      const first = parseBaseGenealogyDate(value.dateType === 'Between' ? value.date : value.dateLabel || value.date || value.originalText) || {};
+      const first = parseBaseGenealogyDate(value.dateLabel || value.date || value.originalText) || {};
       const second = parseBaseGenealogyDate(value.date2Label || value.date2 || '') || {};
       return {
         day: first.day || '',
@@ -10659,9 +10792,9 @@
       const fieldClass = options.className || '';
       const isBetween = model.dateType === 'Between';
       const hiddenValue = escapeHtml(JSON.stringify(model));
-      return `<div class="field genealogy-date-field ${escapeHtml(fieldClass)}" data-genealogy-date-field="${escapeHtml(fieldId)}">
+      return `<div class="field genealogy-date-field ${isBetween ? 'is-between' : ''} ${escapeHtml(fieldClass)}" data-genealogy-date-field="${escapeHtml(fieldId)}">
         <label for="${escapeHtml(inputId)}">${escapeHtml(label)}</label>
-        <div class="genealogy-date-controls">
+        <div class="genealogy-date-controls ${isBetween ? 'is-between' : ''}">
           <select class="compact-select genealogy-date-type" id="${escapeHtml(typeId)}" data-genealogy-date-type>${genealogyDateTypeOptions(model.dateType)}</select>
           <div class="genealogy-date-range-shell ${isBetween ? 'is-between' : ''}" data-genealogy-date-range-shell>
             <div class="genealogy-date-range-cell">
@@ -10736,6 +10869,9 @@
       if (input) input.value = formatGenealogyDateStartLabel(value);
       if (inputTo) inputTo.value = value.dateType === 'Between' ? formatGenealogyDateEndLabel(value) : '';
       if (rangeShell) rangeShell.classList.toggle('is-between', value.dateType === 'Between');
+      const controls = root.querySelector('.genealogy-date-controls');
+      root.classList.toggle('is-between', value.dateType === 'Between');
+      if (controls) controls.classList.toggle('is-between', value.dateType === 'Between');
       if (model) model.value = JSON.stringify(value);
       if (status) status.textContent = value.calendar === 'Julian' ? 'Julian calendar stored; conversion is not implemented.' : '';
       if (!options.keepError) setGenealogyDateFieldError(root, '');
@@ -14006,33 +14142,28 @@
 
       person.livingStatus = normalizeLivingStatus(livingStatus);
 
-      const birthDate = collectGenealogyDateField('addPersonBirth');
-      if (!birthDate) {
-        showToast('Check the birth date before saving.');
-        return;
-      }
-
-      let deathDate = null;
-      if (person.livingStatus === 'Deceased') {
-        deathDate = collectGenealogyDateField('addPersonDeath');
-        if (!deathDate) {
-          showToast('Check the death date before saving.');
-          return;
-        }
-      }
-
       const additionalFacts = collectAddPersonAdditionalFacts(personId);
       if (additionalFacts.invalid) {
         showToast(additionalFacts.message || 'Check the additional facts before saving.');
         return;
       }
 
+      const birthDate = collectGenealogyDateField('addPersonBirth');
+      if (!birthDate) {
+        showToast('Check the birth date before saving.');
+        return;
+      }
       person.birth = {
         ...birthDate,
         placeId: samplePlaceIdFromDisplay(readAddPersonModalValue('#addPersonBirthPlace'))
       };
 
       if (person.livingStatus === 'Deceased') {
+        const deathDate = collectGenealogyDateField('addPersonDeath');
+        if (!deathDate) {
+          showToast('Check the death date before saving.');
+          return;
+        }
         person.death = {
           ...deathDate,
           placeId: samplePlaceIdFromDisplay(readAddPersonModalValue('#addPersonDeathPlace')),
