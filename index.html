@@ -3470,6 +3470,72 @@
     .genealogy-date-field:not(.is-between) [data-genealogy-date-to-cell] {
       display: none;
     }
+    .add-person-life-grid > .add-person-additional-section {
+      display: block;
+      width: 100%;
+      margin-top: var(--space-2);
+    }
+    .add-person-life-event-block > .genealogy-date-field.is-between {
+      grid-template-columns: minmax(150px, 190px) minmax(260px, 1fr) 52px;
+      grid-template-rows: auto 56px auto 56px;
+      gap: var(--space-2) var(--space-3);
+      align-items: start;
+    }
+    .add-person-life-event-block > .genealogy-date-field.is-between > label {
+      grid-column: 1;
+      grid-row: 1;
+      align-self: end;
+      margin: 0;
+    }
+    .add-person-life-event-block > .genealogy-date-field.is-between > .genealogy-date-controls,
+    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-range-shell,
+    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-range-cell {
+      display: contents;
+    }
+    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-range-cell span {
+      display: block;
+      align-self: end;
+      margin: 0;
+    }
+    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-range-cell:first-child span {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .add-person-life-event-block > .genealogy-date-field.is-between [data-genealogy-date-to-cell] span {
+      grid-column: 2;
+      grid-row: 3;
+      margin-top: var(--space-3);
+    }
+    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-type {
+      grid-column: 1;
+      grid-row: 2;
+      align-self: start;
+      min-height: 56px;
+    }
+    .add-person-life-event-block > .genealogy-date-field.is-between [data-genealogy-date-input] {
+      grid-column: 2;
+      grid-row: 2;
+      min-height: 56px;
+    }
+    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-details-button {
+      grid-column: 3;
+      grid-row: 2;
+      width: 52px;
+      height: 56px;
+      min-height: 56px;
+      max-height: 56px;
+      align-self: start;
+      justify-self: start;
+    }
+    .add-person-life-event-block > .genealogy-date-field.is-between [data-genealogy-date-input-to] {
+      grid-column: 2;
+      grid-row: 4;
+      min-height: 56px;
+    }
+    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-standard-status,
+    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-validation {
+      grid-column: 1 / -1;
+    }
     .add-person-facts-section {
       border: 1px solid var(--border-default);
       border-radius: var(--radius-sm);
@@ -13629,9 +13695,10 @@ function renderTreeCardDateLines(person) {
                   <input id="addPersonDeathPlace" value="${escapeHtml(editValues.deathPlace)}" placeholder="e.g. Meowbridge, England">
                 </div>
               </div>
+
+              ${renderAddPersonAdditionalFacts(editPerson)}
             </div>
           </section>
-            ${renderAddPersonAdditionalFacts(editPerson)}
           </div>
           <aside>
             <div class="modal-side-card"><h3>Attach to this person</h3><button class="attach-row" type="button" data-add-person-attach="photo"><div class="attach-icon">${icon.image}</div><div><strong>Add Photo</strong><br><span class="panel-muted">Link photo</span></div></button><button class="attach-row" type="button" data-add-person-attach="file"><div class="attach-icon file">${icon.file}</div><div><strong>Add File</strong><br><span class="panel-muted">Link archive item or file</span></div></button><button class="attach-row" type="button" data-add-person-attach="note"><div class="attach-icon note">${icon.note}</div><div><strong>Add Note</strong><br><span class="panel-muted">Add note about this person</span></div></button></div>
