@@ -14754,10 +14754,23 @@ function renderTreeCardDateLines(person) {
       </div>`;
     }
 
+    function timelineEventBoundaryRank(event) {
+      if (event?.type === 'birth') return 0;
+      if (event?.type === 'death') return 2;
+      return 1;
+    }
+
+    function compareTimelineEvents(a, b) {
+      const boundaryDiff = timelineEventBoundaryRank(a) - timelineEventBoundaryRank(b);
+      if (boundaryDiff) return boundaryDiff;
+
+      return parseTimelineSortValue(a) - parseTimelineSortValue(b);
+    }
+
     function getFamilyTreeTimelineEvents(personId) {
       return getEventsForPerson(personId)
         .slice()
-        .sort((a, b) => parseTimelineSortValue(a) - parseTimelineSortValue(b));
+        .sort(compareTimelineEvents);
     }
 
     function renderFamilyTreeTimeline(personId) {
@@ -14816,9 +14829,12 @@ function renderTreeCardDateLines(person) {
     function timelineEventIcon(event) {
       const map = {
         birth: icon.birth,
+        childBirth: icon.birth,
         marriage: icon.marriage,
         education: icon.education,
-        childBirth: icon.birth,
+        occupation: icon.work,
+        baptism: icon.baptism,
+        burial: icon.mapPin,
         death: icon.death
       };
 
@@ -14829,6 +14845,9 @@ function renderTreeCardDateLines(person) {
       const map = {
         marriage: 'amber',
         education: 'blue',
+        occupation: 'blue',
+        baptism: 'blue',
+        burial: 'gray',
         death: 'gray'
       };
 
