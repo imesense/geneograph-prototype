@@ -2735,6 +2735,9 @@
     .status-dot { display: inline-flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 12px; }
     .status-dot::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--brand-green-500); }
     .status-dot.deceased::before { background: var(--text-tertiary); }
+    .status-dot.unknown::before {
+      background: var(--amber);
+    }
     .card-actions { position: absolute; right: 8px; bottom: 8px; display: flex; gap: 4px; }
     .card-action { width: 26px; height: 26px; border: 0; border-radius: 6px; background: transparent; color: var(--text-secondary); display: grid; place-items: center; }
     .card-action svg { width: 16px; height: 16px; }
@@ -3249,6 +3252,9 @@
     .family-actions-menu { min-width: 210px; }
 
     .relative-popover {
+      --relative-popover-arrow-top: 88px;
+      --relative-popover-arrow-size: 20px;
+
       position: fixed;
       z-index: 90;
       width: 360px;
@@ -3256,9 +3262,50 @@
       background: var(--surface-card);
       border-radius: var(--radius-sm);
       box-shadow: var(--shadow-soft);
-      padding: var(--space-4);
+      padding: 0;
+      /* Critical: arrow must be allowed to sit outside the card */
+      overflow: visible;
     }
-    .relative-popover::before { content: ""; position: absolute; left: -11px; top: 88px; width: 20px; height: 20px; background: var(--surface-card); border-left: 1px solid var(--border-strong); border-bottom: 1px solid var(--border-strong); transform: rotate(45deg); }
+
+    .relative-popover-body {
+      position: relative;
+      z-index: 1;
+      max-height: calc(100vh - 24px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: var(--space-4);
+      border-radius: inherit;
+      background: var(--surface-card);
+    }
+
+    .relative-popover::before {
+      content: "";
+      position: absolute;
+      top: var(--relative-popover-arrow-top);
+      width: var(--relative-popover-arrow-size);
+      height: var(--relative-popover-arrow-size);
+      background: var(--surface-card);
+      transform: rotate(45deg);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .relative-popover[data-arrow-side="left"]::before {
+      left: -11px;
+      right: auto;
+      border-left: 1px solid var(--border-strong);
+      border-bottom: 1px solid var(--border-strong);
+      border-top: 0;
+      border-right: 0;
+    }
+
+    .relative-popover[data-arrow-side="right"]::before {
+      right: -11px;
+      left: auto;
+      border-right: 1px solid var(--border-strong);
+      border-top: 1px solid var(--border-strong);
+      border-left: 0;
+      border-bottom: 0;
+    }
     .relative-popover h2 { margin: 0; font-size: 18px; }
     .relative-popover p { margin: 0 0 var(--space-4); color: var(--text-secondary); }
     .relative-group { color: var(--text-secondary); font-size: 13px; text-transform: uppercase; letter-spacing: .08em; margin: var(--space-4) 0 var(--space-2); }
@@ -4959,8 +5006,13 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      font-weight: 700;
+      font-weight: 600;
       z-index: 2;
+    }
+    .profile-back-link-icon svg {
+      width: 16px;
+      height: 16px;
+      display: block;
     }
     .profile-back-link:hover { color: var(--text-primary); text-decoration: underline; text-underline-offset: 3px; }
 
@@ -5457,6 +5509,11 @@
     }
     .profile-info-row span:first-child { color: var(--text-tertiary); }
     .profile-info-row strong { color: var(--text-primary); min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+    .profile-partner-value { display: grid; gap: 3px; min-width: 0; }
+    .profile-partner-meta { color: var(--text-secondary); font-size: 13px; line-height: 1.35; overflow: hidden; text-overflow: ellipsis; }
+    .profile-partner-link { border: 0; background: transparent; color: var(--text-primary); padding: 0; font: inherit; font-weight: 900; text-align: left; cursor: pointer; min-width: 0; }
+    .profile-partner-link:hover,
+    .profile-partner-link:focus-visible { color: var(--brand-green-300); text-decoration: underline; text-underline-offset: 3px; outline: none; }
 
     .profile-card-edit-tabs {
       display: grid;
@@ -8743,6 +8800,18 @@
     .profile-readonly-grid.profile-readonly-grid-tabbed.main {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+    .profile-readonly-grid.profile-readonly-grid-tabbed.main {
+      align-items: stretch;
+    }
+
+    .profile-readonly-grid.profile-readonly-grid-tabbed.main .profile-info-block {
+      align-content: start;
+      grid-auto-rows: max-content;
+    }
+
+    .profile-readonly-grid.profile-readonly-grid-tabbed.main .profile-info-row {
+      align-items: start;
+    }
     .profile-info-block.wide { min-height: 260px; }
     .profile-full-card.locked .profile-info-block { min-height: 0; }
     .profile-connected-card h3.profile-connected-head {
@@ -8777,30 +8846,55 @@
       max-width: 24px;
       max-height: 24px;
     }
+    .profile-connected-action.open { padding-right: 8px; }
+    /* People full profile connected-card actions */
     .profile-connected-actions {
       display: inline-flex;
       align-items: center;
-      gap: var(--space-2);
+      justify-content: flex-end;
+      gap: var(--space-1);
       flex: 0 0 auto;
-    }
-    .profile-connected-action {
-      min-height: 32px;
-      border: 1px solid transparent;
-      border-radius: 8px;
-      background: transparent;
-      color: var(--brand-green-300);
-      padding: 0 9px;
-      font-weight: 900;
-      text-decoration: underline;
-      text-underline-offset: 3px;
       white-space: nowrap;
     }
-    .profile-connected-action:hover {
-      background: rgba(47,174,116,.08);
-      border-color: rgba(98,217,154,.18);
-      color: var(--text-primary);
+
+    .profile-connected-action {
+      height: 30px;
+      min-height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 0 8px;
+      line-height: 1;
+      vertical-align: middle;
+      text-decoration: none;
     }
-    .profile-connected-action.open { padding-right: 8px; }
+
+    .profile-connected-action svg {
+      width: 15px;
+      height: 15px;
+      max-width: 15px;
+      max-height: 15px;
+      flex: 0 0 15px;
+      display: block;
+    }
+
+    .profile-connected-action.open {
+      padding-right: 6px;
+    }
+
+    .profile-connected-action.open svg {
+      width: 16px;
+      height: 16px;
+      max-width: 16px;
+      max-height: 16px;
+      flex-basis: 16px;
+    }
+    .profile-connected-action:hover,
+    .profile-connected-action:focus-visible {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
     
     .profile-family-scroll.command.clean {
       border-top: 0;
@@ -8966,51 +9060,45 @@
     .profile-readonly-grid.profile-readonly-grid-tabbed.main .profile-info-block h4:nth-child(1) { text-transform: uppercase; }
 
     .profile-hero-more {
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      gap: 10px !important;
-      min-height: 44px;
-      padding: 0 18px !important;
-      line-height: 1 !important;
+      min-width: 176px;
+      padding: 0 var(--space-4);
+      justify-content: space-between;
+      gap: var(--space-3);
     }
+
     .profile-hero-more > span:first-child {
       display: inline-flex;
       align-items: center;
+      gap: var(--space-2);
+      min-width: 0;
       line-height: 1;
-      white-space: nowrap;
     }
+
+    .profile-hero-more > span:first-child svg {
+      width: 17px;
+      height: 17px;
+      flex: 0 0 17px;
+      display: block;
+    }
+
     .profile-hero-more-chevron {
-      width: 14px;
-      height: 14px;
+      width: 16px;
+      height: 16px;
+      flex: 0 0 16px;
       display: inline-grid;
       place-items: center;
-      line-height: 1;
-      transform: translateY(1px);
-      flex: 0 0 auto;
+      transform: none;
+    }
+
+    .profile-hero-more-chevron svg {
+      width: 16px;
+      height: 16px;
+      display: block;
     }
 
     @media (max-width: 1180px) {.profile-family-hub .profile-family-scroll.command,
       .profile-family-hub .profile-family-scroll.command.clean { max-height: 360px !important; }
       .profile-readonly-grid.profile-readonly-grid-tabbed.main { grid-template-columns: 1fr; }}
-    .profile-hero-more {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      min-height: 44px;
-      padding: 0 18px;
-      line-height: 1;
-    }
-    .profile-hero-more-chevron {
-      display: inline-grid;
-      place-items: center;
-      width: 14px;
-      height: 14px;
-      line-height: 1;
-      transform: translateY(1px);
-      flex: 0 0 14px;
-    }
     .profile-full-card.editing .profile-card-edit-grid.two {
       grid-template-columns: 1fr !important;
     }
@@ -9590,6 +9678,12 @@
       font-weight: 900;
       font-size: 16px;
       line-height: 1;
+    }
+    .profile-family-action-button svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+      flex: 0 0 auto;
     }
     .profile-family-action-button:hover,
     .profile-family-action-button:focus-visible {
@@ -14233,27 +14327,99 @@ function renderTreeCardDateLines(person) {
 
     function openRelativePopover(anchor, relation) {
       closeMenu();
+
       const person = personById(state.selectedPersonId);
-      const rect = anchor.getBoundingClientRect();
+      if (!person || !anchor) return;
+
       const popover = document.createElement('div');
       popover.className = 'relative-popover';
       popover.id = 'relativePopover';
-      popover.style.top = `${Math.min(window.innerHeight - 560, rect.bottom - 230)}px`;
-      popover.style.left = `${Math.max(16, rect.left - 374)}px`;
-      popover.innerHTML = `<h2>Add relative</h2><p>to ${escapeHtml(person.name)}</p>
+
+      popover.innerHTML = `<div class="relative-popover-body"><h2>Add relative</h2><p>to ${escapeHtml(person.name)}</p>
         <div class="relative-group">Parents</div><div class="relative-grid"><button class="relative-choice" data-rel="father"><span class="gender-icon">${icon.male}</span>Father</button><button class="relative-choice female" data-rel="mother"><span class="gender-icon">${icon.female}</span>Mother</button></div>
         <div class="relative-group">Partner</div><div class="relative-grid" style="grid-template-columns:1fr"><button class="relative-choice" data-rel="partner"><span class="relative-choice-icon marriage-icon">${icon.marriage}</span>Partner / Spouse</button></div>
         <div class="relative-group">Children</div><div class="relative-grid"><button class="relative-choice" data-rel="son"><span class="gender-icon">${icon.male}</span>Son</button><button class="relative-choice female" data-rel="daughter"><span class="gender-icon">${icon.female}</span>Daughter</button></div>
         <div class="relative-group">Siblings</div><div class="relative-grid"><button class="relative-choice" data-rel="brother"><span class="gender-icon">${icon.male}</span>Brother</button><button class="relative-choice female" data-rel="sister"><span class="gender-icon">${icon.female}</span>Sister</button></div>
-        <button class="connect-choice" type="button" data-connect-existing><span class="connect-choice-main"><span class="connect-choice-icon">${icon.link}</span><span class="connect-choice-copy"><strong>Connect existing person</strong><span>Link someone already in this tree</span></span></span><span class="connect-choice-chevron" aria-hidden="true">${icon.chevron}</span></button>`;
+        <button class="connect-choice" type="button" data-connect-existing><span class="connect-choice-main"><span class="connect-choice-icon">${icon.link}</span><span class="connect-choice-copy"><strong>Connect existing person</strong><span>Link someone already in this tree</span></span></span><span class="connect-choice-chevron" aria-hidden="true">${icon.chevron}</span></button></div>`;
+
       document.body.appendChild(popover);
-      popover.querySelectorAll('[data-rel]').forEach(button => button.addEventListener('click', () => {
-        const rel = button.dataset.rel;
+      positionRelativePopover(popover, anchor);
+
+      popover.querySelectorAll('[data-rel]').forEach(button => {
+        button.addEventListener('click', () => {
+          const rel = button.dataset.rel;
+          closeMenu();
+          openAddPersonModal(`Add ${rel}`, `Create a new person and add as ${person.name.split(' ')[0]}'s ${rel}`, {
+            relativeType: rel,
+            personId: person.id
+          });
+        });
+      });
+
+      popover.querySelector('[data-connect-existing]')?.addEventListener('click', () => {
         closeMenu();
-        openAddPersonModal(`Add ${rel}`, `Create a new person and add as ${person.name.split(' ')[0]}'s ${rel}`, { relativeType: rel, personId: person.id });
-      }));
-      popover.querySelector('[data-connect-existing]').addEventListener('click', () => { closeMenu(); showToast('Connect existing person flow will be added in a later iteration.'); });
+        showToast('Connect existing person flow will be added in a later iteration.');
+      });
+
       setTimeout(() => document.addEventListener('click', closeMenu), 0);
+    }
+    function clampNumber(value, min, max) {
+      return Math.max(min, Math.min(value, max));
+    }
+
+    function positionRelativePopover(popover, anchor) {
+      const rect = anchor.getBoundingClientRect();
+      const margin = 12;
+      const gap = 14;
+      const arrowSize = 20;
+      const arrowCornerPadding = 24;
+
+      const popoverWidth = popover.offsetWidth || 360;
+      const popoverHeight = popover.offsetHeight || 560;
+
+      const anchorCenterX = rect.left + rect.width / 2;
+      const anchorCenterY = rect.top + rect.height / 2;
+
+      const spaceRight = window.innerWidth - rect.right - margin;
+      const spaceLeft = rect.left - margin;
+
+      let left;
+      let arrowSide;
+
+      if (spaceRight >= popoverWidth + gap) {
+        left = rect.right + gap;
+        arrowSide = 'left';
+      } else if (spaceLeft >= popoverWidth + gap) {
+        left = rect.left - popoverWidth - gap;
+        arrowSide = 'right';
+      } else if (spaceRight >= spaceLeft) {
+        left = clampNumber(rect.right + gap, margin, window.innerWidth - popoverWidth - margin);
+        arrowSide = 'left';
+      } else {
+        left = clampNumber(rect.left - popoverWidth - gap, margin, window.innerWidth - popoverWidth - margin);
+        arrowSide = 'right';
+      }
+
+      const preferredTop = anchorCenterY - popoverHeight / 2;
+      const maxTop = Math.max(margin, window.innerHeight - popoverHeight - margin);
+      const top = clampNumber(preferredTop, margin, maxTop);
+
+      const minArrowTop = arrowCornerPadding;
+      const maxArrowTop = Math.max(
+        minArrowTop,
+        popoverHeight - arrowSize - arrowCornerPadding
+      );
+
+      const arrowTop = clampNumber(
+        anchorCenterY - top - arrowSize / 2,
+        minArrowTop,
+        maxArrowTop
+      );
+
+      popover.style.left = `${left}px`;
+      popover.style.top = `${top}px`;
+      popover.dataset.arrowSide = arrowSide;
+      popover.style.setProperty('--relative-popover-arrow-top', `${arrowTop}px`);
     }
 
     function cleanEditFieldValue(value) {
@@ -15690,7 +15856,10 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
       if (typeof state.peopleProfileEditing !== 'boolean') state.peopleProfileEditing = false;
       main.innerHTML = `<div class="person-profile-v2 ${state.peopleProfileEditing ? 'is-editing' : ''}">
         <header class="profile-hero profile-command-hero">
-          <button class="profile-back-link" type="button" id="backPeopleList">< Back to people</button>
+          <button class="profile-back-link" type="button" id="backPeopleList">
+            <span class="profile-back-link-icon" aria-hidden="true">${icon.arrow}</span>
+            <span>Back to people</span>
+          </button>
           ${renderPersonAvatar(person, 'profile-hero-photo')}
           <div class="profile-hero-copy">
             <h1>${escapeHtml(person.name)}</h1>
@@ -15918,15 +16087,90 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
           ${renderProfileInfoRow('Birth place', person.birthPlace || '-')}
           ${isDeceased ? renderProfileInfoRow('Death date', deathLabel || '-') + renderProfileInfoRow('Death place', deathPlaceLabel || '-') + renderProfileInfoRow('Death reason', details.deathReason || '-') + renderProfileInfoRow('Burial place', details.burialPlace || '-') : ''}
         </section>
-        <section class="profile-info-block"><h4>Record info</h4>
-          ${renderProfileInfoRow('Profile ID', `P-${String(currentPeopleRecords().findIndex(p => p.id === person.id) + 1).padStart(6, '0')}`)}
-          ${renderProfileInfoRow('Created', 'May 1, 2026')}
-          ${renderProfileInfoRow('Updated', person.updated || '-')}
-          ${renderProfileInfoRow('Review issues', getPeopleReviewStatus(person) === 'No issues' ? '0 open' : getPeopleReviewStatus(person))}
-          ${renderProfileInfoRow('Privacy', person.living === 'Living' ? 'Living protected' : 'Standard record')}
-          ${renderProfileInfoRow('Source status', person.sourceStatus || 'Partly sourced')}
+        <section class="profile-info-block"><h4>Partners</h4>
+          ${renderProfilePartnersInfo(person)}
         </section>
       </div>`;
+    }
+
+    function profilePartnerRelationshipType(family) {
+      const direct = cleanEditFieldValue(family?.relationshipType || family?.typeLabel || family?.status);
+      if (direct && direct.toLowerCase() !== 'active') return direct;
+      const relevant = profilePartnerFamilyEvent(family);
+      return cleanEditFieldValue(relevant?.relationshipType || relevant?.typeLabel || relevant?.eventType || relevant?.type) || 'Partner';
+    }
+
+    function profilePartnerRelationshipLabel(type) {
+      const value = String(type || '').trim().toLowerCase();
+      const labels = {
+        married: 'Spouse',
+        partner: 'Partner',
+        'unmarried partner': 'Partner',
+        engaged: 'Partner',
+        'former partner': 'Former partner',
+        separated: 'Separated partner',
+        divorced: 'Divorced spouse',
+        annulled: 'Former spouse',
+        'unknown relationship': 'Partner'
+      };
+      return labels[value] || 'Partner';
+    }
+
+    function profilePartnerFamilyEvent(family) {
+      const relevantTags = new Set(['MARR', 'ENGA', 'DIV', 'ANUL', 'SEPARATED']);
+      const relevantTypes = new Set(['marriage', 'engagement', 'divorce', 'annulment', 'separated', 'separation']);
+      return (family?.events || []).find(event => {
+        const tag = String(event?.gedcomTag || event?.tag || '').toUpperCase();
+        const type = String(event?.eventType || event?.type || event?.typeLabel || '').toLowerCase();
+        return relevantTags.has(tag) || relevantTypes.has(type);
+      }) || (family?.events || [])[0] || null;
+    }
+
+    function profilePartnerEventDateLabel(family) {
+      const event = profilePartnerFamilyEvent(family);
+      if (!event) return '';
+      const dateInput = event.date && typeof event.date === 'object'
+        ? event.date
+        : { date: event.date || '', dateLabel: event.dateLabel || '', dateType: event.dateType || 'Exact date' };
+      return formatGenealogyDateLabel(dateInput) || cleanEditFieldValue(event.dateLabel || event.date || event.year);
+    }
+
+    function profilePartnerIdsForFamily(family, personId) {
+      const ids = [
+        family?.partner1Id,
+        family?.partner2Id,
+        family?.partnerAId,
+        family?.partnerBId,
+        family?.personAId,
+        family?.personBId,
+        family?.fatherId,
+        family?.motherId
+      ].filter(Boolean);
+      const unique = [...new Set(ids)];
+      if (!unique.includes(personId)) return null;
+      return unique.find(id => id !== personId) || '';
+    }
+
+    function renderProfilePartnersInfo(person) {
+      const centralPerson = getPerson(person?.id);
+      if (!centralPerson) return '<div class="panel-muted">No partners recorded</div>';
+      const seen = new Set();
+      const rows = centralFamilyRecords()
+        .filter(family => !family.projectId || family.projectId === centralPerson.projectId)
+        .map(family => {
+          const partnerId = profilePartnerIdsForFamily(family, centralPerson.id);
+          if (!partnerId || seen.has(`${family.id}:${partnerId}`)) return null;
+          const partner = getPerson(partnerId);
+          if (!partner) return null;
+          seen.add(`${family.id}:${partnerId}`);
+          const relationshipType = profilePartnerRelationshipType(family);
+          const relationshipLabel = profilePartnerRelationshipLabel(relationshipType);
+          const dateLabel = profilePartnerEventDateLabel(family);
+          const meta = [relationshipType === 'Unknown relationship' ? 'Partner' : relationshipType, dateLabel].filter(Boolean).join(' · ');
+          return renderProfileInfoRowRaw(relationshipLabel, `<span class="profile-partner-value"><button class="profile-partner-link" type="button" data-profile-partner-id="${escapeHtml(partner.id)}">${escapeHtml(partner.names.display)}</button>${meta ? `<small class="profile-partner-meta">${escapeHtml(meta)}</small>` : ''}</span>`);
+        })
+        .filter(Boolean);
+      return rows.length ? rows.join('') : '<div class="panel-muted">No partners recorded</div>';
     }
 
     function renderProfileInfoRow(label, value) {
@@ -16391,6 +16635,10 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
       main.querySelectorAll('[data-profile-note]').forEach(button => button.addEventListener('click', () => openProfileNote(button.dataset.profileNote)));
       main.querySelectorAll('[data-profile-edit-relationship]').forEach(button => button.addEventListener('click', event => { event.stopPropagation(); openProfileRelationshipEdit(person, button.dataset.profileEditRelationship); }));
       main.querySelectorAll('[data-profile-unlink-family]').forEach(button => button.addEventListener('click', event => { event.stopPropagation(); openProfileUnlinkConfirm(person, button.dataset.profileUnlinkFamily); }));
+      main.querySelectorAll('[data-profile-partner-id]').forEach(button => {
+        button.addEventListener('click', () => openProfileFamilyMember(button.dataset.profilePartnerId));
+        button.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openProfileFamilyMember(button.dataset.profilePartnerId); } });
+      });
       main.querySelectorAll('[data-profile-family]').forEach(button => {
         button.addEventListener('click', event => { if (!event.target.closest('[data-profile-edit-relationship], [data-profile-unlink-family]')) openProfileFamilyMember(button.dataset.profileFamily); });
         button.addEventListener('keydown', event => { if ((event.key === 'Enter' || event.key === ' ') && !event.target.closest('[data-profile-edit-relationship], [data-profile-unlink-family]')) { event.preventDefault(); openProfileFamilyMember(button.dataset.profileFamily); } });
