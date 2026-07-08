@@ -1414,6 +1414,79 @@
       box-sizing: border-box;
       resize: vertical;
     }
+    .place-combobox-field {
+      position: relative;
+    }
+
+    .place-combobox-shell {
+      position: relative;
+    }
+
+    .place-combobox-list {
+      position: absolute;
+      z-index: 180;
+      left: 0;
+      right: 0;
+      top: calc(100% + 6px);
+      border: 1px solid var(--border-strong);
+      background: var(--surface-card);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-soft);
+      padding: 4px;
+      max-height: 240px;
+      overflow: auto;
+    }
+
+    .place-combobox-option {
+      width: 100%;
+      min-height: 44px;
+      border: 0;
+      background: transparent;
+      color: var(--text-secondary);
+      border-radius: 8px;
+      display: grid;
+      grid-template-columns: 22px minmax(0, 1fr);
+      gap: var(--space-2);
+      align-items: center;
+      padding: 7px 9px;
+      text-align: left;
+    }
+
+    .place-combobox-option:hover,
+    .place-combobox-option.active {
+      background: var(--surface-selected);
+      color: var(--text-primary);
+    }
+
+    .place-combobox-option svg {
+      width: 16px;
+      height: 16px;
+      color: var(--text-tertiary);
+    }
+
+    .place-combobox-copy {
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+    }
+
+    .place-combobox-copy strong,
+    .place-combobox-copy span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .place-combobox-copy span {
+      color: var(--text-tertiary);
+      font-size: 12px;
+    }
+
+    .place-combobox-hint {
+      margin-top: 6px;
+      color: var(--text-tertiary);
+      font-size: 12px;
+    }
     .genealogy-date-field { display: grid; gap: 8px; }
     .genealogy-date-field > label {
       margin-bottom: 0;
@@ -10467,6 +10540,7 @@
     const icon = {
       addperson: '<svg width="503" height="505" viewBox="0 0 503 505" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M188.374 305C284.303 305 363.628 379.835 376.536 477.069C378.571 492.399 365.762 505 350.299 505H26.5604C11.0966 505 -1.82302 492.399 0.211725 477.069C13.1197 379.835 92.4446 305 188.374 305Z" fill="currentColor"/><path d="M316.374 128C316.374 198.692 259.066 256 188.374 256C117.681 256 60.3738 198.692 60.3738 128C60.3738 57.3075 117.681 0 188.374 0C259.066 0 316.374 57.3075 316.374 128Z" fill="currentColor"/><path d="M397 192C397 180.402 406.402 171 418 171C429.598 171 439 180.402 439 192V320C439 331.598 429.598 341 418 341C406.402 341 397 331.598 397 320V192Z" fill="currentColor"/><path d="M482 235C493.598 235 503 244.402 503 256C503 267.598 493.598 277 482 277H354C342.402 277 333 267.598 333 256C333 244.402 342.402 235 354 235H482Z" fill="currentColor"/></svg>',
       arrow: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M6 12H18M6 12L11 7M6 12L11 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>',
+      baptism: '<svg viewBox="0 0 76 76" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full" enable-background="new 0 0 76.00 76.00" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill="currentColor" fill-opacity="1" stroke-width="0.2" stroke-linejoin="round" d="M 35,19L 41,19L 41,30L 52,30L 52,36L 41,36L 41,57L 35,57L 35,36L 24,36L 24,30L 35,30L 35,19 Z "></path> </g></svg>',
       bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
       birth: `<svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M453 15L427 4L405 0L363 4L335 16L322 25L295 56L282 87L278 121L271 147L255 177L234 202L237 216L294 273L300 276L309 275L330 257L359 241L388 233L419 230L441 223L470 205L496 174L507 148L511 126L507 84L488 46L469 26Z" fill="currentColor"/><path d="M114 90L101 105L95 122L94 147L99 172L113 208L129 237L180 304L216 339L250 366L314 403L339 412L365 417L389 416L413 405L424 392L430 377L431 346L420 306L399 264L386 264L365 271L317 304L298 306L279 299L214 235L204 214L206 191L235 153L246 127L248 113L215 95L172 81L138 80Z" fill="currentColor"/><path d="M54 225L30 252L13 282L3 314L0 336L2 375L12 410L25 435L39 454L70 482L94 496L130 508L152 511L192 509L224 500L250 487L284 459L303 434L303 430L254 405L234 426L211 440L182 448L154 448L128 441L111 432L98 422L79 400L64 363L64 322L79 285L106 255L80 206Z" fill="currentColor"/></svg>`,
       calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 9h18"/><path d="M8 13h.01M12 13h.01M16 13h.01M8 17h.01M12 17h.01"/></svg>',
@@ -10502,6 +10576,7 @@
       people: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 20v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 20v-2.2a4 4 0 0 0-3-3.8"/><path d="M17 3.2a4 4 0 0 1 0 7.6"/></svg>',
       peoplegroup: '<svg width="512" height="512" viewBox="0 0 512 512" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M246 233C309.513 233 361 270.988 361 317.849C361 318.271 360.994 318.692 360.985 319.113C360.993 319.347 361 319.582 361 319.818V423C361 434.046 352.046 443 341 443H151C139.954 443 131 434.046 131 423V319.818C131 319.582 131.006 319.347 131.014 319.113C131.005 318.692 131 318.271 131 317.849C131 270.988 182.487 233 246 233Z" fill="currentColor"/><circle cx="65" cy="65" r="65" transform="matrix(-1 0 0 1 311 78)" fill="currentColor"/><circle cx="59.5" cy="59.5" r="59.5" transform="matrix(-1 0 0 1 154 69)" fill="currentColor"/><circle cx="59.5" cy="59.5" r="59.5" transform="matrix(-1 0 0 1 457 69)" fill="currentColor"/><path d="M105 208C132.716 208 157.921 215.565 176.686 227.92C140.649 244.894 116.571 274.711 116.01 308.753C116.004 308.956 116 309.16 116 309.364V391H20C8.95431 391 0 382.046 0 371V286.228C0 285.675 0.023456 285.128 0.0673828 284.587C0.0234665 283.708 1.01675e-06 282.826 0 281.939C0 241.104 47.0101 208 105 208Z" fill="currentColor"/><path d="M394.97 208C452.96 208 499.97 241.104 499.97 281.939C499.97 282.826 499.945 283.708 499.901 284.587C499.945 285.128 499.97 285.675 499.97 286.228V371C499.97 382.046 491.015 391 479.97 391H376V309.363C376 309.159 375.995 308.956 375.989 308.753C375.453 276.194 353.404 247.499 319.955 230.21C339.013 216.506 365.58 208 394.97 208Z" fill="currentColor"/></svg>',
       pattern: '<svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M36 26L11 58L0 96V415L10 451L26 475L51 496L67 504L96 511H415L444 504L474 486L496 460L504 444L511 415V96L504 67L485 36L453 11L415 0H96L60 10L36 26ZM61 60L74 50L96 42H415L437 50L451 61L461 74L469 96V415L461 437L450 451L437 461L415 469H96L74 461L60 450L50 437L42 415V96L50 74L61 60Z"/><path fill="currentColor" d="M151 107L132 114L116 129L108 146L107 168L114 187L129 203L146 211L168 212L187 205L203 190L211 173L212 151L205 132L190 116L173 108L151 107Z"/><path fill="currentColor" d="M305 112L299 122V197L304 206L314 212H389L398 207L404 197V122L399 113L389 107H314L305 112Z"/><path fill="currentColor" d="M157 278L145 283L100 328L95 344L99 354L147 402L164 405L172 401L218 355L222 347V337L219 330L171 282L157 278Z"/><path fill="currentColor" d="M341 294L286 380L288 394L301 404L407 402L417 388L413 371L367 298L353 291L341 294Z"/></svg>',
+      religion: '<svg fill="currentColor" height="200px" width="200px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 492.388 492.388" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="M217.015,189.087c-15.393-5.529-32.371,2.48-37.893,17.882l-17.729,49.416l-1.777-30.452l56.055-155.7 c3.762-10.393-0.752-22.195-10.865-27.299c-10.93-5.521-24.258-1.136-29.779,9.794L96.425,208.314 c-1.682,3.361-2.673,7.264-2.673,11.282l0.416,117.078l-72.232,37.924C1.9,385.119-5.813,409.881,4.701,429.908 c10.529,20.035,35.283,27.748,55.318,17.227l133.504-70.104l3.058-1.601c8.945-4.769,15.681-13.481,17.521-24.259l22.114-129.207 C238.601,208.056,230.76,194.015,217.015,189.087z"></path> <path d="M470.453,374.597l-72.232-37.924l0.416-117.078c0-4.018-0.991-7.921-2.673-11.282L317.363,52.727 c-5.521-10.93-18.85-15.314-29.779-9.794c-10.113,5.104-14.626,16.905-10.865,27.299l56.055,155.7l-1.776,30.452l-17.729-49.416 c-5.522-15.401-22.5-23.411-37.893-17.882c-13.746,4.929-21.587,18.97-19.203,32.877l22.115,129.207 c1.84,10.778,8.576,19.491,17.521,24.259l3.058,1.601l133.504,70.104c20.035,10.521,44.789,2.808,55.318-17.227 C498.201,409.881,490.488,385.119,470.453,374.597z"></path> </g> </g></svg>',
       female: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M12 12v8M8.5 16h7"/></svg>',
       expand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/><path d="M3 3l6 6M21 3l-6 6M3 21l6-6M21 21l-6-6"/></svg>',
       info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
@@ -10521,6 +10596,7 @@
       tree: '<svg width="230" height="203" viewBox="0 0 230 203" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M151 198C151 200.761 148.761 203 146 203L84 203C81.2386 203 79 200.761 79 198L79 136C79 133.239 81.2386 131 84 131L146 131C148.761 131 151 133.239 151 136L151 198Z" fill="currentColor"/><path d="M230 67C230 69.7614 227.761 72 225 72L163 72C160.239 72 158 69.7614 158 67V5.00001C158 2.23859 160.239 1.35714e-05 163 1.38128e-05L225 1.9233e-05C227.761 1.94744e-05 230 2.2386 230 5.00002V67Z" fill="currentColor"/><path d="M72 67C72 69.7614 69.7614 72 67 72L5 72C2.23857 72 -2.41411e-07 69.7614 0 67L5.42021e-06 5C5.66162e-06 2.23857 2.23858 -2.41411e-07 5.00001 0L67 5.42021e-06C69.7614 5.66162e-06 72 2.23858 72 5.00001L72 67Z" fill="currentColor"/><path d="M34.9997 106C32.2383 106 29.9997 103.761 29.9997 101L29.9998 33C29.9998 30.2386 32.2383 28 34.9998 28H41.9998L41.9997 94L188 94V28H195C197.761 28 200 30.2386 200 33V101C200 103.761 197.761 106 195 106L34.9997 106Z" fill="currentColor"/><path d="M121 131H109L109 106H121L121 131Z" fill="currentColor"/></svg>',
       unlink: '<svg viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>unlink_2_line</title> <g id="1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="File" transform="translate(-672.000000, -96.000000)" fill-rule="nonzero"> <g id="unlink_2_line" transform="translate(672.000000, 96.000000)"> <path d="M24,0 L24,24 L0,24 L0,0 L24,0 Z M12.5934901,23.257841 L12.5819402,23.2595131 L12.5108777,23.2950439 L12.4918791,23.2987469 L12.4918791,23.2987469 L12.4767152,23.2950439 L12.4056548,23.2595131 C12.3958229,23.2563662 12.3870493,23.2590235 12.3821421,23.2649074 L12.3780323,23.275831 L12.360941,23.7031097 L12.3658947,23.7234994 L12.3769048,23.7357139 L12.4804777,23.8096931 L12.4953491,23.8136134 L12.4953491,23.8136134 L12.5071152,23.8096931 L12.6106902,23.7357139 L12.6232938,23.7196733 L12.6232938,23.7196733 L12.6266527,23.7031097 L12.609561,23.275831 C12.6075724,23.2657013 12.6010112,23.2592993 12.5934901,23.257841 L12.5934901,23.257841 Z M12.8583906,23.1452862 L12.8445485,23.1473072 L12.6598443,23.2396597 L12.6498822,23.2499052 L12.6498822,23.2499052 L12.6471943,23.2611114 L12.6650943,23.6906389 L12.6699349,23.7034178 L12.6699349,23.7034178 L12.678386,23.7104931 L12.8793402,23.8032389 C12.8914285,23.8068999 12.9022333,23.8029875 12.9078286,23.7952264 L12.9118235,23.7811639 L12.8776777,23.1665331 C12.8752882,23.1545897 12.8674102,23.1470016 12.8583906,23.1452862 L12.8583906,23.1452862 Z M12.1430473,23.1473072 C12.1332178,23.1423925 12.1221763,23.1452606 12.1156365,23.1525954 L12.1099173,23.1665331 L12.0757714,23.7811639 C12.0751323,23.7926639 12.0828099,23.8018602 12.0926481,23.8045676 L12.108256,23.8032389 L12.3092106,23.7104931 L12.3186497,23.7024347 L12.3186497,23.7024347 L12.3225043,23.6906389 L12.340401,23.2611114 L12.337245,23.2485176 L12.337245,23.2485176 L12.3277531,23.2396597 L12.1430473,23.1473072 Z" id="MingCute" fill-rule="nonzero"> </path> <path d="M8,18 C8.51283143,18 8.93550653,18.386027 8.9932722,18.8833761 L9,19 L9,21 C9,21.5523 8.55228,22 8,22 C7.48716857,22 7.06449347,21.613973 7.0067278,21.1166239 L7,21 L7,19 C7,18.4477 7.44772,18 8,18 Z M16.2426,9.87845 C16.6030615,9.51797 17.1703207,9.49024077 17.5625973,9.79526231 L17.6568,9.87845 L19.7781,11.9998 C21.926,14.1477 21.926,17.6301 19.7781,19.7779 C17.6898639,21.8661361 14.340237,21.9241427 12.1819236,19.9519197 L11.9999,19.7779 L9.87861,17.6566 C9.48808,17.2661 9.48808,16.6329 9.87861,16.2424 C10.2390623,15.8819385 10.8063208,15.8542107 11.1985973,16.1592166 L11.2928,16.2424 L13.4141,18.3637 C14.781,19.7306 16.9971,19.7306 18.3639,18.3637 C19.6818857,17.0457143 19.7289566,14.9380096 18.5051128,13.5636154 L18.3639,13.414 L16.2426,11.2927 C15.852,10.9021 15.852,10.269 16.2426,9.87845 Z M5,16 C5.55228,16 6,16.4477 6,17 C6,17.51285 5.61395571,17.9355092 5.11662025,17.9932725 L5,18 L4,18 C3.44772,18 3,17.5523 3,17 C3,16.48715 3.38604429,16.0644908 3.88337975,16.0067275 L4,16 L5,16 Z M9.17136,9.17134 C9.53184923,8.81086 10.0991191,8.78313077 10.4913971,9.08815231 L10.5856,9.17134 L14.8282,13.414 C15.2187,13.8045 15.2187,14.4377 14.8282,14.8282 C14.4677385,15.1886615 13.9004793,15.2163893 13.5082027,14.9113834 L13.414,14.8282 L9.17136,10.5856 C8.78084,10.195 8.78084,9.56187 9.17136,9.17134 Z M4.22175,4.2216 C6.30997639,2.13338333 9.65960305,2.07537731 11.8178797,4.04758194 L11.9999,4.2216 L14.1212,6.34292 C14.5118,6.73344 14.5118,7.36661 14.1212,7.75713 C13.7607385,8.11761923 13.1935645,8.14534917 12.8012224,7.84031982 L12.707,7.75713 L10.5857,5.63581 C9.21888,4.26898 7.0028,4.26898 5.63597,5.63581 C4.31794571,6.95383429 4.27087342,9.06152179 5.49475311,10.4359775 L5.63597,10.5856 L7.75729,12.7069 C8.14781,13.0974 8.14781,13.7306 7.75729,14.1211 C7.39680077,14.4815615 6.82957355,14.5092893 6.43727848,14.2042834 L6.34307,14.1211 L4.22175,11.9998 C2.07387,9.85189 2.07387,6.36948 4.22175,4.2216 Z M20,6 C20.5523,6 21,6.44772 21,7 C21,7.55228 20.5523,8 20,8 L19,8 C18.4477,8 18,7.55228 18,7 C18,6.44772 18.4477,6 19,6 L20,6 Z M16,2 C16.51285,2 16.9355092,2.38604429 16.9932725,2.88337975 L17,3 L17,5 C17,5.55228 16.5523,6 16,6 C15.48715,6 15.0644908,5.61395571 15.0067275,5.11662025 L15,5 L15,3 C15,2.44772 15.4477,2 16,2 Z" id="??" fill="currentColor"> </path> </g> </g> </g> </g></svg>',
       warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v5M12 17h.01"/></svg>',
+      work: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M9 7H5C3.89543 7 3 7.89543 3 9V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V9C21 7.89543 20.1046 7 19 7H15M9 7V5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7M9 7H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>',
       zoomIn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4M10.5 7.5v6M7.5 10.5h6"/></svg>',
       zoomOut: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4M7.5 10.5h6"/></svg>',
       whiteboard: '<svg viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>ic_fluent_whiteboard_24_regular</title> <g id="Product-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="ic_fluent_whiteboard_24_regular" fill="currentColor" fill-rule="nonzero"> <path d="M15.989,4 L14.486,5.5 L5.25,5.5 L5.10647279,5.5058012 C4.20711027,5.57880766 3.5,6.3318266 3.5,7.25 L3.5,9.49 L6.11032966,7.8500658 C7.11458474,7.21884459 8.42578385,7.4788108 9.11805049,8.41878234 L9.21263533,8.55766707 C9.60754263,9.18595342 9.66531956,9.96466959 9.37643726,10.6398047 L9.29698911,10.8062836 L8.08925622,13.0916763 C7.8957274,13.4579003 8.03572001,13.911669 8.4019376,14.1051994 C8.59519714,14.2073288 8.82158817,14.2192865 9.02227723,14.1418514 L9.12020755,14.0956881 L10.8791978,13.102709 C11.2392458,12.8979206 11.6971362,13.0237834 11.9019246,13.3838314 C12.0896473,13.7138755 11.9995312,14.1261343 11.7058795,14.3502913 L11.6208022,14.4065583 L9.85592161,15.4028701 C9.18921021,15.7781116 8.37750848,15.7888601 7.70109472,15.4314042 C6.6502057,14.8760541 6.22026466,13.6064091 6.69296688,12.535549 L6.76304763,12.3908405 L7.97078427,10.1054407 C8.09599053,9.86851294 8.08527176,9.58278305 7.94266635,9.35590187 C7.74227866,9.03709073 7.34143087,8.9208341 7.00672527,9.06794099 L6.90856446,9.12003478 L3.5,11.262 L3.5,16.754591 C3.5,17.7210893 4.28350169,18.504591 5.25,18.504591 L18.75,18.504591 C19.7164983,18.504591 20.5,17.7210893 20.5,16.754591 L20.5,9.443 L22,7.946 L22,16.754591 C22,18.5495164 20.5449254,20.004591 18.75,20.004591 L5.25,20.004591 C3.45507456,20.004591 2,18.5495164 2,16.754591 L2,7.25 C2,5.51696854 3.35645477,4.10075407 5.06557609,4.00514479 L5.25,4 L15.989,4 Z M21.175499,3.54486123 L21.3057053,3.66549405 L21.4262125,3.79573486 C22.1894032,4.68737541 22.1487912,6.0305334 21.3046801,6.87410524 L17.0238193,11.1477533 C16.760843,11.4102865 16.4369385,11.6036013 16.0810348,11.7104319 L13.7534665,12.409092 C13.224498,12.5678711 12.6669685,12.2677732 12.5081894,11.7388048 C12.4499495,11.54478 12.4520104,11.3376424 12.5140993,11.1448148 L13.2530235,8.84996054 C13.3626608,8.50946335 13.5519023,8.20001385 13.805051,7.94727999 L18.095697,3.66366511 C18.9405104,2.82023607 20.2840592,2.78081537 21.175499,3.54486123 Z M19.155487,4.72519469 L14.864841,9.00880957 C14.7804581,9.09305419 14.7173776,9.19620402 14.6808318,9.30970309 L14.2335301,10.6988744 L15.6497924,10.2737587 C15.768427,10.2381485 15.8763951,10.1737102 15.9640539,10.0861992 L20.244074,5.81339079 L20.3188279,5.72689957 C20.5422483,5.42598751 20.517571,4.99885441 20.2447063,4.72581529 C19.9440539,4.42497074 19.456482,4.42469294 19.155487,4.72519469 Z" id="Color"> </path> </g> </g> </g></svg>'
@@ -10932,7 +11008,10 @@
     function getPlaceDisplay(placeId) {
       return placeId ? getPlace(placeId)?.display || '' : '';
     }
-
+    function getPlaceEventDisplay(event) {
+      const linked = cleanEditFieldValue(getPlaceDisplay(event?.placeId));
+      return linked || cleanEditFieldValue(event?.placeText);
+    }
     function centralFamilyRecords() {
       sampleData.families = Array.isArray(sampleData.families) ? sampleData.families : [];
       return sampleData.families;
@@ -11824,6 +11903,157 @@
       popover.querySelector('[data-editor-smart]')?.focus({ preventScroll: true });
     }
 
+    function bindPlaceComboboxes(root = document) {
+      if (!root || typeof root.querySelectorAll !== 'function') return;
+      const fields = root.querySelectorAll('[data-place-combobox]');
+      fields.forEach(field => {
+        if (field.dataset.placeBound) return;
+        field.dataset.placeBound = 'true';
+        const input = field.querySelector('[data-place-input]');
+        const list = field.querySelector('.place-combobox-list');
+        if (!input || !list) return;
+
+        let activeIndex = -1;
+        let currentOptions = []; // [{type:'place'|'create', place?, text?}]
+
+        function placeMatchScore(place, q) {
+          const nq = normalizePlaceLookupText(q);
+          if (!nq) return 1;
+          const candidates = [place.display, place.name, place.hierarchy, place.country, ...(place.aliases || [])];
+          for (const c of candidates) {
+            if (!c) continue;
+            const nc = normalizePlaceLookupText(c);
+            if (nc.startsWith(nq)) return 3;
+            if (nc.includes(nq)) return 2;
+          }
+          return 0;
+        }
+
+        function buildOptions(query) {
+          const pool = (sampleData.places || []).filter(p => !p.deleted);
+          const trimmed = (query || '').trim();
+          const scored = pool
+            .map(p => ({ place: p, score: placeMatchScore(p, trimmed) }))
+            .filter(x => x.score > 0)
+            .sort((a, b) => (b.score - a.score) || ((b.place.people || 0) - (a.place.people || 0)) || String(a.place.display || a.place.name).localeCompare(String(b.place.display || b.place.name)))
+            .slice(0, 8)
+            .map(x => ({ type: 'place', place: x.place }));
+          const opts = scored;
+          if (trimmed) {
+            const nq = normalizePlaceLookupText(trimmed);
+            const hasExact = pool.some(p => normalizePlaceLookupText(placeDisplayText(p)) === nq);
+            if (!hasExact) opts.push({ type: 'create', text: trimmed });
+          }
+          return opts;
+        }
+
+        function renderList() {
+          if (!currentOptions.length) {
+            list.hidden = true;
+            list.innerHTML = '';
+            input.setAttribute('aria-expanded', 'false');
+            return;
+          }
+          list.innerHTML = currentOptions.map((opt, i) => {
+            const active = i === activeIndex ? ' active' : '';
+            if (opt.type === 'create') {
+              return `<div class="place-combobox-option${active}" role="option" data-place-opt="${i}" data-place-create="1">
+                <div class="place-combobox-copy"><strong>Create new place</strong><span>${escapeHtml(opt.text)}</span></div>
+              </div>`;
+            }
+            const p = opt.place;
+            const primary = p.display || p.name || 'Place';
+            const secondary = p.hierarchy || p.country || '';
+            return `<div class="place-combobox-option${active}" role="option" data-place-opt="${i}" data-place-id="${escapeHtml(p.id)}">
+              <div class="place-combobox-copy"><strong>${escapeHtml(primary)}</strong>${secondary ? `<span>${escapeHtml(secondary)}</span>` : ''}</div>
+            </div>`;
+          }).join('');
+          list.hidden = false;
+          input.setAttribute('aria-expanded', 'true');
+        }
+
+        function refresh() {
+          currentOptions = buildOptions(input.value);
+          activeIndex = currentOptions.length ? 0 : -1;
+          renderList();
+        }
+
+        function close() {
+          list.hidden = true;
+          list.innerHTML = '';
+          input.setAttribute('aria-expanded', 'false');
+          activeIndex = -1;
+          currentOptions = [];
+        }
+
+        function chooseOption(opt) {
+          if (!opt) return;
+          if (opt.type === 'place') {
+            input.value = placeDisplayText(opt.place) || opt.place.display || opt.place.name || '';
+            input.dataset.placeId = opt.place.id;
+          } else {
+            // create: keep typed text; clear selection so save-time creates the record
+            input.dataset.placeId = '';
+          }
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+          close();
+        }
+
+        input.addEventListener('focus', refresh);
+        input.addEventListener('input', () => {
+          // if typed text no longer matches selected place display, clear selection
+          if (input.dataset.placeId) {
+            const sel = getPlace(input.dataset.placeId);
+            if (!sel || normalizePlaceLookupText(input.value) !== normalizePlaceLookupText(placeDisplayText(sel))) {
+              input.dataset.placeId = '';
+            }
+          }
+          refresh();
+        });
+        input.addEventListener('keydown', event => {
+          if (list.hidden && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
+            refresh();
+            event.preventDefault();
+            return;
+          }
+          if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            if (!currentOptions.length) return;
+            activeIndex = (activeIndex + 1) % currentOptions.length;
+            renderList();
+          } else if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            if (!currentOptions.length) return;
+            activeIndex = (activeIndex - 1 + currentOptions.length) % currentOptions.length;
+            renderList();
+          } else if (event.key === 'Enter') {
+            if (!list.hidden && activeIndex >= 0) {
+              event.preventDefault();
+              chooseOption(currentOptions[activeIndex]);
+            }
+          } else if (event.key === 'Escape') {
+            if (!list.hidden) {
+              event.preventDefault();
+              close();
+            }
+          }
+        });
+        input.addEventListener('blur', () => {
+          setTimeout(close, 120);
+        });
+        list.addEventListener('mousedown', event => {
+          const opt = event.target.closest('[data-place-opt]');
+          if (!opt) return;
+          event.preventDefault();
+          const idx = Number(opt.dataset.placeOpt);
+          chooseOption(currentOptions[idx]);
+        });
+      });
+    }
+
+
+
     function bindGenealogyDateFields(root = document) {
       root.querySelectorAll('[data-genealogy-date-details]').forEach(button => {
         if (button.dataset.dateBound) return;
@@ -11870,9 +12100,9 @@
         short: person.names.initials,
         gender: person.gender,
         birth: formatGenealogyDateLabel(person.birth),
-        place: getPlaceDisplay(person.birth?.placeId),
+        place: getPlaceEventDisplay(person.birth),
         death: formatGenealogyDateLabel(person.death),
-        deathPlace: getPlaceDisplay(person.death?.placeId),
+        deathPlace: getPlaceEventDisplay(person.death),
         status: person.livingStatus,
         avatar: person.avatarClass,
         primaryPhotoId: person.primaryPhotoId || '',
@@ -11891,9 +12121,9 @@
         surname: person.names.last,
         living: person.livingStatus,
         birth: formatGenealogyDateLabel(person.birth),
-        birthPlace: getPlaceDisplay(person.birth?.placeId),
+        birthPlace: getPlaceEventDisplay(person.birth),
         death: formatGenealogyDateLabel(person.death),
-        deathPlace: getPlaceDisplay(person.death?.placeId),
+        deathPlace: getPlaceEventDisplay(person.death),
         updated: person.meta.updated,
         gender: person.gender,
         relation: person.role,
@@ -12427,18 +12657,169 @@
       return sampleData.people.map(toPeopleRecord);
     }
 
+    function normalizePlaceLookupText(value) {
+      return cleanEditFieldValue(value)
+        .replace(/\s+/g, ' ')
+        .replace(/[.,;:]+$/g, '')
+        .toLowerCase();
+    }
+
+    function placeDisplayText(place) {
+      return cleanEditFieldValue(place?.display || [place?.name, place?.country].filter(Boolean).join(', '));
+    }
+
+    function findExactPlaceMatch(text) {
+      const normalized = normalizePlaceLookupText(text);
+      if (!normalized) return null;
+
+      return sampleData.places.find(place => {
+        if (!place || place.deleted) return false;
+
+        const values = [
+          place.display,
+          place.name,
+          place.hierarchy,
+          ...(Array.isArray(place.aliases) ? place.aliases : [])
+        ];
+
+        return values.some(value => normalizePlaceLookupText(value) === normalized);
+      }) || null;
+    }
+
     function samplePlaceIdFromDisplay(display) {
-      const text = cleanEditFieldValue(display);
+      return findExactPlaceMatch(display)?.id || null;
+    }
+    function slugFromPlaceText(text) {
+      return normalizePlaceLookupText(text)
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '') || 'place';
+    }
 
-      if (!text) return null;
+    function uniquePlaceIdFromText(text) {
+      const base = `place-${slugFromPlaceText(text)}`;
+      let id = base;
+      let counter = 2;
 
-      return sampleData.places.find(place =>
-        place.display === text || place.name === text
-      )?.id || 'place-unknown';
+      while (sampleData.places.some(place => place.id === id)) {
+        id = `${base}-${counter}`;
+        counter += 1;
+      }
+
+      return id;
+    }
+
+    function createPlaceFromText(text) {
+      const display = cleanEditFieldValue(text);
+      if (!display) return null;
+
+      const exact = findExactPlaceMatch(display);
+      if (exact) return exact;
+
+      const parts = display.split(',').map(part => part.trim()).filter(Boolean);
+      const name = parts[0] || display;
+      const country = parts.length > 1 ? parts[parts.length - 1] : '';
+
+      const place = {
+        id: uniquePlaceIdFromText(display),
+        name,
+        country,
+        display,
+        hierarchy: parts.length > 1 ? parts.slice(1).join(', ') : 'Unresolved place',
+        type: 'Unknown',
+        status: 'missing',
+        statusLabel: 'Missing coordinates',
+        markerType: 'missing',
+        collections: [],
+        people: 0,
+        events: 0,
+        files: 0,
+        photos: 0,
+        notes: 0,
+        updated: 'Just now',
+        deleted: false,
+        coords: 'Unknown',
+        aliases: [],
+        topEvents: []
+      };
+
+      sampleData.places.push(place);
+      return place;
+    }
+
+    function resolvePlaceInputValue(text, selectedPlaceId = '') {
+      const placeText = cleanEditFieldValue(text);
+
+      if (!placeText) {
+        return {
+          placeId: null,
+          placeText: '',
+          created: false
+        };
+      }
+
+      const selectedPlace = selectedPlaceId ? getPlace(selectedPlaceId) : null;
+      if (
+        selectedPlace &&
+        normalizePlaceLookupText(placeText) === normalizePlaceLookupText(placeDisplayText(selectedPlace))
+      ) {
+        return {
+          placeId: selectedPlace.id,
+          placeText,
+          created: false
+        };
+      }
+
+      const exact = findExactPlaceMatch(placeText);
+      if (exact) {
+        return {
+          placeId: exact.id,
+          placeText,
+          created: false
+        };
+      }
+
+      const created = createPlaceFromText(placeText);
+
+      return {
+        placeId: created?.id || null,
+        placeText,
+        created: Boolean(created)
+      };
+    }
+
+    function resolvePlaceInputSelector(selector, root = modalBackdrop) {
+      const input = root?.querySelector(selector);
+      return resolvePlaceInputValue(input?.value || '', input?.dataset.placeId || '');
+    }
+
+    function readPlaceInputValue(selector, root = document) {
+      const input = root?.querySelector(selector);
+
+      return {
+        text: input?.value?.trim() || '',
+        selectedPlaceId: input?.dataset.placeId || ''
+      };
+    }
+
+    function resolvePlaceAssignment(value, currentPlaceId = '') {
+      if (value && typeof value === 'object') {
+        return resolvePlaceInputValue(
+          value.text || '',
+          value.selectedPlaceId || currentPlaceId || ''
+        );
+      }
+
+      return resolvePlaceInputValue(value || '', currentPlaceId || '');
+    }
+
+    function placeInputDisplayValue(placeId, fallbackText = '') {
+      return cleanEditFieldValue(getPlaceDisplay(placeId)) || cleanEditFieldValue(fallbackText);
     }
 
     function syncPeopleRecordToSampleData(record) {
       const person = getPerson(record?.id);
+      const birthPlace = resolvePlaceInputValue(record.birthPlace, person.birth?.placeId);
+      const deathPlace = resolvePlaceInputValue(record.deathPlace, person.death?.placeId);
       if (!person) return;
       person.names.first = record.first || person.names.first;
       person.names.last = record.surname || person.names.last;
@@ -12453,9 +12834,9 @@
           calendar: person.birth?.calendar,
           originalText: record.birth
         }, 'Unknown'),
-        placeId: samplePlaceIdFromDisplay(record.birthPlace) || cleanDatePlaceId(person.birth?.placeId)
+        placeId: birthPlace.placeId || cleanDatePlaceId(person.birth?.placeId),
+        placeText: birthPlace.placeText || person.birth?.placeText || ''
       };
-      person.birth.placeId = samplePlaceIdFromDisplay(record.birthPlace) || person.birth.placeId;
       if (person.livingStatus === 'Deceased') {
         person.death = {
           ...normalizeGenealogyDateInput({
@@ -12465,9 +12846,11 @@
             calendar: person.death?.calendar,
             originalText: record.death
           }, 'Unknown'),
-          placeId: samplePlaceIdFromDisplay(record.deathPlace),
+          placeId: deathPlace.placeId,
+          placeText: deathPlace.placeText,
           reason: person.death?.reason || '',
-          burialPlaceId: cleanDatePlaceId(person.death?.burialPlaceId)
+          burialPlaceId: cleanDatePlaceId(person.death?.burialPlaceId),
+          burialPlaceText: person.death?.burialPlaceText || ''
         };
       } else {
         person.death = {
@@ -14734,8 +15117,8 @@ function renderTreeCardDateLines(person) {
       return formatGenealogyDateLabel(event);
     }
 
-    function editPlaceValue(placeId) {
-      return placeId ? cleanEditFieldValue(getPlaceDisplay(placeId)) : '';
+    function editPlaceValue(placeId, fallbackText = '') {
+      return placeInputDisplayValue(placeId, fallbackText);
     }
 
     function editPersonFormValues(person) {
@@ -14749,13 +15132,44 @@ function renderTreeCardDateLines(person) {
         livingStatus: normalizeLivingStatus(person?.livingStatus),
 
         birthDate: editDateValue(person?.birth),
-        birthPlace: editPlaceValue(person?.birth?.placeId),
+        birthPlace: editPlaceValue(person?.birth?.placeId, person?.birth?.placeText),
 
         deathDate: editDateValue(person?.death),
-        deathPlace: editPlaceValue(person?.death?.placeId),
+        deathPlace: editPlaceValue(person?.death?.placeId, person?.death?.placeText),
         deathReason: cleanEditFieldValue(person?.death?.reason),
-        burialPlace: editPlaceValue(person?.death?.burialPlaceId)
+        burialPlace: editPlaceValue(person?.death?.burialPlaceId, person?.death?.burialPlaceText)
       };
+    }
+
+    function renderPlaceCombobox({
+      id,
+      label,
+      value = '',
+      selectedPlaceId = '',
+      placeholder = 'Search or type a place',
+      className = '',
+      inputAttrs = ''
+    } = {}) {
+      const listId = `${id}PlaceList`;
+
+      return `<div class="field ${escapeHtml(className)} place-combobox-field" data-place-combobox>
+        <label for="${escapeHtml(id)}">${escapeHtml(label)}</label>
+        <div class="place-combobox-shell">
+          <input
+            id="${escapeHtml(id)}"
+            value="${escapeHtml(value)}"
+            placeholder="${escapeHtml(placeholder)}"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-expanded="false"
+            aria-controls="${escapeHtml(listId)}"
+            data-place-input
+            data-place-id="${escapeHtml(selectedPlaceId || '')}"
+            ${inputAttrs}>
+          <div class="place-combobox-list" id="${escapeHtml(listId)}" role="listbox" hidden></div>
+        </div>
+        <div class="place-combobox-hint" data-place-hint>Choose an existing place or type a new one.</div>
+      </div>`;
     }
 
     function addPersonFactDefinitions() {
@@ -14766,8 +15180,8 @@ function renderTreeCardDateLines(person) {
         { id: 'burialPlace', label: 'Burial place', icon: icon.mapPin || icon.plus },
         { id: 'education', label: 'Education', icon: icon.education || icon.plus },
         { id: 'occupation', label: 'Occupation', icon: icon.work || icon.placeholder || icon.plus },
-        { id: 'religion', label: 'Religion', icon: icon.info || icon.plus },
-        { id: 'baptism', label: 'Baptism', icon: icon.calendar || icon.plus },
+        { id: 'religion', label: 'Religion', icon: icon.religion || icon.plus },
+        { id: 'baptism', label: 'Baptism', icon: icon.baptism || icon.plus },
         { id: 'alternativeNames', label: 'Alternative names', icon: icon.people || icon.plus }
       ];
     }
@@ -14801,10 +15215,13 @@ function renderTreeCardDateLines(person) {
         label: 'Additional fact',
         icon: icon.info
       };
-      const details = person ? peopleProfileDetailsFor({ id: person.id }) : defaultPeopleProfileDetails();
-      const death = person?.death || {};
-      const prefixValue = cleanEditFieldValue(person?.names?.prefix || details.prefix);
-      const suffixValue = cleanEditFieldValue(person?.names?.suffix || details.suffix);
+      const centralPerson = person ? ensurePersonCentralStructures(person) : null;
+      const details = centralPerson ? peopleProfileDetailsFor({ id: centralPerson.id }) : defaultPeopleProfileDetails();
+      const death = centralPerson?.death || {};
+      const education = centralPerson ? personAttributeByTag(centralPerson, 'EDUC') : null;
+      const baptism = centralPerson ? personEventByTag(centralPerson, 'BAPM') : null;
+      const prefixValue = cleanEditFieldValue(centralPerson?.names?.prefix || details.prefix);
+      const suffixValue = cleanEditFieldValue(centralPerson?.names?.suffix || details.suffix);
       const header = `<div class="add-person-fact-card-header"><div class="add-person-fact-card-title"><span class="fact-button-icon" aria-hidden="true">${definition.icon}</span><span>${escapeHtml(definition.label)}</span></div><button class="add-person-fact-remove" type="button" data-add-person-remove-fact="${escapeHtml(factId)}" aria-label="Remove ${escapeHtml(definition.label)}">${icon.close}</button></div>`;
       const fieldWrap = content => `<div class="add-person-fact-card" data-add-person-fact-card="${escapeHtml(factId)}">${header}<div class="add-person-fact-grid">${content}</div></div>`;
       if (factId === 'prefix') {
@@ -14817,10 +15234,24 @@ function renderTreeCardDateLines(person) {
         return fieldWrap(`<div class="field full"><label for="addPersonFactCauseOfDeath">Cause of death</label><input id="addPersonFactCauseOfDeath" value="${escapeHtml(cleanEditFieldValue(death.reason || death.cause))}" placeholder="Cause or reason"></div>`);
       }
       if (factId === 'burialPlace') {
-        return fieldWrap(`<div class="field full"><label for="addPersonFactBurialPlace">Burial place</label><input id="addPersonFactBurialPlace" value="${escapeHtml(editPlaceValue(death.burialPlaceId) || death.burialPlaceText || '')}" placeholder="e.g. Old Cattery, England"></div>`);
+        return fieldWrap(renderPlaceCombobox({
+          id: 'addPersonFactBurialPlace',
+          label: 'Burial place',
+          value: editPlaceValue(death.burialPlaceId, death.burialPlaceText),
+          selectedPlaceId: death.burialPlaceId || '',
+          placeholder: 'e.g. Old Cattery, England',
+          className: 'full'
+        }));
       }
       if (factId === 'education') {
-        return fieldWrap(`<div class="field full"><label for="addPersonFactEducationPlace">Education place</label><input id="addPersonFactEducationPlace" value="${escapeHtml(details.educationPlace || '')}" placeholder="School or learning place"></div>
+        return fieldWrap(`${renderPlaceCombobox({
+          id: 'addPersonFactEducationPlace',
+          label: 'Education place',
+          value: editPlaceValue(education?.placeId, education?.placeText || details.educationPlace),
+          selectedPlaceId: education?.placeId || '',
+          placeholder: 'School or learning place',
+          className: 'full'
+        })}
           <div class="profile-edit-date-row add-person-fact-date-row">
             <div class="profile-edit-date-cell">${renderGenealogyDateField('addPersonFactEducationFrom', 'From', details.educationFromDate, { inputId: 'addPersonFactEducationFromDate', typeId: 'addPersonFactEducationFromDateType', defaultDateType: 'Year only', placeholder: 'e.g. 2004' })}</div>
             <div class="profile-edit-date-cell">${renderGenealogyDateField('addPersonFactEducationTo', 'To', details.educationToDate, { inputId: 'addPersonFactEducationToDate', typeId: 'addPersonFactEducationToDateType', defaultDateType: 'Year only', placeholder: 'e.g. 2015' })}</div>
@@ -14840,8 +15271,21 @@ function renderTreeCardDateLines(person) {
         return fieldWrap(`<div class="field full"><label for="addPersonFactReligion">Religion</label><select class="compact-select" id="addPersonFactReligion">${['Unknown','Orthodox','Catholic','Jewish'].map(value => `<option ${value === (details.religion || 'Unknown') ? 'selected' : ''}>${value}</option>`).join('')}</select></div>`);
       }
       if (factId === 'baptism') {
-        return fieldWrap(`<div class="field full"><label for="addPersonFactBaptismPlace">Baptism place</label><input id="addPersonFactBaptismPlace" value="${escapeHtml(details.baptismPlace || '')}" placeholder="Baptism place"></div>
-          ${renderGenealogyDateField('addPersonFactBaptism', 'Baptism date', details.baptismDate, { inputId: 'addPersonFactBaptismDate', typeId: 'addPersonFactBaptismDateType', className: 'full', defaultDateType: 'Exact date', placeholder: 'e.g. 14 Feb 1946' })}`);
+        return fieldWrap(`${renderPlaceCombobox({
+          id: 'addPersonFactBaptismPlace',
+          label: 'Baptism place',
+          value: editPlaceValue(baptism?.placeId, baptism?.placeText || details.baptismPlace),
+          selectedPlaceId: baptism?.placeId || '',
+          placeholder: 'Baptism place',
+          className: 'full'
+        })}
+          ${renderGenealogyDateField('addPersonFactBaptism', 'Baptism date', details.baptismDate, {
+            inputId: 'addPersonFactBaptismDate',
+            typeId: 'addPersonFactBaptismDateType',
+            className: 'full',
+            defaultDateType: 'Exact date',
+            placeholder: 'e.g. 14 Feb 1946'
+          })}`);
       }
       return fieldWrap(`<div class="field full"><label for="addPersonFactAlternativeNames">Alternative names</label><input id="addPersonFactAlternativeNames" value="${escapeHtml(details.alternativeNames || '')}" placeholder="Nickname, spelling variant, or former name"></div>`);
     }
@@ -15025,17 +15469,24 @@ function renderTreeCardDateLines(person) {
     function collectAddPersonRelationshipBlock() {
       const cards = Array.from(modalBackdrop?.querySelectorAll('[data-add-person-relationship-card]') || []);
       const relationships = [];
-      const relationshipType = card.querySelector('[data-add-person-relationship-type]')?.value || 'Married';
-      const marriageTypeSelect = card.querySelector('[data-add-person-marriage-type]');
-      const marriageType = addPersonRelationshipShowsMarriageType(relationshipType)
-        ? marriageTypeSelect?.value || 'Civil'
-        : '';
 
       for (const card of cards) {
         const index = card.dataset.relationshipIndex || '0';
+        const relationshipType = card.querySelector('[data-add-person-relationship-type]')?.value || 'Married';
+        const marriageTypeSelect = card.querySelector('[data-add-person-marriage-type]');
+        const marriageType = addPersonRelationshipShowsMarriageType(relationshipType)
+          ? marriageTypeSelect?.value || 'Civil'
+          : '';
+
         const fieldId = `addPersonRelationship${index}MarriageDate`;
         const marriageDate = collectGenealogyDateField(fieldId);
-        if (!marriageDate) return { invalid: true, message: 'Check the marriage date before saving.' };
+
+        if (!marriageDate) {
+          return {
+            invalid: true,
+            message: 'Check the marriage date before saving.'
+          };
+        }
 
         relationships.push({
           relationshipId: card.dataset.relationshipId || '',
@@ -15047,7 +15498,10 @@ function renderTreeCardDateLines(person) {
         });
       }
 
-      return { invalid: false, relationships };
+      return {
+        invalid: false,
+        relationships
+      };
     }
 
     function relationshipIdForPartners(personAId, personBId) {
@@ -15065,7 +15519,8 @@ function renderTreeCardDateLines(person) {
 
       relationship.marriageType = marriageType;
       const date = normalizeGenealogyDateInput(relationshipValues.marriageDate, 'Exact date');
-      const placeId = samplePlaceIdFromDisplay(relationshipValues.marriagePlace);
+      const marriagePlace = resolvePlaceInputValue(relationshipValues.marriagePlace);
+      const placeId = marriagePlace.placeId;
       let marriage = relationshipEventByTag(relationship, 'MARR');
 
       if (!marriage) {
@@ -15074,7 +15529,7 @@ function renderTreeCardDateLines(person) {
           typeLabel: marriageType,
           date,
           placeId,
-          placeText: relationshipValues.marriagePlace || getPlaceDisplay(placeId)
+          placeText: marriagePlace.placeText
         });
         relationship.events.push(marriage);
       } else {
@@ -15094,6 +15549,7 @@ function renderTreeCardDateLines(person) {
       relationship.startCalendar = date.calendar;
       relationship.startOriginalText = date.originalText;
       relationship.startPlaceId = placeId;
+      relationship.startPlaceText = marriagePlace.placeText;
     }
 
     function savePersonRelationshipBlock(personId, collected) {
@@ -15146,6 +15602,10 @@ function renderTreeCardDateLines(person) {
       const deathDate = livingStatus === 'Deceased' ? collectGenealogyDateField('addPersonDeath') || emptyGenealogyDate('Exact date') : emptyGenealogyDate('Exact date');
       const display = [firstName, middleName, lastName].filter(Boolean).join(' ');
       const initials = `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase() || 'NP';
+      const birthPlace = resolvePlaceInputSelector('#addPersonBirthPlace');
+      const deathPlace = livingStatus === 'Deceased'
+        ? resolvePlaceInputSelector('#addPersonDeathPlace')
+        : { placeId: null, placeText: '', created: false };
 
       const person = {
         id,
@@ -15156,8 +15616,20 @@ function renderTreeCardDateLines(person) {
         role: options.relativeType ? relativeCreateRoleLabel(options.relativeType) : 'Relative',
         branch: 'New entries',
         avatarClass: genderValue === 'Female' ? 'avatar-purple' : genderValue === 'Male' ? 'avatar-green' : '',
-        birth: { ...birthDate, placeId: samplePlaceIdFromDisplay(readAddPersonModalValue('#addPersonBirthPlace')) },
-        death: { ...deathDate, placeId: livingStatus === 'Deceased' ? samplePlaceIdFromDisplay(readAddPersonModalValue('#addPersonDeathPlace')) : null, reason: '', cause: '', burialPlaceId: null },
+        birth: {
+          ...birthDate,
+          placeId: birthPlace.placeId,
+          placeText: birthPlace.placeText
+        },
+        death: {
+          ...deathDate,
+          placeId: deathPlace.placeId,
+          placeText: deathPlace.placeText,
+          reason: '',
+          cause: '',
+          burialPlaceId: null,
+          burialPlaceText: ''
+        },
         profile: { alternativeNames: null },
         attributes: [],
         events: [],
@@ -15263,11 +15735,13 @@ function renderTreeCardDateLines(person) {
                   defaultDateType: 'Exact date'
                 })}
 
-                <div class="field">
-                  <label for="addPersonBirthPlace">Birth place</label>
-                  <input id="addPersonBirthPlace" value="${escapeHtml(editValues.birthPlace)}" placeholder="e.g. Pawford, England">
-                </div>
-              </div>
+              ${renderPlaceCombobox({
+                id: 'addPersonBirthPlace',
+                label: 'Birth place',
+                value: editValues.birthPlace,
+                selectedPlaceId: editPerson?.birth?.placeId || '',
+                placeholder: 'e.g. Pawford, England'
+              })}
 
               <div class="add-person-life-event-block add-person-death-fields" id="deathFieldsGroup">
                 ${renderGenealogyDateField('addPersonDeath', 'Death date', editPerson?.death || emptyGenealogyDate('Exact date'), {
@@ -15277,10 +15751,13 @@ function renderTreeCardDateLines(person) {
                   defaultDateType: 'Exact date'
                 })}
 
-                <div class="field">
-                  <label for="addPersonDeathPlace">Death place</label>
-                  <input id="addPersonDeathPlace" value="${escapeHtml(editValues.deathPlace)}" placeholder="e.g. Meowbridge, England">
-                </div>
+                ${renderPlaceCombobox({
+                  id: 'addPersonDeathPlace',
+                  label: 'Death place',
+                  value: editValues.deathPlace,
+                  selectedPlaceId: editPerson?.death?.placeId || '',
+                  placeholder: 'e.g. Meowbridge, England'
+                })}
               </div>
             </div>
           </section>
@@ -15390,7 +15867,9 @@ function renderTreeCardDateLines(person) {
       const toggle = section.querySelector('[data-add-person-facts-toggle]');
       if (body) body.hidden = false;
       if (toggle) toggle.setAttribute('aria-expanded', 'true');
-      bindGenealogyDateFields(target.lastElementChild || target);
+      const insertedFact = target.lastElementChild || target;
+      bindGenealogyDateFields(insertedFact);
+      bindPlaceComboboxes(insertedFact);
       updateAddPersonFactSummary();
     }
 
@@ -15471,14 +15950,16 @@ function renderTreeCardDateLines(person) {
       if (hasFact('prefix')) facts.prefix = readAddPersonModalValue('#addPersonFactPrefix');
       if (hasFact('suffix')) facts.suffix = readAddPersonModalValue('#addPersonFactSuffix');
       if (hasFact('causeOfDeath')) facts.deathReason = readAddPersonModalValue('#addPersonFactCauseOfDeath');
-      if (hasFact('burialPlace')) facts.burialPlace = readAddPersonModalValue('#addPersonFactBurialPlace');
+      if (hasFact('burialPlace')) {
+        facts.burialPlace = readPlaceInputValue('#addPersonFactBurialPlace', modalBackdrop);
+      }
       if (hasFact('alternativeNames')) facts.alternativeNames = readAddPersonModalValue('#addPersonFactAlternativeNames');
       if (hasFact('education')) {
         const fromDate = collectGenealogyDateField('addPersonFactEducationFrom');
         const toDate = collectGenealogyDateField('addPersonFactEducationTo');
         if (!fromDate || !toDate) return { invalid: true, message: 'Check the education dates before saving.' };
         facts.education = {
-          place: readAddPersonModalValue('#addPersonFactEducationPlace'),
+          place: readPlaceInputValue('#addPersonFactEducationPlace', modalBackdrop),
           notes: readAddPersonModalValue('#addPersonFactEducationNotes'),
           fromDate,
           toDate
@@ -15501,7 +15982,7 @@ function renderTreeCardDateLines(person) {
         const baptismDate = collectGenealogyDateField('addPersonFactBaptism');
         if (!baptismDate) return { invalid: true, message: 'Check the baptism date before saving.' };
         facts.baptism = {
-          place: readAddPersonModalValue('#addPersonFactBaptismPlace'),
+          place: readPlaceInputValue('#addPersonFactBaptismPlace', modalBackdrop),
           date: baptismDate
         };
       }
@@ -15533,9 +16014,9 @@ function renderTreeCardDateLines(person) {
       }
 
       if (person.livingStatus === 'Deceased' && active.has('burialPlace')) {
-        const burialText = valueOrNull(facts.burialPlace);
-        person.death.burialPlaceText = burialText || '';
-        person.death.burialPlaceId = burialText ? samplePlaceIdFromDisplay(burialText) : null;
+        const burialPlace = resolvePlaceAssignment(facts.burialPlace, person.death?.burialPlaceId);
+        person.death.burialPlaceText = burialPlace.placeText;
+        person.death.burialPlaceId = burialPlace.placeId;
       } else {
         person.death.burialPlaceText = '';
         person.death.burialPlaceId = null;
@@ -15544,11 +16025,13 @@ function renderTreeCardDateLines(person) {
       person.profile.alternativeNames = active.has('alternativeNames') ? valueOrNull(facts.alternativeNames) : null;
 
       if (active.has('education') && facts.education) {
-        const placeText = valueOrNull(facts.education.place);
+        const existingEducation = personAttributeByTag(person, 'EDUC');
+        const educationPlace = resolvePlaceAssignment(facts.education.place, existingEducation?.placeId);
+
         upsertPersonAttribute(person, 'EDUC', {
           value: 'Education',
-          placeText: placeText || '',
-          placeId: placeText ? samplePlaceIdFromDisplay(placeText) : null,
+          placeText: educationPlace.placeText,
+          placeId: educationPlace.placeId,
           notes: valueOrNull(facts.education.notes) || '',
           fromDate: genealogyDateOrNull(facts.education.fromDate, 'Year only'),
           toDate: genealogyDateOrNull(facts.education.toDate, 'Year only')
@@ -15576,11 +16059,13 @@ function renderTreeCardDateLines(person) {
       }
 
       if (active.has('baptism') && facts.baptism) {
-        const baptismPlace = valueOrNull(facts.baptism.place);
+        const existingBaptism = personEventByTag(person, 'BAPM');
+        const baptismPlace = resolvePlaceAssignment(facts.baptism.place, existingBaptism?.placeId);
+
         upsertPersonEvent(person, 'BAPM', {
           date: genealogyDateOrNull(facts.baptism.date, 'Exact date'),
-          placeText: baptismPlace || '',
-          placeId: baptismPlace ? samplePlaceIdFromDisplay(baptismPlace) : null
+          placeText: baptismPlace.placeText,
+          placeId: baptismPlace.placeId
         });
       } else {
         removePersonEvent(person, 'BAPM');
@@ -15603,6 +16088,8 @@ function renderTreeCardDateLines(person) {
 
       const genderValue = readAddPersonModalValue('#addPersonGender');
       const livingStatus = readAddPersonModalValue('#addPersonLivingStatus');
+      const birthPlace = resolvePlaceInputSelector('#addPersonBirthPlace');
+      const deathPlace = resolvePlaceInputSelector('#addPersonDeathPlace');
 
       person.names.first = readAddPersonModalValue('#addPersonFirstName');
       person.names.last = readAddPersonModalValue('#addPersonLastName');
@@ -15644,7 +16131,8 @@ function renderTreeCardDateLines(person) {
       }
       person.birth = {
         ...birthDate,
-        placeId: samplePlaceIdFromDisplay(readAddPersonModalValue('#addPersonBirthPlace'))
+        placeId: birthPlace.placeId,
+        placeText: birthPlace.placeText
       };
 
       if (person.livingStatus === 'Deceased') {
@@ -15653,18 +16141,20 @@ function renderTreeCardDateLines(person) {
           showToast('Check the death date before saving.');
           return;
         }
-        person.death = {
-          ...deathDate,
-          placeId: samplePlaceIdFromDisplay(readAddPersonModalValue('#addPersonDeathPlace')),
-          reason: person.death?.reason || '',
-          cause: person.death?.cause || person.death?.reason || '',
-          burialPlaceId: cleanDatePlaceId(person.death?.burialPlaceId),
-          burialPlaceText: person.death?.burialPlaceText || ''
-        };
+      person.death = {
+        ...deathDate,
+        placeId: deathPlace.placeId,
+        placeText: deathPlace.placeText,
+        reason: person.death?.reason || '',
+        cause: person.death?.cause || person.death?.reason || '',
+        burialPlaceId: cleanDatePlaceId(person.death?.burialPlaceId),
+        burialPlaceText: person.death?.burialPlaceText || ''
+      };
       } else {
         person.death = {
           ...emptyGenealogyDate('Exact date'),
           placeId: null,
+          placeText: '',
           reason: '',
           cause: '',
           burialPlaceId: null,
@@ -15674,6 +16164,7 @@ function renderTreeCardDateLines(person) {
 
       applyAddPersonAdditionalFacts(person, additionalFacts);
       savePersonRelationshipBlock(personId, relationshipValues);
+      syncFamilyReciprocalLinks();
 
       person.meta.updated = 'Just now';
       sampleData.events = buildSampleEvents();
@@ -15703,6 +16194,7 @@ function renderTreeCardDateLines(person) {
 
     function bindAddPersonModalControls(personId = '') {
       bindGenealogyDateFields(modalBackdrop);
+      bindPlaceComboboxes(modalBackdrop);
       bindAddPersonAdditionalFacts(personId);
       bindAddPersonRelationshipBlock();
       const gender = modalBackdrop.querySelector('#addPersonGender');
@@ -15832,6 +16324,9 @@ function renderTreeCardDateLines(person) {
       person.names = person.names || {};
       person.birth = person.birth || emptyGenealogyDate('Exact date');
       person.death = person.death || { ...emptyGenealogyDate('Exact date'), placeId: null, reason: '', cause: '', burialPlaceId: null };
+      if (typeof person.birth.placeText === 'undefined') person.birth.placeText = '';
+      if (typeof person.death.placeText === 'undefined') person.death.placeText = '';
+      if (typeof person.death.burialPlaceText === 'undefined') person.death.burialPlaceText = '';
       if (typeof person.death.cause === 'undefined') person.death.cause = person.death.reason || '';
       if (typeof person.death.reason === 'undefined') person.death.reason = person.death.cause || '';
       return person;
@@ -15948,8 +16443,8 @@ function renderTreeCardDateLines(person) {
           if (prop === 'birthDateType') return centralPerson.birth?.dateType || 'Exact date';
           if (prop === 'deathDateType') return centralPerson.death?.dateType || 'Exact date';
           if (prop === 'deathReason') return centralPerson.death?.cause || centralPerson.death?.reason || '';
-          if (prop === 'burialPlace') return getPlaceDisplay(centralPerson.death?.burialPlaceId) || centralPerson.death?.burialPlaceText || '';
-          if (prop === 'educationPlace') return education?.placeText || getPlaceDisplay(education?.placeId) || '';
+          if (prop === 'burialPlace') return editPlaceValue(centralPerson.death?.burialPlaceId, centralPerson.death?.burialPlaceText);
+          if (prop === 'educationPlace') return editPlaceValue(education?.placeId, education?.placeText);
           if (prop === 'educationNotes') return education?.notes || '';
           if (prop === 'educationFromDate') return dateForForm(education?.fromDate, 'Year only');
           if (prop === 'educationToDate') return dateForForm(education?.toDate, 'Year only');
@@ -15959,7 +16454,7 @@ function renderTreeCardDateLines(person) {
           if (prop === 'workFromDate') return dateForForm(work?.fromDate, 'Exact date');
           if (prop === 'workToDate') return dateForForm(work?.toDate, 'Exact date');
           if (prop === 'religion') return religion?.value || '';
-          if (prop === 'baptismPlace') return baptism?.placeText || getPlaceDisplay(baptism?.placeId) || '';
+          if (prop === 'baptismPlace') return editPlaceValue(baptism?.placeId, baptism?.placeText);
           if (prop === 'baptismDate') return dateForForm(baptism?.date, 'Exact date');
           return undefined;
         },
@@ -15971,8 +16466,20 @@ function renderTreeCardDateLines(person) {
           if (prop === 'birthDateType') { centralPerson.birth.dateType = value || centralPerson.birth.dateType || 'Exact date'; return true; }
           if (prop === 'deathDateType') { centralPerson.death.dateType = value || centralPerson.death.dateType || 'Exact date'; return true; }
           if (prop === 'deathReason') { centralPerson.death.reason = valueOrNull(value) || ''; centralPerson.death.cause = centralPerson.death.reason; return true; }
-          if (prop === 'burialPlace') { const text = valueOrNull(value); centralPerson.death.burialPlaceText = text || ''; centralPerson.death.burialPlaceId = text ? samplePlaceIdFromDisplay(text) : null; return true; }
-          if (prop === 'educationPlace') { const text = valueOrNull(value); const attr = upsertPersonAttribute(centralPerson, 'EDUC'); attr.placeText = text || ''; attr.placeId = text ? samplePlaceIdFromDisplay(text) : null; return true; }
+          if (prop === 'burialPlace') {
+            const resolved = resolvePlaceAssignment(value, centralPerson.death?.burialPlaceId);
+            centralPerson.death.burialPlaceText = resolved.placeText;
+            centralPerson.death.burialPlaceId = resolved.placeId;
+            return true;
+          }
+
+          if (prop === 'educationPlace') {
+            const attr = upsertPersonAttribute(centralPerson, 'EDUC');
+            const resolved = resolvePlaceAssignment(value, attr.placeId);
+            attr.placeText = resolved.placeText;
+            attr.placeId = resolved.placeId;
+            return true;
+          }
           if (prop === 'educationNotes') { upsertPersonAttribute(centralPerson, 'EDUC', { notes: valueOrNull(value) || '' }); return true; }
           if (prop === 'educationFromDate') { upsertPersonAttribute(centralPerson, 'EDUC', { fromDate: genealogyDateOrNull(value, 'Year only') }); return true; }
           if (prop === 'educationToDate') { upsertPersonAttribute(centralPerson, 'EDUC', { toDate: genealogyDateOrNull(value, 'Year only') }); return true; }
@@ -15982,7 +16489,13 @@ function renderTreeCardDateLines(person) {
           if (prop === 'workFromDate') { upsertPersonAttribute(centralPerson, 'OCCU', { fromDate: genealogyDateOrNull(value, 'Exact date') }); return true; }
           if (prop === 'workToDate') { upsertPersonAttribute(centralPerson, 'OCCU', { toDate: genealogyDateOrNull(value, 'Exact date') }); return true; }
           if (prop === 'religion') { upsertPersonAttribute(centralPerson, 'RELI', { value: valueOrNull(value) || 'Unknown' }); return true; }
-          if (prop === 'baptismPlace') { const text = valueOrNull(value); const event = upsertPersonEvent(centralPerson, 'BAPM'); event.placeText = text || ''; event.placeId = text ? samplePlaceIdFromDisplay(text) : null; return true; }
+          if (prop === 'baptismPlace') {
+            const event = upsertPersonEvent(centralPerson, 'BAPM');
+            const resolved = resolvePlaceAssignment(value, event.placeId);
+            event.placeText = resolved.placeText;
+            event.placeId = resolved.placeId;
+            return true;
+          }
           if (prop === 'baptismDate') { upsertPersonEvent(centralPerson, 'BAPM', { date: genealogyDateOrNull(value, 'Exact date') }); return true; }
           return true;
         }
@@ -16562,8 +17075,11 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
       const currentStatus = person.living === 'Deceased' ? 'Deceased' : person.living === 'Unknown' ? 'Unknown' : 'Living';
       const isDeceased = currentStatus === 'Deceased';
       const genderValue = person.gender === 'female' ? 'Female' : person.gender === 'male' ? 'Male' : 'Unknown';
-      const deathPlaceValue = person.deathPlace === '-' ? '' : (person.deathPlace || '');
       const centralPerson = getPerson(person.id);
+      const birthPlaceValue = editPlaceValue(centralPerson?.birth?.placeId, centralPerson?.birth?.placeText || person.birthPlace);
+      const rawDeathPlace = person.deathPlace === '-' ? '' : (person.deathPlace || '');
+      const deathPlaceValue = editPlaceValue(centralPerson?.death?.placeId, centralPerson?.death?.placeText || rawDeathPlace);
+      const burialPlaceValue = editPlaceValue(centralPerson?.death?.burialPlaceId, centralPerson?.death?.burialPlaceText || details.burialPlace);
       const birthDateModel = centralPerson?.birth || { date: person.birth, dateLabel: person.birth, dateType: details.birthDateType || 'Unknown' };
       const deathDateModel = centralPerson?.death || { date: person.death, dateLabel: person.death, dateType: details.deathDateType || 'Exact date' };
       return `<div class="profile-main-edit-grid ${isFemale ? 'has-maiden' : 'no-maiden'} ${isDeceased ? 'is-deceased' : ''}">
@@ -16592,7 +17108,14 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
           className: 'profile-date-combo profile-field-birth-date',
           placeholder: 'e.g. 14 Feb 1946'
         })}
-        <div class="field profile-field-birth-place"><label>Birth Place</label><input id="profileInlineBirthPlace" value="${escapeHtml(person.birthPlace || '')}"></div>
+        ${renderPlaceCombobox({
+          id: 'profileInlineBirthPlace',
+          label: 'Birth Place',
+          value: birthPlaceValue,
+          selectedPlaceId: centralPerson?.birth?.placeId || '',
+          placeholder: 'e.g. Pawford, England',
+          className: 'profile-field-birth-place'
+        })}
 
         <div class="profile-death-fields-group" id="profileInlineDeathFields" ${isDeceased ? '' : 'hidden'}>
           ${renderGenealogyDateField('profileInlineDeathField', 'Death Date', deathDateModel, {
@@ -16602,27 +17125,43 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
             placeholder: 'e.g. 20 Oct 1926',
             defaultDateType: 'Exact date'
           })}
-          <div class="field profile-field-death-place"><label>Death Place</label><input id="profileInlineDeathPlace" value="${escapeHtml(deathPlaceValue)}"></div>
+          ${renderPlaceCombobox({
+            id: 'profileInlineDeathPlace',
+            label: 'Death Place',
+            value: deathPlaceValue,
+            selectedPlaceId: centralPerson?.death?.placeId || '',
+            placeholder: 'e.g. Meowbridge, England',
+            className: 'profile-field-death-place'
+          })}
         </div>
         <div class="profile-death-fields-group" id="profileInlineDeathExtraFields" ${isDeceased ? '' : 'hidden'}>
           <div class="field profile-field-death-reason"><label>Cause of Death</label><input id="profileInlineDeathReason" value="${escapeHtml(details.deathReason || '')}" placeholder="Cause or reason"></div>
-          <div class="field profile-field-burial-place"><label>Burial Place</label><input id="profileInlineBurialPlace" value="${escapeHtml(details.burialPlace || '')}" placeholder="Burial place"></div>
+          ${renderPlaceCombobox({
+            id: 'profileInlineBurialPlace',
+            label: 'Burial Place',
+            value: burialPlaceValue,
+            selectedPlaceId: centralPerson?.death?.burialPlaceId || '',
+            placeholder: 'Burial place',
+            className: 'profile-field-burial-place'
+          })}
         </div>
       </div>`;
     }
 
-    function renderProfileEducationEditFields(person) {
-      const details = peopleProfileDetailsFor(person);
-      return `<div class="profile-card-edit-grid two">
-        <div class="field full"><label for="profileEducationPlace">Education place</label><input id="profileEducationPlace" placeholder="School or university" value="${escapeHtml(details.educationPlace || '')}"></div>
-        <div class="profile-edit-date-row profile-range-date-row full">
-          <div class="profile-edit-date-cell">
-            ${renderGenealogyDateField('profileEducationFromDate', 'From', details.educationFromDate, {
-              inputId: 'profileEducationFromDate',
-              typeId: 'profileEducationFromDateType',
-              defaultDateType: 'Year only',
-              placeholder: 'e.g. 2004'
-            })}
+      function renderProfileEducationEditFields(person) {
+        const centralPerson = ensurePersonCentralStructures(getPerson(person.id) || person);
+        const details = peopleProfileDetailsFor(person);
+        const education = personAttributeByTag(centralPerson, 'EDUC');
+
+        return `<div class="profile-card-edit-grid two">
+          ${renderPlaceCombobox({
+            id: 'profileEducationPlace',
+            label: 'Education place',
+            value: editPlaceValue(education?.placeId, education?.placeText || details.educationPlace),
+            selectedPlaceId: education?.placeId || '',
+            placeholder: 'School or university',
+            className: 'full'
+          })}
           </div>
           <div class="profile-edit-date-cell">
             ${renderGenealogyDateField('profileEducationToDate', 'To', details.educationToDate, {
@@ -16665,16 +17204,18 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
     }
 
     function renderProfileOtherEditFields(person) {
+      const centralPerson = ensurePersonCentralStructures(getPerson(person.id) || person);
       const details = peopleProfileDetailsFor(person);
+      const baptism = personEventByTag(centralPerson, 'BAPM');
+
       return `<div class="profile-card-edit-grid two">
         <div class="field"><label for="profileReligion">Religion</label><select class="compact-select" id="profileReligion">${['Unknown','Orthodox','Catholic','Jewish'].map(value => `<option ${value === (details.religion || 'Unknown') ? 'selected' : ''}>${value}</option>`).join('')}</select></div>
-        <div class="field"><label for="profileBaptismPlace">Baptism place</label><input id="profileBaptismPlace" placeholder="Baptism place" value="${escapeHtml(details.baptismPlace || '')}"></div>
-        ${renderGenealogyDateField('profileBaptismDate', 'Baptism date', details.baptismDate, {
-          inputId: 'profileBaptismDate',
-          typeId: 'profileBaptismDateType',
-          className: 'full',
-          defaultDateType: 'Unknown',
-          placeholder: 'e.g. 14 Feb 1946'
+        ${renderPlaceCombobox({
+          id: 'profileBaptismPlace',
+          label: 'Baptism place',
+          value: editPlaceValue(baptism?.placeId, baptism?.placeText || details.baptismPlace),
+          selectedPlaceId: baptism?.placeId || '',
+          placeholder: 'Baptism place'
         })}
       </div>`;
     }
@@ -16801,6 +17342,7 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
     function bindPeopleProfileControls(person) {
       bindToasts(main);
       bindGenealogyDateFields(main);
+      bindPlaceComboboxes(main);
       attachPeopleProfileResizeObserver();
       main.querySelector('#backPeopleList')?.addEventListener('click', () => { state.peopleView = 'directory'; state.peopleSide = 'people'; state.peopleProfileEditing = false; renderPeople(); });
       main.querySelector('#profileEditButton')?.addEventListener('click', () => { state.peopleProfileEditing = true; state.peopleProfileEditTab = 'main'; renderPeople(); });
@@ -16876,7 +17418,7 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
             showToast('Check the education dates before saving.');
             return;
           }
-          details.educationPlace = main.querySelector('#profileEducationPlace')?.value.trim() || '';
+          details.educationPlace = readPlaceInputValue('#profileEducationPlace', main);
           details.educationNotes = main.querySelector('#profileEducationNotes')?.value.trim() || '';
           details.educationFromDate = fromDate;
           details.educationToDate = toDate;
@@ -16915,7 +17457,7 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
             return;
           }
           details.religion = main.querySelector('#profileReligion')?.value || 'Unknown';
-          details.baptismPlace = main.querySelector('#profileBaptismPlace')?.value.trim() || '';
+          details.baptismPlace = readPlaceInputValue('#profileBaptismPlace', main);
           details.baptismDate = baptismDate;
           person.updated = 'Just now';
           getPerson(person.id)?.meta && (getPerson(person.id).meta.updated = 'Just now');
@@ -16928,7 +17470,9 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
         const first = main.querySelector('#profileInlineFirst')?.value.trim();
         const last = main.querySelector('#profileInlineLast')?.value.trim();
         const patronym = main.querySelector('#profileInlinePatronym')?.value.trim();
-        const birthPlace = main.querySelector('#profileInlineBirthPlace')?.value.trim();
+        const birthPlace = readPlaceInputValue('#profileInlineBirthPlace', main);
+        const deathPlace = readPlaceInputValue('#profileInlineDeathPlace', main);
+        const burialPlace = readPlaceInputValue('#profileInlineBurialPlace', main);
         const gender = main.querySelector('#profileInlineGender')?.value;
         const living = main.querySelector('#profileInlineLiving')?.value;
         const birthDate = collectGenealogyDateField('profileInlineBirthField');
@@ -16949,17 +17493,17 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
         details.birthDateType = birthDate.dateType;
         details.deathDateType = deathDate.dateType;
         details.deathReason = main.querySelector('#profileInlineDeathReason')?.value.trim() || '';
-        details.burialPlace = main.querySelector('#profileInlineBurialPlace')?.value.trim() || '';
+        details.burialPlace = burialPlace;
         if (first) person.first = first;
         if (last) person.surname = last;
         if (first || last || patronym) person.name = [person.first || first || '', patronym || '', person.surname || last || ''].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
         person.birth = formatGenealogyDateLabel(birthDate);
-        if (birthPlace) person.birthPlace = birthPlace;
+        person.birthPlace = birthPlace.text;
         if (gender) person.gender = gender.toLowerCase();
         if (living) person.living = living;
         if (living === 'Deceased') {
           person.death = formatGenealogyDateLabel(deathDate);
-          person.deathPlace = main.querySelector('#profileInlineDeathPlace')?.value.trim() || person.deathPlace;
+          person.deathPlace = deathPlace.text;
         } else {
           person.death = '';
           person.deathPlace = '';
@@ -16967,25 +17511,40 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
         person.updated = 'Just now';
         syncPeopleRecordToSampleData(person);
         const centralPerson = getPerson(person.id);
+        const centralBirthPlace = resolvePlaceInputValue(person.birthPlace, centralPerson.birth?.placeId);
+        const centralDeathPlace = resolvePlaceInputValue(person.deathPlace, centralPerson.death?.placeId);
+        const centralBurialPlace = resolvePlaceInputValue(details.burialPlace, centralPerson.death?.burialPlaceId);
+        const resolvedBirthPlace = resolvePlaceAssignment(birthPlace, centralPerson.birth?.placeId);
+        const resolvedDeathPlace = resolvePlaceAssignment(deathPlace, centralPerson.death?.placeId);
+        const resolvedBurialPlace = resolvePlaceAssignment(burialPlace, centralPerson.death?.burialPlaceId);
         if (centralPerson) {
           centralPerson.birth = {
             ...birthDate,
-            placeId: samplePlaceIdFromDisplay(person.birthPlace)
+            placeId: resolvedBirthPlace.placeId,
+            placeText: resolvedBirthPlace.placeText
           };
+
           centralPerson.livingStatus = normalizeLivingStatus(person.living);
+
           if (centralPerson.livingStatus === 'Deceased') {
             centralPerson.death = {
               ...deathDate,
-              placeId: samplePlaceIdFromDisplay(person.deathPlace),
+              placeId: resolvedDeathPlace.placeId,
+              placeText: resolvedDeathPlace.placeText,
               reason: details.deathReason,
-              burialPlaceId: samplePlaceIdFromDisplay(details.burialPlace)
+              cause: details.deathReason,
+              burialPlaceId: resolvedBurialPlace.placeId,
+              burialPlaceText: resolvedBurialPlace.placeText
             };
           } else {
             centralPerson.death = {
               ...emptyGenealogyDate('Exact date'),
               placeId: null,
+              placeText: '',
               reason: '',
-              burialPlaceId: null
+              cause: '',
+              burialPlaceId: null,
+              burialPlaceText: ''
             };
           }
           centralPerson.meta.updated = 'Just now';
