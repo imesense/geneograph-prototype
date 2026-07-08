@@ -1415,6 +1415,9 @@
       resize: vertical;
     }
     .genealogy-date-field { display: grid; gap: 8px; }
+    .genealogy-date-field > label {
+      margin-bottom: 0;
+    }
     .genealogy-date-controls {
       display: grid;
       grid-template-columns: minmax(150px, 190px) minmax(240px, 1fr) var(--control-icon-button-size);
@@ -3860,54 +3863,91 @@
       grid-column: 1 / -1;
     }
 
+    
+
     .add-person-relationship-card .add-person-select-field,
     .add-person-relationship-card .field {
       min-width: 0;
     }
 
-    .add-person-life-event-block > .genealogy-date-field.is-between {
+    .add-person-relationship-card .add-person-relationship-type-field {
+      grid-column: 1;
+    }
+
+    .add-person-relationship-card .add-person-marriage-type-field {
+      grid-column: 2;
+    }
+
+    .add-person-relationship-card .add-person-partner-field,
+    .add-person-relationship-card .add-person-relationship-partner-field {
+      grid-column: 1;
+    }
+
+    .add-person-relationship-card .add-person-marriage-type-field[hidden] {
+      display: none !important;
+    }
+
+    .add-person-life-event-block > .genealogy-date-field.is-between,
+    .add-person-relationship-card .add-person-marriage-date-field.is-between {
       grid-template-columns: minmax(150px, 190px) minmax(260px, 1fr) var(--control-icon-button-size);
       grid-template-rows: auto var(--control-height) auto var(--control-height);
       gap: var(--space-2) var(--space-3);
       align-items: start;
     }
-    .add-person-life-event-block > .genealogy-date-field.is-between > label {
+
+    .add-person-life-event-block > .genealogy-date-field.is-between > label,
+    .add-person-relationship-card .add-person-marriage-date-field.is-between > label {
       grid-column: 1;
       grid-row: 1;
       align-self: end;
-      margin: 0;
     }
+
     .add-person-life-event-block > .genealogy-date-field.is-between > .genealogy-date-controls,
     .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-range-shell,
-    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-range-cell {
+    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-range-cell,
+    .add-person-relationship-card .add-person-marriage-date-field.is-between > .genealogy-date-controls,
+    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-range-shell,
+    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-range-cell {
       display: contents;
     }
-    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-range-cell span {
+
+    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-range-cell span,
+    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-range-cell span {
       display: block;
       align-self: end;
       margin: 0;
     }
-    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-range-cell:first-child span {
+
+    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-range-cell:first-child span,
+    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-range-cell:first-child span {
       grid-column: 2;
       grid-row: 1;
     }
-    .add-person-life-event-block > .genealogy-date-field.is-between [data-genealogy-date-to-cell] span {
+
+    .add-person-life-event-block > .genealogy-date-field.is-between [data-genealogy-date-to-cell] span,
+    .add-person-relationship-card .add-person-marriage-date-field.is-between [data-genealogy-date-to-cell] span {
       grid-column: 2;
       grid-row: 3;
       margin-top: var(--space-3);
     }
-    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-type {
+
+    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-type,
+    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-type {
       grid-column: 1;
       grid-row: 2;
       align-self: start;
       min-height: var(--control-height);
     }
-    .add-person-life-event-block > .genealogy-date-field.is-between [data-genealogy-date-input] {
+
+    .add-person-life-event-block > .genealogy-date-field.is-between [data-genealogy-date-input],
+    .add-person-relationship-card .add-person-marriage-date-field.is-between [data-genealogy-date-input] {
       grid-column: 2;
       grid-row: 2;
       min-height: var(--control-height);
     }
-    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-details-button {
+
+    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-details-button,
+    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-details-button {
       grid-column: 3;
       grid-row: 2;
       width: var(--control-icon-button-size);
@@ -3917,13 +3957,18 @@
       align-self: start;
       justify-self: start;
     }
-    .add-person-life-event-block > .genealogy-date-field.is-between [data-genealogy-date-input-to] {
+
+    .add-person-life-event-block > .genealogy-date-field.is-between [data-genealogy-date-input-to],
+    .add-person-relationship-card .add-person-marriage-date-field.is-between [data-genealogy-date-input-to] {
       grid-column: 2;
       grid-row: 4;
       min-height: var(--control-height);
     }
+
     .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-standard-status,
-    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-validation {
+    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-validation,
+    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-standard-status,
+    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-validation {
       grid-column: 1 / -1;
     }
     .add-person-facts-section,
@@ -4088,7 +4133,6 @@
       grid-column: 1;
       grid-row: 1;
       align-self: end;
-      margin: 0;
     }
 
     .add-person-fact-grid .genealogy-date-field.is-between > .genealogy-date-controls,
@@ -14829,7 +14873,9 @@ function renderTreeCardDateLines(person) {
       const active = ADD_PERSON_RELATIONSHIP_TYPES.includes(selected) ? selected : 'Married';
       return ADD_PERSON_RELATIONSHIP_TYPES.map(value => `<option value="${escapeHtml(value)}" ${value === active ? 'selected' : ''}>${escapeHtml(value)}</option>`).join('');
     }
-
+    function addPersonRelationshipShowsMarriageType(type) {
+      return String(type || '').trim() === 'Married';
+    }
     function addPersonMarriageTypeOptions(selected = 'Civil') {
       const active = ADD_PERSON_MARRIAGE_TYPES.includes(selected) ? selected : 'Civil';
       return ADD_PERSON_MARRIAGE_TYPES.map(value => `<option value="${escapeHtml(value)}" ${value === active ? 'selected' : ''}>${escapeHtml(value)}</option>`).join('');
@@ -14848,7 +14894,11 @@ function renderTreeCardDateLines(person) {
     }
 
     function renderAddPersonRelationshipCard({ relationship = null, personId = '', partner = null, index = 0, mode = 'edit' } = {}) {
-      const relationshipType = relationshipTypeFromLegacy(relationship) || (mode === 'addPartner' ? 'Married' : 'Partner');
+      const relationshipType = relationship
+        ? relationshipTypeFromLegacy(relationship)
+        : mode === 'addPartner'
+          ? 'Married'
+          : 'Partner';
       const marriage = relationshipEventByTag(relationship, 'MARR') || createRelationshipEvent('MARR', 'Marriage', {
         id: `${relationship?.id || 'new-relationship'}-marriage`,
         typeLabel: relationship?.marriageType || 'Civil',
@@ -14861,10 +14911,11 @@ function renderTreeCardDateLines(person) {
       const fieldPrefix = `addPersonRelationship${index}`;
       const marriagePlace = editPlaceValue(marriage.placeId) || marriage.placeText || '';
       const marriageType = marriage.typeLabel || relationship?.marriageType || 'Civil';
+      const showMarriageType = addPersonRelationshipShowsMarriageType(relationshipType);
 
       return `<div class="add-person-relationship-card" data-add-person-relationship-card data-relationship-id="${escapeHtml(relationship?.id || '')}" data-partner-id="${escapeHtml(partner?.id || '')}" data-relationship-index="${index}">
         <div class="add-person-relationship-grid">
-          <div class="field add-person-select-field">
+          <div class="field add-person-select-field add-person-relationship-type-field">
             <label for="${fieldPrefix}Type">Relationship type</label>
             <select class="compact-select add-person-select" id="${fieldPrefix}Type" data-add-person-relationship-type>
               ${addPersonRelationshipTypeOptions(relationshipType)}
@@ -14872,7 +14923,7 @@ function renderTreeCardDateLines(person) {
             <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
           </div>
 
-          <div class="field add-person-select-field">
+          <div class="field add-person-select-field add-person-marriage-type-field" data-add-person-marriage-type-field ${showMarriageType ? '' : 'hidden'}>
             <label for="${fieldPrefix}MarriageType">Marriage type</label>
             <select class="compact-select add-person-select" id="${fieldPrefix}MarriageType" data-add-person-marriage-type>
               ${addPersonMarriageTypeOptions(marriageType)}
@@ -14880,7 +14931,7 @@ function renderTreeCardDateLines(person) {
             <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
           </div>
 
-          <div class="field">
+          <div class="field add-person-relationship-partner-field">
             <label data-add-person-partner-label>${escapeHtml(partnerLabel)}</label>
             <div class="add-person-relationship-partner">
               ${addPersonRelationshipPartnerAvatar(partner)}
@@ -14892,7 +14943,8 @@ function renderTreeCardDateLines(person) {
             inputId: `${fieldPrefix}MarriageDateInput`,
             typeId: `${fieldPrefix}MarriageDateType`,
             placeholder: 'e.g. 18 Aug 2023',
-            defaultDateType: 'Exact date'
+            defaultDateType: 'Exact date',
+            className: 'add-person-marriage-date-field'
           })}
 
           <div class="field full">
@@ -14954,18 +15006,30 @@ function renderTreeCardDateLines(person) {
       });
       modalBackdrop?.querySelectorAll('[data-add-person-relationship-type]').forEach(select => {
         const card = select.closest('[data-add-person-relationship-card]');
-        const updateLabel = () => {
+
+        const updateRelationshipFields = () => {
           const label = card?.querySelector('[data-add-person-partner-label]');
           if (label) label.textContent = relationshipPersonLabel(select.value);
+
+          const marriageTypeField = card?.querySelector('[data-add-person-marriage-type-field]');
+          if (marriageTypeField) {
+            marriageTypeField.hidden = !addPersonRelationshipShowsMarriageType(select.value);
+          }
         };
-        select.addEventListener('change', updateLabel);
-        updateLabel();
+
+        select.addEventListener('change', updateRelationshipFields);
+        updateRelationshipFields();
       });
     }
 
     function collectAddPersonRelationshipBlock() {
       const cards = Array.from(modalBackdrop?.querySelectorAll('[data-add-person-relationship-card]') || []);
       const relationships = [];
+      const relationshipType = card.querySelector('[data-add-person-relationship-type]')?.value || 'Married';
+      const marriageTypeSelect = card.querySelector('[data-add-person-marriage-type]');
+      const marriageType = addPersonRelationshipShowsMarriageType(relationshipType)
+        ? marriageTypeSelect?.value || 'Civil'
+        : '';
 
       for (const card of cards) {
         const index = card.dataset.relationshipIndex || '0';
@@ -14976,11 +15040,8 @@ function renderTreeCardDateLines(person) {
         relationships.push({
           relationshipId: card.dataset.relationshipId || '',
           partnerId: card.dataset.partnerId || '',
-          relationshipType: card.querySelector('[data-add-person-relationship-type]')?.value || 'Married',
-          marriageType:
-            card.querySelector('[data-add-person-marriage-type]')?.value
-            || modalBackdrop?.querySelector('[data-add-person-marriage-type]')?.value
-            || 'Civil',
+          relationshipType,
+          marriageType,
           marriageDate,
           marriagePlace: card.querySelector('[data-add-person-marriage-place]')?.value.trim() || ''
         });
@@ -14997,7 +15058,12 @@ function renderTreeCardDateLines(person) {
 
     function upsertMarriageEvent(relationship, relationshipValues) {
       relationship.events = Array.isArray(relationship.events) ? relationship.events : [];
-      relationship.marriageType = relationshipValues.marriageType || relationship.marriageType || 'Civil';
+      const hasMarriageType = addPersonRelationshipShowsMarriageType(relationshipValues.relationshipType);
+      const marriageType = hasMarriageType
+        ? relationshipValues.marriageType || relationship.marriageType || 'Civil'
+        : '';
+
+      relationship.marriageType = marriageType;
       const date = normalizeGenealogyDateInput(relationshipValues.marriageDate, 'Exact date');
       const placeId = samplePlaceIdFromDisplay(relationshipValues.marriagePlace);
       let marriage = relationshipEventByTag(relationship, 'MARR');
@@ -15005,7 +15071,7 @@ function renderTreeCardDateLines(person) {
       if (!marriage) {
         marriage = createRelationshipEvent('MARR', 'Marriage', {
           id: `${relationship.id}-marriage`,
-          typeLabel: relationshipValues.marriageType || 'Civil',
+          typeLabel: marriageType,
           date,
           placeId,
           placeText: relationshipValues.marriagePlace || getPlaceDisplay(placeId)
@@ -15014,7 +15080,7 @@ function renderTreeCardDateLines(person) {
       } else {
         marriage.eventType = 'Marriage';
         marriage.gedcomTag = 'MARR';
-        marriage.typeLabel = relationshipValues.marriageType || marriage.typeLabel || 'Civil';
+        marriage.typeLabel = marriageType;
         marriage.date = date;
         marriage.placeId = placeId;
         marriage.placeText = relationshipValues.marriagePlace || getPlaceDisplay(placeId);
