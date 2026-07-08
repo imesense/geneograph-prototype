@@ -36,6 +36,8 @@
       --topbar-h: 52px;
       --sidebar-w: 292px;
       --right-w: 320px;
+      --control-height: 42px;
+      --control-icon-button-size: var(--control-height);
       --space-1: 4px;
       --space-2: 8px;
       --space-3: 12px;
@@ -1387,20 +1389,35 @@
     .close-button:hover { background: var(--surface-card-hover); color: var(--text-primary); }
     .form-grid { display: grid; gap: var(--space-4); }
     .field label, .field legend { display: block; color: var(--text-secondary); font-weight: 800; margin-bottom: var(--space-2); }
-    .field input, .field textarea {
+    .field input {
       width: 100%;
+      height: var(--control-height);
+      min-height: var(--control-height);
+      max-height: var(--control-height);
       border: 1px solid var(--border-default);
       background: var(--surface-input);
       color: var(--text-primary);
       border-radius: var(--radius-sm);
-      padding: 12px;
+      padding: 0 var(--space-3);
       outline: 0;
+      box-sizing: border-box;
     }
-    .field textarea { min-height: 104px; resize: vertical; }
+    .field textarea {
+      width: 100%;
+      min-height: 104px;
+      border: 1px solid var(--border-default);
+      background: var(--surface-input);
+      color: var(--text-primary);
+      border-radius: var(--radius-sm);
+      padding: var(--space-3);
+      outline: 0;
+      box-sizing: border-box;
+      resize: vertical;
+    }
     .genealogy-date-field { display: grid; gap: 8px; }
     .genealogy-date-controls {
       display: grid;
-      grid-template-columns: minmax(150px, 190px) minmax(240px, 1fr) 52px;
+      grid-template-columns: minmax(150px, 190px) minmax(240px, 1fr) var(--control-icon-button-size);
       gap: var(--space-3);
       align-items: stretch;
       min-width: 0;
@@ -1408,11 +1425,18 @@
     .genealogy-date-type,
     .genealogy-date-input {
       min-width: 0;
-      min-height: 56px;
+      height: var(--control-height);
+      min-height: var(--control-height);
+      max-height: var(--control-height);
+      box-sizing: border-box;
     }
     .genealogy-date-details-button {
-      width: 52px;
-      min-height: 56px;
+      width: var(--control-icon-button-size);
+      min-width: var(--control-icon-button-size);
+      max-width: var(--control-icon-button-size);
+      height: var(--control-height);
+      min-height: var(--control-height);
+      max-height: var(--control-height);
       border: 1px solid var(--border-default);
       background: var(--surface-input);
       color: var(--text-secondary);
@@ -1420,6 +1444,8 @@
       display: inline-grid;
       place-items: center;
       cursor: pointer;
+      padding: 0;
+      box-sizing: border-box;
     }
     .genealogy-date-details-button:hover,
     .genealogy-date-details-button[aria-expanded="true"] {
@@ -3509,7 +3535,7 @@
     }
     .form-section-title { font-size: 16px; margin: 0 0 var(--space-3); padding-bottom: var(--space-2); border-bottom: 1px solid var(--border-strong); }
     .two-col-form { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
-    .compact-select { height: 42px; border: 1px solid var(--border-default); background: var(--surface-card); color: var(--text-secondary); border-radius: var(--radius-sm); padding: 0 var(--space-3); }
+    .compact-select { height: var(--control-height); min-height: var(--control-height); max-height: var(--control-height); border: 1px solid var(--border-default); background: var(--surface-card); color: var(--text-secondary); border-radius: var(--radius-sm); padding: 0 var(--space-3); box-sizing: border-box; }
     .fact-buttons { display: flex; flex-wrap: wrap; gap: var(--space-2); border: 1px solid var(--border-default); border-radius: var(--radius-sm); padding: var(--space-2); }
     .fact-button { min-height: 38px; border: 0; background: var(--surface-input); color: var(--text-secondary); border-radius: 7px; padding: 0 var(--space-3); }
     .fact-button.is-added,
@@ -3583,7 +3609,7 @@
 
     .add-person-status-field { position: relative; }
     .add-person-status-button {
-      width: 100%; height: 42px; border: 1px solid var(--border-default); background: var(--surface-card); color: var(--text-secondary); border-radius: var(--radius-sm); padding: 0 var(--space-3); display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); font-weight: 700; text-align: left; transition: background var(--ease), border-color var(--ease), color var(--ease);
+      width: 100%; height: var(--control-height); min-height: var(--control-height); max-height: var(--control-height); border: 1px solid var(--border-default); background: var(--surface-card); color: var(--text-secondary); border-radius: var(--radius-sm); padding: 0 var(--space-3); display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); font-weight: 700; text-align: left; transition: background var(--ease), border-color var(--ease), color var(--ease);
     }
     .add-person-status-button:hover, .add-person-status-button[aria-expanded="true"] { background: var(--surface-card-hover); border-color: var(--border-strong); color: var(--text-primary); }
     .add-person-status-current, .add-person-status-option span:first-child { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; }
@@ -3591,7 +3617,7 @@
     .add-person-status-dot.deceased { background: var(--text-tertiary); }
     .add-person-status-dot.unknown { background: var(--amber); }
     .add-person-status-menu { position: absolute; z-index: 150; left: 0; right: 0; top: calc(100% + 6px); border: 1px solid var(--border-strong); background: var(--surface-card); border-radius: var(--radius-sm); box-shadow: var(--shadow-soft); overflow: hidden; padding: 4px; }
-    .add-person-status-option { width: 100%; min-height: 42px; border: 0; background: transparent; color: var(--text-secondary); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: 0 var(--space-3); text-align: left; font-weight: 700; }
+    .add-person-status-option { width: 100%; min-height: var(--control-height); border: 0; background: transparent; color: var(--text-secondary); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: 0 var(--space-3); text-align: left; font-weight: 700; }
     .add-person-status-option:hover, .add-person-status-option.active { background: var(--surface-selected); color: var(--text-primary); }
     .add-person-conditional-field[hidden], .add-person-death-fields[hidden] { display: none !important; }
     .add-person-death-fields { display: contents; }
@@ -3612,15 +3638,15 @@
       width: 100%;
     }
     .add-person-life-event-block .genealogy-date-controls {
-      grid-template-columns: minmax(150px, 190px) minmax(260px, 1fr) 52px;
+      grid-template-columns: minmax(150px, 190px) minmax(260px, 1fr) var(--control-icon-button-size);
     }
     .genealogy-date-range-shell {
       display: grid;
       min-width: 0;
     }
     .genealogy-date-field.is-between .genealogy-date-controls {
-      grid-template-columns: minmax(150px, 190px) minmax(260px, 1fr) 52px;
-      grid-template-rows: auto 56px auto 56px;
+      grid-template-columns: minmax(150px, 190px) minmax(260px, 1fr) var(--control-icon-button-size);
+      grid-template-rows: auto var(--control-height) auto var(--control-height);
       gap: var(--space-2) var(--space-3);
       align-items: start;
     }
@@ -3658,27 +3684,27 @@
     .genealogy-date-field.is-between .genealogy-date-type {
       grid-column: 1;
       grid-row: 2;
-      min-height: 56px;
+      min-height: var(--control-height);
       align-self: start;
     }
     .genealogy-date-field.is-between [data-genealogy-date-input] {
       grid-column: 2;
       grid-row: 2;
-      min-height: 56px;
+      min-height: var(--control-height);
     }
     .genealogy-date-field.is-between .genealogy-date-details-button {
       grid-column: 3;
       grid-row: 2;
-      width: 52px;
-      height: 56px;
-      min-height: 56px;
+      width: var(--control-icon-button-size);
+      height: var(--control-height);
+      min-height: var(--control-height);
       align-self: start;
       justify-self: stretch;
     }
     .genealogy-date-field.is-between [data-genealogy-date-input-to] {
       grid-column: 2;
       grid-row: 4;
-      min-height: 56px;
+      min-height: var(--control-height);
     }
     .genealogy-date-field:not(.is-between) [data-genealogy-date-to-cell] {
       display: none;
@@ -3825,7 +3851,7 @@
     }
 
     .add-person-relationship-card .genealogy-date-controls {
-      grid-template-columns: minmax(130px, 180px) minmax(0, 1fr) 52px;
+      grid-template-columns: minmax(130px, 180px) minmax(0, 1fr) var(--control-icon-button-size);
       min-width: 0;
     }
 
@@ -3840,8 +3866,8 @@
     }
 
     .add-person-life-event-block > .genealogy-date-field.is-between {
-      grid-template-columns: minmax(150px, 190px) minmax(260px, 1fr) 52px;
-      grid-template-rows: auto 56px auto 56px;
+      grid-template-columns: minmax(150px, 190px) minmax(260px, 1fr) var(--control-icon-button-size);
+      grid-template-rows: auto var(--control-height) auto var(--control-height);
       gap: var(--space-2) var(--space-3);
       align-items: start;
     }
@@ -3874,27 +3900,27 @@
       grid-column: 1;
       grid-row: 2;
       align-self: start;
-      min-height: 56px;
+      min-height: var(--control-height);
     }
     .add-person-life-event-block > .genealogy-date-field.is-between [data-genealogy-date-input] {
       grid-column: 2;
       grid-row: 2;
-      min-height: 56px;
+      min-height: var(--control-height);
     }
     .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-details-button {
       grid-column: 3;
       grid-row: 2;
-      width: 52px;
-      height: 56px;
-      min-height: 56px;
-      max-height: 56px;
+      width: var(--control-icon-button-size);
+      height: var(--control-height);
+      min-height: var(--control-height);
+      max-height: var(--control-height);
       align-self: start;
       justify-self: start;
     }
     .add-person-life-event-block > .genealogy-date-field.is-between [data-genealogy-date-input-to] {
       grid-column: 2;
       grid-row: 4;
-      min-height: 56px;
+      min-height: var(--control-height);
     }
     .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-standard-status,
     .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-validation {
@@ -4025,7 +4051,7 @@
     }
 
     .add-person-fact-grid .add-person-fact-date-row .genealogy-date-controls {
-      grid-template-columns: minmax(118px, 150px) minmax(0, 1fr) 44px;
+      grid-template-columns: minmax(118px, 150px) minmax(0, 1fr) var(--control-icon-button-size);
       gap: var(--space-2);
       min-width: 0;
     }
@@ -4033,20 +4059,141 @@
     .add-person-fact-grid .add-person-fact-date-row .genealogy-date-type,
     .add-person-fact-grid .add-person-fact-date-row .genealogy-date-input {
       min-width: 0;
-      min-height: 52px;
+      min-height: var(--control-height);
     }
 
     .add-person-fact-grid .add-person-fact-date-row .genealogy-date-details-button {
-      width: 44px;
-      min-width: 44px;
-      height: 52px;
-      min-height: 52px;
-      max-height: 52px;
+      width: var(--control-icon-button-size);
+      min-width: var(--control-icon-button-size);
+      height: var(--control-height);
+      min-height: var(--control-height);
+      max-height: var(--control-height);
     }
 
     .add-person-fact-grid .add-person-fact-date-row .genealogy-date-details-button svg {
       width: 16px;
       height: 16px;
+    }
+
+    .add-person-fact-grid .genealogy-date-field.is-between {
+      display: grid;
+      grid-template-columns: minmax(118px, 150px) minmax(0, 1fr) var(--control-icon-button-size);
+      grid-template-rows: auto var(--control-height) auto var(--control-height) auto;
+      gap: var(--space-2);
+      align-items: start;
+      min-width: 0;
+    }
+
+    .add-person-fact-grid .genealogy-date-field.is-between > label {
+      grid-column: 1;
+      grid-row: 1;
+      align-self: end;
+      margin: 0;
+    }
+
+    .add-person-fact-grid .genealogy-date-field.is-between > .genealogy-date-controls,
+    .add-person-fact-grid .genealogy-date-field.is-between .genealogy-date-range-shell,
+    .add-person-fact-grid .genealogy-date-field.is-between .genealogy-date-range-cell {
+      display: contents;
+    }
+
+    .add-person-fact-grid .genealogy-date-field.is-between .genealogy-date-range-cell span {
+      display: block;
+      align-self: end;
+      margin: 0;
+    }
+
+    .add-person-fact-grid .genealogy-date-field.is-between .genealogy-date-range-cell:first-child span {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .add-person-fact-grid .genealogy-date-field.is-between [data-genealogy-date-to-cell] span {
+      grid-column: 2;
+      grid-row: 3;
+      margin-top: var(--space-2);
+    }
+
+    .add-person-fact-grid .genealogy-date-field.is-between .genealogy-date-type {
+      grid-column: 1;
+      grid-row: 2;
+      min-height: var(--control-height);
+    }
+
+    .add-person-fact-grid .genealogy-date-field.is-between [data-genealogy-date-input] {
+      grid-column: 2;
+      grid-row: 2;
+      min-height: var(--control-height);
+    }
+
+    .add-person-fact-grid .genealogy-date-field.is-between .genealogy-date-details-button {
+      grid-column: 3;
+      grid-row: 2;
+      width: var(--control-icon-button-size);
+      min-width: var(--control-icon-button-size);
+      height: var(--control-height);
+      min-height: var(--control-height);
+      max-height: var(--control-height);
+      align-self: start;
+      justify-self: start;
+    }
+
+    .add-person-fact-grid .genealogy-date-field.is-between [data-genealogy-date-input-to] {
+      grid-column: 2;
+      grid-row: 4;
+      min-height: var(--control-height);
+    }
+
+    .add-person-fact-grid .genealogy-date-field.is-between .genealogy-date-standard-status,
+    .add-person-fact-grid .genealogy-date-field.is-between .genealogy-date-validation {
+      grid-column: 1 / -1;
+    }
+
+    .add-person-fact-confirm-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 260;
+      display: grid;
+      place-items: center;
+      padding: var(--space-6);
+      background: rgba(0, 0, 0, .46);
+      backdrop-filter: blur(2px);
+    }
+
+    .add-person-fact-confirm-card {
+      width: min(460px, 100%);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      background: var(--surface-card);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+    }
+
+    .add-person-fact-confirm-header,
+    .add-person-fact-confirm-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .add-person-fact-confirm-header h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .add-person-fact-confirm-body {
+      padding: var(--space-5);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .add-person-fact-confirm-actions {
+      justify-content: flex-end;
+      border-top: 1px solid var(--border-default);
+      border-bottom: 0;
     }
     .attach-row { width: 100%; border: 0; border-bottom: 1px solid var(--border-default); background: transparent; text-align: left; cursor: pointer; transition: background var(--ease), color var(--ease); }
     .attach-row:hover, .attach-row:focus-visible { background: rgba(255,255,255,.035); color: var(--text-primary); }
@@ -6443,7 +6590,7 @@
     .albums-search input { width: 100%; border: 0; background: transparent; outline: 0; color: var(--text-primary); }
     .albums-search input::placeholder { color: var(--text-tertiary); }
     .albums-select {
-      height: 42px;
+      height: var(--control-height);
       min-width: 190px;
       border: 1px solid var(--border-default);
       border-radius: var(--radius-sm);
@@ -8461,7 +8608,7 @@
     .publish-field input,
     .publish-field select {
       width: 100%;
-      height: 42px;
+      height: var(--control-height);
       border: 1px solid var(--border-default);
       border-radius: var(--radius-md);
       background: var(--surface-input);
@@ -9201,7 +9348,7 @@
     }
 
     .person-profile .profile-main-edit-grid {
-      --profile-main-control-height: 56px;
+      --profile-main-control-height: var(--control-height);
       display: grid;
       grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) minmax(170px, .72fr);
       gap: 20px 24px;
@@ -9283,15 +9430,15 @@
     }
 
     .person-profile .profile-main-edit-grid .genealogy-date-controls {
-      grid-template-columns: minmax(150px, 190px) minmax(220px, 1fr) 52px;
+      grid-template-columns: minmax(150px, 190px) minmax(220px, 1fr) var(--control-icon-button-size);
       gap: var(--space-3);
       align-items: start;
       min-width: 0;
     }
 
     .person-profile .profile-main-edit-grid .genealogy-date-details-button {
-      width: 52px;
-      min-width: 52px;
+      width: var(--control-icon-button-size);
+      min-width: var(--control-icon-button-size);
       padding: 0;
       place-self: start;
     }
@@ -9356,7 +9503,7 @@
 
     .person-profile .profile-range-date-row .genealogy-date-controls,
     .person-profile .profile-card-edit-grid > .genealogy-date-field .genealogy-date-controls {
-      grid-template-columns: minmax(150px, 190px) minmax(220px, 1fr) 52px;
+      grid-template-columns: minmax(150px, 190px) minmax(220px, 1fr) var(--control-icon-button-size);
       gap: var(--space-3);
       min-width: 0;
     }
@@ -9367,15 +9514,15 @@
     .person-profile .profile-card-edit-grid > .genealogy-date-field .genealogy-date-type,
     .person-profile .profile-card-edit-grid > .genealogy-date-field .genealogy-date-input,
     .person-profile .profile-card-edit-grid > .genealogy-date-field .genealogy-date-details-button {
-      min-height: 52px;
-      height: 52px;
-      max-height: 52px;
+      min-height: var(--control-height);
+      height: var(--control-height);
+      max-height: var(--control-height);
     }
 
     .person-profile .profile-range-date-row .genealogy-date-details-button,
     .person-profile .profile-card-edit-grid > .genealogy-date-field .genealogy-date-details-button {
-      width: 52px;
-      min-width: 52px;
+      width: var(--control-icon-button-size);
+      min-width: var(--control-icon-button-size);
       padding: 0;
     }
 
@@ -10210,6 +10357,52 @@
       .albums-lightbox-nav.prev { left: 8px; }
       .albums-lightbox-nav.next { right: 8px; }
       .albums-lightbox-caption { padding: 12px 16px 20px; }
+    }
+
+  
+
+    /* Project-wide standard form-control height system. Keep standard single-line controls aligned across modules. */
+    .field input,
+    .field select,
+    .compact-select,
+    .add-person-select,
+    .add-person-status-button,
+    .genealogy-date-type,
+    .genealogy-date-input,
+    .genealogy-date-details-button {
+      box-sizing: border-box;
+      height: var(--control-height);
+      min-height: var(--control-height);
+      max-height: var(--control-height);
+    }
+
+    .genealogy-date-controls,
+    .add-person-life-event-block .genealogy-date-controls,
+    .add-person-fact-grid .add-person-fact-date-row .genealogy-date-controls,
+    .person-profile .profile-main-edit-grid .genealogy-date-controls,
+    .person-profile .profile-range-date-row .genealogy-date-controls,
+    .person-profile .profile-card-edit-grid > .genealogy-date-field .genealogy-date-controls {
+      grid-template-columns: minmax(150px, 190px) minmax(0, 1fr) var(--control-icon-button-size);
+    }
+
+    .add-person-fact-grid .add-person-fact-date-row .genealogy-date-controls,
+    .add-person-fact-grid .genealogy-date-field.is-between {
+      grid-template-columns: minmax(118px, 150px) minmax(0, 1fr) var(--control-icon-button-size);
+    }
+
+    .genealogy-date-details-button {
+      width: var(--control-icon-button-size);
+      min-width: var(--control-icon-button-size);
+      max-width: var(--control-icon-button-size);
+      padding: 0;
+    }
+
+    .genealogy-date-field.is-between .genealogy-date-controls {
+      grid-template-rows: auto var(--control-height) auto var(--control-height);
+    }
+
+    .add-person-fact-grid .genealogy-date-field.is-between {
+      grid-template-rows: auto var(--control-height) auto var(--control-height) auto;
     }
 
   </style>
@@ -11344,8 +11537,14 @@
 
     function genealogyDatePartsFromModel(model = {}) {
       const value = normalizeGenealogyDateInput(model);
-      const first = parseBaseGenealogyDate(value.dateLabel || value.date || value.originalText) || {};
-      const second = parseBaseGenealogyDate(value.date2Label || value.date2 || '') || {};
+      const firstSource = value.dateType === 'Between'
+        ? value.date || value.originalText || value.dateLabel
+        : value.dateLabel || value.date || value.originalText;
+      const secondSource = value.dateType === 'Between'
+        ? value.date2 || value.date2Label
+        : value.date2Label || value.date2 || '';
+      const first = parseBaseGenealogyDate(firstSource || '') || {};
+      const second = parseBaseGenealogyDate(secondSource || '') || {};
       return {
         day: first.day || '',
         month: first.month || '',
@@ -11491,8 +11690,24 @@
       const liveType = root.querySelector('[data-genealogy-date-type]')?.value || existingModel.dateType;
       const liveText = root.querySelector('[data-genealogy-date-input]')?.value || '';
       const liveText2 = root.querySelector('[data-genealogy-date-input-to]')?.value || '';
-      const liveParsed = liveText ? parseGenealogyDateTextAsType(liveText, liveType, { calendar: existingModel.calendar, date2: liveType === 'Between' ? liveText2 : existingModel.date2 || existingModel.date2Label }) : null;
-      const model = liveParsed?.valid ? { ...liveParsed.value, placeId: existingModel.placeId, reason: existingModel.reason || '', burialPlaceId: existingModel.burialPlaceId } : { ...existingModel, dateType: normalizeGenealogyDateType(liveType) };
+      const normalizedLiveType = normalizeGenealogyDateType(liveType);
+      const liveParsed = (liveText || (normalizedLiveType === 'Between' && liveText2))
+        ? parseGenealogyDateTextAsType(liveText, normalizedLiveType, {
+          calendar: existingModel.calendar,
+          date2: normalizedLiveType === 'Between' ? liveText2 : existingModel.date2 || existingModel.date2Label,
+          date2Label: normalizedLiveType === 'Between' ? liveText2 : existingModel.date2 || existingModel.date2Label
+        })
+        : null;
+      const model = liveParsed?.valid
+        ? { ...liveParsed.value, placeId: existingModel.placeId, reason: existingModel.reason || '', burialPlaceId: existingModel.burialPlaceId }
+        : {
+          ...existingModel,
+          dateType: normalizedLiveType,
+          date: normalizedLiveType === 'Between' && liveText ? liveText : existingModel.date,
+          dateLabel: normalizedLiveType === 'Between' && liveText ? liveText : existingModel.dateLabel,
+          date2: normalizedLiveType === 'Between' && liveText2 ? liveText2 : existingModel.date2,
+          date2Label: normalizedLiveType === 'Between' && liveText2 ? liveText2 : existingModel.date2Label
+        };
       const parts = genealogyDatePartsFromModel(model);
       const popover = document.createElement('div');
       popover.className = 'genealogy-date-popover';
@@ -14499,41 +14714,36 @@ function renderTreeCardDateLines(person) {
       };
     }
 
-    function addPersonFactDefinitions(options = {}) {
-      const facts = [
-                { id: 'causeOfDeath', label: 'Cause of death', icon: icon.death || icon.plus },
+    function addPersonFactDefinitions() {
+      return [
+        { id: 'prefix', label: 'Prefix', icon: icon.info || icon.plus },
+        { id: 'suffix', label: 'Suffix', icon: icon.info || icon.plus },
+        { id: 'causeOfDeath', label: 'Cause of death', icon: icon.death || icon.plus },
         { id: 'burialPlace', label: 'Burial place', icon: icon.mapPin || icon.plus },
         { id: 'education', label: 'Education', icon: icon.education || icon.plus },
         { id: 'occupation', label: 'Occupation', icon: icon.work || icon.placeholder || icon.plus },
         { id: 'religion', label: 'Religion', icon: icon.info || icon.plus },
         { id: 'baptism', label: 'Baptism', icon: icon.calendar || icon.plus },
-        { id: 'alternativeNames', label: 'Alternative names', icon: icon.people || icon.plus },
+        { id: 'alternativeNames', label: 'Alternative names', icon: icon.people || icon.plus }
       ];
-
-      if (options.includeRelationshipFacts) {
-        facts.push({
-          id: 'marriageType',
-          label: 'Marriage type',
-          icon: icon.link
-        });
-      }
-
-      return facts;
     }
 
-    function addPersonAddedFactsFromPerson(person, options = {}) {
+    function addPersonAddedFactsFromPerson(person) {
       if (!person) return [];
       ensurePersonCentralStructures(person);
+      const details = peopleProfileDetailsFor({ id: person.id });
       const facts = [];
+      if (cleanEditFieldValue(person.names?.prefix || details.prefix)) facts.push('prefix');
+      if (cleanEditFieldValue(person.names?.suffix || details.suffix)) facts.push('suffix');
       if (cleanEditFieldValue(person.death?.cause || person.death?.reason)) facts.push('causeOfDeath');
       if (editPlaceValue(person.death?.burialPlaceId) || cleanEditFieldValue(person.death?.burialPlaceText)) facts.push('burialPlace');
-      if (cleanEditFieldValue(person.profile?.alternativeNames)) facts.push('alternativeNames');
+      if (cleanEditFieldValue(person.profile?.alternativeNames || details.alternativeNames)) facts.push('alternativeNames');
       if (personHasEducationFact(person)) facts.push('education');
       if (personHasOccupationFact(person)) facts.push('occupation');
       if (personHasReligionFact(person)) facts.push('religion');
       if (personHasBaptismFact(person)) facts.push('baptism');
 
-      const allowed = new Set(addPersonFactDefinitions({ includeRelationshipFacts: options.includeRelationshipFacts }).map(fact => fact.id));
+      const allowed = new Set(addPersonFactDefinitions().map(fact => fact.id));
       return [...new Set(facts)].filter(factId => allowed.has(factId));
     }
 
@@ -14541,26 +14751,29 @@ function renderTreeCardDateLines(person) {
       return addPersonFactDefinitions().find(fact => fact.id === factId) || addPersonFactDefinitions()[0];
     }
 
-    function addPersonFactCardHtml(factId, person = null, options = {}) {
-      const definitions = addPersonFactDefinitions({
-        includeRelationshipFacts: options.includeRelationshipFacts
-          || Boolean(modalBackdrop?.querySelector('[data-add-person-relationship-section]'))
-      });
-
-      const definition = definitions.find(fact => fact.id === factId) || {
+    function addPersonFactCardHtml(factId, person = null) {
+      const definition = addPersonFactDefinition(factId) || {
         id: factId,
         label: 'Additional fact',
         icon: icon.info
       };
       const details = person ? peopleProfileDetailsFor({ id: person.id }) : defaultPeopleProfileDetails();
       const death = person?.death || {};
+      const prefixValue = cleanEditFieldValue(person?.names?.prefix || details.prefix);
+      const suffixValue = cleanEditFieldValue(person?.names?.suffix || details.suffix);
       const header = `<div class="add-person-fact-card-header"><div class="add-person-fact-card-title"><span class="fact-button-icon" aria-hidden="true">${definition.icon}</span><span>${escapeHtml(definition.label)}</span></div><button class="add-person-fact-remove" type="button" data-add-person-remove-fact="${escapeHtml(factId)}" aria-label="Remove ${escapeHtml(definition.label)}">${icon.close}</button></div>`;
       const fieldWrap = content => `<div class="add-person-fact-card" data-add-person-fact-card="${escapeHtml(factId)}">${header}<div class="add-person-fact-grid">${content}</div></div>`;
+      if (factId === 'prefix') {
+        return fieldWrap(`<div class="field full"><label for="addPersonFactPrefix">Prefix</label><input id="addPersonFactPrefix" value="${escapeHtml(prefixValue)}" placeholder="e.g. Dr., Sir, Lady"></div>`);
+      }
+      if (factId === 'suffix') {
+        return fieldWrap(`<div class="field full"><label for="addPersonFactSuffix">Suffix</label><input id="addPersonFactSuffix" value="${escapeHtml(suffixValue)}" placeholder="e.g. Jr., III, PhD"></div>`);
+      }
       if (factId === 'causeOfDeath') {
-        return fieldWrap(`<div class="field full"><label for="addPersonFactCauseOfDeath">Cause of death</label><input id="addPersonFactCauseOfDeath" value="${escapeHtml(cleanEditFieldValue(death.reason))}" placeholder="Cause or reason"></div>`);
+        return fieldWrap(`<div class="field full"><label for="addPersonFactCauseOfDeath">Cause of death</label><input id="addPersonFactCauseOfDeath" value="${escapeHtml(cleanEditFieldValue(death.reason || death.cause))}" placeholder="Cause or reason"></div>`);
       }
       if (factId === 'burialPlace') {
-        return fieldWrap(`<div class="field full"><label for="addPersonFactBurialPlace">Burial place</label><input id="addPersonFactBurialPlace" value="${escapeHtml(editPlaceValue(death.burialPlaceId))}" placeholder="e.g. Old Cattery, England"></div>`);
+        return fieldWrap(`<div class="field full"><label for="addPersonFactBurialPlace">Burial place</label><input id="addPersonFactBurialPlace" value="${escapeHtml(editPlaceValue(death.burialPlaceId) || death.burialPlaceText || '')}" placeholder="e.g. Old Cattery, England"></div>`);
       }
       if (factId === 'education') {
         return fieldWrap(`<div class="field full"><label for="addPersonFactEducationPlace">Education place</label><input id="addPersonFactEducationPlace" value="${escapeHtml(details.educationPlace || '')}" placeholder="School or learning place"></div>
@@ -14586,26 +14799,12 @@ function renderTreeCardDateLines(person) {
         return fieldWrap(`<div class="field full"><label for="addPersonFactBaptismPlace">Baptism place</label><input id="addPersonFactBaptismPlace" value="${escapeHtml(details.baptismPlace || '')}" placeholder="Baptism place"></div>
           ${renderGenealogyDateField('addPersonFactBaptism', 'Baptism date', details.baptismDate, { inputId: 'addPersonFactBaptismDate', typeId: 'addPersonFactBaptismDateType', className: 'full', defaultDateType: 'Exact date', placeholder: 'e.g. 14 Feb 1946' })}`);
       }
-      if (factId === 'marriageType') {
-        return fieldWrap(`
-          <div class="field full add-person-select-field">
-            <label for="addPersonRelationship0MarriageType">Marriage type</label>
-            <select class="compact-select add-person-select" id="addPersonRelationship0MarriageType" data-add-person-marriage-type>
-              ${addPersonMarriageTypeOptions('Civil')}
-            </select>
-            <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
-          </div>
-        `);
-      }
       return fieldWrap(`<div class="field full"><label for="addPersonFactAlternativeNames">Alternative names</label><input id="addPersonFactAlternativeNames" value="${escapeHtml(details.alternativeNames || '')}" placeholder="Nickname, spelling variant, or former name"></div>`);
     }
-
-    function renderAddPersonAdditionalFacts(person = null, options = {}) {
-      const activeFacts = addPersonAddedFactsFromPerson(person, options);
+    function renderAddPersonAdditionalFacts(person = null) {
+      const activeFacts = addPersonAddedFactsFromPerson(person);
       const expanded = activeFacts.length > 0;
-      const definitions = addPersonFactDefinitions({
-        includeRelationshipFacts: options.includeRelationshipFacts
-      });
+      const definitions = addPersonFactDefinitions();
       return `<section class="add-person-additional-section">
         <div class="add-person-facts-section" data-add-person-facts>
           <button class="add-person-facts-header" type="button" data-add-person-facts-toggle aria-expanded="${expanded ? 'true' : 'false'}">
@@ -14616,7 +14815,7 @@ function renderTreeCardDateLines(person) {
             <div class="fact-buttons" data-add-person-fact-buttons>
               ${definitions.map(fact => `<button class="fact-button ${activeFacts.includes(fact.id) ? 'is-added' : ''}" type="button" data-add-person-add-fact="${escapeHtml(fact.id)}" ${activeFacts.includes(fact.id) ? 'disabled' : ''}><span class="fact-button-icon" aria-hidden="true">${fact.icon}</span><span>${escapeHtml(fact.label)}</span></button>`).join('')}
             </div>
-            <div class="add-person-facts-added" data-add-person-facts-added>${activeFacts.map(factId => addPersonFactCardHtml(factId, person, options)).join('')}</div>
+            <div class="add-person-facts-added" data-add-person-facts-added>${activeFacts.map(factId => addPersonFactCardHtml(factId, person)).join('')}</div>
           </div>
         </div>
       </section>`;
@@ -14661,6 +14860,7 @@ function renderTreeCardDateLines(person) {
       const partnerName = partner?.names?.display || (mode === 'addPartner' ? 'Selected person' : 'Unknown person');
       const fieldPrefix = `addPersonRelationship${index}`;
       const marriagePlace = editPlaceValue(marriage.placeId) || marriage.placeText || '';
+      const marriageType = marriage.typeLabel || relationship?.marriageType || 'Civil';
 
       return `<div class="add-person-relationship-card" data-add-person-relationship-card data-relationship-id="${escapeHtml(relationship?.id || '')}" data-partner-id="${escapeHtml(partner?.id || '')}" data-relationship-index="${index}">
         <div class="add-person-relationship-grid">
@@ -14668,6 +14868,14 @@ function renderTreeCardDateLines(person) {
             <label for="${fieldPrefix}Type">Relationship type</label>
             <select class="compact-select add-person-select" id="${fieldPrefix}Type" data-add-person-relationship-type>
               ${addPersonRelationshipTypeOptions(relationshipType)}
+            </select>
+            <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
+          </div>
+
+          <div class="field add-person-select-field">
+            <label for="${fieldPrefix}MarriageType">Marriage type</label>
+            <select class="compact-select add-person-select" id="${fieldPrefix}MarriageType" data-add-person-marriage-type>
+              ${addPersonMarriageTypeOptions(marriageType)}
             </select>
             <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
           </div>
@@ -14789,6 +14997,7 @@ function renderTreeCardDateLines(person) {
 
     function upsertMarriageEvent(relationship, relationshipValues) {
       relationship.events = Array.isArray(relationship.events) ? relationship.events : [];
+      relationship.marriageType = relationshipValues.marriageType || relationship.marriageType || 'Civil';
       const date = normalizeGenealogyDateInput(relationshipValues.marriageDate, 'Exact date');
       const placeId = samplePlaceIdFromDisplay(relationshipValues.marriagePlace);
       let marriage = relationshipEventByTag(relationship, 'MARR');
@@ -15015,7 +15224,7 @@ function renderTreeCardDateLines(person) {
             <div class="modal-side-card"><h3>Possible matches<br><span class="panel-muted">Similar people in this project</span></h3><button class="match-row" type="button" data-possible-match="Barnaby Whiskerfield"><div class="small-avatar avatar-amber">BW</div><div><strong>Barnaby Whiskerfield</strong><br>14 Feb 1946<br>Pawford, England</div></button><button class="match-row" type="button" data-possible-match="Rupert Purrington"><div class="small-avatar">RP</div><div><strong>Rupert Purrington</strong><br>19 Oct 1951<br>Fishmarket Row, England</div></button></div>
           </aside>
           ${showRelationshipBlock ? renderAddPersonRelationshipBlock(options, editPerson) : ''}
-          ${renderAddPersonAdditionalFacts(editPerson, { includeRelationshipFacts: showRelationshipBlock })}
+          ${renderAddPersonAdditionalFacts(editPerson)}
         </div>
         <div class="modal-footer add-person-footer">
           <div class="add-person-footer-left">
@@ -15119,6 +15328,54 @@ function renderTreeCardDateLines(person) {
       updateAddPersonFactSummary();
     }
 
+    function removeAddPersonFactCard(section, factId) {
+      section.querySelector(`[data-add-person-fact-card="${CSS.escape(factId)}"]`)?.remove();
+      const button = section.querySelector(`[data-add-person-add-fact="${CSS.escape(factId)}"]`);
+      if (button) {
+        button.disabled = false;
+        button.classList.remove('is-added');
+      }
+      updateAddPersonFactSummary();
+    }
+
+    function confirmRemoveAddPersonFact(factId, onConfirm) {
+      const definition = addPersonFactDefinition(factId);
+      document.querySelector('[data-add-person-fact-confirm]')?.remove();
+      const backdrop = document.createElement('div');
+      backdrop.className = 'add-person-fact-confirm-backdrop';
+      backdrop.dataset.addPersonFactConfirm = 'true';
+      backdrop.innerHTML = `<div class="add-person-fact-confirm-card" role="dialog" aria-modal="true" aria-labelledby="removeFactTitle">
+        <div class="add-person-fact-confirm-header">
+          <h3 id="removeFactTitle">Remove ${escapeHtml(definition.label)}?</h3>
+          <button class="close-button" type="button" data-cancel-remove-fact aria-label="Cancel removing fact">${icon.close}</button>
+        </div>
+        <div class="add-person-fact-confirm-body">
+          Removing this fact will clear the saved ${escapeHtml(definition.label.toLowerCase())} data when you save the person.
+        </div>
+        <div class="add-person-fact-confirm-actions">
+          <button class="button secondary" type="button" data-cancel-remove-fact>Cancel</button>
+          <button class="button primary" type="button" data-confirm-remove-fact>Remove fact</button>
+        </div>
+      </div>`;
+      const close = () => {
+        document.removeEventListener('keydown', onKey);
+        backdrop.remove();
+      };
+      backdrop.addEventListener('click', event => {
+        if (event.target === backdrop || event.target.closest('[data-cancel-remove-fact]')) close();
+        if (event.target.closest('[data-confirm-remove-fact]')) {
+          close();
+          onConfirm?.();
+        }
+      });
+      const onKey = event => {
+        if (event.key === 'Escape') close();
+      };
+      document.addEventListener('keydown', onKey);
+      document.body.appendChild(backdrop);
+      backdrop.querySelector('[data-cancel-remove-fact]')?.focus({ preventScroll: true });
+    }
+
     function bindAddPersonAdditionalFacts(personId = '') {
       const section = modalBackdrop?.querySelector('[data-add-person-facts]');
       if (!section) return;
@@ -15136,22 +15393,17 @@ function renderTreeCardDateLines(person) {
         const remove = event.target.closest('[data-add-person-remove-fact]');
         if (!remove) return;
         const factId = remove.dataset.addPersonRemoveFact;
-        section.querySelector(`[data-add-person-fact-card="${CSS.escape(factId)}"]`)?.remove();
-        const button = section.querySelector(`[data-add-person-add-fact="${CSS.escape(factId)}"]`);
-        if (button) {
-          button.disabled = false;
-          button.classList.remove('is-added');
-        }
-        updateAddPersonFactSummary();
+        confirmRemoveAddPersonFact(factId, () => removeAddPersonFactCard(section, factId));
       });
       updateAddPersonFactSummary();
     }
-
     function collectAddPersonAdditionalFacts(personId = '') {
       const section = modalBackdrop?.querySelector('[data-add-person-facts]');
       const facts = { activeFactIds: collectAddPersonActiveFactIds() };
       if (!section) return facts;
       const hasFact = factId => Boolean(section.querySelector(`[data-add-person-fact-card="${CSS.escape(factId)}"]`));
+      if (hasFact('prefix')) facts.prefix = readAddPersonModalValue('#addPersonFactPrefix');
+      if (hasFact('suffix')) facts.suffix = readAddPersonModalValue('#addPersonFactSuffix');
       if (hasFact('causeOfDeath')) facts.deathReason = readAddPersonModalValue('#addPersonFactCauseOfDeath');
       if (hasFact('burialPlace')) facts.burialPlace = readAddPersonModalValue('#addPersonFactBurialPlace');
       if (hasFact('alternativeNames')) facts.alternativeNames = readAddPersonModalValue('#addPersonFactAlternativeNames');
@@ -15193,6 +15445,18 @@ function renderTreeCardDateLines(person) {
     function applyAddPersonAdditionalFacts(person, facts = {}) {
       ensurePersonCentralStructures(person);
       const active = new Set(facts.activeFactIds || []);
+
+      if (active.has('prefix')) {
+        person.names.prefix = valueOrNull(facts.prefix) || '';
+      } else {
+        delete person.names.prefix;
+      }
+
+      if (active.has('suffix')) {
+        person.names.suffix = valueOrNull(facts.suffix) || '';
+      } else {
+        delete person.names.suffix;
+      }
 
       if (person.livingStatus === 'Deceased' && active.has('causeOfDeath')) {
         person.death.reason = valueOrNull(facts.deathReason) || '';
@@ -15256,7 +15520,6 @@ function renderTreeCardDateLines(person) {
         removePersonEvent(person, 'BAPM');
       }
     }
-
     function updatePersonInitials(person) {
       const first = person.names.first || '';
       const last = person.names.last || '';
