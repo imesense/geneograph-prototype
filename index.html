@@ -3166,6 +3166,35 @@
       font-weight: 700;
     }
 
+    .timeline-date .timeline-date-range {
+      display: inline-grid;
+      justify-items: center;
+      gap: 2px;
+      color: inherit;
+      font: inherit;
+      font-weight: inherit;
+    }
+
+    .timeline-date .timeline-date-range span {
+      display: block;
+      margin-top: 0;
+      color: inherit;
+      font: inherit;
+      font-weight: inherit;
+    }
+
+    .timeline-date .timeline-date-range .timeline-date-separator {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      margin: 1px 0;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1;
+      text-transform: lowercase;
+    }
+
     .timeline-dot {
       position: relative;
       z-index: 2;
@@ -12857,6 +12886,102 @@
       };
     }
 
+    function timelineOptionalGenealogyDate(dateInput, fallbackType = 'Exact date') {
+      if (!dateInput) return null;
+
+      const normalized = normalizeGenealogyDateInput(dateInput, fallbackType);
+      return hasGenealogyDateValue(normalized, fallbackType) ? normalized : null;
+    }
+
+    function timelineUnknownGenealogyDate(fallbackType = 'Exact date') {
+      return emptyGenealogyDate(fallbackType);
+    }
+
+    function timelineDatePayload(dateInput, fallbackType = 'Exact date') {
+      return eventDateFields(dateInput || timelineUnknownGenealogyDate(fallbackType));
+    }
+
+    function familyStartDateForTimeline(family) {
+      return normalizeGenealogyDateInput({
+        date: family?.startDate || '',
+        dateLabel: family?.startDateLabel || '',
+        dateType: family?.startDateType || 'Exact date',
+        sortDate: family?.startSortDate || '',
+        calendar: family?.startCalendar || 'Gregorian',
+        originalText: family?.startOriginalText || ''
+      }, 'Exact date');
+    }
+
+    function familyLooksMarriedForTimeline(family) {
+      const relationshipType = cleanEditFieldValue(family?.relationshipType).toLowerCase();
+      const marriageType = cleanEditFieldValue(family?.marriageType);
+      const startDate = familyStartDateForTimeline(family);
+
+      return Boolean(
+        relationshipType === 'married'
+          || relationshipType.includes('marriage')
+          || marriageType
+          || hasGenealogyDateValue(startDate, 'Exact date')
+          || family?.startPlaceId
+      );
+    }
+
+    function relationshipEventTag(event) {
+      return event?.gedcomTag || event?.tag || '';
+    }
+
+    function timelineMarriageTitle(event = {}) {
+      const label = cleanEditFieldValue(event.typeLabel || event.value || '');
+
+      if (!label) return 'Marriage';
+      if (/wedding/i.test(label)) return 'Wedding';
+      if (/marriage/i.test(label)) return label;
+
+      return `${label} marriage`;
+    }
+
+    function familyMarriageEventsForTimeline(family) {
+      const storedMarriageEvents = (family?.events || [])
+        .filter(event => relationshipEventTag(event) === 'MARR');
+
+      if (storedMarriageEvents.length) {
+        return storedMarriageEvents;
+      }
+
+      if (!familyLooksMarriedForTimeline(family)) {
+        return [];
+      }
+
+      const startDate = familyStartDateForTimeline(family);
+
+      return [{
+        id: `${family.id}-marriage-derived`,
+        gedcomTag: 'MARR',
+        typeLabel: family.marriageType || '',
+        date: startDate,
+        placeId: family.startPlaceId || null,
+        placeText: getPlaceDisplay(family.startPlaceId),
+        derived: true
+      }];
+    }
+
+    function timelineAttributeHasContent(attribute, fields = []) {
+      return fields.some(field => cleanEditFieldValue(attribute?.[field]))
+        || Boolean(attribute?.placeId)
+        || cleanEditFieldValue(attribute?.placeText);
+    }
+
+    function timelineDateRangeLabel(fromDate, toDate) {
+      const from = formatGenealogyDateLabel(fromDate);
+      const to = formatGenealogyDateLabel(toDate);
+
+      if (from && to) return `${from} to ${to}`;
+      if (from) return `From ${from}`;
+      if (to) return `Until ${to}`;
+
+      return '';
+    }
+
     function buildSampleEvents() {
       const events = [];
 
@@ -12880,22 +13005,28 @@
         const personA = getPerson(familyPartnerAId(family));
         const personB = getPerson(familyPartnerBId(family));
         if (personA && personB) {
-          (family.events || [])
-            .filter(event => event.gedcomTag === 'MARR' && relationshipHasMeaningfulEvent(event))
-            .forEach(event => {
-              const eventDate = eventDateFields(event.date);
-              events.push({
-                id: `event-${family.id}-${event.id || 'marriage'}`,
-                projectId: family.projectId,
-                type: 'marriage',
-                personIds: [familyPartnerAId(family), familyPartnerBId(family)],
-                relatedPersonIds: [familyPartnerAId(family), familyPartnerBId(family)],
-                ...eventDate,
-                placeId: event.placeId || null,
-                title: event.typeLabel ? `${event.typeLabel} marriage` : 'Marriage',
-                description: `Marriage of ${personA.names.display} and ${personB.names.display}`
-              });
+          familyMarriageEventsForTimeline(family).forEach(event => {
+            const eventDate = timelineDatePayload(event.date, 'Exact date');
+            const partnerAId = familyPartnerAId(family);
+            const partnerBId = familyPartnerBId(family);
+            const placeId = cleanDatePlaceId(event.placeId || family.startPlaceId) || null;
+
+            events.push({
+              id: `event-${family.id}-${event.id || 'marriage'}`,
+              projectId: family.projectId || personA.projectId || personB.projectId,
+              type: 'marriage',
+              dateKind: 'point',
+              familyId: family.id,
+              personIds: [partnerAId, partnerBId],
+              relatedPersonIds: [partnerAId, partnerBId],
+              ...eventDate,
+              placeId,
+              placeText: event.placeText || getPlaceDisplay(placeId),
+              title: timelineMarriageTitle(event),
+              description: `Marriage of ${personA.names.display} and ${personB.names.display}`,
+              marriageType: event.typeLabel || family.marriageType || ''
             });
+          });
         }
 
         (family.childIds || []).forEach(childId => {
@@ -12939,35 +13070,81 @@
 
         (person.attributes || []).forEach(attribute => {
           if (attribute.tag === 'EDUC') {
-            const date = attribute.fromDate || attribute.date || attribute.toDate;
-            if (!hasGenealogyDateValue(date, 'Year only') && !attribute.placeId && !attribute.placeText && !attribute.notes) return;
-            const eventDate = eventDateFields(date || emptyGenealogyDate('Year only'));
+            const fromDate = timelineOptionalGenealogyDate(attribute.fromDate || attribute.date, 'Year only');
+            const toDate = timelineOptionalGenealogyDate(attribute.toDate, 'Year only');
+            const primaryDate = fromDate || toDate || timelineUnknownGenealogyDate('Year only');
+
+            const institutionName = educationInstitutionLabel(attribute);
+            const educationValue = educationValueLabel(attribute);
+
+            const hasEducationContent = Boolean(
+              fromDate
+                || toDate
+                || timelineAttributeHasContent(attribute, ['institutionName', 'agency', 'value', 'type', 'institutionType'])
+            );
+
+            if (!hasEducationContent) return;
+
+            const eventDate = timelineDatePayload(primaryDate, 'Year only');
+
             events.push({
               id: `event-${attribute.id || `${person.id}-education`}`,
               projectId: person.projectId,
               type: 'education',
+              dateKind: 'span',
               personIds: [person.id],
               relatedPersonIds: [],
               ...eventDate,
+              fromDate,
+              toDate,
               placeId: attribute.placeId || null,
+              placeText: attribute.placeText || '',
               title: 'Education',
-              description: educationTimelineDescription(attribute)
+              description: educationTimelineDescription(attribute),
+              institutionName,
+              institutionType: educationInstitutionTypeLabel(attribute),
+              educationValue,
+              dateRangeLabel: timelineDateRangeLabel(fromDate, toDate)
             });
           }
+
           if (attribute.tag === 'OCCU') {
-            const date = attribute.fromDate || attribute.date || attribute.toDate;
-            if (!hasGenealogyDateValue(date, 'Exact date') && !attribute.value && !attribute.company) return;
-            const eventDate = eventDateFields(date || emptyGenealogyDate('Exact date'));
+            const fromDate = timelineOptionalGenealogyDate(attribute.fromDate || attribute.date, 'Year only');
+            const toDate = timelineOptionalGenealogyDate(attribute.toDate, 'Year only');
+            const primaryDate = fromDate || toDate || timelineUnknownGenealogyDate('Year only');
+
+            const company = cleanEditFieldValue(attribute.company || attribute.agency);
+            const occupation = cleanEditFieldValue(attribute.value || attribute.occupation);
+
+            const hasOccupationContent = Boolean(
+              fromDate
+                || toDate
+                || company
+                || occupation
+                || timelineAttributeHasContent(attribute, ['type'])
+            );
+
+            if (!hasOccupationContent) return;
+
+            const eventDate = timelineDatePayload(primaryDate, 'Year only');
+
             events.push({
               id: `event-${attribute.id || `${person.id}-occupation`}`,
               projectId: person.projectId,
               type: 'occupation',
+              dateKind: 'span',
               personIds: [person.id],
               relatedPersonIds: [],
               ...eventDate,
+              fromDate,
+              toDate,
               placeId: attribute.placeId || null,
+              placeText: attribute.placeText || '',
               title: 'Occupation',
-              description: [attribute.value, attribute.company].filter(Boolean).join(' at ') || 'Occupation fact'
+              description: [occupation, company].filter(Boolean).join(' at ') || 'Occupation fact',
+              company,
+              occupation,
+              dateRangeLabel: timelineDateRangeLabel(fromDate, toDate)
             });
           }
         });
@@ -15284,19 +15461,7 @@ function renderTreeCardDateLines(person) {
         ${renderInspectorSection('record', 'Record Info', '', renderPersonRecordInfo(person.id))}
       </aside>`;
     }
-    function renderTimelineItem(year, iconHtml, title, copy, color = '') {
-      return `<div class="timeline-item">
-        <div class="timeline-year">${escapeHtml(year)}</div>
-        <div class="timeline-dot ${escapeHtml(color)}">
-          <span class="timeline-dot-icon" aria-hidden="true">${iconHtml}</span>
-        </div>
-        <div class="timeline-copy">
-          <strong>${escapeHtml(title)}</strong>
-          <span>${String(copy || '')}</span>
-        </div>
-      </div>`;
-    }
-
+    
     function timelineEventBoundaryRank(event) {
       if (event?.type === 'birth') return 0;
       if (event?.type === 'death') return 2;
@@ -15324,13 +15489,7 @@ function renderTreeCardDateLines(person) {
       }
 
       return `<div class="timeline">
-        ${events.map(event => renderTimelineItem(
-          timelineYear(event),
-          timelineEventIcon(event),
-          event.title,
-          timelineEventDetail(event),
-          timelineEventColor(event)
-        )).join('')}
+        ${events.map(event => renderTimelineItem(event, personId)).join('')}
       </div>`;
     }
 
@@ -15339,6 +15498,7 @@ function renderTreeCardDateLines(person) {
         if (value.sortDate) return Number(value.sortDate);
         value = value.date || value.dateLabel || value.originalText || '';
       }
+
       const text = String(value || '').trim();
       if (!text) return Number.POSITIVE_INFINITY;
 
@@ -15356,17 +15516,28 @@ function renderTreeCardDateLines(person) {
 
       return Number.POSITIVE_INFINITY;
     }
+
     function timelineDateLabel(event) {
-      return formatGenealogyDateLabel(event) || 'Unknown date';
+      return formatGenealogyDateLabel(event);
     }
+
+    function timelineYearFromValue(value) {
+      if (!value) return '';
+
+      const label = formatGenealogyDateLabel(value)
+        || String(value?.dateLabel || value?.date || value || '');
+
+      const match = String(label).match(/\b(\d{4})\b/);
+      return match ? match[1] : '';
+    }
+
     function timelineYear(event) {
-      const source = timelineDateLabel(event);
-      const match = String(source).match(/\b(\d{4})\b/);
-      return match ? match[1] : 'Unknown';
+      return timelineYearFromValue(event) || '—';
     }
 
     function timelinePlaceLabel(event) {
-      return event.placeId ? getPlaceDisplay(event.placeId) : '';
+      return cleanEditFieldValue(getPlaceDisplay(event?.placeId))
+        || cleanEditFieldValue(event?.placeText);
     }
 
     function timelineEventIcon(event) {
@@ -15397,29 +15568,202 @@ function renderTreeCardDateLines(person) {
       return map[event.type] || '';
     }
 
-    function timelineEventDetail(event) {
-      const date = timelineDateLabel(event);
+    function timelineEventIsLasting(event) {
+      return event?.dateKind === 'span' || ['education', 'occupation'].includes(event?.type);
+    }
+
+    function timelineDateParts(value) {
+      if (!value) return null;
+
+      if (value && typeof value === 'object') {
+        const sortDate = String(value.sortDate || '').trim();
+
+        if (/^\d{8}$/.test(sortDate)) {
+          return {
+            year: Number(sortDate.slice(0, 4)),
+            month: Number(sortDate.slice(4, 6)),
+            day: Number(sortDate.slice(6, 8)),
+            precision: 'day'
+          };
+        }
+
+        const label = value.date || value.dateLabel || value.originalText || '';
+        return timelineDateParts(label);
+      }
+
+      const text = String(value || '').trim();
+      if (!text) return null;
+
+      const fullDate = text.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+      if (fullDate) {
+        return {
+          year: Number(fullDate[3]),
+          month: Number(fullDate[2]),
+          day: Number(fullDate[1]),
+          precision: 'day'
+        };
+      }
+
+      const isoDate = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (isoDate) {
+        return {
+          year: Number(isoDate[1]),
+          month: Number(isoDate[2]),
+          day: Number(isoDate[3]),
+          precision: 'day'
+        };
+      }
+
+      const yearMatch = text.match(/\b(\d{4})\b/);
+      if (yearMatch) {
+        return {
+          year: Number(yearMatch[1]),
+          month: 1,
+          day: 1,
+          precision: 'year'
+        };
+      }
+
+      return null;
+    }
+
+    function timelineAgeAtEvent(event, personId) {
+      if (!event || event.type === 'birth' || timelineEventIsLasting(event)) return null;
+
+      const person = getPerson(personId);
+      if (!person?.birth) return null;
+
+      const birth = timelineDateParts(person.birth);
+      const occurrence = timelineDateParts(event);
+
+      if (!birth?.year || !occurrence?.year) return null;
+
+      let age = occurrence.year - birth.year;
+
+      if (
+        birth.precision === 'day'
+          && occurrence.precision === 'day'
+          && (
+            occurrence.month < birth.month
+              || (occurrence.month === birth.month && occurrence.day < birth.day)
+          )
+      ) {
+        age -= 1;
+      }
+
+      if (!Number.isFinite(age) || age < 0) return null;
+
+      return age;
+    }
+
+    function timelineAgeLabel(event, personId) {
+      const age = timelineAgeAtEvent(event, personId);
+      return age === null ? '' : `Age: ${age}`;
+    }
+
+    function timelineDateBlockHtml(event, personId) {
+      if (timelineEventIsLasting(event)) {
+        const fromYear = timelineYearFromValue(event.fromDate || event);
+        const toYear = timelineYearFromValue(event.toDate);
+
+        if (fromYear && toYear) {
+          return `<span class="timeline-date-range">
+            <span>${escapeHtml(fromYear)}</span>
+            <span class="timeline-date-separator">to</span>
+            <span>${escapeHtml(toYear)}</span>
+          </span>`;
+        }
+
+        if (fromYear) return escapeHtml(fromYear);
+        if (toYear) return escapeHtml(toYear);
+
+        return '-';
+      }
+
+      const year = timelineYear(event);
+      const age = year === '-' ? '' : timelineAgeLabel(event, personId);
+
+      return `${escapeHtml(year)}${age ? `<span>${escapeHtml(age)}</span>` : ''}`;
+    }
+
+    function timelineEventDateLine(event) {
+      if (timelineEventIsLasting(event)) {
+        return cleanEditFieldValue(event.dateRangeLabel)
+          || timelineDateRangeLabel(event.fromDate, event.toDate)
+          || '';
+      }
+
+      return timelineDateLabel(event) || '';
+    }
+
+    function timelineEventDatePlaceLines(event) {
+      const date = timelineEventDateLine(event);
       const place = timelinePlaceLabel(event);
-      const meta = [date, place].filter(Boolean).join(' - ');
+
+      return [date, place].filter(Boolean);
+    }
+
+    function timelineDetailLines(...values) {
+      return values
+        .flat()
+        .map(value => cleanEditFieldValue(value))
+        .filter(Boolean)
+        .map(escapeHtml)
+        .join('<br>');
+    }
+
+    function timelineOtherPersonNames(event, personId) {
+      return (event.personIds || [])
+        .filter(id => id && id !== personId)
+        .map(getPersonDisplayName)
+        .filter(Boolean);
+    }
+
+    function timelineEventDetail(event, personId) {
+      const datePlaceLines = timelineEventDatePlaceLines(event);
 
       if (event.type === 'childBirth') {
-        return [escapeHtml(event.description), escapeHtml(meta)].filter(Boolean).join('<br>');
+        return timelineDetailLines(event.description, datePlaceLines);
       }
 
       if (event.type === 'marriage') {
-        const people = (event.personIds || [])
-          .map(getPersonDisplayName)
-          .filter(Boolean)
-          .join(' and ');
+        const otherNames = timelineOtherPersonNames(event, personId);
+        const withLine = otherNames.length
+          ? `With ${otherNames.join(' and ')}`
+          : event.description;
 
-        return [escapeHtml(people), escapeHtml(meta)].filter(Boolean).join('<br>');
+        return timelineDetailLines(withLine, datePlaceLines);
       }
 
       if (event.type === 'education') {
-        return [escapeHtml(event.description), escapeHtml(meta)].filter(Boolean).join('<br>');
+        return timelineDetailLines(
+          event.institutionName || event.description,
+          datePlaceLines
+        );
       }
 
-      return escapeHtml(meta);
+      if (event.type === 'occupation') {
+        return timelineDetailLines(
+          event.occupation || event.description,
+          event.company,
+          datePlaceLines
+        );
+      }
+
+      return timelineDetailLines(datePlaceLines);
+    }
+
+    function renderTimelineItem(event, personId) {
+      return `<div class="timeline-item">
+        <div class="timeline-date">${timelineDateBlockHtml(event, personId)}</div>
+        <div class="timeline-dot ${escapeHtml(timelineEventColor(event))}">
+          <span class="timeline-dot-icon" aria-hidden="true">${timelineEventIcon(event)}</span>
+        </div>
+        <div class="timeline-copy">
+          <strong>${escapeHtml(event.title)}</strong>
+          <span>${String(timelineEventDetail(event, personId) || '')}</span>
+        </div>
+      </div>`;
     }
 
     function renderRelation(person, meta, relationship = {}) {
