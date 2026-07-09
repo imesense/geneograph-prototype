@@ -3578,6 +3578,320 @@
       }
     }
 
+    .connect-person-modal {
+      width: min(940px, calc(100vw - 32px));
+      height: min(760px, calc(100vh - 48px));
+      max-height: calc(100vh - 48px);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+    }
+
+    .connect-person-header {
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr) auto;
+      gap: var(--space-4);
+      align-items: start;
+    }
+
+    .connect-person-header-icon {
+      width: 52px;
+      height: 52px;
+      color: var(--brand-green-400);
+      display: grid;
+      place-items: center;
+    }
+
+    .connect-person-header-icon svg {
+      width: 52px;
+      height: 52px;
+    }
+
+    .connect-person-layout {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+    }
+
+    .connect-person-left {
+      min-width: 0;
+      min-height: 0;
+      padding: var(--space-5);
+      border-right: 1px solid var(--border-default);
+      overflow: auto;
+    }
+
+    .connect-person-main {
+      min-width: 0;
+      min-height: 0;
+      padding: var(--space-5);
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: var(--space-5);
+    }
+
+    .connect-person-search-shell {
+      position: relative;
+    }
+
+    .connect-person-search-shell svg {
+      width: 18px;
+      height: 18px;
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-tertiary);
+      pointer-events: none;
+    }
+
+    .connect-person-search-shell input {
+      padding-left: 42px;
+    }
+
+    .connect-person-warning {
+      margin-top: var(--space-5);
+      border: 1px solid rgba(212, 170, 107, .65);
+      background: rgba(212, 170, 107, .13);
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      padding: var(--space-4);
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .connect-person-warning[hidden] {
+      display: none;
+    }
+
+    .connect-person-warning-title {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: #F0C66F;
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    .connect-person-warning-title svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .connect-person-warning p {
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    .connect-person-warning.is-blocking {
+      border-color: rgba(212, 107, 107, .72);
+      background: rgba(212, 107, 107, .13);
+    }
+
+    .connect-person-warning.is-blocking .connect-person-warning-title {
+      color: #F0A0A0;
+    }
+
+    .connect-person-results-panel {
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: var(--space-2);
+    }
+
+    .connect-person-results-title {
+      color: var(--text-secondary);
+      font-weight: 800;
+    }
+
+    .connect-person-results {
+      min-height: 0;
+      height: 100%;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      overflow: auto;
+      background: rgba(0,0,0,.08);
+    }
+
+    .connect-person-result {
+      width: 100%;
+      min-height: 96px;
+      border: 0;
+      border-bottom: 1px solid var(--border-default);
+      background: transparent;
+      color: var(--text-secondary);
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr);
+      gap: var(--space-4);
+      align-items: center;
+      padding: var(--space-4);
+      text-align: left;
+      font: inherit;
+      cursor: pointer;
+      appearance: none;
+    }
+
+    .connect-person-result:last-child {
+      border-bottom: 0;
+    }
+
+    .connect-person-result:hover,
+    .connect-person-result.is-selected {
+      background: var(--surface-selected);
+      color: var(--text-primary);
+    }
+
+    .connect-person-result:focus-visible {
+      outline: 2px solid var(--brand-green-400);
+      outline-offset: -2px;
+    }
+
+    .connect-person-result-copy {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+    }
+
+    .connect-person-result-copy strong,
+    .connect-person-result-copy span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .connect-person-result-copy strong {
+      color: var(--text-primary);
+      font-size: 16px;
+      line-height: 1.25;
+    }
+
+    .connect-person-result-copy span {
+      color: var(--text-secondary);
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .connect-person-empty {
+      min-height: 0;
+      height: 100%;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      padding: var(--space-5);
+      color: var(--text-tertiary);
+      background: rgba(255,255,255,.018);
+      display: grid;
+      align-content: center;
+    }
+
+    .connect-person-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -.02em;
+      color: var(--text-primary);
+      background: linear-gradient(145deg, #45504b, #202827);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .connect-person-avatar.has-photo {
+      padding: 0;
+      background: var(--surface-input);
+    }
+
+    .connect-person-avatar.has-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .connect-person-create {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: var(--text-secondary);
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr) auto;
+      gap: var(--space-3);
+      align-items: center;
+      padding: var(--space-3);
+      text-align: left;
+      border-radius: var(--radius-sm);
+      font: inherit;
+      cursor: pointer;
+      appearance: none;
+    }
+
+    .connect-person-create:hover {
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
+    }
+
+    .connect-person-create:focus-visible {
+      outline: 2px solid var(--brand-green-400);
+      outline-offset: 2px;
+    }
+
+    .connect-person-create-icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      color: var(--text-primary);
+    }
+
+    .connect-person-create-icon svg {
+      width: 30px;
+      height: 30px;
+    }
+
+    .connect-person-create-copy {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+    }
+
+    .connect-person-create-copy strong {
+      color: var(--text-primary);
+    }
+
+    .connect-person-create-copy span {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .connect-person-create-chevron svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .connect-person-footer {
+      justify-content: flex-end;
+    }
+
+    @media (max-width: 760px) {
+      .connect-person-modal {
+        height: min(760px, calc(100vh - 24px));
+        max-height: calc(100vh - 24px);
+      }
+
+      .connect-person-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .connect-person-left {
+        border-right: 0;
+        border-bottom: 1px solid var(--border-default);
+        overflow: visible;
+      }
+    }
+
     .fact-button {
       display: inline-flex;
       align-items: center;
@@ -15001,7 +15315,18 @@ function renderTreeCardDateLines(person) {
     }
 
     function getGenderForRelativeType(relativeType) {
-      const map = { father: 'Male', mother: 'Female', son: 'Male', daughter: 'Female', brother: 'Male', sister: 'Female' };
+      const map = {
+        father: 'Male',
+        mother: 'Female',
+        son: 'Male',
+        daughter: 'Female',
+        brother: 'Male',
+        sister: 'Female',
+        parent: 'Unknown',
+        child: 'Unknown',
+        partner: 'Unknown'
+      };
+
       return map[String(relativeType || '').toLowerCase()] || 'Unknown';
     }
 
@@ -15024,6 +15349,438 @@ function renderTreeCardDateLines(person) {
         <span class="add-person-status-dot ${statusDotClass(safeStatus)}" aria-hidden="true"></span>
         <span>${escapeHtml(safeStatus)}</span>
       </span>`;
+    }
+    
+    let connectPersonModalState = {
+      anchorPersonId: '',
+      relationshipType: 'parent',
+      query: '',
+      selectedPersonId: ''
+    };
+
+    function normalizeConnectRelationshipType(type) {
+      const value = String(type || '').toLowerCase();
+
+      if (['father', 'mother', 'parent'].includes(value)) return 'parent';
+      if (['son', 'daughter', 'child'].includes(value)) return 'child';
+      if (['partner', 'spouse', 'husband', 'wife'].includes(value)) return 'partner';
+
+      return 'parent';
+    }
+
+    function connectRelationshipLabel(type) {
+      const map = {
+        parent: 'Parent',
+        child: 'Child',
+        partner: 'Partner'
+      };
+
+      return map[normalizeConnectRelationshipType(type)] || 'Parent';
+    }
+
+    function connectRelationshipSentence(type) {
+      const map = {
+        parent: 'parent',
+        child: 'child',
+        partner: 'partner'
+      };
+
+      return map[normalizeConnectRelationshipType(type)] || 'parent';
+    }
+
+    function connectPersonName(person) {
+      return person?.names?.display || person?.name || 'Unknown person';
+    }
+
+    function connectPersonLifeLine(person) {
+      const birth = formatGenealogyDateLabel(person?.birth);
+      const death = formatGenealogyDateLabel(person?.death);
+
+      if (birth && death) return `${birth} - ${death}`;
+      if (birth) return birth;
+      if (death) return `Died ${death}`;
+
+      return 'Dates unknown';
+    }
+
+    function connectPersonPlaceLine(person) {
+      return getPlaceEventDisplay(person?.birth)
+        || getPlaceEventDisplay(person?.death)
+        || person?.branch
+        || '';
+    }
+
+    function connectPersonSearchText(person) {
+      return [
+        connectPersonName(person),
+        person?.names?.first,
+        person?.names?.middle,
+        person?.names?.last,
+        person?.names?.maiden,
+        connectPersonLifeLine(person),
+        connectPersonPlaceLine(person),
+        person?.branch,
+        person?.role
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+    }
+
+    function connectPeopleAlreadyRelated(anchorPersonId, candidatePersonId, relationshipType) {
+      const type = normalizeConnectRelationshipType(relationshipType);
+
+      if (!anchorPersonId || !candidatePersonId || anchorPersonId === candidatePersonId) {
+        return true;
+      }
+
+      if (type === 'parent') {
+        return getParents(anchorPersonId).some(parent => parent.id === candidatePersonId);
+      }
+
+      if (type === 'child') {
+        return getChildren(anchorPersonId).some(child => child.id === candidatePersonId);
+      }
+
+      return getPartnerRelationships(anchorPersonId)
+        .some(relationship => familyPartnerId(relationship, anchorPersonId) === candidatePersonId);
+    }
+
+    function connectPersonCandidateScore(person, anchorPerson, relationshipType, query) {
+      let score = 0;
+      const type = normalizeConnectRelationshipType(relationshipType);
+      const search = connectPersonSearchText(person);
+      const q = String(query || '').trim().toLowerCase();
+
+      if (q && search.includes(q)) score += 80;
+
+      const anchorSurname = String(anchorPerson?.names?.last || '').toLowerCase();
+      const personSurname = String(person?.names?.last || '').toLowerCase();
+
+      if (anchorSurname && personSurname && anchorSurname === personSurname) score += 24;
+
+      const anchorBirthPlace = getPlaceEventDisplay(anchorPerson?.birth).toLowerCase();
+      const personBirthPlace = getPlaceEventDisplay(person?.birth).toLowerCase();
+
+      if (anchorBirthPlace && personBirthPlace && anchorBirthPlace === personBirthPlace) score += 12;
+
+      const gender = String(person?.gender || '').toLowerCase();
+
+      if (type === 'parent') {
+        const anchorSort = Number(anchorPerson?.birth?.sortDate || 0);
+        const candidateSort = Number(person?.birth?.sortDate || 0);
+        if (anchorSort && candidateSort && candidateSort < anchorSort) score += 18;
+      }
+
+      if (type === 'child') {
+        const anchorSort = Number(anchorPerson?.birth?.sortDate || 0);
+        const candidateSort = Number(person?.birth?.sortDate || 0);
+        if (anchorSort && candidateSort && candidateSort > anchorSort) score += 18;
+      }
+
+      if (type === 'partner' && ['male', 'female', 'unknown'].includes(gender)) {
+        score += 4;
+      }
+
+      return score;
+    }
+
+    function connectPersonCandidates() {
+      const anchor = getPerson(connectPersonModalState.anchorPersonId);
+      if (!anchor) return [];
+
+      const query = String(connectPersonModalState.query || '').trim().toLowerCase();
+      const relationshipType = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
+
+      return getPeople(currentProjectId())
+        .filter(person => person?.id && person.id !== anchor.id)
+        .filter(person => !person.deleted)
+        .filter(person => !connectPeopleAlreadyRelated(anchor.id, person.id, relationshipType))
+        .filter(person => !query || connectPersonSearchText(person).includes(query))
+        .map(person => ({
+          person,
+          score: connectPersonCandidateScore(person, anchor, relationshipType, query)
+        }))
+        .sort((a, b) => b.score - a.score || connectPersonName(a.person).localeCompare(connectPersonName(b.person)))
+        .slice(0, query ? 12 : 3)
+        .map(item => item.person);
+    }
+
+    function connectPersonSelectedValidation() {
+      if (!connectPersonModalState.selectedPersonId) return { ok: true };
+
+      return validateRelationshipConnection({
+        anchorPersonId: connectPersonModalState.anchorPersonId,
+        relativePersonId: connectPersonModalState.selectedPersonId,
+        relationshipType: connectPersonModalState.relationshipType
+      });
+    }
+
+    function connectPersonActiveWarning() {
+      const anchor = getPerson(connectPersonModalState.anchorPersonId);
+      const selected = getPerson(connectPersonModalState.selectedPersonId);
+      const type = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
+
+      if (!anchor) return null;
+
+      if (!selected && type === 'parent' && getParents(anchor.id).length > 0) {
+        return {
+          severity: 'warning',
+          title: 'Warning!',
+          message: `${connectPersonName(anchor)} already has recorded parents. The selected person will be connected as an additional parent.`
+        };
+      }
+
+      if (!selected) return null;
+
+      return relationshipWarningForConnection({
+        anchorPersonId: anchor.id,
+        relativePersonId: selected.id,
+        relationshipType: type
+      });
+    }
+
+    function connectPersonNoticeHtml(notice) {
+      if (!notice) {
+        return `<div class="connect-person-warning" data-connect-warning hidden></div>`;
+      }
+
+      const isBlocking = notice.severity === 'blocking';
+
+      return `<div class="connect-person-warning ${isBlocking ? 'is-blocking' : ''}" data-connect-warning>
+        <div class="connect-person-warning-title">${icon.warning}<span>${escapeHtml(notice.title || 'Warning!')}</span></div>
+        <p>${escapeHtml(notice.message || '')}</p>
+      </div>`;
+    }
+
+    function connectPersonWarningHtml() {
+      const validation = connectPersonSelectedValidation();
+
+      if (!validation.ok) {
+        return connectPersonNoticeHtml({
+          severity: 'blocking',
+          title: validation.title || 'Cannot connect',
+          message: validation.message || 'This relationship cannot be created.'
+        });
+      }
+
+      return connectPersonNoticeHtml(connectPersonActiveWarning());
+    }
+
+    function renderConnectPersonResult(person) {
+      const selected = person.id === connectPersonModalState.selectedPersonId;
+      const place = connectPersonPlaceLine(person);
+
+      return `<button class="connect-person-result ${selected ? 'is-selected' : ''}" type="button" data-connect-person-result="${escapeHtml(person.id)}" aria-pressed="${selected ? 'true' : 'false'}">
+        ${renderPersonAvatar(person, 'connect-person-avatar')}
+        <span class="connect-person-result-copy">
+          <strong>${escapeHtml(connectPersonName(person))}</strong>
+          <span>${escapeHtml(connectPersonLifeLine(person))}</span>
+          ${place ? `<span>${escapeHtml(place)}</span>` : ''}
+        </span>
+      </button>`;
+    }
+
+    function renderConnectPersonResults() {
+      const candidates = connectPersonCandidates();
+
+      if (!candidates.length) {
+        return `<div class="connect-person-empty">
+          No matching people found. Try another name or create a new person.
+        </div>`;
+      }
+
+      return `<div class="connect-person-results">
+        ${candidates.map(renderConnectPersonResult).join('')}
+      </div>`;
+    }
+
+    function renderConnectPersonModalHtml() {
+      const anchor = getPerson(connectPersonModalState.anchorPersonId);
+      const anchorName = connectPersonName(anchor);
+      const relationshipType = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
+      const relationshipLabel = connectRelationshipLabel(relationshipType);
+      const relationshipSentence = connectRelationshipSentence(relationshipType);
+      const selectedPerson = getPerson(connectPersonModalState.selectedPersonId);
+      const selectedValidation = connectPersonSelectedValidation();
+      const connectDisabled = !selectedPerson || !selectedValidation.ok;
+      const resultTitle = connectPersonModalState.query ? 'Search results' : 'Suggested matches';
+
+      return `<div class="modal connect-person-modal" role="dialog" aria-modal="true" aria-labelledby="connectPersonTitle">
+        <div class="modal-header connect-person-header">
+          <div class="connect-person-header-icon" aria-hidden="true">${icon.link}</div>
+          <div>
+            <h2 id="connectPersonTitle">Connect existing person</h2>
+            <p>Find a person in this project and connect them to ${escapeHtml(anchorName)}.</p>
+          </div>
+          <button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button>
+        </div>
+
+        <div class="connect-person-layout">
+          <aside class="connect-person-left">
+            <div class="field add-person-select-field">
+              <label for="connectPersonRelationship">Select relationship</label>
+              <select class="compact-select add-person-select" id="connectPersonRelationship" data-connect-relationship>
+                ${['parent', 'child', 'partner'].map(value => `<option value="${value}" ${value === relationshipType ? 'selected' : ''}>${connectRelationshipLabel(value)}</option>`).join('')}
+              </select>
+              <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
+            </div>
+
+            ${connectPersonWarningHtml()}
+          </aside>
+
+          <section class="connect-person-main">
+            <div class="field">
+              <label for="connectPersonSearch">Find person</label>
+              <div class="connect-person-search-shell">
+                ${icon.search}
+                <input id="connectPersonSearch" data-connect-search value="${escapeHtml(connectPersonModalState.query)}" placeholder="Search people..." autocomplete="off">
+              </div>
+            </div>
+
+            <div class="connect-person-results-panel">
+              <div class="connect-person-results-title">${escapeHtml(resultTitle)}</div>
+              ${renderConnectPersonResults()}
+            </div>
+
+            <button class="connect-person-create" type="button" data-connect-create-new>
+              <span class="connect-person-create-icon" aria-hidden="true">${icon.addperson}</span>
+              <span class="connect-person-create-copy">
+                <strong>Can’t find the person?</strong>
+                <span>Create a new person and connect as ${escapeHtml(relationshipSentence)}</span>
+              </span>
+              <span class="connect-person-create-chevron" aria-hidden="true">${icon.chevron}</span>
+            </button>
+          </section>
+        </div>
+
+        <div class="modal-footer connect-person-footer">
+          <button class="button secondary" type="button" data-close>Cancel</button>
+          <button class="button primary" type="button" id="connectPersonConfirm" ${connectDisabled ? 'disabled' : ''}>Connect</button>
+        </div>
+      </div>`;
+    }
+
+    function refreshConnectPersonModal() {
+      modalBackdrop.innerHTML = renderConnectPersonModalHtml();
+      modalBackdrop.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', closeModal));
+      bindConnectPersonModalControls();
+
+      const input = modalBackdrop.querySelector('[data-connect-search]');
+      if (input) {
+        const length = input.value.length;
+        input.focus();
+        input.setSelectionRange(length, length);
+      }
+
+      localizeUI(modalBackdrop);
+    }
+
+    function bindConnectPersonModalControls() {
+      const modal = modalBackdrop.querySelector('.connect-person-modal');
+      if (!modal) return;
+
+      modal.querySelector('[data-connect-relationship]')?.addEventListener('change', event => {
+        connectPersonModalState.relationshipType = normalizeConnectRelationshipType(event.currentTarget.value);
+        connectPersonModalState.selectedPersonId = '';
+        refreshConnectPersonModal();
+      });
+
+      modal.querySelector('[data-connect-search]')?.addEventListener('input', event => {
+        connectPersonModalState.query = event.currentTarget.value;
+        connectPersonModalState.selectedPersonId = '';
+        refreshConnectPersonModal();
+      });
+
+      modal.querySelectorAll('[data-connect-person-result]').forEach(button => {
+        button.addEventListener('click', () => {
+          connectPersonModalState.selectedPersonId = button.dataset.connectPersonResult || '';
+          refreshConnectPersonModal();
+        });
+      });
+
+      modal.querySelector('[data-connect-create-new]')?.addEventListener('click', () => {
+        const anchor = getPerson(connectPersonModalState.anchorPersonId);
+        const relationshipType = normalizeConnectRelationshipType(connectPersonModalState.relationshipType);
+        const label = connectRelationshipSentence(relationshipType);
+
+        closeModal();
+
+        openAddPersonModal(
+          `Add ${label}`,
+          `Create a new person and connect as ${connectPersonName(anchor)}'s ${label}`,
+          {
+            relativeType: relationshipType,
+            connectRelationshipType: relationshipType,
+            connectAfterCreate: true,
+            personId: anchor?.id || connectPersonModalState.anchorPersonId,
+            connectToPersonId: anchor?.id || connectPersonModalState.anchorPersonId
+          }
+        );
+      });
+
+      modal.querySelector('#connectPersonConfirm')?.addEventListener('click', () => {
+        const anchor = getPerson(connectPersonModalState.anchorPersonId);
+        const selected = getPerson(connectPersonModalState.selectedPersonId);
+
+        if (!anchor || !selected) return;
+
+        const validation = connectPersonSelectedValidation();
+
+        if (!validation.ok) {
+          showToast(validation.message || 'This relationship cannot be created.');
+          refreshConnectPersonModal();
+          return;
+        }
+
+        const result = connectPeopleByRelationship({
+          anchorPersonId: anchor.id,
+          relativePersonId: selected.id,
+          relationshipType: connectPersonModalState.relationshipType
+        });
+
+        if (!result.ok) {
+          showToast(result.message || 'Could not connect these people.');
+          refreshConnectPersonModal();
+          return;
+        }
+
+        const relationshipLabel = connectRelationshipSentence(connectPersonModalState.relationshipType);
+
+        closeModal();
+
+        state.selectedPersonId = anchor.id;
+        state.selectedPeopleId = anchor.id;
+        state.treeInspectorCollapsed = false;
+
+        if (state.activeModule === 'Family Tree') {
+          renderFamilyTreePreserveScroll();
+        } else {
+          render();
+        }
+
+        if (result.warning?.message) {
+          showToast(`${connectPersonName(selected)} connected as ${relationshipLabel}. ${result.warning.message}`);
+        } else {
+          showToast(`${connectPersonName(selected)} connected as ${relationshipLabel}.`);
+        }
+      });
+    }
+
+    function openConnectRelativeModal(anchorPersonId, options = {}) {
+      const anchor = getPerson(anchorPersonId);
+      if (!anchor) return;
+
+      connectPersonModalState = {
+        anchorPersonId: anchor.id,
+        relationshipType: normalizeConnectRelationshipType(options.relationshipType || 'parent'),
+        query: '',
+        selectedPersonId: ''
+      };
+
+      openModal(renderConnectPersonModalHtml());
+      bindConnectPersonModalControls();
+      modalBackdrop.querySelector('[data-connect-search]')?.focus();
     }
 
     function openRelativePopover(anchor, relation) {
@@ -15052,14 +15809,17 @@ function renderTreeCardDateLines(person) {
           closeMenu();
           openAddPersonModal(`Add ${rel}`, `Create a new person and add as ${person.name.split(' ')[0]}'s ${rel}`, {
             relativeType: rel,
-            personId: person.id
+            connectRelationshipType: addPersonConnectionTypeFromRelativeType(rel),
+            connectAfterCreate: Boolean(addPersonConnectionTypeFromRelativeType(rel)),
+            personId: person.id,
+            connectToPersonId: person.id
           });
         });
       });
 
       popover.querySelector('[data-connect-existing]')?.addEventListener('click', () => {
         closeMenu();
-        showToast('Connect existing person flow will be added in a later iteration.');
+        openConnectRelativeModal(person.id, { relationshipType: 'parent' });
       });
 
       setTimeout(() => document.addEventListener('click', closeMenu), 0);
@@ -15699,12 +16459,15 @@ function renderTreeCardDateLines(person) {
       const map = {
         father: 'Father',
         mother: 'Mother',
+        parent: 'Parent',
         son: 'Son',
         daughter: 'Daughter',
+        child: 'Child',
         brother: 'Brother',
         sister: 'Sister',
         partner: 'Partner'
       };
+
       return map[String(relativeType || '').toLowerCase()] || 'Relative';
     }
 
@@ -15763,33 +16526,555 @@ function renderTreeCardDateLines(person) {
       return person;
     }
 
-    function createPartnerRelationshipForNewPerson(anchorPersonId, newPersonId, collected) {
-      const values = collected?.relationships?.[0];
-      if (!anchorPersonId || !newPersonId || !values) return null;
-      const id = relationshipIdForPartners(anchorPersonId, newPersonId);
-      const relationship = {
-        id,
-        projectId: state.currentProjectId || state.selectedProjectId || 'p1',
+    function relationshipRoleHintForPerson(personId) {
+      const gender = String(getPerson(personId)?.gender || '').toLowerCase();
+
+      if (gender === 'male') return 'HUSB';
+      if (gender === 'female') return 'WIFE';
+
+      return '';
+    }
+
+    function parentSlotPreference(personId) {
+      const gender = String(getPerson(personId)?.gender || '').toLowerCase();
+
+      if (gender === 'female') return 'mother';
+      return 'father';
+    }
+
+    function uniqueFamilyId(baseId) {
+      const cleanBase = String(baseId || 'family')
+        .replace(/[^a-z0-9]+/gi, '-')
+        .replace(/^-|-$/g, '') || 'family';
+
+      let id = cleanBase;
+      let counter = 2;
+
+      while (centralFamilyRecords().some(family => family.id === id)) {
+        id = `${cleanBase}-${counter}`;
+        counter += 1;
+      }
+
+      return id;
+    }
+
+    function syncFamilyPartnerAliases(family) {
+      const partnerA = family.partnerAId || family.partner1Id || family.personAId || '';
+      const partnerB = family.partnerBId || family.partner2Id || family.personBId || '';
+
+      family.partnerAId = partnerA;
+      family.partner1Id = partnerA;
+      family.personAId = partnerA;
+
+      family.partnerBId = partnerB;
+      family.partner2Id = partnerB;
+      family.personBId = partnerB;
+
+      family.childIds = [...new Set([...(family.childIds || []), ...(family.childrenIds || [])].filter(Boolean))];
+      family.childrenIds = [...family.childIds];
+
+      family.events = Array.isArray(family.events) ? family.events : [];
+      family.attributes = Array.isArray(family.attributes) ? family.attributes : [];
+      family.notes = Array.isArray(family.notes) ? family.notes : [];
+      family.citations = Array.isArray(family.citations) ? family.citations : [];
+      family.mediaIds = Array.isArray(family.mediaIds) ? family.mediaIds : [];
+
+      family.relationshipStatus = family.relationshipStatus || 'active';
+      family.gedcomXref = family.gedcomXref || `@F${family.id.replace(/[^a-z0-9]/gi, '').toUpperCase()}@`;
+
+      return family;
+    }
+
+    function personDisplayName(personId) {
+      return connectPersonName(getPerson(personId));
+    }
+
+    function parentIdsForPerson(personId) {
+      return getParents(personId)
+        .map(parent => parent.id)
+        .filter(Boolean);
+    }
+
+    function childIdsForPerson(personId) {
+      return getChildren(personId)
+        .map(child => child.id)
+        .filter(Boolean);
+    }
+
+    function collectAncestorIds(personId, visited = new Set()) {
+      parentIdsForPerson(personId).forEach(parentId => {
+        if (!parentId || visited.has(parentId)) return;
+        visited.add(parentId);
+        collectAncestorIds(parentId, visited);
+      });
+
+      return visited;
+    }
+
+    function collectDescendantIds(personId, visited = new Set()) {
+      childIdsForPerson(personId).forEach(childId => {
+        if (!childId || visited.has(childId)) return;
+        visited.add(childId);
+        collectDescendantIds(childId, visited);
+      });
+
+      return visited;
+    }
+
+    function hasParentChildRelationship(parentId, childId) {
+      return centralFamilyRecords().some(family =>
+        (family.childIds || family.childrenIds || []).includes(childId)
+          && familyIncludesPerson(family, parentId)
+      );
+    }
+
+    function hasPartnerRelationship(personAId, personBId) {
+      return Boolean(getPartnerRelationshipBetween(personAId, personBId));
+    }
+
+    function validateParentChildConnection(parentId, childId) {
+      if (!parentId || !childId) {
+        return {
+          ok: false,
+          title: 'Missing person',
+          message: 'Select a person to connect.'
+        };
+      }
+
+      if (!getPerson(parentId) || !getPerson(childId)) {
+        return {
+          ok: false,
+          title: 'Person not found',
+          message: 'Person record not found.'
+        };
+      }
+
+      if (parentId === childId) {
+        return {
+          ok: false,
+          title: 'Invalid relationship',
+          message: 'A person cannot be connected to themselves.'
+        };
+      }
+
+      if (hasParentChildRelationship(parentId, childId)) {
+        return {
+          ok: false,
+          title: 'Already connected',
+          message: `${personDisplayName(parentId)} is already connected as a parent of ${personDisplayName(childId)}.`
+        };
+      }
+
+      if (collectDescendantIds(childId).has(parentId)) {
+        return {
+          ok: false,
+          title: 'Relationship loop',
+          message: `${personDisplayName(parentId)} is already a descendant of ${personDisplayName(childId)}. Connecting them as a parent would create a cycle.`
+        };
+      }
+
+      if (collectAncestorIds(parentId).has(childId)) {
+        return {
+          ok: false,
+          title: 'Relationship loop',
+          message: `${personDisplayName(childId)} is already an ancestor of ${personDisplayName(parentId)}. Connecting them as a child would create a cycle.`
+        };
+      }
+
+      return { ok: true };
+    }
+
+    function validatePartnerConnection(personAId, personBId) {
+      if (!personAId || !personBId) {
+        return {
+          ok: false,
+          title: 'Missing person',
+          message: 'Select a person to connect.'
+        };
+      }
+
+      if (!getPerson(personAId) || !getPerson(personBId)) {
+        return {
+          ok: false,
+          title: 'Person not found',
+          message: 'Person record not found.'
+        };
+      }
+
+      if (personAId === personBId) {
+        return {
+          ok: false,
+          title: 'Invalid relationship',
+          message: 'A person cannot be connected to themselves.'
+        };
+      }
+
+      if (hasPartnerRelationship(personAId, personBId)) {
+        return {
+          ok: false,
+          title: 'Already connected',
+          message: `${personDisplayName(personAId)} and ${personDisplayName(personBId)} are already connected as partners.`
+        };
+      }
+
+      return { ok: true };
+    }
+
+    function parentWarningForConnection(parentId, childId) {
+      if (!parentId || !childId) return null;
+
+      const existingParents = getParents(childId)
+        .filter(parent => parent.id && parent.id !== parentId);
+
+      if (!existingParents.length) return null;
+
+      return {
+        severity: 'warning',
+        title: 'Warning!',
+        message: `${personDisplayName(childId)} already has ${existingParents.length === 1 ? 'a recorded parent' : 'recorded parents'}. The selected person will be connected as an additional parent.`
+      };
+    }
+
+    function connectionPairForRelationship(anchorPersonId, relativePersonId, relationshipType) {
+      const anchorId = String(anchorPersonId || '');
+      const relativeId = String(relativePersonId || '');
+      const type = normalizeConnectRelationshipType(relationshipType);
+
+      if (type === 'parent') {
+        return {
+          type,
+          parentId: relativeId,
+          childId: anchorId
+        };
+      }
+
+      if (type === 'child') {
+        return {
+          type,
+          parentId: anchorId,
+          childId: relativeId
+        };
+      }
+
+      return {
+        type,
+        personAId: anchorId,
+        personBId: relativeId
+      };
+    }
+
+    function validateRelationshipConnection({ anchorPersonId, relativePersonId, relationshipType } = {}) {
+      const pair = connectionPairForRelationship(anchorPersonId, relativePersonId, relationshipType);
+
+      if (pair.type === 'parent' || pair.type === 'child') {
+        return validateParentChildConnection(pair.parentId, pair.childId);
+      }
+
+      return validatePartnerConnection(pair.personAId, pair.personBId);
+    }
+
+    function relationshipWarningForConnection({ anchorPersonId, relativePersonId, relationshipType } = {}) {
+      const pair = connectionPairForRelationship(anchorPersonId, relativePersonId, relationshipType);
+
+      if (pair.type === 'parent' || pair.type === 'child') {
+        return parentWarningForConnection(pair.parentId, pair.childId);
+      }
+
+      return null;
+    }
+
+    function familyCanAcceptParent(family, parentId) {
+      if (!family) return false;
+      if (familyIncludesPerson(family, parentId)) return true;
+
+      const preferredSlot = parentSlotPreference(parentId);
+
+      if (preferredSlot === 'mother' && !familyPartnerBId(family)) return true;
+      if (preferredSlot === 'father' && !familyPartnerAId(family)) return true;
+
+      return !familyPartnerAId(family) || !familyPartnerBId(family);
+    }
+
+    function assignParentToFamily(family, parentId) {
+      if (!family || !parentId) return false;
+      if (familyIncludesPerson(family, parentId)) return true;
+
+      const preferredSlot = parentSlotPreference(parentId);
+      const roleHint = relationshipRoleHintForPerson(parentId);
+
+      if (preferredSlot === 'mother' && !familyPartnerBId(family)) {
+        family.partnerBId = parentId;
+        family.partner2Id = parentId;
+        family.personBId = parentId;
+        family.motherId = parentId;
+        family.partnerBRoleHint = roleHint || 'WIFE';
+        family.partner2RoleHint = family.partnerBRoleHint;
+        family.personBRoleHint = family.partnerBRoleHint;
+        return true;
+      }
+
+      if (preferredSlot === 'father' && !familyPartnerAId(family)) {
+        family.partnerAId = parentId;
+        family.partner1Id = parentId;
+        family.personAId = parentId;
+        family.fatherId = parentId;
+        family.partnerARoleHint = roleHint || 'HUSB';
+        family.partner1RoleHint = family.partnerARoleHint;
+        family.personARoleHint = family.partnerARoleHint;
+        return true;
+      }
+
+      if (!familyPartnerAId(family)) {
+        family.partnerAId = parentId;
+        family.partner1Id = parentId;
+        family.personAId = parentId;
+        family.fatherId = parentSlotPreference(parentId) === 'father' ? parentId : family.fatherId || '';
+        family.partnerARoleHint = roleHint;
+        family.partner1RoleHint = roleHint;
+        family.personARoleHint = roleHint;
+        return true;
+      }
+
+      if (!familyPartnerBId(family)) {
+        family.partnerBId = parentId;
+        family.partner2Id = parentId;
+        family.personBId = parentId;
+        family.motherId = parentSlotPreference(parentId) === 'mother' ? parentId : family.motherId || '';
+        family.partnerBRoleHint = roleHint;
+        family.partner2RoleHint = roleHint;
+        family.personBRoleHint = roleHint;
+        return true;
+      }
+
+      return false;
+    }
+
+    function createParentChildFamily(parentId, childId) {
+      const parent = getPerson(parentId);
+      const child = getPerson(childId);
+      const projectId = child?.projectId || parent?.projectId || currentProjectId();
+
+      const family = {
+        id: uniqueFamilyId(`fam-${parentId}-${childId}-parent`),
+        projectId,
         type: 'family',
-        gedcomXref: `@F${id.replace(/[^a-z0-9]/gi, '').toUpperCase()}@`,
-        partnerAId: anchorPersonId,
-        partnerBId: newPersonId,
-        personAId: anchorPersonId,
-        personBId: newPersonId,
-        partnerARoleHint: getPerson(anchorPersonId)?.gender === 'male' ? 'HUSB' : getPerson(anchorPersonId)?.gender === 'female' ? 'WIFE' : '',
-        partnerBRoleHint: getPerson(newPersonId)?.gender === 'male' ? 'HUSB' : getPerson(newPersonId)?.gender === 'female' ? 'WIFE' : '',
-        childrenIds: [],
-        relationshipType: values.relationshipType || 'Married',
+        fatherId: '',
+        motherId: '',
+        partnerAId: '',
+        partnerBId: '',
+        partner1Id: '',
+        partner2Id: '',
+        personAId: '',
+        personBId: '',
+        partnerARoleHint: '',
+        partnerBRoleHint: '',
+        relationshipType: 'Unknown relationship',
         relationshipStatus: 'active',
+        childIds: [childId],
+        childrenIds: [childId],
         events: [],
-        nonEvents: [],
+        attributes: [],
+        notes: [],
+        citations: [],
+        mediaIds: [],
         createdAt: 'Just now',
         updatedAt: 'Just now'
       };
-      upsertMarriageEvent(relationship, values);
-      centralFamilyRecords().push(relationship);
+
+      assignParentToFamily(family, parentId);
+      syncFamilyPartnerAliases(family);
+      centralFamilyRecords().push(family);
+
+      return family;
+    }
+
+    function connectParentToChild(parentId, childId) {
+      const validation = validateParentChildConnection(parentId, childId);
+
+      if (!validation.ok) {
+        return validation;
+      }
+
+      const warning = parentWarningForConnection(parentId, childId);
+
+      let family = centralFamilyRecords().find(candidate =>
+        (candidate.childIds || candidate.childrenIds || []).includes(childId)
+          && familyCanAcceptParent(candidate, parentId)
+      );
+
+      if (!family) {
+        family = createParentChildFamily(parentId, childId);
+      } else {
+        family.childIds = [...new Set([...(family.childIds || []), childId])];
+        family.childrenIds = [...family.childIds];
+        assignParentToFamily(family, parentId);
+        syncFamilyPartnerAliases(family);
+        family.updatedAt = 'Just now';
+      }
+
+      return {
+        ok: true,
+        family,
+        relationshipType: 'parentChild',
+        warning
+      };
+    }
+
+    function getPartnerRelationshipBetween(personAId, personBId) {
+      return centralFamilyRecords().find(family => {
+        const a = familyPartnerAId(family);
+        const b = familyPartnerBId(family);
+
+        return (a === personAId && b === personBId) || (a === personBId && b === personAId);
+      }) || null;
+    }
+
+    function connectPartners(personAId, personBId) {
+      const validation = validatePartnerConnection(personAId, personBId);
+
+      if (!validation.ok) {
+        return validation;
+      }
+
+      const personA = getPerson(personAId);
+      const personB = getPerson(personBId);
+      const id = uniqueFamilyId(relationshipIdForPartners(personAId, personBId));
+
+      const family = {
+        id,
+        projectId: personA.projectId || personB.projectId || currentProjectId(),
+        type: 'family',
+        gedcomXref: `@F${id.replace(/[^a-z0-9]/gi, '').toUpperCase()}@`,
+        partnerAId: personAId,
+        partnerBId: personBId,
+        partner1Id: personAId,
+        partner2Id: personBId,
+        personAId,
+        personBId,
+        fatherId: '',
+        motherId: '',
+        partnerARoleHint: relationshipRoleHintForPerson(personAId),
+        partnerBRoleHint: relationshipRoleHintForPerson(personBId),
+        relationshipType: 'Partner',
+        relationshipStatus: 'active',
+        childIds: [],
+        childrenIds: [],
+        events: [],
+        nonEvents: [],
+        attributes: [],
+        notes: [],
+        citations: [],
+        mediaIds: [],
+        createdAt: 'Just now',
+        updatedAt: 'Just now'
+      };
+
+      syncFamilyPartnerAliases(family);
+      centralFamilyRecords().push(family);
+
+      return {
+        ok: true,
+        family,
+        relationshipType: 'partner',
+        warning: null
+      };
+    }
+
+    function connectPeopleByRelationship({ anchorPersonId, relativePersonId, relationshipType } = {}) {
+      const anchorId = String(anchorPersonId || '');
+      const relativeId = String(relativePersonId || '');
+      const type = normalizeConnectRelationshipType(relationshipType);
+
+      const validation = validateRelationshipConnection({
+        anchorPersonId: anchorId,
+        relativePersonId: relativeId,
+        relationshipType: type
+      });
+
+      if (!validation.ok) {
+        return validation;
+      }
+
+      let result;
+
+      if (type === 'parent') {
+        result = connectParentToChild(relativeId, anchorId);
+      } else if (type === 'child') {
+        result = connectParentToChild(anchorId, relativeId);
+      } else {
+        result = connectPartners(anchorId, relativeId);
+      }
+
+      if (!result.ok) return result;
+
       syncFamilyReciprocalLinks();
-      return relationship;
+      sampleData.events = buildSampleEvents();
+
+      return {
+        ...result,
+        anchorPersonId: anchorId,
+        relativePersonId: relativeId,
+        connectType: type
+      };
+    }
+
+    function addPersonConnectionTypeFromRelativeType(relativeType) {
+      const value = String(relativeType || '').toLowerCase();
+
+      if (['father', 'mother', 'parent'].includes(value)) return 'parent';
+      if (['son', 'daughter', 'child'].includes(value)) return 'child';
+      if (['partner', 'spouse'].includes(value)) return 'partner';
+
+      return '';
+    }
+
+    function addPersonCreateConnectionIntent(options = {}) {
+      const relationshipType = addPersonConnectionTypeFromRelativeType(
+        options.connectRelationshipType || options.relativeType
+      );
+
+      const anchorPersonId = String(
+        options.connectToPersonId
+          || options.anchorPersonId
+          || options.personId
+          || ''
+      );
+
+      return {
+        shouldConnect: Boolean(options.mode !== 'edit' && relationshipType && anchorPersonId),
+        anchorPersonId,
+        relationshipType
+      };
+    }
+
+    function addPersonConnectionToastLabel(relationshipType) {
+      const map = {
+        parent: 'parent',
+        child: 'child',
+        partner: 'partner'
+      };
+
+      return map[relationshipType] || 'relative';
+    }
+
+    function applyPartnerDetailsToCreatedConnection(connectionResult, relationshipValues) {
+      if (!connectionResult?.ok || connectionResult.connectType !== 'partner') return;
+      if (!connectionResult.family) return;
+
+      const values = relationshipValues?.relationships?.[0];
+      if (!values) return;
+
+      connectionResult.family.relationshipType = values.relationshipType || connectionResult.family.relationshipType || 'Partner';
+      connectionResult.family.relationshipStatus = connectionResult.family.relationshipStatus || 'active';
+
+      upsertMarriageEvent(connectionResult.family, values);
+
+      if (typeof syncFamilyPartnerAliases === 'function') {
+        syncFamilyPartnerAliases(connectionResult.family);
+      }
+
+      syncFamilyReciprocalLinks();
+      sampleData.events = buildSampleEvents();
     }
 
     function openAddPersonModal(title, subtitle, options = {}) {
@@ -15928,22 +17213,56 @@ function renderTreeCardDateLines(person) {
           return;
         }
         const newPerson = createPersonFromAddPersonModal(options, additionalFacts);
-        if (isPartnerMode) createPartnerRelationshipForNewPerson(options.personId || state.selectedPersonId, newPerson.id, relationshipValues);
+        const connectionIntent = addPersonCreateConnectionIntent(options);
+        let connectionResult = null;
+
+        if (connectionIntent.shouldConnect) {
+          connectionResult = connectPeopleByRelationship({
+            anchorPersonId: connectionIntent.anchorPersonId,
+            relativePersonId: newPerson.id,
+            relationshipType: connectionIntent.relationshipType
+          });
+
+          if (connectionResult.ok) {
+            applyPartnerDetailsToCreatedConnection(connectionResult, relationshipValues);
+          }
+        }
+
         sampleData.events = buildSampleEvents();
         state.selectedPersonId = newPerson.id;
         state.selectedPeopleId = newPerson.id;
 
         closeModal();
+
         if (state.activeModule === 'Family Tree') {
           renderFamilyTreePreserveScroll?.() || renderFamilyTree();
         } else {
           render();
         }
-        showToast(isPartnerMode ? 'Person and relationship created.' : 'Person created.');
+
+        if (connectionIntent.shouldConnect) {
+          if (connectionResult?.ok) {
+            showToast(`Person created and connected as ${addPersonConnectionToastLabel(connectionIntent.relationshipType)}.`);
+          } else {
+            showToast(connectionResult?.message || 'Person created, but could not connect the relationship.');
+          }
+        } else {
+          showToast('Person created.');
+        }
 
         if (createAnother) {
           requestAnimationFrame(() => {
-            openAddPersonModal('Add person', 'Create a new person in this project');
+            if (connectionIntent.shouldConnect) {
+              openAddPersonModal(title, subtitle, {
+                ...options,
+                personId: connectionIntent.anchorPersonId,
+                connectToPersonId: connectionIntent.anchorPersonId,
+                connectAfterCreate: true,
+                connectRelationshipType: connectionIntent.relationshipType
+              });
+            } else {
+              openAddPersonModal('Add person', 'Create a new person in this project');
+            }
           });
         }
       });
@@ -18128,7 +19447,11 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
         if (selected?.id) syncPersonSidebarSelection(selected.id, context);
         openRelativePopover(event.currentTarget, 'relative');
       });
-      root.querySelector('#connectRelative')?.addEventListener('click', () => showToast('Connect existing person flow will be added in a later iteration.'));
+      root.querySelector('#connectRelative')?.addEventListener('click', () => {
+        if (!selected?.id) return;
+        syncPersonSidebarSelection(selected.id, context);
+        openConnectRelativeModal(selected.id, { relationshipType: 'parent' });
+      });
       root.querySelectorAll('[data-family-photo]').forEach(button => button.addEventListener('click', () => openFamilyPhoto(button.dataset.familyPhoto)));
       root.querySelectorAll('[data-family-archive]').forEach(button => button.addEventListener('click', () => openFamilyArchiveItem(button.dataset.familyArchive)));
       root.querySelectorAll('[data-family-note]').forEach(button => button.addEventListener('click', () => openFamilyNote(button.dataset.familyNote)));
