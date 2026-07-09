@@ -10924,6 +10924,10 @@
           date: '2004',
           dateLabel: '2004',
           placeId: 'place-pawford',
+          value: 'Private tutoring',
+          type: 'Private tutoring',
+          institutionName: 'Pawford tutoring circle',
+          institutionType: 'Private tutoring',
           title: 'Education',
           description: 'Started at Pawford tutoring circle'
         },
@@ -10934,6 +10938,10 @@
           date: '2005',
           dateLabel: '2005',
           placeId: 'place-meowbridge',
+          value: 'School education',
+          type: 'School',
+          institutionName: 'Meowbridge School',
+          institutionType: 'School',
           title: 'Education',
           description: 'Studied in Meowbridge'
         }
@@ -12203,7 +12211,10 @@
         if (!person || personAttributeByTag(person, 'EDUC')) return;
         upsertPersonAttribute(person, 'EDUC', {
           id: fact.id || `education-${person.id}`,
-          value: fact.title || 'Education',
+          value: fact.value || fact.title || 'Education',
+          type: fact.type || fact.institutionType || '',
+          institutionName: fact.institutionName || fact.agency || '',
+          institutionType: fact.institutionType || fact.type || '',
           placeId: cleanDatePlaceId(fact.placeId),
           placeText: getPlaceDisplay(fact.placeId),
           notes: fact.description || '',
@@ -12408,7 +12419,7 @@
               ...eventDate,
               placeId: attribute.placeId || null,
               title: 'Education',
-              description: attribute.notes || attribute.placeText || 'Education fact'
+              description: educationTimelineDescription(attribute)
             });
           }
           if (attribute.tag === 'OCCU') {
@@ -15189,6 +15200,58 @@ function renderTreeCardDateLines(person) {
       </div>`;
     }
 
+    function educationInstitutionTypeOptions(selected = '') {
+      const options = [
+        'Unknown',
+        'School',
+        'University',
+        'College',
+        'Seminary',
+        'Apprenticeship',
+        'Private tutoring',
+        'Military academy',
+        'Religious instruction',
+        'Home education',
+        'Other'
+      ];
+
+      const current = cleanEditFieldValue(selected || 'Unknown');
+
+      return options
+        .map(value => `<option value="${escapeHtml(value)}" ${value === current ? 'selected' : ''}>${escapeHtml(value)}</option>`)
+        .join('');
+    }
+
+    function educationValueLabel(attribute) {
+      const value = cleanEditFieldValue(attribute?.value);
+      return value && value !== 'Education' ? value : '';
+    }
+
+    function educationInstitutionLabel(attribute) {
+      return cleanEditFieldValue(attribute?.institutionName || attribute?.agency);
+    }
+
+    function educationInstitutionTypeLabel(attribute) {
+      return cleanEditFieldValue(attribute?.institutionType || attribute?.type);
+    }
+
+    function educationPrimaryLabel(attribute) {
+      return educationInstitutionLabel(attribute)
+        || educationValueLabel(attribute)
+        || 'Education';
+    }
+
+    function educationTimelineDescription(attribute) {
+      const primary = educationPrimaryLabel(attribute);
+      const credential = educationValueLabel(attribute);
+
+      if (credential && credential !== primary) {
+        return `${primary} - ${credential}`;
+      }
+
+      return primary;
+    }
+
     function addPersonFactDefinitions() {
       return [
         { id: 'prefix', label: 'Prefix', icon: icon.info || icon.plus },
@@ -15261,19 +15324,42 @@ function renderTreeCardDateLines(person) {
         }));
       }
       if (factId === 'education') {
-        return fieldWrap(`${renderPlaceCombobox({
-          id: 'addPersonFactEducationPlace',
-          label: 'Education place',
-          value: editPlaceValue(education?.placeId, education?.placeText || details.educationPlace),
-          selectedPlaceId: education?.placeId || '',
-          placeholder: 'School or learning place',
-          className: 'full'
-        })}
+        return fieldWrap(`<div class="field full">
+            <label for="addPersonFactEducationInstitutionName">Institution name</label>
+            <input id="addPersonFactEducationInstitutionName" value="${escapeHtml(details.educationInstitutionName || '')}" placeholder="e.g. Pawford Grammar School">
+          </div>
+
+          <div class="field add-person-select-field">
+            <label for="addPersonFactEducationInstitutionType">Institution type</label>
+            <select class="compact-select add-person-select" id="addPersonFactEducationInstitutionType">
+              ${educationInstitutionTypeOptions(details.educationInstitutionType)}
+            </select>
+            <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
+          </div>
+
+          <div class="field">
+            <label for="addPersonFactEducationValue">Education or credential</label>
+            <input id="addPersonFactEducationValue" value="${escapeHtml(details.educationValue || '')}" placeholder="e.g. Secondary education, BA, apprenticeship">
+          </div>
+
+          ${renderPlaceCombobox({
+            id: 'addPersonFactEducationPlace',
+            label: 'Place',
+            value: editPlaceValue(education?.placeId, education?.placeText || details.educationPlace),
+            selectedPlaceId: education?.placeId || '',
+            placeholder: 'e.g. Pawford, England',
+            className: 'full'
+          })}
+
           <div class="profile-edit-date-row add-person-fact-date-row">
             <div class="profile-edit-date-cell">${renderGenealogyDateField('addPersonFactEducationFrom', 'From', details.educationFromDate, { inputId: 'addPersonFactEducationFromDate', typeId: 'addPersonFactEducationFromDateType', defaultDateType: 'Year only', placeholder: 'e.g. 2004' })}</div>
             <div class="profile-edit-date-cell">${renderGenealogyDateField('addPersonFactEducationTo', 'To', details.educationToDate, { inputId: 'addPersonFactEducationToDate', typeId: 'addPersonFactEducationToDateType', defaultDateType: 'Year only', placeholder: 'e.g. 2015' })}</div>
           </div>
-          <div class="field full"><label for="addPersonFactEducationNotes">Notes</label><textarea id="addPersonFactEducationNotes" placeholder="Education notes">${escapeHtml(details.educationNotes || '')}</textarea></div>`);
+
+          <div class="field full">
+            <label for="addPersonFactEducationNotes">Notes</label>
+            <textarea id="addPersonFactEducationNotes" placeholder="Education notes">${escapeHtml(details.educationNotes || '')}</textarea>
+          </div>`);
       }
       if (factId === 'occupation') {
         return fieldWrap(`<div class="field"><label for="addPersonFactWorkCompany">Company name</label><input id="addPersonFactWorkCompany" value="${escapeHtml(details.workCompany || '')}" placeholder="Company"></div>
@@ -15991,6 +16077,9 @@ function renderTreeCardDateLines(person) {
         const toDate = collectGenealogyDateField('addPersonFactEducationTo');
         if (!fromDate || !toDate) return { invalid: true, message: 'Check the education dates before saving.' };
         facts.education = {
+          institutionName: readAddPersonModalValue('#addPersonFactEducationInstitutionName'),
+          institutionType: modalBackdrop.querySelector('#addPersonFactEducationInstitutionType')?.value || 'Unknown',
+          value: readAddPersonModalValue('#addPersonFactEducationValue'),
           place: readPlaceInputValue('#addPersonFactEducationPlace', modalBackdrop),
           notes: readAddPersonModalValue('#addPersonFactEducationNotes'),
           fromDate,
@@ -16059,9 +16148,13 @@ function renderTreeCardDateLines(person) {
       if (active.has('education') && facts.education) {
         const existingEducation = personAttributeByTag(person, 'EDUC');
         const educationPlace = resolvePlaceAssignment(facts.education.place, existingEducation?.placeId);
+        const institutionType = valueOrNull(facts.education.institutionType) || 'Unknown';
 
         upsertPersonAttribute(person, 'EDUC', {
-          value: 'Education',
+          value: valueOrNull(facts.education.value) || 'Education',
+          type: institutionType === 'Unknown' ? '' : institutionType,
+          institutionName: valueOrNull(facts.education.institutionName) || '',
+          institutionType,
           placeText: educationPlace.placeText,
           placeId: educationPlace.placeId,
           notes: valueOrNull(facts.education.notes) || '',
@@ -16315,6 +16408,9 @@ function renderTreeCardDateLines(person) {
         deathDateType: 'Exact date',
         deathReason: '',
         burialPlace: '',
+        educationInstitutionName: '',
+        educationInstitutionType: '',
+        educationValue: '',
         educationPlace: '',
         educationNotes: '',
         educationFromDate: emptyGenealogyDate('Year only'),
@@ -16378,6 +16474,8 @@ function renderTreeCardDateLines(person) {
           tag,
           value: '',
           type: '',
+          institutionName: '',
+          institutionType: '',
           date: null,
           fromDate: null,
           toDate: null,
@@ -16440,7 +16538,17 @@ function renderTreeCardDateLines(person) {
 
     function personHasEducationFact(person) {
       const fact = personAttributeByTag(person, 'EDUC');
-      return Boolean(fact && (hasTextValue(fact.placeText) || hasTextValue(fact.placeId) || hasTextValue(fact.notes) || hasGenealogyDateValue(fact.fromDate, 'Year only') || hasGenealogyDateValue(fact.toDate, 'Year only')));
+
+      return Boolean(fact && (
+        hasTextValue(educationInstitutionLabel(fact))
+        || hasTextValue(educationInstitutionTypeLabel(fact))
+        || hasTextValue(educationValueLabel(fact))
+        || hasTextValue(fact.placeText)
+        || hasTextValue(fact.placeId)
+        || hasTextValue(fact.notes)
+        || hasGenealogyDateValue(fact.fromDate, 'Year only')
+        || hasGenealogyDateValue(fact.toDate, 'Year only')
+      ));
     }
 
     function personHasOccupationFact(person) {
@@ -16476,6 +16584,9 @@ function renderTreeCardDateLines(person) {
           if (prop === 'deathDateType') return centralPerson.death?.dateType || 'Exact date';
           if (prop === 'deathReason') return centralPerson.death?.cause || centralPerson.death?.reason || '';
           if (prop === 'burialPlace') return editPlaceValue(centralPerson.death?.burialPlaceId, centralPerson.death?.burialPlaceText);
+          if (prop === 'educationInstitutionName') return educationInstitutionLabel(education);
+          if (prop === 'educationInstitutionType') return educationInstitutionTypeLabel(education) || 'Unknown';
+          if (prop === 'educationValue') return educationValueLabel(education);
           if (prop === 'educationPlace') return editPlaceValue(education?.placeId, education?.placeText);
           if (prop === 'educationNotes') return education?.notes || '';
           if (prop === 'educationFromDate') return dateForForm(education?.fromDate, 'Year only');
@@ -16504,7 +16615,31 @@ function renderTreeCardDateLines(person) {
             centralPerson.death.burialPlaceId = resolved.placeId;
             return true;
           }
+          if (prop === 'educationInstitutionName') {
+            upsertPersonAttribute(centralPerson, 'EDUC', {
+              institutionName: valueOrNull(value) || ''
+            });
+            return true;
+          }
 
+          if (prop === 'educationInstitutionType') {
+            const institutionType = valueOrNull(value) || 'Unknown';
+
+            upsertPersonAttribute(centralPerson, 'EDUC', {
+              institutionType,
+              type: institutionType === 'Unknown' ? '' : institutionType
+            });
+
+            return true;
+          }
+
+          if (prop === 'educationValue') {
+            upsertPersonAttribute(centralPerson, 'EDUC', {
+              value: valueOrNull(value) || 'Education'
+            });
+
+            return true;
+          }
           if (prop === 'educationPlace') {
             const attr = upsertPersonAttribute(centralPerson, 'EDUC');
             const resolved = resolvePlaceAssignment(value, attr.placeId);
@@ -16947,7 +17082,10 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
       if (active === 'education') {
         return `<div class="profile-readonly-grid profile-readonly-grid-single">
           <section class="profile-info-block wide"><h4>Education</h4>
-            ${renderProfileInfoRow('Education place', details.educationPlace || '-')}
+            ${renderProfileInfoRow('Institution', details.educationInstitutionName || '-')}
+            ${renderProfileInfoRow('Institution type', details.educationInstitutionType || '-')}
+            ${renderProfileInfoRow('Education or credential', details.educationValue || '-')}
+            ${renderProfileInfoRow('Place', details.educationPlace || '-')}
             ${renderProfileInfoRow('From', profileDetailDateLabel(details.educationFromDate))}
             ${renderProfileInfoRow('To', profileDetailDateLabel(details.educationToDate))}
             ${renderProfileInfoRow('Notes', details.educationNotes || '-')}
@@ -17180,20 +17318,47 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
       </div>`;
     }
 
-      function renderProfileEducationEditFields(person) {
-        const centralPerson = ensurePersonCentralStructures(getPerson(person.id) || person);
-        const details = peopleProfileDetailsFor(person);
-        const education = personAttributeByTag(centralPerson, 'EDUC');
+    function renderProfileEducationEditFields(person) {
+      const centralPerson = ensurePersonCentralStructures(getPerson(person.id) || person);
+      const details = peopleProfileDetailsFor(person);
+      const education = personAttributeByTag(centralPerson, 'EDUC');
 
-        return `<div class="profile-card-edit-grid two">
-          ${renderPlaceCombobox({
-            id: 'profileEducationPlace',
-            label: 'Education place',
-            value: editPlaceValue(education?.placeId, education?.placeText || details.educationPlace),
-            selectedPlaceId: education?.placeId || '',
-            placeholder: 'School or university',
-            className: 'full'
-          })}
+      return `<div class="profile-card-edit-grid two">
+        <div class="field full">
+          <label for="profileEducationInstitutionName">Institution name</label>
+          <input id="profileEducationInstitutionName" placeholder="e.g. Pawford Grammar School" value="${escapeHtml(details.educationInstitutionName || '')}">
+        </div>
+
+        <div class="field add-person-select-field">
+          <label for="profileEducationInstitutionType">Institution type</label>
+          <select class="compact-select add-person-select" id="profileEducationInstitutionType">
+            ${educationInstitutionTypeOptions(details.educationInstitutionType)}
+          </select>
+          <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
+        </div>
+
+        <div class="field">
+          <label for="profileEducationValue">Education or credential</label>
+          <input id="profileEducationValue" placeholder="e.g. Secondary education, BA, apprenticeship" value="${escapeHtml(details.educationValue || '')}">
+        </div>
+
+        ${renderPlaceCombobox({
+          id: 'profileEducationPlace',
+          label: 'Place',
+          value: editPlaceValue(education?.placeId, education?.placeText || details.educationPlace),
+          selectedPlaceId: education?.placeId || '',
+          placeholder: 'e.g. Pawford, England',
+          className: 'full'
+        })}
+
+        <div class="profile-edit-date-row profile-range-date-row full">
+          <div class="profile-edit-date-cell">
+            ${renderGenealogyDateField('profileEducationFromDate', 'From', details.educationFromDate, {
+              inputId: 'profileEducationFromDate',
+              typeId: 'profileEducationFromDateType',
+              defaultDateType: 'Year only',
+              placeholder: 'e.g. 2004'
+            })}
           </div>
           <div class="profile-edit-date-cell">
             ${renderGenealogyDateField('profileEducationToDate', 'To', details.educationToDate, {
@@ -17204,7 +17369,11 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
             })}
           </div>
         </div>
-        <div class="field full"><label for="profileEducationNotes">Notes</label><textarea id="profileEducationNotes" placeholder="Education notes">${escapeHtml(details.educationNotes || '')}</textarea></div>
+
+        <div class="field full">
+          <label for="profileEducationNotes">Notes</label>
+          <textarea id="profileEducationNotes" placeholder="Education notes">${escapeHtml(details.educationNotes || '')}</textarea>
+        </div>
       </div>`;
     }
 
@@ -17450,6 +17619,9 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
             showToast('Check the education dates before saving.');
             return;
           }
+          details.educationInstitutionName = main.querySelector('#profileEducationInstitutionName')?.value.trim() || '';
+          details.educationInstitutionType = main.querySelector('#profileEducationInstitutionType')?.value || 'Unknown';
+          details.educationValue = main.querySelector('#profileEducationValue')?.value.trim() || '';
           details.educationPlace = readPlaceInputValue('#profileEducationPlace', main);
           details.educationNotes = main.querySelector('#profileEducationNotes')?.value.trim() || '';
           details.educationFromDate = fromDate;
