@@ -3935,6 +3935,10 @@
     .attach-row { display: flex; gap: var(--space-3); padding: var(--space-3); border-bottom: 1px solid var(--border-default); color: var(--text-secondary); }
     .attach-row:last-child { border-bottom: 0; }
     .attach-icon { width: 34px; height: 34px; border-radius: 7px; display: grid; place-items: center; border: 1px solid var(--red); color: #ef8e9a; }
+    .attach-icon.photo {
+      color: var(--red);
+      background: rgba(212, 107, 107, .12);
+    }
     .attach-icon.file { border-color: var(--amber); color: var(--amber); }
     .attach-icon.note { border-color: var(--purple); color: #bca6ff; }
     .add-person-side-note {
@@ -3942,14 +3946,6 @@
       color: var(--text-tertiary);
       font-size: 12px;
       line-height: 1.45;
-    }
-
-    .attach-row.is-informational {
-      cursor: default;
-    }
-
-    .attach-row.is-informational:hover {
-      background: transparent;
     }
 
     .add-person-match-empty {
@@ -4724,12 +4720,63 @@
       border-top: 1px solid var(--border-default);
       border-bottom: 0;
     }
-    .attach-row { width: 100%; border: 0; border-bottom: 1px solid var(--border-default); background: transparent; text-align: left; cursor: pointer; transition: background var(--ease), color var(--ease); }
-    .attach-row:hover, .attach-row:focus-visible { background: rgba(255,255,255,.035); color: var(--text-primary); }
-    .attach-icon { border: 0 !important; background: rgba(212,107,107,.14); color: #ef8e9a; }
-    .attach-icon.file { background: rgba(212,170,107,.14); color: var(--amber); }
-    .attach-icon.note { background: rgba(141,108,232,.14); color: #bca6ff; }
-    .attach-icon svg { width: 20px; height: 20px; stroke-width: 1.8; }
+    .attach-row {
+      width: 100%;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-secondary);
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr);
+      gap: var(--space-3);
+      align-items: center;
+      padding: var(--space-3);
+      text-align: left;
+      font: inherit;
+      cursor: pointer;
+      transition: background var(--ease), border-color var(--ease), color var(--ease);
+    }
+
+    .attach-row:hover {
+      background: var(--surface-card-hover);
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+    }
+
+    .attach-row:focus-visible {
+      outline: 2px solid var(--brand-green-400);
+      outline-offset: 2px;
+    }
+
+    .attach-row strong {
+      color: var(--text-primary);
+    }
+
+    .attach-row span {
+      color: var(--text-tertiary);
+      font-size: 12px;
+    }
+
+    .attach-row:hover span {
+      color: var(--text-secondary);
+    }
+
+    .attach-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,.04);
+      color: var(--text-tertiary);
+      display: grid;
+      place-items: center;
+      transition: background var(--ease), color var(--ease);
+    }
+
+    .attach-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
     .match-row { width: 100%; border: 0; background: transparent; text-align: left; cursor: pointer; border-radius: 0; transition: background var(--ease), color var(--ease); }
     .match-row:hover, .match-row:focus-visible { background: rgba(255,255,255,.035); color: var(--text-primary); }
     .match-row strong { color: var(--text-primary); }
@@ -17576,24 +17623,19 @@ function renderTreeCardDateLines(person) {
     }
 
     function renderAddPersonAttachmentSideCard(isEditMode = false) {
-      const note = isEditMode
-        ? 'Attachments are managed from the person profile, Albums, Archive, and Notes.'
-        : 'Save the person first, then attach photos, archive files, and notes from the person profile.';
-
-      const row = (type, title, subtitle, svg, extraClass = '') => `<button class="attach-row is-informational" type="button" data-add-person-attachment-info="${escapeHtml(type)}">
-        <div class="attach-icon ${escapeHtml(extraClass)}">${svg}</div>
+      const row = (type, title, subtitle, svg, extraClass = '') => `<button class="attach-row" type="button" data-add-person-attachment-info="${escapeHtml(type)}">
+        <div class="attach-icon ${escapeHtml(extraClass)}" aria-hidden="true">${svg}</div>
         <div>
           <strong>${escapeHtml(title)}</strong><br>
-          <span class="panel-muted">${escapeHtml(subtitle)}</span>
+          <span>${escapeHtml(subtitle)}</span>
         </div>
       </button>`;
 
       return `<div class="modal-side-card">
         <h3>Attach to this person</h3>
-        ${row('photo', 'Add Photo', isEditMode ? 'Manage from Albums after saving' : 'Available after save', icon.image)}
-        ${row('file', 'Add File', isEditMode ? 'Manage from Archive after saving' : 'Available after save', icon.file, 'file')}
-        ${row('note', 'Add Note', isEditMode ? 'Manage from Notes after saving' : 'Available after save', icon.note, 'note')}
-        <p class="add-person-side-note">${escapeHtml(note)}</p>
+        ${row('photo', 'Add Photo', 'Choose or connect a photo', icon.image, 'photo')}
+        ${row('file', 'Add File', 'Choose or connect a file', icon.file, 'file')}
+        ${row('note', 'Add Note', 'Create or connect a note', icon.note, 'note')}
       </div>`;
     }
 
@@ -17652,10 +17694,15 @@ function renderTreeCardDateLines(person) {
     function bindAddPersonSideCards(options = {}, editPerson = null) {
       modalBackdrop?.querySelectorAll('[data-add-person-attachment-info]').forEach(button => {
         button.addEventListener('click', () => {
-          const isEditMode = options.mode === 'edit';
-          showToast(isEditMode
-            ? 'Attachments are managed from the saved person profile.'
-            : 'Save the person first to attach photos, files, or notes.');
+          const type = button.dataset.addPersonAttachmentInfo || '';
+
+          const messages = {
+            photo: 'Photo picker will be added in a later step.',
+            file: 'File picker will be added in a later step.',
+            note: 'Note picker will be added in a later step.'
+          };
+
+          showToast(messages[type] || 'Attachment picker will be added in a later step.');
         });
       });
 
