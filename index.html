@@ -3985,14 +3985,50 @@
     .unlink-relationship-option input {
       accent-color: var(--brand-green-400);
     }
+    .form-section-title { font-size: 16px; margin: 0 0 var(--space-3); padding-bottom: var(--space-2); border-bottom: 1px solid var(--border-strong); }
+    .two-col-form { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+    .compact-select { height: var(--control-height); min-height: var(--control-height); max-height: var(--control-height); border: 1px solid var(--border-default); background: var(--surface-card); color: var(--text-secondary); border-radius: var(--radius-sm); padding: 0 var(--space-3); box-sizing: border-box; }
+    .fact-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      padding: var(--space-3);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, .012);
+    }
 
     .fact-button {
+      min-height: 38px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      background: var(--surface-input);
+      color: var(--text-secondary);
+      padding: 0 var(--space-3);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: var(--space-2);
       line-height: 1;
       font-weight: 700;
+      cursor: pointer;
+      transition: background var(--ease), border-color var(--ease), color var(--ease);
+    }
+
+    .fact-button:hover:not(:disabled),
+    .fact-button:focus-visible:not(:disabled) {
+      background: var(--surface-card-hover);
+      border-color: var(--border-default);
+      color: var(--text-primary);
+    }
+
+    .fact-button.is-added,
+    .fact-button:disabled {
+      opacity: 1;
+      cursor: default;
+      background: var(--surface-card);
+      border-color: var(--border-default);
+      color: var(--text-tertiary);
     }
 
     .fact-button-icon {
@@ -4012,17 +4048,6 @@
       max-height: 16px;
       display: block;
       flex: 0 0 16px;
-    }
-    .form-section-title { font-size: 16px; margin: 0 0 var(--space-3); padding-bottom: var(--space-2); border-bottom: 1px solid var(--border-strong); }
-    .two-col-form { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
-    .compact-select { height: var(--control-height); min-height: var(--control-height); max-height: var(--control-height); border: 1px solid var(--border-default); background: var(--surface-card); color: var(--text-secondary); border-radius: var(--radius-sm); padding: 0 var(--space-3); box-sizing: border-box; }
-    .fact-buttons { display: flex; flex-wrap: wrap; gap: var(--space-2); border: 1px solid var(--border-default); border-radius: var(--radius-sm); padding: var(--space-2); }
-    .fact-button { min-height: 38px; border: 0; background: var(--surface-input); color: var(--text-secondary); border-radius: 7px; padding: 0 var(--space-3); }
-    .fact-button.is-added,
-    .fact-button:disabled {
-      opacity: .58;
-      cursor: default;
-      color: var(--text-tertiary);
     }
     .modal-side-card { border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: rgba(255,255,255,.018); margin-bottom: var(--space-4); overflow: hidden; }
     .modal-side-card h3 { margin: 0; padding: var(--space-3); font-size: 15px; border-bottom: 1px solid var(--border-default); }
@@ -4613,13 +4638,20 @@
     .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-validation {
       grid-column: 1 / -1;
     }
-    .add-person-facts-section,
+    .add-person-facts-section {
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, .012);
+      overflow: visible;
+    }
+
     .add-person-relationship-panel {
       border: 1px solid var(--border-default);
       border-radius: var(--radius-sm);
-      background: rgba(255,255,255,.018);
+      background: rgba(255, 255, 255, .018);
       overflow: visible;
     }
+
     .add-person-facts-header,
     .add-person-relationship-header {
       width: 100%;
@@ -4637,12 +4669,21 @@
       cursor: pointer;
     }
 
+    .add-person-facts-header {
+      border-bottom: 1px solid transparent;
+    }
+
+    .add-person-facts-header[aria-expanded="true"] {
+      border-bottom-color: var(--border-default);
+    }
+
     .add-person-facts-header:hover,
     .add-person-facts-header:focus-visible,
     .add-person-relationship-header:hover,
     .add-person-relationship-header:focus-visible {
-      background: rgba(255,255,255,.035);
+      background: rgba(255, 255, 255, .035);
     }
+
     .add-person-facts-header-main,
     .add-person-facts-meta {
       display: inline-flex;
@@ -4650,12 +4691,14 @@
       gap: var(--space-2);
       min-width: 0;
     }
+
     .add-person-facts-meta {
       color: var(--text-tertiary);
       font-size: 12px;
       font-weight: 800;
       flex: 0 0 auto;
     }
+
     .add-person-facts-chevron {
       width: 16px;
       height: 16px;
@@ -4664,58 +4707,84 @@
       transform: rotate(90deg);
       transition: transform var(--ease);
     }
+
     .add-person-facts-header[aria-expanded="false"] .add-person-facts-chevron {
       transform: rotate(0deg);
     }
+
     .add-person-facts-body {
       display: grid;
       gap: var(--space-4);
       padding: var(--space-4);
-      border-top: 1px solid var(--border-default);
+      border-top: 0;
     }
+
     .add-person-facts-body[hidden] {
       display: none !important;
     }
+
     .add-person-facts-added {
       display: grid;
-      gap: var(--space-3);
+      gap: var(--space-4);
     }
+
     .add-person-fact-card {
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-sm);
-      background: rgba(255,255,255,.024);
-      padding: var(--space-4);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      background: var(--surface-card);
+      padding: var(--space-5);
       display: grid;
-      gap: var(--space-3);
+      gap: var(--space-4);
     }
+
     .add-person-fact-card-header {
-      display: flex;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 34px;
       align-items: center;
-      justify-content: space-between;
       gap: var(--space-3);
+      padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--border-default);
     }
+
     .add-person-fact-card-title {
+      min-width: 0;
       display: inline-flex;
       align-items: center;
       gap: var(--space-2);
       color: var(--text-primary);
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 900;
+      line-height: 1.2;
     }
+
+    .add-person-fact-card-title .fact-button-icon {
+      color: var(--text-secondary);
+    }
+
     .add-person-fact-remove {
-      width: 30px;
-      height: 30px;
-      border: 0;
-      border-radius: 8px;
+      width: 34px;
+      height: 34px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
       background: transparent;
       color: var(--text-tertiary);
       display: inline-grid;
       place-items: center;
+      cursor: pointer;
+      transition: background var(--ease), border-color var(--ease), color var(--ease);
     }
+
     .add-person-fact-remove:hover,
     .add-person-fact-remove:focus-visible {
-      background: rgba(255,255,255,.07);
+      background: rgba(255, 255, 255, .055);
+      border-color: var(--border-default);
       color: var(--text-primary);
+    }
+
+    .add-person-fact-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-4);
     }
     .add-person-fact-grid {
       display: grid;
@@ -11327,14 +11396,14 @@
       'Adjust interface density, contrast, and motion behavior.': '--------- ---------, -------- - -------- ----------.', 'Reduce motion': '--------- --------', 'Limit non-essential transitions.': '---------- -------------- --------.', 'Increase contrast': '-------- --------', 'Strengthen borders and text contrast.': '------- ------- - -------- ------.', 'Interface density': '--------- ----------', 'Choose comfortable or compact spacing.': '-------- ------- --- ---------- -------.', 'Comfortable': '-------', 'Compact': '----------', 'Font size': '------ ------', 'Default app text size.': '------ ------ -- ---------.', 'Default': '-- ---------', 'Large': '-------', 'Always show focus outlines': '------ ---------- -----', 'Keep keyboard focus visible.': '---------- ----- ----------.',
       'About GeneoGraph': '- GeneoGraph', 'Prototype information and reference links.': '---------- - --------- - ------.', 'GeneoGraph prototype': '-------- GeneoGraph', 'Version 0.1 prototype - local-first genealogy workspace': '-------- 0.1 - --------- ------- ------------ ----------', 'Active': '-------', 'Help Center would open here.': '----- -------- -- ----- ------.', 'Release notes': '------- - -------', 'Product updates and prototype changes.': '---------- -------- - --------- ---------.', 'View': '--------', 'Privacy policy': '-------- ------------------', 'Privacy documentation placeholder.': '-------- ------------ - ------------------.',
       'Welcome back!': '- ------------!', 'Continue your family history research': '----------- ------------ -------- -------', 'Create family tree': '------- -------- ------', 'Import GEDCOM': '------------- GEDCOM', 'Open project': '------- ------', 'Tip of the day': '----- ---', 'You can drag and drop a GEDCOM file anywhere to import it.': '---------- GEDCOM----- - ----- -----, ----- ------------- ---.', 'Learn more': '--------- ?', 'Search projects...': '----- --------', 'Sort: Date modified': '----------: ---- ---------', 'Sort: Name': '----------: ---', 'Sort: People count': '----------: ----- -----', 'Recent projects': '-------- -------', 'All projects': '--- -------', 'Drop a GeneoGraph or GEDCOM file here to open or import': '---------- ---- GeneoGraph --- GEDCOM --- -------- --- -------', 'Supports .ggproj and .ged files': '-------------- .ggproj - .ged', 'Recent activity': '-------- --------', 'Insights': '-------', 'Sync status': '-------------', 'Project': '------', 'Project overview': '----- -------', 'Project settings': '--------- -------', 'Back to all projects': '----- -- ---- --------', 'Go to Family Tree': '------- - ------', 'Export': '-------', 'Delete project': '------- ------', 'Manage backups': '--------- -------', 'Open': '-------',
-      'Navigation': '---------', 'Saved views': '---------- ----', 'Review center': '----- --------', 'Statistics': '----------', 'Profile': '-------', 'Search people...': '----- -----...', 'Columns': '-------', 'Filter': '------', 'Add person': '-------- --------', 'Sort: Birth date': '----------: ---- --------', 'Name': '---', 'Living': '---', 'Deceased': '----', 'Unknown': '----------', 'Living status': '------ -----', 'Birth date': '---- --------', 'Birth place': '----- --------', 'Death date': '---- ------', 'Death place': '----- ------', 'Updated': '---------', 'Actions': '--------', 'Record Info': '---------- - ------', 'Facts': '-----', 'Relationships': '-----', 'Photos': '----', 'Files': '-----', 'Full profile': '------ -------', 'Open profile': '------- -------', 'Add relative': '-------- ------------', 'Connect relative': '------- ------------', 'More actions': '--- --------', 'Back to people': '----- - -----', 'Edit profile': '------------- -------', 'Save changes': '--------- ---------', 'Cancel': '------', 'Locked': '-------------', 'Editing': '--------------', 'Main information': '-------- ----------', 'Education': '-----------', 'Work': '------', 'Other': '------', 'First name': '---', 'Last name': '-------', 'Patronym': '--------', 'Maiden name': '------- -------', 'Prefix': '-------', 'Suffix': '-------', 'Exact date': '------ ----', 'Before': '--', 'After': '-----', 'Between': '-----', 'About / Circa': '-----', 'Cause of Death': '------- ------', 'Death reason': '------- ------', 'Burial place': '----- -----------', 'Record info': '---------- - ------', 'Profile ID': 'ID -------', 'Created': '-------', 'Review issues': '-------- --------', 'Source status': '------ ----------', 'Partly sourced': '-------- ------------', 'Living protected': '------- --------', 'Immediate Family': '--------- -----', 'Parents': '--------', 'Children': '----', 'Siblings': '------ - -----', 'Grandparents': '------- - -------', 'Partners': '-------', 'Partner': '------', 'Spouse': '------(-)', 'Father': '----', 'Mother': '----', 'Brother': '----', 'Sister': '------', 'Grandmother': '-------', 'Grandfather': '-------', 'Cat': '---', 'Timeline': '----------', 'Add fact': '-------- ----', 'Birth': '--------', 'Wedding': '-------', 'Education start': '------ --------', 'Education finish': '--------- --------', 'Archive': '-----', 'Add': '--------', 'Open ?': '------- ?',
+      'Navigation': '---------', 'Saved filters': '---------- ----', 'Review center': '----- --------', 'Statistics': '----------', 'Profile': '-------', 'Search people...': '----- -----...', 'Columns': '-------', 'Filter': '------', 'Add person': '-------- --------', 'Sort: Birth date': '----------: ---- --------', 'Name': '---', 'Living': '---', 'Deceased': '----', 'Unknown': '----------', 'Living status': '------ -----', 'Birth date': '---- --------', 'Birth place': '----- --------', 'Death date': '---- ------', 'Death place': '----- ------', 'Updated': '---------', 'Actions': '--------', 'Record Info': '---------- - ------', 'Facts': '-----', 'Relationships': '-----', 'Photos': '----', 'Files': '-----', 'Full profile': '------ -------', 'Open profile': '------- -------', 'Add relative': '-------- ------------', 'Connect relative': '------- ------------', 'More actions': '--- --------', 'Back to people': '----- - -----', 'Edit profile': '------------- -------', 'Save changes': '--------- ---------', 'Cancel': '------', 'Locked': '-------------', 'Editing': '--------------', 'Main information': '-------- ----------', 'Education': '-----------', 'Work': '------', 'Other': '------', 'First name': '---', 'Last name': '-------', 'Patronym': '--------', 'Maiden name': '------- -------', 'Prefix': '-------', 'Suffix': '-------', 'Exact date': '------ ----', 'Before': '--', 'After': '-----', 'Between': '-----', 'About / Circa': '-----', 'Cause of Death': '------- ------', 'Death reason': '------- ------', 'Burial place': '----- -----------', 'Record info': '---------- - ------', 'Profile ID': 'ID -------', 'Created': '-------', 'Review issues': '-------- --------', 'Source status': '------ ----------', 'Partly sourced': '-------- ------------', 'Living protected': '------- --------', 'Immediate Family': '--------- -----', 'Parents': '--------', 'Children': '----', 'Siblings': '------ - -----', 'Grandparents': '------- - -------', 'Partners': '-------', 'Partner': '------', 'Spouse': '------(-)', 'Father': '----', 'Mother': '----', 'Brother': '----', 'Sister': '------', 'Grandmother': '-------', 'Grandfather': '-------', 'Cat': '---', 'Timeline': '----------', 'Add fact': '-------- ----', 'Birth': '--------', 'Wedding': '-------', 'Education start': '------ --------', 'Education finish': '--------- --------', 'Archive': '-----', 'Add': '--------', 'Open ?': '------- ?',
       'Create new board': '------- -----', 'Import board': '------------- -----', 'Board type': '---------', 'Categories': '---------', 'All Boards': '--- -----', 'Recently viewed': '--------', 'Favourites': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'DNA': '---', 'Publication': '----------', 'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '---- ------------ --- ------------, ------------ - ----------.', 'Search boards...': '----- -----', 'Sort: Board type': '----------: --- -----', 'All boards': '--- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Note': '-------', 'Image': '-----------', 'Place': '-----', 'Case': '------', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '-----------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Appearance': '------- ---', 'Layout': '-----', 'Linked to person': '------- - ---------', 'Visual only': '------ ---------',
       'Add photos': '-------- ----', 'New album': '----- ------', 'All photos': '--- ----', 'Not in Album': '--- -------', 'Recently deleted': '------- --------', 'Search photos...': '----- ----...', 'Sort: Filename': '----------: --- -----', 'Sort: Photo date': '----------: ---- ----', 'People in this photo': '---- -- ----', 'Date': '----', 'Caption / story': '------- / -------', 'Source': '--------', 'Delete photo': '------- ----', 'Make favourite': '-------- - ---------', 'Remove favourite': '------ -- ----------', 'Tag people': '-------- -----', 'Open photo': '------- ----', 'No people tagged': '---- -- --------', 'Unknown date': '---- ----------', 'Unknown place': '----- ----------',
       'Add files': '-------- -----', 'Create source': '------- --------', 'Sources': '---------', 'Imports': '-------', 'Review': '--------', 'Folders': '-----', 'Search this folder...': '----- - ---- -----...', 'Create folder': '------- -----', 'Sort: Updated': '----------: ---------', 'Sort: Source status': '----------: ------ ---------', 'Source / provenance': '--------', 'Linked to': '------- -', 'Date / place': '---- / -----', 'OCR': 'OCR', 'File info': '---------- - -----', 'Linked evidence': '--------- --------------', 'Assign source': '--------- --------', 'Run OCR': '--------- OCR', 'Restore': '------------', 'Reviewed': '---------', 'Needs review': '----- --------', 'Missing source': '--- ---------', 'Not linked': '-- -------',
       'New note': '----- -------', 'New collection': '----- ---------', 'All notes': '--- -------', 'Collections': '---------', 'Search notes...': '----- -------...', 'Cards': '--------', 'List': '------', 'Saved': '---------', 'Linked people': '--------- ----', 'Linked sources': '--------- ---------', 'Linked places': '--------- -----', 'Related notes': '--------- -------', 'Tasks': '------', 'Note type': '--- -------',
       'New place': '----- -----', 'New collection': '----- ---------', 'Countries': '------', 'Search places': '----- ----', 'Map': '-----', 'Split': '---------- ---', 'Resolved': '---------', 'Approximate': '--------------', 'Missing': '-----------', 'Ambiguous': '------------', 'Back to places': '----- - ------', 'Edit place': '------------- -----', 'Connected people': '--------- ----', 'Sources / files': '--------- / -----', 'Events here': '------- -----', 'Historical names': '------------ --------', 'Identity': '------------', 'Coordinates': '----------', 'Hierarchy': '--------',
       'New Publication': '----- ----------', 'Export history': '------- --------', 'AI Assistant': 'AI----------', 'All outputs': '--- ---------', 'Drafts': '---------', 'Ready to export': '------ - --------', 'Needs update': '------- ----------', 'Published': '------------', 'Archived': '- ------', 'Reports': '------', 'Books': '-----', 'Charts': '---------', 'Maps': '-----', 'Photo stories': '-----------', 'Archive indexes': '------- ------', 'DNA reports': '----------', 'Preview': '------------', 'Content': '-------', 'Settings': '---------', 'Export PDF': '------- PDF', 'Export DOCX': '------- DOCX', 'Share': '----------', 'Duplicate': '-----------', 'Delete': '-------',
-      'Save': '---------', 'Create': '-------', 'Edit': '-------------', 'Delete person': '------- --------', 'Show in Family Tree': '-------- - -------- ------', 'Clear all': '-------- --', 'Save view': '--------- ---', 'View all': '-------- ---', 'View all files': '--- -----', 'View all notes': '--- -------', 'View all photos': '--- ----', 'Add note': '-------- -------', 'Add file': '-------- ----', 'Add photo': '-------- ----', 'Created May 1, 2026': '------- 1 --- 2026', 'Today': '-------', 'Yesterday': '-----', 'Just now': '------ ---', 'Local project': '--------- ------', 'No insights found': '------- -- -------', 'No insights found for this person.': '--- ----- -------- ------- -- -------.', 'Unknown': '----------'
+      'Save': '---------', 'Create': '-------', 'Edit': '-------------', 'Delete person': '------- --------', 'Show in Family Tree': '-------- - -------- ------', 'Clear all': '-------- --', 'Save filter': '--------- ---', 'View all': '-------- ---', 'View all files': '--- -----', 'View all notes': '--- -------', 'View all photos': '--- ----', 'Add note': '-------- -------', 'Add file': '-------- ----', 'Add photo': '-------- ----', 'Created May 1, 2026': '------- 1 --- 2026', 'Today': '-------', 'Yesterday': '-----', 'Just now': '------ ---', 'Local project': '--------- ------', 'No insights found': '------- -- -------', 'No insights found for this person.': '--- ----- -------- ------- -- -------.', 'Unknown': '----------'
     };
 
     const RU_PLURALS = {
@@ -11402,7 +11471,7 @@
       'Add person': '-------- --------', 'Edit person': '------------- --------', 'Create a new person in this project': '-------- ------ -------- - ---- -------', 'Identity': '------', 'Life events': '------- -----', 'Additional facts': '-------------- -----', 'Middle name / Patronym': '-------- / ------- ---', 'Alternative names': '------ -----', 'Cause of death': '------- ------', 'Occupation': '---------', 'Create and add another': '------- - -------- ---', 'Attach to this person': '---------- - ----- --------', 'Possible matches': '--------- ----------', 'Similar people in this project': '------- ---- - -------',
 
       // People
-      'Navigation': '---------', 'Review center': '----- --------', 'Statistics': '----------', 'Saved views': '---------- ----', 'Columns': '-------', 'Filter': '------', 'Sort: Date modified': '----------: ---- ---------', 'Sort: Name': '----------: ---', 'Sort: Birth date': '----------: ---- --------', 'Name': '---', 'Birth date': '---- --------', 'Birth Date': '---- --------', 'Birth place': '----- --------', 'Birth Place': '----- --------', 'Death date': '---- ------', 'Death Date': '---- ------', 'Death place': '----- ------', 'Death Place': '----- ------', 'Updated': '---------', 'Rows per page': '----- -- --------', 'Record Info': '---------- - ------', 'Record info': '---------- - ------', 'Facts': '-----', 'Relationships': '-----', 'Record ID': 'ID ------', 'Created': '-------', 'Updated': '---------', 'Review issues': '-------- --------', 'Privacy': '------------------', 'Source status': '------ ----------', 'Partly sourced': '-------- ------------', 'Living protected': '------- ------- -------', 'Main information': '-------- ----------', 'First name': '---', 'Last name': '-------', 'Patronym': '--------', 'Maiden name': '------- -------', 'Maiden Name': '------- -------', 'Prefix': '-------', 'Suffix': '-------', 'Gender': '---', 'Living status': '------ -----', 'Death reason': '------- ------', 'Cause of Death': '------- ------', 'Burial place': '----- -----------', 'Burial Place': '----- -----------', 'Education': '-----------', 'Work': '------', 'Other': '------', 'Education place': '----- --------', 'Company name': '--------', 'Religion': '-------', 'Baptism place': '----- --------', 'Baptism date': '---- --------', 'Immediate Family': '--------- -----', 'Family': '-----',
+      'Navigation': '---------', 'Review center': '----- --------', 'Statistics': '----------', 'Saved filters': '---------- ----', 'Columns': '-------', 'Filter': '------', 'Sort: Date modified': '----------: ---- ---------', 'Sort: Name': '----------: ---', 'Sort: Birth date': '----------: ---- --------', 'Name': '---', 'Birth date': '---- --------', 'Birth Date': '---- --------', 'Birth place': '----- --------', 'Birth Place': '----- --------', 'Death date': '---- ------', 'Death Date': '---- ------', 'Death place': '----- ------', 'Death Place': '----- ------', 'Updated': '---------', 'Rows per page': '----- -- --------', 'Record Info': '---------- - ------', 'Record info': '---------- - ------', 'Facts': '-----', 'Relationships': '-----', 'Record ID': 'ID ------', 'Created': '-------', 'Updated': '---------', 'Review issues': '-------- --------', 'Privacy': '------------------', 'Source status': '------ ----------', 'Partly sourced': '-------- ------------', 'Living protected': '------- ------- -------', 'Main information': '-------- ----------', 'First name': '---', 'Last name': '-------', 'Patronym': '--------', 'Maiden name': '------- -------', 'Maiden Name': '------- -------', 'Prefix': '-------', 'Suffix': '-------', 'Gender': '---', 'Living status': '------ -----', 'Death reason': '------- ------', 'Cause of Death': '------- ------', 'Burial place': '----- -----------', 'Burial Place': '----- -----------', 'Education': '-----------', 'Work': '------', 'Other': '------', 'Education place': '----- --------', 'Company name': '--------', 'Religion': '-------', 'Baptism place': '----- --------', 'Baptism date': '---- --------', 'Immediate Family': '--------- -----', 'Family': '-----',
 
       // Geneograph
       'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '------ ------------ --- ------------, ------------ - ----------.', 'Create new board': '------- -----', 'Import board': '------------- -----', 'All Boards': '--- -----', 'Recently viewed': '------- -------------', 'Favourites': '---------', 'Categories': '---------', 'Board type': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'Publication': '----------', 'DNA': '---', 'Search boards...': '----- -----', 'Sort: Board type': '----------: --- -----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '--------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Case': '----', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Object palette': '------- --------', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Display name': '------------ ---', 'Life dates': '---- -----', 'Metadata': '----------', 'Short note': '-------- -------', 'Body / description': '----- / --------', 'Delete object': '------- ------', 'Appearance': '------- ---', 'Layout': '-----', 'Card style': '----- --------', 'Show dates': '---------- ----', 'Show place': '---------- -----', 'Show badge': '---------- -----', 'Locked': '-------------', 'Layer': '----', 'Zoom controls': '-------', 'Zoom out': '---------', 'Zoom in': '---------', 'Fit board': '------- -----', 'Fit': '-------',
@@ -13410,6 +13479,7 @@
       peopleSide: 'people',
       selectedPeopleId: 'silver',
       peopleSearch: '',
+      peopleSort: 'modified',
       peopleSavedView: 'All people',
       peopleSavedViewId: '',
       peopleFilters: { surname: '', birthPlace: '', living: 'Any', branch: '', sourceStatus: '', reviewStatus: '' },
@@ -16890,7 +16960,25 @@ function renderTreeCardDateLines(person) {
           <div class="field full"><label for="addPersonFactWorkNotes">Notes</label><textarea id="addPersonFactWorkNotes" placeholder="Work notes">${escapeHtml(details.workNotes || '')}</textarea></div>`);
       }
       if (factId === 'religion') {
-        return fieldWrap(`<div class="field full"><label for="addPersonFactReligion">Religion</label><select class="compact-select" id="addPersonFactReligion">${['Unknown','Orthodox','Catholic','Jewish'].map(value => `<option ${value === (details.religion || 'Unknown') ? 'selected' : ''}>${value}</option>`).join('')}</select></div>`);
+        const religionOptions = ['Unknown', 'Orthodox', 'Catholic', 'Jewish'];
+        const selectedReligion = cleanEditFieldValue(details.religion || 'Unknown') || 'Unknown';
+        const options = religionOptions.includes(selectedReligion)
+          ? religionOptions
+          : [selectedReligion, ...religionOptions];
+
+        return fieldWrap(`<div class="field full">
+          <label for="addPersonFactReligion">Religion</label>
+          <div class="common-select-shell">
+            <select class="compact-select common-select" id="addPersonFactReligion">
+              ${options.map(value => `
+                <option value="${escapeHtml(value)}" ${value === selectedReligion ? 'selected' : ''}>
+                  ${escapeHtml(value)}
+                </option>
+              `).join('')}
+            </select>
+            <span class="common-select-chevron" aria-hidden="true">${icon.chevron}</span>
+          </div>
+        </div>`);
       }
       if (factId === 'baptism') {
         return fieldWrap(`${renderPlaceCombobox({
@@ -19868,14 +19956,19 @@ function renderTreeCardDateLines(person) {
     function profileDetailDateLabel(input, fallback = '-') {
       return formatGenealogyDateLabel(input) || fallback;
     }
-const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living: 'Any', branch: '', sourceStatus: '', reviewStatus: '' });
+    const defaultPeopleFilters = Object.freeze({
+      surname: '',
+      birthPlace: '',
+      living: 'Any',
+      reviewStatus: ''
+    });
     const defaultPeopleColumns = Object.freeze({ living: true, birth: true, birthPlace: true, death: true, deathPlace: true, updated: true });
     const peopleColumnLabels = { living: 'Living', birth: 'Birth date', birthPlace: 'Birth place', death: 'Death date', deathPlace: 'Death place', updated: 'Updated' };
 
     let peopleSavedViews = [
-      { id: 'whiskerfield-line', name: 'Whiskerfield line', description: 'All Whiskerfield surname records.', filters: { surname: 'Whiskerfield' } },
-      { id: 'meowbridge-line', name: 'Meowbridge places', description: 'People and records connected to Meowbridge.', filters: { birthPlace: 'Meowbridge', branch: 'Purrington line' } },
-      { id: 'historic-records', name: 'Historic records', description: 'Great-grandparents and early branch evidence.', filters: { reviewStatus: 'Historic records' } }
+      { id: 'whiskerfield-line', name: 'Whiskerfield surname', description: 'All Whiskerfield surname records.', filters: { surname: 'Whiskerfield' } },
+      { id: 'meowbridge-places', name: 'Meowbridge places', description: 'People and records connected to Meowbridge.', filters: { birthPlace: 'Meowbridge' } },
+      { id: 'historic-records', name: 'Historic records', description: 'Great-grandparents and early evidence.', filters: { reviewStatus: 'Historic records' } }
     ];
 
     function selectedPeopleRecord() {
@@ -19886,26 +19979,139 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
       return records.find(person => person.id === state.selectedPeopleId) || records[0] || null;
     }
 
+    const peopleDateMonths = Object.freeze({
+      jan: 0,
+      january: 0,
+      feb: 1,
+      february: 1,
+      mar: 2,
+      march: 2,
+      apr: 3,
+      april: 3,
+      may: 4,
+      jun: 5,
+      june: 5,
+      jul: 6,
+      july: 6,
+      aug: 7,
+      august: 7,
+      sep: 8,
+      sept: 8,
+      september: 8,
+      oct: 9,
+      october: 9,
+      nov: 10,
+      november: 10,
+      dec: 11,
+      december: 11
+    });
+
+    function peopleDateMonthIndex(value) {
+      const key = String(value || '').trim().toLowerCase();
+      return Object.prototype.hasOwnProperty.call(peopleDateMonths, key)
+        ? peopleDateMonths[key]
+        : null;
+    }
+
+    function validPeopleDate(year, month, day) {
+      const date = new Date(year, month, day);
+
+      return date.getFullYear() === year
+        && date.getMonth() === month
+        && date.getDate() === day
+        ? date
+        : null;
+    }
+
     function parsePeoplePrototypeDate(value) {
       if (!value || value === '-') return null;
+
       const text = String(value).trim();
+
       let match = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
       if (match) {
-        const day = Number(match[1]);
-        const month = Number(match[2]) - 1;
-        const year = Number(match[3]);
-        const date = new Date(year, month, day);
-        return date.getFullYear() === year && date.getMonth() === month && date.getDate() === day ? date : null;
+        return validPeopleDate(
+          Number(match[3]),
+          Number(match[2]) - 1,
+          Number(match[1])
+        );
       }
+
       match = text.match(/^(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4})$/);
-      if (!match) return null;
-      const months = { jan:0, january:0, feb:1, february:1, mar:2, march:2, apr:3, april:3, may:4, jun:5, june:5, jul:6, july:6, aug:7, august:7, sep:8, sept:8, september:8, oct:9, october:9, nov:10, november:10, dec:11, december:11 };
-      const month = months[match[2].toLowerCase()];
-      if (month === undefined) return null;
-      const day = Number(match[1]);
-      const year = Number(match[3]);
-      const date = new Date(year, month, day);
-      return date.getFullYear() === year && date.getMonth() === month && date.getDate() === day ? date : null;
+      if (match) {
+        const month = peopleDateMonthIndex(match[2]);
+        if (month === null) return null;
+
+        return validPeopleDate(
+          Number(match[3]),
+          month,
+          Number(match[1])
+        );
+      }
+
+      match = text.match(/^([A-Za-z]{3,})\s+(\d{1,2}),?\s+(\d{4})$/);
+      if (match) {
+        const month = peopleDateMonthIndex(match[1]);
+        if (month === null) return null;
+
+        return validPeopleDate(
+          Number(match[3]),
+          month,
+          Number(match[2])
+        );
+      }
+
+      return null;
+    }
+
+    function peopleSortDateValue(value) {
+      const text = String(value || '').trim().toLowerCase();
+
+      if (!text || text === '-') return Number.NaN;
+      if (text === 'just now' || text === 'today') return Number.MAX_SAFE_INTEGER;
+      if (text === 'yesterday') return Number.MAX_SAFE_INTEGER - 1;
+
+      const date = parsePeoplePrototypeDate(value);
+
+      return date ? date.getTime() : Number.NaN;
+    }
+
+    function comparePeopleNames(a, b) {
+      return cleanEditFieldValue(a?.name)
+        .localeCompare(cleanEditFieldValue(b?.name), undefined, { sensitivity: 'base' });
+    }
+
+    function comparePeopleOptionalNumber(a, b, direction = 'asc') {
+      const aMissing = !Number.isFinite(a);
+      const bMissing = !Number.isFinite(b);
+
+      if (aMissing && bMissing) return 0;
+      if (aMissing) return 1;
+      if (bMissing) return -1;
+
+      return direction === 'desc' ? b - a : a - b;
+    }
+
+    function sortPeopleRecords(records, sort = state.peopleSort) {
+      return records.slice().sort((a, b) => {
+        if (sort === 'name') {
+          return comparePeopleNames(a, b);
+        }
+
+        if (sort === 'birth') {
+          return comparePeopleOptionalNumber(
+            peopleSortDateValue(a.birth),
+            peopleSortDateValue(b.birth),
+            'asc'
+          ) || comparePeopleNames(a, b);
+        }
+
+        return comparePeopleOptionalNumber(
+          peopleSortDateValue(a.updated),
+          peopleSortDateValue(b.updated),
+          'desc'
+        ) || comparePeopleNames(a, b);
+      });
     }
 
     function calculatePeopleAge(fromDate, toDate = new Date()) {
@@ -19972,18 +20178,18 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
 
     function hasActivePeopleFilters(filters = state.peopleFilters) {
       const f = peopleFiltersWithDefaults(filters);
-      return Boolean(f.surname || f.birthPlace || f.branch || f.sourceStatus || f.reviewStatus || f.living !== 'Any');
+      return Boolean(f.surname || f.birthPlace || f.reviewStatus || f.living !== 'Any');
     }
 
     function activePeopleFilterEntries(filters = state.peopleFilters) {
       const f = peopleFiltersWithDefaults(filters);
       const entries = [];
+
       if (f.surname) entries.push(['surname', 'Surname', f.surname]);
       if (f.birthPlace) entries.push(['birthPlace', 'Birth place', f.birthPlace]);
       if (f.living !== 'Any') entries.push(['living', 'Living status', f.living]);
-      if (f.branch) entries.push(['branch', 'Branch', f.branch]);
-      if (f.sourceStatus) entries.push(['sourceStatus', 'Source status', f.sourceStatus]);
       if (f.reviewStatus) entries.push(['reviewStatus', 'Review status', f.reviewStatus]);
+
       return entries;
     }
 
@@ -19998,17 +20204,15 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
       if (f.surname) list = list.filter(p => p.surname === f.surname || p.name.toLowerCase().includes(f.surname.toLowerCase()));
       if (f.birthPlace) list = list.filter(p => p.birthPlace.toLowerCase().includes(f.birthPlace.toLowerCase()));
       if (f.living !== 'Any') list = list.filter(p => p.living === f.living);
-      if (f.branch) list = list.filter(p => p.branch === f.branch);
-      if (f.sourceStatus) list = list.filter(p => getPeopleSourceStatus(p) === f.sourceStatus);
       if (f.reviewStatus) list = list.filter(p => getPeopleReviewStatus(p) === f.reviewStatus);
       if (q) list = list.filter(p => `${p.name} ${p.birthPlace} ${p.relation} ${p.living} ${getPeopleSourceStatus(p)} ${getPeopleReviewStatus(p)}`.toLowerCase().includes(q));
-      return list;
+      return sortPeopleRecords(list);
     }
 
     function renderPeopleActiveFilters() {
       if (!hasActivePeopleFilters()) return '';
       const chips = activePeopleFilterEntries().map(([key, label, value]) => `<span class="filter-chip people-filter-chip"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)} <button type="button" data-people-remove-filter="${key}" aria-label="Remove ${escapeHtml(label)} filter">${icon.close}</button></span>`).join('');
-      return `<div class="people-filterbar" aria-label="Active People filters">${chips}<span class="people-filter-actions"><button class="link" type="button" id="peopleClearFilters">Clear all</button><button class="people-save-view" type="button" id="peopleSaveView">Save view</button></span></div>`;
+      return `<div class="people-filterbar" aria-label="Active People filters">${chips}<span class="people-filter-actions"><button class="link" type="button" id="peopleClearFilters">Clear all</button><button class="people-save-view" type="button" id="peopleSaveView">Save filter</button></span></div>`;
     }
 
     function renderPeople() {
@@ -20032,10 +20236,10 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
             <button class="button secondary people-columns-button ${peopleColumnsCustomized() ? 'active' : ''}" type="button" id="peopleColumnsButton" aria-haspopup="dialog">${icon.grid} Columns</button>
             <button class="button secondary people-filter-button ${hasActivePeopleFilters() ? 'active' : ''}" type="button" id="peopleFilterButton">Filter${activePeopleFilterCount() ? `<span class="people-filter-count">${activePeopleFilterCount()}</span>` : ''}</button>
             <span class="people-sort-field">
-              <select class="people-sort-select" aria-label="Sort people">
-                <option>Sort: Date modified</option>
-                <option>Sort: Name</option>
-                <option>Sort: Birth date</option>
+              <select class="people-sort-select" id="peopleSort" aria-label="Sort people">
+                <option value="modified" ${state.peopleSort === 'modified' ? 'selected' : ''}>Sort: Date modified</option>
+                <option value="name" ${state.peopleSort === 'name' ? 'selected' : ''}>Sort: Name</option>
+                <option value="birth" ${state.peopleSort === 'birth' ? 'selected' : ''}>Sort: Birth date</option>
               </select>
               <span class="people-sort-chevron" aria-hidden="true">${icon.chevron}</span>
             </span>
@@ -20056,14 +20260,29 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
     }
 
     function renderPeopleSidebarInner() {
-      const savedViewsMarkup = peopleSavedViews.map(view => `<button class="side-link ${state.peopleSavedViewId === view.id ? 'active' : ''}" type="button" data-saved-view="${view.id}">${icon.folder}<span>${escapeHtml(view.name)}</span></button>`).join('');
-      return `<div class="side-section-title">Navigation</div>
-        <button class="side-link ${state.peopleView !== 'profile' && state.peopleSide === 'people' ? 'active' : ''}" type="button" data-people-side="people">${icon.peoplegroup}<span>People</span></button>
-        <button class="side-link ${state.peopleView === 'profile' ? 'active' : ''}" type="button" data-open-profile>${icon.profile}<span>Profile</span></button>
-        <button class="side-link" type="button" data-placeholder-view="Review center">${icon.search}<span>Review center</span><span class="people-review-count">5</span></button>
-        <button class="side-link" type="button" data-placeholder-view="Statistics">${icon.grid}<span>Statistics</span></button>
-        <div class="side-section-title with-add"><span>Saved views</span><button class="side-add-button" type="button" aria-label="Create saved view" id="peopleSidebarSaveView">${icon.plus}</button></div>
-        ${savedViewsMarkup}`;
+      const savedViewsMarkup = peopleSavedViews
+        .map(view => `<button class="side-link ${state.peopleSavedViewId === view.id ? 'active' : ''}" type="button" data-saved-view="${view.id}">${icon.folder}<span>${escapeHtml(view.name)}</span></button>`)
+        .join('');
+
+      return `<div>
+          <div class="side-section-title">Navigation</div>
+          <div class="side-nav">
+            <button class="side-link ${state.peopleView !== 'profile' && state.peopleSide === 'people' ? 'active' : ''}" type="button" data-people-side="people">${icon.peoplegroup}<span>People</span></button>
+            <button class="side-link ${state.peopleView === 'profile' ? 'active' : ''}" type="button" data-open-profile>${icon.profile}<span>Profile</span></button>
+            <button class="side-link" type="button" data-placeholder-view="Review center">${icon.search}<span>Review center</span><span class="people-review-count">5</span></button>
+            <button class="side-link" type="button" data-placeholder-view="Statistics">${icon.grid}<span>Statistics</span></button>
+          </div>
+        </div>
+
+        <div>
+          <div class="side-section-title with-add">
+            <span>Saved filters</span>
+            <button class="side-add-button" type="button" aria-label="Create saved filter" id="peopleSidebarSaveView">${icon.plus}</button>
+          </div>
+          <div class="side-nav">
+            ${savedViewsMarkup}
+          </div>
+        </div>`;
     }
 
     function renderPeopleTable(rows) {
@@ -21144,23 +21363,37 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
       popover.setAttribute('role', 'dialog');
       popover.setAttribute('aria-label', 'Filter people');
       popover.innerHTML = `
-        <div class="people-filter-popover-header"><h3>Filter people</h3><p>Refine the directory by surname, place, status, sources, and review needs.</p></div>
-        <div class="people-filter-grid">
-          <div class="people-filter-field"><label for="pfSurname">Surname</label><select id="pfSurname">${peopleFilterOptions(['', 'Whiskerfield', 'Purrington', 'Milkpaw', 'Softtail'], f.surname)}</select></div>
-          <div class="people-filter-field"><label for="pfBirthPlace">Birth place</label><select id="pfBirthPlace">${peopleFilterOptions(['', 'Pawford', 'Meowbridge', 'Fishmarket Row', 'Old Cattery', 'Unknown'], f.birthPlace)}</select></div>
-          <div class="people-filter-field"><label for="pfLiving">Living status</label><select id="pfLiving">${peopleFilterOptions(['Any', 'Living', 'Deceased', 'Unknown'], f.living)}</select></div>
-          <div class="people-filter-field"><label for="pfBranch">Branch</label><select id="pfBranch">${peopleFilterOptions(['', 'Whiskerfield line', 'Purrington line', 'Milkpaw line', 'Softtail line'], f.branch)}</select></div>
-          <div class="people-filter-field"><label for="pfSource">Source status</label><select id="pfSource">${peopleFilterOptions(['', 'Fully sourced', 'Partly sourced', 'Unsourced'], f.sourceStatus)}</select></div>
-          <div class="people-filter-field"><label for="pfReview">Review status</label><select id="pfReview">${peopleFilterOptions(['', 'No issues', 'Possible duplicate', 'Missing facts', 'Missing source', 'Historic records'], f.reviewStatus)}</select></div>
+        <div class="people-filter-popover-header">
+          <h3>Filter people</h3>
+          <p>Refine the directory by surname, birth place, living status, and review needs.</p>
         </div>
-        <div class="people-filter-footer"><button class="button secondary" type="button" data-people-filter-reset>Reset</button><button class="button primary" type="button" data-people-filter-apply>Apply filters</button></div>`;
+        <div class="people-filter-grid">
+          <div class="people-filter-field">
+            <label for="pfSurname">Surname</label>
+            <select id="pfSurname">${peopleFilterOptions(['', 'Whiskerfield', 'Purrington', 'Milkpaw', 'Softtail'], f.surname)}</select>
+          </div>
+          <div class="people-filter-field">
+            <label for="pfBirthPlace">Birth place</label>
+            <select id="pfBirthPlace">${peopleFilterOptions(['', 'Pawford', 'Meowbridge', 'Fishmarket Row', 'Old Cattery', 'Unknown'], f.birthPlace)}</select>
+          </div>
+          <div class="people-filter-field">
+            <label for="pfLiving">Living status</label>
+            <select id="pfLiving">${peopleFilterOptions(['Any', 'Living', 'Deceased', 'Unknown'], f.living)}</select>
+          </div>
+          <div class="people-filter-field">
+            <label for="pfReview">Review status</label>
+            <select id="pfReview">${peopleFilterOptions(['', 'No issues', 'Possible duplicate', 'Missing facts', 'Missing source', 'Historic records'], f.reviewStatus)}</select>
+          </div>
+        </div>
+        <div class="people-filter-footer">
+          <button class="button secondary" type="button" data-people-filter-reset>Reset</button>
+          <button class="button primary" type="button" data-people-filter-apply>Apply filters</button>
+        </div>`;
       document.body.appendChild(popover);
       popover.querySelector('[data-people-filter-reset]')?.addEventListener('click', () => {
         popover.querySelector('#pfSurname').value = '';
         popover.querySelector('#pfBirthPlace').value = '';
         popover.querySelector('#pfLiving').value = 'Any';
-        popover.querySelector('#pfBranch').value = '';
-        popover.querySelector('#pfSource').value = '';
         popover.querySelector('#pfReview').value = '';
       });
       popover.querySelector('[data-people-filter-apply]')?.addEventListener('click', () => {
@@ -21168,8 +21401,6 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
           surname: popover.querySelector('#pfSurname').value,
           birthPlace: popover.querySelector('#pfBirthPlace').value,
           living: popover.querySelector('#pfLiving').value || 'Any',
-          branch: popover.querySelector('#pfBranch').value,
-          sourceStatus: popover.querySelector('#pfSource').value,
           reviewStatus: popover.querySelector('#pfReview').value
         };
         state.peopleSavedViewId = '';
@@ -21212,7 +21443,7 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
         return;
       }
       const suggested = generatePeopleSavedViewName();
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="savePeopleViewTitle"><div class="modal-header"><div><h2 id="savePeopleViewTitle">Save people view</h2><p>Save the current active filters as a sidebar view.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="savePeopleViewForm"><div class="modal-body form-grid"><div class="field"><label for="peopleViewName">View name</label><input id="peopleViewName" required value="${escapeHtml(suggested)}"></div><div class="field"><label for="peopleViewDescription">Description</label><textarea id="peopleViewDescription" placeholder="Optional note about this saved view"></textarea></div><div class="people-filterbar">${activePeopleFilterEntries().map(([, label, value]) => `<span class="filter-chip people-filter-chip"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</span>`).join('')}</div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Save view</button></div></form></div>`);
+      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="savePeopleViewTitle"><div class="modal-header"><div><h2 id="savePeopleViewTitle">Save people view</h2><p>Save the current active filters as a sidebar view.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="savePeopleViewForm"><div class="modal-body form-grid"><div class="field"><label for="peopleViewName">View name</label><input id="peopleViewName" required value="${escapeHtml(suggested)}"></div><div class="field"><label for="peopleViewDescription">Description</label><textarea id="peopleViewDescription" placeholder="Optional note about this saved filter"></textarea></div><div class="people-filterbar">${activePeopleFilterEntries().map(([, label, value]) => `<span class="filter-chip people-filter-chip"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</span>`).join('')}</div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Save filter</button></div></form></div>`);
       modalBackdrop.querySelector('#peopleViewName')?.focus();
       modalBackdrop.querySelector('#savePeopleViewForm')?.addEventListener('submit', event => {
         event.preventDefault();
@@ -21224,7 +21455,7 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
         state.peopleSavedView = name;
         closeModal();
         renderPeople();
-        showToast('Saved view created.');
+        showToast('Saved filter created.');
       });
     }
 
@@ -21407,6 +21638,10 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
       bindPeopleSidebar(main);
       bindToasts(main);
       bindSearchInput(main, '#peopleSearch', 'peopleSearch', renderPeople);
+      main.querySelector('#peopleSort')?.addEventListener('change', event => {
+        state.peopleSort = event.currentTarget.value || 'modified';
+        renderPeople();
+      });
       main.querySelector('#peopleColumnsButton')?.addEventListener('click', e => openPeopleColumnsPopover(e.currentTarget));
       main.querySelector('#peopleFilterButton')?.addEventListener('click', e => openPeopleFilterPopover(e.currentTarget));
       main.querySelector('#peopleClearFilters')?.addEventListener('click', clearPeopleFilters);
