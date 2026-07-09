@@ -3937,10 +3937,116 @@
     .attach-icon { width: 34px; height: 34px; border-radius: 7px; display: grid; place-items: center; border: 1px solid var(--red); color: #ef8e9a; }
     .attach-icon.file { border-color: var(--amber); color: var(--amber); }
     .attach-icon.note { border-color: var(--purple); color: #bca6ff; }
+    .add-person-side-note {
+      margin: var(--space-3) 0 0;
+      color: var(--text-tertiary);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .attach-row.is-informational {
+      cursor: default;
+    }
+
+    .attach-row.is-informational:hover {
+      background: transparent;
+    }
+
+    .add-person-match-empty {
+      min-height: 96px;
+      padding: var(--space-5);
+      color: var(--text-tertiary);
+      font-size: 13px;
+      line-height: 1.45;
+      text-align: center;
+      display: grid;
+      place-items: center;
+    }
+
+    .match-row.is-possible-duplicate {
+      text-align: left;
+    }
+
+    .match-row .match-score {
+      color: var(--amber);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .add-person-match-list {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .match-row.is-possible-duplicate {
+      width: 100%;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-secondary);
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: var(--space-3);
+      align-items: center;
+      padding: var(--space-3);
+      text-align: left;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .match-row.is-possible-duplicate:hover {
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
+    }
+
+    .match-row.is-possible-duplicate.is-selected {
+      border-color: var(--brand-green-500);
+      background: rgba(47, 174, 116, .12);
+      color: var(--text-primary);
+    }
+
+    .match-row.is-possible-duplicate:focus-visible {
+      outline: 2px solid var(--brand-green-400);
+      outline-offset: 2px;
+    }
+
+    .match-row.is-possible-duplicate .small-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .match-row.is-possible-duplicate .small-avatar.has-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .add-person-match-action {
+      width: 100%;
+      margin-top: var(--space-4);
+      justify-content: center;
+      gap: var(--space-2);
+    }
+
+    .add-person-match-action svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .add-person-match-action:disabled {
+      opacity: .48;
+      cursor: not-allowed;
+    }
     .match-row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); color: var(--text-secondary); }
     .checkbox-row { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-5); color: var(--text-secondary); }
     .checkbox-row input { width: 22px; height: 22px; accent-color: var(--brand-green-500); }
-
+    
     .add-person-select-field {
       position: relative;
     }
@@ -17076,10 +17182,514 @@ function renderTreeCardDateLines(person) {
       syncFamilyReciprocalLinks();
       sampleData.events = buildSampleEvents();
     }
+    
+    function addPersonDateFieldHasTypedValue(fieldId) {
+      const root = modalBackdrop?.querySelector(`[data-genealogy-date-field="${CSS.escape(fieldId)}"]`);
+      if (!root) return false;
+
+      return Boolean(
+        root.querySelector('[data-genealogy-date-input]')?.value.trim()
+          || root.querySelector('[data-genealogy-date-input-to]')?.value.trim()
+      );
+    }
+
+    function addPersonPlaceFieldHasTypedValue(selector) {
+      const value = modalBackdrop?.querySelector(selector)?.value || '';
+      return hasTextValue(value);
+    }
+
+    function addPersonFactsHaveIdentifyingValue(facts = {}) {
+      if (!facts || facts.invalid) return false;
+
+      const burialPlaceText = facts.burialPlace?.text || '';
+      const education = facts.education || {};
+      const educationPlaceText = education.place?.text || '';
+      const work = facts.work || {};
+      const baptism = facts.baptism || {};
+      const baptismPlaceText = baptism.place?.text || '';
+
+      return Boolean(
+        hasTextValue(facts.alternativeNames)
+          || hasTextValue(burialPlaceText)
+          || hasTextValue(education.institutionName)
+          || hasTextValue(education.value)
+          || hasTextValue(educationPlaceText)
+          || hasTextValue(education.notes)
+          || hasGenealogyDateValue(education.fromDate, 'Year only')
+          || hasGenealogyDateValue(education.toDate, 'Year only')
+          || hasTextValue(work.company)
+          || hasTextValue(work.occupation)
+          || hasTextValue(work.notes)
+          || hasGenealogyDateValue(work.fromDate, 'Year only')
+          || hasGenealogyDateValue(work.toDate, 'Year only')
+          || hasTextValue(baptismPlaceText)
+          || hasGenealogyDateValue(baptism.date, 'Exact date')
+      );
+    }
+
+    function addPersonHasCoreIdentifyingValue() {
+      const livingStatus = normalizeLivingStatus(readAddPersonModalValue('#addPersonLivingStatus'));
+
+      return Boolean(
+        readAddPersonModalValue('#addPersonFirstName')
+          || readAddPersonModalValue('#addPersonLastName')
+          || readAddPersonModalValue('#addPersonMiddleName')
+          || readAddPersonModalValue('#addPersonMaidenName')
+          || addPersonDateFieldHasTypedValue('addPersonBirth')
+          || addPersonPlaceFieldHasTypedValue('#addPersonBirthPlace')
+          || (
+            livingStatus === 'Deceased'
+              && (
+                addPersonDateFieldHasTypedValue('addPersonDeath')
+                  || addPersonPlaceFieldHasTypedValue('#addPersonDeathPlace')
+              )
+          )
+      );
+    }
+
+    function focusAddPersonFirstIdentifyingField() {
+      const target = modalBackdrop?.querySelector('#addPersonFirstName')
+        || modalBackdrop?.querySelector('#addPersonLastName')
+        || modalBackdrop?.querySelector('#addPersonBirthDate');
+
+      target?.focus({ preventScroll: true });
+    }
+
+    function validateAddPersonCreateIdentity(options = {}, additionalFacts = {}) {
+      const connectionIntent = addPersonCreateConnectionIntent(options);
+
+      if (
+        connectionIntent.shouldConnect
+          || addPersonHasCoreIdentifyingValue()
+          || addPersonFactsHaveIdentifyingValue(additionalFacts)
+      ) {
+        return { ok: true };
+      }
+
+      return {
+        ok: false,
+        message: 'Add a name or at least one identifying fact before creating a person.'
+      };
+    }
+
+    function commitAddPersonModalCreate(title, subtitle, options = {}) {
+      const createAnother = modalBackdrop.querySelector('#addPersonCreateAnother')?.checked;
+      const additionalFacts = collectAddPersonAdditionalFacts('');
+
+      if (additionalFacts.invalid) {
+        showToast(additionalFacts.message || 'Check the additional facts before creating.');
+        return null;
+      }
+
+      const identityValidation = validateAddPersonCreateIdentity(options, additionalFacts);
+
+      if (!identityValidation.ok) {
+        showToast(identityValidation.message);
+        focusAddPersonFirstIdentifyingField();
+        return null;
+      }
+
+      const relationshipValues = collectAddPersonRelationshipBlock();
+
+      if (relationshipValues.invalid) {
+        showToast(relationshipValues.message || 'Check the relationship details before creating.');
+        return null;
+      }
+
+      const newPerson = createPersonFromAddPersonModal(options, additionalFacts);
+      const connectionIntent = addPersonCreateConnectionIntent(options);
+      let connectionResult = null;
+
+      if (connectionIntent.shouldConnect) {
+        connectionResult = connectPeopleByRelationship({
+          anchorPersonId: connectionIntent.anchorPersonId,
+          relativePersonId: newPerson.id,
+          relationshipType: connectionIntent.relationshipType
+        });
+
+        if (connectionResult.ok) {
+          applyPartnerDetailsToCreatedConnection(connectionResult, relationshipValues);
+        }
+      }
+
+      sampleData.events = buildSampleEvents();
+      state.selectedPersonId = newPerson.id;
+      state.selectedPeopleId = newPerson.id;
+
+      closeModal();
+
+      if (state.activeModule === 'Family Tree') {
+        renderFamilyTreePreserveScroll?.() || renderFamilyTree();
+      } else {
+        render();
+      }
+
+      if (connectionIntent.shouldConnect) {
+        if (connectionResult?.ok) {
+          showToast(`Person created and connected as ${addPersonConnectionToastLabel(connectionIntent.relationshipType)}.`);
+        } else {
+          showToast(connectionResult?.message || 'Person created, but could not connect the relationship.');
+        }
+      } else {
+        showToast('Person created.');
+      }
+
+      if (createAnother) {
+        requestAnimationFrame(() => {
+          if (connectionIntent.shouldConnect) {
+            openAddPersonModal(title, subtitle, {
+              ...options,
+              personId: connectionIntent.anchorPersonId,
+              connectToPersonId: connectionIntent.anchorPersonId,
+              connectAfterCreate: true,
+              connectRelationshipType: connectionIntent.relationshipType
+            });
+          } else {
+            openAddPersonModal('Add person', 'Create a new person in this project');
+          }
+        });
+      }
+
+      return {
+        ok: true,
+        person: newPerson,
+        connectionResult
+      };
+    }
+
+    function normalizeAddPersonMatchText(value) {
+      return cleanEditFieldValue(value)
+        .replace(/\s+/g, ' ')
+        .toLowerCase();
+    }
+
+    function addPersonDraftDateValue(selector) {
+      return normalizeAddPersonMatchText(modalBackdrop?.querySelector(selector)?.value || '');
+    }
+
+    function addPersonDraftPlaceValue(selector) {
+      return normalizeAddPersonMatchText(modalBackdrop?.querySelector(selector)?.value || '');
+    }
+
+    function addPersonPersonDateValues(event) {
+      return [
+        event?.date,
+        event?.dateLabel,
+        event?.originalText,
+        event?.sortDate
+      ]
+        .map(normalizeAddPersonMatchText)
+        .filter(Boolean);
+    }
+
+    function addPersonPersonPlaceValues(event) {
+      return [
+        getPlaceEventDisplay(event),
+        getPlaceDisplay(event?.placeId),
+        event?.placeText
+      ]
+        .map(normalizeAddPersonMatchText)
+        .filter(Boolean);
+    }
+
+    function collectAddPersonDraftForMatching() {
+      const firstName = normalizeAddPersonMatchText(readAddPersonModalValue('#addPersonFirstName'));
+      const middleName = normalizeAddPersonMatchText(readAddPersonModalValue('#addPersonMiddleName'));
+      const lastName = normalizeAddPersonMatchText(readAddPersonModalValue('#addPersonLastName'));
+      const maidenName = normalizeAddPersonMatchText(readAddPersonModalValue('#addPersonMaidenName'));
+      const birthDate = addPersonDraftDateValue('#addPersonBirthDate');
+      const deathDate = addPersonDraftDateValue('#addPersonDeathDate');
+      const birthPlace = addPersonDraftPlaceValue('#addPersonBirthPlace');
+      const deathPlace = addPersonDraftPlaceValue('#addPersonDeathPlace');
+
+      return {
+        firstName,
+        middleName,
+        lastName,
+        maidenName,
+        birthDate,
+        deathDate,
+        birthPlace,
+        deathPlace,
+        hasSignal: Boolean(
+          firstName
+            || middleName
+            || lastName
+            || maidenName
+            || birthDate
+            || deathDate
+            || birthPlace
+            || deathPlace
+        )
+      };
+    }
+
+    function addPersonNameValuesForPerson(person) {
+      return [
+        person?.names?.first,
+        person?.names?.middle,
+        person?.names?.last,
+        person?.names?.maiden,
+        person?.names?.display,
+        person?.name
+      ]
+        .map(normalizeAddPersonMatchText)
+        .filter(Boolean);
+    }
+
+    function scoreAddPersonPossibleMatch(person, draft, options = {}) {
+      let score = 0;
+      const names = person?.names || {};
+      const personFirst = normalizeAddPersonMatchText(names.first);
+      const personMiddle = normalizeAddPersonMatchText(names.middle);
+      const personLast = normalizeAddPersonMatchText(names.last);
+      const personMaiden = normalizeAddPersonMatchText(names.maiden);
+      const personDisplay = normalizeAddPersonMatchText(names.display || person?.name);
+      const birthDates = addPersonPersonDateValues(person?.birth);
+      const deathDates = addPersonPersonDateValues(person?.death);
+      const birthPlaces = addPersonPersonPlaceValues(person?.birth);
+      const deathPlaces = addPersonPersonPlaceValues(person?.death);
+
+      if (draft.firstName && personFirst === draft.firstName) score += 34;
+      else if (draft.firstName && personFirst.startsWith(draft.firstName)) score += 18;
+      else if (draft.firstName && personDisplay.includes(draft.firstName)) score += 12;
+
+      if (draft.middleName && personMiddle === draft.middleName) score += 10;
+
+      if (draft.lastName && personLast === draft.lastName) score += 32;
+      else if (draft.lastName && personDisplay.includes(draft.lastName)) score += 16;
+
+      if (draft.maidenName && (personMaiden === draft.maidenName || personLast === draft.maidenName)) score += 22;
+
+      if (draft.birthDate && birthDates.includes(draft.birthDate)) score += 34;
+      else if (draft.birthDate && birthDates.some(value => value.includes(draft.birthDate) || draft.birthDate.includes(value))) score += 18;
+
+      if (draft.deathDate && deathDates.includes(draft.deathDate)) score += 26;
+      else if (draft.deathDate && deathDates.some(value => value.includes(draft.deathDate) || draft.deathDate.includes(value))) score += 12;
+
+      if (draft.birthPlace && birthPlaces.some(value => value === draft.birthPlace)) score += 24;
+      else if (draft.birthPlace && birthPlaces.some(value => value.includes(draft.birthPlace) || draft.birthPlace.includes(value))) score += 12;
+
+      if (draft.deathPlace && deathPlaces.some(value => value === draft.deathPlace)) score += 18;
+      else if (draft.deathPlace && deathPlaces.some(value => value.includes(draft.deathPlace) || draft.deathPlace.includes(value))) score += 8;
+
+      const anchor = getPerson(options.connectToPersonId || options.personId || '');
+      if (anchor) {
+        const anchorLast = normalizeAddPersonMatchText(anchor.names?.last);
+        if (anchorLast && personLast && anchorLast === personLast) score += 8;
+      }
+
+      return score;
+    }
+
+    let addPersonPossibleMatchState = {
+      selectedPersonId: ''
+    };
+
+    function findAddPersonPossibleMatches(options = {}, editPerson = null) {
+      const draft = collectAddPersonDraftForMatching();
+      if (!draft.hasSignal) return [];
+
+      const currentPersonId = editPerson?.id || '';
+
+      return getPeople(currentProjectId())
+        .filter(person => person?.id && person.id !== currentPersonId)
+        .filter(person => !person.deleted)
+        .map(person => ({
+          person,
+          score: scoreAddPersonPossibleMatch(person, draft, options)
+        }))
+        .filter(item => item.score >= 24)
+        .sort((a, b) => b.score - a.score || connectPersonName(a.person).localeCompare(connectPersonName(b.person)))
+        .slice(0, 2);
+    }
+
+    function addPersonPossibleMatchMeta(person) {
+      const life = connectPersonLifeLine(person);
+      const place = getPlaceEventDisplay(person?.birth) || getPlaceEventDisplay(person?.death) || person?.branch || '';
+
+      return [life, place].filter(Boolean).join('<br>');
+    }
+
+    function renderAddPersonPossibleMatchRow(item) {
+      const person = item.person;
+      const selected = person.id === addPersonPossibleMatchState.selectedPersonId;
+
+      return `<button
+        class="match-row is-possible-duplicate ${selected ? 'is-selected' : ''}"
+        type="button"
+        data-add-person-possible-match="${escapeHtml(person.id)}"
+        aria-pressed="${selected ? 'true' : 'false'}">
+        ${renderPersonAvatar(person, 'small-avatar')}
+        <div>
+          <strong>${escapeHtml(connectPersonName(person))}</strong><br>
+          ${addPersonPossibleMatchMeta(person)}
+        </div>
+      </button>`;
+    }
+
+    function addPersonPossibleMatchActionLabel(options = {}) {
+      const connectionIntent = addPersonCreateConnectionIntent(options);
+      return connectionIntent.shouldConnect ? 'Connect selected' : 'Open selected';
+    }
+
+    function renderAddPersonPossibleMatchesCard(options = {}, editPerson = null) {
+      const matches = findAddPersonPossibleMatches(options, editPerson);
+      const draft = collectAddPersonDraftForMatching();
+      const selectedPerson = getPerson(addPersonPossibleMatchState.selectedPersonId);
+      const actionLabel = addPersonPossibleMatchActionLabel(options);
+
+      if (!draft.hasSignal) {
+        return `<div class="modal-side-card" data-add-person-possible-matches>
+          <h3>Possible matches<br><span class="panel-muted">Similar people in this project</span></h3>
+          <div class="add-person-match-empty">Enter a name, date, or place to check for existing people.</div>
+        </div>`;
+      }
+
+      if (!matches.length) {
+        return `<div class="modal-side-card" data-add-person-possible-matches>
+          <h3>Possible matches<br><span class="panel-muted">Similar people in this project</span></h3>
+          <div class="add-person-match-empty">No strong matches found in this project.</div>
+        </div>`;
+      }
+
+      const selectedStillVisible = matches.some(item => item.person.id === addPersonPossibleMatchState.selectedPersonId);
+
+      if (addPersonPossibleMatchState.selectedPersonId && !selectedStillVisible) {
+        addPersonPossibleMatchState.selectedPersonId = '';
+      }
+
+      return `<div class="modal-side-card" data-add-person-possible-matches>
+        <h3>Possible matches<br><span class="panel-muted">Similar people in this project</span></h3>
+        <div class="add-person-match-list">
+          ${matches.map(renderAddPersonPossibleMatchRow).join('')}
+        </div>
+        <button
+          class="button secondary add-person-match-action"
+          type="button"
+          data-add-person-match-action
+          ${selectedPerson && selectedStillVisible ? '' : 'disabled'}>
+          ${icon.link}
+          <span>${escapeHtml(actionLabel)}</span>
+        </button>
+      </div>`;
+    }
+
+    function renderAddPersonAttachmentSideCard(isEditMode = false) {
+      const note = isEditMode
+        ? 'Attachments are managed from the person profile, Albums, Archive, and Notes.'
+        : 'Save the person first, then attach photos, archive files, and notes from the person profile.';
+
+      const row = (type, title, subtitle, svg, extraClass = '') => `<button class="attach-row is-informational" type="button" data-add-person-attachment-info="${escapeHtml(type)}">
+        <div class="attach-icon ${escapeHtml(extraClass)}">${svg}</div>
+        <div>
+          <strong>${escapeHtml(title)}</strong><br>
+          <span class="panel-muted">${escapeHtml(subtitle)}</span>
+        </div>
+      </button>`;
+
+      return `<div class="modal-side-card">
+        <h3>Attach to this person</h3>
+        ${row('photo', 'Add Photo', isEditMode ? 'Manage from Albums after saving' : 'Available after save', icon.image)}
+        ${row('file', 'Add File', isEditMode ? 'Manage from Archive after saving' : 'Available after save', icon.file, 'file')}
+        ${row('note', 'Add Note', isEditMode ? 'Manage from Notes after saving' : 'Available after save', icon.note, 'note')}
+        <p class="add-person-side-note">${escapeHtml(note)}</p>
+      </div>`;
+    }
+
+    function refreshAddPersonPossibleMatchesCard(options = {}, editPerson = null) {
+      const container = modalBackdrop?.querySelector('[data-add-person-possible-matches]');
+      if (!container) return;
+
+      const previousSelection = addPersonPossibleMatchState.selectedPersonId;
+
+      container.outerHTML = renderAddPersonPossibleMatchesCard(options, editPerson);
+
+      const stillExists = modalBackdrop?.querySelector(
+        `[data-add-person-possible-match="${CSS.escape(previousSelection)}"]`
+      );
+
+      if (previousSelection && !stillExists) {
+        addPersonPossibleMatchState.selectedPersonId = '';
+        const refreshed = modalBackdrop?.querySelector('[data-add-person-possible-matches]');
+        if (refreshed) refreshed.outerHTML = renderAddPersonPossibleMatchesCard(options, editPerson);
+      }
+
+      bindAddPersonPossibleMatchRows(options, editPerson);
+    }
+
+    function openAddPersonPossibleMatch(personId) {
+      const person = getPerson(personId);
+      if (!person) return;
+
+      closeModal();
+
+      state.selectedPersonId = person.id;
+      state.selectedPeopleId = person.id;
+      state.treeInspectorCollapsed = false;
+
+      if (state.activeModule === 'Family Tree') {
+        renderFamilyTreePreserveScroll?.() || renderFamilyTree();
+      } else {
+        render();
+      }
+
+      showToast(`Opened possible match: ${connectPersonName(person)}.`);
+    }
+
+    function bindAddPersonPossibleMatchRows(options = {}, editPerson = null) {
+      modalBackdrop?.querySelectorAll('[data-add-person-possible-match]').forEach(button => {
+        button.addEventListener('click', () => {
+          selectAddPersonPossibleMatch(button.dataset.addPersonPossibleMatch || '', options, editPerson);
+        });
+      });
+
+      modalBackdrop?.querySelector('[data-add-person-match-action]')?.addEventListener('click', () => {
+        commitAddPersonPossibleMatchAction(options);
+      });
+    }
+
+    function bindAddPersonSideCards(options = {}, editPerson = null) {
+      modalBackdrop?.querySelectorAll('[data-add-person-attachment-info]').forEach(button => {
+        button.addEventListener('click', () => {
+          const isEditMode = options.mode === 'edit';
+          showToast(isEditMode
+            ? 'Attachments are managed from the saved person profile.'
+            : 'Save the person first to attach photos, files, or notes.');
+        });
+      });
+
+      bindAddPersonPossibleMatchRows(options, editPerson);
+
+      const refresh = () => {
+        addPersonPossibleMatchState.selectedPersonId = '';
+        refreshAddPersonPossibleMatchesCard(options, editPerson);
+      };
+      const selectors = [
+        '#addPersonFirstName',
+        '#addPersonMiddleName',
+        '#addPersonLastName',
+        '#addPersonMaidenName',
+        '#addPersonBirthDate',
+        '#addPersonDeathDate',
+        '#addPersonBirthPlace',
+        '#addPersonDeathPlace'
+      ];
+
+      selectors.forEach(selector => {
+        const input = modalBackdrop?.querySelector(selector);
+        if (!input) return;
+        input.addEventListener('input', refresh);
+        input.addEventListener('change', refresh);
+      });
+    }
 
     function openAddPersonModal(title, subtitle, options = {}) {
       const isEditMode = options.mode === 'edit';
       const editPerson = isEditMode ? getPerson(options.personId) : null;
+      addPersonPossibleMatchState = {
+        selectedPersonId: ''
+      };
       const editValues = editPersonFormValues(editPerson);
       const isPartnerMode = options.relativeType === 'partner';
       const showRelationshipBlock = relationshipBlockShouldShow(options, editPerson);
@@ -17166,8 +17776,8 @@ function renderTreeCardDateLines(person) {
           </section>
           </div>
           <aside>
-            <div class="modal-side-card"><h3>Attach to this person</h3><button class="attach-row" type="button" data-add-person-attach="photo"><div class="attach-icon">${icon.image}</div><div><strong>Add Photo</strong><br><span class="panel-muted">Link photo</span></div></button><button class="attach-row" type="button" data-add-person-attach="file"><div class="attach-icon file">${icon.file}</div><div><strong>Add File</strong><br><span class="panel-muted">Link archive item or file</span></div></button><button class="attach-row" type="button" data-add-person-attach="note"><div class="attach-icon note">${icon.note}</div><div><strong>Add Note</strong><br><span class="panel-muted">Add note about this person</span></div></button></div>
-            <div class="modal-side-card"><h3>Possible matches<br><span class="panel-muted">Similar people in this project</span></h3><button class="match-row" type="button" data-possible-match="Barnaby Whiskerfield"><div class="small-avatar avatar-amber">BW</div><div><strong>Barnaby Whiskerfield</strong><br>14 Feb 1946<br>Pawford, England</div></button><button class="match-row" type="button" data-possible-match="Rupert Purrington"><div class="small-avatar">RP</div><div><strong>Rupert Purrington</strong><br>19 Oct 1951<br>Fishmarket Row, England</div></button></div>
+            ${renderAddPersonAttachmentSideCard(isEditMode)}
+            ${isEditMode ? '' : renderAddPersonPossibleMatchesCard(options, editPerson)}
           </aside>
           ${showRelationshipBlock ? renderAddPersonRelationshipBlock(options, editPerson) : ''}
           ${renderAddPersonAdditionalFacts(editPerson)}
@@ -17194,79 +17804,85 @@ function renderTreeCardDateLines(person) {
         </div>
       </div>`);
       bindAddPersonModalControls(options.mode === 'edit' ? options.personId || '' : '');
+      bindAddPersonSideCards(options, editPerson);
       updateAddPersonConditionalFields();
       if (isEditMode) {
         modalBackdrop.querySelector('[data-save-edit-person]')?.addEventListener('click', () => {
           saveEditPersonModalValues(options.personId);
         });
       } else {
-      modalBackdrop.querySelector('[data-create-person]')?.addEventListener('click', () => {
-        const createAnother = modalBackdrop.querySelector('#addPersonCreateAnother')?.checked;
-        const additionalFacts = collectAddPersonAdditionalFacts('');
-        if (additionalFacts.invalid) {
-          showToast(additionalFacts.message || 'Check the additional facts before creating.');
-          return;
-        }
-        const relationshipValues = collectAddPersonRelationshipBlock();
-        if (relationshipValues.invalid) {
-          showToast(relationshipValues.message || 'Check the relationship details before creating.');
-          return;
-        }
-        const newPerson = createPersonFromAddPersonModal(options, additionalFacts);
-        const connectionIntent = addPersonCreateConnectionIntent(options);
-        let connectionResult = null;
+        modalBackdrop.querySelector('[data-create-person]')?.addEventListener('click', event => {
+          const button = event.currentTarget;
+          if (button.disabled) return;
 
-        if (connectionIntent.shouldConnect) {
-          connectionResult = connectPeopleByRelationship({
-            anchorPersonId: connectionIntent.anchorPersonId,
-            relativePersonId: newPerson.id,
-            relationshipType: connectionIntent.relationshipType
-          });
+          button.disabled = true;
+          const result = commitAddPersonModalCreate(title, subtitle, options);
 
-          if (connectionResult.ok) {
-            applyPartnerDetailsToCreatedConnection(connectionResult, relationshipValues);
+          if (!result?.ok && modalBackdrop.contains(button)) {
+            button.disabled = false;
           }
-        }
-
-        sampleData.events = buildSampleEvents();
-        state.selectedPersonId = newPerson.id;
-        state.selectedPeopleId = newPerson.id;
-
-        closeModal();
-
-        if (state.activeModule === 'Family Tree') {
-          renderFamilyTreePreserveScroll?.() || renderFamilyTree();
-        } else {
-          render();
-        }
-
-        if (connectionIntent.shouldConnect) {
-          if (connectionResult?.ok) {
-            showToast(`Person created and connected as ${addPersonConnectionToastLabel(connectionIntent.relationshipType)}.`);
-          } else {
-            showToast(connectionResult?.message || 'Person created, but could not connect the relationship.');
-          }
-        } else {
-          showToast('Person created.');
-        }
-
-        if (createAnother) {
-          requestAnimationFrame(() => {
-            if (connectionIntent.shouldConnect) {
-              openAddPersonModal(title, subtitle, {
-                ...options,
-                personId: connectionIntent.anchorPersonId,
-                connectToPersonId: connectionIntent.anchorPersonId,
-                connectAfterCreate: true,
-                connectRelationshipType: connectionIntent.relationshipType
-              });
-            } else {
-              openAddPersonModal('Add person', 'Create a new person in this project');
-            }
-          });
-        }
-      });
+        });
       }
+    }
+
+    function selectAddPersonPossibleMatch(personId, options = {}, editPerson = null) {
+      addPersonPossibleMatchState.selectedPersonId = personId || '';
+      refreshAddPersonPossibleMatchesCard(options, editPerson);
+    }
+
+    function refreshAfterPossibleMatchConnection(anchorPersonId) {
+      closeModal();
+
+      state.selectedPersonId = anchorPersonId || state.selectedPersonId;
+      state.selectedPeopleId = anchorPersonId || state.selectedPeopleId;
+      state.treeInspectorCollapsed = false;
+
+      if (state.activeModule === 'Family Tree') {
+        renderFamilyTreePreserveScroll?.() || renderFamilyTree();
+      } else {
+        render();
+      }
+    }
+
+    function commitAddPersonPossibleMatchAction(options = {}) {
+      const selectedPerson = getPerson(addPersonPossibleMatchState.selectedPersonId);
+
+      if (!selectedPerson) {
+        showToast('Select a possible match first.');
+        return;
+      }
+
+      const connectionIntent = addPersonCreateConnectionIntent(options);
+
+      if (!connectionIntent.shouldConnect) {
+        openAddPersonPossibleMatch(selectedPerson.id);
+        return;
+      }
+
+      const relationshipValues = collectAddPersonRelationshipBlock();
+
+      if (relationshipValues.invalid) {
+        showToast(relationshipValues.message || 'Check the relationship details before connecting.');
+        return;
+      }
+
+      const result = connectPeopleByRelationship({
+        anchorPersonId: connectionIntent.anchorPersonId,
+        relativePersonId: selectedPerson.id,
+        relationshipType: connectionIntent.relationshipType
+      });
+
+      if (!result.ok) {
+        showToast(result.message || 'Could not connect the selected match.');
+        return;
+      }
+
+      applyPartnerDetailsToCreatedConnection(result, relationshipValues);
+
+      sampleData.events = buildSampleEvents();
+      refreshAfterPossibleMatchConnection(connectionIntent.anchorPersonId);
+
+      showToast(`${connectPersonName(selectedPerson)} connected as ${addPersonConnectionToastLabel(connectionIntent.relationshipType)}.`);
     }
 
     function readAddPersonModalValue(selector) {
@@ -17678,7 +18294,6 @@ function renderTreeCardDateLines(person) {
         }
         updateAddPersonConditionalFields();
       }));
-      modalBackdrop.querySelectorAll('[data-add-person-attach]').forEach(button => button.addEventListener('click', () => openAddPersonAttachOverlay(button.dataset.addPersonAttach)));
       modalBackdrop.querySelectorAll('[data-possible-match]').forEach(button => button.addEventListener('click', () => showToast(`Possible match selected: ${button.dataset.possibleMatch}. Connect/merge flow will be added later.`)));
     }
 
