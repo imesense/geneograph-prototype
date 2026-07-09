@@ -3892,6 +3892,71 @@
       }
     }
 
+    .unlink-relationship-modal {
+      width: min(560px, calc(100vw - 32px));
+    }
+
+    .unlink-relationship-body {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .unlink-relationship-warning {
+      border: 1px solid rgba(212, 170, 107, .55);
+      background: rgba(212, 170, 107, .12);
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      padding: var(--space-4);
+      line-height: 1.45;
+    }
+
+    .unlink-relationship-children {
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      padding: var(--space-4);
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .unlink-relationship-children-title {
+      color: var(--text-primary);
+      font-weight: 800;
+    }
+
+    .unlink-relationship-child-list {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    .unlink-relationship-options {
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .unlink-relationship-option {
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-secondary);
+      padding: var(--space-3);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      cursor: pointer;
+    }
+
+    .unlink-relationship-option:hover {
+      border-color: var(--border-strong);
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
+    }
+
+    .unlink-relationship-option input {
+      accent-color: var(--brand-green-400);
+    }
+
     .fact-button {
       display: inline-flex;
       align-items: center;
@@ -15357,12 +15422,28 @@ function renderTreeCardDateLines(person) {
       return escapeHtml(meta);
     }
 
-    function renderRelation(person, meta) {
+    function renderRelation(person, meta, relationship = {}) {
       if (!person) return '';
 
       const initials = person.names?.initials || '??';
       const name = person.names?.display || 'Unnamed person';
       const avatar = person.avatarClass || 'avatar-green';
+      const kind = String(relationship.kind || '').toLowerCase();
+      const canUnlink = ['parent', 'child', 'partner'].includes(kind);
+
+      const unlinkButton = canUnlink
+        ? `<button
+            class="relation-action-button relation-link-button"
+            type="button"
+            aria-label="Unlink ${escapeHtml(name)}"
+            data-unlink-relationship
+            data-unlink-kind="${escapeHtml(kind)}"
+            data-unlink-person-id="${escapeHtml(relationship.personId || '')}"
+            data-unlink-related-person-id="${escapeHtml(relationship.relatedPersonId || person.id)}"
+            data-unlink-family-id="${escapeHtml(relationship.familyId || '')}">
+            ${icon.unlink}
+          </button>`
+        : '';
 
       return `<div class="relation-row" tabindex="0" data-relation-person-id="${escapeHtml(person.id)}">
         <div class="relation-row-main">
@@ -15373,7 +15454,7 @@ function renderTreeCardDateLines(person) {
           </div>
         </div>
         <div class="relation-actions" aria-label="Relationship actions">
-          <button class="relation-action-button relation-link-button" type="button" aria-label="Unlink ${escapeHtml(name)}" data-toast="Unlink relationship is simulated.">${icon.unlink}</button>
+          ${unlinkButton}
           <button class="relation-action-button" type="button" aria-label="More options for ${escapeHtml(name)}" aria-haspopup="menu" aria-expanded="false" data-toast="Relationship options menu is simulated.">${icon.more}</button>
         </div>
       </div>`;
@@ -15428,22 +15509,50 @@ function renderTreeCardDateLines(person) {
       return [
         {
           title: 'Parents',
-          rows: parents.map(parent => renderRelation(parent, relationMeta(parentRelationLabel(parent), parent)))
+          rows: parents.map(parent => {
+            const family = unlinkFindCentralFamilyForParentChild(parent.id, personId);
+
+            return renderRelation(parent, relationMeta(parentRelationLabel(parent), parent), {
+              kind: 'parent',
+              personId,
+              relatedPersonId: parent.id,
+              familyId: family?.id || ''
+            });
+          })
         },
         {
           title: 'Siblings',
-          rows: siblings.map(sibling => renderRelation(sibling, relationMeta(siblingRelationLabel(sibling), sibling)))
+          rows: siblings.map(sibling => renderRelation(sibling, relationMeta(siblingRelationLabel(sibling), sibling), {
+            kind: 'sibling',
+            personId,
+            relatedPersonId: sibling.id
+          }))
         },
         {
           title: 'Partner',
           rows: partnerRelationships.map(rel => {
             const partner = getRelationshipPartner(rel, personId);
-            return renderRelation(partner, relationMeta(relationshipPersonLabel(rel.relationshipType), partner));
+
+            return renderRelation(partner, relationMeta(relationshipPersonLabel(rel.relationshipType), partner), {
+              kind: 'partner',
+              personId,
+              relatedPersonId: partner?.id || '',
+              familyId: rel.id || ''
+            });
           })
         },
         {
           title: 'Children',
-          rows: children.map(child => renderRelation(child, relationMeta(childRelationLabel(child), child)))
+          rows: children.map(child => {
+            const family = unlinkFindCentralFamilyForParentChild(personId, child.id);
+
+            return renderRelation(child, relationMeta(childRelationLabel(child), child), {
+              kind: 'child',
+              personId,
+              relatedPersonId: child.id,
+              familyId: family?.id || ''
+            });
+          })
         }
       ];
     }
@@ -17728,6 +17837,585 @@ function renderTreeCardDateLines(person) {
         if (!input) return;
         input.addEventListener('input', refresh);
         input.addEventListener('change', refresh);
+      });
+    }
+
+    function unlinkStoredFamilies() {
+      if (!Array.isArray(sampleData.families)) sampleData.families = [];
+      return sampleData.families;
+    }
+
+    function unlinkPersonName(personOrId) {
+      const person = typeof personOrId === 'string' ? getPerson(personOrId) : personOrId;
+      return person?.names?.display || person?.name || 'Unknown person';
+    }
+
+    function unlinkFamilyPartnerAId(family) {
+      return familyPartnerAId(family) || family?.fatherId || family?.husbandId || '';
+    }
+
+    function unlinkFamilyPartnerBId(family) {
+      return familyPartnerBId(family) || family?.motherId || family?.wifeId || '';
+    }
+
+    function unlinkFamilyIncludesPerson(family, personId) {
+      return Boolean(personId && (
+        unlinkFamilyPartnerAId(family) === personId
+          || unlinkFamilyPartnerBId(family) === personId
+      ));
+    }
+
+    function unlinkFamilyPartnerId(family, personId) {
+      if (unlinkFamilyPartnerAId(family) === personId) return unlinkFamilyPartnerBId(family);
+      if (unlinkFamilyPartnerBId(family) === personId) return unlinkFamilyPartnerAId(family);
+      return '';
+    }
+
+    function unlinkFamilyChildrenIds(family) {
+      return [...new Set([...(family?.childIds || []), ...(family?.childrenIds || [])].filter(Boolean))];
+    }
+
+    function unlinkSetFamilyChildren(family, childIds = []) {
+      const ids = [...new Set(childIds.filter(Boolean))];
+      family.childIds = ids;
+      family.childrenIds = [...ids];
+      return ids;
+    }
+
+    function unlinkStoredFamilyById(familyId) {
+      return unlinkStoredFamilies().find(family => family.id === familyId) || null;
+    }
+
+    function unlinkCentralFamilyById(familyId) {
+      return centralFamilyRecords().find(family => family.id === familyId) || null;
+    }
+
+    function unlinkMaterializeFamily(family) {
+      if (!family?.id) return null;
+
+      const existing = unlinkStoredFamilyById(family.id);
+      if (existing) return existing;
+
+      const copy = {
+        ...family,
+        childIds: unlinkFamilyChildrenIds(family),
+        childrenIds: unlinkFamilyChildrenIds(family),
+        events: Array.isArray(family.events) ? [...family.events] : [],
+        attributes: Array.isArray(family.attributes) ? [...family.attributes] : [],
+        notes: Array.isArray(family.notes) ? [...family.notes] : [],
+        citations: Array.isArray(family.citations) ? [...family.citations] : [],
+        mediaIds: Array.isArray(family.mediaIds) ? [...family.mediaIds] : []
+      };
+
+      unlinkStoredFamilies().push(copy);
+      return copy;
+    }
+
+    function unlinkFindCentralFamilyForParentChild(parentId, childId, preferredFamilyId = '') {
+      const families = centralFamilyRecords();
+
+      if (preferredFamilyId) {
+        const family = families.find(item =>
+          item.id === preferredFamilyId
+            && unlinkFamilyIncludesPerson(item, parentId)
+            && unlinkFamilyChildrenIds(item).includes(childId)
+        );
+
+        if (family) return family;
+      }
+
+      return families.find(family =>
+        unlinkFamilyIncludesPerson(family, parentId)
+          && unlinkFamilyChildrenIds(family).includes(childId)
+      ) || null;
+    }
+
+    function unlinkFindStoredFamilyForParentChild(parentId, childId, preferredFamilyId = '') {
+      return unlinkMaterializeFamily(
+        unlinkFindCentralFamilyForParentChild(parentId, childId, preferredFamilyId)
+      );
+    }
+
+    function unlinkFindCentralPartnerFamily(personAId, personBId, preferredFamilyId = '') {
+      const families = centralFamilyRecords();
+
+      if (preferredFamilyId) {
+        const family = families.find(item =>
+          item.id === preferredFamilyId
+            && unlinkFamilyIncludesPerson(item, personAId)
+            && unlinkFamilyIncludesPerson(item, personBId)
+        );
+
+        if (family) return family;
+      }
+
+      return families.find(family =>
+        unlinkFamilyIncludesPerson(family, personAId)
+          && unlinkFamilyIncludesPerson(family, personBId)
+      ) || null;
+    }
+
+    function unlinkFindStoredPartnerFamily(personAId, personBId, preferredFamilyId = '') {
+      return unlinkMaterializeFamily(
+        unlinkFindCentralPartnerFamily(personAId, personBId, preferredFamilyId)
+      );
+    }
+
+    function unlinkUniqueFamilyId(base = 'family') {
+      const cleanBase = String(base || 'family')
+        .replace(/[^a-z0-9]+/gi, '-')
+        .replace(/^-|-$/g, '') || 'family';
+
+      let id = cleanBase;
+      let counter = 2;
+
+      while (centralFamilyRecords().some(family => family.id === id) || unlinkStoredFamilyById(id)) {
+        id = `${cleanBase}-${counter}`;
+        counter += 1;
+      }
+
+      return id;
+    }
+
+    function unlinkParentSlotForPerson(parentId) {
+      const gender = String(getPerson(parentId)?.gender || '').toLowerCase();
+
+      if (gender === 'female') {
+        return {
+          partnerAId: '',
+          partnerBId: parentId,
+          fatherId: '',
+          motherId: parentId,
+          partnerARoleHint: '',
+          partnerBRoleHint: 'WIFE'
+        };
+      }
+
+      return {
+        partnerAId: parentId,
+        partnerBId: '',
+        fatherId: parentId,
+        motherId: '',
+        partnerARoleHint: 'HUSB',
+        partnerBRoleHint: ''
+      };
+    }
+
+    function unlinkApplyFamilyAliases(family) {
+      const partnerA = unlinkFamilyPartnerAId(family);
+      const partnerB = unlinkFamilyPartnerBId(family);
+
+      family.partnerAId = partnerA;
+      family.partner1Id = partnerA;
+      family.personAId = partnerA;
+
+      family.partnerBId = partnerB;
+      family.partner2Id = partnerB;
+      family.personBId = partnerB;
+
+      unlinkSetFamilyChildren(family, unlinkFamilyChildrenIds(family));
+
+      family.events = Array.isArray(family.events) ? family.events : [];
+      family.attributes = Array.isArray(family.attributes) ? family.attributes : [];
+      family.notes = Array.isArray(family.notes) ? family.notes : [];
+      family.citations = Array.isArray(family.citations) ? family.citations : [];
+      family.mediaIds = Array.isArray(family.mediaIds) ? family.mediaIds : [];
+
+      family.type = family.type || 'family';
+      family.relationshipStatus = family.relationshipStatus || 'active';
+
+      return family;
+    }
+
+    function unlinkFindStoredSingleParentFamily(parentId) {
+      return unlinkStoredFamilies().find(family => {
+        const partnerA = unlinkFamilyPartnerAId(family);
+        const partnerB = unlinkFamilyPartnerBId(family);
+        const partners = [partnerA, partnerB].filter(Boolean);
+
+        return partners.length === 1 && partners[0] === parentId;
+      }) || null;
+    }
+
+    function unlinkCreateSingleParentFamily(parentId, childIds = [], projectId = '') {
+      const slot = unlinkParentSlotForPerson(parentId);
+      const family = {
+        id: unlinkUniqueFamilyId(`family-${parentId}-single-parent`),
+        projectId: projectId || currentProjectId(),
+        type: 'family',
+
+        fatherId: slot.fatherId,
+        motherId: slot.motherId,
+
+        partnerAId: slot.partnerAId,
+        partner1Id: slot.partnerAId,
+        personAId: slot.partnerAId,
+        partnerARoleHint: slot.partnerARoleHint,
+
+        partnerBId: slot.partnerBId,
+        partner2Id: slot.partnerBId,
+        personBId: slot.partnerBId,
+        partnerBRoleHint: slot.partnerBRoleHint,
+
+        relationshipType: 'Single parent',
+        relationshipStatus: 'active',
+        childIds: [],
+        childrenIds: [],
+        events: [],
+        attributes: [],
+        notes: [],
+        citations: [],
+        mediaIds: [],
+        gedcomXref: ''
+      };
+
+      family.gedcomXref = `@F${family.id.replace(/[^a-z0-9]/gi, '').toUpperCase()}@`;
+      unlinkSetFamilyChildren(family, childIds);
+
+      unlinkStoredFamilies().push(family);
+      return family;
+    }
+
+    function unlinkAddChildrenToSingleParentFamily(parentId, childIds = [], projectId = '') {
+      if (!parentId || !childIds.length) return null;
+
+      const family = unlinkFindStoredSingleParentFamily(parentId)
+        || unlinkCreateSingleParentFamily(parentId, [], projectId);
+
+      unlinkSetFamilyChildren(family, [
+        ...unlinkFamilyChildrenIds(family),
+        ...childIds
+      ]);
+
+      return unlinkApplyFamilyAliases(family);
+    }
+
+    function unlinkFamilyHasPartnerPair(family) {
+      return Boolean(unlinkFamilyPartnerAId(family) && unlinkFamilyPartnerBId(family));
+    }
+
+    function unlinkFamilyHasPayload(family) {
+      return Boolean(
+        (family?.events || []).length
+          || (family?.attributes || []).length
+          || (family?.notes || []).length
+          || (family?.citations || []).length
+          || (family?.mediaIds || []).length
+      );
+    }
+
+    function unlinkRemoveFamilyById(familyId) {
+      const families = unlinkStoredFamilies();
+      const index = families.findIndex(family => family.id === familyId);
+
+      if (index >= 0) {
+        families.splice(index, 1);
+        return true;
+      }
+
+      return false;
+    }
+
+    function unlinkRemoveFamilyIfEmptyAndOrphaned(family) {
+      if (!family?.id) return false;
+      if (unlinkFamilyChildrenIds(family).length) return false;
+      if (unlinkFamilyHasPartnerPair(family)) return false;
+      if (unlinkFamilyHasPayload(family)) return false;
+
+      return unlinkRemoveFamilyById(family.id);
+    }
+
+    function unlinkParentChildRelationship({ parentId, childId, familyId = '' } = {}) {
+      if (!parentId || !childId) {
+        return { ok: false, message: 'Relationship information is missing.' };
+      }
+
+      const family = unlinkFindStoredFamilyForParentChild(parentId, childId, familyId);
+
+      if (!family) {
+        return { ok: false, message: 'Relationship record not found.' };
+      }
+
+      const children = unlinkFamilyChildrenIds(family);
+
+      if (!children.includes(childId)) {
+        return { ok: false, message: 'This parent-child relationship has already been removed.' };
+      }
+
+      const otherParentId = unlinkFamilyPartnerId(family, parentId);
+
+      unlinkSetFamilyChildren(
+        family,
+        children.filter(id => id !== childId)
+      );
+
+      if (otherParentId) {
+        unlinkAddChildrenToSingleParentFamily(otherParentId, [childId], family.projectId);
+      }
+
+      unlinkApplyFamilyAliases(family);
+      unlinkRemoveFamilyIfEmptyAndOrphaned(family);
+
+      return {
+        ok: true,
+        message: 'Relationship unlinked.'
+      };
+    }
+
+    function unlinkPartnerRelationship({ personAId, personBId, familyId = '', keepChildrenWithParentId = '' } = {}) {
+      if (!personAId || !personBId) {
+        return { ok: false, message: 'Relationship information is missing.' };
+      }
+
+      const family = unlinkFindStoredPartnerFamily(personAId, personBId, familyId);
+
+      if (!family) {
+        return { ok: false, message: 'Relationship record not found.' };
+      }
+
+      const childIds = unlinkFamilyChildrenIds(family);
+
+      if (childIds.length) {
+        if (![personAId, personBId].includes(keepChildrenWithParentId)) {
+          return { ok: false, message: 'Choose which parent should keep the children.' };
+        }
+
+        unlinkAddChildrenToSingleParentFamily(
+          keepChildrenWithParentId,
+          childIds,
+          family.projectId
+        );
+      }
+
+      unlinkRemoveFamilyById(family.id);
+
+      return {
+        ok: true,
+        message: 'Relationship unlinked.'
+      };
+    }
+
+    function refreshAfterRelationshipUnlink(focusPersonId, sidebarContext = 'tree') {
+      syncFamilyReciprocalLinks();
+      sampleData.events = buildSampleEvents();
+
+      if (focusPersonId) {
+        state.selectedPersonId = focusPersonId;
+        if (sidebarContext === 'people') state.selectedPeopleId = focusPersonId;
+      }
+
+      closeModal();
+
+      if (sidebarContext === 'people') {
+        renderPeople();
+      } else {
+        renderFamilyTreePreserveScroll?.() || renderFamilyTree();
+      }
+    }
+
+    function buildUnlinkRelationshipContext(raw = {}) {
+      const kind = String(raw.kind || '').toLowerCase();
+      const personId = String(raw.personId || '');
+      const relatedPersonId = String(raw.relatedPersonId || '');
+      const familyId = String(raw.familyId || '');
+      const sidebarContext = raw.sidebarContext || 'tree';
+
+      if (!personId || !relatedPersonId) {
+        return { ok: false, message: 'Relationship information is missing.' };
+      }
+
+      if (kind === 'sibling') {
+        return {
+          ok: false,
+          message: 'Sibling relationships come from shared parents. Remove or edit parent-child links instead.'
+        };
+      }
+
+      if (kind === 'parent') {
+        const family = unlinkFindCentralFamilyForParentChild(relatedPersonId, personId, familyId);
+
+        return {
+          ok: Boolean(family),
+          message: family ? '' : 'Relationship record not found.',
+          kind,
+          sidebarContext,
+          personId,
+          relatedPersonId,
+          parentId: relatedPersonId,
+          childId: personId,
+          familyId: family?.id || familyId,
+          childrenIds: []
+        };
+      }
+
+      if (kind === 'child') {
+        const family = unlinkFindCentralFamilyForParentChild(personId, relatedPersonId, familyId);
+
+        return {
+          ok: Boolean(family),
+          message: family ? '' : 'Relationship record not found.',
+          kind,
+          sidebarContext,
+          personId,
+          relatedPersonId,
+          parentId: personId,
+          childId: relatedPersonId,
+          familyId: family?.id || familyId,
+          childrenIds: []
+        };
+      }
+
+      if (kind === 'partner') {
+        const family = unlinkFindCentralPartnerFamily(personId, relatedPersonId, familyId);
+        const childrenIds = unlinkFamilyChildrenIds(family);
+
+        return {
+          ok: Boolean(family),
+          message: family ? '' : 'Relationship record not found.',
+          kind,
+          sidebarContext,
+          personId,
+          relatedPersonId,
+          personAId: personId,
+          personBId: relatedPersonId,
+          familyId: family?.id || familyId,
+          childrenIds
+        };
+      }
+
+      return {
+        ok: false,
+        message: 'Unsupported relationship type.'
+      };
+    }
+
+    function renderUnlinkRelationshipChildren(context) {
+      if (context.kind !== 'partner' || !context.childrenIds.length) return '';
+
+      const personAName = unlinkPersonName(context.personAId);
+      const personBName = unlinkPersonName(context.personBId);
+
+      return `<div class="unlink-relationship-children">
+        <div class="unlink-relationship-children-title">Children connected through this relationship</div>
+        <ul class="unlink-relationship-child-list">
+          ${context.childrenIds.map(childId => `<li>${escapeHtml(unlinkPersonName(childId))}</li>`).join('')}
+        </ul>
+
+        <div class="unlink-relationship-options" role="radiogroup" aria-label="Choose parent to keep children">
+          <label class="unlink-relationship-option">
+            <input type="radio" name="unlinkKeepChildrenWith" value="${escapeHtml(context.personAId)}">
+            <span>Keep children with ${escapeHtml(personAName)}</span>
+          </label>
+          <label class="unlink-relationship-option">
+            <input type="radio" name="unlinkKeepChildrenWith" value="${escapeHtml(context.personBId)}">
+            <span>Keep children with ${escapeHtml(personBName)}</span>
+          </label>
+        </div>
+      </div>`;
+    }
+
+    function unlinkRelationshipDescription(context) {
+      if (context.kind === 'parent') {
+        return `This will remove ${unlinkPersonName(context.parentId)} as ${unlinkPersonName(context.childId)}’s parent. Neither person will be deleted.`;
+      }
+
+      if (context.kind === 'child') {
+        return `This will remove ${unlinkPersonName(context.childId)} as ${unlinkPersonName(context.parentId)}’s child. Neither person will be deleted.`;
+      }
+
+      if (context.kind === 'partner') {
+        const base = `This will remove the partner relationship between ${unlinkPersonName(context.personAId)} and ${unlinkPersonName(context.personBId)}. Neither person will be deleted.`;
+
+        if (context.childrenIds.length) {
+          return `${base} Choose which parent should keep the children after unlinking.`;
+        }
+
+        return base;
+      }
+
+      return 'This will remove the selected relationship. No person will be deleted.';
+    }
+
+    function renderUnlinkRelationshipModal(context) {
+      const needsChildDecision = context.kind === 'partner' && context.childrenIds.length > 0;
+
+      return `<div class="modal unlink-relationship-modal" role="dialog" aria-modal="true" aria-labelledby="unlinkRelationshipTitle">
+        <div class="modal-header">
+          <div>
+            <h2 id="unlinkRelationshipTitle">Remove relationship?</h2>
+            <p>This changes the relationship only. People records will remain in the project.</p>
+          </div>
+          <button class="close-button" type="button" data-close>${icon.close}</button>
+        </div>
+
+        <div class="modal-body unlink-relationship-body">
+          <div class="unlink-relationship-warning">
+            ${escapeHtml(unlinkRelationshipDescription(context))}
+          </div>
+
+          ${renderUnlinkRelationshipChildren(context)}
+        </div>
+
+        <div class="modal-footer">
+          <button class="button secondary" type="button" data-close>Cancel</button>
+          <button class="button danger" type="button" data-confirm-unlink-relationship ${needsChildDecision ? 'disabled' : ''}>
+            Unlink relationship
+          </button>
+        </div>
+      </div>`;
+    }
+
+    function openUnlinkRelationshipModal(rawContext = {}) {
+      const context = buildUnlinkRelationshipContext(rawContext);
+
+      if (!context.ok) {
+        showToast(context.message || 'Relationship cannot be unlinked.');
+        return;
+      }
+
+      openModal(renderUnlinkRelationshipModal(context));
+      bindUnlinkRelationshipModal(context);
+    }
+
+    function bindUnlinkRelationshipModal(context) {
+      const confirmButton = modalBackdrop.querySelector('[data-confirm-unlink-relationship]');
+      const keepChildrenInputs = [...modalBackdrop.querySelectorAll('input[name="unlinkKeepChildrenWith"]')];
+
+      keepChildrenInputs.forEach(input => {
+        input.addEventListener('change', () => {
+          if (confirmButton) confirmButton.disabled = false;
+        });
+      });
+
+      confirmButton?.addEventListener('click', () => {
+        let result = null;
+
+        if (context.kind === 'parent' || context.kind === 'child') {
+          result = unlinkParentChildRelationship({
+            parentId: context.parentId,
+            childId: context.childId,
+            familyId: context.familyId
+          });
+        }
+
+        if (context.kind === 'partner') {
+          const keepChildrenWithParentId = modalBackdrop.querySelector('input[name="unlinkKeepChildrenWith"]:checked')?.value || '';
+
+          result = unlinkPartnerRelationship({
+            personAId: context.personAId,
+            personBId: context.personBId,
+            familyId: context.familyId,
+            keepChildrenWithParentId
+          });
+        }
+
+        if (!result?.ok) {
+          showToast(result?.message || 'Relationship could not be unlinked.');
+          return;
+        }
+
+        refreshAfterRelationshipUnlink(context.personId, context.sidebarContext);
+        showToast(result.message || 'Relationship unlinked.');
       });
     }
 
@@ -20137,6 +20825,25 @@ const defaultPeopleFilters = Object.freeze({ surname: '', birthPlace: '', living
         state.inspectorSections[id] = !sectionIsOpen(id);
         rerenderPersonSidebarContext(context);
       }));
+      root.querySelectorAll('[data-unlink-relationship]').forEach(button => {
+        button.addEventListener('click', event => {
+          event.stopPropagation();
+
+          const personId = button.dataset.unlinkPersonId || selected?.id || '';
+
+          if (personId) {
+            syncPersonSidebarSelection(personId, context);
+          }
+
+          openUnlinkRelationshipModal({
+            sidebarContext: context,
+            kind: button.dataset.unlinkKind || '',
+            personId,
+            relatedPersonId: button.dataset.unlinkRelatedPersonId || '',
+            familyId: button.dataset.unlinkFamilyId || ''
+          });
+        });
+      });
       bindToasts(root);
     }
 
