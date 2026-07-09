@@ -4143,9 +4143,31 @@
 
     .add-person-select {
       width: 100%;
+      height: var(--control-height);
+      min-height: var(--control-height);
+      max-height: var(--control-height);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-input);
+      color: var(--text-secondary);
+      padding: 0 42px 0 var(--space-3);
+      box-sizing: border-box;
       appearance: none;
-      padding-right: 42px;
+      -webkit-appearance: none;
       background-image: none;
+      cursor: pointer;
+    }
+
+    .add-person-select:hover {
+      background: var(--surface-card-hover);
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+    }
+
+    .add-person-select:focus {
+      outline: 0;
+      border-color: var(--brand-green-500);
+      color: var(--text-primary);
     }
 
     .add-person-select-chevron {
@@ -4165,6 +4187,11 @@
       height: 16px;
       display: block;
       transform: rotate(90deg);
+    }
+
+    .add-person-select-field:hover .add-person-select-chevron,
+    .add-person-select-field:focus-within .add-person-select-chevron {
+      color: var(--text-primary);
     }
 
     .add-person-status-chevron {
@@ -4263,7 +4290,7 @@
       align-self: end;
       margin-top: var(--space-3);
     }
-    .genealogy-date-field.is-between .genealogy-date-type {
+    .genealogy-date-field.is-between .genealogy-date-type-shell {
       grid-column: 1;
       grid-row: 2;
       min-height: var(--control-height);
@@ -4432,6 +4459,46 @@
       min-width: 0;
     }
 
+    .add-person-relationship-partner-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) var(--control-height);
+      gap: var(--space-3);
+      align-items: center;
+    }
+
+    .add-person-relationship-partner-shell .add-person-relationship-partner {
+      min-width: 0;
+    }
+
+    .add-person-relationship-partner-unlink {
+      width: var(--control-height);
+      height: var(--control-height);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-input);
+      color: var(--text-secondary);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: background var(--ease), border-color var(--ease), color var(--ease);
+    }
+
+    .add-person-relationship-partner-unlink svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .add-person-relationship-partner-unlink:hover {
+      background: var(--surface-card-hover);
+      border-color: var(--border-strong);
+      color: var(--red);
+    }
+
+    .add-person-relationship-partner-unlink:focus-visible {
+      outline: 2px solid var(--brand-green-400);
+      outline-offset: 2px;
+    }
+
     .add-person-relationship-card .genealogy-date-controls {
       grid-template-columns: minmax(130px, 180px) minmax(0, 1fr) var(--control-icon-button-size);
       min-width: 0;
@@ -4506,8 +4573,8 @@
       margin-top: var(--space-3);
     }
 
-    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-type,
-    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-type {
+    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-type-shell,
+    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-type-shell {
       grid-column: 1;
       grid-row: 2;
       align-self: start;
@@ -4733,7 +4800,7 @@
       margin-top: var(--space-2);
     }
 
-    .add-person-fact-grid .genealogy-date-field.is-between .genealogy-date-type {
+    .add-person-fact-grid .genealogy-date-field.is-between .genealogy-date-type-shell {
       grid-column: 1;
       grid-row: 2;
       min-height: var(--control-height);
@@ -11035,6 +11102,88 @@
     .field input,
     .field select,
     .compact-select,
+    .common-select-shell,
+    .common-select,
+    .add-person-select,
+    .add-person-status-button,
+    .genealogy-date-type,
+    .genealogy-date-input,
+    .genealogy-date-details-button {
+      box-sizing: border-box;
+      height: var(--control-height);
+      min-height: var(--control-height);
+      max-height: var(--control-height);
+    }
+
+    .common-select-shell {
+      position: relative;
+      display: block;
+      width: 100%;
+      min-width: 0;
+      height: var(--control-height);
+      min-height: var(--control-height);
+      max-height: var(--control-height);
+    }
+
+    .common-select {
+      display: block;
+      width: 100%;
+      height: var(--control-height);
+      min-height: var(--control-height);
+      max-height: var(--control-height);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-input);
+      color: var(--text-secondary);
+      padding: 0 42px 0 var(--space-3);
+      box-sizing: border-box;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: none;
+      cursor: pointer;
+    }
+
+    .common-select:hover {
+      background: var(--surface-card-hover);
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+    }
+
+    .common-select:focus {
+      outline: 0;
+      border-color: var(--brand-green-500);
+      color: var(--text-primary);
+    }
+
+    .common-select-chevron {
+      position: absolute;
+      top: 0;
+      right: 14px;
+      bottom: 0;
+      z-index: 2;
+      width: 18px;
+      height: auto;
+      display: grid;
+      place-items: center;
+      color: var(--text-tertiary);
+      pointer-events: none;
+    }
+
+    .common-select-chevron svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+      transform: rotate(90deg);
+    }
+
+    .common-select-shell:hover .common-select-chevron,
+    .common-select-shell:focus-within .common-select-chevron {
+      color: var(--text-primary);
+    }
+
+    .genealogy-date-field.has-error .common-select {
+      border-color: rgba(255, 111, 111, .65);
+    }
     .add-person-select,
     .add-person-status-button,
     .genealogy-date-type,
@@ -11074,7 +11223,6 @@
     .add-person-fact-grid .genealogy-date-field.is-between {
       grid-template-rows: auto var(--control-height) auto var(--control-height) auto;
     }
-
   </style>
 </head>
 <body>
@@ -12258,7 +12406,12 @@
       return `<div class="field genealogy-date-field ${isBetween ? 'is-between' : ''} ${escapeHtml(fieldClass)}" data-genealogy-date-field="${escapeHtml(fieldId)}">
         <label for="${escapeHtml(inputId)}">${escapeHtml(label)}</label>
         <div class="genealogy-date-controls">
-          <select class="compact-select genealogy-date-type" id="${escapeHtml(typeId)}" data-genealogy-date-type>${genealogyDateTypeOptions(model.dateType)}</select>
+          <div class="common-select-shell genealogy-date-type-shell">
+            <select class="compact-select common-select genealogy-date-type" id="${escapeHtml(typeId)}" data-genealogy-date-type>
+              ${genealogyDateTypeOptions(model.dateType)}
+            </select>
+            <span class="common-select-chevron" aria-hidden="true">${icon.chevron}</span>
+          </div>
           <div class="genealogy-date-range-shell" data-genealogy-date-range-shell>
             <div class="genealogy-date-range-cell">
               <span>From</span>
@@ -16828,6 +16981,7 @@ function renderTreeCardDateLines(person) {
       );
       const marriageType = marriage.typeLabel || relationship?.marriageType || 'Civil';
       const showMarriageType = addPersonRelationshipShowsMarriageType(relationshipType);
+      const showPartnerUnlinkToast = Boolean(mode === 'edit' && relationship?.id && personId && partner?.id);
 
       return `<div class="add-person-relationship-card" data-add-person-relationship-card data-relationship-id="${escapeHtml(relationship?.id || '')}" data-partner-id="${escapeHtml(partner?.id || '')}" data-relationship-index="${index}">
         <div class="add-person-relationship-grid">
@@ -16841,9 +16995,23 @@ function renderTreeCardDateLines(person) {
 
           <div class="field add-person-relationship-partner-field">
             <label data-add-person-partner-label>${escapeHtml(partnerLabel)}</label>
-            <div class="add-person-relationship-partner">
-              ${addPersonRelationshipPartnerAvatar(partner)}
-              <span>${escapeHtml(partnerName)}</span>
+            <div class="add-person-relationship-partner-shell">
+              <div class="add-person-relationship-partner">
+                ${addPersonRelationshipPartnerAvatar(partner)}
+                <span>${escapeHtml(partnerName)}</span>
+              </div>
+              ${showPartnerUnlinkToast ? `
+                <button
+                  class="add-person-relationship-partner-unlink"
+                  type="button"
+                  aria-label="Unlink ${escapeHtml(partnerName)}"
+                  data-add-person-unlink-partner-toast
+                  data-person-id="${escapeHtml(personId)}"
+                  data-partner-id="${escapeHtml(partner?.id || '')}"
+                  data-relationship-id="${escapeHtml(relationship?.id || '')}">
+                  ${icon.unlink}
+                </button>
+              ` : ''}
             </div>
           </div>
 
@@ -16939,6 +17107,21 @@ function renderTreeCardDateLines(person) {
 
         select.addEventListener('change', updateRelationshipFields);
         updateRelationshipFields();
+      });
+
+      modalBackdrop?.querySelectorAll('[data-add-person-unlink-partner-toast]').forEach(button => {
+        if (button.dataset.unlinkToastBound === 'true') return;
+        button.dataset.unlinkToastBound = 'true';
+
+        button.addEventListener('click', event => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          const partner = getPerson(button.dataset.partnerId || '');
+          const partnerName = partner?.names?.display || partner?.name || 'this spouse';
+
+          showToast(`To unlink ${partnerName}, use the unlink action in the right-side Relationships panel.`);
+        });
       });
     }
 
