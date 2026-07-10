@@ -5416,6 +5416,89 @@
       font-weight: 900;
     }
 
+    .people-saved-filter-row {
+      width: 100%;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease);
+    }
+
+    .people-saved-filter-row:hover {
+      background: rgba(255, 255, 255, .035);
+    }
+
+    .people-saved-filter-row.active {
+      background: var(--surface-selected);
+      border-color: rgba(98, 217, 154, .12);
+    }
+
+    .people-saved-filter-main {
+      min-width: 0;
+      min-height: 42px;
+      flex: 1 1 auto;
+      padding: 0 var(--space-3);
+      border: 0;
+      background: transparent;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      text-align: left;
+      font-weight: 700;
+      letter-spacing: .03em;
+      cursor: pointer;
+    }
+
+    .people-saved-filter-main svg {
+      width: 19px;
+      height: 19px;
+      flex: 0 0 auto;
+      color: var(--text-tertiary);
+    }
+
+    .people-saved-filter-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .people-saved-filter-row.active .people-saved-filter-main {
+      color: var(--text-primary);
+    }
+
+    .people-saved-filter-row.active .people-saved-filter-main svg {
+      color: var(--brand-green-300);
+    }
+
+    .people-saved-filter-more {
+      flex: 0 0 34px;
+      margin: 0 var(--space-2) 0 0;
+      opacity: 0;
+      transition: opacity var(--ease);
+    }
+
+    .people-saved-filter-row:hover .people-saved-filter-more,
+    .people-saved-filter-row:focus-within .people-saved-filter-more,
+    .people-saved-filter-row.active .people-saved-filter-more {
+      opacity: 1;
+    }
+
+    .people-filter-delete-copy {
+      padding: var(--space-4);
+      border: 1px solid rgba(212, 107, 107, .24);
+      border-radius: var(--radius-sm);
+      background: rgba(212, 107, 107, .08);
+      color: #f0b8b8;
+    }
+
     .people-filter-button {
       position: relative;
       white-space: nowrap;
@@ -5482,10 +5565,13 @@
     }
 
     .people-filter-grid {
-      padding: var(--space-4);
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: var(--space-3);
+    }
+
+    .people-filter-popover > .people-filter-grid {
+      padding: var(--space-4);
     }
 
     .people-filter-field {
@@ -5542,6 +5628,75 @@
       letter-spacing: .01em;
     }
 
+    .people-saved-view-modal {
+      width: min(620px, calc(100vw - 32px));
+    }
+
+    .people-saved-view-body {
+      display: grid;
+      gap: var(--space-5);
+    }
+
+    .people-saved-view-identity {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .people-saved-view-filters {
+      display: grid;
+      gap: var(--space-3);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--border-default);
+    }
+
+    .people-saved-view-section-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-4);
+    }
+
+    .people-saved-view-section-header h3 {
+      margin: 0 0 4px;
+      color: var(--text-primary);
+      font-size: 15px;
+    }
+
+    .people-saved-view-section-header p {
+      margin: 0;
+      color: var(--text-tertiary);
+      font-size: 13px;
+    }
+
+    .people-saved-view-clear {
+      flex: 0 0 auto;
+    }
+
+    .people-saved-view-error {
+      margin: 0;
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .people-saved-view-error[hidden] {
+      display: none;
+    }
+
+    @media (max-width: 640px) {
+      .people-filter-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .people-saved-view-section-header {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .people-saved-view-clear {
+        align-self: flex-start;
+      }
+    }
 
     .people-columns-button {
       white-space: nowrap;
@@ -5636,19 +5791,27 @@
     .more-button {
       width: 34px;
       height: 34px;
-      border-radius: 8px;
+      flex: 0 0 34px;
+      padding: 0;
       border: 1px solid transparent;
+      border-radius: var(--radius-sm);
       background: transparent;
       color: var(--text-tertiary);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      font-size: 18px;
-      line-height: 1;
-      font-weight: 900;
-      letter-spacing: 1px;
-      transition: background var(--ease), border-color var(--ease), color var(--ease);
+      display: inline-grid;
+      place-items: center;
+      line-height: 0;
+      cursor: pointer;
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease);
+    }
+
+    .more-button svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+      pointer-events: none;
     }
 
     .more-button:hover, .more-button:focus-visible {
@@ -6016,50 +6179,10 @@
       padding-bottom: 8px;
       border-bottom: 1px solid rgba(255,255,255,.045);
     }
-
-    .profile-info-row:last-child { border-bottom: 0; padding-bottom: 0; }
-    .profile-info-row span { color: var(--text-tertiary); font-size: 12px; font-weight: 800; }
-    .profile-info-row strong { color: var(--text-primary); line-height: 1.35; overflow-wrap: anywhere; }
-    .profile-info-row small { color: var(--text-tertiary); line-height: 1.35; }
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-
-    
-
     .profile-linked-copy {
       min-width: 0;
       flex: 1 1 auto;
     }
-
-    
-
-    
-
-    
-
-    
-
-    
-    .profile-family-scroll {
-      max-height: 430px;
-      overflow-y: auto;
-      display: grid;
-      gap: var(--space-4);
-    }
-
-    .profile-family-group { display: grid; gap: var(--space-2); }
-    .profile-family-row-button .small-avatar { flex: 0 0 auto; }
 
     .profile-photo-grid-updated {
       display: grid;
@@ -6369,31 +6492,9 @@
       color: var(--text-primary);
     }
 
-    
-    
-    
-    
-    
-    
     .people-hero-copy h2 { margin-bottom: 8px; }
     .people-hero-copy p { margin-bottom: 8px; }
     
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
     @media (max-width: 1280px) {.people-layout { grid-template-columns: minmax(0, 1fr); }
       .people-person-sidebar { display: none; }
       .people-toolbar { grid-template-columns: 1fr auto; }
@@ -6452,16 +6553,6 @@
       text-transform: uppercase;
       letter-spacing: .08em;
     }
-    .profile-info-row {
-      display: grid;
-      grid-template-columns: minmax(92px, .72fr) minmax(0, 1fr);
-      gap: var(--space-3);
-      color: var(--text-secondary);
-      font-size: 13px;
-      min-width: 0;
-    }
-    .profile-info-row span:first-child { color: var(--text-tertiary); }
-    .profile-info-row strong { color: var(--text-primary); min-width: 0; overflow: hidden; text-overflow: ellipsis; }
     .profile-partner-value { display: grid; gap: 3px; min-width: 0; }
     .profile-partner-meta { color: var(--text-secondary); font-size: 13px; line-height: 1.35; overflow: hidden; text-overflow: ellipsis; }
     .profile-partner-link { border: 0; background: transparent; color: var(--text-primary); padding: 0; font: inherit; font-weight: 900; text-align: left; cursor: pointer; min-width: 0; }
@@ -6536,88 +6627,6 @@
     .profile-connected-cube .profile-note-tile { min-height: 74px; }
     .profile-connected-cube .profile-photo-button { min-height: 62px; }
 
-    .profile-connected-card .profile-connected-head {
-      min-height: 52px;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: center;
-      gap: var(--space-3);
-      padding: var(--space-3) var(--space-4);
-    }
-    .profile-connected-title {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-2);
-      min-width: 0;
-      font-size: 16px;
-      font-weight: 900;
-      color: var(--text-primary);
-    }
-    .profile-connected-icon {
-      width: 26px;
-      height: 26px;
-      flex: 0 0 26px;
-      display: inline-grid;
-      place-items: center;
-      color: var(--text-primary);
-      opacity: .92;
-    }
-    .profile-connected-icon svg {
-      width: 24px;
-      height: 24px;
-      display: block;
-    }
-    .profile-connected-actions {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-2);
-      white-space: nowrap;
-    }
-    .profile-connected-action {
-      min-height: 30px;
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--brand-green-300);
-      border-radius: 8px;
-      padding: 0 8px;
-      font-size: 13px;
-      line-height: 1;
-      font-weight: 900;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-    .profile-connected-action:hover,
-    .profile-connected-action:focus-visible {
-      background: rgba(47,174,116,.09);
-      border-color: rgba(98,217,154,.18);
-      color: var(--text-primary);
-    }
-
-    .profile-compact-timeline {
-      border: 1px solid var(--border-default);
-      background: var(--surface-card);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-    }
-    .profile-compact-timeline h3 {
-      min-height: 48px;
-      margin: 0;
-      padding: var(--space-3) var(--space-4);
-      border-bottom: 1px solid var(--border-default);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-3);
-      font-size: 16px;
-    }
-    .profile-compact-timeline-list {
-      position: relative;
-      display: grid;
-      gap: 4px;
-      padding: var(--space-4);
-      max-height: 330px;
-      overflow-y: auto;
-    }
     .profile-compact-timeline-list::before {
       content: "";
       position: absolute;
@@ -6660,6 +6669,541 @@
       .profile-edit-card,
       .profile-family-hub { min-height: auto; }}
 
+    /* =========================================================
+      People Profile — canonical component styles
+      ========================================================= */
+
+    /* Profile page layout */
+
+    .main.people-profile-main {
+      min-height: 0;
+      overflow: auto;
+    }
+
+    .person-profile {
+      --profile-card-min-h: 408px;
+      --profile-family-sync-h: var(--profile-card-min-h);
+
+      min-height: 100%;
+      height: auto;
+      box-sizing: border-box;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto auto auto;
+      align-items: start;
+      gap: var(--space-4);
+      padding: 24px 28px 36px;
+      background: var(--surface-main);
+      overflow: visible;
+    }
+
+    .person-profile .profile-command-hero,
+    .person-profile__top,
+    .person-profile__bottom {
+      grid-column: 1 / -1;
+      min-width: 0;
+    }
+
+    .person-profile__top,
+    .person-profile__bottom {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 390px;
+      align-items: stretch;
+      gap: var(--space-4);
+    }
+
+    .person-profile .profile-command-hero,
+    .person-profile .profile-full-card,
+    .person-profile .profile-family-hub,
+    .person-profile .profile-connected-cube,
+    .person-profile .profile-compact-timeline {
+      grid-area: auto;
+    }
+
+    /* Main information card */
+
+    .person-profile .profile-full-card,
+    .person-profile .profile-full-card.editing,
+    .person-profile.is-editing .profile-full-card {
+      width: 100%;
+      height: auto;
+      min-height: var(--profile-card-min-h);
+      max-height: none;
+      align-self: start;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .person-profile .profile-full-card .profile-card-body {
+      flex: 1 1 auto;
+      height: auto;
+      min-height: 0;
+      max-height: none;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      overflow: visible;
+    }
+
+    .person-profile .profile-full-card .profile-card-edit-tabs {
+      flex: 0 0 auto;
+      margin-bottom: 0;
+    }
+
+    .person-profile .profile-full-card.editing .profile-card-edit-grid.two {
+      grid-template-columns: 1fr;
+    }
+
+    /* Read-only information grids */
+
+    .profile-readonly-grid.profile-readonly-grid-tabbed:not(.main),
+    .profile-readonly-grid.profile-readonly-grid-single {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+
+    .profile-readonly-grid.profile-readonly-grid-tabbed.main {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: stretch;
+    }
+
+    .profile-readonly-grid.profile-readonly-grid-tabbed.main .profile-info-block {
+      align-content: start;
+      grid-auto-rows: max-content;
+    }
+
+    .profile-readonly-grid.profile-readonly-grid-tabbed.main .profile-info-row {
+      align-items: start;
+    }
+
+    .profile-info-block.wide {
+      min-height: 260px;
+    }
+
+    .profile-full-card.locked .profile-info-block {
+      min-height: 0;
+    }
+
+    /* Information key/value rows */
+
+    .profile-info-row {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(92px, .72fr) minmax(0, 1fr);
+      align-items: start;
+      gap: var(--space-3);
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, .045);
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .profile-info-row:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .profile-info-row > span:first-child {
+      color: var(--text-tertiary);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .profile-info-row > strong {
+      min-width: 0;
+      color: var(--text-primary);
+      line-height: 1.35;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .profile-info-row > small {
+      color: var(--text-tertiary);
+      line-height: 1.35;
+    }
+
+    /* Connected cards */
+
+    .profile-connected-card h3.profile-connected-head {
+      min-height: 54px;
+      margin: 0;
+      padding: 0 var(--space-4);
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      font-size: 16px;
+    }
+
+    .profile-connected-title {
+      min-width: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-primary);
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .profile-connected-icon {
+      width: 28px;
+      height: 28px;
+      flex: 0 0 28px;
+      display: inline-grid;
+      place-items: center;
+      color: var(--text-secondary);
+    }
+
+    .profile-connected-icon svg {
+      width: 24px;
+      height: 24px;
+      max-width: 24px;
+      max-height: 24px;
+      display: block;
+    }
+
+    .profile-connected-actions {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-1);
+      white-space: nowrap;
+    }
+
+    .profile-connected-action {
+      height: 30px;
+      min-height: 30px;
+      padding: 0 8px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--brand-green-300);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-size: 13px;
+      line-height: 1;
+      font-weight: 900;
+      vertical-align: middle;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .profile-connected-action svg {
+      width: 15px;
+      height: 15px;
+      max-width: 15px;
+      max-height: 15px;
+      flex: 0 0 15px;
+      display: block;
+    }
+
+    .profile-connected-action.open {
+      padding-right: 6px;
+    }
+
+    .profile-connected-action.open svg {
+      width: 16px;
+      height: 16px;
+      max-width: 16px;
+      max-height: 16px;
+      flex-basis: 16px;
+    }
+
+    .profile-connected-action:hover,
+    .profile-connected-action:focus-visible {
+      border-color: rgba(98, 217, 154, .18);
+      background: rgba(47, 174, 116, .09);
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    /* Connected-card grid */
+
+    .person-profile .profile-connected-cube {
+      align-self: start;
+      position: relative;
+      z-index: auto;
+      margin: 0;
+    }
+
+    /* Compact timeline */
+
+    .person-profile .profile-compact-timeline.profile-connected-card {
+      height: 100%;
+      min-height: 0;
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      background: var(--surface-card);
+      overflow: hidden;
+    }
+
+    .profile-compact-timeline .profile-connected-head.profile-timeline-head {
+      min-height: 52px;
+      flex: 0 0 auto;
+      margin: 0;
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--border-default);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: var(--space-3);
+      font-size: 16px;
+    }
+
+    .profile-compact-timeline
+      .profile-connected-title
+      .profile-connected-icon {
+      width: 26px;
+      height: 26px;
+      flex: 0 0 26px;
+    }
+
+    .profile-compact-timeline
+      .profile-connected-title
+      .profile-connected-icon svg {
+      width: 22px;
+      height: 22px;
+      max-width: 22px;
+      max-height: 22px;
+    }
+
+    .profile-compact-timeline-list {
+      position: relative;
+      flex: 1 1 auto;
+      min-height: 0;
+      max-height: none;
+      display: grid;
+      align-content: start;
+      gap: 4px;
+      padding: var(--space-4);
+      overflow-y: auto;
+    }
+
+    /* Family card */
+
+    .person-profile__top .profile-family-hub,
+    .person-profile.is-editing
+      .person-profile__top
+      .profile-family-hub {
+      height: var(--profile-family-sync-h);
+      min-height: var(--profile-family-sync-h);
+      max-height: var(--profile-family-sync-h);
+      align-self: start;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      background: var(--surface-card);
+      overflow: hidden;
+    }
+
+    .person-profile__top .profile-family-tabs {
+      flex: 0 0 auto;
+    }
+
+    .person-profile__top .profile-family-scroll.command,
+    .person-profile__top .profile-family-scroll.command.clean {
+      flex: 1 1 auto;
+      height: auto;
+      min-height: 0;
+      max-height: none;
+      display: grid;
+      align-content: start;
+      gap: var(--space-4);
+      padding: var(--space-4);
+      border-top: 0;
+      background: transparent;
+      overflow-y: auto;
+    }
+
+    .person-profile__top .profile-family-group {
+      display: grid;
+      align-content: start;
+      gap: var(--space-2);
+    }
+
+    .person-profile__top .profile-family-empty {
+      align-self: start;
+      justify-self: stretch;
+      margin: var(--space-4);
+      color: var(--text-tertiary);
+    }
+
+    /* Current Family member row */
+
+    .person-profile .profile-family-member-row {
+      width: 100%;
+      min-height: 76px;
+      display: grid;
+      grid-template-columns: 56px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255, 255, 255, .04);
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, .025);
+      color: var(--text-secondary);
+      text-align: left;
+      cursor: pointer;
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease),
+        transform var(--ease);
+    }
+
+    .person-profile .profile-family-member-row:hover,
+    .person-profile .profile-family-member-row:focus-within {
+      border-color: var(--border-strong);
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
+      transform: translateY(-1px);
+    }
+
+    .person-profile .profile-family-member-row .small-avatar {
+      width: 48px;
+      height: 48px;
+      flex: 0 0 48px;
+      font-size: 15px;
+    }
+
+    .person-profile .profile-family-member-row .profile-linked-copy {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .person-profile .profile-family-member-row .profile-linked-copy strong {
+      display: block;
+      color: var(--text-primary);
+      font-size: 14px;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .person-profile .profile-family-member-row .profile-linked-copy span {
+      display: block;
+      color: var(--text-tertiary);
+      font-size: 12px;
+      line-height: 1.25;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .person-profile .profile-family-row-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(4px);
+      transition:
+        opacity var(--ease),
+        transform var(--ease);
+    }
+
+    .person-profile
+      .profile-family-member-row:hover
+      .profile-family-row-actions,
+    .person-profile
+      .profile-family-member-row:focus-within
+      .profile-family-row-actions {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .person-profile .profile-family-action-button {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-secondary);
+      display: inline-grid;
+      place-items: center;
+      font-size: 16px;
+      line-height: 1;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .person-profile .profile-family-action-button svg {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+      display: block;
+    }
+
+    .person-profile .profile-family-action-button:hover,
+    .person-profile .profile-family-action-button:focus-visible {
+      background: rgba(255, 255, 255, .075);
+      color: var(--text-primary);
+    }
+
+    /* Small Profile utilities */
+
+    .profile-status-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-primary);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    /* Responsive Profile layout */
+
+    @media (max-width: 1420px) {
+      .profile-readonly-grid.profile-readonly-grid-tabbed.main {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 1180px) {
+      .person-profile__top,
+      .person-profile__bottom {
+        grid-template-columns: 1fr;
+      }
+
+      .person-profile__top .profile-family-hub,
+      .person-profile.is-editing
+        .person-profile__top
+        .profile-family-hub {
+        height: auto;
+        min-height: var(--profile-card-min-h);
+        max-height: none;
+        align-self: stretch;
+      }
+
+      .person-profile__top .profile-family-scroll.command,
+      .person-profile__top .profile-family-scroll.command.clean {
+        max-height: 360px;
+      }
+
+      .profile-readonly-grid.profile-readonly-grid-tabbed.main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 1080px) {
+      .person-profile .profile-connected-cube {
+        grid-template-columns: 1fr;
+      }
+    }
 
     /* Geneograph module */
     .geneo-home-page {
@@ -9724,142 +10268,6 @@
       box-shadow: none;
     }
 
-  
-
-    /* People preview pane refinement: collapsed panels, cleaner hero, actions menu */
-    
-    
-    
-    
-
-  
-
-
-    /* Profile card and connected-card refinements */
-    .profile-full-card .profile-card-body {
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-      gap: var(--space-4);
-    }
-    .profile-full-card .profile-card-edit-tabs {
-      margin-bottom: 0;
-      flex: 0 0 auto;
-    }
-    .profile-readonly-grid.profile-readonly-grid-tabbed {
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
-      align-items: stretch;
-    }
-    .profile-readonly-grid.profile-readonly-grid-tabbed.main {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-    .profile-readonly-grid.profile-readonly-grid-tabbed.main {
-      align-items: stretch;
-    }
-
-    .profile-readonly-grid.profile-readonly-grid-tabbed.main .profile-info-block {
-      align-content: start;
-      grid-auto-rows: max-content;
-    }
-
-    .profile-readonly-grid.profile-readonly-grid-tabbed.main .profile-info-row {
-      align-items: start;
-    }
-    .profile-info-block.wide { min-height: 260px; }
-    .profile-full-card.locked .profile-info-block { min-height: 0; }
-    .profile-connected-card h3.profile-connected-head {
-      min-height: 54px;
-      padding: 0 var(--space-4);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-3);
-      font-size: 16px;
-    }
-    .profile-connected-title {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-      font-size: 16px;
-      font-weight: 900;
-      color: var(--text-primary);
-    }
-    .profile-connected-icon {
-      width: 28px;
-      height: 28px;
-      flex: 0 0 28px;
-      display: inline-grid;
-      place-items: center;
-      color: var(--text-secondary);
-    }
-    .profile-connected-icon svg {
-      width: 24px;
-      height: 24px;
-      max-width: 24px;
-      max-height: 24px;
-    }
-    .profile-connected-action.open { padding-right: 8px; }
-    /* People full profile connected-card actions */
-    .profile-connected-actions {
-      display: inline-flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: var(--space-1);
-      flex: 0 0 auto;
-      white-space: nowrap;
-    }
-
-    .profile-connected-action {
-      height: 30px;
-      min-height: 30px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      padding: 0 8px;
-      line-height: 1;
-      vertical-align: middle;
-      text-decoration: none;
-    }
-
-    .profile-connected-action svg {
-      width: 15px;
-      height: 15px;
-      max-width: 15px;
-      max-height: 15px;
-      flex: 0 0 15px;
-      display: block;
-    }
-
-    .profile-connected-action.open {
-      padding-right: 6px;
-    }
-
-    .profile-connected-action.open svg {
-      width: 16px;
-      height: 16px;
-      max-width: 16px;
-      max-height: 16px;
-      flex-basis: 16px;
-    }
-    .profile-connected-action:hover,
-    .profile-connected-action:focus-visible {
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-    
-    .profile-family-scroll.command.clean {
-      border-top: 0;
-      max-height: 700px;
-      padding-top: var(--space-4);
-    }
-    @media (max-width: 1420px) {.profile-readonly-grid.profile-readonly-grid-tabbed,
-      .profile-readonly-grid.profile-readonly-grid-tabbed.main { grid-template-columns: 1fr 1fr; }}
-    @media (max-width: 1080px) {.profile-readonly-grid.profile-readonly-grid-tabbed,
-      .profile-readonly-grid.profile-readonly-grid-tabbed.main { grid-template-columns: 1fr; }}
-
-
     /* People full profile requested refinements */
     .profile-side-card.profile-family-hub {
       min-height: 0;
@@ -9946,14 +10354,6 @@
     .profile-compact-timeline-list {
       max-height: 342px;
     }
-    .profile-status-inline {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--text-primary);
-      font-weight: 900;
-      white-space: nowrap;
-    }
 @media (max-width: 1080px) {.profile-family-hub { max-height: none; }
       .profile-family-hub .profile-family-scroll.command.clean { max-height: 360px; }}
     .profile-family-hub .profile-family-tabs { flex: 0 0 auto; }
@@ -9990,50 +10390,12 @@
     }
     .profile-readonly-grid.profile-readonly-grid-tabbed.main .profile-info-block h4:nth-child(1) { text-transform: uppercase; }
 
-    .profile-hero-more {
-      min-width: 176px;
-      padding: 0 var(--space-4);
-      justify-content: space-between;
-      gap: var(--space-3);
-    }
-
-    .profile-hero-more > span:first-child {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-2);
-      min-width: 0;
-      line-height: 1;
-    }
-
-    .profile-hero-more > span:first-child svg {
-      width: 17px;
-      height: 17px;
-      flex: 0 0 17px;
-      display: block;
-    }
-
-    .profile-hero-more-chevron {
-      width: 16px;
-      height: 16px;
-      flex: 0 0 16px;
-      display: inline-grid;
-      place-items: center;
-      transform: none;
-    }
-
-    .profile-hero-more-chevron svg {
-      width: 16px;
-      height: 16px;
-      display: block;
-    }
-
     @media (max-width: 1180px) {.profile-family-hub .profile-family-scroll.command,
       .profile-family-hub .profile-family-scroll.command.clean { max-height: 360px !important; }
       .profile-readonly-grid.profile-readonly-grid-tabbed.main { grid-template-columns: 1fr; }}
     .profile-full-card.editing .profile-card-edit-grid.two {
       grid-template-columns: 1fr !important;
     }
-    
     
     .people-full-profile-cta {
       grid-column: 1 / -1;
@@ -10052,102 +10414,6 @@
       transform: rotate(180deg);
     }
 
-    /* People full profile: row wrappers keep Profile/Family and Connected/Timeline aligned. */
-    .person-profile {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      grid-template-areas: none;
-      grid-template-rows: auto auto auto;
-      align-items: start;
-      gap: var(--space-4);
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
-    .person-profile .profile-command-hero,
-    .person-profile__top,
-    .person-profile__bottom {
-      grid-column: 1 / -1;
-      min-width: 0;
-    }
-    .person-profile .profile-command-hero,
-    .person-profile .profile-full-card,
-    .person-profile .profile-family-hub,
-    .person-profile .profile-connected-cube,
-    .person-profile .profile-compact-timeline {
-      grid-area: auto;
-    }
-    .person-profile__top,
-    .person-profile__bottom {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 390px;
-      gap: var(--space-4);
-      align-items: stretch;
-    }
-    .person-profile .profile-full-card,
-    .person-profile .profile-full-card.editing,
-    .person-profile.is-editing .profile-full-card {
-      height: auto;
-      min-height: 0;
-      max-height: none;
-      align-self: start;
-      overflow: hidden;
-      width: 100%;
-    }
-    .person-profile .profile-full-card .profile-card-body {
-      height: auto;
-      min-height: auto;
-      max-height: none;
-      overflow: visible;
-    }
-    .person-profile .profile-family-hub,
-    .person-profile.is-editing .profile-family-hub {
-      height: auto;
-      min-height: var(--profile-card-min-h);
-      max-height: none;
-      align-self: stretch;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    .person-profile .profile-family-scroll.command,
-    .person-profile .profile-family-scroll.command.clean {
-      flex: 1 1 auto;
-      min-height: 0;
-      max-height: none;
-      overflow-y: auto;
-      align-content: start;
-    }
-    .person-profile .profile-connected-cube {
-      align-self: start;
-      margin: 0;
-      position: relative;
-      z-index: auto;
-    }
-    .person-profile .profile-compact-timeline {
-      align-self: stretch;
-      height: 100%;
-      min-height: 0;
-    }
-    @media (max-width: 1180px) {.person-profile__top,
-      .person-profile__bottom {
-        grid-template-columns: 1fr;
-      }
-      .person-profile .profile-family-hub,
-      .person-profile.is-editing .profile-family-hub {
-        min-height: 340px;
-      }}
-
-
-    /* People profile measured alignment: the family card gets a JS-synced height from the Profile card, while its list scrolls internally. */
-    .person-profile__top .profile-family-hub {
-      align-self: start;
-      overflow: hidden;
-    }
-    .person-profile__top .profile-family-scroll.command,
-    .person-profile__top .profile-family-scroll.command.clean {
-      min-height: 0;
-      overflow-y: auto;
-    }
     /* People full-profile edit form: canonical Main info control system. */
     .person-profile .profile-full-card .profile-card-body {
       overflow: visible;
@@ -10365,135 +10631,7 @@
       }
     }
 
-
-
     /* Final targeted regression fixes: People full profile, Geneograph toolbar, shared settings icon sizing. */
-    .person-profile {
-      height: 100%;
-      min-height: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding: 24px 28px 32px;
-      gap: var(--space-4);
-      background: var(--surface-main);
-    }
-    .person-profile__top,
-    .person-profile__bottom {
-      min-width: 0;
-      align-items: stretch;
-    }
-    .person-profile .profile-full-card {
-      min-height: 408px;
-      height: auto;
-      align-self: stretch;
-      display: flex;
-      flex-direction: column;
-    }
-    .person-profile .profile-full-card .profile-card-body {
-      flex: 1 1 auto;
-      min-height: 0;
-    }
-    .person-profile .profile-family-hub {
-      min-height: 408px;
-      height: auto;
-      align-self: stretch;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    .person-profile .profile-family-scroll.command.clean {
-      flex: 1 1 auto;
-      min-height: 0;
-      overflow-y: auto;
-      display: grid;
-      align-content: start;
-      gap: var(--space-4);
-      padding: var(--space-4);
-    }
-    .person-profile .profile-family-row-button.command {
-      width: 100%;
-      min-height: 76px;
-      display: grid;
-      grid-template-columns: 54px minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 14px;
-      padding: 12px 14px;
-      border: 1px solid transparent;
-      border-radius: var(--radius-sm);
-      background: rgba(255,255,255,.025);
-      color: var(--text-secondary);
-      text-align: left;
-      text-decoration: none;
-      transition: background var(--ease), border-color var(--ease), transform var(--ease);
-    }
-    .person-profile .profile-family-row-button.command:hover,
-    .person-profile .profile-family-row-button.command:focus-within {
-      background: var(--surface-card-hover);
-      border-color: var(--border-default);
-      transform: translateY(-1px);
-    }
-    .person-profile .profile-family-row-button.command .small-avatar {
-      width: 48px;
-      height: 48px;
-      flex: 0 0 48px;
-    }
-    .person-profile .profile-family-row-button.command .profile-linked-copy {
-      min-width: 0;
-      display: grid;
-      gap: 3px;
-    }
-    .person-profile .profile-family-row-button.command .profile-linked-copy strong {
-      color: var(--text-primary);
-      font-size: 14px;
-      line-height: 1.2;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .person-profile .profile-family-row-button.command .profile-linked-copy span {
-      color: var(--text-tertiary);
-      font-size: 12px;
-      line-height: 1.25;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    
-    .profile-family-row-actions {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateX(4px);
-      transition: opacity var(--ease), transform var(--ease);
-    }
-    .profile-family-row-button:hover .profile-family-row-actions,
-    .profile-family-row-button:focus-within .profile-family-row-actions {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateX(0);
-    }
-    .profile-family-row-action {
-      width: 32px;
-      height: 32px;
-      border: 1px solid transparent;
-      border-radius: 8px;
-      background: transparent;
-      color: var(--text-secondary);
-      display: inline-grid;
-      place-items: center;
-      padding: 0;
-      font-weight: 900;
-      line-height: 1;
-    }
-    .profile-family-row-action:hover,
-    .profile-family-row-action:focus-visible {
-      background: rgba(255,255,255,.07);
-      color: var(--text-primary);
-      border-color: var(--border-default);
-    }
     .geneo-editor-toolbar {
       min-height: 54px;
       max-height: 64px;
@@ -10546,133 +10684,6 @@
   
 
     /* Final targeted regression fixes: People full profile, family rows, Geneograph toolbar, settings icon sizing */
-    .main.people-profile-main {
-      overflow: auto !important;
-      min-height: 0;
-    }
-    .main.people-profile-main .person-profile {
-      min-height: 100%;
-      height: auto;
-      overflow: visible !important;
-      padding: 24px 28px 36px !important;
-      box-sizing: border-box;
-    }
-    .person-profile .profile-full-card,
-    .person-profile .profile-family-hub {
-      min-height: 408px !important;
-    }
-    .person-profile__top .profile-family-hub {
-      align-self: stretch !important;
-      display: flex !important;
-      flex-direction: column !important;
-      overflow: hidden !important;
-      background: var(--surface-card) !important;
-      border: 1px solid var(--border-default) !important;
-      border-radius: var(--radius-md) !important;
-    }
-    .person-profile__top .profile-family-scroll.command.clean {
-      flex: 1 1 auto !important;
-      min-height: 0 !important;
-      max-height: none !important;
-      overflow-y: auto !important;
-      display: grid !important;
-      align-content: start !important;
-      gap: var(--space-4) !important;
-      padding: var(--space-4) !important;
-      background: transparent !important;
-    }
-    .profile-family-member-row {
-      width: 100%;
-      min-height: 76px;
-      border: 1px solid rgba(255,255,255,.04);
-      background: rgba(255,255,255,.025);
-      color: var(--text-secondary);
-      border-radius: var(--radius-md);
-      display: grid;
-      grid-template-columns: 56px minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 14px;
-      padding: 10px 12px;
-      text-align: left;
-      cursor: pointer;
-      transition: background var(--ease), border-color var(--ease), color var(--ease), transform var(--ease);
-    }
-    .profile-family-member-row:hover,
-    .profile-family-member-row:focus-within {
-      background: var(--surface-card-hover);
-      border-color: var(--border-strong);
-      color: var(--text-primary);
-      transform: translateY(-1px);
-    }
-    .profile-family-member-row .small-avatar {
-      width: 48px;
-      height: 48px;
-      font-size: 15px;
-      flex: 0 0 48px;
-    }
-    .profile-family-member-row .profile-linked-copy {
-      min-width: 0;
-      display: grid;
-      gap: 4px;
-    }
-    .profile-family-member-row .profile-linked-copy strong {
-      display: block;
-      color: var(--text-primary);
-      font-size: 14px;
-      line-height: 1.2;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .profile-family-member-row .profile-linked-copy span {
-      display: block;
-      color: var(--text-tertiary);
-      font-size: 12px;
-      line-height: 1.25;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .profile-family-row-actions {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateX(4px);
-      transition: opacity var(--ease), transform var(--ease);
-    }
-    .profile-family-member-row:hover .profile-family-row-actions,
-    .profile-family-member-row:focus-within .profile-family-row-actions {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateX(0);
-    }
-    .profile-family-action-button {
-      width: 32px;
-      height: 32px;
-      border: 0;
-      border-radius: 8px;
-      background: transparent;
-      color: var(--text-secondary);
-      display: inline-grid;
-      place-items: center;
-      padding: 0;
-      font-weight: 900;
-      font-size: 16px;
-      line-height: 1;
-    }
-    .profile-family-action-button svg {
-      width: 18px;
-      height: 18px;
-      display: block;
-      flex: 0 0 auto;
-    }
-    .profile-family-action-button:hover,
-    .profile-family-action-button:focus-visible {
-      background: rgba(255,255,255,.075);
-      color: var(--text-primary);
-    }
     .geneo-editor-toolbar {
       min-height: 54px !important;
       max-height: 64px !important;
@@ -10735,40 +10746,6 @@
 
 
     /* Final pass: compact People full-profile card height and app-styled Geneograph toolbar buttons. */
-    :root { --profile-card-min-h: 408px; }
-
-    .person-profile .profile-full-card,
-    .person-profile .profile-family-hub,
-    .person-profile__top .profile-family-hub {
-      min-height: var(--profile-card-min-h) !important;
-    }
-
-    .person-profile .profile-family-hub,
-    .person-profile__top .profile-family-hub {
-      height: auto !important;
-      max-height: none !important;
-      align-self: stretch !important;
-      display: flex !important;
-      flex-direction: column !important;
-      overflow: hidden !important;
-    }
-
-    .person-profile .profile-family-scroll.command,
-    .person-profile .profile-family-scroll.command.clean,
-    .person-profile__top .profile-family-scroll.command,
-    .person-profile__top .profile-family-scroll.command.clean {
-      flex: 1 1 auto !important;
-      min-height: 0 !important;
-      max-height: none !important;
-      overflow-y: auto !important;
-      align-content: start !important;
-    }
-
-    .person-profile.is-editing .profile-full-card {
-      height: auto !important;
-      max-height: none !important;
-    }
-
     .geneo-editor-toolbar {
       min-height: 58px !important;
       max-height: 66px !important;
@@ -10885,19 +10862,6 @@
 
 
     /* Final compact profile height and Geneograph app-toolbar style pass */
-    .person-profile .profile-full-card,
-    .person-profile .profile-family-hub {
-      min-height: var(--profile-card-min-h) !important;
-    }
-    .person-profile__top .profile-family-hub {
-      align-self: stretch !important;
-    }
-    .person-profile__top .profile-family-scroll.command,
-    .person-profile__top .profile-family-scroll.command.clean {
-      flex: 1 1 auto !important;
-      min-height: 0 !important;
-      overflow-y: auto !important;
-    }
     .geneo-editor-toolbar {
       min-height: 58px !important;
       max-height: 66px !important;
@@ -10990,75 +10954,6 @@
       max-height: 18px !important;
       flex: 0 0 18px !important;
       display: block !important;
-    }
-
-
-    /* Final People profile family height sync: profile controls the top-row height; family scrolls internally. */
-    .person-profile {
-      --profile-family-sync-h: var(--profile-card-min-h, 408px);
-    }
-    .person-profile__top .profile-family-hub {
-      height: var(--profile-family-sync-h) !important;
-      min-height: var(--profile-family-sync-h) !important;
-      max-height: var(--profile-family-sync-h) !important;
-      align-self: start !important;
-      overflow: hidden !important;
-      display: flex !important;
-      flex-direction: column !important;
-    }
-    .person-profile__top .profile-family-tabs {
-      flex: 0 0 auto !important;
-    }
-    .person-profile__top .profile-family-scroll.command,
-    .person-profile__top .profile-family-scroll.command.clean {
-      flex: 1 1 auto !important;
-      min-height: 0 !important;
-      max-height: none !important;
-      overflow-y: auto !important;
-      align-content: start !important;
-    }
-    @media (max-width: 1180px) {
-      .person-profile__top .profile-family-hub {
-        height: auto !important;
-        min-height: var(--profile-card-min-h, 408px) !important;
-        max-height: none !important;
-      }
-    }
-
-
-
-    /* Final People profile family-height synchronization fix.
-       The Family card height is controlled by the Profile card, and Immediate Family always scrolls internally. */
-    .person-profile {
-      --profile-card-min-h: 408px;
-      --profile-family-sync-h: var(--profile-card-min-h);
-    }
-    .person-profile__top .profile-family-hub {
-      height: var(--profile-family-sync-h) !important;
-      min-height: var(--profile-family-sync-h) !important;
-      max-height: var(--profile-family-sync-h) !important;
-      align-self: start !important;
-      display: flex !important;
-      flex-direction: column !important;
-      overflow: hidden !important;
-    }
-    .person-profile__top .profile-family-scroll.command,
-    .person-profile__top .profile-family-scroll.command.clean {
-      flex: 1 1 auto !important;
-      min-height: 0 !important;
-      height: auto !important;
-      max-height: none !important;
-      overflow-y: auto !important;
-      display: grid !important;
-      align-content: start !important;
-    }
-    .person-profile__top .profile-family-group {
-      display: grid !important;
-      gap: var(--space-2) !important;
-      align-content: start !important;
-    }
-    .person-profile__top .profile-family-member-row {
-      flex: 0 0 auto;
     }
 
     /* ---- Albums justified-row layout ---- */
@@ -15492,7 +15387,10 @@ function renderTreeCardDateLines(person) {
         if (action === 'profile') openFamilyPersonProfile(person);
         if (action === 'delete') openDeleteFamilyPersonConfirm(person);
       });
-      setTimeout(() => document.addEventListener('click', closeMenu), 0);
+      setTimeout(() => {
+        document.addEventListener('click', closeMenu);
+        document.addEventListener('scroll', closeMenu, true);
+      }, 0);
     }
 
     function openFamilyPersonProfile(person) {
@@ -19962,6 +19860,108 @@ function renderTreeCardDateLines(person) {
       living: 'Any',
       reviewStatus: ''
     });
+    const peopleFilterDefinitions = Object.freeze([
+      Object.freeze({
+        key: 'surname',
+        label: 'Surname',
+        options: Object.freeze([
+          '',
+          'Whiskerfield',
+          'Purrington',
+          'Milkpaw',
+          'Softtail'
+        ])
+      }),
+      Object.freeze({
+        key: 'birthPlace',
+        label: 'Birth place',
+        options: Object.freeze([
+          '',
+          'Pawford',
+          'Meowbridge',
+          'Fishmarket Row',
+          'Old Cattery',
+          'Unknown'
+        ])
+      }),
+      Object.freeze({
+        key: 'living',
+        label: 'Living status',
+        options: Object.freeze([
+          'Any',
+          'Living',
+          'Deceased',
+          'Unknown'
+        ])
+      }),
+      Object.freeze({
+        key: 'reviewStatus',
+        label: 'Review status',
+        options: Object.freeze([
+          '',
+          'No issues',
+          'Possible duplicate',
+          'Missing facts',
+          'Missing source',
+          'Historic records'
+        ])
+      })
+    ]);
+
+    function peopleFilterFieldId(prefix, key) {
+      return `${prefix}-${key}`;
+    }
+
+    function renderPeopleFilterFields(
+      filters = defaultPeopleFilters,
+      prefix = 'people-filter'
+    ) {
+      const normalized = peopleFiltersWithDefaults(filters);
+
+      return peopleFilterDefinitions.map(definition => {
+        const fieldId = peopleFilterFieldId(prefix, definition.key);
+
+        return `<div class="people-filter-field">
+          <label for="${escapeHtml(fieldId)}">${escapeHtml(definition.label)}</label>
+          <select
+            id="${escapeHtml(fieldId)}"
+            data-people-filter-input="${escapeHtml(definition.key)}">
+            ${peopleFilterOptions(
+              definition.options,
+              normalized[definition.key]
+            )}
+          </select>
+        </div>`;
+      }).join('');
+    }
+
+    function readPeopleFilterFields(root) {
+      const filters = { ...defaultPeopleFilters };
+
+      peopleFilterDefinitions.forEach(definition => {
+        const input = root.querySelector(
+          `[data-people-filter-input="${definition.key}"]`
+        );
+
+        filters[definition.key] = input
+          ? input.value
+          : defaultPeopleFilters[definition.key];
+      });
+
+      return peopleFiltersWithDefaults(filters);
+    }
+
+    function resetPeopleFilterFields(root) {
+      peopleFilterDefinitions.forEach(definition => {
+        const input = root.querySelector(
+          `[data-people-filter-input="${definition.key}"]`
+        );
+
+        if (input) {
+          input.value = defaultPeopleFilters[definition.key];
+        }
+      });
+    }
     const defaultPeopleColumns = Object.freeze({ living: true, birth: true, birthPlace: true, death: true, deathPlace: true, updated: true });
     const peopleColumnLabels = { living: 'Living', birth: 'Birth date', birthPlace: 'Birth place', death: 'Death date', deathPlace: 'Death place', updated: 'Updated' };
 
@@ -20260,25 +20260,82 @@ function renderTreeCardDateLines(person) {
     }
 
     function renderPeopleSidebarInner() {
-      const savedViewsMarkup = peopleSavedViews
-        .map(view => `<button class="side-link ${state.peopleSavedViewId === view.id ? 'active' : ''}" type="button" data-saved-view="${view.id}">${icon.folder}<span>${escapeHtml(view.name)}</span></button>`)
-        .join('');
+      const savedViewsMarkup = peopleSavedViews.map(view => {
+        const isActive = state.peopleSavedViewId === view.id;
+
+        return `<div class="people-saved-filter-row ${isActive ? 'active' : ''}">
+          <button
+            class="people-saved-filter-main"
+            type="button"
+            data-saved-view="${escapeHtml(view.id)}"
+            title="${escapeHtml(view.name)}">
+            ${icon.folder}
+            <span class="people-saved-filter-name">${escapeHtml(view.name)}</span>
+          </button>
+
+          <button
+            class="more-button people-saved-filter-more"
+            type="button"
+            data-saved-view-menu="${escapeHtml(view.id)}"
+            aria-label="Actions for ${escapeHtml(view.name)}"
+            aria-haspopup="menu">
+            ${icon.more}
+          </button>
+        </div>`;
+      }).join('');
 
       return `<div>
           <div class="side-section-title">Navigation</div>
+
           <div class="side-nav">
-            <button class="side-link ${state.peopleView !== 'profile' && state.peopleSide === 'people' ? 'active' : ''}" type="button" data-people-side="people">${icon.peoplegroup}<span>People</span></button>
-            <button class="side-link ${state.peopleView === 'profile' ? 'active' : ''}" type="button" data-open-profile>${icon.profile}<span>Profile</span></button>
-            <button class="side-link" type="button" data-placeholder-view="Review center">${icon.search}<span>Review center</span><span class="people-review-count">5</span></button>
-            <button class="side-link" type="button" data-placeholder-view="Statistics">${icon.grid}<span>Statistics</span></button>
+            <button
+              class="side-link ${state.peopleView !== 'profile' && state.peopleSide === 'people' ? 'active' : ''}"
+              type="button"
+              data-people-side="people">
+              ${icon.peoplegroup}
+              <span>People</span>
+            </button>
+
+            <button
+              class="side-link ${state.peopleView === 'profile' ? 'active' : ''}"
+              type="button"
+              data-open-profile>
+              ${icon.profile}
+              <span>Profile</span>
+            </button>
+
+            <button
+              class="side-link"
+              type="button"
+              data-placeholder-view="Review center">
+              ${icon.search}
+              <span>Review center</span>
+              <span class="people-review-count">5</span>
+            </button>
+
+            <button
+              class="side-link"
+              type="button"
+              data-placeholder-view="Statistics">
+              ${icon.grid}
+              <span>Statistics</span>
+            </button>
           </div>
         </div>
 
         <div>
           <div class="side-section-title with-add">
             <span>Saved filters</span>
-            <button class="side-add-button" type="button" aria-label="Create saved filter" id="peopleSidebarSaveView">${icon.plus}</button>
+
+            <button
+              class="side-add-button"
+              type="button"
+              id="peopleSidebarSaveView"
+              aria-label="Create saved filter">
+              ${icon.plus}
+            </button>
           </div>
+
           <div class="side-nav">
             ${savedViewsMarkup}
           </div>
@@ -20329,7 +20386,14 @@ function renderTreeCardDateLines(person) {
           <div class="profile-hero-actions">
             <button class="button primary" type="button" id="profileEditButton">${icon.edit} ${state.peopleProfileEditing ? 'Editing profile' : 'Edit profile'}</button>
             <button class="button secondary" type="button" id="profileAddRelative">${icon.addperson} Add relative</button>
-            <button class="button secondary profile-hero-more" type="button" id="profileMoreActions"><span>${icon.more} More actions</span><span class="profile-hero-more-chevron icon-rotate-down">${icon.chevron}</span></button>
+            <button
+              class="button secondary"
+              type="button"
+              id="profileMoreActions"
+              aria-haspopup="menu"
+              aria-expanded="false">
+              ${renderPanelButtonLabel(icon.more, 'More actions')}
+            </button>
           </div>
         </header>
         <div class="person-profile__top">
@@ -21353,61 +21417,67 @@ function renderTreeCardDateLines(person) {
       closePeopleFilterPopover();
       closePeopleColumnsPopover();
       closeMenu();
+
       const rect = anchor.getBoundingClientRect();
-      const f = peopleFiltersWithDefaults();
+      const filters = peopleFiltersWithDefaults();
       const popover = document.createElement('div');
+
       popover.className = 'people-filter-popover';
       popover.id = 'peopleFilterPopover';
       popover.style.top = `${rect.bottom + 8}px`;
-      popover.style.left = `${Math.min(window.innerWidth - 376, Math.max(12, rect.left - 56))}px`;
+      popover.style.left = `${
+        Math.min(window.innerWidth - 376, Math.max(12, rect.left - 56))
+      }px`;
+
       popover.setAttribute('role', 'dialog');
       popover.setAttribute('aria-label', 'Filter people');
+
       popover.innerHTML = `
         <div class="people-filter-popover-header">
           <h3>Filter people</h3>
           <p>Refine the directory by surname, birth place, living status, and review needs.</p>
         </div>
+
         <div class="people-filter-grid">
-          <div class="people-filter-field">
-            <label for="pfSurname">Surname</label>
-            <select id="pfSurname">${peopleFilterOptions(['', 'Whiskerfield', 'Purrington', 'Milkpaw', 'Softtail'], f.surname)}</select>
-          </div>
-          <div class="people-filter-field">
-            <label for="pfBirthPlace">Birth place</label>
-            <select id="pfBirthPlace">${peopleFilterOptions(['', 'Pawford', 'Meowbridge', 'Fishmarket Row', 'Old Cattery', 'Unknown'], f.birthPlace)}</select>
-          </div>
-          <div class="people-filter-field">
-            <label for="pfLiving">Living status</label>
-            <select id="pfLiving">${peopleFilterOptions(['Any', 'Living', 'Deceased', 'Unknown'], f.living)}</select>
-          </div>
-          <div class="people-filter-field">
-            <label for="pfReview">Review status</label>
-            <select id="pfReview">${peopleFilterOptions(['', 'No issues', 'Possible duplicate', 'Missing facts', 'Missing source', 'Historic records'], f.reviewStatus)}</select>
-          </div>
+          ${renderPeopleFilterFields(filters, 'people-popover-filter')}
         </div>
+
         <div class="people-filter-footer">
-          <button class="button secondary" type="button" data-people-filter-reset>Reset</button>
-          <button class="button primary" type="button" data-people-filter-apply>Apply filters</button>
-        </div>`;
+          <button
+            class="button secondary"
+            type="button"
+            data-people-filter-reset>
+            Reset
+          </button>
+
+          <button
+            class="button primary"
+            type="button"
+            data-people-filter-apply>
+            Apply filters
+          </button>
+        </div>
+      `;
+
       document.body.appendChild(popover);
-      popover.querySelector('[data-people-filter-reset]')?.addEventListener('click', () => {
-        popover.querySelector('#pfSurname').value = '';
-        popover.querySelector('#pfBirthPlace').value = '';
-        popover.querySelector('#pfLiving').value = 'Any';
-        popover.querySelector('#pfReview').value = '';
-      });
-      popover.querySelector('[data-people-filter-apply]')?.addEventListener('click', () => {
-        state.peopleFilters = {
-          surname: popover.querySelector('#pfSurname').value,
-          birthPlace: popover.querySelector('#pfBirthPlace').value,
-          living: popover.querySelector('#pfLiving').value || 'Any',
-          reviewStatus: popover.querySelector('#pfReview').value
-        };
-        state.peopleSavedViewId = '';
-        state.peopleSavedView = 'Custom filters';
-        closePeopleFilterPopover();
-        renderPeople();
-      });
+
+      popover
+        .querySelector('[data-people-filter-reset]')
+        ?.addEventListener('click', () => {
+          resetPeopleFilterFields(popover);
+        });
+
+      popover
+        .querySelector('[data-people-filter-apply]')
+        ?.addEventListener('click', () => {
+          state.peopleFilters = readPeopleFilterFields(popover);
+          state.peopleSavedViewId = '';
+          state.peopleSavedView = 'Custom filters';
+
+          closePeopleFilterPopover();
+          renderPeople();
+        });
+
       setTimeout(() => {
         document.addEventListener('click', closePeopleFilterOnOutside);
         document.addEventListener('keydown', closePeopleFilterOnEscape);
@@ -21431,32 +21501,444 @@ function renderTreeCardDateLines(person) {
       renderPeople();
     }
 
-    function generatePeopleSavedViewName() {
-      const entries = activePeopleFilterEntries();
-      if (!entries.length) return 'Custom people view';
-      return entries.slice(0, 2).map(([, , value]) => value).join(' - ');
+    function generatePeopleSavedViewName(
+      filters = state.peopleFilters
+    ) {
+      const entries = activePeopleFilterEntries(filters);
+
+      if (!entries.length) {
+        return 'Custom people filter';
+      }
+
+      return entries
+        .slice(0, 2)
+        .map(([, , value]) => value)
+        .join(' - ');
+    }
+
+    function setPeopleSavedViewModalError(message = '', focusSelector = '') {
+      const error = modalBackdrop.querySelector(
+        '[data-people-saved-view-error]'
+      );
+
+      if (error) {
+        error.textContent = message;
+        error.hidden = !message;
+      }
+
+      if (message && focusSelector) {
+        modalBackdrop.querySelector(focusSelector)?.focus();
+      }
+    }
+
+    function openPeopleSavedViewModal({
+      mode = 'create',
+      viewId = '',
+      initialName = '',
+      initialDescription = '',
+      initialFilters = defaultPeopleFilters
+    } = {}) {
+      const isEdit = mode === 'edit';
+
+      const existingView = isEdit
+        ? peopleSavedViews.find(view => view.id === viewId)
+        : null;
+
+      if (isEdit && !existingView) {
+        showToast('Saved filter not found.');
+        return;
+      }
+
+      const name = existingView?.name || initialName;
+      const description = existingView?.description || initialDescription;
+
+      const filters = peopleFiltersWithDefaults(
+        existingView?.filters || initialFilters
+      );
+
+      const title = isEdit ? 'Edit filter' : 'Create filter';
+      const subtitle = isEdit
+        ? 'Update the name, description, or filter conditions.'
+        : 'Create a reusable filter for the People directory.';
+
+      const submitLabel = isEdit ? 'Save changes' : 'Create filter';
+
+      openModal(`
+        <div
+          class="modal people-saved-view-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="peopleSavedViewModalTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="peopleSavedViewModalTitle">${escapeHtml(title)}</h2>
+              <p>${escapeHtml(subtitle)}</p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close>
+              ${icon.close}
+            </button>
+          </div>
+
+          <form id="peopleSavedViewForm">
+            <div class="modal-body people-saved-view-body">
+              <div class="people-saved-view-identity">
+                <div class="field">
+                  <label for="peopleSavedViewName">Name</label>
+                  <input
+                    id="peopleSavedViewName"
+                    required
+                    maxlength="80"
+                    value="${escapeHtml(name)}"
+                    placeholder="e.g. Meowbridge relatives">
+                </div>
+
+                <div class="field">
+                  <label for="peopleSavedViewDescription">Description</label>
+                  <textarea
+                    id="peopleSavedViewDescription"
+                    placeholder="Optional description">${escapeHtml(description)}</textarea>
+                </div>
+              </div>
+
+              <section
+                class="people-saved-view-filters"
+                aria-labelledby="peopleSavedViewFiltersTitle">
+
+                <div class="people-saved-view-section-header">
+                  <div>
+                    <h3 id="peopleSavedViewFiltersTitle">Filters</h3>
+                    <p>Choose at least one condition for this saved filter.</p>
+                  </div>
+
+                  <button
+                    class="link people-saved-view-clear"
+                    type="button"
+                    data-people-saved-view-clear>
+                    Clear filters
+                  </button>
+                </div>
+
+                <div class="people-filter-grid">
+                  ${renderPeopleFilterFields(
+                    filters,
+                    'people-saved-view-filter'
+                  )}
+                </div>
+
+                <p
+                  class="people-saved-view-error"
+                  data-people-saved-view-error
+                  role="alert"
+                  hidden>
+                </p>
+              </section>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                class="button secondary"
+                type="button"
+                data-close>
+                Cancel
+              </button>
+
+              <button
+                class="button primary"
+                type="submit">
+                ${escapeHtml(submitLabel)}
+              </button>
+            </div>
+          </form>
+        </div>
+      `);
+
+      const form = modalBackdrop.querySelector('#peopleSavedViewForm');
+      const nameInput = modalBackdrop.querySelector('#peopleSavedViewName');
+
+      nameInput?.focus();
+
+      modalBackdrop
+        .querySelector('[data-people-saved-view-clear]')
+        ?.addEventListener('click', () => {
+          resetPeopleFilterFields(form);
+          setPeopleSavedViewModalError();
+        });
+
+      form?.addEventListener('input', () => {
+        setPeopleSavedViewModalError();
+      });
+
+      form?.addEventListener('change', () => {
+        setPeopleSavedViewModalError();
+      });
+
+      form?.addEventListener('submit', event => {
+        event.preventDefault();
+
+        const submittedName = nameInput?.value.trim() || '';
+        const submittedDescription = modalBackdrop
+          .querySelector('#peopleSavedViewDescription')
+          ?.value
+          .trim() || '';
+
+        const submittedFilters = readPeopleFilterFields(form);
+
+        if (!submittedName) {
+          setPeopleSavedViewModalError(
+            'Enter a filter name.',
+            '#peopleSavedViewName'
+          );
+          return;
+        }
+
+        if (!hasActivePeopleFilters(submittedFilters)) {
+          setPeopleSavedViewModalError(
+            'Choose at least one filter option.',
+            '[data-people-filter-input]'
+          );
+          return;
+        }
+
+        const duplicate = peopleSavedViews.find(view => {
+          return view.id !== viewId
+            && view.name.trim().toLowerCase()
+              === submittedName.toLowerCase();
+        });
+
+        if (duplicate) {
+          setPeopleSavedViewModalError(
+            'A saved filter with this name already exists.',
+            '#peopleSavedViewName'
+          );
+          return;
+        }
+
+        if (isEdit) {
+          const wasActive = state.peopleSavedViewId === existingView.id;
+
+          existingView.name = submittedName;
+          existingView.description = submittedDescription;
+          existingView.filters = { ...submittedFilters };
+
+          if (wasActive) {
+            state.peopleSavedView = submittedName;
+            state.peopleFilters = { ...submittedFilters };
+          }
+
+          closeModal();
+          renderPeople();
+          showToast('Filter updated.');
+          return;
+        }
+
+        const id = `people-view-${Date.now()}`;
+
+        peopleSavedViews.push({
+          id,
+          name: submittedName,
+          description: submittedDescription,
+          filters: { ...submittedFilters }
+        });
+
+        state.peopleSavedViewId = id;
+        state.peopleSavedView = submittedName;
+        state.peopleFilters = { ...submittedFilters };
+        state.peopleView = 'directory';
+
+        closeModal();
+        renderPeople();
+        showToast('Filter created.');
+      });
+    }
+
+    function openCreatePeopleFilterModal() {
+      openPeopleSavedViewModal({
+        mode: 'create',
+        initialName: '',
+        initialDescription: '',
+        initialFilters: { ...defaultPeopleFilters }
+      });
     }
 
     function openSavePeopleViewModal() {
       if (!hasActivePeopleFilters()) {
-        showToast('Add filters before saving a view.');
+        showToast('Add filters before saving a filter.');
         return;
       }
-      const suggested = generatePeopleSavedViewName();
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="savePeopleViewTitle"><div class="modal-header"><div><h2 id="savePeopleViewTitle">Save people view</h2><p>Save the current active filters as a sidebar view.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="savePeopleViewForm"><div class="modal-body form-grid"><div class="field"><label for="peopleViewName">View name</label><input id="peopleViewName" required value="${escapeHtml(suggested)}"></div><div class="field"><label for="peopleViewDescription">Description</label><textarea id="peopleViewDescription" placeholder="Optional note about this saved filter"></textarea></div><div class="people-filterbar">${activePeopleFilterEntries().map(([, label, value]) => `<span class="filter-chip people-filter-chip"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</span>`).join('')}</div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Save filter</button></div></form></div>`);
-      modalBackdrop.querySelector('#peopleViewName')?.focus();
-      modalBackdrop.querySelector('#savePeopleViewForm')?.addEventListener('submit', event => {
-        event.preventDefault();
-        const name = modalBackdrop.querySelector('#peopleViewName').value.trim() || suggested;
-        const description = modalBackdrop.querySelector('#peopleViewDescription').value.trim();
-        const id = `people-view-${Date.now()}`;
-        peopleSavedViews.push({ id, name, description, filters: { ...peopleFiltersWithDefaults() } });
-        state.peopleSavedViewId = id;
-        state.peopleSavedView = name;
-        closeModal();
-        renderPeople();
-        showToast('Saved filter created.');
+
+      openPeopleSavedViewModal({
+        mode: 'create',
+        initialName: generatePeopleSavedViewName(),
+        initialDescription: '',
+        initialFilters: peopleFiltersWithDefaults()
       });
+    }
+
+    function openEditPeopleFilterModal(viewId) {
+      openPeopleSavedViewModal({
+        mode: 'edit',
+        viewId
+      });
+    }
+
+    function openPeopleSavedViewMenu(viewId, anchor) {
+      closeMenu();
+      closePeopleFilterPopover();
+      closePeopleColumnsPopover();
+
+      const view = peopleSavedViews.find(item => item.id === viewId);
+      if (!view || !anchor) return;
+
+      const rect = anchor.getBoundingClientRect();
+      const menu = document.createElement('div');
+
+      menu.className = 'menu-popover';
+      menu.id = 'projectMenu';
+      menu.setAttribute('role', 'menu');
+      menu.setAttribute('aria-label', `Actions for ${view.name}`);
+
+      menu.style.top = `${rect.bottom + 6}px`;
+      menu.style.left = `${Math.max(12, rect.right - 190)}px`;
+
+      menu.innerHTML = `
+        <button
+          type="button"
+          role="menuitem"
+          data-people-saved-view-action="edit">
+          Edit filter
+        </button>
+
+        <button
+          class="danger"
+          type="button"
+          role="menuitem"
+          data-people-saved-view-action="delete">
+          Delete filter
+        </button>
+      `;
+
+      document.body.appendChild(menu);
+
+      menu.addEventListener('click', event => {
+        const actionButton = event.target.closest(
+          '[data-people-saved-view-action]'
+        );
+
+        if (!actionButton) return;
+
+        const action = actionButton.dataset.peopleSavedViewAction;
+
+        closeMenu();
+
+        if (action === 'edit') {
+          openEditPeopleFilterModal(viewId);
+        }
+
+        if (action === 'delete') {
+          openDeletePeopleFilterConfirm(viewId);
+        }
+      });
+
+      menu.addEventListener('keydown', event => {
+        if (event.key !== 'Escape') return;
+
+        event.preventDefault();
+        closeMenu();
+        anchor.focus();
+      });
+
+      setTimeout(() => {
+        document.addEventListener('click', closeMenu);
+      }, 0);
+    }
+
+    function openDeletePeopleFilterConfirm(viewId) {
+      const view = peopleSavedViews.find(item => item.id === viewId);
+      if (!view) {
+        showToast('Saved filter not found.');
+        return;
+      }
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="deletePeopleFilterTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="deletePeopleFilterTitle">Delete filter?</h2>
+              <p>This action cannot be undone.</p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close>
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <div class="people-filter-delete-copy">
+              <strong>${escapeHtml(view.name)}</strong>
+              will be removed from Saved filters.
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+              Cancel
+            </button>
+
+            <button
+              class="button danger"
+              type="button"
+              id="confirmDeletePeopleFilter">
+              Delete filter
+            </button>
+          </div>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelector('#confirmDeletePeopleFilter')
+        ?.addEventListener('click', () => {
+          deletePeopleSavedView(viewId);
+        });
+    }
+
+    function deletePeopleSavedView(viewId) {
+      const index = peopleSavedViews.findIndex(view => view.id === viewId);
+      if (index < 0) {
+        closeModal();
+        showToast('Saved filter not found.');
+        return;
+      }
+
+      const wasActive = state.peopleSavedViewId === viewId;
+
+      peopleSavedViews.splice(index, 1);
+
+      if (wasActive) {
+        state.peopleSavedViewId = '';
+        state.peopleSavedView = 'All people';
+        state.peopleFilters = { ...defaultPeopleFilters };
+        state.peopleView = 'directory';
+      }
+
+      closeModal();
+      renderPeople();
+      showToast('Filter deleted.');
     }
 
     function applyPeopleSavedView(viewId) {
@@ -21609,25 +22091,89 @@ function renderTreeCardDateLines(person) {
       closeMenu();
       closePeopleFilterPopover();
       closePeopleColumnsPopover();
+
       const person = currentPeopleRecords().find(item => item.id === personId);
-      if (!person) return;
+      if (!person || !anchor) return;
+
       const rect = anchor.getBoundingClientRect();
       const menu = document.createElement('div');
+
       menu.className = 'menu-popover people-row-menu';
       menu.id = 'projectMenu';
+      menu.setAttribute('role', 'menu');
+      menu.setAttribute('aria-label', `Actions for ${person.name}`);
+
+      menu.innerHTML = `
+        <button
+          type="button"
+          role="menuitem"
+          data-people-person-action="tree">
+          Show in Family Tree
+        </button>
+
+        <button
+          type="button"
+          role="menuitem"
+          class="danger"
+          data-people-person-action="delete">
+          Delete person
+        </button>
+      `;
+
+      /*
+      * Append first so the browser can calculate the menu's real width.
+      * Hide it during measurement to avoid a visible jump.
+      */
+      menu.style.visibility = 'hidden';
       menu.style.top = `${rect.bottom + 6}px`;
-      menu.style.left = `${Math.max(12, rect.right - 210)}px`;
-      menu.innerHTML = `<button type="button" data-people-person-action="tree">Show in Family Tree</button><button type="button" class="danger" data-people-person-action="delete">Delete person</button>`;
+      menu.style.left = '0px';
+
       document.body.appendChild(menu);
+
+      const viewportPadding = 12;
+      const menuWidth = menu.getBoundingClientRect().width;
+
+      /*
+      * Align the menu's right edge with the button's right edge.
+      * Clamp only when the menu would leave the viewport.
+      */
+      const preferredLeft = rect.right - menuWidth;
+      const maximumLeft =
+        window.innerWidth - menuWidth - viewportPadding;
+
+      menu.style.left = `${
+        Math.max(
+          viewportPadding,
+          Math.min(preferredLeft, maximumLeft)
+        )
+      }px`;
+
+      menu.style.visibility = 'visible';
+
       menu.addEventListener('click', event => {
-        const action = event.target.closest('[data-people-person-action]')?.dataset.peoplePersonAction;
+        const action = event.target
+          .closest('[data-people-person-action]')
+          ?.dataset.peoplePersonAction;
+
         if (!action) return;
+
         closeMenu();
-        if (action === 'tree') showPersonInFamilyTree(person.id);
-        if (action === 'delete') openDeletePeoplePersonConfirm(person.id);
+
+        if (action === 'tree') {
+          showPersonInFamilyTree(person.id);
+        }
+
+        if (action === 'delete') {
+          openDeletePeoplePersonConfirm(person.id);
+        }
       });
-      setTimeout(() => document.addEventListener('click', closeMenu), 0);
+
+      setTimeout(() => {
+        document.addEventListener('click', closeMenu);
+        document.addEventListener('scroll', closeMenu, true);
+      }, 0);
     }
+
     function openDeletePeoplePersonConfirm(personId) {
       const person = currentPeopleRecords().find(item => item.id === personId);
       if (!person) return;
@@ -21657,14 +22203,57 @@ function renderTreeCardDateLines(person) {
     }
 
     function bindPeopleSidebar(root) {
-      root.querySelectorAll('[data-saved-view]').forEach(button => button.addEventListener('click', () => applyPeopleSavedView(button.dataset.savedView)));
-      root.querySelector('#peopleSidebarSaveView')?.addEventListener('click', openSavePeopleViewModal);
-      root.querySelector('[data-people-side]')?.addEventListener('click', () => { state.peopleView = 'directory'; state.peopleSide = 'people'; state.peopleSavedViewId = ''; state.peopleSavedView = 'All people'; state.peopleFilters = { ...defaultPeopleFilters }; renderPeople(); });
-      root.querySelector('[data-open-profile]')?.addEventListener('click', () => { state.peopleView = 'profile'; renderPeople(); });
-      root.querySelectorAll('[data-placeholder-view]').forEach(button => button.addEventListener('click', () => showToast(`${button.dataset.placeholderView} will be built in a later People iteration.`)));
+      root.querySelectorAll('[data-saved-view]').forEach(button => {
+        button.addEventListener('click', () => {
+          applyPeopleSavedView(button.dataset.savedView);
+        });
+      });
+
+      root.querySelectorAll('[data-saved-view-menu]').forEach(button => {
+        button.addEventListener('click', event => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          openPeopleSavedViewMenu(
+            button.dataset.savedViewMenu,
+            button
+          );
+        });
+      });
+
+      root
+        .querySelector('#peopleSidebarSaveView')
+        ?.addEventListener('click', openCreatePeopleFilterModal);
+
+      root
+        .querySelector('[data-people-side]')
+        ?.addEventListener('click', () => {
+          state.peopleView = 'directory';
+          state.peopleSide = 'people';
+          state.peopleSavedViewId = '';
+          state.peopleSavedView = 'All people';
+          state.peopleFilters = { ...defaultPeopleFilters };
+
+          renderPeople();
+        });
+
+      root
+        .querySelector('[data-open-profile]')
+        ?.addEventListener('click', () => {
+          state.peopleView = 'profile';
+          renderPeople();
+        });
+
+      root.querySelectorAll('[data-placeholder-view]').forEach(button => {
+        button.addEventListener('click', () => {
+          showToast(
+            `${button.dataset.placeholderView} will be built in a later People iteration.`
+          );
+        });
+      });
+
       bindToasts(root);
     }
-
 
     sampleData.albums = [
       { id: 'al-family', name: 'Family photos', description: 'Shared family portraits and gatherings.', created: 'May 8, 2026' },
@@ -25062,9 +25651,15 @@ function renderTreeCardDateLines(person) {
       document.getElementById('topbarPopover')?.remove();
       document.getElementById('peopleColumnsPopover')?.remove();
       document.getElementById('peopleFilterPopover')?.remove();
+
       state.topbarPopover = null;
-      if (typeof closeProjectNameOverlay === 'function') closeProjectNameOverlay();
+
+      if (typeof closeProjectNameOverlay === 'function') {
+        closeProjectNameOverlay();
+      }
+
       document.removeEventListener('click', closeMenu);
+      document.removeEventListener('scroll', closeMenu, true);
       document.removeEventListener('click', closeTopbarPopoverOnOutside);
     }
 
