@@ -1480,20 +1480,42 @@
       font-size: 12px;
     }
     .genealogy-date-field {
-      --genealogy-date-type-column: minmax(150px, 190px);
-      --genealogy-date-input-column: minmax(260px, 1fr);
+      --genealogy-date-type-column:
+        minmax(150px, 190px);
+
+      --genealogy-date-input-column:
+        minmax(0, 1fr);
+
+      --genealogy-date-column-gap:
+        var(--space-3);
+
+      --genealogy-date-row-gap:
+        var(--space-2);
+
+      --genealogy-date-columns:
+        var(--genealogy-date-type-column)
+        var(--genealogy-date-input-column)
+        var(--control-icon-button-size);
+
+      min-width: 0;
       display: grid;
-      gap: 8px;
+      row-gap: var(--genealogy-date-row-gap);
     }
+
     .genealogy-date-field > label {
       margin-bottom: 0;
     }
+
     .genealogy-date-controls {
-      display: grid;
-      grid-template-columns: var(--genealogy-date-type-column) minmax(240px, 1fr) var(--control-icon-button-size);
-      gap: var(--space-3);
-      align-items: stretch;
       min-width: 0;
+      display: grid;
+      grid-template-columns:
+        var(--genealogy-date-columns);
+      column-gap:
+        var(--genealogy-date-column-gap);
+      row-gap:
+        var(--genealogy-date-row-gap);
+      align-items: stretch;
     }
     .genealogy-date-type,
     .genealogy-date-input {
@@ -1633,57 +1655,6 @@
       .genealogy-date-field:not(.is-between)
         .genealogy-date-type-shell {
         grid-column: 1 / -1;
-      }
-
-      .genealogy-date-field.is-between:not(.genealogy-date-inline-range)
-        .genealogy-date-controls {
-        grid-template-columns:
-          minmax(0, 1fr)
-          var(--control-icon-button-size);
-        grid-template-rows:
-          var(--control-height)
-          auto
-          var(--control-height)
-          auto
-          var(--control-height);
-      }
-
-      .genealogy-date-field.is-between:not(.genealogy-date-inline-range)
-        .genealogy-date-type-shell {
-        grid-column: 1 / -1;
-        grid-row: 1;
-      }
-
-      .genealogy-date-field.is-between:not(.genealogy-date-inline-range)
-        .genealogy-date-range-cell:first-child > span {
-        grid-column: 1 / -1;
-        grid-row: 2;
-        margin-top: var(--space-2);
-      }
-
-      .genealogy-date-field.is-between:not(.genealogy-date-inline-range)
-        [data-genealogy-date-input] {
-        grid-column: 1;
-        grid-row: 3;
-      }
-
-      .genealogy-date-field.is-between:not(.genealogy-date-inline-range)
-        .genealogy-date-details-button {
-        grid-column: 2;
-        grid-row: 3;
-      }
-
-      .genealogy-date-field.is-between:not(.genealogy-date-inline-range)
-        [data-genealogy-date-to-cell] > span {
-        grid-column: 1 / -1;
-        grid-row: 4;
-        margin-top: var(--space-2);
-      }
-
-      .genealogy-date-field.is-between:not(.genealogy-date-inline-range)
-        [data-genealogy-date-input-to] {
-        grid-column: 1 / -1;
-        grid-row: 5;
       }
 
       .genealogy-date-editor-grid {
@@ -4486,11 +4457,11 @@
     .add-person-life-event-block.add-person-death-fields {
       display: grid;
     }
-    .add-person-life-event-block .genealogy-date-field {
+    .add-person-life-event-block
+      .genealogy-date-field {
       width: 100%;
-    }
-    .add-person-life-event-block .genealogy-date-controls {
-      grid-template-columns: var(--genealogy-date-type-column) minmax(260px, 1fr) var(--control-icon-button-size);
+      --genealogy-date-input-column:
+        minmax(260px, 1fr);
     }
 
     .genealogy-date-validation {
@@ -4499,16 +4470,6 @@
     .genealogy-date-range-shell {
       display: grid;
       min-width: 0;
-    }
-    .genealogy-date-field.is-between:not(.genealogy-date-inline-range) .genealogy-date-controls {
-      grid-template-columns: var(--genealogy-date-type-column) minmax(260px, 1fr) var(--control-icon-button-size);
-      grid-template-rows: auto var(--control-height) auto var(--control-height);
-      gap: var(--space-2) var(--space-3);
-      align-items: start;
-    }
-    .genealogy-date-field.is-between:not(.genealogy-date-inline-range) .genealogy-date-range-shell,
-    .genealogy-date-field.is-between:not(.genealogy-date-inline-range) .genealogy-date-range-cell {
-      display: contents;
     }
     .genealogy-date-range-cell {
       display: grid;
@@ -4526,48 +4487,7 @@
     .genealogy-date-field.is-between .genealogy-date-range-cell span {
       display: block;
     }
-    .genealogy-date-field.is-between:not(.genealogy-date-inline-range)
-      .genealogy-date-range-cell:first-child > span {
-      grid-column: 2;
-      grid-row: 1;
-      align-self: end;
-      justify-self: start;
-      margin: 0;
-    }
 
-    .genealogy-date-field.is-between:not(.genealogy-date-inline-range)
-      [data-genealogy-date-to-cell] > span {
-      grid-column: 2;
-      grid-row: 3;
-      align-self: end;
-      justify-self: start;
-      margin: var(--space-3) 0 0;
-    }
-    .genealogy-date-field.is-between:not(.genealogy-date-inline-range) .genealogy-date-type-shell {
-      grid-column: 1;
-      grid-row: 2;
-      min-height: var(--control-height);
-      align-self: start;
-    }
-    .genealogy-date-field.is-between:not(.genealogy-date-inline-range) [data-genealogy-date-input] {
-      grid-column: 2;
-      grid-row: 2;
-      min-height: var(--control-height);
-    }
-    .genealogy-date-field.is-between:not(.genealogy-date-inline-range) .genealogy-date-details-button {
-      grid-column: 3;
-      grid-row: 2;
-      width: var(--control-icon-button-size);
-      height: var(--control-height);
-      min-height: var(--control-height);
-      align-self: start;
-      justify-self: stretch;
-    }
-    .genealogy-date-field.is-between:not(.genealogy-date-inline-range) [data-genealogy-date-input-to] {
-      grid-column: 2;
-      grid-row: 4;
-      min-height: var(--control-height);
-    }
     .genealogy-date-field:not(.is-between) [data-genealogy-date-to-cell] {
       display: none;
     }
@@ -4752,14 +4672,13 @@
       outline-offset: 2px;
     }
 
-    .add-person-relationship-card .genealogy-date-controls {
-      grid-template-columns: var(--genealogy-date-type-column) minmax(0, 1fr) var(--control-icon-button-size);
-      min-width: 0;
-    }
-
     .add-person-relationship-card .genealogy-date-field,
     .add-person-relationship-card .field.full {
-      grid-column: 1 / -1;
+      --genealogy-date-type-column:
+        minmax(130px, 180px);
+
+      --genealogy-date-input-column:
+        minmax(0, 1fr);
     }
 
     .partner-relationship-start,
@@ -4799,15 +4718,16 @@
       min-width: 0;
       display: grid;
       grid-template-columns:
-        var(--genealogy-date-type-column)
-        var(--genealogy-date-input-column)
-        var(--control-icon-button-size);
+        var(--genealogy-date-columns);
       grid-template-rows:
         auto
         var(--control-height)
         auto
         var(--control-height);
-      gap: var(--space-2) var(--space-3);
+      column-gap:
+        var(--genealogy-date-column-gap);
+      row-gap:
+        var(--genealogy-date-row-gap);
       align-items: start;
     }
 
@@ -5057,28 +4977,52 @@
 
     .add-person-fact-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
       gap: var(--space-3);
-    }
-    .add-person-fact-grid .field.full,
-    .add-person-fact-grid .profile-edit-date-row {
-      grid-column: 1 / -1;
-    }
-    .add-person-fact-grid .add-person-fact-date-row {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--space-3);
-      min-width: 0;
     }
 
-    .add-person-fact-grid .add-person-fact-date-row .profile-edit-date-cell {
+    .add-person-fact-grid .field.full,
+    .add-person-fact-grid
+      .add-person-fact-date-row {
+      grid-column: 1 / -1;
+    }
+
+    .add-person-fact-grid
+      .add-person-fact-date-row {
+      min-width: 0;
+      display: grid;
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+      gap: var(--space-3);
+      align-items: start;
+    }
+
+    .add-person-fact-grid
+      .add-person-fact-date-row
+      .profile-edit-date-cell {
       min-width: 0;
       overflow: hidden;
     }
 
-    .add-person-fact-grid .add-person-fact-date-row .genealogy-date-controls {
-      grid-template-columns: minmax(118px, 150px) minmax(0, 1fr) var(--control-icon-button-size);
-      gap: var(--space-2);
-      min-width: 0;
+    .add-person-fact-grid
+      .add-person-fact-date-row
+      .genealogy-date-field {
+      --genealogy-date-type-column:
+        minmax(118px, 150px);
+
+      --genealogy-date-input-column:
+        minmax(0, 1fr);
+
+      --genealogy-date-column-gap:
+        var(--space-2);
+    }
+
+    @media (max-width: 900px) {
+      .add-person-fact-grid
+        .add-person-fact-date-row {
+        grid-template-columns: 1fr;
+      }
     }
 
     .add-person-fact-grid .add-person-fact-date-row .genealogy-date-type,
@@ -5408,8 +5352,6 @@
       .tree-inspector { display: none; }
       .add-person-grid { grid-template-columns: 1fr; }
       .two-col-form { grid-template-columns: 1fr; }
-      .add-person-life-event-block .genealogy-date-controls,
-      .genealogy-date-field.is-between:not(.genealogy-date-inline-range) .genealogy-date-controls,
       .add-person-fact-grid {
         grid-template-columns: 1fr;
       }}
@@ -6451,7 +6393,7 @@
 
     @media (max-width: 900px) {.people-layout { grid-template-columns: 1fr; }}
 
-    .profile-edit-card-header-state {
+    .profile-edit-card-state {
       display: inline-flex;
       align-items: center;
       gap: 7px;
@@ -6465,7 +6407,7 @@
       font-weight: 900;
       white-space: nowrap;
     }
-    .profile-edit-card-header-state.editing {
+    .profile-edit-card-state.editing {
       color: var(--brand-green-300);
       background: rgba(47,174,116,.12);
       border-color: rgba(98,217,154,.24);
@@ -6499,35 +6441,60 @@
     .profile-partner-link:hover,
     .profile-partner-link:focus-visible { color: var(--brand-green-300); text-decoration: underline; text-underline-offset: 3px; outline: none; }
 
-    .profile-card-edit-tabs {
+    .profile-card-tabs {
+      flex: 0 0 auto;
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      background: var(--surface-input);
+      grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+      margin: 0;
       border: 1px solid var(--border-default);
       border-radius: var(--radius-sm);
+      background: var(--surface-input);
       overflow: hidden;
-      margin-bottom: var(--space-4);
     }
-    .profile-card-edit-tab {
+
+    .profile-card-tab {
+      min-width: 0;
       min-height: 40px;
+      padding: 0 var(--space-2);
+      position: relative;
       border: 0;
       border-right: 1px solid var(--border-default);
       background: transparent;
       color: var(--text-tertiary);
       font-weight: 900;
-      position: relative;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
     }
-    .profile-card-edit-tab:last-child { border-right: 0; }
-    .profile-card-edit-tab:hover { background: rgba(255,255,255,.035); color: var(--text-primary); }
-    .profile-card-edit-tab.active { color: var(--text-primary); background: var(--surface-card); }
-    .profile-card-edit-tab.active::after {
+
+    .profile-card-tab:last-child {
+      border-right: 0;
+    }
+
+    .profile-card-tab:hover,
+    .profile-card-tab:focus-visible {
+      background: rgba(255, 255, 255, .035);
+      color: var(--text-primary);
+    }
+
+    .profile-card-tab.active {
+      background: var(--surface-card);
+      color: var(--text-primary);
+    }
+
+    .profile-card-tab.active::after {
       content: "";
       position: absolute;
-      left: 24%; right: 24%; bottom: 5px;
+      right: 24%;
+      bottom: 5px;
+      left: 24%;
       height: 2px;
-      background: var(--text-primary);
       border-radius: 999px;
+      background: var(--text-primary);
     }
+
     .profile-card-edit-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -6535,13 +6502,6 @@
     }
     .profile-card-edit-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .profile-card-edit-grid .field.full { grid-column: 1 / -1; }
-    .profile-edit-date-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: var(--space-5);
-      align-items: start;
-      min-width: 0;
-    }
 
     /* Profile → Other editing */
 
@@ -6567,7 +6527,6 @@
       grid-row: 2;
       min-width: 0;
     }
-    .profile-edit-date-row.full { grid-column: 1 / -1; }
     .profile-edit-date-cell { min-width: 0; }
     .profile-edit-date-cell .genealogy-date-field { width: 100%; }
     
@@ -6578,41 +6537,6 @@
       display: flex;
       justify-content: flex-end;
       gap: var(--space-2);
-    }
-
-    .person-profile
-      .profile-other-baptism-date
-      .genealogy-date-controls {
-      grid-template-columns:
-        var(--genealogy-date-type-column)
-        minmax(0, 1.2fr)
-        var(--control-icon-button-size);
-      gap: var(--space-2);
-      min-width: 0;
-      align-items: start;
-    }
-
-    .person-profile
-      .profile-other-baptism-date
-      .genealogy-date-type-shell,
-    .person-profile
-      .profile-other-baptism-date
-      .genealogy-date-range-shell,
-    .person-profile
-      .profile-other-baptism-date
-      .genealogy-date-range-cell,
-    .person-profile
-      .profile-other-baptism-date
-      .genealogy-date-input {
-      min-width: 0;
-    }
-
-    .person-profile
-      .profile-other-baptism-date
-      .genealogy-date-details-button {
-      width: var(--control-icon-button-size);
-      min-width: var(--control-icon-button-size);
-      padding: 0;
     }
 
     @media (max-width: 900px) {
@@ -6641,7 +6565,7 @@
     }
 
     .person-profile {
-      --profile-card-min-h: 408px;
+      --profile-primary-card-min-h: 408px;
 
       --profile-connected-card-h: 276px;
       --profile-connected-grid-h:
@@ -6680,72 +6604,82 @@
 
     .person-profile .profile-command-hero,
     .person-profile .profile-full-card,
-    .person-profile .profile-family-hub,
+    .person-profile .profile-family-slot,
     .person-profile .profile-connected-cube,
     .person-profile .profile-compact-timeline {
       grid-area: auto;
     }
 
-    /* Main information card */
+    /* Main Profile card */
 
     .person-profile .profile-full-card {
       width: 100%;
+      min-width: 0;
       height: auto;
-      min-height: var(--profile-card-min-h);
+      min-height:
+        var(--profile-primary-card-min-h);
       max-height: none;
-      align-self: start;
+      align-self: stretch;
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
 
-
     /*
-    * Editing controls such as place-combobox lists are allowed
-    * to extend outside the card.
+    * Editing dropdowns and place suggestion lists may extend
+    * outside the card.
     */
-    .person-profile .profile-full-card.editing,
-    .person-profile.is-editing .profile-full-card {
+    .person-profile
+      .profile-full-card.editing {
       position: relative;
       z-index: 20;
       overflow: visible;
     }
 
-    .person-profile .profile-full-card .profile-card-body {
+    .person-profile
+      .profile-full-card
+      .profile-card-body {
       flex: 1 1 auto;
-      height: auto;
+      min-width: 0;
       min-height: 0;
-      max-height: none;
       display: flex;
       flex-direction: column;
       gap: var(--space-4);
       overflow: visible;
     }
 
-    .person-profile .profile-full-card .profile-card-edit-tabs {
-      flex: 0 0 auto;
-      margin-bottom: 0;
-    }
-
-    .person-profile .profile-full-card.locked .profile-readonly-grid {
+    /*
+    * Every panel occupies the same grid cell. Hidden panels retain
+    * layout participation, so the stack height is established by
+    * the tallest panel in the current locked/editing mode.
+    */
+    .profile-card-panel-stack {
       flex: 1 1 auto;
+      min-width: 0;
       min-height: 0;
+      display: grid;
+      align-items: start;
     }
 
-    .person-profile
-      .profile-full-card.locked
-      .profile-readonly-grid-single
-      .profile-info-block {
-      height: 100%;
+    .profile-card-panel {
+      grid-area: 1 / 1;
+      min-width: 0;
+      align-self: start;
+      visibility: hidden;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
     }
 
-    .person-profile .profile-full-card.editing .profile-card-edit-grid.two {
-      grid-template-columns: 1fr;
+    .profile-card-panel.active {
+      visibility: visible;
+      pointer-events: auto;
+      user-select: auto;
+      z-index: 1;
     }
 
     /* Read-only information grids */
 
-    .profile-readonly-grid.profile-readonly-grid-tabbed:not(.main),
     .profile-readonly-grid.profile-readonly-grid-single {
       grid-template-columns: 1fr;
       align-items: stretch;
@@ -7323,11 +7257,27 @@
           
     /* Family card */
 
-    .person-profile__top .profile-family-hub {
-      height: var(--profile-card-min-h);
-      min-height: var(--profile-card-min-h);
-      max-height: var(--profile-card-min-h);
-      align-self: start;
+    /*
+    * The Profile card determines the desktop grid-row height.
+    * The Family slot fills that row without contributing its own
+    * intrinsic height.
+    */
+    .person-profile__top
+      .profile-family-slot {
+      min-width: 0;
+      min-height: 0;
+      position: relative;
+      align-self: stretch;
+    }
+
+    .person-profile__top
+      .profile-family-hub {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      max-height: none;
       display: flex;
       flex-direction: column;
     }
@@ -7426,14 +7376,24 @@
         grid-template-columns: 1fr;
       }
 
-      .person-profile__top .profile-family-hub {
-        height: auto;
-        min-height: var(--profile-card-min-h);
-        max-height: none;
-        align-self: stretch;
+      .person-profile__top
+        .profile-family-slot {
+        position: static;
+        min-height: 0;
       }
 
-      .person-profile__top .profile-family-scroll {
+      .person-profile__top
+        .profile-family-hub {
+        position: static;
+        inset: auto;
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        max-height: none;
+      }
+
+      .person-profile__top
+        .profile-family-scroll {
         max-height: 360px;
       }
 
@@ -10624,20 +10584,37 @@
       z-index: 180;
     }
 
-    .person-profile .profile-main-edit-grid .genealogy-date-controls {
-      grid-template-columns:
-        var(--genealogy-date-type-column)
-        minmax(0, 1fr)
-        var(--control-icon-button-size);
-      gap: var(--space-2);
+    .person-profile
+      .profile-main-edit-grid
+      .genealogy-date-controls {
       align-items: start;
       min-width: 0;
     }
 
-    .person-profile .profile-main-edit-grid .genealogy-date-inline-range,
-    .person-profile .profile-other-baptism-date {
-      --genealogy-date-type-column: minmax(104px, .8fr);
-      --genealogy-date-input-column: minmax(0, 1.2fr);
+    .person-profile
+      .profile-main-edit-grid
+      .genealogy-date-inline-range {
+      --genealogy-date-type-column:
+        minmax(160px, 188px);
+
+      --genealogy-date-input-column:
+        minmax(0, 1fr);
+
+      --genealogy-date-column-gap:
+        var(--space-2);
+    }
+
+    /* Profile Other: Baptism uses the shared layout. */
+    .person-profile
+      .profile-other-baptism-date {
+      --genealogy-date-type-column:
+        minmax(104px, .8fr);
+
+      --genealogy-date-input-column:
+        minmax(220px, 1fr);
+
+      --genealogy-date-column-gap:
+        var(--space-2);
     }
 
     .person-profile .profile-main-edit-grid .genealogy-date-details-button {
@@ -10713,55 +10690,15 @@
       display: none !important;
     }
 
-    /* Match the Add/Edit Person layout when the date type is Between. */
-    /* Birth Date / Death Date label sits above the date-type control. */
-    /*
-    * Flatten the shared date-control wrappers so the labels and inputs
-    * can participate directly in the Profile date field grid.
-    */
-    /* “From” directly above the first date input. */
-    /* “To” directly above the second date input. */
-    /* First row of controls. */
-    /* Second date input below its “To” label. */
-    /* Validation and calendar-status messages remain full width. */
-    .person-profile .profile-range-date-row {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--space-4);
-      min-width: 0;
-    }
-
-    .person-profile .profile-range-date-row .profile-edit-date-cell {
-      min-width: 0;
-    }
-
-    .person-profile .profile-range-date-row .genealogy-date-controls,
-    .person-profile .profile-card-edit-grid > .genealogy-date-field .genealogy-date-controls {
-      grid-template-columns: var(--genealogy-date-type-column) minmax(220px, 1fr) var(--control-icon-button-size);
-      gap: var(--space-3);
-      min-width: 0;
-    }
-
-    .person-profile .profile-range-date-row .genealogy-date-type,
-    .person-profile .profile-range-date-row .genealogy-date-input,
-    .person-profile .profile-range-date-row .genealogy-date-details-button,
-    .person-profile .profile-card-edit-grid > .genealogy-date-field .genealogy-date-type,
-    .person-profile .profile-card-edit-grid > .genealogy-date-field .genealogy-date-input,
-    .person-profile .profile-card-edit-grid > .genealogy-date-field .genealogy-date-details-button {
-      min-height: var(--control-height);
-      height: var(--control-height);
-      max-height: var(--control-height);
-    }
-
-    .person-profile .profile-range-date-row .genealogy-date-details-button,
-    .person-profile .profile-card-edit-grid > .genealogy-date-field .genealogy-date-details-button {
-      width: var(--control-icon-button-size);
-      min-width: var(--control-icon-button-size);
-      padding: 0;
+    .person-profile
+      .profile-card-edit-grid
+      > .genealogy-date-field {
+      --genealogy-date-input-column:
+        minmax(220px, 1fr);
     }
 
     @media (max-width: 1180px) {
-      .person-profile .profile-main-edit-grid,
-      .person-profile .profile-range-date-row {
+      .person-profile .profile-main-edit-grid {
         grid-template-columns: 1fr;
       }
       .person-profile .profile-field-gender,
@@ -10780,15 +10717,6 @@
       .person-profile .profile-field-burial-place {
         grid-column: 1;
         grid-row: auto;
-      }
-    }
-
-    @media (max-width: 900px) {
-      .profile-edit-date-row,
-      .person-profile .profile-main-edit-grid .genealogy-date-controls,
-      .person-profile .profile-range-date-row .genealogy-date-controls,
-      .person-profile .profile-card-edit-grid > .genealogy-date-field .genealogy-date-controls {
-        grid-template-columns: 1fr;
       }
     }
 
@@ -11308,40 +11236,6 @@
 
     .genealogy-date-field.has-error .common-select {
       border-color: rgba(255, 111, 111, .65);
-    }
-    .add-person-select,
-    .add-person-status-button,
-    .genealogy-date-type,
-    .genealogy-date-input,
-    .genealogy-date-details-button {
-      box-sizing: border-box;
-      height: var(--control-height);
-      min-height: var(--control-height);
-      max-height: var(--control-height);
-    }
-
-    .genealogy-date-controls,
-    .add-person-life-event-block .genealogy-date-controls,
-    .add-person-fact-grid .add-person-fact-date-row .genealogy-date-controls,
-    .person-profile .profile-main-edit-grid .genealogy-date-controls,
-    .person-profile .profile-range-date-row .genealogy-date-controls,
-    .person-profile .profile-card-edit-grid > .genealogy-date-field .genealogy-date-controls {
-      grid-template-columns: var(--genealogy-date-type-column) minmax(0, 1fr) var(--control-icon-button-size);
-    }
-
-    .add-person-fact-grid .add-person-fact-date-row .genealogy-date-field {
-      --genealogy-date-type-column: minmax(118px, 150px);
-    }
-
-    .genealogy-date-details-button {
-      width: var(--control-icon-button-size);
-      min-width: var(--control-icon-button-size);
-      max-width: var(--control-icon-button-size);
-      padding: 0;
-    }
-
-    .genealogy-date-field.is-between:not(.genealogy-date-inline-range) .genealogy-date-controls {
-      grid-template-rows: auto var(--control-height) auto var(--control-height);
     }
 
     @media (max-width: 720px) {
@@ -17511,9 +17405,36 @@ function renderTreeCardDateLines(person) {
             className: 'full'
           })}
 
-          <div class="profile-edit-date-row add-person-fact-date-row">
-            <div class="profile-edit-date-cell">${renderGenealogyDateField('addPersonFactEducationFrom', 'From', details.educationFromDate, { inputId: 'addPersonFactEducationFromDate', typeId: 'addPersonFactEducationFromDateType', defaultDateType: 'Year only', placeholder: 'e.g. 2004' })}</div>
-            <div class="profile-edit-date-cell">${renderGenealogyDateField('addPersonFactEducationTo', 'To', details.educationToDate, { inputId: 'addPersonFactEducationToDate', typeId: 'addPersonFactEducationToDateType', defaultDateType: 'Year only', placeholder: 'e.g. 2015' })}</div>
+          <div class="add-person-fact-date-row">
+            <div class="profile-edit-date-cell">
+              ${renderGenealogyDateField(
+                'addPersonFactEducationFrom',
+                'Start date',
+                details.educationFromDate,
+                {
+                  inputId: 'addPersonFactEducationFromDate',
+                  typeId: 'addPersonFactEducationFromDateType',
+                  defaultDateType: 'Year only',
+                  placeholder: 'e.g. 2004',
+                  className: 'genealogy-date-inline-range'
+                }
+              )}
+            </div>
+
+            <div class="profile-edit-date-cell">
+              ${renderGenealogyDateField(
+                'addPersonFactEducationFrom',
+                'Start date',
+                details.educationFromDate,
+                {
+                  inputId: 'addPersonFactEducationFromDate',
+                  typeId: 'addPersonFactEducationFromDateType',
+                  defaultDateType: 'Year only',
+                  placeholder: 'e.g. 2004',
+                  className: 'genealogy-date-inline-range'
+                }
+              )}
+            </div>
           </div>
 
           <div class="field full">
@@ -17524,9 +17445,36 @@ function renderTreeCardDateLines(person) {
       if (factId === 'occupation') {
         return fieldWrap(`<div class="field"><label for="addPersonFactWorkCompany">Company name</label><input id="addPersonFactWorkCompany" value="${escapeHtml(details.workCompany || '')}" placeholder="Company"></div>
           <div class="field"><label for="addPersonFactWorkOccupation">Occupation</label><input id="addPersonFactWorkOccupation" value="${escapeHtml(details.workOccupation || '')}" placeholder="Occupation"></div>
-          <div class="profile-edit-date-row add-person-fact-date-row">
-            <div class="profile-edit-date-cell">${renderGenealogyDateField('addPersonFactWorkFrom', 'From', details.workFromDate, { inputId: 'addPersonFactWorkFromDate', typeId: 'addPersonFactWorkFromDateType', defaultDateType: 'Exact date', placeholder: 'e.g. 2016' })}</div>
-            <div class="profile-edit-date-cell">${renderGenealogyDateField('addPersonFactWorkTo', 'To', details.workToDate, { inputId: 'addPersonFactWorkToDate', typeId: 'addPersonFactWorkToDateType', defaultDateType: 'Exact date', placeholder: 'e.g. 2020' })}</div>
+          <div class="add-person-fact-date-row">
+            <div class="profile-edit-date-cell">
+              ${renderGenealogyDateField(
+                'addPersonFactWorkFrom',
+                'Start date',
+                details.workFromDate,
+                {
+                  inputId: 'addPersonFactWorkFromDate',
+                  typeId: 'addPersonFactWorkFromDateType',
+                  defaultDateType: 'Exact date',
+                  placeholder: 'e.g. 2016',
+                  className: 'genealogy-date-inline-range'
+                }
+              )}
+            </div>
+
+            <div class="profile-edit-date-cell">
+              ${renderGenealogyDateField(
+                'addPersonFactWorkTo',
+                'End date',
+                details.workToDate,
+                {
+                  inputId: 'addPersonFactWorkToDate',
+                  typeId: 'addPersonFactWorkToDateType',
+                  defaultDateType: 'Exact date',
+                  placeholder: 'e.g. 2020',
+                  className: 'genealogy-date-inline-range'
+                }
+              )}
+            </div>
           </div>
           <div class="field full"><label for="addPersonFactWorkNotes">Notes</label><textarea id="addPersonFactWorkNotes" placeholder="Work notes">${escapeHtml(details.workNotes || '')}</textarea></div>`);
       }
@@ -21713,50 +21661,156 @@ function renderTreeCardDateLines(person) {
       </tbody></table>`;
     }
 
+    const PROFILE_CARD_SECTIONS = Object.freeze([
+      Object.freeze({
+        id: 'main',
+        label: 'Main information'
+      }),
+      Object.freeze({
+        id: 'education',
+        label: 'Education'
+      }),
+      Object.freeze({
+        id: 'work',
+        label: 'Work'
+      }),
+      Object.freeze({
+        id: 'other',
+        label: 'Other'
+      })
+    ]);
+
+    function normalizeProfileCardSection(value) {
+      return PROFILE_CARD_SECTIONS.some(
+        section => section.id === value
+      )
+        ? value
+        : 'main';
+    }
+
     function renderPeopleProfile(person) {
       main.classList.add('people-profile-main');
-      state.peopleProfileEditTab = state.peopleProfileEditTab || 'main';
-      if (typeof state.peopleProfileEditing !== 'boolean') state.peopleProfileEditing = false;
-      main.innerHTML = `<div class="person-profile ${state.peopleProfileEditing ? 'is-editing' : ''}">
-        <header class="profile-hero profile-command-hero">
-          <button class="profile-back-link" type="button" id="backPeopleList">
-            <span class="profile-back-link-icon" aria-hidden="true">${icon.arrow}</span>
-            <span>Back to people</span>
-          </button>
-          ${renderPersonAvatar(person, 'profile-hero-photo')}
-          <div class="profile-hero-copy">
-            <h1>${escapeHtml(person.name)}</h1>
-            ${renderPeopleHeroLifeSummary(person, { includeBirthPlace: true })}
-            <p>${escapeHtml(person.parents ? `Child of ${person.parents}` : person.relation)}</p>
-            <div class="person-chip-row">
-              ${renderLivingStatusChip(person.living)}
-              <span class="person-chip red">${person.photos} photos</span>
-              <span class="person-chip amber">${person.files} files</span>
-              <span class="person-chip purple">${person.notes} notes</span>
+
+      state.peopleProfileEditTab =
+        normalizeProfileCardSection(
+          state.peopleProfileEditTab
+        );
+
+      if (
+        typeof state.peopleProfileEditing
+        !== 'boolean'
+      ) {
+        state.peopleProfileEditing = false;
+      }
+
+      main.innerHTML = `
+        <div class="person-profile">
+          <header class="profile-hero profile-command-hero">
+            <button
+              class="profile-back-link"
+              type="button"
+              id="backPeopleList">
+              <span
+                class="profile-back-link-icon"
+                aria-hidden="true">
+                ${icon.arrow}
+              </span>
+
+              <span>Back to people</span>
+            </button>
+
+            ${renderPersonAvatar(
+              person,
+              'profile-hero-photo'
+            )}
+
+            <div class="profile-hero-copy">
+              <h1>${escapeHtml(person.name)}</h1>
+
+              ${renderPeopleHeroLifeSummary(
+                person,
+                {
+                  includeBirthPlace: true
+                }
+              )}
+
+              <p>
+                ${escapeHtml(
+                  person.parents
+                    ? `Child of ${person.parents}`
+                    : person.relation
+                )}
+              </p>
+
+              <div class="person-chip-row">
+                ${renderLivingStatusChip(person.living)}
+
+                <span class="person-chip red">
+                  ${person.photos} photos
+                </span>
+
+                <span class="person-chip amber">
+                  ${person.files} files
+                </span>
+
+                <span class="person-chip purple">
+                  ${person.notes} notes
+                </span>
+              </div>
+            </div>
+
+            <div class="profile-hero-actions">
+              <button
+                class="button primary"
+                type="button"
+                id="profileEditButton"
+                ${state.peopleProfileEditing
+                  ? 'disabled aria-disabled="true"'
+                  : ''}>
+                ${icon.edit}
+
+                ${state.peopleProfileEditing
+                  ? 'Editing profile'
+                  : 'Edit profile'}
+              </button>
+
+              <button
+                class="button secondary"
+                type="button"
+                id="profileAddRelative">
+                ${icon.addperson}
+                Add relative
+              </button>
+
+              <button
+                class="button secondary"
+                type="button"
+                id="profileMoreActions"
+                aria-haspopup="menu"
+                aria-expanded="false">
+                ${renderPanelButtonLabel(
+                  icon.more,
+                  'More actions'
+                )}
+              </button>
+            </div>
+          </header>
+
+          <div class="person-profile__top">
+            ${renderEditableProfileCard(person)}
+
+            <div class="profile-family-slot">
+              ${renderProfileFamilyHub(person)}
             </div>
           </div>
-          <div class="profile-hero-actions">
-            <button class="button primary" type="button" id="profileEditButton">${icon.edit} ${state.peopleProfileEditing ? 'Editing profile' : 'Edit profile'}</button>
-            <button class="button secondary" type="button" id="profileAddRelative">${icon.addperson} Add relative</button>
-            <button
-              class="button secondary"
-              type="button"
-              id="profileMoreActions"
-              aria-haspopup="menu"
-              aria-expanded="false">
-              ${renderPanelButtonLabel(icon.more, 'More actions')}
-            </button>
+
+          <div class="person-profile__bottom">
+            ${renderProfileConnectedCube(person)}
+            ${renderProfileCompactTimeline(person)}
           </div>
-        </header>
-        <div class="person-profile__top">
-          ${renderEditableProfileCard(person)}
-          ${renderProfileFamilyHub(person)}
         </div>
-        <div class="person-profile__bottom">
-          ${renderProfileConnectedCube(person)}
-          ${renderProfileCompactTimeline(person)}
-        </div>
-      </div>`;
+      `;
+
       bindPeopleProfileControls(person);
     }
 
@@ -21850,150 +21904,594 @@ function renderTreeCardDateLines(person) {
       };
     }
 
-    function renderEditableProfileCard(person) {
-      const editing = !!state.peopleProfileEditing;
-      const active = state.peopleProfileEditTab || 'main';
-      return `<article class="profile-card profile-edit-card profile-full-card ${editing ? 'editing' : 'locked'}">
-        <h3><span class="section-title">${icon.people} Profile</span><span class="profile-edit-card-header-state ${editing ? 'editing' : ''}">${editing ? 'Editing' : 'Locked'}</span></h3>
-        <div class="profile-card-body">
-          ${renderProfileCardTabs(active)}
-          ${editing ? renderProfileEditCardTabContent(person, active) : renderProfileLockedCardBody(person, active)}
-          ${editing ? `<div class="profile-edit-inline-actions"><button class="button secondary" type="button" id="profileCancelEdit">Cancel</button><button class="button primary" type="button" id="profileSaveInlineEdit">Save changes</button></div>` : ''}
-        </div>
-      </article>`;
-    }
-
-    function renderProfileLockedCardBody(person, active = state.peopleProfileEditTab || 'main') {
-      const name = splitProfileName(person);
-      const details = peopleProfileDetailsFor(person);
-      const isDeceased = person.living === 'Deceased';
-      const isFemale = person.gender === 'female';
-      const centralPerson = getPerson(person.id);
-      const birthLabel = formatGenealogyDateLabel(centralPerson?.birth || person.birth);
-      const deathLabel = formatGenealogyDateLabel(centralPerson?.death || person.death);
-      const deathPlaceLabel = cleanEditFieldValue(person.deathPlace);
-      if (active === 'education') {
-        return `<div class="profile-readonly-grid profile-readonly-grid-single">
-          <section class="profile-info-block wide"><h4>Education</h4>
-            ${renderProfileInfoRow('Institution', details.educationInstitutionName || '-')}
-            ${renderProfileInfoRow('Institution type', details.educationInstitutionType || '-')}
-            ${renderProfileInfoRow('Education or credential', details.educationValue || '-')}
-            ${renderProfileInfoRow('Place', details.educationPlace || '-')}
-            ${renderProfileInfoRow('From', profileDetailDateLabel(details.educationFromDate))}
-            ${renderProfileInfoRow('To', profileDetailDateLabel(details.educationToDate))}
-            ${renderProfileInfoRow('Notes', details.educationNotes || '-')}
-          </section>
-        </div>`;
-      }
-      if (active === 'work') {
-        return `<div class="profile-readonly-grid profile-readonly-grid-single">
-          <section class="profile-info-block wide"><h4>Work</h4>
-            ${renderProfileInfoRow('Company name', details.workCompany || '-')}
-            ${renderProfileInfoRow('Occupation', details.workOccupation || '-')}
-            ${renderProfileInfoRow('From', profileDetailDateLabel(details.workFromDate))}
-            ${renderProfileInfoRow('To', profileDetailDateLabel(details.workToDate))}
-            ${renderProfileInfoRow('Notes', details.workNotes || '-')}
-          </section>
-        </div>`;
-      }
-      if (active === 'other') {
-        return `<div class="profile-readonly-grid profile-readonly-grid-single">
-          <section class="profile-info-block wide"><h4>Other</h4>
-            ${renderProfileInfoRow(
-              'Religion',
-              normalizeReligionValue(details.religion)
-            )}
-            ${renderProfileInfoRow('Baptism date', profileDetailDateLabel(details.baptismDate))}
-            ${renderProfileInfoRow('Baptism place', details.baptismPlace || '-')}
-            ${renderProfileInfoRow('Privacy', person.living === 'Living' ? 'Living person protected' : 'Standard record')}
-          </section>
-        </div>`;
-      }
-      return `<div class="profile-readonly-grid profile-readonly-grid-tabbed main">
-        <section class="profile-info-block"><h4>Main information</h4>
-          ${renderProfileInfoRow('First name', name.first || '-')}
-          ${renderProfileInfoRow('Last name', name.surname || '-')}
-          ${renderProfileInfoRow('Patronym', name.patronym || '-')}
-          ${isFemale ? renderProfileInfoRow('Maiden name', details.maidenName || '-') : ''}
-          ${renderProfileInfoRow('Gender', isFemale ? 'Female' : person.gender === 'male' ? 'Male' : 'Unknown')}
-          ${renderProfileInfoRowRaw('Living status', renderProfileStatusValue(person.living || 'Unknown'))}
-          ${renderProfileInfoRow('Prefix', details.prefix || '-')}
-          ${renderProfileInfoRow('Suffix', details.suffix || '-')}
-        </section>
-        <section class="profile-info-block"><h4>Birth and life</h4>
-          ${renderProfileInfoRow('Birth date', birthLabel || '-')}
-          ${renderProfileInfoRow('Birth place', person.birthPlace || '-')}
-          ${isDeceased ? renderProfileInfoRow('Death date', deathLabel || '-') + renderProfileInfoRow('Death place', deathPlaceLabel || '-') + renderProfileInfoRow('Death reason', details.deathReason || '-') + renderProfileInfoRow('Burial place', details.burialPlace || '-') : ''}
-        </section>
-        <section class="profile-info-block"><h4>Partners</h4>
-          ${renderProfilePartnersInfo(person)}
-        </section>
-      </div>`;
-    }
-
-    function profilePartnerIdsForFamily(family, personId) {
-      const ids = [
-        family?.partner1Id,
-        family?.partner2Id,
-        family?.partnerAId,
-        family?.partnerBId,
-        family?.personAId,
-        family?.personBId,
-        family?.fatherId,
-        family?.motherId
-      ].filter(Boolean);
-      const unique = [...new Set(ids)];
-      if (!unique.includes(personId)) return null;
-      return unique.find(id => id !== personId) || '';
-    }
-
-    function renderProfilePartnersInfo(person) {
-      const centralPerson = getPerson(person?.id);
-      if (!centralPerson) return '<div class="panel-muted">No partners recorded</div>';
-      const seen = new Set();
-      const rows = centralFamilyRecords()
-        .filter(family => !family.projectId || family.projectId === centralPerson.projectId)
-        .map(family => {
-          const partnerId = profilePartnerIdsForFamily(family, centralPerson.id);
-          if (!partnerId || seen.has(`${family.id}:${partnerId}`)) return null;
-          const partner = getPerson(partnerId);
-          if (!partner) return null;
-          seen.add(`${family.id}:${partnerId}`);
-          const relationshipType = relationshipTypeFromLegacy(family);
-          const relationshipLabel = relationshipType === 'Unknown relationship'
-            ? 'Relationship'
-            : relationshipType;
-          const dateLabel = partnerRelationshipDateSummary(family).rangeLabel;
-          return renderProfileInfoRowRaw(
-            relationshipLabel,
-            `<span class="profile-partner-value"><button class="profile-partner-link" type="button" data-profile-partner-id="${escapeHtml(partner.id)}">${escapeHtml(partner.names.display)}</button>${dateLabel ? `<small class="profile-partner-meta">${escapeHtml(dateLabel)}</small>` : ''}</span>`
-          );
-        })
-        .filter(Boolean);
-      return rows.length ? rows.join('') : '<div class="panel-muted">No partners recorded</div>';
-    }
-
     function renderProfileInfoRow(label, value) {
-      return `<div class="profile-info-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`;
+      return `
+        <div class="profile-info-row">
+          <span>${escapeHtml(label)}</span>
+          <strong>${escapeHtml(value)}</strong>
+        </div>
+      `;
     }
 
     function renderProfileInfoRowRaw(label, html) {
-      return `<div class="profile-info-row"><span>${escapeHtml(label)}</span><strong>${html}</strong></div>`;
+      return `
+        <div class="profile-info-row">
+          <span>${escapeHtml(label)}</span>
+          <strong>${html}</strong>
+        </div>
+      `;
     }
 
     function renderProfileStatusValue(status) {
       const safeStatus = status || 'Unknown';
-      return `<span class="profile-status-inline"><span class="add-person-status-dot ${statusDotClass(safeStatus)}"></span>${escapeHtml(safeStatus)}</span>`;
+
+      return `
+        <span class="profile-status-inline">
+          <span
+            class="
+              add-person-status-dot
+              ${statusDotClass(safeStatus)}
+            "
+            aria-hidden="true">
+          </span>
+
+          ${escapeHtml(safeStatus)}
+        </span>
+      `;
     }
 
-    function renderProfileCardTabs(active) {
-      return `<div class="profile-card-edit-tabs profile-card-tabs-always" role="tablist" aria-label="Profile card sections">
-        ${['main','education','work','other'].map(id => `<button class="profile-card-edit-tab ${active === id ? 'active' : ''}" type="button" data-profile-card-tab="${id}">${id === 'main' ? 'Main information' : capitalize(id)}</button>`).join('')}
-      </div>`;
+    function renderProfilePartnersInfo(person) {
+      const centralPerson = getPerson(person?.id);
+
+      if (!centralPerson) {
+        return `
+          <div class="panel-muted">
+            No partners recorded
+          </div>
+        `;
+      }
+
+      const rows = getPartnerRelationships(
+        centralPerson.id
+      )
+        .filter(family =>
+          !family.projectId
+          || !centralPerson.projectId
+          || family.projectId
+            === centralPerson.projectId
+        )
+        .map(family => {
+          const partnerId = familyPartnerId(
+            family,
+            centralPerson.id
+          );
+
+          const partner = getPerson(partnerId);
+
+          if (!partner) return '';
+
+          const relationshipType =
+            relationshipTypeFromLegacy(family);
+
+          const relationshipLabel =
+            relationshipType
+            === 'Unknown relationship'
+              ? 'Relationship'
+              : relationshipType;
+
+          const dateLabel =
+            partnerRelationshipDateSummary(
+              family
+            ).rangeLabel;
+
+          const partnerName =
+            partner.names?.display
+            || 'Unnamed person';
+
+          return renderProfileInfoRowRaw(
+            relationshipLabel,
+            `
+              <span class="profile-partner-value">
+                <button
+                  class="profile-partner-link"
+                  type="button"
+                  data-profile-partner-id="${
+                    escapeHtml(partner.id)
+                  }">
+                  ${escapeHtml(partnerName)}
+                </button>
+
+                ${dateLabel
+                  ? `
+                    <small class="profile-partner-meta">
+                      ${escapeHtml(dateLabel)}
+                    </small>
+                  `
+                  : ''}
+              </span>
+            `
+          );
+        })
+        .filter(Boolean);
+
+      return rows.length
+        ? rows.join('')
+        : `
+          <div class="panel-muted">
+            No partners recorded
+          </div>
+        `;
     }
 
-    function renderProfileEditCardTabContent(person, active = state.peopleProfileEditTab || 'main') {
-      return active === 'main' ? renderProfileMainEditFields(person) : active === 'education' ? renderProfileEducationEditFields(person) : active === 'work' ? renderProfileWorkEditFields(person) : renderProfileOtherEditFields(person);
+    function renderEditableProfileCard(person) {
+      const editing = Boolean(
+        state.peopleProfileEditing
+      );
+
+      const activeSection =
+        normalizeProfileCardSection(
+          state.peopleProfileEditTab
+        );
+
+      return `
+        <article
+          class="
+            profile-card
+            profile-full-card
+            ${editing ? 'editing' : 'locked'}
+          "
+          data-profile-card-root>
+
+          <h3>
+            <span class="section-title">
+              ${icon.people}
+              Profile
+            </span>
+
+            <span
+              class="
+                profile-edit-card-state
+                ${editing ? 'editing' : ''}
+              ">
+              ${editing ? 'Editing' : 'Locked'}
+            </span>
+          </h3>
+
+          <div class="profile-card-body">
+            ${renderProfileCardTabs(activeSection)}
+
+            ${renderProfileCardPanels(
+              person,
+              editing,
+              activeSection
+            )}
+
+            ${editing
+              ? `
+                <div class="profile-edit-inline-actions">
+                  <button
+                    class="button secondary"
+                    type="button"
+                    id="profileCancelEdit">
+                    Cancel
+                  </button>
+
+                  <button
+                    class="button primary"
+                    type="button"
+                    id="profileSaveInlineEdit">
+                    Save changes
+                  </button>
+                </div>
+              `
+              : ''}
+          </div>
+        </article>
+      `;
+    }
+
+    function renderProfileLockedPanelContent(
+      person,
+      sectionId
+    ) {
+      const activeSection =
+        normalizeProfileCardSection(sectionId);
+
+      const name = splitProfileName(person);
+      const details = peopleProfileDetailsFor(person);
+
+      const isDeceased =
+        person.living === 'Deceased';
+
+      const isFemale =
+        person.gender === 'female';
+
+      const centralPerson = getPerson(person.id);
+
+      const birthLabel =
+        formatGenealogyDateLabel(
+          centralPerson?.birth || person.birth
+        );
+
+      const deathLabel =
+        formatGenealogyDateLabel(
+          centralPerson?.death || person.death
+        );
+
+      const deathPlaceLabel =
+        cleanEditFieldValue(person.deathPlace);
+
+      if (activeSection === 'education') {
+        return `
+          <div
+            class="
+              profile-readonly-grid
+              profile-readonly-grid-single
+            ">
+
+            <section class="profile-info-block wide">
+              <h4>Education</h4>
+
+              ${renderProfileInfoRow(
+                'Institution',
+                details.educationInstitutionName || '-'
+              )}
+
+              ${renderProfileInfoRow(
+                'Institution type',
+                details.educationInstitutionType || '-'
+              )}
+
+              ${renderProfileInfoRow(
+                'Education or credential',
+                details.educationValue || '-'
+              )}
+
+              ${renderProfileInfoRow(
+                'Place',
+                details.educationPlace || '-'
+              )}
+
+              ${renderProfileInfoRow(
+                'From',
+                profileDetailDateLabel(
+                  details.educationFromDate
+                )
+              )}
+
+              ${renderProfileInfoRow(
+                'To',
+                profileDetailDateLabel(
+                  details.educationToDate
+                )
+              )}
+
+              ${renderProfileInfoRow(
+                'Notes',
+                details.educationNotes || '-'
+              )}
+            </section>
+          </div>
+        `;
+      }
+
+      if (activeSection === 'work') {
+        return `
+          <div
+            class="
+              profile-readonly-grid
+              profile-readonly-grid-single
+            ">
+
+            <section class="profile-info-block wide">
+              <h4>Work</h4>
+
+              ${renderProfileInfoRow(
+                'Company name',
+                details.workCompany || '-'
+              )}
+
+              ${renderProfileInfoRow(
+                'Occupation',
+                details.workOccupation || '-'
+              )}
+
+              ${renderProfileInfoRow(
+                'From',
+                profileDetailDateLabel(
+                  details.workFromDate
+                )
+              )}
+
+              ${renderProfileInfoRow(
+                'To',
+                profileDetailDateLabel(
+                  details.workToDate
+                )
+              )}
+
+              ${renderProfileInfoRow(
+                'Notes',
+                details.workNotes || '-'
+              )}
+            </section>
+          </div>
+        `;
+      }
+
+      if (activeSection === 'other') {
+        return `
+          <div
+            class="
+              profile-readonly-grid
+              profile-readonly-grid-single
+            ">
+
+            <section class="profile-info-block wide">
+              <h4>Other</h4>
+
+              ${renderProfileInfoRow(
+                'Religion',
+                normalizeReligionValue(
+                  details.religion
+                )
+              )}
+
+              ${renderProfileInfoRow(
+                'Baptism date',
+                profileDetailDateLabel(
+                  details.baptismDate
+                )
+              )}
+
+              ${renderProfileInfoRow(
+                'Baptism place',
+                details.baptismPlace || '-'
+              )}
+
+              ${renderProfileInfoRow(
+                'Privacy',
+                person.living === 'Living'
+                  ? 'Living person protected'
+                  : 'Standard record'
+              )}
+            </section>
+          </div>
+        `;
+      }
+
+      return `
+        <div
+          class="
+            profile-readonly-grid
+            profile-readonly-grid-tabbed
+            main
+          ">
+
+          <section class="profile-info-block">
+            <h4>Main information</h4>
+
+            ${renderProfileInfoRow(
+              'First name',
+              name.first || '-'
+            )}
+
+            ${renderProfileInfoRow(
+              'Last name',
+              name.surname || '-'
+            )}
+
+            ${renderProfileInfoRow(
+              'Patronym',
+              name.patronym || '-'
+            )}
+
+            ${isFemale
+              ? renderProfileInfoRow(
+                  'Maiden name',
+                  details.maidenName || '-'
+                )
+              : ''}
+
+            ${renderProfileInfoRow(
+              'Gender',
+              isFemale
+                ? 'Female'
+                : person.gender === 'male'
+                  ? 'Male'
+                  : 'Unknown'
+            )}
+
+            ${renderProfileInfoRowRaw(
+              'Living status',
+              renderProfileStatusValue(
+                person.living || 'Unknown'
+              )
+            )}
+
+            ${renderProfileInfoRow(
+              'Prefix',
+              details.prefix || '-'
+            )}
+
+            ${renderProfileInfoRow(
+              'Suffix',
+              details.suffix || '-'
+            )}
+          </section>
+
+          <section class="profile-info-block">
+            <h4>Birth and life</h4>
+
+            ${renderProfileInfoRow(
+              'Birth date',
+              birthLabel || '-'
+            )}
+
+            ${renderProfileInfoRow(
+              'Birth place',
+              person.birthPlace || '-'
+            )}
+
+            ${isDeceased
+              ? `
+                ${renderProfileInfoRow(
+                  'Death date',
+                  deathLabel || '-'
+                )}
+
+                ${renderProfileInfoRow(
+                  'Death place',
+                  deathPlaceLabel || '-'
+                )}
+
+                ${renderProfileInfoRow(
+                  'Death reason',
+                  details.deathReason || '-'
+                )}
+
+                ${renderProfileInfoRow(
+                  'Burial place',
+                  details.burialPlace || '-'
+                )}
+              `
+              : ''}
+          </section>
+
+          <section class="profile-info-block">
+            <h4>Partners</h4>
+            ${renderProfilePartnersInfo(person)}
+          </section>
+        </div>
+      `;
+    }
+
+    function renderProfileCardTabs(activeSection) {
+      const active =
+        normalizeProfileCardSection(activeSection);
+
+      return `
+        <div
+          class="profile-card-tabs"
+          role="tablist"
+          aria-label="Profile card sections">
+
+          ${PROFILE_CARD_SECTIONS.map(section => {
+            const isActive =
+              section.id === active;
+
+            const tabId =
+              `profile-card-tab-${section.id}`;
+
+            const panelId =
+              `profile-card-panel-${section.id}`;
+
+            return `
+              <button
+                class="
+                  profile-card-tab
+                  ${isActive ? 'active' : ''}
+                "
+                id="${escapeHtml(tabId)}"
+                type="button"
+                role="tab"
+                aria-selected="${
+                  isActive ? 'true' : 'false'
+                }"
+                aria-controls="${escapeHtml(panelId)}"
+                tabindex="${isActive ? '0' : '-1'}"
+                data-profile-card-tab="${
+                  escapeHtml(section.id)
+                }">
+                ${escapeHtml(section.label)}
+              </button>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function renderProfileEditPanelContent(
+      person,
+      sectionId
+    ) {
+      switch (
+        normalizeProfileCardSection(sectionId)
+      ) {
+        case 'education':
+          return renderProfileEducationEditFields(
+            person
+          );
+
+        case 'work':
+          return renderProfileWorkEditFields(
+            person
+          );
+
+        case 'other':
+          return renderProfileOtherEditFields(
+            person
+          );
+
+        default:
+          return renderProfileMainEditFields(
+            person
+          );
+      }
+    }
+
+    function renderProfileCardPanels(
+      person,
+      editing,
+      activeSection
+    ) {
+      const active =
+        normalizeProfileCardSection(activeSection);
+
+      return `
+        <div class="profile-card-panel-stack">
+          ${PROFILE_CARD_SECTIONS.map(section => {
+            const isActive =
+              section.id === active;
+
+            const tabId =
+              `profile-card-tab-${section.id}`;
+
+            const panelId =
+              `profile-card-panel-${section.id}`;
+
+            const content = editing
+              ? renderProfileEditPanelContent(
+                  person,
+                  section.id
+                )
+              : renderProfileLockedPanelContent(
+                  person,
+                  section.id
+                );
+
+            return `
+              <section
+                class="
+                  profile-card-panel
+                  ${isActive ? 'active' : ''}
+                "
+                id="${escapeHtml(panelId)}"
+                role="tabpanel"
+                aria-labelledby="${escapeHtml(tabId)}"
+                aria-hidden="${
+                  isActive ? 'false' : 'true'
+                }"
+                data-profile-card-panel="${
+                  escapeHtml(section.id)
+                }"
+                ${isActive ? '' : 'inert'}>
+                ${content}
+              </section>
+            `;
+          }).join('')}
+        </div>
+      `;
     }
 
     function renderProfileMainEditFields(person) {
@@ -22085,7 +22583,7 @@ function renderTreeCardDateLines(person) {
       const education = personAttributeByTag(centralPerson, 'EDUC');
 
       return `
-        <div class="add-person-fact-grid profile-education-edit-grid">
+        <div class="add-person-fact-grid">
           <div class="field full">
             <label for="profileEducationInstitutionName">
               Institution name
@@ -22142,17 +22640,18 @@ function renderTreeCardDateLines(person) {
             className: 'full'
           })}
 
-          <div class="profile-edit-date-row add-person-fact-date-row">
+          <div class="add-person-fact-date-row">
             <div class="profile-edit-date-cell">
               ${renderGenealogyDateField(
                 'profileEducationFromDate',
-                'From',
+                'Start date',
                 details.educationFromDate,
                 {
                   inputId: 'profileEducationFromDate',
                   typeId: 'profileEducationFromDateType',
                   defaultDateType: 'Year only',
-                  placeholder: 'e.g. 2004'
+                  placeholder: 'e.g. 2004',
+                  className: 'genealogy-date-inline-range'
                 }
               )}
             </div>
@@ -22160,13 +22659,14 @@ function renderTreeCardDateLines(person) {
             <div class="profile-edit-date-cell">
               ${renderGenealogyDateField(
                 'profileEducationToDate',
-                'To',
+                'End date',
                 details.educationToDate,
                 {
                   inputId: 'profileEducationToDate',
                   typeId: 'profileEducationToDateType',
                   defaultDateType: 'Year only',
-                  placeholder: 'e.g. 2015'
+                  placeholder: 'e.g. 2015',
+                  className: 'genealogy-date-inline-range'
                 }
               )}
             </div>
@@ -22189,7 +22689,7 @@ function renderTreeCardDateLines(person) {
       const details = peopleProfileDetailsFor(person);
 
       return `
-        <div class="add-person-fact-grid profile-work-edit-grid">
+        <div class="add-person-fact-grid">
           <div class="field">
             <label for="profileWorkCompany">Company name</label>
 
@@ -22208,17 +22708,18 @@ function renderTreeCardDateLines(person) {
               value="${escapeHtml(details.workOccupation || '')}">
           </div>
 
-          <div class="profile-edit-date-row add-person-fact-date-row">
+          <div class="add-person-fact-date-row">
             <div class="profile-edit-date-cell">
               ${renderGenealogyDateField(
                 'profileWorkFromDate',
-                'From',
+                'Start date',
                 details.workFromDate,
                 {
                   inputId: 'profileWorkFromDate',
                   typeId: 'profileWorkFromDateType',
                   defaultDateType: 'Exact date',
-                  placeholder: 'e.g. 2016'
+                  placeholder: 'e.g. 2016',
+                  className: 'genealogy-date-inline-range'
                 }
               )}
             </div>
@@ -22226,13 +22727,14 @@ function renderTreeCardDateLines(person) {
             <div class="profile-edit-date-cell">
               ${renderGenealogyDateField(
                 'profileWorkToDate',
-                'To',
+                'End date',
                 details.workToDate,
                 {
                   inputId: 'profileWorkToDate',
                   typeId: 'profileWorkToDateType',
                   defaultDateType: 'Exact date',
-                  placeholder: 'e.g. 2020'
+                  placeholder: 'e.g. 2020',
+                  className: 'genealogy-date-inline-range'
                 }
               )}
             </div>
@@ -22834,17 +23336,842 @@ function renderTreeCardDateLines(person) {
         });
     }
 
+    function activateProfileCardSection(
+      card,
+      sectionId,
+      {
+        focusTab = false
+      } = {}
+    ) {
+      if (!card) return;
+
+      const activeSection =
+        normalizeProfileCardSection(sectionId);
+
+      state.peopleProfileEditTab =
+        activeSection;
+
+      const tabs = [
+        ...card.querySelectorAll(
+          '[data-profile-card-tab]'
+        )
+      ];
+
+      const panels = [
+        ...card.querySelectorAll(
+          '[data-profile-card-panel]'
+        )
+      ];
+
+      tabs.forEach(tab => {
+        const isActive =
+          tab.dataset.profileCardTab
+          === activeSection;
+
+        tab.classList.toggle(
+          'active',
+          isActive
+        );
+
+        tab.setAttribute(
+          'aria-selected',
+          isActive ? 'true' : 'false'
+        );
+
+        tab.tabIndex = isActive ? 0 : -1;
+      });
+
+      panels.forEach(panel => {
+        const isActive =
+          panel.dataset.profileCardPanel
+          === activeSection;
+
+        panel.classList.toggle(
+          'active',
+          isActive
+        );
+
+        panel.setAttribute(
+          'aria-hidden',
+          isActive ? 'false' : 'true'
+        );
+
+        if (isActive) {
+          panel.removeAttribute('inert');
+        } else {
+          panel.setAttribute('inert', '');
+        }
+      });
+
+      if (focusTab) {
+        card.querySelector(
+          `[data-profile-card-tab="${
+            CSS.escape(activeSection)
+          }"]`
+        )?.focus();
+      }
+    }
+
+    function bindProfileCardTabs(card) {
+      if (!card) return;
+
+      const tabs = [
+        ...card.querySelectorAll(
+          '[data-profile-card-tab]'
+        )
+      ];
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => {
+          activateProfileCardSection(
+            card,
+            tab.dataset.profileCardTab
+          );
+        });
+
+        tab.addEventListener(
+          'keydown',
+          event => {
+            const handledKeys = [
+              'ArrowLeft',
+              'ArrowRight',
+              'Home',
+              'End'
+            ];
+
+            if (
+              !handledKeys.includes(event.key)
+            ) {
+              return;
+            }
+
+            event.preventDefault();
+
+            let nextIndex = index;
+
+            if (event.key === 'ArrowLeft') {
+              nextIndex =
+                (index - 1 + tabs.length)
+                % tabs.length;
+            }
+
+            if (event.key === 'ArrowRight') {
+              nextIndex =
+                (index + 1)
+                % tabs.length;
+            }
+
+            if (event.key === 'Home') {
+              nextIndex = 0;
+            }
+
+            if (event.key === 'End') {
+              nextIndex = tabs.length - 1;
+            }
+
+            activateProfileCardSection(
+              card,
+              tabs[nextIndex]
+                .dataset.profileCardTab,
+              {
+                focusTab: true
+              }
+            );
+          }
+        );
+      });
+    }
+
+    function profileEditValidationFailure(
+      section,
+      message,
+      focusSelector
+    ) {
+      return {
+        ok: false,
+        section,
+        message,
+        focusSelector
+      };
+    }
+
+    function collectProfileMainEdit() {
+      const living =
+        main.querySelector(
+          '#profileInlineLiving'
+        )?.value || 'Unknown';
+
+      const birthDate =
+        collectGenealogyDateField(
+          'profileInlineBirthField'
+        );
+
+      if (!birthDate) {
+        return profileEditValidationFailure(
+          'main',
+          'Check the birth date before saving.',
+          `
+            [data-genealogy-date-field=
+              "profileInlineBirthField"]
+            [data-genealogy-date-input]
+          `.replace(/\s+/g, ' ')
+        );
+      }
+
+      const deathDate =
+        living === 'Deceased'
+          ? collectGenealogyDateField(
+              'profileInlineDeathField'
+            )
+          : emptyGenealogyDate(
+              'Exact date'
+            );
+
+      if (!deathDate) {
+        return profileEditValidationFailure(
+          'main',
+          'Check the death date before saving.',
+          `
+            [data-genealogy-date-field=
+              "profileInlineDeathField"]
+            [data-genealogy-date-input]
+          `.replace(/\s+/g, ' ')
+        );
+      }
+
+      return {
+        ok: true,
+        section: 'main',
+        payload: {
+          first:
+            main.querySelector(
+              '#profileInlineFirst'
+            )?.value.trim() || '',
+
+          last:
+            main.querySelector(
+              '#profileInlineLast'
+            )?.value.trim() || '',
+
+          patronym:
+            main.querySelector(
+              '#profileInlinePatronym'
+            )?.value.trim() || '',
+
+          prefix:
+            main.querySelector(
+              '#profileInlinePrefix'
+            )?.value.trim() || '',
+
+          suffix:
+            main.querySelector(
+              '#profileInlineSuffix'
+            )?.value.trim() || '',
+
+          maidenName:
+            main.querySelector(
+              '#profileInlineMaidenInput'
+            )?.value.trim() || '',
+
+          gender:
+            main.querySelector(
+              '#profileInlineGender'
+            )?.value || 'Unknown',
+
+          living,
+
+          birthDate,
+          birthPlace:
+            readPlaceInputValue(
+              '#profileInlineBirthPlace',
+              main
+            ),
+
+          deathDate,
+          deathPlace:
+            readPlaceInputValue(
+              '#profileInlineDeathPlace',
+              main
+            ),
+
+          deathReason:
+            main.querySelector(
+              '#profileInlineDeathReason'
+            )?.value.trim() || '',
+
+          burialPlace:
+            readPlaceInputValue(
+              '#profileInlineBurialPlace',
+              main
+            )
+        }
+      };
+    }
+
+    function collectProfileEducationEdit() {
+      const fromDate =
+        collectGenealogyDateField(
+          'profileEducationFromDate'
+        );
+
+      if (!fromDate) {
+        return profileEditValidationFailure(
+          'education',
+          'Check the education start date before saving.',
+          `
+            [data-genealogy-date-field=
+              "profileEducationFromDate"]
+            [data-genealogy-date-input]
+          `.replace(/\s+/g, ' ')
+        );
+      }
+
+      const toDate =
+        collectGenealogyDateField(
+          'profileEducationToDate'
+        );
+
+      if (!toDate) {
+        return profileEditValidationFailure(
+          'education',
+          'Check the education end date before saving.',
+          `
+            [data-genealogy-date-field=
+              "profileEducationToDate"]
+            [data-genealogy-date-input]
+          `.replace(/\s+/g, ' ')
+        );
+      }
+
+      return {
+        ok: true,
+        section: 'education',
+        payload: {
+          institutionName:
+            main.querySelector(
+              '#profileEducationInstitutionName'
+            )?.value.trim() || '',
+
+          institutionType:
+            main.querySelector(
+              '#profileEducationInstitutionType'
+            )?.value || 'Unknown',
+
+          value:
+            main.querySelector(
+              '#profileEducationValue'
+            )?.value.trim() || '',
+
+          place:
+            readPlaceInputValue(
+              '#profileEducationPlace',
+              main
+            ),
+
+          notes:
+            main.querySelector(
+              '#profileEducationNotes'
+            )?.value.trim() || '',
+
+          fromDate,
+          toDate
+        }
+      };
+    }
+
+    function collectProfileWorkEdit() {
+      const fromDate =
+        collectGenealogyDateField(
+          'profileWorkFromDate'
+        );
+
+      if (!fromDate) {
+        return profileEditValidationFailure(
+          'work',
+          'Check the work start date before saving.',
+          `
+            [data-genealogy-date-field=
+              "profileWorkFromDate"]
+            [data-genealogy-date-input]
+          `.replace(/\s+/g, ' ')
+        );
+      }
+
+      const toDate =
+        collectGenealogyDateField(
+          'profileWorkToDate'
+        );
+
+      if (!toDate) {
+        return profileEditValidationFailure(
+          'work',
+          'Check the work end date before saving.',
+          `
+            [data-genealogy-date-field=
+              "profileWorkToDate"]
+            [data-genealogy-date-input]
+          `.replace(/\s+/g, ' ')
+        );
+      }
+
+      return {
+        ok: true,
+        section: 'work',
+        payload: {
+          company:
+            main.querySelector(
+              '#profileWorkCompany'
+            )?.value.trim() || '',
+
+          occupation:
+            main.querySelector(
+              '#profileWorkOccupation'
+            )?.value.trim() || '',
+
+          notes:
+            main.querySelector(
+              '#profileWorkNotes'
+            )?.value.trim() || '',
+
+          fromDate,
+          toDate
+        }
+      };
+    }
+
+    function collectProfileOtherEdit() {
+      const baptismDate =
+        collectGenealogyDateField(
+          'profileBaptismDate'
+        );
+
+      if (!baptismDate) {
+        return profileEditValidationFailure(
+          'other',
+          'Check the baptism date before saving.',
+          `
+            [data-genealogy-date-field=
+              "profileBaptismDate"]
+            [data-genealogy-date-input]
+          `.replace(/\s+/g, ' ')
+        );
+      }
+
+      return {
+        ok: true,
+        section: 'other',
+        payload: {
+          religion:
+            readReligionField(
+              main,
+              'profileReligion'
+            ),
+
+          baptismDate,
+
+          baptismPlace:
+            readPlaceInputValue(
+              '#profileBaptismPlace',
+              main
+            )
+        }
+      };
+    }
+
+    function collectProfileEditSections() {
+      const results = [
+        collectProfileMainEdit(),
+        collectProfileEducationEdit(),
+        collectProfileWorkEdit(),
+        collectProfileOtherEdit()
+      ];
+
+      const invalid = results.find(
+        result => !result.ok
+      );
+
+      if (invalid) return invalid;
+
+      return {
+        ok: true,
+        payloads: Object.fromEntries(
+          results.map(result => [
+            result.section,
+            result.payload
+          ])
+        )
+      };
+    }
+
+    function applyProfileMainEdit(
+      person,
+      payload
+    ) {
+      const centralPerson =
+        getPerson(person.id);
+
+      if (!centralPerson) return;
+
+      ensurePersonCentralStructures(
+        centralPerson
+      );
+
+      const first =
+        payload.first
+        || centralPerson.names.first
+        || person.first
+        || '';
+
+      const last =
+        payload.last
+        || centralPerson.names.last
+        || person.surname
+        || '';
+
+      const displayName = [
+        first,
+        payload.patronym,
+        last
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        || centralPerson.names.display
+        || person.name;
+
+      const gender =
+        String(payload.gender || '')
+          .toLowerCase();
+
+      const normalizedGender =
+        gender === 'male'
+        || gender === 'female'
+          ? gender
+          : 'unknown';
+
+      const livingStatus =
+        normalizeLivingStatus(
+          payload.living
+        );
+
+      const birthPlace =
+        resolvePlaceAssignment(
+          payload.birthPlace,
+          centralPerson.birth?.placeId
+        );
+
+      const deathPlace =
+        resolvePlaceAssignment(
+          payload.deathPlace,
+          centralPerson.death?.placeId
+        );
+
+      const burialPlace =
+        resolvePlaceAssignment(
+          payload.burialPlace,
+          centralPerson.death
+            ?.burialPlaceId
+        );
+
+      centralPerson.names.first = first;
+      centralPerson.names.middle =
+        payload.patronym || '';
+      centralPerson.names.last = last;
+      centralPerson.names.display =
+        displayName;
+      centralPerson.names.prefix =
+        payload.prefix || '';
+      centralPerson.names.suffix =
+        payload.suffix || '';
+      centralPerson.names.maiden =
+        payload.maidenName || '';
+
+      centralPerson.names.initials =
+        `${first[0] || ''}${last[0] || ''}`
+          .toUpperCase()
+        || centralPerson.names.initials
+        || '??';
+
+      centralPerson.gender =
+        normalizedGender;
+
+      centralPerson.livingStatus =
+        livingStatus;
+
+      centralPerson.birth = {
+        ...payload.birthDate,
+        placeId: birthPlace.placeId,
+        placeText: birthPlace.placeText
+      };
+
+      if (livingStatus === 'Deceased') {
+        centralPerson.death = {
+          ...payload.deathDate,
+          placeId: deathPlace.placeId,
+          placeText: deathPlace.placeText,
+          reason: payload.deathReason,
+          cause: payload.deathReason,
+          burialPlaceId:
+            burialPlace.placeId,
+          burialPlaceText:
+            burialPlace.placeText
+        };
+      } else {
+        centralPerson.death = {
+          ...emptyGenealogyDate(
+            'Exact date'
+          ),
+          placeId: null,
+          placeText: '',
+          reason: '',
+          cause: '',
+          burialPlaceId: null,
+          burialPlaceText: ''
+        };
+      }
+
+      person.first = first;
+      person.surname = last;
+      person.name = displayName;
+      person.gender = normalizedGender;
+      person.living = livingStatus;
+      person.birth =
+        formatGenealogyDateLabel(
+          payload.birthDate
+        );
+      person.birthPlace =
+        birthPlace.placeText;
+
+      if (livingStatus === 'Deceased') {
+        person.death =
+          formatGenealogyDateLabel(
+            payload.deathDate
+          );
+
+        person.deathPlace =
+          deathPlace.placeText;
+      } else {
+        person.death = '';
+        person.deathPlace = '';
+      }
+    }
+
+    function applyProfileEducationEdit(
+      person,
+      payload
+    ) {
+      const centralPerson =
+        getPerson(person.id);
+
+      if (!centralPerson) return;
+
+      const education =
+        upsertPersonAttribute(
+          centralPerson,
+          'EDUC',
+          {
+            institutionName:
+              payload.institutionName,
+
+            institutionType:
+              payload.institutionType,
+
+            type:
+              payload.institutionType
+              === 'Unknown'
+                ? ''
+                : payload.institutionType,
+
+            value:
+              payload.value || 'Education',
+
+            notes: payload.notes,
+
+            fromDate:
+              genealogyDateOrNull(
+                payload.fromDate,
+                'Year only'
+              ),
+
+            toDate:
+              genealogyDateOrNull(
+                payload.toDate,
+                'Year only'
+              )
+          }
+        );
+
+      const place =
+        resolvePlaceAssignment(
+          payload.place,
+          education.placeId
+        );
+
+      education.placeId =
+        place.placeId;
+
+      education.placeText =
+        place.placeText;
+    }
+
+    function applyProfileWorkEdit(
+      person,
+      payload
+    ) {
+      const centralPerson =
+        getPerson(person.id);
+
+      if (!centralPerson) return;
+
+      upsertPersonAttribute(
+        centralPerson,
+        'OCCU',
+        {
+          company: payload.company,
+          value: payload.occupation,
+          notes: payload.notes,
+
+          fromDate:
+            genealogyDateOrNull(
+              payload.fromDate,
+              'Exact date'
+            ),
+
+          toDate:
+            genealogyDateOrNull(
+              payload.toDate,
+              'Exact date'
+            )
+        }
+      );
+    }
+
+    function applyProfileOtherEdit(
+      person,
+      payload
+    ) {
+      const centralPerson =
+        getPerson(person.id);
+
+      if (!centralPerson) return;
+
+      upsertPersonAttribute(
+        centralPerson,
+        'RELI',
+        {
+          value:
+            normalizeReligionValue(
+              payload.religion
+            )
+        }
+      );
+
+      const baptism =
+        upsertPersonEvent(
+          centralPerson,
+          'BAPM',
+          {
+            date:
+              genealogyDateOrNull(
+                payload.baptismDate,
+                'Exact date'
+              )
+          }
+        );
+
+      const place =
+        resolvePlaceAssignment(
+          payload.baptismPlace,
+          baptism.placeId
+        );
+
+      baptism.placeId =
+        place.placeId;
+
+      baptism.placeText =
+        place.placeText;
+    }
+
+    function applyProfileEditSections(
+      person,
+      payloads
+    ) {
+      applyProfileMainEdit(
+        person,
+        payloads.main
+      );
+
+      applyProfileEducationEdit(
+        person,
+        payloads.education
+      );
+
+      applyProfileWorkEdit(
+        person,
+        payloads.work
+      );
+
+      applyProfileOtherEdit(
+        person,
+        payloads.other
+      );
+
+      person.updated = 'Just now';
+
+      const centralPerson =
+        getPerson(person.id);
+
+      if (centralPerson?.meta) {
+        centralPerson.meta.updated =
+          'Just now';
+      }
+
+      sampleData.events =
+        buildSampleEvents();
+    }
+
+    function showProfileEditValidationError(
+      card,
+      result
+    ) {
+      activateProfileCardSection(
+        card,
+        result.section
+      );
+
+      showToast(result.message);
+
+      requestAnimationFrame(() => {
+        card?.querySelector(
+          result.focusSelector
+        )?.focus();
+      });
+    }
+
     function bindPeopleProfileControls(person) {
       bindToasts(main);
       bindGenealogyDateFields(main);
       bindPlaceComboboxes(main);
       bindRelationshipList(main, 'profile');
       bindProfilePhotoCarousels(main);
+      const profileCard = main.querySelector(
+        '[data-profile-card-root]'
+      );
+      bindProfileCardTabs(profileCard);
       main.querySelector('#backPeopleList')?.addEventListener('click', () => { state.peopleView = 'directory'; state.peopleSide = 'people'; state.peopleProfileEditing = false; renderPeople(); });
-      main.querySelector('#profileEditButton')?.addEventListener('click', () => { state.peopleProfileEditing = true; state.peopleProfileEditTab = 'main'; renderPeople(); });
+      main
+        .querySelector('#profileEditButton')
+        ?.addEventListener('click', () => {
+          if (state.peopleProfileEditing) {
+            return;
+          }
+
+          state.peopleProfileEditing = true;
+          renderPeople();
+        });
       main.querySelector('#profileAddRelative')?.addEventListener('click', e => openRelativePopover(e.currentTarget, 'relative'));
       main.querySelector('#profileMoreActions')?.addEventListener('click', e => openPeoplePersonActionsMenu(person.id, e.currentTarget));
-      main.querySelectorAll('[data-profile-card-tab]').forEach(button => button.addEventListener('click', () => { state.peopleProfileEditTab = button.dataset.profileCardTab; renderPeople(); }));
       main.querySelector('#profileInlineGender')?.addEventListener('change', event => {
         const isFemale = event.target.value === 'Female';
         const row = main.querySelector('#profileInlineMaiden');
@@ -22900,160 +24227,46 @@ function renderTreeCardDateLines(person) {
         if (profileStatusMenu) profileStatusMenu.hidden = true;
         profileStatusButton?.setAttribute('aria-expanded', 'false');
       }));
-      main.querySelector('#profileCancelEdit')?.addEventListener('click', () => { state.peopleProfileEditing = false; state.peopleProfileEditTab = 'main'; renderPeople(); showToast('Profile editing cancelled.'); });
-      main.querySelector('#profileSaveInlineEdit')?.addEventListener('click', () => {
-        const activeEditTab = state.peopleProfileEditTab || 'main';
-        const details = peopleProfileDetailsFor(person);
-        if (activeEditTab === 'education') {
-          const fromDate = collectGenealogyDateField('profileEducationFromDate');
-          const toDate = collectGenealogyDateField('profileEducationToDate');
-          if (!fromDate || !toDate) {
-            showToast('Check the education dates before saving.');
-            return;
-          }
-          details.educationInstitutionName = main.querySelector('#profileEducationInstitutionName')?.value.trim() || '';
-          details.educationInstitutionType = main.querySelector('#profileEducationInstitutionType')?.value || 'Unknown';
-          details.educationValue = main.querySelector('#profileEducationValue')?.value.trim() || '';
-          details.educationPlace = readPlaceInputValue('#profileEducationPlace', main);
-          details.educationNotes = main.querySelector('#profileEducationNotes')?.value.trim() || '';
-          details.educationFromDate = fromDate;
-          details.educationToDate = toDate;
-          person.updated = 'Just now';
-          getPerson(person.id)?.meta && (getPerson(person.id).meta.updated = 'Just now');
+      main
+        .querySelector('#profileCancelEdit')
+        ?.addEventListener('click', () => {
           state.peopleProfileEditing = false;
-          state.peopleProfileEditTab = 'main';
+
           renderPeople();
-          showToast('Profile changes saved.');
-          return;
-        }
-        if (activeEditTab === 'work') {
-          const fromDate = collectGenealogyDateField('profileWorkFromDate');
-          const toDate = collectGenealogyDateField('profileWorkToDate');
-          if (!fromDate || !toDate) {
-            showToast('Check the work dates before saving.');
-            return;
-          }
-          details.workCompany = main.querySelector('#profileWorkCompany')?.value.trim() || '';
-          details.workOccupation = main.querySelector('#profileWorkOccupation')?.value.trim() || '';
-          details.workNotes = main.querySelector('#profileWorkNotes')?.value.trim() || '';
-          details.workFromDate = fromDate;
-          details.workToDate = toDate;
-          person.updated = 'Just now';
-          getPerson(person.id)?.meta && (getPerson(person.id).meta.updated = 'Just now');
-          state.peopleProfileEditing = false;
-          state.peopleProfileEditTab = 'main';
-          renderPeople();
-          showToast('Profile changes saved.');
-          return;
-        }
-        if (activeEditTab === 'other') {
-          const baptismDate = collectGenealogyDateField('profileBaptismDate');
-          if (!baptismDate) {
-            showToast('Check the baptism date before saving.');
-            return;
-          }
-          details.religion = readReligionField(
-            main,
-            'profileReligion'
+
+          showToast(
+            'Profile editing cancelled.'
           );
-          details.baptismPlace = readPlaceInputValue('#profileBaptismPlace', main);
-          details.baptismDate = baptismDate;
-          person.updated = 'Just now';
-          getPerson(person.id)?.meta && (getPerson(person.id).meta.updated = 'Just now');
-          state.peopleProfileEditing = false;
-          state.peopleProfileEditTab = 'main';
-          renderPeople();
-          showToast('Profile changes saved.');
-          return;
-        }
-        const first = main.querySelector('#profileInlineFirst')?.value.trim();
-        const last = main.querySelector('#profileInlineLast')?.value.trim();
-        const patronym = main.querySelector('#profileInlinePatronym')?.value.trim();
-        const birthPlace = readPlaceInputValue('#profileInlineBirthPlace', main);
-        const deathPlace = readPlaceInputValue('#profileInlineDeathPlace', main);
-        const burialPlace = readPlaceInputValue('#profileInlineBurialPlace', main);
-        const gender = main.querySelector('#profileInlineGender')?.value;
-        const living = main.querySelector('#profileInlineLiving')?.value;
-        const birthDate = collectGenealogyDateField('profileInlineBirthField');
-        if (!birthDate) {
-          showToast('Check the birth date before saving.');
-          return;
-        }
-        const deathDate = living === 'Deceased'
-          ? collectGenealogyDateField('profileInlineDeathField')
-          : emptyGenealogyDate('Exact date');
-        if (!deathDate) {
-          showToast('Check the death date before saving.');
-          return;
-        }
-        details.prefix = main.querySelector('#profileInlinePrefix')?.value.trim() || '';
-        details.suffix = main.querySelector('#profileInlineSuffix')?.value.trim() || '';
-        details.maidenName = main.querySelector('#profileInlineMaidenInput')?.value.trim() || '';
-        details.birthDateType = birthDate.dateType;
-        details.deathDateType = deathDate.dateType;
-        details.deathReason = main.querySelector('#profileInlineDeathReason')?.value.trim() || '';
-        details.burialPlace = burialPlace;
-        if (first) person.first = first;
-        if (last) person.surname = last;
-        if (first || last || patronym) person.name = [person.first || first || '', patronym || '', person.surname || last || ''].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
-        person.birth = formatGenealogyDateLabel(birthDate);
-        person.birthPlace = birthPlace.text;
-        if (gender) person.gender = gender.toLowerCase();
-        if (living) person.living = living;
-        if (living === 'Deceased') {
-          person.death = formatGenealogyDateLabel(deathDate);
-          person.deathPlace = deathPlace.text;
-        } else {
-          person.death = '';
-          person.deathPlace = '';
-        }
-        person.updated = 'Just now';
-        syncPeopleRecordToSampleData(person);
-        const centralPerson = getPerson(person.id);
-        const centralBirthPlace = resolvePlaceInputValue(person.birthPlace, centralPerson.birth?.placeId);
-        const centralDeathPlace = resolvePlaceInputValue(person.deathPlace, centralPerson.death?.placeId);
-        const centralBurialPlace = resolvePlaceInputValue(details.burialPlace, centralPerson.death?.burialPlaceId);
-        const resolvedBirthPlace = resolvePlaceAssignment(birthPlace, centralPerson.birth?.placeId);
-        const resolvedDeathPlace = resolvePlaceAssignment(deathPlace, centralPerson.death?.placeId);
-        const resolvedBurialPlace = resolvePlaceAssignment(burialPlace, centralPerson.death?.burialPlaceId);
-        if (centralPerson) {
-          centralPerson.birth = {
-            ...birthDate,
-            placeId: resolvedBirthPlace.placeId,
-            placeText: resolvedBirthPlace.placeText
-          };
+        });
 
-          centralPerson.livingStatus = normalizeLivingStatus(person.living);
+      main
+        .querySelector('#profileSaveInlineEdit')
+        ?.addEventListener('click', () => {
+          const result =
+            collectProfileEditSections();
 
-          if (centralPerson.livingStatus === 'Deceased') {
-            centralPerson.death = {
-              ...deathDate,
-              placeId: resolvedDeathPlace.placeId,
-              placeText: resolvedDeathPlace.placeText,
-              reason: details.deathReason,
-              cause: details.deathReason,
-              burialPlaceId: resolvedBurialPlace.placeId,
-              burialPlaceText: resolvedBurialPlace.placeText
-            };
-          } else {
-            centralPerson.death = {
-              ...emptyGenealogyDate('Exact date'),
-              placeId: null,
-              placeText: '',
-              reason: '',
-              cause: '',
-              burialPlaceId: null,
-              burialPlaceText: ''
-            };
+          if (!result.ok) {
+            showProfileEditValidationError(
+              profileCard,
+              result
+            );
+
+            return;
           }
-          centralPerson.meta.updated = 'Just now';
-          sampleData.events = buildSampleEvents();
-        }
-        state.peopleProfileEditing = false;
-        state.peopleProfileEditTab = 'main';
-        renderPeople();
-        showToast('Profile changes saved.');
-      });
+
+          applyProfileEditSections(
+            person,
+            result.payloads
+          );
+
+          state.peopleProfileEditing = false;
+
+          renderPeople();
+
+          showToast(
+            'Profile changes saved.'
+          );
+        });
       main.querySelector('[data-profile-add-fact]')?.addEventListener('click', () => openAddFactOverlay(person));
       main.querySelectorAll('[data-profile-archive]').forEach(button => button.addEventListener('click', () => openProfileArchiveFile(button.dataset.profileArchive)));
       main.querySelectorAll('[data-profile-note]').forEach(button => button.addEventListener('click', () => openProfileNote(button.dataset.profileNote)));
