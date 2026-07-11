@@ -21748,11 +21748,53 @@ function renderTreeCardDateLines(person) {
 
     function profilePartnerEventDateLabel(family) {
       const event = profilePartnerFamilyEvent(family);
+
       if (!event) return '';
-      const dateInput = event.date && typeof event.date === 'object'
-        ? event.date
-        : { date: event.date || '', dateLabel: event.dateLabel || '', dateType: event.dateType || 'Exact date' };
-      return formatGenealogyDateLabel(dateInput) || cleanEditFieldValue(event.dateLabel || event.date || event.year);
+
+      const rawDate = event.date;
+
+      const dateInput =
+        rawDate && typeof rawDate === 'object'
+          ? rawDate
+          : {
+              date:
+                typeof rawDate === 'string'
+                || typeof rawDate === 'number'
+                  ? String(rawDate)
+                  : '',
+              dateLabel:
+                typeof event.dateLabel === 'string'
+                  ? event.dateLabel
+                  : '',
+              dateType:
+                event.dateType || 'Exact date'
+            };
+
+      const formatted =
+        formatGenealogyDateLabel(dateInput);
+
+      if (formatted) return formatted;
+
+      /*
+      * Only scalar legacy values are valid display fallbacks.
+      * Never pass a date object into cleanEditFieldValue().
+      */
+      const fallback = [
+        event.dateLabel,
+        event.year,
+        family?.startDateLabel,
+        family?.startDate
+      ].find(value =>
+        (
+          typeof value === 'string'
+          || typeof value === 'number'
+        )
+        && String(value).trim()
+      );
+
+      return fallback == null
+        ? ''
+        : cleanEditFieldValue(String(fallback));
     }
 
     function profilePartnerIdsForFamily(family, personId) {
