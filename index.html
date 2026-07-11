@@ -3273,27 +3273,180 @@
       border-radius: 999px;
       z-index: 0;
     }
-    .relationship-list { display: grid; gap: var(--space-5); }
-    .relation-group-title { color: var(--text-tertiary); text-transform: uppercase; font-size: 12px; letter-spacing: .08em; margin: 0 0 var(--space-2); }
-    .relation-row { display: flex; align-items: center; gap: var(--space-4); color: var(--text-secondary); padding: 10px 12px; border-radius: var(--radius-sm); min-height: 72px; position: relative; }
-    .relation-row + .relation-row { margin-top: var(--space-2); }
-    .relation-row:hover, .relation-row:focus-within { background: rgba(255,255,255,.04); }
-    .relation-row-main { display: flex; align-items: center; gap: var(--space-4); min-width: 0; flex: 1 1 auto; }
-    .family-person-pane .relationship-list { gap: var(--space-3); }
-    .family-person-pane .relation-row { gap: var(--space-2); padding: 7px 8px; min-height: 58px; }
-    .family-person-pane .relation-row + .relation-row { margin-top: var(--space-1); }
-    .family-person-pane .relation-row-main { gap: var(--space-3); }
-    .relation-row-copy { min-width: 0; }
-    .relation-row strong { color: var(--text-primary); display: block; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .relation-row span { display: block; line-height: 1.35; }
-    .relation-actions { display: flex; align-items: center; gap: var(--space-2); opacity: 0; pointer-events: none; transform: translateX(4px); transition: opacity var(--ease), transform var(--ease); }
-    .relation-row:hover .relation-actions, .relation-row:focus-within .relation-actions { opacity: 1; pointer-events: auto; transform: translateX(0); }
-    .relation-action-button { width: 34px; height: 34px; border: 0; border-radius: 8px; background: transparent; color: var(--text-primary); display: grid; place-items: center; font-size: 18px; }
-    .relation-action-button:hover { background: rgba(255,255,255,.07); }
-    .relation-link-button svg {
+
+    /* Shared relationship list */
+
+    .relationship-list {
+      display: grid;
+      gap: var(--space-5);
+    }
+
+    .relationship-group {
+      min-width: 0;
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .relation-group-title {
+      margin: 0;
+      color: var(--text-tertiary);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .relation-row {
+      min-width: 0;
+      min-height: 64px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-secondary);
+      transition:
+        background var(--ease),
+        border-color var(--ease);
+    }
+
+    .relation-row + .relation-row {
+      margin-top: var(--space-1);
+    }
+
+    .relation-row:hover,
+    .relation-row:focus-within {
+      border-color: var(--border-default);
+      background: rgba(255, 255, 255, .04);
+    }
+
+    .relation-row-main {
+      width: 100%;
+      min-width: 0;
+      min-height: 62px;
+      padding: 8px 10px;
+      border: 0;
+      border-radius: inherit;
+      background: transparent;
+      color: inherit;
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .relation-row-main:focus-visible {
+      outline: 2px solid var(--brand-green-400);
+      outline-offset: -2px;
+    }
+
+    .relation-row-copy {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .relation-row-copy strong {
+      min-width: 0;
+      display: block;
+      margin: 0;
+      color: var(--text-primary);
+      font-size: 13px;
+      line-height: 1.25;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .relation-row-copy span {
+      min-width: 0;
+      display: block;
+      color: var(--text-tertiary);
+      font-size: 12px;
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .relation-actions {
+      padding-right: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(4px);
+      transition:
+        opacity var(--ease),
+        transform var(--ease);
+    }
+
+    .relation-row:hover .relation-actions,
+    .relation-row:focus-within .relation-actions {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .relation-action-button {
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-secondary);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .relation-action-button svg {
       width: 18px;
       height: 18px;
       display: block;
+    }
+
+    .relation-action-button:hover,
+    .relation-action-button:focus-visible {
+      background: rgba(255, 255, 255, .075);
+      color: var(--text-primary);
+    }
+
+    .relation-action-button.danger:hover,
+    .relation-action-button.danger:focus-visible {
+      background: rgba(212, 107, 107, .12);
+      color: var(--red);
+    }
+
+    /* Compact presentation inside the right sidebar. */
+
+    .family-person-pane .relationship-list {
+      gap: var(--space-3);
+    }
+
+    .family-person-pane .relationship-group {
+      gap: var(--space-1);
+    }
+
+    .family-person-pane .relation-row {
+      min-height: 58px;
+    }
+
+    .family-person-pane .relation-row-main {
+      min-height: 56px;
+      padding: 7px 8px;
+    }
+
+    @media (hover: none) {
+      .relation-actions {
+        opacity: 1;
+        pointer-events: auto;
+        transform: none;
+      }
     }
     
     .photo-thumb { width: 58px; height: 58px; border-radius: 7px; background: linear-gradient(145deg, #c7b09a, #3f4d46); display: grid; place-items: center; font-weight: 900; }
@@ -6155,255 +6308,10 @@
       gap: var(--space-2);
     }
     .profile-card-body { padding: var(--space-4); }
-    .profile-side { display: grid; gap: var(--space-4); align-content: start; min-width: 0; }
-
-    
-    
-    
-
-    .profile-side .relation-row { background: transparent; border-color: transparent; }
-    .profile-side .relation-row:hover, .profile-side .relation-row:focus-within { background: rgba(255,255,255,.035); border-color: var(--border-default); }
-    .profile-photo-grid { display: flex; gap: var(--space-2); align-items: center; }
-    .profile-photo-grid .photo-thumb { width: 64px; height: 64px; border-radius: 8px; }
-    
-
-    
-
-    
-
-    .profile-info-row {
-      min-width: 0;
-      display: grid;
-      gap: 3px;
-      color: var(--text-secondary);
-      padding-bottom: 8px;
-      border-bottom: 1px solid rgba(255,255,255,.045);
-    }
-    .profile-linked-copy {
-      min-width: 0;
-      flex: 1 1 auto;
-    }
-
-    .profile-photo-grid-updated {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(58px, 1fr));
-      gap: var(--space-2);
-    }
-
-    .profile-photo-button {
-      min-height: 68px;
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 9px;
-      background: linear-gradient(135deg, #163a2a, #2fae74);
-      color: var(--text-primary);
-      display: grid;
-      place-items: center;
-      font-weight: 900;
-      text-align: center;
-      transition: transform var(--ease), border-color var(--ease), background var(--ease);
-      overflow: hidden;
-    }
-
-    .profile-photo-button:hover,
-    .profile-photo-button:focus-visible {
-      transform: translateY(-1px);
-      border-color: rgba(98,217,154,.42);
-    }
-
-    .profile-photo-button.sepia { background: linear-gradient(135deg, #5e533a, #d7c39b); color: #14100a; }
-    .profile-photo-button.mono { background: linear-gradient(135deg, #373b39, #d8d8d5); color: #141716; }
-    .profile-photo-button.purple { background: linear-gradient(135deg, #352a58, #8669d7); }
-    .profile-photo-button.amber { background: linear-gradient(135deg, #5c4522, #d4aa6b); }
-    .profile-photo-more-button { background: var(--surface-input); color: var(--text-primary); line-height: 1.1; }
-    
-
-    .profile-compact-card,
-    .profile-family-hub {
-      border: 1px solid var(--border-default);
-      background: var(--surface-card);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      min-width: 0;
-    }
-    .profile-compact-card h3 {
-      min-height: 48px;
-      margin: 0;
-      padding: var(--space-3) var(--space-4);
-      border-bottom: 1px solid var(--border-default);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-3);
-      font-size: 16px;
-    }
-    
-    .profile-compact-card .profile-card-body { padding: var(--space-4); }
-    .profile-connected-strip { display: grid; grid-template-columns: repeat(4, minmax(54px, 1fr)); gap: var(--space-2); }
-
-    .profile-file-tile,
-    .profile-note-tile {
-      min-height: 84px;
-      border: 1px solid transparent;
-      background: rgba(255,255,255,.018);
-      color: var(--text-secondary);
-      border-radius: var(--radius-sm);
-      display: grid;
-      place-items: center;
-      gap: 6px;
-      text-align: center;
-      padding: 8px;
-      transition: background var(--ease), border-color var(--ease), transform var(--ease);
-    }
-    .profile-file-tile:hover,
-    .profile-note-tile:hover,
-    .profile-file-tile:focus-visible,
-    .profile-note-tile:focus-visible {
-      background: rgba(255,255,255,.04);
-      border-color: var(--border-default);
-      color: var(--text-primary);
-      transform: translateY(-1px);
-    }
-    .profile-file-tile .file-badge { width: 34px; height: 40px; }
-    .profile-file-tile small,
-    .profile-note-tile small {
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      line-clamp: 2;
-      -webkit-box-orient: vertical;
-      color: var(--text-tertiary);
-      font-size: 11px;
-      line-height: 1.2;
-    }
-    .profile-note-tile span svg { width: 26px; height: 26px; color: var(--text-secondary); }
-
-    .profile-photo-grid-updated.compact { grid-template-columns: repeat(4, minmax(56px, 1fr)); }
-    .profile-photo-grid-updated.compact .profile-photo-button { min-height: 70px; }
-
-    .profile-place-map {
-      position: relative;
-      width: calc(100% - 32px);
-      height: 120px;
-      margin: var(--space-4) var(--space-4) 0;
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-sm);
-      background:
-        radial-gradient(circle at 28% 35%, rgba(47,174,116,.16), transparent 26%),
-        radial-gradient(circle at 72% 62%, rgba(93,173,236,.12), transparent 24%),
-        #0b100f;
-      overflow: hidden;
-      color: var(--text-secondary);
-    }
-    .profile-place-map:hover { border-color: var(--border-strong); }
-    .profile-place-map-grid {
-      position: absolute;
-      inset: 0;
-      opacity: .45;
-      background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
-      background-size: 28px 28px;
-    }
-    .profile-place-marker {
-      position: absolute;
-      width: 13px;
-      height: 13px;
-      border-radius: 50%;
-      background: var(--brand-green-500);
-      box-shadow: 0 0 0 5px rgba(47,174,116,.16);
-    }
-    .profile-place-marker.one { left: 30%; top: 42%; }
-    .profile-place-marker.two { right: 26%; bottom: 28%; background: var(--amber); box-shadow: 0 0 0 5px rgba(212,170,107,.14); }
-    .profile-place-route {
-      position: absolute;
-      left: 34%;
-      top: 48%;
-      width: 38%;
-      height: 2px;
-      background: linear-gradient(90deg, var(--brand-green-300), var(--amber));
-      transform: rotate(18deg);
-      opacity: .65;
-    }
-    .profile-place-list { display: grid; gap: var(--space-2); padding-top: var(--space-3); }
-    .profile-place-row {
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--text-secondary);
-      border-radius: var(--radius-sm);
-      padding: 9px 10px;
-      text-align: left;
-      display: grid;
-      gap: 2px;
-    }
-    .profile-place-row:hover { background: rgba(255,255,255,.035); border-color: var(--border-default); color: var(--text-primary); }
-    .profile-place-row strong { color: var(--text-primary); }
-    .profile-place-row span { color: var(--text-tertiary); font-size: 12px; }
-
-    .profile-family-tabs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      border-bottom: 1px solid var(--border-default);
-      background: rgba(255,255,255,.025);
-    }
-    .profile-family-tab {
-      min-height: 46px;
-      border: 0;
-      border-right: 1px solid var(--border-default);
-      background: transparent;
-      color: var(--text-tertiary);
-      font-weight: 900;
-      letter-spacing: .03em;
-      position: relative;
-    }
-    .profile-family-tab:last-child { border-right: 0; }
-    .profile-family-tab:hover { background: rgba(255,255,255,.035); color: var(--text-primary); }
-    .profile-family-tab.active { color: var(--text-primary); background: rgba(11,15,14,.24); }
-    .profile-family-tab.active::after { content: ""; position: absolute; left: 26%; right: 26%; bottom: 5px; height: 2px; background: var(--text-primary); border-radius: 999px; }
-    
-    
-    
-    .profile-family-scroll.command { max-height: 650px; padding: var(--space-4); }
-    .profile-family-row-button.command { min-height: 76px; }
-    .profile-family-empty { color: var(--text-tertiary); padding: var(--space-6); text-align: center; }
-
-    
-    .profile-edit-tabs {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      background: var(--surface-input);
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-      margin-bottom: var(--space-5);
-    }
-    .profile-edit-tab {
-      min-height: 44px;
-      border: 0;
-      border-right: 1px solid var(--border-default);
-      background: transparent;
-      color: var(--text-tertiary);
-      font-weight: 900;
-      position: relative;
-    }
-    .profile-edit-tab:last-child { border-right: 0; }
-    .profile-edit-tab:hover { color: var(--text-primary); background: rgba(255,255,255,.035); }
-    .profile-edit-tab.active { color: var(--text-primary); background: var(--surface-card); }
-    .profile-edit-tab.active::after { content: ""; position: absolute; left: 22%; right: 22%; bottom: 6px; height: 2px; background: var(--text-primary); border-radius: 999px; }
-    .profile-edit-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: var(--space-4); }
-    .profile-edit-grid.main { grid-template-columns: repeat(3, minmax(0,1fr)); }
-    .profile-death-fields { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: var(--space-4); }
-    
-    
-    
-    .relationship-detail-person { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-5); color: var(--text-secondary); }
-    .relationship-detail-person strong { display: block; color: var(--text-primary); }
-    .relationship-detail-person span { color: var(--text-tertiary); }
 
     @media (max-width: 1080px) {.profile-edit-grid,
       .profile-edit-grid.main,
-      .profile-death-fields { grid-template-columns: 1fr; }
-      .profile-edit-tabs { grid-template-columns: 1fr 1fr; }}
-    @media (max-width: 1320px) {.profile-family-scroll { max-height: 320px; }}
+      .profile-death-fields { grid-template-columns: 1fr; }}
 
     .people-toolbar {
       grid-template-columns: minmax(220px, 1fr) max-content auto minmax(190px, 220px) max-content;
@@ -6433,8 +6341,6 @@
     .people-columns-header h3 { margin: 0 0 4px; font-size: 16px; }
     .people-columns-header p { margin: 0; color: var(--text-tertiary); font-size: 13px; }
     .people-columns-list { display: grid; gap: 2px; padding: 8px; }
-    
-    
     
     .people-columns-footer { border-top: 1px solid var(--border-default); padding: var(--space-3); display:flex; justify-content:flex-end; }
     .people-columns-footer .button { min-height: 36px; letter-spacing: .01em; }
@@ -6501,15 +6407,6 @@
       .people-toolbar .people-sort-select, .people-toolbar .button.secondary { display: none; }}
 
     @media (max-width: 900px) {.people-layout { grid-template-columns: 1fr; }}
-
-    .profile-edit-card,
-    .profile-family-hub {
-      min-height: 432px;
-      display: flex;
-      flex-direction: column;
-    }
-    .profile-edit-card .profile-card-body,
-    .profile-family-hub .profile-family-scroll.command { flex: 1 1 auto; }
 
     .profile-edit-card-header-state {
       display: inline-flex;
@@ -6602,6 +6499,31 @@
       align-items: start;
       min-width: 0;
     }
+
+    /* Profile → Other editing */
+
+    .person-profile .profile-other-edit-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+    }
+
+    .person-profile .profile-other-religion {
+      grid-column: 1;
+      grid-row: 1;
+      min-width: 0;
+    }
+
+    .person-profile .profile-other-baptism-date {
+      grid-column: 2;
+      grid-row: 1;
+      min-width: 0;
+    }
+
+    .person-profile .profile-other-baptism-place {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      min-width: 0;
+    }
     .profile-edit-date-row.full { grid-column: 1 / -1; }
     .profile-edit-date-cell { min-width: 0; }
     .profile-edit-date-cell .genealogy-date-field { width: 100%; }
@@ -6615,59 +6537,59 @@
       gap: var(--space-2);
     }
 
-    .profile-connected-cube {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--space-4);
+    .person-profile
+      .profile-other-baptism-date
+      .genealogy-date-controls {
+      grid-template-columns:
+        minmax(104px, .8fr)
+        minmax(0, 1.2fr)
+        var(--control-icon-button-size);
+      gap: var(--space-2);
+      min-width: 0;
+      align-items: start;
     }
-    .profile-connected-cube .profile-compact-card { min-height: 238px; }
-    .profile-connected-cube .profile-place-map { height: 96px; }
-    .profile-connected-cube .profile-connected-strip { grid-template-columns: repeat(4, minmax(48px, 1fr)); }
-    .profile-connected-cube .profile-file-tile,
-    .profile-connected-cube .profile-note-tile { min-height: 74px; }
-    .profile-connected-cube .profile-photo-button { min-height: 62px; }
 
-    .profile-compact-timeline-list::before {
-      content: "";
-      position: absolute;
-      left: 76px;
-      top: 26px;
-      bottom: 26px;
-      width: 1px;
-      background: var(--border-strong);
+    .person-profile
+      .profile-other-baptism-date
+      .genealogy-date-type-shell,
+    .person-profile
+      .profile-other-baptism-date
+      .genealogy-date-range-shell,
+    .person-profile
+      .profile-other-baptism-date
+      .genealogy-date-range-cell,
+    .person-profile
+      .profile-other-baptism-date
+      .genealogy-date-input {
+      min-width: 0;
     }
-    .profile-compact-timeline-row {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      min-height: 62px;
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--text-secondary);
-      border-radius: var(--radius-sm);
-      display: grid;
-      grid-template-columns: 46px 22px 1fr;
-      gap: var(--space-3);
-      align-items: center;
-      padding: 8px;
-      text-align: left;
-    }
-    .profile-compact-timeline-row:hover,
-    .profile-compact-timeline-row:focus-visible { background: rgba(255,255,255,.035); border-color: var(--border-default); color: var(--text-primary); }
-    .profile-compact-year { color: var(--text-primary); font-weight: 900; text-align: right; }
-    .profile-compact-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--brand-green-500); background: var(--surface-card); box-shadow: 0 0 0 4px rgba(47,174,116,.1); }
-    .profile-compact-timeline-row.education .profile-compact-dot { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(93,173,236,.1); }
-    .profile-compact-timeline-row.relationship .profile-compact-dot { border-color: var(--amber); box-shadow: 0 0 0 4px rgba(212,170,107,.1); }
-    .profile-compact-timeline-row.source .profile-compact-dot,
-    .profile-compact-timeline-row.note .profile-compact-dot { border-color: var(--purple); box-shadow: 0 0 0 4px rgba(141,108,232,.1); }
-    .profile-compact-copy strong { display: block; color: var(--text-primary); font-size: 13px; line-height: 1.25; }
-    .profile-compact-copy small { display: block; color: var(--text-tertiary); font-size: 12px; line-height: 1.3; margin-top: 2px; }
 
-    @media (max-width: 1420px) {.profile-readonly-grid { grid-template-columns: 1fr 1fr; }}
-    @media (max-width: 1080px) {.profile-connected-cube { grid-template-columns: 1fr; }
-      
-      .profile-edit-card,
-      .profile-family-hub { min-height: auto; }}
+    .person-profile
+      .profile-other-baptism-date
+      .genealogy-date-details-button {
+      width: var(--control-icon-button-size);
+      min-width: var(--control-icon-button-size);
+      padding: 0;
+    }
+
+    @media (max-width: 900px) {
+      .person-profile .profile-other-edit-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .person-profile .profile-other-religion,
+      .person-profile .profile-other-baptism-date,
+      .person-profile .profile-other-baptism-place {
+        grid-column: 1;
+        grid-row: auto;
+      }
+
+      .person-profile
+        .profile-other-baptism-date
+        .genealogy-date-controls {
+        grid-template-columns: 1fr;
+      }
+    }
 
     /* =========================================================
       People Profile — canonical component styles
@@ -6684,6 +6606,13 @@
       --profile-card-min-h: 408px;
       --profile-family-sync-h: var(--profile-card-min-h);
 
+      --profile-connected-card-h: 276px;
+      --profile-connected-grid-h:
+        calc(
+          var(--profile-connected-card-h)
+          + var(--profile-connected-card-h)
+          + var(--space-4)
+        );
       min-height: 100%;
       height: auto;
       box-sizing: border-box;
@@ -6722,9 +6651,7 @@
 
     /* Main information card */
 
-    .person-profile .profile-full-card,
-    .person-profile .profile-full-card.editing,
-    .person-profile.is-editing .profile-full-card {
+    .person-profile .profile-full-card {
       width: 100%;
       height: auto;
       min-height: var(--profile-card-min-h);
@@ -6733,6 +6660,18 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+    }
+
+
+    /*
+    * Editing controls such as place-combobox lists are allowed
+    * to extend outside the card.
+    */
+    .person-profile .profile-full-card.editing,
+    .person-profile.is-editing .profile-full-card {
+      position: relative;
+      z-index: 20;
+      overflow: visible;
     }
 
     .person-profile .profile-full-card .profile-card-body {
@@ -6751,6 +6690,18 @@
       margin-bottom: 0;
     }
 
+    .person-profile .profile-full-card.locked .profile-readonly-grid {
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+
+    .person-profile
+      .profile-full-card.locked
+      .profile-readonly-grid-single
+      .profile-info-block {
+      height: 100%;
+    }
+
     .person-profile .profile-full-card.editing .profile-card-edit-grid.two {
       grid-template-columns: 1fr;
     }
@@ -6760,7 +6711,7 @@
     .profile-readonly-grid.profile-readonly-grid-tabbed:not(.main),
     .profile-readonly-grid.profile-readonly-grid-single {
       grid-template-columns: 1fr;
-      align-items: start;
+      align-items: stretch;
     }
 
     .profile-readonly-grid.profile-readonly-grid-tabbed.main {
@@ -6768,21 +6719,15 @@
       align-items: stretch;
     }
 
-    .profile-readonly-grid.profile-readonly-grid-tabbed.main .profile-info-block {
+    .profile-readonly-grid.profile-readonly-grid-tabbed.main
+      .profile-info-block {
       align-content: start;
       grid-auto-rows: max-content;
     }
 
-    .profile-readonly-grid.profile-readonly-grid-tabbed.main .profile-info-row {
+    .profile-readonly-grid.profile-readonly-grid-tabbed.main
+      .profile-info-row {
       align-items: start;
-    }
-
-    .profile-info-block.wide {
-      min-height: 260px;
-    }
-
-    .profile-full-card.locked .profile-info-block {
-      min-height: 0;
     }
 
     /* Information key/value rows */
@@ -6824,9 +6769,22 @@
       line-height: 1.35;
     }
 
-    /* Connected cards */
+    /* Connected resources and Timeline */
 
-    .profile-connected-card h3.profile-connected-head {
+    .person-profile__bottom {
+      align-items: start;
+    }
+
+    .profile-connected-card {
+      min-width: 0;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      background: var(--surface-card);
+      overflow: hidden;
+    }
+
+    .profile-connected-card > .profile-connected-head {
+      flex: 0 0 54px;
       min-height: 54px;
       margin: 0;
       padding: 0 var(--space-4);
@@ -6865,6 +6823,21 @@
       display: block;
     }
 
+    .profile-resource-count {
+      min-width: 22px;
+      height: 22px;
+      padding: 0 7px;
+      border: 1px solid rgba(255, 255, 255, .07);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .04);
+      color: var(--text-tertiary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
     .profile-connected-actions {
       flex: 0 0 auto;
       display: inline-flex;
@@ -6875,44 +6848,31 @@
     }
 
     .profile-connected-action {
-      height: 30px;
-      min-height: 30px;
+      height: 34px;
+      min-height: 34px;
       padding: 0 8px;
       border: 1px solid transparent;
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       background: transparent;
       color: var(--brand-green-300);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+      gap: 6px;
       font-size: 13px;
       line-height: 1;
       font-weight: 900;
-      vertical-align: middle;
       text-decoration: none;
       cursor: pointer;
     }
 
     .profile-connected-action svg {
-      width: 15px;
-      height: 15px;
-      max-width: 15px;
-      max-height: 15px;
-      flex: 0 0 15px;
-      display: block;
-    }
-
-    .profile-connected-action.open {
-      padding-right: 6px;
-    }
-
-    .profile-connected-action.open svg {
       width: 16px;
       height: 16px;
       max-width: 16px;
       max-height: 16px;
-      flex-basis: 16px;
+      flex: 0 0 16px;
+      display: block;
     }
 
     .profile-connected-action:hover,
@@ -6923,237 +6883,487 @@
       text-decoration: none;
     }
 
-    /* Connected-card grid */
+    /* 2 × 2 resource grid */
 
     .person-profile .profile-connected-cube {
+      min-width: 0;
       align-self: start;
-      position: relative;
-      z-index: auto;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows:
+        repeat(2, var(--profile-connected-card-h));
+      gap: var(--space-4);
       margin: 0;
     }
 
-    /* Compact timeline */
-
-    .person-profile .profile-compact-timeline.profile-connected-card {
-      height: 100%;
+    .person-profile .profile-resource-card {
+      height: var(--profile-connected-card-h);
       min-height: 0;
-      align-self: stretch;
       display: flex;
       flex-direction: column;
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-md);
-      background: var(--surface-card);
+    }
+
+    .profile-resource-card__body {
+      flex: 1 1 auto;
+      min-width: 0;
+      min-height: 0;
+      padding: var(--space-3) var(--space-4);
       overflow: hidden;
     }
 
-    .profile-compact-timeline .profile-connected-head.profile-timeline-head {
-      min-height: 52px;
-      flex: 0 0 auto;
-      margin: 0;
-      padding: var(--space-3) var(--space-4);
-      border-bottom: 1px solid var(--border-default);
+    .profile-resource-card__footer {
+      width: 100%;
+      flex: 0 0 44px;
+      min-height: 44px;
+      padding: 0 var(--space-4);
+      border: 0;
+      border-top: 1px solid var(--border-default);
+      background: rgba(11, 15, 14, .16);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      text-align: left;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition:
+        color var(--ease),
+        background var(--ease);
+    }
+
+    .profile-resource-card__footer svg {
+      width: 17px;
+      height: 17px;
+      flex: 0 0 17px;
+    }
+
+    .profile-resource-card__footer:hover,
+    .profile-resource-card__footer:focus-visible {
+      background: rgba(255, 255, 255, .035);
+      color: var(--brand-green-300);
+    }
+
+    .profile-resource-empty {
+      height: 100%;
+      min-height: 0;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
+      place-items: center;
+      padding: var(--space-4);
+      color: var(--text-tertiary);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    /* Shared preview rows */
+
+    .profile-resource-list {
+      height: 100%;
+      min-height: 0;
+      display: grid;
+      align-content: start;
+      gap: var(--space-1);
+    }
+
+    .profile-resource-row {
+      width: 100%;
+      min-width: 0;
+      min-height: 48px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-secondary);
+      text-align: left;
+      cursor: pointer;
+      transition:
+        color var(--ease),
+        background var(--ease),
+        border-color var(--ease);
+    }
+
+    .profile-resource-row:hover,
+    .profile-resource-row:focus-visible {
+      border-color: var(--border-default);
+      background: rgba(255, 255, 255, .035);
+      color: var(--text-primary);
+    }
+
+    .profile-resource-row strong {
+      min-width: 0;
+      color: var(--text-primary);
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    .profile-resource-row small {
+      min-width: 0;
+      color: var(--text-tertiary);
+      font-size: 12px;
+      line-height: 1.3;
+    }
+
+    /* Photos */
+
+    .profile-resource-card--photos .profile-resource-card__body {
+      padding-inline: var(--space-3);
+    }
+
+    .profile-photo-carousel {
+      height: 100%;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .profile-photo-carousel.has-overflow {
+      grid-template-columns:
+        34px
+        minmax(0, 1fr)
+        34px;
+    }
+
+    .profile-photo-track {
+      grid-column: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      overscroll-behavior-inline: contain;
+      scrollbar-width: none;
+    }
+
+    .profile-photo-carousel.has-overflow .profile-photo-track {
+      grid-column: 2;
+    }
+
+    .profile-photo-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .profile-photo-thumb {
+      height: 118px;
+      flex: 0 0 calc((100% - 16px) / 3);
+      scroll-snap-align: start;
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 9px;
+      background:
+        linear-gradient(135deg, #163a2a, #2fae74);
+      color: var(--text-primary);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      transition:
+        transform var(--ease),
+        border-color var(--ease);
+    }
+
+    .profile-photo-thumb:hover,
+    .profile-photo-thumb:focus-visible {
+      transform: translateY(-1px);
+      border-color: rgba(98, 217, 154, .42);
+    }
+
+    .profile-photo-thumb.sepia {
+      background:
+        linear-gradient(135deg, #5e533a, #d7c39b);
+      color: #14100a;
+    }
+
+    .profile-photo-thumb.mono {
+      background:
+        linear-gradient(135deg, #373b39, #d8d8d5);
+      color: #141716;
+    }
+
+    .profile-photo-thumb.purple {
+      background:
+        linear-gradient(135deg, #352a58, #8669d7);
+    }
+
+    .profile-photo-thumb.amber {
+      background:
+        linear-gradient(135deg, #5c4522, #d4aa6b);
+    }
+
+    .profile-photo-carousel-button {
+      width: 34px;
+      height: 42px;
+      padding: 0;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-input);
+      color: var(--text-secondary);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .profile-photo-carousel-button.previous {
+      grid-column: 1;
+    }
+
+    .profile-photo-carousel-button.next {
+      grid-column: 3;
+    }
+
+    .profile-photo-carousel-button svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .profile-photo-carousel-button:hover:not(:disabled),
+    .profile-photo-carousel-button:focus-visible:not(:disabled) {
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+    }
+
+    .profile-photo-carousel-button:disabled {
+      opacity: .35;
+      cursor: default;
+    }
+
+    /* Archive */
+
+    .profile-file-row {
+      padding: 5px 8px;
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr);
       align-items: center;
       gap: var(--space-3);
-      font-size: 16px;
     }
 
-    .profile-compact-timeline
-      .profile-connected-title
-      .profile-connected-icon {
-      width: 26px;
-      height: 26px;
-      flex: 0 0 26px;
+    .profile-resource-file-badge {
+      width: 30px;
+      height: 36px;
+      flex: 0 0 30px;
     }
 
-    .profile-compact-timeline
-      .profile-connected-title
-      .profile-connected-icon svg {
-      width: 22px;
-      height: 22px;
-      max-width: 22px;
-      max-height: 22px;
+    .profile-file-row-copy {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
     }
 
-    .profile-compact-timeline-list {
-      position: relative;
-      flex: 1 1 auto;
+    .profile-file-row-copy strong,
+    .profile-file-row-copy small {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Notes */
+
+    .profile-note-preview-list {
+      grid-template-rows:
+        repeat(2, minmax(0, 1fr));
+      gap: var(--space-2);
+    }
+
+    .profile-note-preview-row {
       min-height: 0;
-      max-height: none;
+      padding: 8px 10px;
       display: grid;
       align-content: start;
       gap: 4px;
-      padding: var(--space-4);
-      overflow-y: auto;
     }
 
+    .profile-note-preview-row strong {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .profile-note-excerpt {
+      min-width: 0;
+      overflow: hidden;
+      color: var(--text-secondary);
+      font-size: 12px;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .profile-note-updated {
+      margin-top: auto;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Places */
+
+    .profile-place-preview-row {
+      padding: 6px 9px;
+      display: grid;
+      align-content: center;
+      gap: 3px;
+    }
+
+    .profile-place-preview-row strong {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .profile-place-preview-meta {
+      min-width: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .profile-place-status-dot {
+      width: 7px;
+      height: 7px;
+      flex: 0 0 7px;
+      border-radius: 50%;
+      background: var(--text-tertiary);
+    }
+
+    .profile-place-status-dot.resolved {
+      background: var(--brand-green-500);
+    }
+
+    .profile-place-status-dot.approximate {
+      background: var(--amber);
+    }
+
+    .profile-place-status-dot.unresolved {
+      background: var(--red);
+    }
+
+    /* Timeline */
+
+    .person-profile
+      .profile-compact-timeline.profile-connected-card {
+      width: 100%;
+      height: var(--profile-connected-grid-h);
+      min-height: var(--profile-connected-grid-h);
+      max-height: var(--profile-connected-grid-h);
+      align-self: start;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-compact-timeline-list {
+      flex: 1 1 auto;
+      min-width: 0;
+      min-height: 0;
+      padding: var(--space-4);
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+    }
+
+    .profile-compact-timeline-list > .timeline {
+      margin: 0;
+    }
+
+    .profile-compact-timeline-list .timeline-dot {
+      background: var(--surface-card);
+    }
+
+    .profile-compact-timeline-list > .panel-muted {
+      margin: 0;
+      padding: var(--space-2) 0;
+    }
+          
     /* Family card */
 
-    .person-profile__top .profile-family-hub,
-    .person-profile.is-editing
-      .person-profile__top
-      .profile-family-hub {
+    .person-profile__top .profile-family-hub {
       height: var(--profile-family-sync-h);
       min-height: var(--profile-family-sync-h);
       max-height: var(--profile-family-sync-h);
       align-self: start;
       display: flex;
       flex-direction: column;
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-md);
-      background: var(--surface-card);
-      overflow: hidden;
     }
 
-    .person-profile__top .profile-family-tabs {
-      flex: 0 0 auto;
+    /*
+    * The shared .profile-side-card h3 rule supplies the heading
+    * layout, border, font size, alignment, and spacing.
+    */
+    .person-profile__top .profile-family-head {
+      flex: 0 0 54px;
+      min-height: 54px;
+      padding: 0 var(--space-4);
     }
 
-    .person-profile__top .profile-family-scroll.command,
-    .person-profile__top .profile-family-scroll.command.clean {
+    .person-profile .profile-family-title {
+      min-width: 0;
+    }
+
+    .person-profile .profile-family-title-icon {
+      width: 24px;
+      height: 24px;
+      flex: 0 0 24px;
+      display: inline-grid;
+      place-items: center;
+      color: var(--text-secondary);
+    }
+
+    .person-profile .profile-family-title-icon svg {
+      width: 24px;
+      height: 24px;
+      max-width: 24px;
+      max-height: 24px;
+      display: block;
+    }
+
+    .person-profile .profile-family-count {
+      min-width: 24px;
+      height: 24px;
+      padding: 0 8px;
+      border: 1px solid rgba(255, 255, 255, .07);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .04);
+      color: var(--text-tertiary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .person-profile__top .profile-family-scroll {
       flex: 1 1 auto;
       height: auto;
       min-height: 0;
       max-height: none;
-      display: grid;
-      align-content: start;
-      gap: var(--space-4);
       padding: var(--space-4);
-      border-top: 0;
-      background: transparent;
+      overflow-x: hidden;
       overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
     }
 
-    .person-profile__top .profile-family-group {
-      display: grid;
-      align-content: start;
-      gap: var(--space-2);
+    .person-profile__top
+      .profile-family-scroll
+      .relationship-list {
+      gap: var(--space-4);
     }
 
-    .person-profile__top .profile-family-empty {
-      align-self: start;
-      justify-self: stretch;
-      margin: var(--space-4);
-      color: var(--text-tertiary);
+    .person-profile__top
+      .profile-family-scroll
+      .panel-muted {
+      margin: 0;
     }
-
-    /* Current Family member row */
-
-    .person-profile .profile-family-member-row {
-      width: 100%;
-      min-height: 76px;
-      display: grid;
-      grid-template-columns: 56px minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 14px;
-      padding: 10px 12px;
-      border: 1px solid rgba(255, 255, 255, .04);
-      border-radius: var(--radius-md);
-      background: rgba(255, 255, 255, .025);
-      color: var(--text-secondary);
-      text-align: left;
-      cursor: pointer;
-      transition:
-        background var(--ease),
-        border-color var(--ease),
-        color var(--ease),
-        transform var(--ease);
-    }
-
-    .person-profile .profile-family-member-row:hover,
-    .person-profile .profile-family-member-row:focus-within {
-      border-color: var(--border-strong);
-      background: var(--surface-card-hover);
-      color: var(--text-primary);
-      transform: translateY(-1px);
-    }
-
-    .person-profile .profile-family-member-row .small-avatar {
-      width: 48px;
-      height: 48px;
-      flex: 0 0 48px;
-      font-size: 15px;
-    }
-
-    .person-profile .profile-family-member-row .profile-linked-copy {
-      min-width: 0;
-      display: grid;
-      gap: 4px;
-    }
-
-    .person-profile .profile-family-member-row .profile-linked-copy strong {
-      display: block;
-      color: var(--text-primary);
-      font-size: 14px;
-      line-height: 1.2;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .person-profile .profile-family-member-row .profile-linked-copy span {
-      display: block;
-      color: var(--text-tertiary);
-      font-size: 12px;
-      line-height: 1.25;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .person-profile .profile-family-row-actions {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateX(4px);
-      transition:
-        opacity var(--ease),
-        transform var(--ease);
-    }
-
-    .person-profile
-      .profile-family-member-row:hover
-      .profile-family-row-actions,
-    .person-profile
-      .profile-family-member-row:focus-within
-      .profile-family-row-actions {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateX(0);
-    }
-
-    .person-profile .profile-family-action-button {
-      width: 32px;
-      height: 32px;
-      padding: 0;
-      border: 0;
-      border-radius: 8px;
-      background: transparent;
-      color: var(--text-secondary);
-      display: inline-grid;
-      place-items: center;
-      font-size: 16px;
-      line-height: 1;
-      font-weight: 900;
-      cursor: pointer;
-    }
-
-    .person-profile .profile-family-action-button svg {
-      width: 18px;
-      height: 18px;
-      flex: 0 0 18px;
-      display: block;
-    }
-
-    .person-profile .profile-family-action-button:hover,
-    .person-profile .profile-family-action-button:focus-visible {
-      background: rgba(255, 255, 255, .075);
-      color: var(--text-primary);
-    }
-
     /* Small Profile utilities */
 
     .profile-status-inline {
@@ -7179,18 +7389,14 @@
         grid-template-columns: 1fr;
       }
 
-      .person-profile__top .profile-family-hub,
-      .person-profile.is-editing
-        .person-profile__top
-        .profile-family-hub {
+      .person-profile__top .profile-family-hub {
         height: auto;
         min-height: var(--profile-card-min-h);
         max-height: none;
         align-self: stretch;
       }
 
-      .person-profile__top .profile-family-scroll.command,
-      .person-profile__top .profile-family-scroll.command.clean {
+      .person-profile__top .profile-family-scroll {
         max-height: 360px;
       }
 
@@ -7199,9 +7405,22 @@
       }
     }
 
-    @media (max-width: 1080px) {
+    @media (max-width: 760px) {
       .person-profile .profile-connected-cube {
         grid-template-columns: 1fr;
+        grid-template-rows: none;
+      }
+
+      .person-profile .profile-resource-card {
+        height: auto;
+        min-height: var(--profile-connected-card-h);
+      }
+
+      .person-profile
+        .profile-compact-timeline.profile-connected-card {
+        height: 520px;
+        min-height: 520px;
+        max-height: 520px;
       }
     }
 
@@ -10267,136 +10486,7 @@
       color: var(--text-primary);
       box-shadow: none;
     }
-
-    /* People full profile requested refinements */
-    .profile-side-card.profile-family-hub {
-      min-height: 0;
-      max-height: 404px;
-      display: flex;
-      flex-direction: column;
-    }
-    .profile-side-card.profile-family-hub .profile-family-scroll.command,
-    .profile-side-card.profile-family-hub .profile-family-scroll.command.clean {
-      flex: 1 1 auto;
-      max-height: 342px;
-      overflow-y: auto;
-    }
-    .profile-compact-timeline.profile-connected-card {
-      border: 1px solid var(--border-default);
-      background: var(--surface-card);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-    }
-    .profile-compact-timeline.profile-connected-card h3.profile-connected-head {
-      min-height: 54px;
-      margin: 0;
-      padding: 0 var(--space-4);
-      border-bottom: 1px solid var(--border-default);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-3);
-      font-size: 16px;
-    }
-    .profile-compact-timeline .profile-connected-title {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .profile-compact-timeline .profile-connected-icon {
-      width: 28px;
-      height: 28px;
-      flex: 0 0 28px;
-    }
-    .profile-compact-timeline .profile-connected-icon svg {
-      width: 22px;
-      height: 22px;
-      max-width: 22px;
-      max-height: 22px;
-    }
-    .profile-compact-timeline-list {
-      max-height: 286px;
-      padding: var(--space-4);
-    }
-@media (max-width: 1080px) {.profile-side-card.profile-family-hub { max-height: none; }
-      .profile-side-card.profile-family-hub .profile-family-scroll.command,
-      .profile-side-card.profile-family-hub .profile-family-scroll.command.clean { max-height: 320px; }}
-
   
-    /* People full profile final refinements */
-    .profile-compact-timeline .profile-connected-head.profile-timeline-head {
-      min-height: 52px;
-      margin: 0;
-      padding: var(--space-3) var(--space-4);
-      border-bottom: 1px solid var(--border-default);
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: center;
-      gap: var(--space-3);
-      font-size: 16px;
-    }
-    .profile-compact-timeline .profile-connected-title .profile-connected-icon {
-      width: 26px;
-      height: 26px;
-      flex: 0 0 26px;
-    }
-    .profile-compact-timeline .profile-connected-title .profile-connected-icon svg {
-      width: 22px;
-      height: 22px;
-    }
-    .profile-family-hub {
-      min-height: 0;
-      max-height: 360px;
-    }
-    .profile-family-hub .profile-family-scroll.command.clean {
-      max-height: 314px;
-    }
-    .profile-compact-timeline-list {
-      max-height: 342px;
-    }
-@media (max-width: 1080px) {.profile-family-hub { max-height: none; }
-      .profile-family-hub .profile-family-scroll.command.clean { max-height: 360px; }}
-    .profile-family-hub .profile-family-tabs { flex: 0 0 auto; }
-    .profile-family-hub .profile-family-scroll.command,
-    .profile-family-hub .profile-family-scroll.command.clean {
-      flex: 1 1 auto !important;
-      min-height: 0;
-      max-height: none !important;
-      overflow-y: auto;
-      display: grid;
-      align-content: start;
-      gap: var(--space-4);
-      padding-top: var(--space-4);
-    }
-    .profile-family-group { display: grid; gap: var(--space-2); align-content: start; }
-    .profile-family-empty { align-self: start; justify-self: stretch; margin: var(--space-4); color: var(--text-tertiary); }
-    .profile-compact-timeline .profile-connected-head.profile-timeline-head {
-      flex: 0 0 auto;
-    }
-    .profile-compact-timeline-list {
-      flex: 1 1 auto;
-      min-height: 0;
-      max-height: none !important;
-      overflow-y: auto;
-    }
-
-    .profile-readonly-grid.profile-readonly-grid-tabbed:not(.main),
-    .profile-readonly-grid.profile-readonly-grid-single {
-      grid-template-columns: 1fr !important;
-      align-items: start;
-    }
-    .profile-readonly-grid.profile-readonly-grid-tabbed.main {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-    .profile-readonly-grid.profile-readonly-grid-tabbed.main .profile-info-block h4:nth-child(1) { text-transform: uppercase; }
-
-    @media (max-width: 1180px) {.profile-family-hub .profile-family-scroll.command,
-      .profile-family-hub .profile-family-scroll.command.clean { max-height: 360px !important; }
-      .profile-readonly-grid.profile-readonly-grid-tabbed.main { grid-template-columns: 1fr; }}
-    .profile-full-card.editing .profile-card-edit-grid.two {
-      grid-template-columns: 1fr !important;
-    }
-    
     .people-full-profile-cta {
       grid-column: 1 / -1;
       justify-content: flex-start !important;
@@ -10415,10 +10505,6 @@
     }
 
     /* People full-profile edit form: canonical Main info control system. */
-    .person-profile .profile-full-card .profile-card-body {
-      overflow: visible;
-    }
-
     .person-profile .profile-main-edit-grid {
       --profile-main-control-height: var(--control-height);
       display: grid;
@@ -10502,8 +10588,11 @@
     }
 
     .person-profile .profile-main-edit-grid .genealogy-date-controls {
-      grid-template-columns: minmax(150px, 190px) minmax(220px, 1fr) var(--control-icon-button-size);
-      gap: var(--space-3);
+      grid-template-columns:
+        minmax(104px, .8fr)
+        minmax(0, 1.2fr)
+        var(--control-icon-button-size);
+      gap: var(--space-2);
       align-items: start;
       min-width: 0;
     }
@@ -10521,6 +10610,21 @@
       display: block;
     }
 
+    .person-profile
+      .profile-main-edit-grid
+      .profile-date-combo
+      .genealogy-date-type-shell,
+    .person-profile
+      .profile-main-edit-grid
+      .profile-date-combo
+      .genealogy-date-range-shell,
+    .person-profile
+      .profile-main-edit-grid
+      .profile-date-combo
+      .genealogy-date-input {
+      min-width: 0;
+    }
+
     .person-profile .profile-field-gender { grid-column: 1; grid-row: 1; }
     .person-profile .profile-field-living { grid-column: 2; grid-row: 1; }
     .person-profile .profile-field-first { grid-column: 1; grid-row: 2; }
@@ -10529,12 +10633,35 @@
     .person-profile .profile-field-patronym { grid-column: 1; grid-row: 3; }
     .person-profile .profile-field-maiden { grid-column: 2; grid-row: 3; }
     .person-profile .profile-field-suffix { grid-column: 3; grid-row: 3; }
-    .person-profile .profile-field-birth-date { grid-column: 1 / 3; grid-row: 4; }
-    .person-profile .profile-field-birth-place { grid-column: 3; grid-row: 4; }
-    .person-profile .profile-field-death-date { grid-column: 1 / 3; grid-row: 5; }
-    .person-profile .profile-field-death-place { grid-column: 3; grid-row: 5; }
-    .person-profile .profile-field-death-reason { grid-column: 1; grid-row: 6; }
-    .person-profile .profile-field-burial-place { grid-column: 2 / 4; grid-row: 6; }
+    .person-profile .profile-field-birth-date {
+      grid-column: 1;
+      grid-row: 4;
+    }
+
+    .person-profile .profile-field-birth-place {
+      grid-column: 2 / 4;
+      grid-row: 4;
+    }
+
+    .person-profile .profile-field-death-date {
+      grid-column: 1;
+      grid-row: 5;
+    }
+
+    .person-profile .profile-field-death-place {
+      grid-column: 2 / 4;
+      grid-row: 5;
+    }
+
+    .person-profile .profile-field-death-reason {
+      grid-column: 1;
+      grid-row: 6;
+    }
+
+    .person-profile .profile-field-burial-place {
+      grid-column: 2 / 4;
+      grid-row: 6;
+    }
 
     .person-profile .profile-main-edit-grid.no-maiden .profile-field-maiden,
     .person-profile .profile-main-edit-grid:not(.has-maiden) .profile-field-maiden,
@@ -10561,6 +10688,121 @@
     .person-profile .profile-date-combo {
       display: grid;
       gap: 8px;
+    }
+
+    /* Match the Add/Edit Person layout when the date type is Between. */
+    .person-profile .profile-date-combo.is-between {
+      grid-template-columns:
+        minmax(104px, .8fr)
+        minmax(0, 1.2fr)
+        var(--control-icon-button-size);
+      grid-template-rows:
+        auto
+        var(--control-height)
+        auto
+        var(--control-height);
+      gap: var(--space-2);
+      align-items: start;
+      min-width: 0;
+    }
+
+    /* Birth Date / Death Date label sits above the date-type control. */
+    .person-profile .profile-date-combo.is-between > label {
+      grid-column: 1;
+      grid-row: 1;
+      align-self: end;
+    }
+
+    /*
+    * Flatten the shared date-control wrappers so the labels and inputs
+    * can participate directly in the Profile date field grid.
+    */
+    .person-profile
+      .profile-date-combo.is-between
+      > .genealogy-date-controls,
+    .person-profile
+      .profile-date-combo.is-between
+      .genealogy-date-range-shell,
+    .person-profile
+      .profile-date-combo.is-between
+      .genealogy-date-range-cell {
+      display: contents;
+    }
+
+    .person-profile
+      .profile-date-combo.is-between
+      .genealogy-date-range-cell > span {
+      display: block;
+      align-self: end;
+      justify-self: start;
+      margin: 0;
+    }
+
+    /* “From” directly above the first date input. */
+    .person-profile
+      .profile-date-combo.is-between
+      .genealogy-date-range-cell:first-child > span {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    /* “To” directly above the second date input. */
+    .person-profile
+      .profile-date-combo.is-between
+      [data-genealogy-date-to-cell] > span {
+      grid-column: 2;
+      grid-row: 3;
+      margin-top: var(--space-3);
+    }
+
+    /* First row of controls. */
+    .person-profile
+      .profile-date-combo.is-between
+      .genealogy-date-type-shell {
+      grid-column: 1;
+      grid-row: 2;
+      min-height: var(--control-height);
+      align-self: start;
+    }
+
+    .person-profile
+      .profile-date-combo.is-between
+      [data-genealogy-date-input] {
+      grid-column: 2;
+      grid-row: 2;
+      min-height: var(--control-height);
+    }
+
+    .person-profile
+      .profile-date-combo.is-between
+      .genealogy-date-details-button {
+      grid-column: 3;
+      grid-row: 2;
+      width: var(--control-icon-button-size);
+      height: var(--control-height);
+      min-height: var(--control-height);
+      max-height: var(--control-height);
+      align-self: start;
+      justify-self: start;
+    }
+
+    /* Second date input below its “To” label. */
+    .person-profile
+      .profile-date-combo.is-between
+      [data-genealogy-date-input-to] {
+      grid-column: 2;
+      grid-row: 4;
+      min-height: var(--control-height);
+    }
+
+    /* Validation and calendar-status messages remain full width. */
+    .person-profile
+      .profile-date-combo.is-between
+      .genealogy-date-standard-status,
+    .person-profile
+      .profile-date-combo.is-between
+      .genealogy-date-validation {
+      grid-column: 1 / -1;
     }
 
     .person-profile .profile-range-date-row {
@@ -11757,7 +11999,46 @@
       return familyPartnerAId(family) === personId ? familyPartnerBId(family) : familyPartnerAId(family);
     }
 
-        function buildFamiliesFromRelationshipRecords(records = []) {
+    const PARENT_CHILD_RELATIONSHIP_TYPES = Object.freeze([
+      'Biological',
+      'Adoptive',
+      'Step',
+      'Foster',
+      'Guardian'
+    ]);
+
+    function normalizeParentChildRelationshipType(
+      value
+    ) {
+      const normalized = String(value || '').trim();
+
+      return PARENT_CHILD_RELATIONSHIP_TYPES.includes(
+        normalized
+      )
+        ? normalized
+        : 'Biological';
+    }
+
+    function sanitizeParentChildTypes(types) {
+      if (
+        !types
+        || typeof types !== 'object'
+        || Array.isArray(types)
+      ) {
+        return {};
+      }
+
+      return Object.fromEntries(
+        Object.entries(types)
+          .filter(([key]) => Boolean(key))
+          .map(([key, value]) => [
+            key,
+            normalizeParentChildRelationshipType(value)
+          ])
+      );
+    }
+
+      function buildFamiliesFromRelationshipRecords(records = []) {
       const source = Array.isArray(records) ? records : [];
       const familyMap = new Map();
       const pairToFamilyId = new Map();
@@ -11783,7 +12064,10 @@
           attributes: Array.isArray(family.attributes) ? family.attributes : [],
           notes: Array.isArray(family.notes) ? family.notes : [],
           citations: Array.isArray(family.citations) ? family.citations : [],
-          mediaIds: Array.isArray(family.mediaIds) ? family.mediaIds : []
+          mediaIds: Array.isArray(family.mediaIds) ? family.mediaIds : [],
+          parentChildTypes: sanitizeParentChildTypes(
+            family.parentChildTypes
+          ),
         };
         normalized.relationshipType = relationshipTypeFromLegacy(normalized);
         normalized.relationshipStatus = normalized.relationshipStatus || 'active';
@@ -11798,6 +12082,14 @@
           existing.notes = [...(existing.notes || []), ...(normalized.notes || [])];
           existing.citations = [...(existing.citations || []), ...(normalized.citations || [])];
           existing.mediaIds = [...new Set([...(existing.mediaIds || []), ...(normalized.mediaIds || [])])];
+          existing.parentChildTypes = {
+            ...sanitizeParentChildTypes(
+              existing.parentChildTypes
+            ),
+            ...sanitizeParentChildTypes(
+              normalized.parentChildTypes
+            )
+          };
           return existing;
         }
         familyMap.set(normalized.id, normalized);
@@ -11883,25 +12175,58 @@
       return getPeople(currentProjectId()).map(person => person.names.display);
     }
 
+    function uniquePeopleById(people) {
+      const seen = new Set();
+
+      return people.filter(person => {
+        if (!person?.id || seen.has(person.id)) {
+          return false;
+        }
+
+        seen.add(person.id);
+        return true;
+      });
+    }
+
     function getParents(personId) {
-      return centralFamilyRecords()
-        .filter(family => (family.childIds || []).includes(personId))
-        .flatMap(family => [
-          { id: familyPartnerAId(family), parentRole: getPerson(familyPartnerAId(family))?.gender === 'female' ? 'mother' : 'father' },
-          { id: familyPartnerBId(family), parentRole: getPerson(familyPartnerBId(family))?.gender === 'female' ? 'mother' : 'father' }
-        ])
-        .filter(link => link.id)
-        .map(link => {
-          const parent = getPerson(link.id);
-          return parent ? { ...parent, parentRole: link.parentRole } : null;
-        })
+      const parents = centralFamilyRecords()
+        .filter(family =>
+          (family.childIds || []).includes(personId)
+        )
+        .flatMap(family =>
+          [
+            familyPartnerAId(family),
+            familyPartnerBId(family)
+          ]
+            .filter(Boolean)
+            .map(parentId => {
+              const parent = getPerson(parentId);
+
+              if (!parent) return null;
+
+              return {
+                ...parent,
+                parentRole:
+                  familyPartnerRole(family, parentId)
+                  || 'parent'
+              };
+            })
+        )
         .filter(Boolean);
+
+      return uniquePeopleById(parents);
     }
 
     function getChildren(personId) {
-      return centralFamilyRecords()
-        .filter(family => familyIncludesPerson(family, personId))
-        .flatMap(family => family.childIds || [])
+      const childIds = new Set(
+        centralFamilyRecords()
+          .filter(family =>
+            familyIncludesPerson(family, personId)
+          )
+          .flatMap(family => family.childIds || [])
+      );
+
+      return [...childIds]
         .map(childId => getPerson(childId))
         .filter(Boolean);
     }
@@ -13380,7 +13705,6 @@
       peopleFilters: { surname: '', birthPlace: '', living: 'Any', branch: '', sourceStatus: '', reviewStatus: '' },
       peopleVisibleColumns: { living: true, birth: true, birthPlace: true, death: true, deathPlace: true, updated: true },
       peoplePreviewCollapsed: false,
-      peopleProfileFamilyTab: 'immediate',
       peopleProfileEditing: false,
       peopleProfileEditTab: 'main',
       geneoView: 'home',
@@ -15555,8 +15879,11 @@ function renderTreeCardDateLines(person) {
       </div>`;
 
       const timelineContent = renderFamilyTreeTimeline(person.id);
-      const relationshipsContent = renderFamilyTreeRelationships(person.id);
-      const relationshipsCount = familyTreeRelationshipCount(person.id);
+      const relationshipsContent =
+        renderRelationships(person.id);
+
+      const relationshipsCount =
+        relationshipCount(person.id);
       const photosContent = renderFamilyPhotos(person);
       const archiveContent = renderFamilyArchiveItems(person);
       const notesContent = renderFamilyNotes(person);
@@ -15573,7 +15900,11 @@ function renderTreeCardDateLines(person) {
         ${renderInspectorSection(
           'relationships',
           'Relationships',
-          `${relationshipsCount} ${relationshipsCount === 1 ? 'person' : 'people'}`,
+          `${relationshipsCount} ${
+            relationshipsCount === 1
+              ? 'relationship'
+              : 'relationships'
+          }`,
           relationshipsContent
         )}
         ${renderInspectorSection('photos', 'Photos', `${photoCount} ${photoCount === 1 ? 'photo' : 'photos'}`, photosContent, `<button class="link" type="button" data-toast="Photo linking will be handled in Albums.">${renderPanelButtonLabel(icon.plus, 'Add photo')}</button>`, { inlineAction: true })}
@@ -15887,46 +16218,93 @@ function renderTreeCardDateLines(person) {
       </div>`;
     }
 
-    function renderRelation(person, meta, relationship = {}) {
-      if (!person) return '';
+    function parentChildRelationshipKey(
+      parentId,
+      childId
+    ) {
+      return `${parentId || ''}|${childId || ''}`;
+    }
 
-      const initials = person.names?.initials || '??';
-      const name = person.names?.display || 'Unnamed person';
-      const avatar = person.avatarClass || 'avatar-green';
-      const kind = String(relationship.kind || '').toLowerCase();
-      const canUnlink = ['parent', 'child', 'partner'].includes(kind);
+    function parentChildRelationshipType(
+      family,
+      parentId,
+      childId
+    ) {
+      const key = parentChildRelationshipKey(
+        parentId,
+        childId
+      );
 
-      const unlinkButton = canUnlink
-        ? `<button
-            class="relation-action-button relation-link-button"
-            type="button"
-            aria-label="Unlink ${escapeHtml(name)}"
-            data-unlink-relationship
-            data-unlink-kind="${escapeHtml(kind)}"
-            data-unlink-person-id="${escapeHtml(relationship.personId || '')}"
-            data-unlink-related-person-id="${escapeHtml(relationship.relatedPersonId || person.id)}"
-            data-unlink-family-id="${escapeHtml(relationship.familyId || '')}">
-            ${icon.unlink}
-          </button>`
-        : '';
+      return normalizeParentChildRelationshipType(
+        family?.parentChildTypes?.[key]
+      );
+    }
 
-      return `<div class="relation-row" tabindex="0" data-relation-person-id="${escapeHtml(person.id)}">
-        <div class="relation-row-main">
-          <div class="small-avatar ${escapeHtml(avatar)}">${escapeHtml(initials)}</div>
-          <div class="relation-row-copy">
-            <strong>${escapeHtml(name)}</strong>
-            <span>${escapeHtml(meta)}</span>
-          </div>
-        </div>
-        <div class="relation-actions" aria-label="Relationship actions">
-          ${unlinkButton}
-          <button class="relation-action-button" type="button" aria-label="More options for ${escapeHtml(name)}" aria-haspopup="menu" aria-expanded="false" data-toast="Relationship options menu is simulated.">${icon.more}</button>
-        </div>
-      </div>`;
+    function parentChildRelationshipTypeOptions(
+      selected = 'Biological'
+    ) {
+      const active =
+        normalizeParentChildRelationshipType(selected);
+
+      return PARENT_CHILD_RELATIONSHIP_TYPES
+        .map(value => `
+          <option
+            value="${escapeHtml(value)}"
+            ${value === active ? 'selected' : ''}>
+            ${escapeHtml(value)}
+          </option>
+        `)
+        .join('');
+    }
+
+    function setParentChildRelationshipType(
+      family,
+      parentId,
+      childId,
+      value = 'Biological'
+    ) {
+      if (!family || !parentId || !childId) return;
+
+      const key = parentChildRelationshipKey(
+        parentId,
+        childId
+      );
+
+      family.parentChildTypes = {
+        ...sanitizeParentChildTypes(
+          family.parentChildTypes
+        ),
+        [key]:
+          normalizeParentChildRelationshipType(value)
+      };
+    }
+
+    function removeParentChildRelationshipType(
+      family,
+      parentId,
+      childId
+    ) {
+      if (!family || !parentId || !childId) return;
+
+      const key = parentChildRelationshipKey(
+        parentId,
+        childId
+      );
+
+      const next = {
+        ...sanitizeParentChildTypes(
+          family.parentChildTypes
+        )
+      };
+
+      delete next[key];
+      family.parentChildTypes = next;
     }
 
     function relationBirthMeta(person) {
-      return person?.birth?.dateLabel || person?.birth?.date || '';
+      return person?.birth?.dateLabel
+        || person?.birth?.date
+        || '';
     }
 
     function relationGender(person) {
@@ -15934,113 +16312,314 @@ function renderTreeCardDateLines(person) {
     }
 
     function parentRelationLabel(person) {
-      if (person.parentRole === 'father' || relationGender(person) === 'male') return 'Father';
-      if (person.parentRole === 'mother' || relationGender(person) === 'female') return 'Mother';
+      if (
+        person.parentRole === 'father'
+        || relationGender(person) === 'male'
+      ) {
+        return 'Father';
+      }
+
+      if (
+        person.parentRole === 'mother'
+        || relationGender(person) === 'female'
+      ) {
+        return 'Mother';
+      }
+
       return 'Parent';
     }
 
     function siblingRelationLabel(person) {
-      if (relationGender(person) === 'male') return 'Brother';
-      if (relationGender(person) === 'female') return 'Sister';
+      if (relationGender(person) === 'male') {
+        return 'Brother';
+      }
+
+      if (relationGender(person) === 'female') {
+        return 'Sister';
+      }
+
       return 'Sibling';
     }
 
     function childRelationLabel(person) {
-      if (relationGender(person) === 'male') return 'Son';
-      if (relationGender(person) === 'female') return 'Daughter';
+      if (relationGender(person) === 'male') {
+        return 'Son';
+      }
+
+      if (relationGender(person) === 'female') {
+        return 'Daughter';
+      }
+
       return 'Child';
     }
 
-    function relationMeta(label, person) {
+    function relationMeta(
+      label,
+      person,
+      qualifier = ''
+    ) {
+      const relationshipLabel = [
+        label,
+        qualifier
+      ].filter(Boolean).join(' · ');
+
       const birth = relationBirthMeta(person);
-      return [label, birth].filter(Boolean).join(' - ');
+
+      return [
+        relationshipLabel,
+        birth
+      ].filter(Boolean).join(' - ');
     }
 
-    function renderRelationshipGroup(title, rows) {
-      if (!rows.length) return '';
-
-      return `<div>
-        <div class="relation-group-title">${escapeHtml(title)}</div>
-        ${rows.join('')}
-      </div>`;
-    }
-
-    function getFamilyTreeRelationshipGroups(personId) {
+    function getRelationshipGroups(personId) {
       const parents = getParents(personId);
       const siblings = getSiblings(personId);
-      const partnerRelationships = getPartnerRelationships(personId);
+      const partnerRelationships =
+        getPartnerRelationships(personId);
       const children = getChildren(personId);
 
       return [
         {
           title: 'Parents',
-          rows: parents.map(parent => {
-            const family = unlinkFindCentralFamilyForParentChild(parent.id, personId);
+          items: parents.map(parent => {
+            const family =
+              unlinkFindCentralFamilyForParentChild(
+                parent.id,
+                personId
+              );
 
-            return renderRelation(parent, relationMeta(parentRelationLabel(parent), parent), {
+            const type = parentChildRelationshipType(
+              family,
+              parent.id,
+              personId
+            );
+
+            return {
               kind: 'parent',
+              person: parent,
               personId,
               relatedPersonId: parent.id,
-              familyId: family?.id || ''
-            });
+              familyId: family?.id || '',
+              meta: relationMeta(
+                parentRelationLabel(parent),
+                parent,
+                type
+              ),
+              canEdit: true,
+              canUnlink: true
+            };
           })
         },
         {
           title: 'Siblings',
-          rows: siblings.map(sibling => renderRelation(sibling, relationMeta(siblingRelationLabel(sibling), sibling), {
+          items: siblings.map(sibling => ({
             kind: 'sibling',
+            person: sibling,
             personId,
-            relatedPersonId: sibling.id
+            relatedPersonId: sibling.id,
+            familyId: '',
+            meta: relationMeta(
+              siblingRelationLabel(sibling),
+              sibling
+            ),
+            canEdit: false,
+            canUnlink: false
           }))
         },
         {
-          title: 'Partner',
-          rows: partnerRelationships.map(rel => {
-            const partner = getRelationshipPartner(rel, personId);
+          title: 'Partners',
+          items: partnerRelationships
+            .map(relationship => {
+              const partner = getRelationshipPartner(
+                relationship,
+                personId
+              );
 
-            return renderRelation(partner, relationMeta(relationshipPersonLabel(rel.relationshipType), partner), {
-              kind: 'partner',
-              personId,
-              relatedPersonId: partner?.id || '',
-              familyId: rel.id || ''
-            });
-          })
+              if (!partner) return null;
+
+              const relationshipType =
+                relationshipTypeFromLegacy(relationship);
+
+              return {
+                kind: 'partner',
+                person: partner,
+                personId,
+                relatedPersonId: partner.id,
+                familyId: relationship.id || '',
+                meta: relationMeta(
+                  relationshipPersonLabel(
+                    relationshipType
+                  ),
+                  partner,
+                  relationshipType === 'Unknown relationship'
+                    ? ''
+                    : relationshipType
+                ),
+                canEdit: true,
+                canUnlink: true
+              };
+            })
+            .filter(Boolean)
         },
         {
           title: 'Children',
-          rows: children.map(child => {
-            const family = unlinkFindCentralFamilyForParentChild(personId, child.id);
+          items: children.map(child => {
+            const family =
+              unlinkFindCentralFamilyForParentChild(
+                personId,
+                child.id
+              );
 
-            return renderRelation(child, relationMeta(childRelationLabel(child), child), {
+            const type = parentChildRelationshipType(
+              family,
+              personId,
+              child.id
+            );
+
+            return {
               kind: 'child',
+              person: child,
               personId,
               relatedPersonId: child.id,
-              familyId: family?.id || ''
-            });
+              familyId: family?.id || '',
+              meta: relationMeta(
+                childRelationLabel(child),
+                child,
+                type
+              ),
+              canEdit: true,
+              canUnlink: true
+            };
           })
         }
       ];
     }
 
-    function familyTreeRelationshipCount(personId) {
-      return getParents(personId).length
-        + getSiblings(personId).length
-        + getPartnerRelationships(personId).length
-        + getChildren(personId).length;
+    function renderRelation(item) {
+      const person = item?.person;
+
+      if (!person) return '';
+
+      const initials =
+        person.names?.initials || '??';
+
+      const name =
+        person.names?.display || 'Unnamed person';
+
+      const avatar =
+        person.avatarClass || 'avatar-green';
+
+      const actions =
+        item.canEdit || item.canUnlink
+          ? `
+            <div
+              class="relation-actions"
+              aria-label="Relationship actions">
+
+              ${item.canEdit
+                ? `
+                  <button
+                    class="relation-action-button"
+                    type="button"
+                    aria-label="Edit relationship with ${escapeHtml(name)}"
+                    data-edit-relationship>
+                    ${icon.edit}
+                  </button>
+                `
+                : ''}
+
+              ${item.canUnlink
+                ? `
+                  <button
+                    class="relation-action-button danger"
+                    type="button"
+                    aria-label="Unlink ${escapeHtml(name)}"
+                    data-unlink-relationship>
+                    ${icon.unlink}
+                  </button>
+                `
+                : ''}
+            </div>
+          `
+          : '';
+
+      return `
+        <div
+          class="relation-row"
+          data-relationship-row
+          data-relationship-kind="${escapeHtml(item.kind)}"
+          data-relationship-person-id="${escapeHtml(item.personId)}"
+          data-relationship-related-person-id="${escapeHtml(item.relatedPersonId)}"
+          data-relationship-family-id="${escapeHtml(item.familyId)}">
+
+          <button
+            class="relation-row-main"
+            type="button"
+            data-select-relationship-person="${escapeHtml(person.id)}"
+            aria-label="Select ${escapeHtml(name)}">
+
+            <span
+              class="small-avatar ${escapeHtml(avatar)}"
+              aria-hidden="true">
+              ${escapeHtml(initials)}
+            </span>
+
+            <span class="relation-row-copy">
+              <strong>${escapeHtml(name)}</strong>
+              <span>${escapeHtml(item.meta)}</span>
+            </span>
+          </button>
+
+          ${actions}
+        </div>
+      `;
     }
 
-    function renderFamilyTreeRelationships(personId) {
-      const groups = getFamilyTreeRelationshipGroups(personId)
-        .map(group => renderRelationshipGroup(group.title, group.rows))
+    function renderRelationshipGroup(group) {
+      if (!group?.items?.length) return '';
+
+      return `
+        <section class="relationship-group">
+          <div class="relation-group-title">
+            ${escapeHtml(group.title)}
+          </div>
+
+          <div>
+            ${group.items.map(renderRelation).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    function relationshipCount(personId) {
+      return getRelationshipGroups(personId)
+        .reduce(
+          (total, group) =>
+            total + group.items.length,
+          0
+        );
+    }
+
+    function renderRelationships(personId) {
+      const groups = getRelationshipGroups(personId)
+        .map(renderRelationshipGroup)
         .filter(Boolean);
 
       if (!groups.length) {
-        return `<div class="panel-muted">No immediate relationships recorded for this person.</div>`;
+        return `
+          <div class="panel-muted">
+            No immediate relationships recorded for this person.
+          </div>
+        `;
       }
 
-      return `<div class="relationship-list">${groups.join('')}</div>`;
+      return `
+        <div class="relationship-list">
+          ${groups.join('')}
+        </div>
+      `;
     }
-
+ 
     function getGenderForRelativeType(relativeType) {
       const map = {
         father: 'Male',
@@ -18417,7 +18996,10 @@ function renderTreeCardDateLines(person) {
         attributes: Array.isArray(family.attributes) ? [...family.attributes] : [],
         notes: Array.isArray(family.notes) ? [...family.notes] : [],
         citations: Array.isArray(family.citations) ? [...family.citations] : [],
-        mediaIds: Array.isArray(family.mediaIds) ? [...family.mediaIds] : []
+        mediaIds: Array.isArray(family.mediaIds) ? [...family.mediaIds] : [],
+        parentChildTypes: sanitizeParentChildTypes(
+          family.parentChildTypes
+        ),
       };
 
       unlinkStoredFamilies().push(copy);
@@ -18579,6 +19161,7 @@ function renderTreeCardDateLines(person) {
         notes: [],
         citations: [],
         mediaIds: [],
+        parentChildTypes: {},
         gedcomXref: ''
       };
 
@@ -18655,15 +19238,52 @@ function renderTreeCardDateLines(person) {
         return { ok: false, message: 'This parent-child relationship has already been removed.' };
       }
 
-      const otherParentId = unlinkFamilyPartnerId(family, parentId);
+      const otherParentId =
+        unlinkFamilyPartnerId(family, parentId);
+
+      const otherParentType = otherParentId
+        ? parentChildRelationshipType(
+            family,
+            otherParentId,
+            childId
+          )
+        : 'Biological';
 
       unlinkSetFamilyChildren(
         family,
         children.filter(id => id !== childId)
       );
 
+      /*
+      * The child is no longer represented by this family,
+      * so remove all connection-type keys for that child.
+      */
+      removeParentChildRelationshipType(
+        family,
+        parentId,
+        childId
+      );
+
       if (otherParentId) {
-        unlinkAddChildrenToSingleParentFamily(otherParentId, [childId], family.projectId);
+        removeParentChildRelationshipType(
+          family,
+          otherParentId,
+          childId
+        );
+
+        const singleParentFamily =
+          unlinkAddChildrenToSingleParentFamily(
+            otherParentId,
+            [childId],
+            family.projectId
+          );
+
+        setParentChildRelationshipType(
+          singleParentFamily,
+          otherParentId,
+          childId,
+          otherParentType
+        );
       }
 
       unlinkApplyFamilyAliases(family);
@@ -18692,12 +19312,30 @@ function renderTreeCardDateLines(person) {
         if (![personAId, personBId].includes(keepChildrenWithParentId)) {
           return { ok: false, message: 'Choose which parent should keep the children.' };
         }
+        const retainedTypes = childIds.map(childId => ({
+          childId,
+          type: parentChildRelationshipType(
+            family,
+            keepChildrenWithParentId,
+            childId
+          )
+        }));
 
-        unlinkAddChildrenToSingleParentFamily(
-          keepChildrenWithParentId,
-          childIds,
-          family.projectId
-        );
+        const singleParentFamily =
+          unlinkAddChildrenToSingleParentFamily(
+            keepChildrenWithParentId,
+            childIds,
+            family.projectId
+          );
+
+        retainedTypes.forEach(({ childId, type }) => {
+          setParentChildRelationshipType(
+            singleParentFamily,
+            keepChildrenWithParentId,
+            childId,
+            type
+          );
+        });
       }
 
       unlinkRemoveFamilyById(family.id);
@@ -18708,22 +19346,45 @@ function renderTreeCardDateLines(person) {
       };
     }
 
-    function refreshAfterRelationshipUnlink(focusPersonId, sidebarContext = 'tree') {
+    function refreshAfterRelationshipChange(
+      focusPersonId,
+      context = 'tree'
+    ) {
       syncFamilyReciprocalLinks();
       sampleData.events = buildSampleEvents();
 
       if (focusPersonId) {
         state.selectedPersonId = focusPersonId;
-        if (sidebarContext === 'people') state.selectedPeopleId = focusPersonId;
+
+        if (
+          context === 'people'
+          || context === 'profile'
+        ) {
+          state.selectedPeopleId = focusPersonId;
+        }
       }
 
       closeModal();
 
-      if (sidebarContext === 'people') {
+      if (context === 'profile') {
+        state.activeModule = 'People';
+        state.peopleView = 'profile';
+        state.peopleSide = 'profile';
+        state.peopleProfileEditing = false;
         renderPeople();
-      } else {
-        renderFamilyTreePreserveScroll?.() || renderFamilyTree();
+        return;
       }
+
+      if (context === 'people') {
+        state.peoplePreviewCollapsed = false;
+        renderPeople();
+        return;
+      }
+
+      state.treeInspectorCollapsed = false;
+
+      renderFamilyTreePreserveScroll?.()
+        || renderFamilyTree();
     }
 
     function buildUnlinkRelationshipContext(raw = {}) {
@@ -18927,9 +19588,486 @@ function renderTreeCardDateLines(person) {
           return;
         }
 
-        refreshAfterRelationshipUnlink(context.personId, context.sidebarContext);
-        showToast(result.message || 'Relationship unlinked.');
+        refreshAfterRelationshipChange(
+          context.personId,
+          context.sidebarContext
+        );
       });
+    }
+
+    function buildRelationshipEditContext(raw = {}) {
+      const kind =
+        String(raw.kind || '').toLowerCase();
+
+      const personId =
+        String(raw.personId || '');
+
+      const relatedPersonId =
+        String(raw.relatedPersonId || '');
+
+      const familyId =
+        String(raw.familyId || '');
+
+      const sidebarContext =
+        raw.sidebarContext || 'tree';
+
+      if (!personId || !relatedPersonId) {
+        return {
+          ok: false,
+          message: 'Relationship information is missing.'
+        };
+      }
+
+      if (kind === 'sibling') {
+        return {
+          ok: false,
+          message:
+            'Sibling relationships are derived from shared parents.'
+        };
+      }
+
+      if (kind === 'parent') {
+        const family =
+          unlinkFindCentralFamilyForParentChild(
+            relatedPersonId,
+            personId,
+            familyId
+          );
+
+        return {
+          ok: Boolean(family),
+          message: family
+            ? ''
+            : 'Relationship record not found.',
+          kind,
+          sidebarContext,
+          personId,
+          relatedPersonId,
+          family,
+          familyId: family?.id || familyId,
+          parentId: relatedPersonId,
+          childId: personId
+        };
+      }
+
+      if (kind === 'child') {
+        const family =
+          unlinkFindCentralFamilyForParentChild(
+            personId,
+            relatedPersonId,
+            familyId
+          );
+
+        return {
+          ok: Boolean(family),
+          message: family
+            ? ''
+            : 'Relationship record not found.',
+          kind,
+          sidebarContext,
+          personId,
+          relatedPersonId,
+          family,
+          familyId: family?.id || familyId,
+          parentId: personId,
+          childId: relatedPersonId
+        };
+      }
+
+      if (kind === 'partner') {
+        const family =
+          unlinkFindCentralPartnerFamily(
+            personId,
+            relatedPersonId,
+            familyId
+          );
+
+        return {
+          ok: Boolean(family),
+          message: family
+            ? ''
+            : 'Relationship record not found.',
+          kind,
+          sidebarContext,
+          personId,
+          relatedPersonId,
+          family,
+          familyId: family?.id || familyId
+        };
+      }
+
+      return {
+        ok: false,
+        message: 'Unsupported relationship type.'
+      };
+    }
+
+    function relationshipEditPersonName(personId) {
+      return getPerson(personId)?.names?.display
+        || 'Unknown person';
+    }
+
+    function renderParentChildRelationshipEditFields(
+      context
+    ) {
+      const currentType = parentChildRelationshipType(
+        context.family,
+        context.parentId,
+        context.childId
+      );
+
+      return `
+        <div class="field add-person-select-field">
+          <label for="relationshipEditParentChildType">
+            Parent–child connection
+          </label>
+
+          <select
+            class="compact-select add-person-select"
+            id="relationshipEditParentChildType">
+            ${parentChildRelationshipTypeOptions(
+              currentType
+            )}
+          </select>
+
+          <span
+            class="add-person-select-chevron"
+            aria-hidden="true">
+            ${icon.chevron}
+          </span>
+        </div>
+
+        <div class="panel-muted">
+          This value describes how this parent and child are
+          connected. It does not change either person record.
+        </div>
+      `;
+    }
+
+    function renderPartnerRelationshipEditFields(
+      context
+    ) {
+      const family = context.family;
+
+      const relationshipType =
+        relationshipTypeFromLegacy(family);
+
+      const marriage =
+        relationshipEventByTag(family, 'MARR')
+        || createRelationshipEvent(
+          'MARR',
+          'Marriage',
+          {
+            id: `${family.id}-marriage`,
+            typeLabel:
+              family.marriageType || 'Civil',
+            date: emptyGenealogyDate('Exact date'),
+            placeId: family.startPlaceId || null,
+            placeText: family.startPlaceText || ''
+          }
+        );
+
+      const marriageType =
+        marriage.typeLabel
+        || family.marriageType
+        || 'Civil';
+
+      const showMarriageType =
+        addPersonRelationshipShowsMarriageType(
+          relationshipType
+        );
+
+      return `
+        <div class="field add-person-select-field">
+          <label for="relationshipEditType">
+            Relationship type
+          </label>
+
+          <select
+            class="compact-select add-person-select"
+            id="relationshipEditType">
+            ${addPersonRelationshipTypeOptions(
+              relationshipType
+            )}
+          </select>
+
+          <span
+            class="add-person-select-chevron"
+            aria-hidden="true">
+            ${icon.chevron}
+          </span>
+        </div>
+
+        ${renderGenealogyDateField(
+          'relationshipEditDate',
+          'Relationship date',
+          marriage.date
+            || emptyGenealogyDate('Exact date'),
+          {
+            inputId: 'relationshipEditDateInput',
+            typeId: 'relationshipEditDateType',
+            placeholder: 'e.g. 18 Aug 2023',
+            defaultDateType: 'Exact date',
+            className: 'full'
+          }
+        )}
+
+        ${renderPlaceCombobox({
+          id: 'relationshipEditPlace',
+          label: 'Relationship place',
+          value: editPlaceValue(
+            marriage.placeId || family.startPlaceId,
+            marriage.placeText
+              || family.startPlaceText
+          ),
+          selectedPlaceId:
+            marriage.placeId
+            || family.startPlaceId
+            || '',
+          placeholder: 'e.g. Meowbridge, England',
+          className: 'full'
+        })}
+
+        <div
+          class="field add-person-select-field"
+          data-relationship-edit-marriage-type
+          ${showMarriageType ? '' : 'hidden'}>
+
+          <label for="relationshipEditMarriageType">
+            Marriage type
+          </label>
+
+          <select
+            class="compact-select add-person-select"
+            id="relationshipEditMarriageType">
+            ${addPersonMarriageTypeOptions(
+              marriageType
+            )}
+          </select>
+
+          <span
+            class="add-person-select-chevron"
+            aria-hidden="true">
+            ${icon.chevron}
+          </span>
+        </div>
+      `;
+    }
+
+    function renderRelationshipEditModal(context) {
+      const personName =
+        relationshipEditPersonName(context.personId);
+
+      const relatedName =
+        relationshipEditPersonName(
+          context.relatedPersonId
+        );
+
+      return `
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="relationshipEditTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="relationshipEditTitle">
+                Edit relationship
+              </h2>
+
+              <p>
+                ${escapeHtml(personName)}
+                and
+                ${escapeHtml(relatedName)}
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close>
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body form-grid">
+            ${context.kind === 'partner'
+              ? renderPartnerRelationshipEditFields(
+                  context
+                )
+              : renderParentChildRelationshipEditFields(
+                  context
+                )}
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+              Cancel
+            </button>
+
+            <button
+              class="button primary"
+              type="button"
+              data-save-relationship-edit>
+              Save relationship
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function bindRelationshipEditModal(context) {
+      if (context.kind === 'partner') {
+        bindGenealogyDateFields(modalBackdrop);
+        bindPlaceComboboxes(modalBackdrop);
+
+        const typeSelect =
+          modalBackdrop.querySelector(
+            '#relationshipEditType'
+          );
+
+        const marriageTypeField =
+          modalBackdrop.querySelector(
+            '[data-relationship-edit-marriage-type]'
+          );
+
+        const updateMarriageTypeVisibility = () => {
+          if (!marriageTypeField || !typeSelect) {
+            return;
+          }
+
+          marriageTypeField.hidden =
+            !addPersonRelationshipShowsMarriageType(
+              typeSelect.value
+            );
+        };
+
+        typeSelect?.addEventListener(
+          'change',
+          updateMarriageTypeVisibility
+        );
+
+        updateMarriageTypeVisibility();
+      }
+
+      modalBackdrop
+        .querySelector(
+          '[data-save-relationship-edit]'
+        )
+        ?.addEventListener('click', () => {
+          const family = context.family;
+
+          if (!family) {
+            showToast(
+              'Relationship record not found.'
+            );
+            return;
+          }
+
+          if (context.kind === 'partner') {
+            const relationshipDate =
+              collectGenealogyDateField(
+                'relationshipEditDate'
+              );
+
+            if (!relationshipDate) {
+              showToast(
+                'Check the relationship date before saving.'
+              );
+              return;
+            }
+
+            const relationshipType =
+              modalBackdrop.querySelector(
+                '#relationshipEditType'
+              )?.value || 'Partner';
+
+            const marriageType =
+              addPersonRelationshipShowsMarriageType(
+                relationshipType
+              )
+                ? modalBackdrop.querySelector(
+                    '#relationshipEditMarriageType'
+                  )?.value || 'Civil'
+                : '';
+
+            family.relationshipType =
+              relationshipType;
+
+            family.relationshipStatus =
+              family.relationshipStatus || 'active';
+
+            upsertMarriageEvent(family, {
+              relationshipType,
+              marriageType,
+              marriageDate: relationshipDate,
+              marriagePlace: readPlaceInputValue(
+                '#relationshipEditPlace',
+                modalBackdrop
+              )
+            });
+
+            if (
+              typeof syncFamilyPartnerAliases
+              === 'function'
+            ) {
+              syncFamilyPartnerAliases(family);
+            }
+          } else {
+            const value =
+              normalizeParentChildRelationshipType(
+                modalBackdrop.querySelector(
+                  '#relationshipEditParentChildType'
+                )?.value
+              );
+
+            const key = parentChildRelationshipKey(
+              context.parentId,
+              context.childId
+            );
+
+            family.parentChildTypes = {
+              ...sanitizeParentChildTypes(
+                family.parentChildTypes
+              ),
+              [key]: value
+            };
+          }
+
+          family.updatedAt = 'Just now';
+
+          refreshAfterRelationshipChange(
+            context.personId,
+            context.sidebarContext
+          );
+
+          showToast('Relationship updated.');
+        });
+    }
+
+    function openRelationshipEditModal(
+      rawContext = {}
+    ) {
+      const context =
+        buildRelationshipEditContext(rawContext);
+
+      if (!context.ok) {
+        showToast(
+          context.message
+          || 'Relationship cannot be edited.'
+        );
+        return;
+      }
+
+      openModal(
+        renderRelationshipEditModal(context)
+      );
+
+      bindRelationshipEditModal(context);
     }
 
     function openAddPersonModal(title, subtitle, options = {}) {
@@ -20362,7 +21500,6 @@ function renderTreeCardDateLines(person) {
 
     function renderPeopleProfile(person) {
       main.classList.add('people-profile-main');
-      state.peopleProfileFamilyTab = state.peopleProfileFamilyTab || 'immediate';
       state.peopleProfileEditTab = state.peopleProfileEditTab || 'main';
       if (typeof state.peopleProfileEditing !== 'boolean') state.peopleProfileEditing = false;
       main.innerHTML = `<div class="person-profile ${state.peopleProfileEditing ? 'is-editing' : ''}">
@@ -20471,22 +21608,6 @@ function renderTreeCardDateLines(person) {
           { title: 'Meowbridge record analysis', noteId: 'n3', type: 'Source analysis', updated: 'Jun 24, 2026', body: 'Transcription and interpretation of a Meowbridge record.' }
         ]
       };
-      const familyMap = {
-        silver: [
-          { group: 'Grandparents', tab: 'immediate', id: 'barnaby', initials: 'BW', name: 'Barnaby Whiskerfield', meta: 'Paternal grandfather', cls: '' },
-          { group: 'Grandparents', tab: 'immediate', id: 'daisy', initials: 'DM', name: 'Daisy Milkpaw', meta: 'Paternal grandmother', cls: 'avatar-purple' },
-          { group: 'Children', tab: 'immediate', id: 'oliver', initials: 'OW', name: 'Oliver Whiskerfield', meta: 'Son', cls: 'avatar-amber' },
-          { group: 'Children', tab: 'immediate', id: 'mochi', initials: 'MO', name: 'Mochi Whiskerfield', meta: 'Daughter', cls: 'avatar-purple' },
-          { group: 'Children', tab: 'immediate', id: 'cleo', initials: 'CW', name: 'Cleo Whiskerfield', meta: 'Daughter', cls: 'avatar-purple' },
-          { group: 'Partners', tab: 'partners', id: 'luna', initials: 'LP', name: 'Luna Purrington', meta: 'Spouse - 2023-present', cls: 'avatar-purple', relationshipId: 'partner-luna' }
-        ]
-      };
-      const fallbackFamily = [
-        { group: 'Family', tab: 'immediate', id: 'silver', initials: 'MW', name: 'Silver Whiskerfield', meta: 'Linked family member', cls: 'avatar-green' },
-        { group: 'Family', tab: 'immediate', id: 'luna', initials: 'LP', name: 'Luna Purrington', meta: 'Linked family member', cls: 'avatar-purple' },
-        { group: 'Family', tab: 'immediate', id: 'oliver', initials: 'OW', name: 'Oliver Whiskerfield', meta: 'Linked family member', cls: 'avatar-amber' },
-        { group: 'Partners', tab: 'partners', id: '', initials: 'PR', name: 'Partner placeholder', meta: 'Relationship details can be added later', cls: 'avatar-purple', relationshipId: 'partner-placeholder' }
-      ];
       const placeMap = {
         silver: [
           { id: 'pl-pawford', title: 'Pawford, England', meta: 'Birth - household', status: 'Resolved' },
@@ -20497,33 +21618,11 @@ function renderTreeCardDateLines(person) {
         rupert: [{ id: 'pl-fishmarket', title: 'Fishmarket Row, England', meta: 'Birth record', status: 'Approximate' }],
         pearl: [{ id: 'pl-old-cattery', title: 'Old Cattery, England', meta: 'Birth - death', status: 'Resolved' }]
       };
-      const timelineMap = {
-        silver: [
-          { year: '1998', title: 'Birth', detail: '03.03.1998 - Pawford, England', kind: 'birth' },
-          { year: '2023', title: 'Marriage', detail: 'Luna Purrington - 18.08.2023 - Meowbridge, England', kind: 'relationship' },
-          { year: '2024', title: 'Birth of Oliver', detail: '18.05.2024 - Pawford, England', kind: 'birth' },
-          { year: '2026', title: 'Birth of Mochi', detail: '07.09.2026 - Unknown place', kind: 'birth' },
-          { year: '-', title: 'Birth of Cleo', detail: 'Unknown date - Unknown place', kind: 'birth' }
-        ],
-        barnaby: [
-          { year: '1946', title: 'Birth', detail: 'Pawford, England', kind: 'birth' },
-          { year: '2018', title: 'Death', detail: '22.11.2018 - Pawford, England', kind: 'source' }
-        ],
-        rupert: [
-          { year: '1951', title: 'Birth', detail: 'Fishmarket Row, England', kind: 'birth' },
-          { year: '-', title: 'Death date unresolved', detail: 'Unknown place', kind: 'note' }
-        ]
-      };
       return {
         photos: photoMap[person.id] || [{ id: 'ph1', label: person.initials, cls: 'green', title: 'Linked portrait' }, { id: 'ph5', label: 'WF', cls: 'mono', title: 'Whiskerfield family album' }],
         archive: archiveMap[person.id] || [{ type: 'PDF', name: 'Linked archive file.pdf', meta: 'Added recently - Source assigned', fileId: null }],
         notes: noteMap[person.id] || [{ title: 'Profile note', noteId: null, type: 'Research note', updated: person.updated, body: 'Placeholder note linked to this person.' }],
-        family: familyMap[person.id] || fallbackFamily,
-        places: placeMap[person.id] || [{ id: 'pl-pawford', title: person.birthPlace || 'Unknown place', meta: 'Linked place', status: 'Approximate' }],
-        timeline: timelineMap[person.id] || [
-          { year: person.birth.slice(-4) || '-', title: 'Birth', detail: person.birthPlace || 'Unknown place', kind: 'birth' },
-          { year: '2026', title: 'Profile reviewed', detail: 'Record updated in GeneoGraph', kind: 'note' }
-        ]
+        places: placeMap[person.id] || [{ id: 'pl-pawford', title: person.birthPlace || 'Unknown place', meta: 'Linked place', status: 'Approximate' }]
       };
     }
 
@@ -20798,237 +21897,877 @@ function renderTreeCardDateLines(person) {
     }
 
     function renderProfileEducationEditFields(person) {
-      const centralPerson = ensurePersonCentralStructures(getPerson(person.id) || person);
+      const centralPerson = ensurePersonCentralStructures(
+        getPerson(person.id) || person
+      );
+
       const details = peopleProfileDetailsFor(person);
       const education = personAttributeByTag(centralPerson, 'EDUC');
 
-      return `<div class="profile-card-edit-grid two">
-        <div class="field full">
-          <label for="profileEducationInstitutionName">Institution name</label>
-          <input id="profileEducationInstitutionName" placeholder="e.g. Pawford Grammar School" value="${escapeHtml(details.educationInstitutionName || '')}">
-        </div>
+      return `
+        <div class="add-person-fact-grid profile-education-edit-grid">
+          <div class="field full">
+            <label for="profileEducationInstitutionName">
+              Institution name
+            </label>
 
-        <div class="field add-person-select-field">
-          <label for="profileEducationInstitutionType">Institution type</label>
-          <select class="compact-select add-person-select" id="profileEducationInstitutionType">
-            ${educationInstitutionTypeOptions(details.educationInstitutionType)}
-          </select>
-          <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
-        </div>
-
-        <div class="field">
-          <label for="profileEducationValue">Education or credential</label>
-          <input id="profileEducationValue" placeholder="e.g. Secondary education, BA, apprenticeship" value="${escapeHtml(details.educationValue || '')}">
-        </div>
-
-        ${renderPlaceCombobox({
-          id: 'profileEducationPlace',
-          label: 'Place',
-          value: editPlaceValue(education?.placeId, education?.placeText || details.educationPlace),
-          selectedPlaceId: education?.placeId || '',
-          placeholder: 'e.g. Pawford, England',
-          className: 'full'
-        })}
-
-        <div class="profile-edit-date-row profile-range-date-row full">
-          <div class="profile-edit-date-cell">
-            ${renderGenealogyDateField('profileEducationFromDate', 'From', details.educationFromDate, {
-              inputId: 'profileEducationFromDate',
-              typeId: 'profileEducationFromDateType',
-              defaultDateType: 'Year only',
-              placeholder: 'e.g. 2004'
-            })}
+            <input
+              id="profileEducationInstitutionName"
+              placeholder="e.g. Pawford Grammar School"
+              value="${escapeHtml(
+                details.educationInstitutionName || ''
+              )}">
           </div>
-          <div class="profile-edit-date-cell">
-            ${renderGenealogyDateField('profileEducationToDate', 'To', details.educationToDate, {
-              inputId: 'profileEducationToDate',
-              typeId: 'profileEducationToDateType',
-              defaultDateType: 'Year only',
-              placeholder: 'e.g. 2015'
-            })}
+
+          <div class="field add-person-select-field">
+            <label for="profileEducationInstitutionType">
+              Institution type
+            </label>
+
+            <select
+              class="compact-select add-person-select"
+              id="profileEducationInstitutionType">
+              ${educationInstitutionTypeOptions(
+                details.educationInstitutionType
+              )}
+            </select>
+
+            <span
+              class="add-person-select-chevron"
+              aria-hidden="true">
+              ${icon.chevron}
+            </span>
+          </div>
+
+          <div class="field">
+            <label for="profileEducationValue">
+              Education or credential
+            </label>
+
+            <input
+              id="profileEducationValue"
+              placeholder="e.g. Secondary education, BA, apprenticeship"
+              value="${escapeHtml(details.educationValue || '')}">
+          </div>
+
+          ${renderPlaceCombobox({
+            id: 'profileEducationPlace',
+            label: 'Place',
+            value: editPlaceValue(
+              education?.placeId,
+              education?.placeText || details.educationPlace
+            ),
+            selectedPlaceId: education?.placeId || '',
+            placeholder: 'e.g. Pawford, England',
+            className: 'full'
+          })}
+
+          <div class="profile-edit-date-row add-person-fact-date-row">
+            <div class="profile-edit-date-cell">
+              ${renderGenealogyDateField(
+                'profileEducationFromDate',
+                'From',
+                details.educationFromDate,
+                {
+                  inputId: 'profileEducationFromDate',
+                  typeId: 'profileEducationFromDateType',
+                  defaultDateType: 'Year only',
+                  placeholder: 'e.g. 2004'
+                }
+              )}
+            </div>
+
+            <div class="profile-edit-date-cell">
+              ${renderGenealogyDateField(
+                'profileEducationToDate',
+                'To',
+                details.educationToDate,
+                {
+                  inputId: 'profileEducationToDate',
+                  typeId: 'profileEducationToDateType',
+                  defaultDateType: 'Year only',
+                  placeholder: 'e.g. 2015'
+                }
+              )}
+            </div>
+          </div>
+
+          <div class="field full">
+            <label for="profileEducationNotes">Notes</label>
+
+            <textarea
+              id="profileEducationNotes"
+              placeholder="Education notes">${escapeHtml(
+                details.educationNotes || ''
+              )}</textarea>
           </div>
         </div>
-
-        <div class="field full">
-          <label for="profileEducationNotes">Notes</label>
-          <textarea id="profileEducationNotes" placeholder="Education notes">${escapeHtml(details.educationNotes || '')}</textarea>
-        </div>
-      </div>`;
+      `;
     }
 
     function renderProfileWorkEditFields(person) {
       const details = peopleProfileDetailsFor(person);
-      return `<div class="profile-card-edit-grid two">
-        <div class="field"><label for="profileWorkCompany">Company name</label><input id="profileWorkCompany" placeholder="Company" value="${escapeHtml(details.workCompany || '')}"></div>
-        <div class="field"><label for="profileWorkOccupation">Occupation</label><input id="profileWorkOccupation" placeholder="Occupation" value="${escapeHtml(details.workOccupation || '')}"></div>
-        <div class="profile-edit-date-row profile-range-date-row full">
-          <div class="profile-edit-date-cell">
-            ${renderGenealogyDateField('profileWorkFromDate', 'From', details.workFromDate, {
-              inputId: 'profileWorkFromDate',
-              typeId: 'profileWorkFromDateType',
-              defaultDateType: 'Unknown',
-              placeholder: 'e.g. 2016'
-            })}
+
+      return `
+        <div class="add-person-fact-grid profile-work-edit-grid">
+          <div class="field">
+            <label for="profileWorkCompany">Company name</label>
+
+            <input
+              id="profileWorkCompany"
+              placeholder="Company"
+              value="${escapeHtml(details.workCompany || '')}">
           </div>
-          <div class="profile-edit-date-cell">
-            ${renderGenealogyDateField('profileWorkToDate', 'To', details.workToDate, {
-              inputId: 'profileWorkToDate',
-              typeId: 'profileWorkToDateType',
-              defaultDateType: 'Unknown',
-              placeholder: 'e.g. 2020'
-            })}
+
+          <div class="field">
+            <label for="profileWorkOccupation">Occupation</label>
+
+            <input
+              id="profileWorkOccupation"
+              placeholder="Occupation"
+              value="${escapeHtml(details.workOccupation || '')}">
+          </div>
+
+          <div class="profile-edit-date-row add-person-fact-date-row">
+            <div class="profile-edit-date-cell">
+              ${renderGenealogyDateField(
+                'profileWorkFromDate',
+                'From',
+                details.workFromDate,
+                {
+                  inputId: 'profileWorkFromDate',
+                  typeId: 'profileWorkFromDateType',
+                  defaultDateType: 'Exact date',
+                  placeholder: 'e.g. 2016'
+                }
+              )}
+            </div>
+
+            <div class="profile-edit-date-cell">
+              ${renderGenealogyDateField(
+                'profileWorkToDate',
+                'To',
+                details.workToDate,
+                {
+                  inputId: 'profileWorkToDate',
+                  typeId: 'profileWorkToDateType',
+                  defaultDateType: 'Exact date',
+                  placeholder: 'e.g. 2020'
+                }
+              )}
+            </div>
+          </div>
+
+          <div class="field full">
+            <label for="profileWorkNotes">Notes</label>
+
+            <textarea
+              id="profileWorkNotes"
+              placeholder="Work notes">${escapeHtml(
+                details.workNotes || ''
+              )}</textarea>
           </div>
         </div>
-        <div class="field full"><label for="profileWorkNotes">Notes</label><textarea id="profileWorkNotes" placeholder="Work notes">${escapeHtml(details.workNotes || '')}</textarea></div>
-      </div>`;
+      `;
     }
 
     function renderProfileOtherEditFields(person) {
-      const centralPerson = ensurePersonCentralStructures(getPerson(person.id) || person);
+      const centralPerson = ensurePersonCentralStructures(
+        getPerson(person.id) || person
+      );
+
       const details = peopleProfileDetailsFor(person);
       const baptism = personEventByTag(centralPerson, 'BAPM');
 
-      return `<div class="profile-card-edit-grid two">
-        <div class="field"><label for="profileReligion">Religion</label><select class="compact-select" id="profileReligion">${['Unknown','Orthodox','Catholic','Jewish'].map(value => `<option ${value === (details.religion || 'Unknown') ? 'selected' : ''}>${value}</option>`).join('')}</select></div>
-        ${renderPlaceCombobox({
-          id: 'profileBaptismPlace',
-          label: 'Baptism place',
-          value: editPlaceValue(baptism?.placeId, baptism?.placeText || details.baptismPlace),
-          selectedPlaceId: baptism?.placeId || '',
-          placeholder: 'Baptism place'
-        })}
-      </div>`;
+      const religionOptions = [
+        'Unknown',
+        'Orthodox',
+        'Catholic',
+        'Jewish',
+        'Muslim',
+        'Other'
+      ];
+
+      const selectedReligion =
+        cleanEditFieldValue(details.religion || 'Unknown')
+        || 'Unknown';
+
+      const availableReligionOptions =
+        religionOptions.includes(selectedReligion)
+          ? religionOptions
+          : [selectedReligion, ...religionOptions];
+
+      return `
+        <div class="profile-card-edit-grid two profile-other-edit-grid">
+          <div class="field profile-other-religion">
+            <label for="profileReligion">Religion</label>
+
+            <div class="common-select-shell">
+              <select
+                class="compact-select common-select"
+                id="profileReligion">
+                ${availableReligionOptions.map(value => `
+                  <option
+                    value="${escapeHtml(value)}"
+                    ${value === selectedReligion ? 'selected' : ''}>
+                    ${escapeHtml(value)}
+                  </option>
+                `).join('')}
+              </select>
+
+              <span
+                class="common-select-chevron"
+                aria-hidden="true">
+                ${icon.chevron}
+              </span>
+            </div>
+          </div>
+
+          ${renderGenealogyDateField(
+            'profileBaptismDate',
+            'Baptism date',
+            details.baptismDate,
+            {
+              inputId: 'profileBaptismDate',
+              typeId: 'profileBaptismDateType',
+              className: 'profile-other-baptism-date',
+              defaultDateType: 'Exact date',
+              placeholder: 'e.g. 14 Feb 1946'
+            }
+          )}
+
+          ${renderPlaceCombobox({
+            id: 'profileBaptismPlace',
+            label: 'Baptism place',
+            value: editPlaceValue(
+              baptism?.placeId,
+              baptism?.placeText || details.baptismPlace
+            ),
+            selectedPlaceId: baptism?.placeId || '',
+            placeholder: 'e.g. Pawford, England',
+            className: 'full profile-other-baptism-place'
+          })}
+        </div>
+      `;
+    }
+
+    function profileResourceNoun(count, singular, plural) {
+      return count === 1 ? singular : plural;
+    }
+
+    function renderProfileResourceEmpty(message) {
+      return `
+        <div class="profile-resource-empty">
+          ${escapeHtml(message)}
+        </div>
+      `;
+    }
+
+    function renderProfileResourceCard({
+      type,
+      iconSvg,
+      title,
+      count,
+      singular,
+      plural,
+      addLabel,
+      addToast,
+      body
+    }) {
+      const noun = profileResourceNoun(
+        count,
+        singular,
+        plural
+      );
+
+      return `
+        <article
+          class="
+            profile-resource-card
+            profile-connected-card
+            profile-resource-card--${type}
+          ">
+
+          <h3 class="profile-connected-head">
+            <span class="profile-connected-title">
+              <span class="profile-connected-icon">
+                ${iconSvg}
+              </span>
+
+              <span>${escapeHtml(title)}</span>
+
+              <span
+                class="profile-resource-count"
+                aria-label="${escapeHtml(`${count} ${noun}`)}">
+                ${count}
+              </span>
+            </span>
+
+            <span class="profile-connected-actions">
+              <button
+                class="profile-connected-action"
+                type="button"
+                data-toast="${escapeHtml(addToast)}">
+                ${icon.plus}
+                <span>${escapeHtml(addLabel)}</span>
+              </button>
+            </span>
+          </h3>
+
+          <div class="profile-resource-card__body">
+            ${body}
+          </div>
+
+          ${count > 0
+            ? `
+              <button
+                class="profile-resource-card__footer"
+                type="button"
+                data-profile-view-all="${type}">
+                <span>
+                  View all ${count} ${escapeHtml(noun)}
+                </span>
+
+                ${icon.chevron}
+              </button>
+            `
+            : ''}
+        </article>
+      `;
+    }
+
+    function profileArchiveAddedLabel(item) {
+      const meta = String(item?.meta || '').trim();
+
+      if (!meta) return 'Added recently';
+
+      return meta.split(/\s+-\s+/)[0]
+        || 'Added recently';
+    }
+
+    function profilePlaceStatusClass(status) {
+      const value = String(status || '')
+        .trim()
+        .toLowerCase();
+
+      if (value === 'resolved') return 'resolved';
+
+      if (
+        value.includes('unresolved')
+        || value.includes('missing')
+        || value.includes('ambiguous')
+      ) {
+        return 'unresolved';
+      }
+
+      return 'approximate';
     }
 
     function renderProfileConnectedCube(person) {
-      return `<section class="profile-connected-cube" aria-label="Connected profile items">
-        ${renderProfileConnectedPhotos(person)}
-        ${renderProfileConnectedFiles(person)}
-        ${renderProfileConnectedNotes(person)}
-        ${renderProfileConnectedPlaces(person)}
-      </section>`;
+      return `
+        <section
+          class="profile-connected-cube"
+          aria-label="Connected profile items">
+          ${renderProfileConnectedPhotos(person)}
+          ${renderProfileConnectedFiles(person)}
+          ${renderProfileConnectedNotes(person)}
+          ${renderProfileConnectedPlaces(person)}
+        </section>
+      `;
     }
 
-
     function renderProfileCompactTimeline(person) {
-      const assets = peopleProfileAssets(person);
-      return `<section class="profile-compact-timeline profile-connected-card"><h3 class="profile-connected-head profile-timeline-head"><span class="profile-connected-title"><span class="profile-connected-icon">${icon.clock}</span><span>Timeline</span></span><span class="profile-connected-actions"><button class="profile-connected-action" type="button" data-profile-add-fact>${icon.plus} Add fact</button></span></h3><div class="profile-compact-timeline-list">${assets.timeline.map((event, index) => `<button class="profile-compact-timeline-row ${escapeHtml(event.kind)}" type="button" data-profile-life-event="${index}"><span class="profile-compact-year">${escapeHtml(event.year)}</span><span class="profile-compact-dot"></span><span class="profile-compact-copy"><strong>${escapeHtml(event.title)}</strong><small>${escapeHtml(event.detail)}</small></span></button>`).join('')}</div></section>`;
+      const timelineContent =
+        renderFamilyTreeTimeline(person.id);
+
+      return `
+        <section
+          class="profile-compact-timeline profile-connected-card"
+          aria-label="Timeline">
+
+          <h3 class="profile-connected-head profile-timeline-head">
+            <span class="profile-connected-title">
+              <span class="profile-connected-icon">
+                ${icon.clock}
+              </span>
+
+              <span>Timeline</span>
+            </span>
+
+            <span class="profile-connected-actions">
+              <button
+                class="profile-connected-action"
+                type="button"
+                data-profile-add-fact>
+                ${icon.plus}
+                <span>Add fact</span>
+              </button>
+            </span>
+          </h3>
+
+          <div class="profile-compact-timeline-list">
+            ${timelineContent}
+          </div>
+        </section>
+      `;
     }
 
     function renderProfileConnectedPhotos(person) {
-      const assets = peopleProfileAssets(person);
-      const visible = assets.photos.slice(0, 3);
-      const remaining = Math.max(0, assets.photos.length - visible.length);
-      return `<article class="profile-compact-card profile-connected-card"><h3 class="profile-connected-head"><span class="profile-connected-title"><span class="profile-connected-icon">${icon.image}</span><span>Photos</span></span><span class="profile-connected-actions"><button class="profile-connected-action" type="button" data-toast="Add photo simulated.">${icon.plus} Add</button><button class="profile-connected-action open" type="button" data-profile-view-all="photos">Open ${icon.chevron}</button></span></h3><div class="profile-card-body"><div class="profile-photo-grid-updated compact">${visible.map(photo => `<button class="profile-photo-button ${escapeHtml(photo.cls || '')}" type="button" data-profile-photo="${escapeHtml(photo.id)}" title="${escapeHtml(photo.title)}"><span>${escapeHtml(photo.label)}</span></button>`).join('')}${remaining ? `<button class="profile-photo-button profile-photo-more-button" type="button" data-profile-photo="more">${icon.plus}${remaining}<br>more</button>` : ''}</div></div></article>`;
+      const photos = peopleProfileAssets(person).photos;
+      const hasOverflow = photos.length > 3;
+      const trackId = `profilePhotoTrack-${person.id}`;
+
+      const body = photos.length
+        ? `
+          <div
+            class="
+              profile-photo-carousel
+              ${hasOverflow ? 'has-overflow' : ''}
+            "
+            data-profile-photo-carousel>
+
+            ${hasOverflow
+              ? `
+                <button
+                  class="
+                    profile-photo-carousel-button
+                    previous
+                  "
+                  type="button"
+                  data-profile-photo-prev
+                  aria-label="Previous photos"
+                  aria-controls="${escapeHtml(trackId)}"
+                  disabled>
+                  ${icon.arrow}
+                </button>
+              `
+              : ''}
+
+            <div
+              class="profile-photo-track"
+              id="${escapeHtml(trackId)}"
+              data-profile-photo-track
+              aria-label="Photos for ${escapeHtml(person.name)}">
+
+              ${photos.map(photo => `
+                <button
+                  class="
+                    profile-photo-thumb
+                    ${escapeHtml(photo.cls || '')}
+                  "
+                  type="button"
+                  data-profile-photo="${escapeHtml(photo.id)}"
+                  title="${escapeHtml(photo.title)}"
+                  aria-label="Open ${escapeHtml(photo.title)}">
+                  <span>${escapeHtml(photo.label)}</span>
+                </button>
+              `).join('')}
+            </div>
+
+            ${hasOverflow
+              ? `
+                <button
+                  class="
+                    profile-photo-carousel-button
+                    next
+                  "
+                  type="button"
+                  data-profile-photo-next
+                  aria-label="Next photos"
+                  aria-controls="${escapeHtml(trackId)}">
+                  ${icon.chevron}
+                </button>
+              `
+              : ''}
+          </div>
+        `
+        : renderProfileResourceEmpty('No photos yet');
+
+      return renderProfileResourceCard({
+        type: 'photos',
+        iconSvg: icon.image,
+        title: 'Photos',
+        count: photos.length,
+        singular: 'photo',
+        plural: 'photos',
+        addLabel: 'Add photo',
+        addToast: 'Add photo simulated.',
+        body
+      });
     }
 
     function renderProfileConnectedFiles(person) {
-      const assets = peopleProfileAssets(person);
-      return `<article class="profile-compact-card profile-connected-card"><h3 class="profile-connected-head"><span class="profile-connected-title"><span class="profile-connected-icon">${icon.file}</span><span>Archive</span></span><span class="profile-connected-actions"><button class="profile-connected-action" type="button" data-toast="Add file simulated.">${icon.plus} Add</button><button class="profile-connected-action open" type="button" data-profile-view-all="archive">Open ${icon.chevron}</button></span></h3><div class="profile-card-body profile-connected-strip">${assets.archive.slice(0, 4).map(item => `<button class="profile-file-tile" type="button" data-profile-archive="${escapeHtml(item.fileId || '')}" title="${escapeHtml(item.name)}"><span class="file-badge">${escapeHtml(item.type)}</span><small>${escapeHtml(item.name)}</small></button>`).join('')}</div></article>`;
+      const files = peopleProfileAssets(person).archive;
+      const preview = files.slice(0, 3);
+
+      const body = preview.length
+        ? `
+          <div class="profile-resource-list">
+            ${preview.map(item => `
+              <button
+                class="profile-resource-row profile-file-row"
+                type="button"
+                data-profile-archive="${escapeHtml(
+                  item.fileId || ''
+                )}"
+                title="${escapeHtml(item.name)}"
+                aria-label="Open ${escapeHtml(item.name)}">
+
+                <span
+                  class="
+                    file-badge
+                    profile-resource-file-badge
+                  ">
+                  ${escapeHtml(item.type || 'FILE')}
+                </span>
+
+                <span class="profile-file-row-copy">
+                  <strong>${escapeHtml(item.name)}</strong>
+
+                  <small>
+                    ${escapeHtml(
+                      profileArchiveAddedLabel(item)
+                    )}
+                  </small>
+                </span>
+              </button>
+            `).join('')}
+          </div>
+        `
+        : renderProfileResourceEmpty(
+            'No archive files linked'
+          );
+
+      return renderProfileResourceCard({
+        type: 'archive',
+        iconSvg: icon.file,
+        title: 'Archive',
+        count: files.length,
+        singular: 'file',
+        plural: 'files',
+        addLabel: 'Add file',
+        addToast: 'Add file simulated.',
+        body
+      });
     }
 
     function renderProfileConnectedNotes(person) {
-      const assets = peopleProfileAssets(person);
-      return `<article class="profile-compact-card profile-connected-card"><h3 class="profile-connected-head"><span class="profile-connected-title"><span class="profile-connected-icon">${icon.note}</span><span>Notes</span></span><span class="profile-connected-actions"><button class="profile-connected-action" type="button" data-toast="Add note simulated.">${icon.plus} Add</button><button class="profile-connected-action open" type="button" data-profile-view-all="notes">Open ${icon.chevron}</button></span></h3><div class="profile-card-body profile-connected-strip">${assets.notes.slice(0, 3).map(note => `<button class="profile-note-tile" type="button" data-profile-note="${escapeHtml(note.noteId || '')}" title="${escapeHtml(note.title)}"><span>${icon.note}</span><small>${escapeHtml(note.title)}</small></button>`).join('')}</div></article>`;
+      const notes = peopleProfileAssets(person).notes;
+      const preview = notes.slice(0, 2);
+
+      const body = preview.length
+        ? `
+          <div
+            class="
+              profile-resource-list
+              profile-note-preview-list
+            ">
+
+            ${preview.map(note => {
+              const excerpt =
+                note.body
+                || note.type
+                || '';
+
+              const meta = [
+                note.type || '',
+                note.updated
+                  ? `Updated ${note.updated}`
+                  : ''
+              ].filter(Boolean).join(' · ');
+
+              return `
+                <button
+                  class="
+                    profile-resource-row
+                    profile-note-preview-row
+                  "
+                  type="button"
+                  data-profile-note="${escapeHtml(
+                    note.noteId || ''
+                  )}"
+                  title="${escapeHtml(note.title)}"
+                  aria-label="Open ${escapeHtml(note.title)}">
+
+                  <strong>${escapeHtml(note.title)}</strong>
+
+                  <span class="profile-note-excerpt">
+                    ${escapeHtml(excerpt)}
+                  </span>
+
+                  <small class="profile-note-updated">
+                    ${escapeHtml(meta)}
+                  </small>
+                </button>
+              `;
+            }).join('')}
+          </div>
+        `
+        : renderProfileResourceEmpty('No notes yet');
+
+      return renderProfileResourceCard({
+        type: 'notes',
+        iconSvg: icon.note,
+        title: 'Notes',
+        count: notes.length,
+        singular: 'note',
+        plural: 'notes',
+        addLabel: 'Add note',
+        addToast: 'Add note simulated.',
+        body
+      });
     }
 
     function renderProfileConnectedPlaces(person) {
-      const assets = peopleProfileAssets(person);
-      return `<article class="profile-compact-card profile-connected-card"><h3 class="profile-connected-head"><span class="profile-connected-title"><span class="profile-connected-icon">${icon.mapPin}</span><span>Places</span></span><span class="profile-connected-actions"><button class="profile-connected-action" type="button" data-toast="Add place link simulated.">${icon.plus} Add</button><button class="profile-connected-action open" type="button" data-profile-view-all="places">Open ${icon.chevron}</button></span></h3><button class="profile-place-map" type="button" data-profile-view-all="places"><span class="profile-place-map-grid"></span><span class="profile-place-marker one"></span><span class="profile-place-marker two"></span><span class="profile-place-route"></span></button><div class="profile-card-body profile-place-list">${assets.places.slice(0, 3).map(place => `<button class="profile-place-row" type="button" data-profile-place="${escapeHtml(place.id)}"><strong>${escapeHtml(place.title)}</strong><span>${escapeHtml(place.meta)} - ${escapeHtml(place.status)}</span></button>`).join('')}</div></article>`;
+      const places = peopleProfileAssets(person).places;
+      const preview = places.slice(0, 3);
+
+      const body = preview.length
+        ? `
+          <div class="profile-resource-list">
+            ${preview.map(place => {
+              const status =
+                place.status || 'Approximate';
+
+              return `
+                <button
+                  class="
+                    profile-resource-row
+                    profile-place-preview-row
+                  "
+                  type="button"
+                  data-profile-place="${escapeHtml(place.id)}"
+                  aria-label="Open ${escapeHtml(place.title)}">
+
+                  <strong>${escapeHtml(place.title)}</strong>
+
+                  <small class="profile-place-preview-meta">
+                    <span
+                      class="
+                        profile-place-status-dot
+                        ${profilePlaceStatusClass(status)}
+                      "
+                      aria-hidden="true">
+                    </span>
+
+                    <span>
+                      ${escapeHtml(
+                        place.meta || 'Linked place'
+                      )}
+                      ·
+                      ${escapeHtml(status)}
+                    </span>
+                  </small>
+                </button>
+              `;
+            }).join('')}
+          </div>
+        `
+        : renderProfileResourceEmpty(
+            'No places linked'
+          );
+
+      return renderProfileResourceCard({
+        type: 'places',
+        iconSvg: icon.mapPin,
+        title: 'Places',
+        count: places.length,
+        singular: 'place',
+        plural: 'places',
+        addLabel: 'Add place',
+        addToast: 'Add place link simulated.',
+        body
+      });
     }
 
     function renderProfileFamilyHub(person) {
-      const assets = peopleProfileAssets(person);
-      const activeTab = state.peopleProfileFamilyTab || 'immediate';
-      const members = assets.family.filter(item => (activeTab === 'partners' ? item.tab === 'partners' : item.tab !== 'partners'));
-      const groups = members.reduce((acc, item) => { acc[item.group] = acc[item.group] || []; acc[item.group].push(item); return acc; }, {});
-      const hasMembers = Object.keys(groups).length > 0;
-      return `<section class="profile-side-card profile-family-hub"><div class="profile-family-tabs" role="tablist" aria-label="Family profile sections"><button class="profile-family-tab ${activeTab === 'immediate' ? 'active' : ''}" type="button" role="tab" aria-selected="${activeTab === 'immediate'}" data-profile-family-tab="immediate">Immediate Family</button><button class="profile-family-tab ${activeTab === 'partners' ? 'active' : ''}" type="button" role="tab" aria-selected="${activeTab === 'partners'}" data-profile-family-tab="partners">Partners</button></div><div class="profile-family-scroll command clean">${hasMembers ? Object.entries(groups).map(([group, rows]) => `<div class="profile-family-group"><div class="relation-group-title">${escapeHtml(group)}</div>${rows.map(member => renderProfileFamilyMemberRow(member)).join('')}</div>`).join('') : `<div class="profile-family-empty">No ${activeTab === 'partners' ? 'partners' : 'immediate family'} linked yet.</div>`}</div></section>`;
-    }
+      const count = relationshipCount(person.id);
 
-    function renderProfileFamilyMemberRow(member) {
-      const actionId = member.relationshipId || member.id || member.name;
-      const linkAttr = member.relationshipId ? `data-profile-relationship="${escapeHtml(member.relationshipId)}"` : `data-profile-family="${escapeHtml(member.id || '')}"`;
-      return `<div class="profile-family-member-row" role="button" tabindex="0" ${linkAttr} data-profile-family-name="${escapeHtml(member.name)}"><div class="small-avatar ${escapeHtml(member.cls || '')}">${escapeHtml(member.initials)}</div><span class="profile-linked-copy"><strong>${escapeHtml(member.name)}</strong><span>${escapeHtml(member.meta)}</span></span><span class="profile-family-row-actions"><button class="profile-family-action-button" type="button" data-profile-edit-relationship="${escapeHtml(actionId)}" aria-label="Edit relationship for ${escapeHtml(member.name)}">${icon.edit}</button><button class="profile-family-action-button" type="button" data-profile-unlink-family="${escapeHtml(actionId)}" data-profile-unlink-name="${escapeHtml(member.name)}" aria-label="Unlink ${escapeHtml(member.name)}">${icon.unlink}</button></span></div>`;
+      return `
+        <section
+          class="profile-side-card profile-family-hub"
+          aria-label="Family relationships">
+
+          <h3 class="profile-family-head">
+            <span class="section-title profile-family-title">
+              <span
+                class="profile-family-title-icon"
+                aria-hidden="true">
+                ${icon.peoplegroup}
+              </span>
+
+              <span>Family</span>
+            </span>
+
+            <span
+              class="profile-family-count"
+              aria-label="${count} ${
+                count === 1
+                  ? 'relationship'
+                  : 'relationships'
+              }">
+              ${count}
+            </span>
+          </h3>
+
+          <div class="profile-family-scroll">
+            ${renderRelationships(person.id)}
+          </div>
+        </section>
+      `;
     }
 
     let peopleProfileResizeObserver = null;
+    let peopleProfileLayoutFrame = 0;
+
+    function getPeopleProfileCardMinHeight(root) {
+      return Number.parseFloat(
+        getComputedStyle(root)
+          .getPropertyValue('--profile-card-min-h')
+      ) || 480;
+    }
 
     function syncPeopleProfileFamilyHeight() {
       const root = main.querySelector('.person-profile');
-      const profile = main.querySelector('.profile-full-card');
-      const family = main.querySelector('.profile-family-hub');
-      if (!root || !profile || !family) return;
+      const profile = root?.querySelector('.profile-full-card');
+
+      if (!root || !profile) return;
+
+      /*
+      * Below this breakpoint the Profile and Family cards are stacked,
+      * so matching their heights is unnecessary.
+      */
       if (window.innerWidth <= 1180) {
         root.style.removeProperty('--profile-family-sync-h');
-        family.style.removeProperty('height');
-        family.style.removeProperty('min-height');
-        family.style.removeProperty('max-height');
         return;
       }
-      const minHeight = 408;
-      const profileHeight = Math.ceil(profile.getBoundingClientRect().height);
-      const target = Math.max(minHeight, profileHeight);
-      root.style.setProperty('--profile-family-sync-h', `${target}px`);
-      family.style.setProperty('height', `${target}px`, 'important');
-      family.style.setProperty('min-height', `${target}px`, 'important');
-      family.style.setProperty('max-height', `${target}px`, 'important');
+
+      const minimumHeight =
+        getPeopleProfileCardMinHeight(root);
+
+      const profileHeight = Math.ceil(
+        profile.getBoundingClientRect().height
+      );
+
+      root.style.setProperty(
+        '--profile-family-sync-h',
+        `${Math.max(minimumHeight, profileHeight)}px`
+      );
     }
 
     function schedulePeopleProfileLayoutSync() {
-      requestAnimationFrame(() => {
+      cancelAnimationFrame(peopleProfileLayoutFrame);
+
+      peopleProfileLayoutFrame = requestAnimationFrame(() => {
         syncPeopleProfileFamilyHeight();
-        requestAnimationFrame(syncPeopleProfileFamilyHeight);
       });
     }
 
     function attachPeopleProfileResizeObserver() {
       peopleProfileResizeObserver?.disconnect();
-      const profile = main.querySelector('.profile-full-card');
-      if (!profile || typeof ResizeObserver === 'undefined') {
-        schedulePeopleProfileLayoutSync();
-        return;
+
+      const profile = main.querySelector(
+        '.person-profile .profile-full-card'
+      );
+
+      if (!profile) return;
+
+      if (typeof ResizeObserver !== 'undefined') {
+        peopleProfileResizeObserver =
+          new ResizeObserver(() => {
+            schedulePeopleProfileLayoutSync();
+          });
+
+        peopleProfileResizeObserver.observe(profile);
       }
-      peopleProfileResizeObserver = new ResizeObserver(schedulePeopleProfileLayoutSync);
-      peopleProfileResizeObserver.observe(profile);
+
       schedulePeopleProfileLayoutSync();
     }
 
-    function openProfileRelationshipEdit(person, target) {
-      const assets = peopleProfileAssets(person);
-      const member = assets.family.find(item => item.id === target || item.relationshipId === target || item.name === target) || null;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="profileRelationshipEditTitle">
-        <div class="modal-header"><div><h2 id="profileRelationshipEditTitle">Edit relationship</h2><p>${escapeHtml(member ? `${person.name} and ${member.name}` : person.name)}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div>
-        <div class="modal-body form-grid">
-          <div class="field"><label>Relationship type</label><input value="${escapeHtml(member?.meta?.split('-')[0]?.trim() || 'Relationship')}" /></div>
-          <div class="field"><label>Relationship dates</label><input placeholder="e.g. 2022-present" value="${escapeHtml(member?.meta?.includes('-') ? member.meta.split('-').slice(1).join('-').trim() : '')}" /></div>
-          <div class="field"><label>Notes</label><textarea placeholder="Add relationship notes, source comments, or uncertainty."></textarea></div>
-        </div>
-        <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-close>Save relationship</button></div>
-      </div>`);
+    function updateProfilePhotoCarousel(carousel) {
+      const track = carousel?.querySelector(
+        '[data-profile-photo-track]'
+      );
+
+      const previous = carousel?.querySelector(
+        '[data-profile-photo-prev]'
+      );
+
+      const next = carousel?.querySelector(
+        '[data-profile-photo-next]'
+      );
+
+      if (!track || !previous || !next) return;
+
+      previous.disabled = track.scrollLeft <= 2;
+
+      next.disabled =
+        track.scrollLeft + track.clientWidth
+        >= track.scrollWidth - 2;
     }
 
-    function openProfileUnlinkConfirm(person, target) {
-      const assets = peopleProfileAssets(person);
-      const member = assets.family.find(item => item.id === target || item.relationshipId === target || item.name === target) || null;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="profileUnlinkTitle">
-        <div class="modal-header"><div><h2 id="profileUnlinkTitle">Remove connection?</h2><p>${escapeHtml(member ? `${member.name} will be unlinked from ${person.name}.` : 'This relationship link will be removed.')}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div>
-        <div class="modal-body"><p style="margin:0;color:var(--text-secondary)">The person record, photos, notes, and archive files will remain in the project. Only this family relationship connection is affected.</p></div>
-        <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" id="confirmProfileUnlink">Unlink</button></div>
-      </div>`);
-      modalBackdrop.querySelector('#confirmProfileUnlink')?.addEventListener('click', () => { closeModal(); showToast('Relationship unlink is simulated.'); });
+    function bindProfilePhotoCarousels(root = main) {
+      root
+        .querySelectorAll('[data-profile-photo-carousel]')
+        .forEach(carousel => {
+          const track = carousel.querySelector(
+            '[data-profile-photo-track]'
+          );
+
+          const previous = carousel.querySelector(
+            '[data-profile-photo-prev]'
+          );
+
+          const next = carousel.querySelector(
+            '[data-profile-photo-next]'
+          );
+
+          /*
+          * Carousels with three or fewer photos do not render
+          * navigation buttons.
+          */
+          if (!track || !previous || !next) return;
+
+          const scrollTrack = direction => {
+            track.scrollBy({
+              left:
+                Math.max(track.clientWidth * .82, 160)
+                * direction,
+              behavior: 'smooth'
+            });
+          };
+
+          previous.addEventListener('click', () => {
+            scrollTrack(-1);
+          });
+
+          next.addEventListener('click', () => {
+            scrollTrack(1);
+          });
+
+          track.addEventListener(
+            'scroll',
+            () => updateProfilePhotoCarousel(carousel),
+            { passive: true }
+          );
+
+          requestAnimationFrame(() => {
+            updateProfilePhotoCarousel(carousel);
+          });
+        });
     }
 
     function bindPeopleProfileControls(person) {
       bindToasts(main);
       bindGenealogyDateFields(main);
       bindPlaceComboboxes(main);
+      bindRelationshipList(main, 'profile');
+      bindProfilePhotoCarousels(main);
       attachPeopleProfileResizeObserver();
       main.querySelector('#backPeopleList')?.addEventListener('click', () => { state.peopleView = 'directory'; state.peopleSide = 'people'; state.peopleProfileEditing = false; renderPeople(); });
       main.querySelector('#profileEditButton')?.addEventListener('click', () => { state.peopleProfileEditing = true; state.peopleProfileEditTab = 'main'; renderPeople(); });
       main.querySelector('#profileAddRelative')?.addEventListener('click', e => openRelativePopover(e.currentTarget, 'relative'));
       main.querySelector('#profileMoreActions')?.addEventListener('click', e => openPeoplePersonActionsMenu(person.id, e.currentTarget));
-      main.querySelectorAll('[data-profile-family-tab]').forEach(button => button.addEventListener('click', () => { state.peopleProfileFamilyTab = button.dataset.profileFamilyTab; renderPeople(); }));
       main.querySelectorAll('[data-profile-card-tab]').forEach(button => button.addEventListener('click', () => { state.peopleProfileEditTab = button.dataset.profileCardTab; renderPeople(); }));
       main.querySelector('#profileInlineGender')?.addEventListener('change', event => {
         const isFemale = event.target.value === 'Female';
@@ -21238,32 +22977,31 @@ function renderTreeCardDateLines(person) {
         renderPeople();
         showToast('Profile changes saved.');
       });
-      main.querySelectorAll('[data-profile-life-event]').forEach(button => button.addEventListener('click', () => openProfileFactOverlay(person, Number(button.dataset.profileLifeEvent))));
       main.querySelector('[data-profile-add-fact]')?.addEventListener('click', () => openAddFactOverlay(person));
       main.querySelectorAll('[data-profile-archive]').forEach(button => button.addEventListener('click', () => openProfileArchiveFile(button.dataset.profileArchive)));
       main.querySelectorAll('[data-profile-note]').forEach(button => button.addEventListener('click', () => openProfileNote(button.dataset.profileNote)));
-      main.querySelectorAll('[data-profile-edit-relationship]').forEach(button => button.addEventListener('click', event => { event.stopPropagation(); openProfileRelationshipEdit(person, button.dataset.profileEditRelationship); }));
-      main.querySelectorAll('[data-profile-unlink-family]').forEach(button => button.addEventListener('click', event => { event.stopPropagation(); openProfileUnlinkConfirm(person, button.dataset.profileUnlinkFamily); }));
       main.querySelectorAll('[data-profile-partner-id]').forEach(button => {
         button.addEventListener('click', () => openProfileFamilyMember(button.dataset.profilePartnerId));
         button.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openProfileFamilyMember(button.dataset.profilePartnerId); } });
       });
-      main.querySelectorAll('[data-profile-family]').forEach(button => {
-        button.addEventListener('click', event => { if (!event.target.closest('[data-profile-edit-relationship], [data-profile-unlink-family]')) openProfileFamilyMember(button.dataset.profileFamily); });
-        button.addEventListener('keydown', event => { if ((event.key === 'Enter' || event.key === ' ') && !event.target.closest('[data-profile-edit-relationship], [data-profile-unlink-family]')) { event.preventDefault(); openProfileFamilyMember(button.dataset.profileFamily); } });
-      });
-      main.querySelectorAll('[data-profile-relationship]').forEach(button => {
-        button.addEventListener('click', event => { if (!event.target.closest('[data-profile-edit-relationship], [data-profile-unlink-family]')) openRelationshipDetailsOverlay(person, button.dataset.profileRelationship); });
-        button.addEventListener('keydown', event => { if ((event.key === 'Enter' || event.key === ' ') && !event.target.closest('[data-profile-edit-relationship], [data-profile-unlink-family]')) { event.preventDefault(); openRelationshipDetailsOverlay(person, button.dataset.profileRelationship); } });
-      });
       main.querySelectorAll('[data-profile-photo]').forEach(button => button.addEventListener('click', () => openProfilePhoto(button.dataset.profilePhoto)));
       main.querySelectorAll('[data-profile-place]').forEach(button => button.addEventListener('click', () => openProfilePlace(button.dataset.profilePlace)));
-      main.querySelectorAll('[data-profile-view-all]').forEach(button => button.addEventListener('click', () => {
-        if (button.dataset.profileViewAll === 'archive') openProfileAllArchive(person);
-        if (button.dataset.profileViewAll === 'notes') openProfileAllNotes(person);
-        if (button.dataset.profileViewAll === 'photos') openProfileAllPhotos(person);
-        if (button.dataset.profileViewAll === 'places') openProfileAllPlaces(person);
-      }));
+      const profileViewAllActions = {
+        archive: openProfileAllArchive,
+        notes: openProfileAllNotes,
+        photos: openProfileAllPhotos,
+        places: openProfileAllPlaces
+      };
+
+      main
+        .querySelectorAll('[data-profile-view-all]')
+        .forEach(button => {
+          button.addEventListener('click', () => {
+            profileViewAllActions[
+              button.dataset.profileViewAll
+            ]?.();
+          });
+        });
     }
 
     function openProfileArchiveFile(fileId) {
@@ -21277,11 +23015,32 @@ function renderTreeCardDateLines(person) {
     }
 
     function openProfilePhoto(photoId) {
-      openFamilyPhoto(photoId || 'more');
+      if (!photoId) {
+        showToast('Opening linked photo is simulated.');
+        return;
+      }
+
+      const hasFullRecord =
+        sampleData.media?.some(photo =>
+          photo.id === photoId && !photo.deleted
+        );
+
+      if (!hasFullRecord) {
+        showToast(
+          'This preview is not linked to a full photo record yet.'
+        );
+        return;
+      }
+
+      openFamilyPhoto(photoId);
     }
 
     function openProfilePlace(placeId) {
-      if (!placeId) { showToast('Opening linked place is simulated.'); return; }
+      if (!placeId) {
+        showToast('Opening linked place is simulated.');
+        return;
+      }
+
       state.activeModule = 'Places';
       state.placesView = 'all';
       state.selectedPlaceId = placeId;
@@ -21289,26 +23048,55 @@ function renderTreeCardDateLines(person) {
       render();
     }
 
-    function openProfileAllArchive(person) {
-      const first = peopleProfileAssets(person).archive.find(item => item.fileId);
-      if (first) openFamilyArchiveItem(first.fileId);
-      else { state.activeModule = 'Archive'; state.archiveView = 'files'; render(); }
+    function openProfileAllArchive() {
+      state.activeModule = 'Archive';
+      state.archiveView = 'files';
+      state.archiveSelectedFolderId = 'archive';
+      state.archiveSelectedFileId = null;
+      state.archiveSelectedFileIds = [];
+      state.archiveSearch = '';
+      state.archiveInspectorCollapsed = true;
+      render();
     }
 
-    function openProfileAllNotes(person) {
-      const first = peopleProfileAssets(person).notes.find(item => item.noteId);
-      if (first) openFamilyNote(first.noteId);
-      else { state.activeModule = 'Notes'; state.notesView = 'all'; state.notesRightCollapsed = true; render(); }
+    function openProfileAllNotes() {
+      state.activeModule = 'Notes';
+      state.notesView = 'all';
+      state.notesActiveCollectionId = null;
+      state.notesActiveCaseId = null;
+      state.selectedNoteId = null;
+      state.notesSearch = '';
+      state.notesTypeFilter = 'all';
+      state.notesRightCollapsed = true;
+      render();
     }
 
-    function openProfileAllPhotos(person) {
-      const first = peopleProfileAssets(person).photos[0];
-      openFamilyPhoto(first?.id || 'more');
+    function openProfileAllPhotos() {
+      state.activeModule = 'Albums';
+      state.albumsView = 'all';
+      state.activeAlbumId = null;
+      state.selectedPhotoId = null;
+      state.selectedPhotoIds = [];
+      state.albumsSearch = '';
+      state.albumsFilters = {
+        person: '',
+        place: '',
+        dateRange: '',
+        favouriteOnly: false
+      };
+      state.albumsDetailCollapsed = true;
+      render();
     }
 
-    function openProfileAllPlaces(person) {
-      const first = peopleProfileAssets(person).places[0];
-      openProfilePlace(first?.id || 'pl-pawford');
+    function openProfileAllPlaces() {
+      state.activeModule = 'Places';
+      state.placesView = 'all';
+      state.placesActiveCollectionId = null;
+      state.placesActiveCountry = null;
+      state.selectedPlaceId = null;
+      state.placesSearch = '';
+      state.placesDetailOpen = false;
+      render();
     }
 
     function openProfileFamilyMember(personId) {
@@ -21317,24 +23105,11 @@ function renderTreeCardDateLines(person) {
       state.selectedPeopleId = personId;
       state.peopleView = 'profile';
       state.peopleSide = 'profile';
-      state.peopleProfileFamilyTab = 'immediate';
       renderPeople();
-    }
-
-    function openProfileFactOverlay(person, index) {
-      const item = peopleProfileAssets(person).timeline[index];
-      if (!item) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="factDetailTitle"><div class="modal-header"><div><h2 id="factDetailTitle">${escapeHtml(item.title)}</h2><p>${escapeHtml(person.name)} - ${escapeHtml(item.year)}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body form-grid"><div class="field"><label>Fact details</label><textarea>${escapeHtml(item.detail)}</textarea></div><div class="field"><label>Linked evidence</label><input value="Archive and source links will appear here" disabled></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-close>Save fact</button></div></div>`);
     }
 
     function openAddFactOverlay(person) {
       openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="addFactTitle"><div class="modal-header"><div><h2 id="addFactTitle">Add fact</h2><p>Add a life event to ${escapeHtml(person.name)}.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body form-grid"><div class="field"><label>Fact type</label><select class="compact-select"><option>Residence</option><option>Education</option><option>Occupation</option><option>Military service</option><option>Custom fact</option></select></div><div class="field"><label>Date</label><input placeholder="e.g. 2004"></div><div class="field"><label>Place</label><input placeholder="e.g. Pawford, England"></div><div class="field"><label>Notes</label><textarea placeholder="Add context or source notes"></textarea></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-close>Add fact</button></div></div>`);
-    }
-
-    function openRelationshipDetailsOverlay(person, relationshipId) {
-      const assets = peopleProfileAssets(person);
-      const rel = assets.family.find(item => item.relationshipId === relationshipId) || assets.family.find(item => item.tab === 'partners');
-      openModal(`<div class="modal profile-relationship-modal" role="dialog" aria-modal="true" aria-labelledby="relationshipTitle"><div class="modal-header"><div><h2 id="relationshipTitle">Relationship details</h2><p>${escapeHtml(person.name)}${rel ? ` and ${escapeHtml(rel.name)}` : ''}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="profile-edit-tabs"><button class="profile-edit-tab active" type="button">Immediate Family</button><button class="profile-edit-tab active" type="button">Partners</button></div><div class="relationship-detail-person"><div class="small-avatar ${escapeHtml(rel?.cls || 'avatar-purple')}">${escapeHtml(rel?.initials || 'P')}</div><div><strong>${escapeHtml(rel?.name || 'Partner')}</strong><span>${escapeHtml(rel?.meta || 'Relationship details')}</span></div></div><div class="profile-edit-grid"><div class="field"><label>Relationship status</label><select class="compact-select"><option>Partner / spouse</option><option>Former partner</option><option>Uncertain relationship</option></select></div><div class="field"><label>Relationship start</label><input placeholder="Between"><input placeholder="2022" style="margin-top:8px"></div><div class="field"><label>Relationship place</label><input placeholder="e.g. Meowbridge, England"></div><div class="field"><label>Witnesses</label><input placeholder="Link witnesses or notes"></div><div class="field"><label>Relationship end</label><input placeholder="Between"><input placeholder="optional" style="margin-top:8px"></div></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-close>Save relationship</button></div></div>`);
     }
 
     function bindAccordion(root, rerender = renderPeople) {
@@ -22019,6 +23794,122 @@ function renderTreeCardDateLines(person) {
       else renderFamilyTreePreserveScroll();
     }
 
+    function relationshipContextFromRow(
+      row,
+      sidebarContext
+    ) {
+      return {
+        sidebarContext,
+        kind:
+          row?.dataset.relationshipKind || '',
+        personId:
+          row?.dataset.relationshipPersonId || '',
+        relatedPersonId:
+          row?.dataset.relationshipRelatedPersonId
+          || '',
+        familyId:
+          row?.dataset.relationshipFamilyId || ''
+      };
+    }
+
+    function selectRelationshipPerson(
+      personId,
+      context = 'tree'
+    ) {
+      if (!personId || !getPerson(personId)) {
+        showToast('Person record not found.');
+        return;
+      }
+
+      if (context === 'profile') {
+        openProfileFamilyMember(personId);
+        return;
+      }
+
+      syncPersonSidebarSelection(
+        personId,
+        context
+      );
+
+      if (context === 'people') {
+        state.peoplePreviewCollapsed = false;
+        renderPeople();
+        return;
+      }
+
+      state.treeCenterTargetId = personId;
+      state.treeInspectorCollapsed = false;
+
+      renderFamilyTreePreserveScroll?.()
+        || renderFamilyTree();
+    }
+
+    function bindRelationshipList(
+      root,
+      context = 'tree'
+    ) {
+      root
+        .querySelectorAll(
+          '[data-select-relationship-person]'
+        )
+        .forEach(button => {
+          button.addEventListener('click', () => {
+            selectRelationshipPerson(
+              button.dataset.selectRelationshipPerson,
+              context
+            );
+          });
+        });
+
+      root
+        .querySelectorAll('[data-edit-relationship]')
+        .forEach(button => {
+          button.addEventListener('click', event => {
+            event.stopPropagation();
+
+            const row = button.closest(
+              '[data-relationship-row]'
+            );
+
+            openRelationshipEditModal(
+              relationshipContextFromRow(
+                row,
+                context
+              )
+            );
+          });
+        });
+
+      root
+        .querySelectorAll('[data-unlink-relationship]')
+        .forEach(button => {
+          button.addEventListener('click', event => {
+            event.stopPropagation();
+
+            const row = button.closest(
+              '[data-relationship-row]'
+            );
+
+            const relationshipContext =
+              relationshipContextFromRow(
+                row,
+                context
+              );
+
+            if (relationshipContext.personId) {
+              syncPersonSidebarSelection(
+                relationshipContext.personId,
+                context
+              );
+            }
+
+            openUnlinkRelationshipModal(
+              relationshipContext
+            );
+          });
+        });
+    }
+
     function bindPersonSidebar(root, context = 'tree') {
       const selectedId = personSidebarSelectedId(context);
       const selected = personSidebarTreePerson(selectedId);
@@ -22065,25 +23956,7 @@ function renderTreeCardDateLines(person) {
         state.inspectorSections[id] = !sectionIsOpen(id);
         rerenderPersonSidebarContext(context);
       }));
-      root.querySelectorAll('[data-unlink-relationship]').forEach(button => {
-        button.addEventListener('click', event => {
-          event.stopPropagation();
-
-          const personId = button.dataset.unlinkPersonId || selected?.id || '';
-
-          if (personId) {
-            syncPersonSidebarSelection(personId, context);
-          }
-
-          openUnlinkRelationshipModal({
-            sidebarContext: context,
-            kind: button.dataset.unlinkKind || '',
-            personId,
-            relatedPersonId: button.dataset.unlinkRelatedPersonId || '',
-            familyId: button.dataset.unlinkFamilyId || ''
-          });
-        });
-      });
+      bindRelationshipList(root, context);
       bindToasts(root);
     }
 
