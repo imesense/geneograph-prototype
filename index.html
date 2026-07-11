@@ -1536,7 +1536,7 @@
     }
 
     .genealogy-date-validation {
-      color: var(--danger);
+      color: var(--red);
     }
 
     .genealogy-date-field.has-error .genealogy-date-input,
@@ -1621,9 +1621,69 @@
       margin-top: var(--space-4);
     }
     @media (max-width: 720px) {
-      .genealogy-date-controls { grid-template-columns: 1fr; }
-      .genealogy-date-type { grid-column: 1 / -1; }
-      .genealogy-date-editor-grid { grid-template-columns: 1fr; }
+      .genealogy-date-controls {
+        grid-template-columns: 1fr;
+      }
+
+      .genealogy-date-field:not(.is-between)
+        .genealogy-date-type-shell {
+        grid-column: 1 / -1;
+      }
+
+      .genealogy-date-field.is-between
+        .genealogy-date-controls {
+        grid-template-columns:
+          minmax(0, 1fr)
+          var(--control-icon-button-size);
+        grid-template-rows:
+          var(--control-height)
+          auto
+          var(--control-height)
+          auto
+          var(--control-height);
+      }
+
+      .genealogy-date-field.is-between
+        .genealogy-date-type-shell {
+        grid-column: 1 / -1;
+        grid-row: 1;
+      }
+
+      .genealogy-date-field.is-between
+        .genealogy-date-range-cell:first-child > span {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        margin-top: var(--space-2);
+      }
+
+      .genealogy-date-field.is-between
+        [data-genealogy-date-input] {
+        grid-column: 1;
+        grid-row: 3;
+      }
+
+      .genealogy-date-field.is-between
+        .genealogy-date-details-button {
+        grid-column: 2;
+        grid-row: 3;
+      }
+
+      .genealogy-date-field.is-between
+        [data-genealogy-date-to-cell] > span {
+        grid-column: 1 / -1;
+        grid-row: 4;
+        margin-top: var(--space-2);
+      }
+
+      .genealogy-date-field.is-between
+        [data-genealogy-date-input-to] {
+        grid-column: 1 / -1;
+        grid-row: 5;
+      }
+
+      .genealogy-date-editor-grid {
+        grid-template-columns: 1fr;
+      }
     }
     @media (max-width: 520px) {
       .genealogy-date-parts-row { grid-template-columns: 1fr; }
@@ -4427,6 +4487,10 @@
     .add-person-life-event-block .genealogy-date-controls {
       grid-template-columns: minmax(150px, 190px) minmax(260px, 1fr) var(--control-icon-button-size);
     }
+
+    .genealogy-date-validation {
+      grid-column: 1 / -1;
+    }
     .genealogy-date-range-shell {
       display: grid;
       min-width: 0;
@@ -4457,16 +4521,22 @@
     .genealogy-date-field.is-between .genealogy-date-range-cell span {
       display: block;
     }
-    .genealogy-date-field.is-between .genealogy-date-range-cell:first-child span {
-      grid-column: 1 / -1;
+    .genealogy-date-field.is-between
+      .genealogy-date-range-cell:first-child > span {
+      grid-column: 2;
       grid-row: 1;
       align-self: end;
+      justify-self: start;
+      margin: 0;
     }
-    .genealogy-date-field.is-between [data-genealogy-date-to-cell] span {
-      grid-column: 1 / -1;
+
+    .genealogy-date-field.is-between
+      [data-genealogy-date-to-cell] > span {
+      grid-column: 2;
       grid-row: 3;
       align-self: end;
-      margin-top: var(--space-3);
+      justify-self: start;
+      margin: var(--space-3) 0 0;
     }
     .genealogy-date-field.is-between .genealogy-date-type-shell {
       grid-column: 1;
@@ -4707,90 +4777,122 @@
       grid-column: 1 / -1;
     }
 
-    .add-person-life-event-block > .genealogy-date-field.is-between,
-    .add-person-relationship-card .add-person-marriage-date-field.is-between {
-      grid-template-columns: minmax(150px, 190px) minmax(260px, 1fr) var(--control-icon-button-size);
-      grid-template-rows: auto var(--control-height) auto var(--control-height);
+    /* Inline-labelled Between date layout */
+
+    .genealogy-date-inline-range.is-between {
+      width: 100%;
+      min-width: 0;
+      display: grid;
+      grid-template-columns:
+        minmax(150px, 190px)
+        minmax(260px, 1fr)
+        var(--control-icon-button-size);
+      grid-template-rows:
+        auto
+        var(--control-height)
+        auto
+        var(--control-height);
       gap: var(--space-2) var(--space-3);
       align-items: start;
     }
 
-    .add-person-life-event-block > .genealogy-date-field.is-between > label,
-    .add-person-relationship-card .add-person-marriage-date-field.is-between > label {
-      grid-column: 1;
-      grid-row: 1;
-      align-self: end;
-    }
-
-    .add-person-life-event-block > .genealogy-date-field.is-between > .genealogy-date-controls,
-    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-range-shell,
-    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-range-cell,
-    .add-person-relationship-card .add-person-marriage-date-field.is-between > .genealogy-date-controls,
-    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-range-shell,
-    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-range-cell {
+    /*
+    * Flatten the shared wrappers so the outer label,
+    * From/To labels, inputs, and calendar button
+    * participate in the same grid.
+    */
+    .genealogy-date-inline-range.is-between
+      > .genealogy-date-controls,
+    .genealogy-date-inline-range.is-between
+      .genealogy-date-range-shell,
+    .genealogy-date-inline-range.is-between
+      .genealogy-date-range-cell {
       display: contents;
     }
 
-    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-range-cell span,
-    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-range-cell span {
-      display: block;
+    /* Main field label and From label share the first row. */
+
+    .genealogy-date-inline-range.is-between
+      > label {
+      grid-column: 1;
+      grid-row: 1;
       align-self: end;
       margin: 0;
     }
 
-    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-range-cell:first-child span,
-    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-range-cell:first-child span {
+    .genealogy-date-inline-range.is-between
+      .genealogy-date-range-cell
+      > span {
+      display: block;
+      align-self: end;
+      justify-self: start;
+      margin: 0;
+    }
+
+    .genealogy-date-inline-range.is-between
+      .genealogy-date-range-cell:first-child
+      > span {
       grid-column: 2;
       grid-row: 1;
     }
 
-    .add-person-life-event-block > .genealogy-date-field.is-between [data-genealogy-date-to-cell] span,
-    .add-person-relationship-card .add-person-marriage-date-field.is-between [data-genealogy-date-to-cell] span {
+    /* First date-control row. */
+
+    .genealogy-date-inline-range.is-between
+      .genealogy-date-type-shell {
+      grid-column: 1;
+      grid-row: 2;
+      min-width: 0;
+      min-height: var(--control-height);
+      align-self: start;
+    }
+
+    .genealogy-date-inline-range.is-between
+      [data-genealogy-date-input] {
+      grid-column: 2;
+      grid-row: 2;
+      min-width: 0;
+      min-height: var(--control-height);
+    }
+
+    .genealogy-date-inline-range.is-between
+      .genealogy-date-details-button {
+      grid-column: 3;
+      grid-row: 2;
+      width: var(--control-icon-button-size);
+      min-width: var(--control-icon-button-size);
+      max-width: var(--control-icon-button-size);
+      height: var(--control-height);
+      min-height: var(--control-height);
+      max-height: var(--control-height);
+      align-self: start;
+    }
+
+    /* To label and second date input. */
+
+    .genealogy-date-inline-range.is-between
+      [data-genealogy-date-to-cell]
+      > span {
       grid-column: 2;
       grid-row: 3;
       margin-top: var(--space-3);
     }
 
-    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-type-shell,
-    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-type-shell {
-      grid-column: 1;
-      grid-row: 2;
-      align-self: start;
-      min-height: var(--control-height);
-    }
-
-    .add-person-life-event-block > .genealogy-date-field.is-between [data-genealogy-date-input],
-    .add-person-relationship-card .add-person-marriage-date-field.is-between [data-genealogy-date-input] {
-      grid-column: 2;
-      grid-row: 2;
-      min-height: var(--control-height);
-    }
-
-    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-details-button,
-    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-details-button {
-      grid-column: 3;
-      grid-row: 2;
-      width: var(--control-icon-button-size);
-      height: var(--control-height);
-      min-height: var(--control-height);
-      max-height: var(--control-height);
-      align-self: start;
-      justify-self: start;
-    }
-
-    .add-person-life-event-block > .genealogy-date-field.is-between [data-genealogy-date-input-to],
-    .add-person-relationship-card .add-person-marriage-date-field.is-between [data-genealogy-date-input-to] {
+    .genealogy-date-inline-range.is-between
+      [data-genealogy-date-input-to] {
       grid-column: 2;
       grid-row: 4;
+      min-width: 0;
       min-height: var(--control-height);
     }
 
-    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-standard-status,
-    .add-person-life-event-block > .genealogy-date-field.is-between .genealogy-date-validation,
-    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-standard-status,
-    .add-person-relationship-card .add-person-marriage-date-field.is-between .genealogy-date-validation {
+    .genealogy-date-inline-range.is-between
+      .genealogy-date-standard-status,
+    .genealogy-date-inline-range.is-between
+      .genealogy-date-validation {
       grid-column: 1 / -1;
     }
+
     .add-person-facts-section {
       border: 1px solid var(--border-default);
       border-radius: var(--radius-md);
@@ -4934,11 +5036,6 @@
       color: var(--text-primary);
     }
 
-    .add-person-fact-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--space-4);
-    }
     .add-person-fact-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -11429,6 +11526,67 @@
     .add-person-fact-grid .genealogy-date-field.is-between {
       grid-template-rows: auto var(--control-height) auto var(--control-height) auto;
     }
+
+    @media (max-width: 720px) {
+      .genealogy-date-inline-range.is-between {
+        grid-template-columns:
+          minmax(0, 1fr)
+          var(--control-icon-button-size);
+        grid-template-rows:
+          auto
+          var(--control-height)
+          auto
+          var(--control-height)
+          auto
+          var(--control-height);
+      }
+
+      .genealogy-date-inline-range.is-between
+        > label {
+        grid-column: 1 / -1;
+        grid-row: 1;
+      }
+
+      .genealogy-date-inline-range.is-between
+        .genealogy-date-type-shell {
+        grid-column: 1 / -1;
+        grid-row: 2;
+      }
+
+      .genealogy-date-inline-range.is-between
+        .genealogy-date-range-cell:first-child
+        > span {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        margin-top: var(--space-2);
+      }
+
+      .genealogy-date-inline-range.is-between
+        [data-genealogy-date-input] {
+        grid-column: 1;
+        grid-row: 4;
+      }
+
+      .genealogy-date-inline-range.is-between
+        .genealogy-date-details-button {
+        grid-column: 2;
+        grid-row: 4;
+      }
+
+      .genealogy-date-inline-range.is-between
+        [data-genealogy-date-to-cell]
+        > span {
+        grid-column: 1 / -1;
+        grid-row: 5;
+        margin-top: var(--space-2);
+      }
+
+      .genealogy-date-inline-range.is-between
+        [data-genealogy-date-input-to] {
+        grid-column: 1 / -1;
+        grid-row: 6;
+      }
+    }
   </style>
 </head>
 <body>
@@ -17199,6 +17357,117 @@ function renderTreeCardDateLines(person) {
       return text;
     }
 
+    const RELIGION_VALUES = Object.freeze([
+      'Unknown',
+      'Orthodox',
+      'Catholic',
+      'Jewish',
+      'Muslim',
+      'Other'
+    ]);
+
+    const DEFAULT_RELIGION = 'Unknown';
+
+    function normalizeReligionValue(value) {
+      if (
+        typeof value !== 'string'
+        && typeof value !== 'number'
+      ) {
+        return DEFAULT_RELIGION;
+      }
+
+      const text = String(value).trim();
+
+      if (
+        !text
+        || text === '-'
+        || text === '—'
+      ) {
+        return DEFAULT_RELIGION;
+      }
+
+      const canonicalValue = RELIGION_VALUES.find(
+        option =>
+          option.toLowerCase() === text.toLowerCase()
+      );
+
+      /*
+      * Preserve imported or legacy values that are not yet
+      * part of the predefined option list.
+      */
+      return canonicalValue || text;
+    }
+
+    function religionFieldOptions(selectedValue) {
+      const selected =
+        normalizeReligionValue(selectedValue);
+
+      return RELIGION_VALUES.includes(selected)
+        ? [...RELIGION_VALUES]
+        : [selected, ...RELIGION_VALUES];
+    }
+
+    function renderReligionField({
+      id,
+      value = DEFAULT_RELIGION,
+      className = '',
+      label = 'Religion'
+    } = {}) {
+      if (!id) return '';
+
+      const selected = normalizeReligionValue(value);
+      const options = religionFieldOptions(selected);
+
+      const fieldClass = [
+        'field',
+        className
+      ].filter(Boolean).join(' ');
+
+      return `
+        <div class="${escapeHtml(fieldClass)}">
+          <label for="${escapeHtml(id)}">
+            ${escapeHtml(label)}
+          </label>
+
+          <div class="common-select-shell">
+            <select
+              class="compact-select common-select"
+              id="${escapeHtml(id)}">
+
+              ${options.map(option => `
+                <option
+                  value="${escapeHtml(option)}"
+                  ${option === selected ? 'selected' : ''}>
+                  ${escapeHtml(option)}
+                </option>
+              `).join('')}
+            </select>
+
+            <span
+              class="common-select-chevron"
+              aria-hidden="true">
+              ${icon.chevron}
+            </span>
+          </div>
+        </div>
+      `;
+    }
+
+    function readReligionField(
+      root,
+      fieldId
+    ) {
+      if (!root || !fieldId) {
+        return DEFAULT_RELIGION;
+      }
+
+      const field = root.querySelector(
+        `#${CSS.escape(fieldId)}`
+      );
+
+      return normalizeReligionValue(field?.value);
+    }
+
     function genderLabelFromPerson(person) {
       const gender = String(person?.gender || '').toLowerCase();
 
@@ -17437,25 +17706,13 @@ function renderTreeCardDateLines(person) {
           <div class="field full"><label for="addPersonFactWorkNotes">Notes</label><textarea id="addPersonFactWorkNotes" placeholder="Work notes">${escapeHtml(details.workNotes || '')}</textarea></div>`);
       }
       if (factId === 'religion') {
-        const religionOptions = ['Unknown', 'Orthodox', 'Catholic', 'Jewish'];
-        const selectedReligion = cleanEditFieldValue(details.religion || 'Unknown') || 'Unknown';
-        const options = religionOptions.includes(selectedReligion)
-          ? religionOptions
-          : [selectedReligion, ...religionOptions];
-
-        return fieldWrap(`<div class="field full">
-          <label for="addPersonFactReligion">Religion</label>
-          <div class="common-select-shell">
-            <select class="compact-select common-select" id="addPersonFactReligion">
-              ${options.map(value => `
-                <option value="${escapeHtml(value)}" ${value === selectedReligion ? 'selected' : ''}>
-                  ${escapeHtml(value)}
-                </option>
-              `).join('')}
-            </select>
-            <span class="common-select-chevron" aria-hidden="true">${icon.chevron}</span>
-          </div>
-        </div>`);
+        return fieldWrap(
+          renderReligionField({
+            id: 'addPersonFactReligion',
+            value: details.religion,
+            className: 'full'
+          })
+        );
       }
       if (factId === 'baptism') {
         return fieldWrap(`${renderPlaceCombobox({
@@ -17585,7 +17842,7 @@ function renderTreeCardDateLines(person) {
             typeId: `${fieldPrefix}MarriageDateType`,
             placeholder: 'e.g. 18 Aug 2023',
             defaultDateType: 'Exact date',
-            className: 'add-person-marriage-date-field'
+            className: 'add-person-marriage-date-field genealogy-date-inline-range'
           })}
 
           ${renderPlaceCombobox({
@@ -19808,7 +20065,7 @@ function renderTreeCardDateLines(person) {
             typeId: 'relationshipEditDateType',
             placeholder: 'e.g. 18 Aug 2023',
             defaultDateType: 'Exact date',
-            className: 'full'
+            className: 'full genealogy-date-inline-range'
           }
         )}
 
@@ -20131,7 +20388,8 @@ function renderTreeCardDateLines(person) {
                   inputId: 'addPersonBirthDate',
                   typeId: 'addPersonBirthDateType',
                   placeholder: 'e.g. 14 Feb 1946',
-                  defaultDateType: 'Exact date'
+                  defaultDateType: 'Exact date',
+                  className: 'genealogy-date-inline-range'
                 })}
 
               ${renderPlaceCombobox({
@@ -20147,7 +20405,8 @@ function renderTreeCardDateLines(person) {
                   inputId: 'addPersonDeathDate',
                   typeId: 'addPersonDeathDateType',
                   placeholder: 'e.g. 20 Oct 1926',
-                  defaultDateType: 'Exact date'
+                  defaultDateType: 'Exact date',
+                  className: 'genealogy-date-inline-range'
                 })}
 
                 ${renderPlaceCombobox({
@@ -20419,7 +20678,12 @@ function renderTreeCardDateLines(person) {
           toDate
         };
       }
-      if (hasFact('religion')) facts.religion = modalBackdrop.querySelector('#addPersonFactReligion')?.value || 'Unknown';
+      if (hasFact('religion')) {
+        facts.religion = readReligionField(
+          modalBackdrop,
+          'addPersonFactReligion'
+        );
+      }
       if (hasFact('baptism')) {
         const baptismDate = collectGenealogyDateField('addPersonFactBaptism');
         if (!baptismDate) return { invalid: true, message: 'Check the baptism date before saving.' };
@@ -20499,7 +20763,15 @@ function renderTreeCardDateLines(person) {
       }
 
       if (active.has('religion')) {
-        upsertPersonAttribute(person, 'RELI', { value: valueOrNull(facts.religion) || 'Unknown' });
+        upsertPersonAttribute(
+          person,
+          'RELI',
+          {
+            value: normalizeReligionValue(
+              facts.religion
+            )
+          }
+        );
       } else {
         removePersonAttribute(person, 'RELI');
       }
@@ -20975,7 +21247,17 @@ function renderTreeCardDateLines(person) {
           if (prop === 'workNotes') { upsertPersonAttribute(centralPerson, 'OCCU', { notes: valueOrNull(value) || '' }); return true; }
           if (prop === 'workFromDate') { upsertPersonAttribute(centralPerson, 'OCCU', { fromDate: genealogyDateOrNull(value, 'Exact date') }); return true; }
           if (prop === 'workToDate') { upsertPersonAttribute(centralPerson, 'OCCU', { toDate: genealogyDateOrNull(value, 'Exact date') }); return true; }
-          if (prop === 'religion') { upsertPersonAttribute(centralPerson, 'RELI', { value: valueOrNull(value) || 'Unknown' }); return true; }
+          if (prop === 'religion') {
+            upsertPersonAttribute(
+              centralPerson,
+              'RELI',
+              {
+                value: normalizeReligionValue(value)
+              }
+            );
+
+            return true;
+          }
           if (prop === 'baptismPlace') {
             const event = upsertPersonEvent(centralPerson, 'BAPM');
             const resolved = resolvePlaceAssignment(value, event.placeId);
@@ -21684,7 +21966,10 @@ function renderTreeCardDateLines(person) {
       if (active === 'other') {
         return `<div class="profile-readonly-grid profile-readonly-grid-single">
           <section class="profile-info-block wide"><h4>Other</h4>
-            ${renderProfileInfoRow('Religion', details.religion || 'Unknown')}
+            ${renderProfileInfoRow(
+              'Religion',
+              normalizeReligionValue(details.religion)
+            )}
             ${renderProfileInfoRow('Baptism date', profileDetailDateLabel(details.baptismDate))}
             ${renderProfileInfoRow('Baptism place', details.baptismPlace || '-')}
             ${renderProfileInfoRow('Privacy', person.living === 'Living' ? 'Living person protected' : 'Standard record')}
@@ -22121,49 +22406,13 @@ function renderTreeCardDateLines(person) {
       const details = peopleProfileDetailsFor(person);
       const baptism = personEventByTag(centralPerson, 'BAPM');
 
-      const religionOptions = [
-        'Unknown',
-        'Orthodox',
-        'Catholic',
-        'Jewish',
-        'Muslim',
-        'Other'
-      ];
-
-      const selectedReligion =
-        cleanEditFieldValue(details.religion || 'Unknown')
-        || 'Unknown';
-
-      const availableReligionOptions =
-        religionOptions.includes(selectedReligion)
-          ? religionOptions
-          : [selectedReligion, ...religionOptions];
-
       return `
         <div class="profile-card-edit-grid two profile-other-edit-grid">
-          <div class="field profile-other-religion">
-            <label for="profileReligion">Religion</label>
-
-            <div class="common-select-shell">
-              <select
-                class="compact-select common-select"
-                id="profileReligion">
-                ${availableReligionOptions.map(value => `
-                  <option
-                    value="${escapeHtml(value)}"
-                    ${value === selectedReligion ? 'selected' : ''}>
-                    ${escapeHtml(value)}
-                  </option>
-                `).join('')}
-              </select>
-
-              <span
-                class="common-select-chevron"
-                aria-hidden="true">
-                ${icon.chevron}
-              </span>
-            </div>
-          </div>
+          ${renderReligionField({
+            id: 'profileReligion',
+            value: details.religion,
+            className: 'profile-other-religion'
+          })}
 
           ${renderGenealogyDateField(
             'profileBaptismDate',
@@ -22920,7 +23169,10 @@ function renderTreeCardDateLines(person) {
             showToast('Check the baptism date before saving.');
             return;
           }
-          details.religion = main.querySelector('#profileReligion')?.value || 'Unknown';
+          details.religion = readReligionField(
+            main,
+            'profileReligion'
+          );
           details.baptismPlace = readPlaceInputValue('#profileBaptismPlace', main);
           details.baptismDate = baptismDate;
           person.updated = 'Just now';
