@@ -543,6 +543,7 @@
       align-items: center;
       justify-content: space-between;
       gap: var(--space-4);
+      flex-wrap: wrap;
       margin-bottom: var(--space-7, 28px);
     }
     .toolbar-left, .toolbar-right { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
@@ -5159,6 +5160,8 @@
     .add-person-mini-list { display: grid; gap: var(--space-2); }
     .add-person-mini-choice { min-height: 50px; border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: rgba(255,255,255,.025); color: var(--text-secondary); display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-3); text-align: left; font-weight: 800; }
     .add-person-mini-choice:hover, .add-person-mini-choice:focus-visible { background: var(--surface-card-hover); border-color: var(--border-strong); color: var(--text-primary); }
+    .add-person-mini-choice-indicator { width: 22px; height: 22px; border: 1px solid var(--border-strong); border-radius: 5px; display: grid; place-items: center; flex: 0 0 22px; }
+    .add-person-mini-choice-indicator.checked { border-color: rgba(98,217,154,.4); background: var(--brand-green-500); color: #07130e; }
     .add-person-mini-footer { border-top: 1px solid var(--border-default); padding: var(--space-4) var(--space-5); display: flex; justify-content: flex-end; gap: var(--space-3); }
     @media (max-width: 820px) {
       .add-person-fact-grid .add-person-fact-date-row {
@@ -5377,10 +5380,23 @@
       min-width: 0;
       min-height: 0;
       display: grid;
-      grid-template-rows: auto auto 1fr auto;
+      grid-template-rows: auto minmax(0, 1fr) auto;
       padding: var(--space-4);
       gap: var(--space-3);
       overflow: hidden;
+    }
+
+    .people-directory-controls {
+      min-width: 0;
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .people-toolbar-slot {
+      min-width: 0;
+      min-height: 44px;
+      display: grid;
+      align-items: stretch;
     }
 
     .people-toolbar {
@@ -5389,6 +5405,35 @@
       gap: var(--space-3);
       align-items: center;
       min-width: 0;
+    }
+
+    .people-bulk-toolbar {
+      min-width: 0;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+    }
+
+    .people-bulk-summary {
+      flex: 0 0 auto;
+      color: var(--text-primary);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .people-bulk-actions {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    .people-bulk-actions .button {
+      white-space: nowrap;
     }
 
     #addPeoplePerson {
@@ -5635,6 +5680,29 @@
       border-radius: var(--radius-sm);
       background: rgba(212, 107, 107, .08);
       color: #f0b8b8;
+    }
+
+    .people-delete-confirm-copy {
+      display: grid;
+      gap: var(--space-3);
+      color: var(--text-secondary);
+    }
+
+    .people-delete-confirm-copy p,
+    .people-delete-confirm-copy ul {
+      margin: 0;
+    }
+
+    .people-delete-confirm-copy ul {
+      display: grid;
+      gap: 6px;
+      padding-left: 20px;
+      color: var(--text-primary);
+    }
+
+    .people-delete-remaining {
+      color: var(--text-tertiary);
+      font-size: 13px;
     }
 
     .people-filter-button {
@@ -5922,8 +5990,11 @@
 
     .people-table tr { cursor: pointer; }
     .people-table tbody tr:hover { background: rgba(255,255,255,.025); }
-    .people-table tbody tr.selected { background: var(--surface-selected); }
-    .people-table tbody tr.selected td { border-color: rgba(98,217,154,.14); }
+    .people-table tbody tr.is-previewed { background: rgba(255,255,255,.035); }
+    .people-table tbody tr.is-previewed td { border-color: rgba(255,255,255,.09); }
+    .people-table tbody tr.is-selected { background: var(--surface-selected); }
+    .people-table tbody tr.is-selected td { border-color: rgba(98,217,154,.14); }
+    .people-table tbody tr.is-previewed.is-selected { box-shadow: inset 3px 0 0 var(--brand-green-400); }
 
 
     .more-button {
@@ -5971,24 +6042,22 @@
       box-shadow: 0 0 0 1px rgba(47,174,116,.12);
     }
 
-    .people-table tr.selected .more-button {
+    .people-table tr.is-previewed .more-button,
+    .people-table tr.is-selected .more-button {
       background: rgba(255,255,255,.06);
       border-color: rgba(98,217,154,.36);
       color: var(--text-primary);
     }
 
 
-    .people-table .people-row-action,
-    .people-table tr.selected .people-row-action {
+    .people-table .people-row-action {
       background: transparent;
       border-color: transparent;
       color: var(--text-tertiary);
       box-shadow: none;
     }
     .people-table .people-row-action:hover,
-    .people-table .people-row-action:focus-visible,
-    .people-table tr.selected .people-row-action:hover,
-    .people-table tr.selected .people-row-action:focus-visible {
+    .people-table .people-row-action:focus-visible {
       background: rgba(255,255,255,.06);
       border-color: var(--border-default);
       color: var(--text-primary);
@@ -6006,21 +6075,31 @@
     .person-cell strong { display: block; color: var(--text-primary); line-height: 1.2; }
     .person-cell span { display: block; color: var(--text-tertiary); font-size: 12px; margin-top: 2px; }
 
-    .table-checkbox {
-      width: 22px;
-      height: 22px;
-      border-radius: 5px;
-      border: 1px solid var(--border-strong);
-      background: transparent;
-      display: grid;
-      place-items: center;
-      color: var(--text-primary);
+    .people-select-column {
+      width: 48px;
+      min-width: 48px;
+      max-width: 48px;
+      text-align: center !important;
     }
 
-    .table-checkbox.checked {
-      border-color: rgba(98,217,154,.4);
-      background: var(--brand-green-500);
-      color: #07130e;
+    .people-actions-column {
+      width: 72px;
+      min-width: 72px;
+      max-width: 72px;
+      text-align: center !important;
+    }
+
+    .people-select-checkbox {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      accent-color: var(--brand-green-500);
+      cursor: pointer;
+    }
+
+    .people-select-checkbox:focus-visible {
+      outline: 2px solid var(--brand-green-300);
+      outline-offset: 2px;
     }
 
     .table-footer {
@@ -6298,10 +6377,6 @@
       .profile-edit-grid.main,
       .profile-death-fields { grid-template-columns: 1fr; }}
 
-    .people-toolbar {
-      grid-template-columns: minmax(220px, 1fr) max-content auto minmax(190px, 220px) max-content;
-    }
-
     .people-columns-button {
       white-space: nowrap;
       justify-content: center;
@@ -6330,66 +6405,14 @@
     .people-columns-footer { border-top: 1px solid var(--border-default); padding: var(--space-3); display:flex; justify-content:flex-end; }
     .people-columns-footer .button { min-height: 36px; letter-spacing: .01em; }
 
-    .people-content { grid-template-rows: auto auto minmax(0, 1fr) auto; }
-    .people-table-wrap { min-height: 0; }
-    .people-content .table-footer {
-      position: sticky;
-      bottom: 0;
-      z-index: 5;
-      min-height: 48px;
-      padding: var(--space-2) var(--space-3);
-      border-top: 1px solid var(--border-default);
-      background: rgba(15,20,19,.96);
-      box-shadow: 0 -12px 28px rgba(0,0,0,.2);
-    }
-    .people-content {
-      height: 100%;
-      grid-template-rows: auto minmax(0, 1fr) auto;
-    }
-
-    .people-content.has-filters {
-      grid-template-rows: auto auto minmax(0, 1fr) auto;
-    }
-
-    .people-table-wrap {
-      min-height: 0;
-      height: 100%;
-      overflow: auto;
-    }
-
-    .people-content .table-footer {
-      position: static;
-      flex: 0 0 auto;
-    }
-
-    .people-table .people-row-action {
-      background: transparent;
-      border-color: transparent;
-      color: var(--text-tertiary);
-      box-shadow: none;
-    }
-    .people-table .people-row-action:hover,
-    .people-table .people-row-action:focus-visible,
-    .people-table tr.selected .people-row-action:hover,
-    .people-table tr.selected .people-row-action:focus-visible {
-      background: var(--surface-card-hover);
-      border-color: var(--border-default);
-      color: var(--text-primary);
-      box-shadow: none;
-    }
-    .people-table tr.selected .people-row-action {
-      background: transparent;
-      border-color: transparent;
-      color: var(--text-primary);
-    }
-
     .people-hero-copy h2 { margin-bottom: 8px; }
     .people-hero-copy p { margin-bottom: 8px; }
     
     @media (max-width: 1280px) {.people-layout { grid-template-columns: minmax(0, 1fr); }
       .people-person-sidebar { display: none; }
-      .people-toolbar { grid-template-columns: 1fr auto; }
-      .people-toolbar .people-sort-select, .people-toolbar .button.secondary { display: none; }}
+      .people-normal-toolbar { grid-template-columns: 1fr auto; }
+      .people-normal-toolbar .people-sort-field, .people-normal-toolbar .button.secondary { display: none; }
+      .people-bulk-actions { justify-content: flex-start; }}
 
     @media (max-width: 900px) {.people-layout { grid-template-columns: 1fr; }}
 
@@ -10338,12 +10361,7 @@
 
   
 
-    /* People tab refinement: columns, sticky footer, row actions, preview links */
-    .people-toolbar {
-      grid-template-columns: minmax(240px, 1fr) max-content max-content minmax(190px, 220px) max-content;
-    }
-    #addPeoplePerson { white-space: nowrap; min-width: 156px; }
-    .people-table-wrap { min-height: 0; }
+    /* People columns and preview refinements */
     
     .people-columns-button,
     .people-filter-button { white-space: nowrap; min-width: 110px; justify-content: center; }
@@ -10375,30 +10393,6 @@
     .people-columns-option:hover { background: rgba(255,255,255,.035); border-color: var(--border-default); color: var(--text-primary); }
     .people-columns-option.locked { cursor: default; color: var(--text-tertiary); }
     .people-columns-option input { position: absolute; opacity: 0; pointer-events: none; }
-    .people-row-action {
-      width: 34px;
-      height: 34px;
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--text-tertiary);
-      border-radius: 8px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      line-height: 1;
-      font-weight: 900;
-      letter-spacing: 1px;
-      padding: 0;
-      transition: background var(--ease), border-color var(--ease), color var(--ease), box-shadow var(--ease);
-    }
-    .people-row-action:hover,
-    .people-row-action:focus-visible {
-      background: rgba(255,255,255,.055);
-      border-color: var(--border-default);
-      color: var(--text-primary);
-    }
-    .people-table tr.selected .people-row-action { color: var(--text-primary); }
     
     
     
@@ -10413,32 +10407,6 @@
     
     
     
-    @media (max-width: 1280px) {.people-toolbar { grid-template-columns: 1fr auto auto; }
-      .people-toolbar .people-sort-select { display: none; }}
-
-  
-
-    /* People row action and preview hero final overrides */
-    .people-table .people-row-action {
-      background: transparent;
-      border-color: transparent;
-      box-shadow: none;
-      color: var(--text-tertiary);
-    }
-    .people-table .people-row-action:hover,
-    .people-table .people-row-action:focus-visible {
-      background: rgba(255,255,255,.055);
-      border-color: var(--border-default);
-      color: var(--text-primary);
-      box-shadow: none;
-    }
-    .people-table tr.selected .people-row-action {
-      background: transparent;
-      border-color: transparent;
-      color: var(--text-primary);
-    }
-
-
     /* People tab refinement overrides */
     .people-columns-option input {
       position: static !important;
@@ -10467,23 +10435,6 @@
       margin-left: auto;
       margin-right: 0;
     }
-    .people-table .people-row-action,
-    .people-table tr.selected .people-row-action {
-      background: transparent;
-      border-color: transparent;
-      color: var(--text-tertiary);
-      box-shadow: none;
-    }
-    .people-table .people-row-action:hover,
-    .people-table .people-row-action:focus-visible,
-    .people-table tr.selected .people-row-action:hover,
-    .people-table tr.selected .people-row-action:focus-visible {
-      background: rgba(255,255,255,.06);
-      border-color: var(--border-default);
-      color: var(--text-primary);
-      box-shadow: none;
-    }
-  
     .people-full-profile-cta {
       grid-column: 1 / -1;
       justify-content: flex-start !important;
@@ -13556,6 +13507,8 @@
       peopleView: 'directory',
       peopleSide: 'people',
       selectedPeopleId: 'silver',
+      peopleSelectedIds: [],
+      peopleSelectionAnchorId: '',
       peopleSearch: '',
       peopleSort: 'modified',
       peopleSavedView: 'All people',
@@ -13671,9 +13624,7 @@
     }
 
     function currentPeopleRecords() {
-      const projectPeople = getPeopleRecordsFromSampleData(currentProjectId());
-      if (projectPeople?.length) return projectPeople;
-      return sampleData.people.map(toPeopleRecord);
+      return getPeopleRecordsFromSampleData(currentProjectId());
     }
 
     function normalizePlaceLookupText(value) {
@@ -13945,6 +13896,9 @@
     ];
 
     function render() {
+      if (state.activeModule !== 'People' && state.peopleSelectedIds.length) {
+        clearPeopleSelection();
+      }
       applyLanguage();
       main.classList.remove('people-profile-main');
       renderTopbar();
@@ -14710,6 +14664,7 @@
     }
 
     function openStartupProjectModule(projectId, moduleName) {
+      clearPeopleSelection();
       state.projectOpen = true;
       state.currentProjectId = projectId;
       state.selectedProjectId = projectId;
@@ -15550,44 +15505,6 @@ function renderTreeCardDateLines(person) {
 
     function renderFamilyNotes(person) {
       return `<div class="note-list family-note-list">${familyNoteLinks(person).map(note => `<button class="family-note-card" type="button" data-family-note="${escapeHtml(note.noteId || '')}"><strong>${escapeHtml(note.title)}</strong><span>${escapeHtml(note.body)}</span><em class="status-dot">${escapeHtml(note.updated)}</em></button>`).join('')}</div>`;
-    }
-
-    function openFamilyPersonActionsMenu(anchor, person) {
-      closeMenu();
-      const rect = anchor.getBoundingClientRect();
-      const menu = document.createElement('div');
-      menu.className = 'menu-popover family-actions-menu';
-      menu.id = 'projectMenu';
-      menu.style.top = `${rect.bottom + 6}px`;
-      menu.style.left = `${Math.max(12, rect.right - 210)}px`;
-      menu.innerHTML = `<button type="button" data-family-action="profile">Open profile</button><button type="button" class="danger" data-family-action="delete">Delete person</button>`;
-      document.body.appendChild(menu);
-      menu.addEventListener('click', event => {
-        const action = event.target.closest('[data-family-action]')?.dataset.familyAction;
-        if (!action) return;
-        closeMenu();
-        if (action === 'profile') openFamilyPersonProfile(person);
-        if (action === 'delete') openDeleteFamilyPersonConfirm(person);
-      });
-      setTimeout(() => {
-        document.addEventListener('click', closeMenu);
-        document.addEventListener('scroll', closeMenu, true);
-      }, 0);
-    }
-
-    function openFamilyPersonProfile(person) {
-      const peopleId = treePersonToPeopleRecordId(person);
-      if (!peopleId) { showToast('No linked People profile found for this person.'); return; }
-      state.activeModule = 'People';
-      state.peopleView = 'profile';
-      state.peopleSide = 'profile';
-      state.selectedPeopleId = peopleId;
-      render();
-    }
-
-    function openDeleteFamilyPersonConfirm(person) {
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteFamilyPersonTitle"><div class="modal-header"><div><h2 id="deleteFamilyPersonTitle">Delete person?</h2><p>${escapeHtml(person.name)}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="albums-delete-copy">This removes the person from the family tree. Linked photos, archive files, and notes remain in the project.</div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" id="confirmDeleteFamilyPerson">Delete person</button></div></div>`);
-      modalBackdrop.querySelector('#confirmDeleteFamilyPerson')?.addEventListener('click', () => { closeModal(); showToast('Person deletion simulated.'); });
     }
 
     function openFamilyPhoto(photoId) {
@@ -18712,6 +18629,7 @@ function renderTreeCardDateLines(person) {
       }
 
       sampleData.events = buildSampleEvents();
+      clearPeopleSelection();
       state.selectedPersonId = newPerson.id;
       state.selectedPeopleId = newPerson.id;
 
@@ -20860,12 +20778,12 @@ function renderTreeCardDateLines(person) {
       const overlay = document.createElement('div');
       overlay.className = 'add-person-mini-backdrop';
       overlay.id = 'addPersonMiniOverlay';
-      overlay.innerHTML = `<div class="add-person-mini-card" role="dialog" aria-modal="true" aria-labelledby="addPersonMiniTitle"><div class="add-person-mini-head"><div><h3 id="addPersonMiniTitle">${escapeHtml(config.title)}</h3><p>${escapeHtml(config.subtitle)}</p></div><button class="close-button" type="button" data-mini-close>${icon.close}</button></div><div class="add-person-mini-body">${type === 'note' ? `<div class="field"><label>Note title</label><input placeholder="e.g. About this person"></div><div class="field"><label>Note body</label><textarea placeholder="Write a short note..."></textarea></div>` : `<label class="search" style="width:100%">${icon.search}<input type="search" placeholder="Search ${type === 'photo' ? 'photos' : 'archive files'}..."></label>`}<div class="add-person-mini-list">${config.choices.map((choice, index) => `<button class="add-person-mini-choice" type="button" data-mini-choice><span class="table-checkbox ${index === 0 ? 'checked' : ''}">${index === 0 ? icon.check : ''}</span><span>${escapeHtml(choice)}</span></button>`).join('')}</div></div><div class="add-person-mini-footer"><button class="button secondary" type="button" data-mini-close>Cancel</button><button class="button primary" type="button" data-mini-apply>${escapeHtml(config.action)}</button></div></div>`;
+      overlay.innerHTML = `<div class="add-person-mini-card" role="dialog" aria-modal="true" aria-labelledby="addPersonMiniTitle"><div class="add-person-mini-head"><div><h3 id="addPersonMiniTitle">${escapeHtml(config.title)}</h3><p>${escapeHtml(config.subtitle)}</p></div><button class="close-button" type="button" data-mini-close>${icon.close}</button></div><div class="add-person-mini-body">${type === 'note' ? `<div class="field"><label>Note title</label><input placeholder="e.g. About this person"></div><div class="field"><label>Note body</label><textarea placeholder="Write a short note..."></textarea></div>` : `<label class="search" style="width:100%">${icon.search}<input type="search" placeholder="Search ${type === 'photo' ? 'photos' : 'archive files'}..."></label>`}<div class="add-person-mini-list">${config.choices.map((choice, index) => `<button class="add-person-mini-choice" type="button" data-mini-choice><span class="add-person-mini-choice-indicator ${index === 0 ? 'checked' : ''}">${index === 0 ? icon.check : ''}</span><span>${escapeHtml(choice)}</span></button>`).join('')}</div></div><div class="add-person-mini-footer"><button class="button secondary" type="button" data-mini-close>Cancel</button><button class="button primary" type="button" data-mini-apply>${escapeHtml(config.action)}</button></div></div>`;
       document.body.appendChild(overlay);
       overlay.addEventListener('click', event => { if (event.target === overlay || event.target.closest('[data-mini-close]')) closeAddPersonAttachOverlay(); });
       overlay.querySelectorAll('[data-mini-choice]').forEach(button => button.addEventListener('click', () => {
-        overlay.querySelectorAll('.table-checkbox').forEach(box => { box.classList.remove('checked'); box.textContent = ''; });
-        const box = button.querySelector('.table-checkbox');
+        overlay.querySelectorAll('.add-person-mini-choice-indicator').forEach(box => { box.classList.remove('checked'); box.textContent = ''; });
+        const box = button.querySelector('.add-person-mini-choice-indicator');
         box.classList.add('checked');
         box.innerHTML = icon.check;
       }));
@@ -21510,18 +21428,122 @@ function renderTreeCardDateLines(person) {
       return sortPeopleRecords(list);
     }
 
+    function peopleSelectedIdSet() {
+      return new Set(Array.isArray(state.peopleSelectedIds) ? state.peopleSelectedIds : []);
+    }
+
+    function peopleSelectedRecords() {
+      const selectedIds = peopleSelectedIdSet();
+      return getPeople(currentProjectId()).filter(person => selectedIds.has(person.id));
+    }
+
+    function prunePeopleSelection() {
+      setPeopleSelection(state.peopleSelectedIds);
+    }
+
+    function clearPeopleSelection() {
+      state.peopleSelectedIds = [];
+      state.peopleSelectionAnchorId = '';
+    }
+
+    function setPeopleSelection(personIds) {
+      const validIds = new Set(getPeople(currentProjectId()).map(person => person.id));
+      state.peopleSelectedIds = [...new Set(Array.isArray(personIds) ? personIds : [])]
+        .filter(personId => validIds.has(personId));
+
+      if (!state.peopleSelectedIds.length || !validIds.has(state.peopleSelectionAnchorId)) {
+        state.peopleSelectionAnchorId = '';
+      }
+    }
+
+    function togglePeopleSelection(personId, options = {}) {
+      const rows = Array.isArray(options.rows) ? options.rows : [];
+      const visibleIds = rows.map(person => person.id);
+      const selectedIds = peopleSelectedIdSet();
+      const anchorIndex = visibleIds.indexOf(state.peopleSelectionAnchorId);
+      const personIndex = visibleIds.indexOf(personId);
+
+      if (options.shiftKey && anchorIndex >= 0 && personIndex >= 0) {
+        const start = Math.min(anchorIndex, personIndex);
+        const end = Math.max(anchorIndex, personIndex);
+        visibleIds.slice(start, end + 1).forEach(id => selectedIds.add(id));
+      } else {
+        if (selectedIds.has(personId)) selectedIds.delete(personId);
+        else selectedIds.add(personId);
+        state.peopleSelectionAnchorId = personId;
+      }
+
+      setPeopleSelection([...selectedIds]);
+    }
+
+    function peopleVisibleSelectionState(rows) {
+      const visibleIds = (Array.isArray(rows) ? rows : []).map(person => person.id);
+      const selectedIds = peopleSelectedIdSet();
+      const selectedVisibleIds = visibleIds.filter(personId => selectedIds.has(personId));
+
+      return {
+        visibleIds,
+        selectedVisibleIds,
+        allVisibleSelected: visibleIds.length > 0 && selectedVisibleIds.length === visibleIds.length,
+        someVisibleSelected: selectedVisibleIds.length > 0
+      };
+    }
+
     function renderPeopleActiveFilters() {
       if (!hasActivePeopleFilters()) return '';
       const chips = activePeopleFilterEntries().map(([key, label, value]) => `<span class="filter-chip people-filter-chip"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)} <button type="button" data-people-remove-filter="${key}" aria-label="Remove ${escapeHtml(label)} filter">${icon.close}</button></span>`).join('');
       return `<div class="people-filterbar" aria-label="Active People filters">${chips}<span class="people-filter-actions"><button class="link" type="button" id="peopleClearFilters">Clear all</button><button class="people-save-view" type="button" id="peopleSaveView">Save filter</button></span></div>`;
     }
 
+    function renderPeopleNormalToolbar() {
+      return `<div class="people-toolbar people-normal-toolbar">
+        <label class="search-input">${icon.search}<input id="peopleSearch" type="search" placeholder="Search people..." value="${escapeHtml(state.peopleSearch)}"></label>
+        <button class="button secondary people-columns-button ${peopleColumnsCustomized() ? 'active' : ''}" type="button" id="peopleColumnsButton" aria-haspopup="dialog">${icon.grid} Columns</button>
+        <button class="button secondary people-filter-button ${hasActivePeopleFilters() ? 'active' : ''}" type="button" id="peopleFilterButton">Filter${activePeopleFilterCount() ? `<span class="people-filter-count">${activePeopleFilterCount()}</span>` : ''}</button>
+        <span class="people-sort-field">
+          <select class="people-sort-select" id="peopleSort" aria-label="Sort people">
+            <option value="modified" ${state.peopleSort === 'modified' ? 'selected' : ''}>Sort: Date modified</option>
+            <option value="name" ${state.peopleSort === 'name' ? 'selected' : ''}>Sort: Name</option>
+            <option value="birth" ${state.peopleSort === 'birth' ? 'selected' : ''}>Sort: Birth date</option>
+          </select>
+          <span class="people-sort-chevron" aria-hidden="true">${icon.chevron}</span>
+        </span>
+        <button class="button primary" type="button" id="addPeoplePerson">${icon.plus} Add person</button>
+      </div>`;
+    }
+
+    function renderPeopleBulkToolbar(rows) {
+      const count = peopleSelectedRecords().length;
+      return `<div class="people-bulk-toolbar" aria-label="Bulk actions for selected people">
+        <strong class="people-bulk-summary">${count} selected</strong>
+        <div class="people-bulk-actions">
+          <button class="button secondary" type="button" data-people-bulk-export>${icon.export} Export selected people</button>
+          <button class="button secondary" type="button" data-people-bulk-add-board>${icon.whiteboard} Add selected people to a Geneograph board</button>
+          <button class="button danger" type="button" data-people-bulk-delete>${icon.trash} Delete selected</button>
+          <button class="button secondary" type="button" data-people-bulk-clear>Clear</button>
+        </div>
+      </div>`;
+    }
+
+    function renderPeopleDirectoryControls(rows) {
+      const toolbar = state.peopleSelectedIds.length
+        ? renderPeopleBulkToolbar(rows)
+        : renderPeopleNormalToolbar();
+
+      return `<div class="people-directory-controls">
+        <div class="people-toolbar-slot">${toolbar}</div>
+        ${renderPeopleActiveFilters()}
+      </div>`;
+    }
+
     function renderPeople() {
       workspace.classList.remove('no-sidebar');
       sidebar.innerHTML = '';
+      prunePeopleSelection();
       const selected = selectedPeopleRecord();
       const allPeopleRecords = currentPeopleRecords();
       if (state.peopleView === 'profile') {
+        clearPeopleSelection();
         renderPeopleSidebar();
         renderPeopleProfile(selected);
         return;
@@ -21529,30 +21551,15 @@ function renderTreeCardDateLines(person) {
       main.classList.remove('people-profile-main');
       renderPeopleSidebar();
       const rows = filteredPeople();
-      const hasPeopleFilters = hasActivePeopleFilters();
       main.innerHTML = `<div class="people-layout ${state.peoplePreviewCollapsed ? 'preview-collapsed' : ''}">
-        <section class="people-content ${hasPeopleFilters ? 'has-filters' : ''}" aria-label="People directory">
-          <div class="people-toolbar">
-            <label class="search-input">${icon.search}<input id="peopleSearch" type="search" placeholder="Search people..." value="${escapeHtml(state.peopleSearch)}"></label>
-            <button class="button secondary people-columns-button ${peopleColumnsCustomized() ? 'active' : ''}" type="button" id="peopleColumnsButton" aria-haspopup="dialog">${icon.grid} Columns</button>
-            <button class="button secondary people-filter-button ${hasActivePeopleFilters() ? 'active' : ''}" type="button" id="peopleFilterButton">Filter${activePeopleFilterCount() ? `<span class="people-filter-count">${activePeopleFilterCount()}</span>` : ''}</button>
-            <span class="people-sort-field">
-              <select class="people-sort-select" id="peopleSort" aria-label="Sort people">
-                <option value="modified" ${state.peopleSort === 'modified' ? 'selected' : ''}>Sort: Date modified</option>
-                <option value="name" ${state.peopleSort === 'name' ? 'selected' : ''}>Sort: Name</option>
-                <option value="birth" ${state.peopleSort === 'birth' ? 'selected' : ''}>Sort: Birth date</option>
-              </select>
-              <span class="people-sort-chevron" aria-hidden="true">${icon.chevron}</span>
-            </span>
-            <button class="button primary" type="button" id="addPeoplePerson">${icon.plus} Add person</button>
-          </div>
-          ${hasPeopleFilters ? renderPeopleActiveFilters() : ''}
+        <section class="people-content" aria-label="People directory">
+          ${renderPeopleDirectoryControls(rows)}
           <div class="people-table-wrap">${renderPeopleTable(rows)}</div>
           <div class="table-footer"><span>Showing ${rows.length ? 1 : 0}-${rows.length} of ${allPeopleRecords.length} people</span><div class="pagination"><button class="page-button icon-rotate-left" type="button" aria-label="Previous page">${icon.chevron}</button><button class="page-button active" type="button">1</button><button class="page-button" type="button">2</button><button class="page-button" type="button" aria-label="Next page">${icon.chevron}</button></div><span>Rows per page: 25</span></div>
         </section>
         ${renderPersonSidebar(selected?.id, 'people')}
       </div>`;
-      bindPeopleControls();
+      bindPeopleControls(rows);
     }
 
     function renderPeopleSidebar() {
@@ -21645,8 +21652,9 @@ function renderTreeCardDateLines(person) {
 
     function renderPeopleTable(rows) {
       const columns = peopleColumnsWithDefaults();
+      const selectedIds = peopleSelectedIdSet();
       const headers = [
-        '<th><span class="table-checkbox" aria-hidden="true"></span></th>',
+        '<th class="people-select-column"><input class="people-select-checkbox" type="checkbox" data-people-select-visible aria-label="Select all visible people"></th>',
         '<th>Name</th>',
         columns.living ? '<th>Living</th>' : '',
         columns.birth ? '<th>Birth date</th>' : '',
@@ -21654,10 +21662,15 @@ function renderTreeCardDateLines(person) {
         columns.death ? '<th>Death date</th>' : '',
         columns.deathPlace ? '<th>Death place</th>' : '',
         columns.updated ? '<th>Updated</th>' : '',
-        '<th>Actions</th>'
+        '<th class="people-actions-column">Actions</th>'
       ].join('');
       return `<table class="people-table"><thead><tr>${headers}</tr></thead><tbody>
-        ${rows.map(person => `<tr class="${person.id === state.selectedPeopleId ? 'selected' : ''}" data-people-row="${person.id}" tabindex="0"><td><span class="table-checkbox ${person.id === state.selectedPeopleId ? 'checked' : ''}">${person.id === state.selectedPeopleId ? icon.check : ''}</span></td><td><div class="person-cell"><div class="small-avatar ${person.gender === 'female' ? 'avatar-purple' : person.id === 'oliver' ? 'avatar-amber' : 'avatar-green'}">${person.initials}</div><div><strong>${escapeHtml(person.name)}</strong><span>${escapeHtml(person.relation)}</span></div></div></td>${columns.living ? `<td>${escapeHtml(person.living)}</td>` : ''}${columns.birth ? `<td>${escapeHtml(person.birth)}</td>` : ''}${columns.birthPlace ? `<td>${escapeHtml(person.birthPlace)}</td>` : ''}${columns.death ? `<td>${escapeHtml(person.death)}</td>` : ''}${columns.deathPlace ? `<td>${escapeHtml(person.deathPlace)}</td>` : ''}${columns.updated ? `<td>${escapeHtml(person.updated)}</td>` : ''}<td><button class="more-button people-row-action" type="button" aria-label="Actions for ${escapeHtml(person.name)}" aria-haspopup="menu" aria-expanded="false" data-people-row-menu="${person.id}">${icon.more}</button></td></tr>`).join('')}
+        ${rows.map(person => {
+          const isPreviewed = person.id === state.selectedPeopleId;
+          const isSelected = selectedIds.has(person.id);
+          const rowClasses = [isPreviewed ? 'is-previewed' : '', isSelected ? 'is-selected' : ''].filter(Boolean).join(' ');
+          return `<tr class="${rowClasses}" data-people-row="${person.id}" tabindex="0"><td class="people-select-column"><input class="people-select-checkbox" type="checkbox" data-people-select-id="${escapeHtml(person.id)}" aria-label="Select ${escapeHtml(person.name)}" ${isSelected ? 'checked' : ''}></td><td><div class="person-cell"><div class="small-avatar ${person.gender === 'female' ? 'avatar-purple' : person.id === 'oliver' ? 'avatar-amber' : 'avatar-green'}">${person.initials}</div><div><strong>${escapeHtml(person.name)}</strong><span>${escapeHtml(person.relation)}</span></div></div></td>${columns.living ? `<td>${escapeHtml(person.living)}</td>` : ''}${columns.birth ? `<td>${escapeHtml(person.birth)}</td>` : ''}${columns.birthPlace ? `<td>${escapeHtml(person.birthPlace)}</td>` : ''}${columns.death ? `<td>${escapeHtml(person.death)}</td>` : ''}${columns.deathPlace ? `<td>${escapeHtml(person.deathPlace)}</td>` : ''}${columns.updated ? `<td>${escapeHtml(person.updated)}</td>` : ''}<td class="people-actions-column"><button class="more-button people-row-action" type="button" aria-label="Actions for ${escapeHtml(person.name)}" aria-haspopup="menu" aria-expanded="false" data-people-row-menu="${person.id}">${icon.more}</button></td></tr>`;
+        }).join('')}
       </tbody></table>`;
     }
 
@@ -24171,7 +24184,7 @@ function renderTreeCardDateLines(person) {
           renderPeople();
         });
       main.querySelector('#profileAddRelative')?.addEventListener('click', e => openRelativePopover(e.currentTarget, 'relative'));
-      main.querySelector('#profileMoreActions')?.addEventListener('click', e => openPeoplePersonActionsMenu(person.id, e.currentTarget));
+      main.querySelector('#profileMoreActions')?.addEventListener('click', e => openPeopleActionsMenu(person.id, e.currentTarget, { includeProfile: false }));
       main.querySelector('#profileInlineGender')?.addEventListener('change', event => {
         const isFemale = event.target.value === 'Female';
         const row = main.querySelector('#profileInlineMaiden');
@@ -24535,6 +24548,7 @@ function renderTreeCardDateLines(person) {
       popover
         .querySelector('[data-people-filter-apply]')
         ?.addEventListener('click', () => {
+          clearPeopleSelection();
           state.peopleFilters = readPeopleFilterFields(popover);
           state.peopleSavedViewId = '';
           state.peopleSavedView = 'Custom filters';
@@ -24550,6 +24564,7 @@ function renderTreeCardDateLines(person) {
     }
 
     function clearPeopleFilters() {
+      clearPeopleSelection();
       state.peopleFilters = { ...defaultPeopleFilters };
       state.peopleSavedViewId = '';
       state.peopleSavedView = 'All people';
@@ -24558,6 +24573,7 @@ function renderTreeCardDateLines(person) {
     }
 
     function removePeopleFilter(key) {
+      clearPeopleSelection();
       state.peopleFilters = peopleFiltersWithDefaults();
       if (key === 'living') state.peopleFilters[key] = 'Any';
       else state.peopleFilters[key] = '';
@@ -24791,6 +24807,7 @@ function renderTreeCardDateLines(person) {
           existingView.filters = { ...submittedFilters };
 
           if (wasActive) {
+            clearPeopleSelection();
             state.peopleSavedView = submittedName;
             state.peopleFilters = { ...submittedFilters };
           }
@@ -24810,6 +24827,7 @@ function renderTreeCardDateLines(person) {
           filters: { ...submittedFilters }
         });
 
+        clearPeopleSelection();
         state.peopleSavedViewId = id;
         state.peopleSavedView = submittedName;
         state.peopleFilters = { ...submittedFilters };
@@ -24995,6 +25013,7 @@ function renderTreeCardDateLines(person) {
       peopleSavedViews.splice(index, 1);
 
       if (wasActive) {
+        clearPeopleSelection();
         state.peopleSavedViewId = '';
         state.peopleSavedView = 'All people';
         state.peopleFilters = { ...defaultPeopleFilters };
@@ -25009,6 +25028,7 @@ function renderTreeCardDateLines(person) {
     function applyPeopleSavedView(viewId) {
       const view = peopleSavedViews.find(item => item.id === viewId);
       if (!view) return;
+      clearPeopleSelection();
       state.peopleSavedViewId = view.id;
       state.peopleSavedView = view.name;
       state.peopleFilters = { ...defaultPeopleFilters, ...view.filters };
@@ -25016,29 +25036,40 @@ function renderTreeCardDateLines(person) {
       renderPeople();
     }
 
-    function openPeopleRowActionsMenu(personId, anchor) {
+    function openPeopleActionsMenu(personId, anchor, { includeProfile = true } = {}) {
       closeMenu();
       closePeopleFilterPopover();
       closePeopleColumnsPopover();
-      const person = currentPeopleRecords().find(item => item.id === personId);
-      if (!person) return;
+      const person = getPerson(personId);
+      if (!person || !anchor) return;
       const rect = anchor.getBoundingClientRect();
       const menu = document.createElement('div');
       menu.className = 'menu-popover people-row-menu';
       menu.id = 'projectMenu';
+      menu.setAttribute('role', 'menu');
+      menu.setAttribute('aria-label', `Actions for ${person.names?.display || 'person'}`);
+      menu.style.visibility = 'hidden';
       menu.style.top = `${rect.bottom + 6}px`;
-      menu.style.left = `${Math.max(12, rect.right - 190)}px`;
-      menu.innerHTML = `<button type="button" data-people-action="profile">Open profile</button><button type="button" data-people-action="tree">Show in Family Tree</button><button type="button" class="danger" data-people-action="delete">Delete person</button>`;
+      menu.style.left = '0px';
+      menu.innerHTML = `${includeProfile ? '<button type="button" role="menuitem" data-people-action="profile">Open profile</button>' : ''}<button type="button" role="menuitem" data-people-action="edit">Edit person</button><button type="button" role="menuitem" data-people-action="tree">Show in Family Tree</button><button type="button" role="menuitem" class="danger" data-people-action="delete">Delete person</button>`;
       document.body.appendChild(menu);
+      const viewportPadding = 12;
+      const menuWidth = menu.getBoundingClientRect().width;
+      menu.style.left = `${Math.max(viewportPadding, Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - viewportPadding))}px`;
+      menu.style.visibility = 'visible';
       menu.addEventListener('click', event => {
         const action = event.target.closest('[data-people-action]')?.dataset.peopleAction;
         if (!action) return;
         closeMenu();
         if (action === 'profile') openPeopleProfileFromRow(person.id);
+        if (action === 'edit') openEditPersonModal(person.id);
         if (action === 'tree') showPersonInFamilyTree(person.id);
-        if (action === 'delete') openDeletePeoplePersonConfirm(person.id);
+        if (action === 'delete') openDeletePeopleConfirm([person.id]);
       });
-      setTimeout(() => document.addEventListener('click', closeMenu), 0);
+      setTimeout(() => {
+        document.addEventListener('click', closeMenu);
+        document.addEventListener('scroll', closeMenu, true);
+      }, 0);
     }
 
     function openPeopleProfileFromRow(personId) {
@@ -25212,7 +25243,7 @@ function renderTreeCardDateLines(person) {
         if (!selected) return;
         event.stopPropagation();
         syncPersonSidebarSelection(selected.id, context);
-        openFamilyPersonActionsMenu(event.currentTarget, selected);
+        openPeopleActionsMenu(selected.id, event.currentTarget, { includeProfile: true });
       });
       root.querySelector('#addRelative')?.addEventListener('click', event => {
         if (selected?.id) syncPersonSidebarSelection(selected.id, context);
@@ -25250,119 +25281,202 @@ function renderTreeCardDateLines(person) {
       bindToasts(root);
     }
 
-    function openPeoplePersonActionsMenu(personId, anchor) {
-      closeMenu();
-      closePeopleFilterPopover();
-      closePeopleColumnsPopover();
+    function openDeletePeopleConfirm(personIds) {
+      const requestedIds = [...new Set(Array.isArray(personIds) ? personIds.filter(Boolean) : [])];
+      const validPeople = requestedIds
+        .map(personId => getPerson(personId))
+        .filter(Boolean);
 
-      const person = currentPeopleRecords().find(item => item.id === personId);
-      if (!person || !anchor) return;
+      if (!validPeople.length) return;
 
-      const rect = anchor.getBoundingClientRect();
-      const menu = document.createElement('div');
+      const validIds = validPeople.map(person => person.id);
+      const count = validPeople.length;
+      const visibleNames = validPeople.slice(0, 5)
+        .map(person => `<li>${escapeHtml(person.names?.display || 'Unnamed person')}</li>`)
+        .join('');
+      const remaining = count - 5;
+      const noun = count === 1 ? 'person' : 'people';
 
-      menu.className = 'menu-popover people-row-menu';
-      menu.id = 'projectMenu';
-      menu.setAttribute('role', 'menu');
-      menu.setAttribute('aria-label', `Actions for ${person.name}`);
+      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deletePeopleTitle"><div class="modal-header"><div><h2 id="deletePeopleTitle">Delete ${count === 1 ? 'person' : `${count} people`}?</h2><p>${count} ${noun} selected</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="people-delete-confirm-copy"><p>Deleting ${count === 1 ? 'this person' : 'these people'} will also remove their relationship references.</p><ul>${visibleNames}</ul>${remaining > 0 ? `<p class="people-delete-remaining">And ${remaining} more ${remaining === 1 ? 'person' : 'people'}.</p>` : ''}<p>Linked photos, archive files, notes, and other research material will remain in the project.</p></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-confirm-delete-people>Delete ${noun}</button></div></div>`);
 
-      menu.innerHTML = `
-        <button
-          type="button"
-          role="menuitem"
-          data-people-person-action="tree">
-          Show in Family Tree
-        </button>
+      modalBackdrop.querySelector('[data-confirm-delete-people]')
+        ?.addEventListener('click', () => deletePeopleRecords(validIds));
+    }
 
-        <button
-          type="button"
-          role="menuitem"
-          class="danger"
-          data-people-person-action="delete">
-          Delete person
-        </button>
-      `;
+    function deletePeopleRecords(personIds) {
+      const requestedIds = [...new Set(Array.isArray(personIds) ? personIds.filter(Boolean) : [])];
+      const validIds = requestedIds.filter(personId => Boolean(getPerson(personId)));
+      if (!validIds.length) return;
 
-      /*
-      * Append first so the browser can calculate the menu's real width.
-      * Hide it during measurement to avoid a visible jump.
-      */
-      menu.style.visibility = 'hidden';
-      menu.style.top = `${rect.bottom + 6}px`;
-      menu.style.left = '0px';
+      const deletedIds = new Set(validIds);
+      const partnerAFields = ['fatherId', 'husbandId', 'partnerAId', 'partner1Id', 'personAId'];
+      const partnerBFields = ['motherId', 'wifeId', 'partnerBId', 'partner2Id', 'personBId'];
+      const partnerAHints = ['partnerARoleHint', 'partner1RoleHint', 'personARoleHint', 'husbandRoleHint'];
+      const partnerBHints = ['partnerBRoleHint', 'partner2RoleHint', 'personBRoleHint', 'wifeRoleHint'];
 
-      document.body.appendChild(menu);
+      sampleData.people = sampleData.people.filter(person => !deletedIds.has(person.id));
 
-      const viewportPadding = 12;
-      const menuWidth = menu.getBoundingClientRect().width;
+      sampleData.families = centralFamilyRecords().map(family => {
+        const removedPartnerA = partnerAFields.some(field => deletedIds.has(family[field]));
+        const removedPartnerB = partnerBFields.some(field => deletedIds.has(family[field]));
 
-      /*
-      * Align the menu's right edge with the button's right edge.
-      * Clamp only when the menu would leave the viewport.
-      */
-      const preferredLeft = rect.right - menuWidth;
-      const maximumLeft =
-        window.innerWidth - menuWidth - viewportPadding;
+        partnerAFields.forEach(field => {
+          if (deletedIds.has(family[field])) family[field] = '';
+        });
+        partnerBFields.forEach(field => {
+          if (deletedIds.has(family[field])) family[field] = '';
+        });
+        if (removedPartnerA) partnerAHints.forEach(field => { family[field] = ''; });
+        if (removedPartnerB) partnerBHints.forEach(field => { family[field] = ''; });
 
-      menu.style.left = `${
-        Math.max(
-          viewportPadding,
-          Math.min(preferredLeft, maximumLeft)
-        )
-      }px`;
+        unlinkSetFamilyChildren(
+          family,
+          unlinkFamilyChildrenIds(family).filter(personId => !deletedIds.has(personId))
+        );
 
-      menu.style.visibility = 'visible';
+        family.parentChildTypes = Object.fromEntries(
+          Object.entries(sanitizeParentChildTypes(family.parentChildTypes))
+            .filter(([key]) => !key.split('|').some(personId => deletedIds.has(personId)))
+        );
 
-      menu.addEventListener('click', event => {
-        const action = event.target
-          .closest('[data-people-person-action]')
-          ?.dataset.peoplePersonAction;
-
-        if (!action) return;
-
-        closeMenu();
-
-        if (action === 'tree') {
-          showPersonInFamilyTree(person.id);
-        }
-
-        if (action === 'delete') {
-          openDeletePeoplePersonConfirm(person.id);
-        }
+        return syncFamilyPartnerAliases(family);
+      }).filter(family => {
+        const memberIds = new Set([
+          familyPartnerAId(family),
+          familyPartnerBId(family),
+          ...unlinkFamilyChildrenIds(family)
+        ].filter(Boolean));
+        return memberIds.size >= 2;
       });
 
-      setTimeout(() => {
-        document.addEventListener('click', closeMenu);
-        document.addEventListener('scroll', closeMenu, true);
-      }, 0);
-    }
+      const survivingFamilyIds = new Set(sampleData.families.map(family => family.id));
+      sampleData.events = (sampleData.events || []).map(event => ({
+        ...event,
+        personIds: Array.isArray(event.personIds)
+          ? event.personIds.filter(personId => !deletedIds.has(personId))
+          : event.personIds,
+        relatedPersonIds: Array.isArray(event.relatedPersonIds)
+          ? event.relatedPersonIds.filter(personId => !deletedIds.has(personId))
+          : event.relatedPersonIds
+      })).filter(event => {
+        if (event.familyId && !survivingFamilyIds.has(event.familyId)) return false;
+        return !Array.isArray(event.personIds) || event.personIds.length > 0;
+      });
 
-    function openDeletePeoplePersonConfirm(personId) {
-      const person = currentPeopleRecords().find(item => item.id === personId);
-      if (!person) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deletePeoplePersonTitle"><div class="modal-header"><div><h2 id="deletePeoplePersonTitle">Delete person?</h2><p>${escapeHtml(person.name)}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="albums-delete-copy">${escapeHtml(person.name)} will be removed from this project. Linked photos, archive files, notes, and facts will remain.</div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" id="confirmDeletePeoplePerson">Delete person</button></div></div>`);
-      modalBackdrop.querySelector('#confirmDeletePeoplePerson')?.addEventListener('click', () => { closeModal(); showToast('Person deletion simulated.'); });
+      sampleData.links = (sampleData.links || []).filter(link =>
+        !(link.fromType === 'person' && deletedIds.has(link.fromId))
+        && !(link.toType === 'person' && deletedIds.has(link.toId))
+      );
+
+      clearPeopleSelection();
+      const fallbackId = getPeople(currentProjectId())[0]?.id || '';
+      if (!getPerson(state.selectedPeopleId)) state.selectedPeopleId = fallbackId;
+      if (!getPerson(state.selectedPersonId)) state.selectedPersonId = fallbackId;
+      if (deletedIds.has(state.treeCenterTargetId)) state.treeCenterTargetId = fallbackId;
+
+      syncFamilyReciprocalLinks();
+      sampleData.events = buildSampleEvents();
+      closeModal();
+      render();
+      showToast(validIds.length === 1 ? 'Person deleted.' : `${validIds.length} people deleted.`);
     }
-    function bindPeopleControls() {
-      bindPeopleSidebar(main);
-      bindToasts(main);
-      bindSearchInput(main, '#peopleSearch', 'peopleSearch', renderPeople);
+    function bindPeopleToolbarControls(rows) {
+      bindSearchInput(main, '#peopleSearch', 'peopleSearch', () => {
+        clearPeopleSelection();
+        renderPeople();
+      });
       main.querySelector('#peopleSort')?.addEventListener('change', event => {
         state.peopleSort = event.currentTarget.value || 'modified';
         renderPeople();
       });
-      main.querySelector('#peopleColumnsButton')?.addEventListener('click', e => openPeopleColumnsPopover(e.currentTarget));
-      main.querySelector('#peopleFilterButton')?.addEventListener('click', e => openPeopleFilterPopover(e.currentTarget));
+      main.querySelector('#peopleColumnsButton')?.addEventListener('click', event => openPeopleColumnsPopover(event.currentTarget));
+      main.querySelector('#peopleFilterButton')?.addEventListener('click', event => openPeopleFilterPopover(event.currentTarget));
       main.querySelector('#peopleClearFilters')?.addEventListener('click', clearPeopleFilters);
       main.querySelector('#peopleSaveView')?.addEventListener('click', openSavePeopleViewModal);
-      main.querySelectorAll('[data-people-remove-filter]').forEach(button => button.addEventListener('click', () => removePeopleFilter(button.dataset.peopleRemoveFilter)));
-      main.querySelector('#addPeoplePerson')?.addEventListener('click', () => openAddPersonModal('Add person', 'Create a new person in this project'));
-      bindPersonSidebar(main, 'people');
-      main.querySelectorAll('[data-people-row-menu]').forEach(button => button.addEventListener('click', e => { e.stopPropagation(); openPeopleRowActionsMenu(button.dataset.peopleRowMenu, button); }));
-      main.querySelectorAll('[data-people-row]').forEach(row => {
-        row.addEventListener('click', e => { if (!e.target.closest('button')) { state.selectedPeopleId = row.dataset.peopleRow; state.selectedPersonId = row.dataset.peopleRow; resetPersonSidebarSections(); renderPeople(); }});
-        row.addEventListener('keydown', e => { if (e.key === 'Enter') { state.selectedPeopleId = row.dataset.peopleRow; state.selectedPersonId = row.dataset.peopleRow; resetPersonSidebarSections(); renderPeople(); }});
+      main.querySelectorAll('[data-people-remove-filter]').forEach(button => {
+        button.addEventListener('click', () => removePeopleFilter(button.dataset.peopleRemoveFilter));
       });
+      main.querySelector('#addPeoplePerson')?.addEventListener('click', () => openAddPersonModal('Add person', 'Create a new person in this project'));
+      main.querySelector('[data-people-bulk-export]')?.addEventListener('click', () => showToast('Export selected people'));
+      main.querySelector('[data-people-bulk-add-board]')?.addEventListener('click', () => showToast('Add selected people to a Geneograph board'));
+      main.querySelector('[data-people-bulk-delete]')?.addEventListener('click', () => openDeletePeopleConfirm(state.peopleSelectedIds));
+      main.querySelector('[data-people-bulk-clear]')?.addEventListener('click', () => {
+        clearPeopleSelection();
+        renderPeople();
+      });
+    }
+
+    function bindPeopleSelectionControls(rows) {
+      const selectionState = peopleVisibleSelectionState(rows);
+      const headerCheckbox = main.querySelector('[data-people-select-visible]');
+
+      if (headerCheckbox) {
+        headerCheckbox.checked = selectionState.allVisibleSelected;
+        headerCheckbox.indeterminate = selectionState.someVisibleSelected && !selectionState.allVisibleSelected;
+        headerCheckbox.disabled = selectionState.visibleIds.length === 0;
+        headerCheckbox.addEventListener('click', event => {
+          event.stopPropagation();
+          const selectedIds = peopleSelectedIdSet();
+          if (selectionState.allVisibleSelected) {
+            selectionState.visibleIds.forEach(personId => selectedIds.delete(personId));
+          } else {
+            selectionState.visibleIds.forEach(personId => selectedIds.add(personId));
+          }
+          setPeopleSelection([...selectedIds]);
+          renderPeople();
+        });
+      }
+
+      main.querySelectorAll('[data-people-select-id]').forEach(checkbox => {
+        checkbox.addEventListener('click', event => {
+          event.stopPropagation();
+          togglePeopleSelection(checkbox.dataset.peopleSelectId, {
+            shiftKey: event.shiftKey,
+            rows
+          });
+          renderPeople();
+        });
+      });
+    }
+
+    function bindPeopleTableNavigation(rows) {
+      main.querySelectorAll('[data-people-row]').forEach(row => {
+        const previewPerson = () => {
+          state.selectedPeopleId = row.dataset.peopleRow;
+          state.selectedPersonId = row.dataset.peopleRow;
+          resetPersonSidebarSections();
+          renderPeople();
+        };
+
+        row.addEventListener('click', event => {
+          if (event.target.closest('button, input, select, a, [data-people-select-id]')) return;
+          previewPerson();
+        });
+        row.addEventListener('keydown', event => {
+          if (event.target !== row || event.key !== 'Enter') return;
+          event.preventDefault();
+          previewPerson();
+        });
+      });
+    }
+
+    function bindPeopleRowActions(rows) {
+      main.querySelectorAll('[data-people-row-menu]').forEach(button => {
+        button.addEventListener('click', event => {
+          event.stopPropagation();
+          openPeopleActionsMenu(button.dataset.peopleRowMenu, button, { includeProfile: true });
+        });
+      });
+    }
+
+    function bindPeopleControls(rows) {
+      bindPeopleSidebar(main);
+      bindPeopleToolbarControls(rows);
+      bindPeopleSelectionControls(rows);
+      bindPeopleTableNavigation(rows);
+      bindPeopleRowActions(rows);
+      bindPersonSidebar(main, 'people');
+      bindToasts(main);
     }
 
     function bindPeopleSidebar(root) {
@@ -25391,6 +25505,7 @@ function renderTreeCardDateLines(person) {
       root
         .querySelector('[data-people-side]')
         ?.addEventListener('click', () => {
+          clearPeopleSelection();
           state.peopleView = 'directory';
           state.peopleSide = 'people';
           state.peopleSavedViewId = '';
@@ -25403,6 +25518,7 @@ function renderTreeCardDateLines(person) {
       root
         .querySelector('[data-open-profile]')
         ?.addEventListener('click', () => {
+          clearPeopleSelection();
           state.peopleView = 'profile';
           renderPeople();
         });
@@ -28768,8 +28884,8 @@ function renderTreeCardDateLines(person) {
       main.querySelector('#sortProjects')?.addEventListener('change', e => { state.sort = e.target.value; renderStartup(); });
       main.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => { state.viewMode = button.dataset.view; renderStartup(); }));
       main.querySelectorAll('[data-project-id]').forEach(card => {
-        card.addEventListener('click', e => { if (!e.target.closest('button')) { state.selectedProjectId = card.dataset.projectId; renderStartup(); }});
-        card.addEventListener('keydown', e => { if (e.key === 'Enter') { state.selectedProjectId = card.dataset.projectId; renderStartup(); }});
+        card.addEventListener('click', e => { if (!e.target.closest('button')) { clearPeopleSelection(); state.selectedProjectId = card.dataset.projectId; renderStartup(); }});
+        card.addEventListener('keydown', e => { if (e.key === 'Enter') { clearPeopleSelection(); state.selectedProjectId = card.dataset.projectId; renderStartup(); }});
       });
       main.querySelectorAll('[data-open]').forEach(button => button.addEventListener('click', e => { e.stopPropagation(); openProject(button.dataset.open); }));
       main.querySelectorAll('[data-menu]').forEach(button => button.addEventListener('click', e => { e.stopPropagation(); openProjectMenu(button.dataset.menu, button); }));
@@ -28777,6 +28893,7 @@ function renderTreeCardDateLines(person) {
     }
 
     function openProject(id) {
+      clearPeopleSelection();
       state.currentProjectId = id;
       state.selectedProjectId = id;
       state.projectOpen = true;
@@ -29014,7 +29131,19 @@ function renderTreeCardDateLines(person) {
 
     normalizeCentralRuntimeData();
 
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeMenu(); } });
+    document.addEventListener('keydown', event => {
+      if (event.key !== 'Escape') return;
+      closeModal();
+      closeMenu();
+      if (
+        state.activeModule === 'People'
+        && state.peopleView === 'directory'
+        && state.peopleSelectedIds.length
+      ) {
+        clearPeopleSelection();
+        renderPeople();
+      }
+    });
     main.addEventListener('click', e => {
       const side = e.target.closest('[data-open-side-main]')?.dataset.openSideMain;
       if (side) { state.openSide = side; renderOpenProject(); }
