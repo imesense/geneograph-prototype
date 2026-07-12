@@ -15211,12 +15211,35 @@
 
         renderFamilyTreePreserveScroll();
       }));
-      main.querySelectorAll('[data-card-add]').forEach(button => button.addEventListener('click', e => {
-        e.stopPropagation();
-        const card = button.closest('[data-person-id]');
-        if (card?.dataset.personId) state.selectedPersonId = card.dataset.personId;
-        openRelativePopover(button, button.dataset.cardAdd || 'relative');
-      }));
+      main
+        .querySelectorAll('[data-card-add]')
+        .forEach(button =>
+          button.addEventListener(
+            'click',
+            event => {
+              event.stopPropagation();
+
+              const card =
+                button.closest(
+                  '[data-person-id]'
+                );
+
+              const anchorPersonId =
+                card?.dataset.personId
+                || state.selectedPersonId;
+
+              if (!anchorPersonId) return;
+
+              state.selectedPersonId =
+                anchorPersonId;
+
+              openRelativePopover(
+                button,
+                anchorPersonId
+              );
+            }
+          )
+        );
       main.querySelectorAll('[data-card-edit]').forEach(button => button.addEventListener('click', e => {
         e.stopPropagation();
         openEditPersonModal(button.dataset.cardEdit);
@@ -16294,14 +16317,8 @@ function renderTreeCardDateLines(person) {
 
       if (!person) return '';
 
-      const initials =
-        person.names?.initials || '??';
-
       const name =
         person.names?.display || 'Unnamed person';
-
-      const avatar =
-        person.avatarClass || 'avatar-green';
 
       const actions =
         item.canEdit || item.canUnlink
@@ -16352,11 +16369,14 @@ function renderTreeCardDateLines(person) {
             data-select-relationship-person="${escapeHtml(person.id)}"
             aria-label="Select ${escapeHtml(name)}">
 
-            <span
-              class="small-avatar ${escapeHtml(avatar)}"
-              aria-hidden="true">
-              ${escapeHtml(initials)}
-            </span>
+            ${renderPersonAvatar(
+              person,
+              'small-avatar',
+              {
+                element: 'span',
+                decorative: true
+              }
+            )}
 
             <span class="relation-row-copy">
               <strong>${escapeHtml(name)}</strong>
@@ -16883,10 +16903,15 @@ function renderTreeCardDateLines(person) {
       modalBackdrop.querySelector('[data-connect-search]')?.focus();
     }
 
-    function openRelativePopover(anchor, relation) {
+    function openRelativePopover(
+      anchor,
+      anchorPersonId
+    ) {
       closeMenu();
 
-      const person = personById(state.selectedPersonId);
+      const person =
+        personById(anchorPersonId);
+
       if (!person || !anchor) return;
 
       const popover = document.createElement('div');
@@ -17553,12 +17578,6 @@ function renderTreeCardDateLines(person) {
       return false;
     }
 
-    function addPersonRelationshipPartnerAvatar(person) {
-      const initials = person?.names?.initials || '??';
-      const avatar = person?.avatarClass || 'avatar-green';
-      return `<span class="small-avatar ${escapeHtml(avatar)}">${escapeHtml(initials)}</span>`;
-    }
-
     function renderAddPersonRelationshipCard({ relationship = null, personId = '', partner = null, index = 0, mode = 'edit' } = {}) {
       const relationshipType = relationship
         ? relationshipTypeFromLegacy(relationship)
@@ -17586,7 +17605,10 @@ function renderTreeCardDateLines(person) {
             <label>Person</label>
             <div class="add-person-relationship-partner-shell">
               <div class="add-person-relationship-partner">
-                ${addPersonRelationshipPartnerAvatar(partner)}
+                ${renderPersonAvatar(
+                  partner,
+                  'small-avatar'
+                )}
                 <span>${escapeHtml(partnerName)}</span>
               </div>
               ${showPartnerUnlinkToast ? `
@@ -17897,17 +17919,18 @@ function renderTreeCardDateLines(person) {
     }
 
     function createPersonFromAddPersonModal(options = {}, additionalFacts = {}) {
-      const firstName = readAddPersonModalValue('#addPersonFirstName') || 'New';
-      const lastName = readAddPersonModalValue('#addPersonLastName') || 'Person';
+      const enteredFirstName = readAddPersonModalValue('#addPersonFirstName');
+      const firstName = enteredFirstName || 'Unknown';
+      const lastName = readAddPersonModalValue('#addPersonLastName');
       const middleName = readAddPersonModalValue('#addPersonMiddleName');
       const maidenName = readAddPersonModalValue('#addPersonMaidenName');
-      const id = createPersonIdFromName(firstName, lastName);
+      const id = createPersonIdFromName( firstName, lastName);
       const genderValue = readAddPersonModalValue('#addPersonGender');
       const livingStatus = normalizeLivingStatus(readAddPersonModalValue('#addPersonLivingStatus'));
       const birthDate = collectGenealogyDateField('addPersonBirth') || emptyGenealogyDate('Exact date');
       const deathDate = livingStatus === 'Deceased' ? collectGenealogyDateField('addPersonDeath') || emptyGenealogyDate('Exact date') : emptyGenealogyDate('Exact date');
       const display = [firstName, middleName, lastName].filter(Boolean).join(' ');
-      const initials = `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase() || 'NP';
+      const initials = `${firstName[0] || 'U'}${lastName[0] || ''}`.toUpperCase();
       const birthPlace = resolvePlaceInputSelector('#addPersonBirthPlace');
       const deathPlace = livingStatus === 'Deceased'
         ? resolvePlaceInputSelector('#addPersonDeathPlace')
@@ -18629,9 +18652,20 @@ function renderTreeCardDateLines(person) {
       }
 
       sampleData.events = buildSampleEvents();
+
       clearPeopleSelection();
-      state.selectedPersonId = newPerson.id;
-      state.selectedPeopleId = newPerson.id;
+
+      const selectedAfterCreateId =
+        connectionIntent.shouldConnect
+        && getPerson(
+          connectionIntent.anchorPersonId
+        )
+          ? connectionIntent.anchorPersonId
+          : newPerson.id;
+
+      state.selectedPersonId = selectedAfterCreateId;
+
+      state.selectedPeopleId = selectedAfterCreateId;
 
       closeModal();
 
@@ -21669,7 +21703,28 @@ function renderTreeCardDateLines(person) {
           const isPreviewed = person.id === state.selectedPeopleId;
           const isSelected = selectedIds.has(person.id);
           const rowClasses = [isPreviewed ? 'is-previewed' : '', isSelected ? 'is-selected' : ''].filter(Boolean).join(' ');
-          return `<tr class="${rowClasses}" data-people-row="${person.id}" tabindex="0"><td class="people-select-column"><input class="people-select-checkbox" type="checkbox" data-people-select-id="${escapeHtml(person.id)}" aria-label="Select ${escapeHtml(person.name)}" ${isSelected ? 'checked' : ''}></td><td><div class="person-cell"><div class="small-avatar ${person.gender === 'female' ? 'avatar-purple' : person.id === 'oliver' ? 'avatar-amber' : 'avatar-green'}">${person.initials}</div><div><strong>${escapeHtml(person.name)}</strong><span>${escapeHtml(person.relation)}</span></div></div></td>${columns.living ? `<td>${escapeHtml(person.living)}</td>` : ''}${columns.birth ? `<td>${escapeHtml(person.birth)}</td>` : ''}${columns.birthPlace ? `<td>${escapeHtml(person.birthPlace)}</td>` : ''}${columns.death ? `<td>${escapeHtml(person.death)}</td>` : ''}${columns.deathPlace ? `<td>${escapeHtml(person.deathPlace)}</td>` : ''}${columns.updated ? `<td>${escapeHtml(person.updated)}</td>` : ''}<td class="people-actions-column"><button class="more-button people-row-action" type="button" aria-label="Actions for ${escapeHtml(person.name)}" aria-haspopup="menu" aria-expanded="false" data-people-row-menu="${person.id}">${icon.more}</button></td></tr>`;
+          return `<tr class="${rowClasses}" data-people-row="${person.id}" tabindex="0">
+            <td class="people-select-column">
+            <input class="people-select-checkbox" type="checkbox" data-people-select-id="${escapeHtml(person.id)}" aria-label="Select ${escapeHtml(person.name)}" ${isSelected ? 'checked' : ''}></td>
+            <td>
+              <div class="person-cell">
+                ${renderPersonAvatar(
+                  person,
+                  'small-avatar'
+                )}
+
+                <div class="person-cell-copy">
+                  <strong>
+                    ${escapeHtml(person.name)}
+                  </strong>
+
+                  <span>
+                    ${escapeHtml(person.relation)}
+                  </span>
+                </div>
+              </div>
+            </td>
+                ${columns.living ? `<td>${escapeHtml(person.living)}</td>` : ''}${columns.birth ? `<td>${escapeHtml(person.birth)}</td>` : ''}${columns.birthPlace ? `<td>${escapeHtml(person.birthPlace)}</td>` : ''}${columns.death ? `<td>${escapeHtml(person.death)}</td>` : ''}${columns.deathPlace ? `<td>${escapeHtml(person.deathPlace)}</td>` : ''}${columns.updated ? `<td>${escapeHtml(person.updated)}</td>` : ''}<td class="people-actions-column"><button class="more-button people-row-action" type="button" aria-label="Actions for ${escapeHtml(person.name)}" aria-haspopup="menu" aria-expanded="false" data-people-row-menu="${person.id}">${icon.more}</button></td></tr>`;
         }).join('')}
       </tbody></table>`;
     }
@@ -24183,8 +24238,31 @@ function renderTreeCardDateLines(person) {
           state.peopleProfileEditing = true;
           renderPeople();
         });
-      main.querySelector('#profileAddRelative')?.addEventListener('click', e => openRelativePopover(e.currentTarget, 'relative'));
-      main.querySelector('#profileMoreActions')?.addEventListener('click', e => openPeopleActionsMenu(person.id, e.currentTarget, { includeProfile: false }));
+      main
+        .querySelector('#profileAddRelative')
+        ?.addEventListener(
+          'click',
+          event => {
+            openRelativePopover(
+              event.currentTarget,
+              person.id
+            );
+          }
+        );
+      main
+        .querySelector('#profileMoreActions')
+        ?.addEventListener(
+          'click',
+          event => {
+            openPeopleActionsMenu(
+              person.id,
+              event.currentTarget,
+              {
+                includeProfile: false
+              }
+            );
+          }
+        );
       main.querySelector('#profileInlineGender')?.addEventListener('change', event => {
         const isFemale = event.target.value === 'Female';
         const row = main.querySelector('#profileInlineMaiden');
@@ -24402,12 +24480,37 @@ function renderTreeCardDateLines(person) {
       render();
     }
 
-    function openProfileFamilyMember(personId) {
-      if (!personId) { showToast('Placeholder family member; add a linked person later.'); return; }
-      if (!getPerson(personId)) { showToast('This family member is not linked to a People profile yet.'); return; }
-      state.selectedPeopleId = personId;
-      state.peopleView = 'profile';
-      state.peopleSide = 'profile';
+    function openProfileFamilyMember(
+      personId
+    ) {
+      if (!personId) {
+        showToast(
+          'Placeholder family member; add a linked person later.'
+        );
+
+        return;
+      }
+
+      if (!getPerson(personId)) {
+        showToast(
+          'This family member is not linked to a People profile yet.'
+        );
+
+        return;
+      }
+
+      state.selectedPeopleId =
+        personId;
+
+      state.selectedPersonId =
+        personId;
+
+      state.peopleView =
+        'profile';
+
+      state.peopleSide =
+        'profile';
+
       renderPeople();
     }
 
@@ -25036,39 +25139,147 @@ function renderTreeCardDateLines(person) {
       renderPeople();
     }
 
-    function openPeopleActionsMenu(personId, anchor, { includeProfile = true } = {}) {
+    function openPeopleActionsMenu(
+      personId,
+      anchor,
+      {
+        includeProfile = true
+      } = {}
+    ) {
       closeMenu();
       closePeopleFilterPopover();
       closePeopleColumnsPopover();
+
       const person = getPerson(personId);
+
       if (!person || !anchor) return;
-      const rect = anchor.getBoundingClientRect();
-      const menu = document.createElement('div');
-      menu.className = 'menu-popover people-row-menu';
+
+      const rect =
+        anchor.getBoundingClientRect();
+
+      const menu =
+        document.createElement('div');
+
+      menu.className =
+        'menu-popover people-row-menu';
+
       menu.id = 'projectMenu';
-      menu.setAttribute('role', 'menu');
-      menu.setAttribute('aria-label', `Actions for ${person.names?.display || 'person'}`);
+
+      menu.setAttribute(
+        'role',
+        'menu'
+      );
+
+      menu.setAttribute(
+        'aria-label',
+        `Actions for ${
+          person.names?.display || 'person'
+        }`
+      );
+
       menu.style.visibility = 'hidden';
-      menu.style.top = `${rect.bottom + 6}px`;
+      menu.style.top =
+        `${rect.bottom + 6}px`;
       menu.style.left = '0px';
-      menu.innerHTML = `${includeProfile ? '<button type="button" role="menuitem" data-people-action="profile">Open profile</button>' : ''}<button type="button" role="menuitem" data-people-action="edit">Edit person</button><button type="button" role="menuitem" data-people-action="tree">Show in Family Tree</button><button type="button" role="menuitem" class="danger" data-people-action="delete">Delete person</button>`;
+
+      menu.innerHTML = `
+        ${includeProfile
+          ? `
+            <button
+              type="button"
+              role="menuitem"
+              data-people-action="profile">
+              Open profile
+            </button>
+          `
+          : ''}
+
+        <button
+          type="button"
+          role="menuitem"
+          data-people-action="tree">
+          Show in Family Tree
+        </button>
+
+        <button
+          type="button"
+          role="menuitem"
+          class="danger"
+          data-people-action="delete">
+          Delete person
+        </button>
+      `;
+
       document.body.appendChild(menu);
+
       const viewportPadding = 12;
-      const menuWidth = menu.getBoundingClientRect().width;
-      menu.style.left = `${Math.max(viewportPadding, Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - viewportPadding))}px`;
+
+      const menuWidth =
+        menu.getBoundingClientRect().width;
+
+      menu.style.left = `${
+        Math.max(
+          viewportPadding,
+          Math.min(
+            rect.right - menuWidth,
+            window.innerWidth
+              - menuWidth
+              - viewportPadding
+          )
+        )
+      }px`;
+
       menu.style.visibility = 'visible';
-      menu.addEventListener('click', event => {
-        const action = event.target.closest('[data-people-action]')?.dataset.peopleAction;
-        if (!action) return;
-        closeMenu();
-        if (action === 'profile') openPeopleProfileFromRow(person.id);
-        if (action === 'edit') openEditPersonModal(person.id);
-        if (action === 'tree') showPersonInFamilyTree(person.id);
-        if (action === 'delete') openDeletePeopleConfirm([person.id]);
-      });
+
+      menu.addEventListener(
+        'click',
+        event => {
+          const action =
+            event.target
+              .closest('[data-people-action]')
+              ?.dataset.peopleAction;
+
+          if (!action) return;
+
+          closeMenu();
+
+          if (action === 'profile') {
+            openPeopleProfileFromRow(
+              person.id
+            );
+          }
+
+          if (action === 'edit') {
+            openEditPersonModal(
+              person.id
+            );
+          }
+
+          if (action === 'tree') {
+            showPersonInFamilyTree(
+              person.id
+            );
+          }
+
+          if (action === 'delete') {
+            openDeletePeopleConfirm([
+              person.id
+            ]);
+          }
+        }
+      );
+
       setTimeout(() => {
-        document.addEventListener('click', closeMenu);
-        document.addEventListener('scroll', closeMenu, true);
+        document.addEventListener(
+          'click',
+          closeMenu
+        );
+
+        document.addEventListener(
+          'scroll',
+          closeMenu,
+          true
+        );
       }, 0);
     }
 
@@ -25245,10 +25456,24 @@ function renderTreeCardDateLines(person) {
         syncPersonSidebarSelection(selected.id, context);
         openPeopleActionsMenu(selected.id, event.currentTarget, { includeProfile: true });
       });
-      root.querySelector('#addRelative')?.addEventListener('click', event => {
-        if (selected?.id) syncPersonSidebarSelection(selected.id, context);
-        openRelativePopover(event.currentTarget, 'relative');
-      });
+      root
+        .querySelector('#addRelative')
+        ?.addEventListener(
+          'click',
+          event => {
+            if (!selected?.id) return;
+
+            syncPersonSidebarSelection(
+              selected.id,
+              context
+            );
+
+            openRelativePopover(
+              event.currentTarget,
+              selected.id
+            );
+          }
+        );
       root.querySelector('#connectRelative')?.addEventListener('click', () => {
         if (!selected?.id) return;
         syncPersonSidebarSelection(selected.id, context);
@@ -25571,18 +25796,76 @@ function renderTreeCardDateLines(person) {
       return person?.avatarClass || person?.avatar || '';
     }
 
-    function renderPersonAvatar(person, className) {
-      const photo = albumPhotoById(personPrimaryPhotoId(person));
-      const initials = personAvatarInitials(person);
-      const avatarClass = personAvatarClass(person);
+    function renderPersonAvatar(
+      person,
+      className,
+      {
+        element = 'div',
+        decorative = false
+      } = {}
+    ) {
+      const photo =
+        albumPhotoById(
+          personPrimaryPhotoId(person)
+        );
+
+      const initials =
+        personAvatarInitials(person);
+
+      const avatarClass =
+        personAvatarClass(person);
+
+      const tagName =
+        element === 'span'
+          ? 'span'
+          : 'div';
+
+      const classes = [
+        className,
+        avatarClass,
+        photo?.src ? 'has-photo' : ''
+      ]
+        .filter(Boolean)
+        .join(' ');
+
+      const hiddenAttribute =
+        decorative
+          ? ' aria-hidden="true"'
+          : '';
 
       if (photo?.src) {
-        return `<div class="${className} ${escapeHtml(avatarClass)} has-photo" title="${escapeHtml(photo.title || '')}">
-          <img src="${escapeHtml(photo.src)}" alt="${escapeHtml(photo.title || initials)}">
-        </div>`;
+        const titleAttribute =
+          photo.title
+            ? ` title="${escapeHtml(
+                photo.title
+              )}"`
+            : '';
+
+        const imageAlt =
+          decorative
+            ? ''
+            : photo.title || initials;
+
+        return `
+          <${tagName}
+            class="${escapeHtml(classes)}"
+            ${titleAttribute}
+            ${hiddenAttribute}>
+
+            <img
+              src="${escapeHtml(photo.src)}"
+              alt="${escapeHtml(imageAlt)}">
+          </${tagName}>
+        `;
       }
 
-      return `<div class="${className} ${escapeHtml(avatarClass)}">${escapeHtml(initials)}</div>`;
+      return `
+        <${tagName}
+          class="${escapeHtml(classes)}"
+          ${hiddenAttribute}>
+          ${escapeHtml(initials)}
+        </${tagName}>
+      `;
     }
 
     function renderAlbums() {
