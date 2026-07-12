@@ -11724,6 +11724,17 @@
       ]
     };
 
+    // Rebuild seeded display names / initials via the shared formatter
+    (function normalizeSeededPersonNames() {
+      (sampleData.people || []).forEach(person => {
+        if (!person || !person.names) return;
+        if (!('prefix' in person.names)) person.names.prefix = '';
+        if (!('suffix' in person.names)) person.names.suffix = '';
+        rebuildPersonDisplayName(person);
+      });
+    })();
+
+
     function getPeople(projectId) {
       return sampleData.people.filter(person => !projectId || person.projectId === projectId);
     }
@@ -11747,6 +11758,191 @@
       const linked = cleanEditFieldValue(getPlaceDisplay(event?.placeId));
       return linked || cleanEditFieldValue(event?.placeText);
     }
+
+    // ---------- Name prefix / suffix (shared) ----------
+    const PREFIX_SUGGESTIONS = ['Dr.', 'Prof.', 'Rev.', 'Sir', 'Lady', 'Capt.'];
+    const SUFFIX_SUGGESTIONS = ['Jr.', 'Sr.', 'II', 'III', 'IV', 'PhD'];
+
+    function normalizeNameSegment(value) {
+      return String(value == null ? '' : value).trim();
+    }
+
+    function formatPersonFullName(person) {
+      const n = person?.names || {};
+      return [n.prefix, n.first, n.middle, n.last, n.suffix]
+        .map(normalizeNameSegment)
+        .filter(Boolean)
+        .join(' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function formatPersonInitials(person) {
+      const n = person?.names || {};
+      const f = normalizeNameSegment(n.first);
+      const l = normalizeNameSegment(n.last);
+      const initials = `${f[0] || ''}${l[0] || ''}`.toUpperCase();
+      return initials || (n.initials || '??');
+    }
+
+    function rebuildPersonDisplayName(person) {
+      if (!person || !person.names) return person;
+
+      person.names.display = formatPersonFullName(person);
+      person.names.initials = formatPersonInitials(person);
+
+      return person;
+    }
+
+    function collectNameAffixValue(inputEl) {
+      if (!inputEl) return '';
+      return normalizeNameSegment(inputEl.value);
+    }
+
+    function nameAffixSuggestionList(kind) {
+      return kind === 'prefix' ? PREFIX_SUGGESTIONS : SUFFIX_SUGGESTIONS;
+    }
+
+    function renderNameAffixCombobox({ id, label, value = '', kind = 'prefix', className = 'full', inputAttrs = '' } = {}) {
+      const listId = `${id}List`;
+      const placeholder = kind === 'prefix' ? 'e.g. Dr., Sir, Lady' : 'e.g. Jr., III, PhD';
+      return `<div class="field ${escapeHtml(className)} place-combobox-field name-affix-combobox-field" data-name-affix-combobox data-name-affix-kind="${escapeHtml(kind)}">
+        <label for="${escapeHtml(id)}">${escapeHtml(label)}</label>
+        <div class="place-combobox-shell">
+          <input
+            id="${escapeHtml(id)}"
+            value="${escapeHtml(value)}"
+            placeholder="${escapeHtml(placeholder)}"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-expanded="false"
+            aria-controls="${escapeHtml(listId)}"
+            autocomplete="off"
+            data-name-affix-input
+            ${inputAttrs}>
+          <div class="place-combobox-list" id="${escapeHtml(listId)}" role="listbox" hidden></div>
+        </div>
+      </div>`;
+    }
+
+    function bindNameAffixComboboxes(root = document) {
+      if (!root || typeof root.querySelectorAll !== 'function') return;
+      root.querySelectorAll('[data-name-affix-combobox]').forEach(field => {
+        if (field.dataset.nameAffixBound) return;
+        field.dataset.nameAffixBound = 'true';
+        const input = field.querySelector('[data-name-affix-input]');
+        const list = field.querySelector('.place-combobox-list');
+        if (!input || !list) return;
+        const kind = field.dataset.nameAffixKind === 'suffix' ? 'suffix' : 'prefix';
+        const suggestions = nameAffixSuggestionList(kind);
+        let activeIndex = -1;
+        let currentOptions = [];
+
+        function buildOptions(query) {
+          const q = (query || '').trim().toLowerCase();
+          if (!q) return suggestions.slice();
+          return suggestions.filter(s => s.toLowerCase().includes(q));
+        }
+
+        function renderList() {
+          if (!currentOptions.length) {
+            list.hidden = true;
+            list.innerHTML = '';
+            input.setAttribute('aria-expanded', 'false');
+            input.removeAttribute('aria-activedescendant');
+            return;
+          }
+          list.innerHTML = currentOptions.map((opt, i) => {
+            const active = i === activeIndex ? ' active' : '';
+            const optId = `${input.id}-opt-${i}`;
+            return `<div class="place-combobox-option${active}" role="option" id="${escapeHtml(optId)}" aria-selected="${i === activeIndex ? 'true' : 'false'}" data-name-affix-opt="${i}">
+              <div class="place-combobox-copy"><strong>${escapeHtml(opt)}</strong></div>
+            </div>`;
+          }).join('');
+          list.hidden = false;
+          input.setAttribute('aria-expanded', 'true');
+          if (activeIndex >= 0) {
+            input.setAttribute('aria-activedescendant', `${input.id}-opt-${activeIndex}`);
+          } else {
+            input.removeAttribute('aria-activedescendant');
+          }
+        }
+
+        function refresh() {
+          currentOptions = buildOptions(input.value);
+          activeIndex = currentOptions.length ? 0 : -1;
+          renderList();
+        }
+
+        function close() {
+          list.hidden = true;
+          list.innerHTML = '';
+          input.setAttribute('aria-expanded', 'false');
+          input.removeAttribute('aria-activedescendant');
+          activeIndex = -1;
+          currentOptions = [];
+        }
+
+        function chooseOption(value) {
+          if (value == null) return;
+          input.value = value;
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+          close();
+        }
+
+        input.addEventListener('focus', refresh);
+        input.addEventListener('input', refresh);
+        input.addEventListener('keydown', event => {
+          if (list.hidden && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
+            refresh();
+            event.preventDefault();
+            return;
+          }
+          if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            if (!currentOptions.length) return;
+            activeIndex = (activeIndex + 1) % currentOptions.length;
+            renderList();
+          } else if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            if (!currentOptions.length) return;
+            activeIndex = (activeIndex - 1 + currentOptions.length) % currentOptions.length;
+            renderList();
+          } else if (event.key === 'Home' && !list.hidden) {
+            event.preventDefault();
+            activeIndex = 0;
+            renderList();
+          } else if (event.key === 'End' && !list.hidden) {
+            event.preventDefault();
+            activeIndex = currentOptions.length - 1;
+            renderList();
+          } else if (event.key === 'Enter') {
+            if (!list.hidden && activeIndex >= 0) {
+              event.preventDefault();
+              chooseOption(currentOptions[activeIndex]);
+            }
+          } else if (event.key === 'Escape') {
+            if (!list.hidden) {
+              event.preventDefault();
+              close();
+            }
+          } else if (event.key === 'Tab') {
+            close();
+          }
+        });
+        input.addEventListener('blur', () => setTimeout(close, 120));
+        list.addEventListener('mousedown', event => {
+          const opt = event.target.closest('[data-name-affix-opt]');
+          if (!opt) return;
+          event.preventDefault();
+          const idx = Number(opt.dataset.nameAffixOpt);
+          chooseOption(currentOptions[idx]);
+        });
+      });
+    }
+    // ---------- end name affix ----------
+
     function centralFamilyRecords() {
       sampleData.families = Array.isArray(sampleData.families) ? sampleData.families : [];
       return sampleData.families;
@@ -13793,7 +13989,7 @@
       if (!person) return;
       person.names.first = record.first || person.names.first;
       person.names.last = record.surname || person.names.last;
-      person.names.display = record.name || [person.names.first, person.names.last].filter(Boolean).join(' ');
+      rebuildPersonDisplayName(person);
       person.gender = record.gender || person.gender;
       person.livingStatus = record.living || person.livingStatus;
       person.birth = {
@@ -17301,11 +17497,12 @@ function renderTreeCardDateLines(person) {
       const header = `<div class="add-person-fact-card-header"><div class="add-person-fact-card-title"><span class="fact-button-icon" aria-hidden="true">${definition.icon}</span><span>${escapeHtml(definition.label)}</span></div><button class="add-person-fact-remove" type="button" data-add-person-remove-fact="${escapeHtml(factId)}" aria-label="Remove ${escapeHtml(definition.label)}">${icon.close}</button></div>`;
       const fieldWrap = content => `<div class="add-person-fact-card" data-add-person-fact-card="${escapeHtml(factId)}">${header}<div class="add-person-fact-grid">${content}</div></div>`;
       if (factId === 'prefix') {
-        return fieldWrap(`<div class="field full"><label for="addPersonFactPrefix">Prefix</label><input id="addPersonFactPrefix" value="${escapeHtml(prefixValue)}" placeholder="e.g. Dr., Sir, Lady"></div>`);
+        return fieldWrap(renderNameAffixCombobox({ id: 'addPersonFactPrefix', label: 'Prefix', value: prefixValue, kind: 'prefix', className: 'full' }));
       }
       if (factId === 'suffix') {
-        return fieldWrap(`<div class="field full"><label for="addPersonFactSuffix">Suffix</label><input id="addPersonFactSuffix" value="${escapeHtml(suffixValue)}" placeholder="e.g. Jr., III, PhD"></div>`);
+        return fieldWrap(renderNameAffixCombobox({ id: 'addPersonFactSuffix', label: 'Suffix', value: suffixValue, kind: 'suffix', className: 'full' }));
       }
+
       if (factId === 'causeOfDeath') {
         return fieldWrap(`<div class="field full"><label for="addPersonFactCauseOfDeath">Cause of death</label><input id="addPersonFactCauseOfDeath" value="${escapeHtml(cleanEditFieldValue(death.reason || death.cause))}" placeholder="Cause or reason"></div>`);
       }
@@ -18777,13 +18974,16 @@ function renderTreeCardDateLines(person) {
 
     function addPersonNameValuesForPerson(person) {
       return [
+        person?.names?.prefix,
         person?.names?.first,
         person?.names?.middle,
         person?.names?.last,
+        person?.names?.suffix,
         person?.names?.maiden,
         person?.names?.display,
         person?.name
       ]
+
         .map(normalizeAddPersonMatchText)
         .filter(Boolean);
     }
@@ -19996,6 +20196,8 @@ function renderTreeCardDateLines(person) {
       if (context.kind === 'partner') {
         bindGenealogyDateFields(modalBackdrop);
         bindPlaceComboboxes(modalBackdrop);
+        bindNameAffixComboboxes(modalBackdrop);
+
 
         const typeSelect =
           modalBackdrop.querySelector(
@@ -20401,6 +20603,8 @@ function renderTreeCardDateLines(person) {
       const insertedFact = target.lastElementChild || target;
       bindGenealogyDateFields(insertedFact);
       bindPlaceComboboxes(insertedFact);
+      bindNameAffixComboboxes(insertedFact);
+
       updateAddPersonFactSummary();
     }
 
@@ -20532,17 +20736,10 @@ function renderTreeCardDateLines(person) {
       ensurePersonCentralStructures(person);
       const active = new Set(facts.activeFactIds || []);
 
-      if (active.has('prefix')) {
-        person.names.prefix = valueOrNull(facts.prefix) || '';
-      } else {
-        delete person.names.prefix;
-      }
+      person.names.prefix = active.has('prefix') ? (normalizeNameSegment(facts.prefix)) : '';
+      person.names.suffix = active.has('suffix') ? (normalizeNameSegment(facts.suffix)) : '';
+      rebuildPersonDisplayName(person);
 
-      if (active.has('suffix')) {
-        person.names.suffix = valueOrNull(facts.suffix) || '';
-      } else {
-        delete person.names.suffix;
-      }
 
       if (person.livingStatus === 'Deceased' && active.has('causeOfDeath')) {
         person.death.reason = valueOrNull(facts.deathReason) || '';
@@ -20647,13 +20844,8 @@ function renderTreeCardDateLines(person) {
       person.names.middle = readAddPersonModalValue('#addPersonMiddleName');
       person.names.maiden = readAddPersonModalValue('#addPersonMaidenName');
 
-      person.names.display = [
-        person.names.first,
-        person.names.middle,
-        person.names.last
-      ].filter(Boolean).join(' ') || person.names.display;
+      rebuildPersonDisplayName(person);
 
-      updatePersonInitials(person);
 
       person.gender = genderValue === 'Male'
         ? 'male'
@@ -20746,6 +20938,8 @@ function renderTreeCardDateLines(person) {
     function bindAddPersonModalControls(personId = '') {
       bindGenealogyDateFields(modalBackdrop);
       bindPlaceComboboxes(modalBackdrop);
+      bindNameAffixComboboxes(modalBackdrop);
+
       bindAddPersonAdditionalFacts(personId);
       bindAddPersonRelationshipBlock();
       const gender = modalBackdrop.querySelector('#addPersonGender');
@@ -21027,8 +21221,9 @@ function renderTreeCardDateLines(person) {
           return undefined;
         },
         set(_target, prop, value) {
-          if (prop === 'prefix') { centralPerson.names.prefix = valueOrNull(value) || ''; return true; }
-          if (prop === 'suffix') { centralPerson.names.suffix = valueOrNull(value) || ''; return true; }
+          if (prop === 'prefix') { centralPerson.names.prefix = normalizeNameSegment(value); rebuildPersonDisplayName(centralPerson); return true; }
+          if (prop === 'suffix') { centralPerson.names.suffix = normalizeNameSegment(value); rebuildPersonDisplayName(centralPerson); return true; }
+
           if (prop === 'maidenName') { centralPerson.names.maiden = valueOrNull(value) || ''; return true; }
           if (prop === 'alternativeNames') { centralPerson.profile.alternativeNames = valueOrNull(value); return true; }
           if (prop === 'birthDateType') { centralPerson.birth.dateType = value || centralPerson.birth.dateType || 'Exact date'; return true; }
@@ -21829,16 +22024,16 @@ function renderTreeCardDateLines(person) {
 
             <div class="profile-hero-actions">
               <button
-                class="button primary"
+                class="button ${state.peopleProfileEditing ? 'secondary' : 'primary'}"
                 type="button"
-                id="profileEditButton"
-                ${state.peopleProfileEditing
-                  ? 'disabled aria-disabled="true"'
-                  : ''}>
-                ${icon.edit}
+                id="profileEditButton">
 
                 ${state.peopleProfileEditing
-                  ? 'Editing profile'
+                  ? icon.close
+                  : icon.edit}
+
+                ${state.peopleProfileEditing
+                  ? 'Cancel editing'
                   : 'Edit profile'}
               </button>
 
@@ -21964,11 +22159,21 @@ function renderTreeCardDateLines(person) {
     }
 
     function splitProfileName(person) {
-      const parts = (person.name || '').split(/\s+/).filter(Boolean);
+      const centralPerson = getPerson(person?.id);
+      const names = centralPerson?.names || {};
+
       return {
-        first: person.first || parts[0] || '',
-        patronym: parts.length > 2 ? parts.slice(1, -1).join(' ') : (parts[1] && parts[1] !== person.surname ? parts[1] : ''),
-        surname: person.surname || parts[parts.length - 1] || ''
+        first: normalizeNameSegment(
+          names.first ?? person?.first ?? ''
+        ),
+
+        patronym: normalizeNameSegment(
+          names.middle ?? ''
+        ),
+
+        surname: normalizeNameSegment(
+          names.last ?? person?.surname ?? ''
+        )
       };
     }
 
@@ -22590,11 +22795,11 @@ function renderTreeCardDateLines(person) {
 
         <div class="field profile-field-first"><label>First name</label><input id="profileInlineFirst" value="${escapeHtml(name.first)}"></div>
         <div class="field profile-field-last"><label>Last name</label><input id="profileInlineLast" value="${escapeHtml(name.surname)}"></div>
-        <div class="field profile-field-prefix"><label>Prefix</label><input id="profileInlinePrefix" value="${escapeHtml(details.prefix || '')}" placeholder="Prefix"></div>
+        ${renderNameAffixCombobox({ id: 'profileInlinePrefix', label: 'Prefix', value: details.prefix || '', kind: 'prefix', className: 'profile-field-prefix' })}
 
         <div class="field profile-field-patronym"><label>Patronym</label><input id="profileInlinePatronym" value="${escapeHtml(name.patronym)}"></div>
         <div class="field profile-field-maiden" id="profileInlineMaiden" ${isFemale ? '' : 'hidden'}><label>Maiden Name</label><input id="profileInlineMaidenInput" value="${escapeHtml(details.maidenName || '')}" placeholder="Maiden surname"></div>
-        <div class="field profile-field-suffix"><label>Suffix</label><input id="profileInlineSuffix" value="${escapeHtml(details.suffix || '')}" placeholder="Suffix"></div>
+        ${renderNameAffixCombobox({ id: 'profileInlineSuffix', label: 'Suffix', value: details.suffix || '', kind: 'suffix', className: 'profile-field-suffix' })}
 
         ${renderGenealogyDateField('profileInlineBirthField', 'Birth Date', birthDateModel, {
           inputId: 'profileInlineBirth',
@@ -23896,17 +24101,8 @@ function renderTreeCardDateLines(person) {
         || person.surname
         || '';
 
-      const displayName = [
-        first,
-        payload.patronym,
-        last
-      ]
-        .filter(Boolean)
-        .join(' ')
-        .replace(/\s+/g, ' ')
-        .trim()
-        || centralPerson.names.display
-        || person.name;
+      // display name is derived below via rebuildPersonDisplayName
+
 
       const gender =
         String(payload.gender || '')
@@ -23943,23 +24139,13 @@ function renderTreeCardDateLines(person) {
         );
 
       centralPerson.names.first = first;
-      centralPerson.names.middle =
-        payload.patronym || '';
+      centralPerson.names.middle = payload.patronym || '';
       centralPerson.names.last = last;
-      centralPerson.names.display =
-        displayName;
-      centralPerson.names.prefix =
-        payload.prefix || '';
-      centralPerson.names.suffix =
-        payload.suffix || '';
-      centralPerson.names.maiden =
-        payload.maidenName || '';
+      centralPerson.names.prefix = normalizeNameSegment(payload.prefix);
+      centralPerson.names.suffix = normalizeNameSegment(payload.suffix);
+      centralPerson.names.maiden = payload.maidenName || '';
+      rebuildPersonDisplayName(centralPerson);
 
-      centralPerson.names.initials =
-        `${first[0] || ''}${last[0] || ''}`
-          .toUpperCase()
-        || centralPerson.names.initials
-        || '??';
 
       centralPerson.gender =
         normalizedGender;
@@ -24001,7 +24187,7 @@ function renderTreeCardDateLines(person) {
 
       person.first = first;
       person.surname = last;
-      person.name = displayName;
+      person.name = centralPerson.names.display;
       person.gender = normalizedGender;
       person.living = livingStatus;
       person.birth =
@@ -24217,10 +24403,18 @@ function renderTreeCardDateLines(person) {
       });
     }
 
+    function cancelPeopleProfileEditing() {
+      state.peopleProfileEditing = false;
+      renderPeople();
+      showToast('Profile editing cancelled.');
+    }
+
     function bindPeopleProfileControls(person) {
       bindToasts(main);
       bindGenealogyDateFields(main);
       bindPlaceComboboxes(main);
+      bindNameAffixComboboxes(main);
+
       bindRelationshipList(main, 'profile');
       bindProfilePhotoCarousels(main);
       const profileCard = main.querySelector(
@@ -24232,6 +24426,7 @@ function renderTreeCardDateLines(person) {
         .querySelector('#profileEditButton')
         ?.addEventListener('click', () => {
           if (state.peopleProfileEditing) {
+            cancelPeopleProfileEditing();
             return;
           }
 
@@ -24320,15 +24515,10 @@ function renderTreeCardDateLines(person) {
       }));
       main
         .querySelector('#profileCancelEdit')
-        ?.addEventListener('click', () => {
-          state.peopleProfileEditing = false;
-
-          renderPeople();
-
-          showToast(
-            'Profile editing cancelled.'
-          );
-        });
+        ?.addEventListener(
+          'click',
+          cancelPeopleProfileEditing
+        );
 
       main
         .querySelector('#profileSaveInlineEdit')
