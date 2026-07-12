@@ -4976,11 +4976,36 @@
       color: var(--text-primary);
     }
 
+
     .add-person-fact-grid {
       display: grid;
       grid-template-columns:
         repeat(2, minmax(0, 1fr));
       gap: var(--space-3);
+    }
+
+    .custom-fact-help,
+    .custom-fact-error {
+      margin-top: 6px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .custom-fact-help {
+      color: var(--text-tertiary);
+    }
+
+    .custom-fact-error {
+      color: var(--red);
+    }
+
+    .custom-fact-error:empty {
+      display: none;
+    }
+
+    .custom-fact-field.has-error input,
+    .custom-fact-field.has-error textarea {
+      border-color: var(--red);
     }
 
     .add-person-fact-grid .field.full,
@@ -7722,6 +7747,11 @@
       font-size: 20px;
       flex: 0 0 auto;
     }
+    .geneo-avatar svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+    }
     .geneo-avatar.amber { background: linear-gradient(145deg, rgba(212,170,107,.52), rgba(87,57,25,.92)); border-color: rgba(212,170,107,.4); }
     .geneo-avatar.blue { background: linear-gradient(145deg, rgba(93,173,236,.3), rgba(15,38,54,.95)); border-color: rgba(93,173,236,.35); }
     .geneo-avatar.purple { background: linear-gradient(145deg, rgba(141,108,232,.44), rgba(42,32,70,.95)); border-color: rgba(141,108,232,.42); }
@@ -7800,9 +7830,26 @@
       text-align: left;
       overflow: hidden;
     }
-    .geneo-palette-button span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .geneo-palette-button span:first-child { width: 18px; flex: 0 0 18px; text-align: center; }
-    .geneo-palette-button span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .geneo-palette-button span:first-child {
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 18px;
+    }
+
+    .geneo-palette-button span:first-child svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+
+    .geneo-palette-button span:last-child {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
     .geneo-palette-button:hover,
     .geneo-palette-button.active { background: var(--surface-selected); color: var(--text-primary); }
     .geneo-zoom-overlay {
@@ -7877,6 +7924,18 @@
     }
     .geneo-current-board h2 { margin: 0 0 4px; font-size: 15px; line-height: 1.25; }
     .geneo-current-board .meta { color: var(--text-secondary); display: grid; gap: 6px; font-size: 12px; }
+    .geneo-current-board .meta > span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .geneo-current-board .meta svg {
+      width: 14px;
+      height: 14px;
+      display: block;
+      flex: 0 0 14px;
+    }
     .geneo-current-board .saved { color: var(--brand-green-300); }
     .geneo-current-board-top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-2); }
     .geneo-current-board-top > div { min-width: 0; }
@@ -7935,6 +7994,12 @@
     .geneo-layer-row.selected { background: var(--surface-selected); border-color: rgba(98,217,154,.12); color: var(--text-primary); }
     .geneo-layer-row .name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .geneo-layer-icon { width: 20px; height: 20px; border-radius: 5px; display: grid; place-items: center; background: rgba(255,255,255,.05); color: var(--brand-green-300); flex: 0 0 auto; }
+    .geneo-layer-icon svg,
+    .geneo-layer-toggle svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
     .geneo-layer-toggle {
       width: 26px;
       height: 26px;
@@ -11324,6 +11389,22 @@
       unlink: '<svg viewBox="0 0 24 24" fill="currentColor"><title>unlink_2_line</title> <g id="1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="File" transform="translate(-672.000000, -96.000000)" fill-rule="nonzero"> <g id="unlink_2_line" transform="translate(672.000000, 96.000000)"> <path d="M24,0 L24,24 L0,24 L0,0 L24,0 Z M12.5934901,23.257841 L12.5819402,23.2595131 L12.5108777,23.2950439 L12.4918791,23.2987469 L12.4918791,23.2987469 L12.4767152,23.2950439 L12.4056548,23.2595131 C12.3958229,23.2563662 12.3870493,23.2590235 12.3821421,23.2649074 L12.3780323,23.275831 L12.360941,23.7031097 L12.3658947,23.7234994 L12.3769048,23.7357139 L12.4804777,23.8096931 L12.4953491,23.8136134 L12.4953491,23.8136134 L12.5071152,23.8096931 L12.6106902,23.7357139 L12.6232938,23.7196733 L12.6232938,23.7196733 L12.6266527,23.7031097 L12.609561,23.275831 C12.6075724,23.2657013 12.6010112,23.2592993 12.5934901,23.257841 L12.5934901,23.257841 Z M12.8583906,23.1452862 L12.8445485,23.1473072 L12.6598443,23.2396597 L12.6498822,23.2499052 L12.6498822,23.2499052 L12.6471943,23.2611114 L12.6650943,23.6906389 L12.6699349,23.7034178 L12.6699349,23.7034178 L12.678386,23.7104931 L12.8793402,23.8032389 C12.8914285,23.8068999 12.9022333,23.8029875 12.9078286,23.7952264 L12.9118235,23.7811639 L12.8776777,23.1665331 C12.8752882,23.1545897 12.8674102,23.1470016 12.8583906,23.1452862 L12.8583906,23.1452862 Z M12.1430473,23.1473072 C12.1332178,23.1423925 12.1221763,23.1452606 12.1156365,23.1525954 L12.1099173,23.1665331 L12.0757714,23.7811639 C12.0751323,23.7926639 12.0828099,23.8018602 12.0926481,23.8045676 L12.108256,23.8032389 L12.3092106,23.7104931 L12.3186497,23.7024347 L12.3186497,23.7024347 L12.3225043,23.6906389 L12.340401,23.2611114 L12.337245,23.2485176 L12.337245,23.2485176 L12.3277531,23.2396597 L12.1430473,23.1473072 Z" id="MingCute" fill-rule="nonzero"> </path> <path d="M8,18 C8.51283143,18 8.93550653,18.386027 8.9932722,18.8833761 L9,19 L9,21 C9,21.5523 8.55228,22 8,22 C7.48716857,22 7.06449347,21.613973 7.0067278,21.1166239 L7,21 L7,19 C7,18.4477 7.44772,18 8,18 Z M16.2426,9.87845 C16.6030615,9.51797 17.1703207,9.49024077 17.5625973,9.79526231 L17.6568,9.87845 L19.7781,11.9998 C21.926,14.1477 21.926,17.6301 19.7781,19.7779 C17.6898639,21.8661361 14.340237,21.9241427 12.1819236,19.9519197 L11.9999,19.7779 L9.87861,17.6566 C9.48808,17.2661 9.48808,16.6329 9.87861,16.2424 C10.2390623,15.8819385 10.8063208,15.8542107 11.1985973,16.1592166 L11.2928,16.2424 L13.4141,18.3637 C14.781,19.7306 16.9971,19.7306 18.3639,18.3637 C19.6818857,17.0457143 19.7289566,14.9380096 18.5051128,13.5636154 L18.3639,13.414 L16.2426,11.2927 C15.852,10.9021 15.852,10.269 16.2426,9.87845 Z M5,16 C5.55228,16 6,16.4477 6,17 C6,17.51285 5.61395571,17.9355092 5.11662025,17.9932725 L5,18 L4,18 C3.44772,18 3,17.5523 3,17 C3,16.48715 3.38604429,16.0644908 3.88337975,16.0067275 L4,16 L5,16 Z M9.17136,9.17134 C9.53184923,8.81086 10.0991191,8.78313077 10.4913971,9.08815231 L10.5856,9.17134 L14.8282,13.414 C15.2187,13.8045 15.2187,14.4377 14.8282,14.8282 C14.4677385,15.1886615 13.9004793,15.2163893 13.5082027,14.9113834 L13.414,14.8282 L9.17136,10.5856 C8.78084,10.195 8.78084,9.56187 9.17136,9.17134 Z M4.22175,4.2216 C6.30997639,2.13338333 9.65960305,2.07537731 11.8178797,4.04758194 L11.9999,4.2216 L14.1212,6.34292 C14.5118,6.73344 14.5118,7.36661 14.1212,7.75713 C13.7607385,8.11761923 13.1935645,8.14534917 12.8012224,7.84031982 L12.707,7.75713 L10.5857,5.63581 C9.21888,4.26898 7.0028,4.26898 5.63597,5.63581 C4.31794571,6.95383429 4.27087342,9.06152179 5.49475311,10.4359775 L5.63597,10.5856 L7.75729,12.7069 C8.14781,13.0974 8.14781,13.7306 7.75729,14.1211 C7.39680077,14.4815615 6.82957355,14.5092893 6.43727848,14.2042834 L6.34307,14.1211 L4.22175,11.9998 C2.07387,9.85189 2.07387,6.36948 4.22175,4.2216 Z M20,6 C20.5523,6 21,6.44772 21,7 C21,7.55228 20.5523,8 20,8 L19,8 C18.4477,8 18,7.55228 18,7 C18,6.44772 18.4477,6 19,6 L20,6 Z M16,2 C16.51285,2 16.9355092,2.38604429 16.9932725,2.88337975 L17,3 L17,5 C17,5.55228 16.5523,6 16,6 C15.48715,6 15.0644908,5.61395571 15.0067275,5.11662025 L15,5 L15,3 C15,2.44772 15.4477,2 16,2 Z" id="??" fill="currentColor"> </path> </g> </g> </g> </g></svg>',
       warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v5M12 17h.01"/></svg>',
       work: '<svg viewBox="0 0 24 24" fill="none" ><path d="M9 7H5C3.89543 7 3 7.89543 3 9V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V9C21 7.89543 20.1046 7 19 7H15M9 7V5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7M9 7H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>',
+
+      undo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 7H5V3"/><path d="M5 7a8 8 0 1 1-1 8"/></svg>',
+      redo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 7h4V3"/><path d="M19 7a8 8 0 1 0 1 8"/></svg>',
+      cursorSelect: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 3 12 10-6 1 3 6-3 1-3-6-3 4Z"/></svg>',
+      pan: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 11V7a1.5 1.5 0 0 1 3 0v3-5a1.5 1.5 0 0 1 3 0v5-4a1.5 1.5 0 0 1 3 0v5-2a1.5 1.5 0 0 1 3 0v5c0 4-3 7-7 7h-1c-3 0-5-2-6-4l-2-4a1.5 1.5 0 0 1 2.6-1.5L7 13"/></svg>',
+      eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>',
+      eyeOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 6.2A10 10 0 0 1 12 6c6 0 9.5 6 9.5 6a16 16 0 0 1-3 3.7M6.2 6.2C3.8 8 2.5 12 2.5 12s3.5 6 9.5 6a9 9 0 0 0 3-.5"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>',
+      lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>',
+      unlock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 7-2.6"/></svg>',
+      frame: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg>',
+      hypothesis: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="7" r="2.5"/><circle cx="12" cy="17" r="2.5"/><path d="m9 8.5 2 6M15 8.5l-2 6M9.5 7h5"/></svg>',
+      checklist: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 1.5 1.5L8 5M10 6h10M4 12l1.5 1.5L8 11M10 12h10M4 18l1.5 1.5L8 17M10 18h10"/></svg>',
+      researchCase: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="6" width="16" height="14" rx="2"/><path d="M9 6V4h6v2M4 11h16M10 14h4"/></svg>',
+      shape: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><circle cx="17" cy="17" r="4"/></svg>',
+      text: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5h14M12 5v14M8 19h8"/></svg>',
+
       zoomIn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4M10.5 7.5v6M7.5 10.5h6"/></svg>',
       zoomOut: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4M7.5 10.5h6"/></svg>',
       whiteboard: '<svg viewBox="0 0 24 24" fill="currentColor"><title>ic_fluent_whiteboard_24_regular</title> <g id="Product-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="ic_fluent_whiteboard_24_regular" fill="currentColor" fill-rule="nonzero"> <path d="M15.989,4 L14.486,5.5 L5.25,5.5 L5.10647279,5.5058012 C4.20711027,5.57880766 3.5,6.3318266 3.5,7.25 L3.5,9.49 L6.11032966,7.8500658 C7.11458474,7.21884459 8.42578385,7.4788108 9.11805049,8.41878234 L9.21263533,8.55766707 C9.60754263,9.18595342 9.66531956,9.96466959 9.37643726,10.6398047 L9.29698911,10.8062836 L8.08925622,13.0916763 C7.8957274,13.4579003 8.03572001,13.911669 8.4019376,14.1051994 C8.59519714,14.2073288 8.82158817,14.2192865 9.02227723,14.1418514 L9.12020755,14.0956881 L10.8791978,13.102709 C11.2392458,12.8979206 11.6971362,13.0237834 11.9019246,13.3838314 C12.0896473,13.7138755 11.9995312,14.1261343 11.7058795,14.3502913 L11.6208022,14.4065583 L9.85592161,15.4028701 C9.18921021,15.7781116 8.37750848,15.7888601 7.70109472,15.4314042 C6.6502057,14.8760541 6.22026466,13.6064091 6.69296688,12.535549 L6.76304763,12.3908405 L7.97078427,10.1054407 C8.09599053,9.86851294 8.08527176,9.58278305 7.94266635,9.35590187 C7.74227866,9.03709073 7.34143087,8.9208341 7.00672527,9.06794099 L6.90856446,9.12003478 L3.5,11.262 L3.5,16.754591 C3.5,17.7210893 4.28350169,18.504591 5.25,18.504591 L18.75,18.504591 C19.7164983,18.504591 20.5,17.7210893 20.5,16.754591 L20.5,9.443 L22,7.946 L22,16.754591 C22,18.5495164 20.5449254,20.004591 18.75,20.004591 L5.25,20.004591 C3.45507456,20.004591 2,18.5495164 2,16.754591 L2,7.25 C2,5.51696854 3.35645477,4.10075407 5.06557609,4.00514479 L5.25,4 L15.989,4 Z M21.175499,3.54486123 L21.3057053,3.66549405 L21.4262125,3.79573486 C22.1894032,4.68737541 22.1487912,6.0305334 21.3046801,6.87410524 L17.0238193,11.1477533 C16.760843,11.4102865 16.4369385,11.6036013 16.0810348,11.7104319 L13.7534665,12.409092 C13.224498,12.5678711 12.6669685,12.2677732 12.5081894,11.7388048 C12.4499495,11.54478 12.4520104,11.3376424 12.5140993,11.1448148 L13.2530235,8.84996054 C13.3626608,8.50946335 13.5519023,8.20001385 13.805051,7.94727999 L18.095697,3.66366511 C18.9405104,2.82023607 20.2840592,2.78081537 21.175499,3.54486123 Z M19.155487,4.72519469 L14.864841,9.00880957 C14.7804581,9.09305419 14.7173776,9.19620402 14.6808318,9.30970309 L14.2335301,10.6988744 L15.6497924,10.2737587 C15.768427,10.2381485 15.8763951,10.1737102 15.9640539,10.0861992 L20.244074,5.81339079 L20.3188279,5.72689957 C20.5422483,5.42598751 20.517571,4.99885441 20.2447063,4.72581529 C19.9440539,4.42497074 19.456482,4.42469294 19.155487,4.72519469 Z" id="Color"> </path> </g> </g> </g></svg>'
@@ -13594,6 +13675,92 @@
               dateRangeLabel: timelineDateRangeLabel(fromDate, toDate)
             });
           }
+
+            if (attribute.tag === 'FACT') {
+              const factType =
+                cleanEditFieldValue(
+                  attribute.type
+                );
+
+              const factValue =
+                cleanEditFieldValue(
+                  attribute.value
+                );
+
+              const factNotes =
+                cleanEditFieldValue(
+                  attribute.notes
+                );
+
+              const factDate =
+                timelineOptionalGenealogyDate(
+                  attribute.date,
+                  'Exact date'
+                );
+
+              const hasFactContent = Boolean(
+                factType
+                  && (
+                    factValue
+                    || factNotes
+                    || factDate
+                    || attribute.placeId
+                    || cleanEditFieldValue(
+                      attribute.placeText
+                    )
+                  )
+              );
+
+              if (!hasFactContent) {
+                return;
+              }
+
+              events.push({
+                id:
+                  `event-${
+                    attribute.id
+                      || `${person.id}-fact`
+                  }`,
+
+                projectId:
+                  person.projectId,
+
+                type:
+                  'customFact',
+
+                dateKind:
+                  'point',
+
+                personIds:
+                  [person.id],
+
+                relatedPersonIds:
+                  [],
+
+                ...timelineDatePayload(
+                  factDate
+                    || timelineUnknownGenealogyDate(
+                      'Exact date'
+                    ),
+                  'Exact date'
+                ),
+
+                placeId:
+                  attribute.placeId || null,
+
+                placeText:
+                  attribute.placeText || '',
+
+                title:
+                  factType,
+
+                description:
+                  factValue,
+
+                notes:
+                  factNotes
+              });
+            }
         });
 
         (person.events || []).forEach(event => {
@@ -15890,7 +16057,22 @@ function renderTreeCardDateLines(person) {
         ${renderFamilyTreePersonHero(person)}
         <div class="family-person-actions">${actionsContent}</div>
         ${renderInspectorSection('insights', 'Insights', 'No insights found', '<div class="panel-muted">No insights found for this person.</div>')}
-        ${renderInspectorSection('timeline', 'Timeline', '', timelineContent, `<button class="link" type="button" data-toast="Add fact flow will be added later.">${renderPanelButtonLabel(icon.plus, 'Add fact')}</button>`, { inlineAction: true })}
+        ${renderInspectorSection(
+          'timeline',
+          'Timeline',
+          '',
+          timelineContent,
+          `<button
+            class="link"
+            type="button"
+            data-person-add-fact>
+            ${renderPanelButtonLabel(
+              icon.plus,
+              'Add fact'
+            )}
+          </button>`,
+          { inlineAction: true }
+        )}
         ${renderInspectorSection(
           'relationships',
           'Relationships',
@@ -15995,6 +16177,7 @@ function renderTreeCardDateLines(person) {
         occupation: icon.work,
         baptism: icon.baptism,
         burial: icon.mapPin,
+        customFact: icon.info,
         death: icon.death
       };
 
@@ -16007,6 +16190,7 @@ function renderTreeCardDateLines(person) {
         education: 'blue',
         occupation: 'blue',
         baptism: 'blue',
+        customFact: 'blue',
         burial: 'gray',
         death: 'gray'
       };
@@ -16193,6 +16377,13 @@ function renderTreeCardDateLines(person) {
           event.occupation || event.description,
           event.company,
           datePlaceLines
+        );
+      }
+      if (event.type === 'customFact') {
+        return timelineDetailLines(
+          event.description,
+          datePlaceLines,
+          event.notes
         );
       }
 
@@ -17444,6 +17635,115 @@ function renderTreeCardDateLines(person) {
       return primary;
     }
 
+    function renderCustomFactFields(
+      idPrefix,
+      fact = null
+    ) {
+      const type =
+        cleanEditFieldValue(fact?.type);
+
+      const value =
+        cleanEditFieldValue(fact?.value);
+
+      const notes =
+        cleanEditFieldValue(fact?.notes);
+
+      const date =
+        fact?.date
+          || emptyGenealogyDate('Exact date');
+
+      return `
+        <div
+          class="field full custom-fact-field"
+          data-custom-fact-field="type">
+
+          <label for="${escapeHtml(idPrefix)}Type">
+            Fact name *
+          </label>
+
+          <input
+            id="${escapeHtml(idPrefix)}Type"
+            value="${escapeHtml(type)}"
+            placeholder="e.g. Skill, membership, physical description"
+            aria-required="true"
+            aria-describedby="
+              ${escapeHtml(idPrefix)}TypeHelp
+              ${escapeHtml(idPrefix)}TypeError
+            ">
+
+          <div
+            class="custom-fact-help"
+            id="${escapeHtml(idPrefix)}TypeHelp">
+            Use a short category that describes the fact.
+          </div>
+
+          <div
+            class="custom-fact-error"
+            id="${escapeHtml(idPrefix)}TypeError"
+            aria-live="polite">
+          </div>
+        </div>
+
+        <div
+          class="field full custom-fact-field"
+          data-custom-fact-field="content">
+
+          <label for="${escapeHtml(idPrefix)}Value">
+            Value
+          </label>
+
+          <input
+            id="${escapeHtml(idPrefix)}Value"
+            value="${escapeHtml(value)}"
+            placeholder="What was true about this person?"
+            aria-describedby="${escapeHtml(idPrefix)}ContentError">
+
+          <div
+            class="custom-fact-error"
+            id="${escapeHtml(idPrefix)}ContentError"
+            aria-live="polite">
+          </div>
+        </div>
+
+        ${renderGenealogyDateField(
+          `${idPrefix}Date`,
+          'Date or period',
+          date,
+          {
+            inputId: `${idPrefix}DateInput`,
+            typeId: `${idPrefix}DateType`,
+            defaultDateType: 'Exact date',
+            placeholder: 'e.g. 1924 or 14 Feb 1946',
+            className:
+              'full genealogy-date-inline-range'
+          }
+        )}
+
+        ${renderPlaceCombobox({
+          id: `${idPrefix}Place`,
+          label: 'Place',
+          value: editPlaceValue(
+            fact?.placeId,
+            fact?.placeText
+          ),
+          selectedPlaceId:
+            fact?.placeId || '',
+          placeholder:
+            'Search or type a place',
+          className: 'full'
+        })}
+
+        <div class="field full">
+          <label for="${escapeHtml(idPrefix)}Notes">
+            Notes
+          </label>
+
+          <textarea
+            id="${escapeHtml(idPrefix)}Notes"
+            placeholder="Research context or additional details">${escapeHtml(notes)}</textarea>
+        </div>`;
+    }
+
     function addPersonFactDefinitions() {
       return [
         { id: 'prefix', label: 'Prefix', icon: icon.info || icon.plus },
@@ -17454,6 +17754,7 @@ function renderTreeCardDateLines(person) {
         { id: 'occupation', label: 'Occupation', icon: icon.work || icon.placeholder || icon.plus },
         { id: 'religion', label: 'Religion', icon: icon.religion || icon.plus },
         { id: 'baptism', label: 'Baptism', icon: icon.baptism || icon.plus },
+        { id: 'customFact', label: 'Custom fact', icon: icon.info || icon.plus },
         { id: 'alternativeNames', label: 'Alternative names', icon: icon.people || icon.plus }
       ];
     }
@@ -17472,6 +17773,7 @@ function renderTreeCardDateLines(person) {
       if (personHasOccupationFact(person)) facts.push('occupation');
       if (personHasReligionFact(person)) facts.push('religion');
       if (personHasBaptismFact(person)) facts.push('baptism');
+      if (personAttributeByTag(person, 'FACT')) {facts.push('customFact');}
 
       const allowed = new Set(addPersonFactDefinitions().map(fact => fact.id));
       return [...new Set(facts)].filter(factId => allowed.has(factId));
@@ -17492,6 +17794,7 @@ function renderTreeCardDateLines(person) {
       const death = centralPerson?.death || {};
       const education = centralPerson ? personAttributeByTag(centralPerson, 'EDUC') : null;
       const baptism = centralPerson ? personEventByTag(centralPerson, 'BAPM') : null;
+      const customFact = centralPerson ? personAttributeByTag( centralPerson, 'FACT') : null;
       const prefixValue = cleanEditFieldValue(centralPerson?.names?.prefix || details.prefix);
       const suffixValue = cleanEditFieldValue(centralPerson?.names?.suffix || details.suffix);
       const header = `<div class="add-person-fact-card-header"><div class="add-person-fact-card-title"><span class="fact-button-icon" aria-hidden="true">${definition.icon}</span><span>${escapeHtml(definition.label)}</span></div><button class="add-person-fact-remove" type="button" data-add-person-remove-fact="${escapeHtml(factId)}" aria-label="Remove ${escapeHtml(definition.label)}">${icon.close}</button></div>`;
@@ -17502,7 +17805,12 @@ function renderTreeCardDateLines(person) {
       if (factId === 'suffix') {
         return fieldWrap(renderNameAffixCombobox({ id: 'addPersonFactSuffix', label: 'Suffix', value: suffixValue, kind: 'suffix', className: 'full' }));
       }
-
+      if (factId === 'customFact') {
+        return fieldWrap(
+          renderCustomFactFields(
+            'addPersonCustomFact',
+            customFact));
+      }
       if (factId === 'causeOfDeath') {
         return fieldWrap(`<div class="field full"><label for="addPersonFactCauseOfDeath">Cause of death</label><input id="addPersonFactCauseOfDeath" value="${escapeHtml(cleanEditFieldValue(death.reason || death.cause))}" placeholder="Cause or reason"></div>`);
       }
@@ -18743,6 +19051,8 @@ function renderTreeCardDateLines(person) {
       const work = facts.work || {};
       const baptism = facts.baptism || {};
       const baptismPlaceText = baptism.place?.text || '';
+      const customFact = facts.customFact || {};
+      const customFactPlaceText = customFact.place?.text || '';
 
       return Boolean(
         hasTextValue(facts.alternativeNames)
@@ -18760,6 +19070,13 @@ function renderTreeCardDateLines(person) {
           || hasGenealogyDateValue(work.toDate, 'Year only')
           || hasTextValue(baptismPlaceText)
           || hasGenealogyDateValue(baptism.date, 'Exact date')
+          || hasTextValue(customFact.value)
+          || hasTextValue(customFact.notes)
+          || hasTextValue(customFactPlaceText)
+          || hasGenealogyDateValue(
+            customFact.date,
+            'Exact date'
+          )
       );
     }
 
@@ -20677,6 +20994,158 @@ function renderTreeCardDateLines(person) {
       });
       updateAddPersonFactSummary();
     }
+
+    function collectCustomFactFields(
+      idPrefix,
+      root = modalBackdrop
+    ) {
+      const select = suffix =>
+        root?.querySelector(
+          `#${CSS.escape(`${idPrefix}${suffix}`)}`
+        );
+
+      const typeInput = select('Type');
+      const valueInput = select('Value');
+      const notesInput = select('Notes');
+
+      const typeField =
+        typeInput?.closest(
+          '[data-custom-fact-field="type"]'
+        );
+
+      const contentField =
+        valueInput?.closest(
+          '[data-custom-fact-field="content"]'
+        );
+
+      const typeError =
+        select('TypeError');
+
+      const contentError =
+        select('ContentError');
+
+      typeField?.classList.remove('has-error');
+      contentField?.classList.remove('has-error');
+
+      typeInput?.removeAttribute('aria-invalid');
+      valueInput?.removeAttribute('aria-invalid');
+
+      if (typeError) {
+        typeError.textContent = '';
+      }
+
+      if (contentError) {
+        contentError.textContent = '';
+      }
+
+      const type =
+        String(typeInput?.value || '').trim();
+
+      const value =
+        String(valueInput?.value || '').trim();
+
+      const notes =
+        String(notesInput?.value || '').trim();
+
+      const place = readPlaceInputValue(
+        `#${idPrefix}Place`,
+        root
+      );
+
+      const date = collectGenealogyDateField(
+        `${idPrefix}Date`
+      );
+
+      if (!type) {
+        typeField?.classList.add('has-error');
+
+        typeInput?.setAttribute(
+          'aria-invalid',
+          'true'
+        );
+
+        if (typeError) {
+          typeError.textContent =
+            'Enter a short name for this fact.';
+        }
+
+        typeInput?.focus({
+          preventScroll: true
+        });
+
+        return {
+          invalid: true,
+          message:
+            'Enter a name for the custom fact.'
+        };
+      }
+
+      if (!date) {
+        root
+          ?.querySelector(
+            `[data-genealogy-date-field="${CSS.escape(
+              `${idPrefix}Date`
+            )}"] [data-genealogy-date-input]`
+          )
+          ?.focus({
+            preventScroll: true
+          });
+
+        return {
+          invalid: true,
+          message:
+            'Check the custom fact date before saving.'
+        };
+      }
+
+      const hasContent = Boolean(
+        value
+          || notes
+          || place.text
+          || place.selectedPlaceId
+          || hasGenealogyDateValue(
+            date,
+            'Exact date'
+          )
+      );
+
+      if (!hasContent) {
+        contentField?.classList.add('has-error');
+
+        valueInput?.setAttribute(
+          'aria-invalid',
+          'true'
+        );
+
+        if (contentError) {
+          contentError.textContent =
+            'Add a value, date, place, or note.';
+        }
+
+        valueInput?.focus({
+          preventScroll: true
+        });
+
+        return {
+          invalid: true,
+          message:
+            'Add some information to the custom fact.'
+        };
+      }
+
+      return {
+        invalid: false,
+
+        value: {
+          type,
+          value,
+          date,
+          place,
+          notes
+        }
+      };
+    }
+
     function collectAddPersonAdditionalFacts(personId = '') {
       const section = modalBackdrop?.querySelector('[data-add-person-facts]');
       const facts = { activeFactIds: collectAddPersonActiveFactIds() };
@@ -20689,6 +21158,12 @@ function renderTreeCardDateLines(person) {
         facts.burialPlace = readPlaceInputValue('#addPersonFactBurialPlace', modalBackdrop);
       }
       if (hasFact('alternativeNames')) facts.alternativeNames = readAddPersonModalValue('#addPersonFactAlternativeNames');
+      if (hasFact('customFact')) { const result = collectCustomFactFields('addPersonCustomFact',  modalBackdrop);
+        if (result.invalid) {
+          return result;
+        }
+        facts.customFact = result.value;
+      }
       if (hasFact('education')) {
         const fromDate = collectGenealogyDateField('addPersonFactEducationFrom');
         const toDate = collectGenealogyDateField('addPersonFactEducationTo');
@@ -20732,6 +21207,61 @@ function renderTreeCardDateLines(person) {
       return facts;
     }
 
+    function applyPersonCustomFact(
+      person,
+      values
+    ) {
+      ensurePersonCentralStructures(person);
+
+      if (!values) {
+        removePersonAttribute(
+          person,
+          'FACT'
+        );
+
+        return null;
+      }
+
+      const existing =
+        personAttributeByTag(
+          person,
+          'FACT'
+        );
+
+      const place =
+        resolvePlaceAssignment(
+          values.place,
+          existing?.placeId
+        );
+
+      return upsertPersonAttribute(
+        person,
+        'FACT',
+        {
+          type:
+            valueOrNull(values.type) || '',
+
+          value:
+            valueOrNull(values.value) || '',
+
+          date:
+            genealogyDateOrNull(
+              values.date,
+              'Exact date'
+            ),
+
+          placeId:
+            place.placeId,
+
+          placeText:
+            place.placeText,
+
+          notes:
+            valueOrNull(values.notes) || ''
+        }
+      );
+    }
+
     function applyAddPersonAdditionalFacts(person, facts = {}) {
       ensurePersonCentralStructures(person);
       const active = new Set(facts.activeFactIds || []);
@@ -20759,6 +21289,11 @@ function renderTreeCardDateLines(person) {
       }
 
       person.profile.alternativeNames = active.has('alternativeNames') ? valueOrNull(facts.alternativeNames) : null;
+
+      if (active.has('customFact') && facts.customFact) {applyPersonCustomFact(person, facts.customFact);
+      } else {
+        applyPersonCustomFact(person, null);
+      }
 
       if (active.has('education') && facts.education) {
         const existingEducation = personAttributeByTag(person, 'EDUC');
@@ -24705,7 +25240,176 @@ function renderTreeCardDateLines(person) {
     }
 
     function openAddFactOverlay(person) {
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="addFactTitle"><div class="modal-header"><div><h2 id="addFactTitle">Add fact</h2><p>Add a life event to ${escapeHtml(person.name)}.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body form-grid"><div class="field"><label>Fact type</label><select class="compact-select"><option>Residence</option><option>Education</option><option>Occupation</option><option>Military service</option><option>Custom fact</option></select></div><div class="field"><label>Date</label><input placeholder="e.g. 2004"></div><div class="field"><label>Place</label><input placeholder="e.g. Pawford, England"></div><div class="field"><label>Notes</label><textarea placeholder="Add context or source notes"></textarea></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-close>Add fact</button></div></div>`);
+      const personId = person?.id;
+
+      const centralPerson =
+        ensurePersonCentralStructures(
+          getPerson(personId)
+        );
+
+      if (!centralPerson) {
+        showToast(
+          'Person record was not found.'
+        );
+
+        return;
+      }
+
+      const existingFact =
+        personAttributeByTag(
+          centralPerson,
+          'FACT'
+        );
+
+      const isEditing =
+        Boolean(existingFact);
+
+      const personName =
+        getPersonDisplayName(personId)
+          || centralPerson.names?.display
+          || 'this person';
+
+      openModal(`
+        <form
+          class="modal"
+          id="timelineCustomFactForm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="addFactTitle"
+          novalidate>
+
+          <div class="modal-header">
+            <div>
+              <h2 id="addFactTitle">
+                ${
+                  isEditing
+                    ? 'Edit custom fact'
+                    : 'Add custom fact'
+                }
+              </h2>
+
+              <p>
+                Record an attribute or characteristic
+                for ${escapeHtml(personName)}.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close custom fact dialog">
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <div class="add-person-fact-grid">
+              ${renderCustomFactFields(
+                'timelineCustomFact',
+                existingFact
+              )}
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+              Cancel
+            </button>
+
+            <button
+              class="button primary"
+              type="submit">
+              ${
+                isEditing
+                  ? 'Save changes'
+                  : 'Add fact'
+              }
+            </button>
+          </div>
+        </form>`);
+
+      bindGenealogyDateFields(
+        modalBackdrop
+      );
+
+      bindPlaceComboboxes(
+        modalBackdrop
+      );
+
+      modalBackdrop
+        .querySelector(
+          '#timelineCustomFactForm'
+        )
+        ?.addEventListener(
+          'submit',
+          event => {
+            event.preventDefault();
+
+            const result =
+              collectCustomFactFields(
+                'timelineCustomFact',
+                modalBackdrop
+              );
+
+            if (result.invalid) {
+              showToast(
+                result.message
+                  || 'Check the custom fact before saving.'
+              );
+
+              return;
+            }
+
+            applyPersonCustomFact(
+              centralPerson,
+              result.value
+            );
+
+            centralPerson.meta =
+              centralPerson.meta || {};
+
+            centralPerson.meta.updated =
+              'Just now';
+
+            sampleData.events =
+              buildSampleEvents();
+
+            closeModal();
+
+            if (
+              state.activeModule
+              === 'Family Tree'
+            ) {
+              renderFamilyTreePreserveScroll?.()
+                || renderFamilyTree();
+            } else if (
+              state.activeModule
+              === 'People'
+            ) {
+              renderPeople();
+            } else {
+              render();
+            }
+
+            showToast(
+              isEditing
+                ? 'Custom fact updated.'
+                : 'Custom fact added.'
+            );
+          }
+        );
+
+      modalBackdrop
+        .querySelector(
+          '#timelineCustomFactType'
+        )
+        ?.focus({
+          preventScroll: true
+        });
     }
 
     function bindAccordion(root, rerender = renderPeople) {
@@ -25669,6 +26373,25 @@ function renderTreeCardDateLines(person) {
         syncPersonSidebarSelection(selected.id, context);
         openConnectRelativeModal(selected.id, { relationshipType: 'parent' });
       });
+      root
+        .querySelector(
+          '[data-person-add-fact]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            if (!selected?.id) return;
+
+            syncPersonSidebarSelection(
+              selected.id,
+              context
+            );
+
+            openAddFactOverlay(
+              getPerson(selected.id)
+            );
+          }
+        );
       root.querySelectorAll('[data-family-photo]').forEach(button => button.addEventListener('click', () => openFamilyPhoto(button.dataset.familyPhoto)));
       root.querySelectorAll('[data-family-archive]').forEach(button => button.addEventListener('click', () => openFamilyArchiveItem(button.dataset.familyArchive)));
       root.querySelectorAll('[data-family-note]').forEach(button => button.addEventListener('click', () => openFamilyNote(button.dataset.familyNote)));
@@ -26825,7 +27548,7 @@ function renderTreeCardDateLines(person) {
     sampleData.boardObjects = [
       { id: 'go-frame', group: 'Theory 1: Missing relationship', type: 'frame', title: 'Theory 1: Daisy Milkpaw and the Pawford Whiskerfields', x: 260, y: 110, w: 540, h: 230, color: 'amber', visible: true, locked: false, z: 1 },
       { id: 'go-daisy', group: 'Theory 1: Missing relationship', type: 'person', title: 'Daisy Milkpaw', subtitle: '1949 - 2020', meta: 'Old Cattery, England', note: 'Linked project person. Records suggest a connection to the Pawford Whiskerfield household.', x: 305, y: 165, w: 210, h: 96, initials: 'DM', avatar: 'green', linked: true, visible: true, locked: false, z: 10 },
-      { id: 'go-unknown', group: 'Theory 1: Missing relationship', type: 'person', title: 'Unknown relative', subtitle: '~1920 - ?', meta: 'Pawford, England', note: 'Possible family link based on age, location and household records.', x: 590, y: 160, w: 195, h: 112, initials: '?', avatar: 'amber', linked: false, visualOnly: true, visible: true, locked: false, z: 10 },
+      { id: 'go-unknown', group: 'Theory 1: Missing relationship', type: 'person', title: 'Unknown relative', subtitle: '~1920 - ?', meta: 'Pawford, England', note: 'Possible family link based on age, location and household records.', x: 590, y: 160, w: 195, h: 112, initials: '', avatar: 'amber', linked: false, visualOnly: true, visible: true, locked: false, z: 10 },
       { id: 'go-birth-record', group: 'Evidence', type: 'evidence', title: 'Birth record extract', subtitle: '11 Nov 1949', meta: 'Old Cattery, England', note: 'Source supports Daisy birth fact and suggests a household clue.', x: 300, y: 410, w: 185, h: 108, visible: true, locked: false, z: 8 },
       { id: 'go-household', group: 'Evidence', type: 'image', title: 'Household record', subtitle: '1940', meta: 'Pawford, England - 2 files', note: 'May connect household members around the same location.', x: 315, y: 600, w: 240, h: 150, visible: true, locked: false, z: 8 },
       { id: 'go-barnaby', group: 'Theory 1: Missing relationship', type: 'person', title: 'Barnaby Whiskerfield', subtitle: '1946 - 2018', meta: 'Pawford, England', note: 'Same region, adjacent household records, and possible family context.', x: 650, y: 500, w: 220, h: 100, initials: 'BW', avatar: 'blue', linked: true, visible: true, locked: false, z: 10 },
@@ -27020,12 +27743,34 @@ function renderTreeCardDateLines(person) {
         <section class="geneo-editor">
           <div class="geneo-editor-toolbar" role="toolbar" aria-label="Geneograph board tools">
             <div class="geneo-editor-toolbar-left">
-              <button class="geneo-toolbar-button" type="button" data-toast="Undo stack is a placeholder in this iteration.">? <span class="optional">Undo</span></button>
-              <button class="geneo-toolbar-button" type="button" data-toast="Redo stack is a placeholder in this iteration.">? <span class="optional">Redo</span></button>
-              <div class="geneo-tool-group" aria-label="Canvas mode">
-                <button class="geneo-tool ${state.geneoTool === 'select' ? 'active' : ''}" type="button" data-geneo-tool="select">${icon.placeholder} Select</button>
-                <button class="geneo-tool ${state.geneoTool === 'pan' ? 'active' : ''}" type="button" data-geneo-tool="pan">${icon.placeholder} Pan</button>
-              </div>
+            <button class="geneo-toolbar-button" type="button" data-toast="Undo stack is a placeholder in this iteration.">
+              ${icon.undo}
+              <span class="optional">Undo</span>
+            </button>
+
+            <button class="geneo-toolbar-button" type="button" data-toast="Redo stack is a placeholder in this iteration.">
+              ${icon.redo}
+              <span class="optional">Redo</span>
+            </button>
+
+            <div class="geneo-tool-group" aria-label="Canvas mode">
+              <button
+                class="geneo-tool ${state.geneoTool === 'select' ? 'active' : ''}"
+                type="button"
+                data-geneo-tool="select">
+                ${icon.cursorSelect}
+                <span>Select</span>
+              </button>
+
+              <button
+                class="geneo-tool ${state.geneoTool === 'pan' ? 'active' : ''}"
+                type="button"
+                data-geneo-tool="pan">
+                ${icon.pan}
+                <span>Pan</span>
+              </button>
+            </div>
+              
               <button class="geneo-toolbar-button" type="button" data-geneo-add="note">${icon.plus} Add</button>
               <button class="geneo-toolbar-button ${state.geneoTool === 'connect' ? 'active' : ''}" type="button" data-geneo-tool="connect">${icon.link} Connect</button>
               <button class="geneo-toolbar-button" type="button" data-geneo-templates>Templates</button>
@@ -27038,15 +27783,15 @@ function renderTreeCardDateLines(person) {
           <div class="geneo-editor-main ${state.geneoInspectorCollapsed ? 'inspector-collapsed' : ''}">
             <div class="geneo-canvas-wrap" aria-label="Geneograph canvas">
               <div class="geneo-palette" aria-label="Object palette">
-                ${renderGeneoPaletteButton('person', 'O', 'Person')}
-                ${renderGeneoPaletteButton('evidence', '?', 'Evidence')}
-                ${renderGeneoPaletteButton('note', '?', 'Note')}
-                ${renderGeneoPaletteButton('image', '?', 'Image')}
-                ${renderGeneoPaletteButton('place', '?', 'Place')}
-                ${renderGeneoPaletteButton('case', '?', 'Case')}
-                ${renderGeneoPaletteButton('shape', '?', 'Shape')}
-                ${renderGeneoPaletteButton('connector', '?', 'Connector')}
-                ${renderGeneoPaletteButton('text', 'T', 'Text')}
+                ${renderGeneoPaletteButton('person', icon.profile, 'Person')}
+                ${renderGeneoPaletteButton('evidence', icon.file, 'Evidence')}
+                ${renderGeneoPaletteButton('note', icon.note, 'Note')}
+                ${renderGeneoPaletteButton('image', icon.image, 'Image')}
+                ${renderGeneoPaletteButton('place', icon.mapPin, 'Place')}
+                ${renderGeneoPaletteButton('case', icon.researchCase, 'Case')}
+                ${renderGeneoPaletteButton('shape', icon.shape, 'Shape')}
+                ${renderGeneoPaletteButton('connector', icon.link, 'Connector')}
+                ${renderGeneoPaletteButton('text', icon.text, 'Text')}
               </div>
               <div class="geneo-board-space" style="width:${boardSpaceW}px;height:${boardSpaceH}px">
                 <div class="geneo-canvas-stage" style="width:${GENEO_BOARD_W}px;height:${GENEO_BOARD_H}px;transform:scale(${zoom})">
@@ -27068,8 +27813,17 @@ function renderTreeCardDateLines(person) {
       bindGeneographEditor();
     }
 
-    function renderGeneoPaletteButton(type, glyph, label) {
-      return `<button class="geneo-palette-button" type="button" data-geneo-add="${type}" title="${escapeHtml(label)}"><span>${glyph}</span><span>${label}</span></button>`;
+    function renderGeneoPaletteButton(type, iconSvg, label) {
+      return `
+        <button
+          class="geneo-palette-button"
+          type="button"
+          data-geneo-add="${type}"
+          title="${escapeHtml(label)}"
+          aria-label="Add ${escapeHtml(label)}">
+          <span aria-hidden="true">${iconSvg}</span>
+          <span>${escapeHtml(label)}</span>
+        </button>`;
     }
 
     function renderGeneographEditorSidebar(board) {
@@ -27087,7 +27841,17 @@ function renderTreeCardDateLines(person) {
               <div>
                 <div class="side-section-title">Current board</div>
                 <h2>${escapeHtml(board.title)}</h2>
-                <div class="meta"><span>? ${escapeHtml(board.type)}</span><span class="saved">? Saved - Auto-saved 14:42</span></div>
+                <div class="meta">
+                  <span>
+                    ${icon.whiteboard}
+                    <span>${escapeHtml(board.type)}</span>
+                  </span>
+
+                  <span class="saved">
+                    ${icon.check}
+                    <span>Saved - Auto-saved 14:42</span>
+                  </span>
+                </div>
               </div>
               <button class="geneo-board-info-button ${state.geneoBoardInfoOpen ? 'active' : ''}" type="button" data-geneo-board-info aria-expanded="${state.geneoBoardInfoOpen}" aria-label="Show board details">${icon.info}</button>
             </div>
@@ -27096,7 +27860,7 @@ function renderTreeCardDateLines(person) {
           </div>
           <div class="geneo-layers">
             <div class="side-section-title">Objects</div>
-            <div class="geneo-layer-tools"><input class="geneo-object-search" id="geneoLayerSearch" placeholder="Search objects-" value="${escapeHtml(state.geneoLayerSearch)}"><button class="geneo-mini-action" type="button" data-toast="Layer display settings are simulated." aria-label="Layer display settings">${icon.settings}</button><button class="geneo-mini-action" type="button" data-toast="Layer lock settings are simulated." aria-label="Layer lock settings">${icon.placeholder}</button><button class="geneo-mini-action" type="button" data-geneo-add="note" aria-label="Add note">${icon.plus}</button></div>
+            <div class="geneo-layer-tools"><input class="geneo-object-search" id="geneoLayerSearch" placeholder="Search objects-" value="${escapeHtml(state.geneoLayerSearch)}"><button class="geneo-mini-action" type="button" data-toast="Layer display settings are simulated." aria-label="Layer display settings">${icon.settings}</button><button class="geneo-mini-action" type="button" data-toast="Layer lock settings are simulated." aria-label="Layer lock settings">${icon.lock}</button><button class="geneo-mini-action" type="button" data-geneo-add="note" aria-label="Add note">${icon.plus}</button></div>
             ${Object.entries(objectGroups).sort(([a],[b]) => geneoGroupOrder(a) - geneoGroupOrder(b)).map(([group, items]) => renderGeneoLayerGroup(group, items.slice().sort(geneoObjectLayerSort))).join('')}
           </div>
         </div>`;
@@ -27135,15 +27899,54 @@ function renderTreeCardDateLines(person) {
 
     function renderGeneoLayerRow(object) {
       const selected = object.id === state.selectedGeneoObjectId;
-      return `<div class="geneo-layer-row ${selected ? 'selected' : ''}" data-geneo-layer="${object.id}" role="button" tabindex="0">
-        <span class="geneo-layer-icon">${geneoObjectGlyph(object.type)}</span><span class="name">${escapeHtml(object.title)}</span>
-        <button class="geneo-layer-toggle" type="button" data-geneo-toggle-visible="${object.id}" aria-label="Toggle visibility">${object.visible ? icon.check : icon.placeholder}</button>
-        <button class="geneo-layer-toggle" type="button" data-geneo-toggle-lock="${object.id}" aria-label="Toggle lock">${object.locked ? icon.placeholder : icon.info}</button>
-      </div>`;
+
+      return `
+        <div
+          class="geneo-layer-row ${selected ? 'selected' : ''}"
+          data-geneo-layer="${object.id}"
+          role="button"
+          tabindex="0">
+
+          <span class="geneo-layer-icon" aria-hidden="true">
+            ${geneoObjectIcon(object.type)}
+          </span>
+
+          <span class="name">${escapeHtml(object.title)}</span>
+
+          <button
+            class="geneo-layer-toggle"
+            type="button"
+            data-geneo-toggle-visible="${object.id}"
+            aria-label="${object.visible ? 'Hide' : 'Show'} ${escapeHtml(object.title)}">
+            ${object.visible ? icon.eye : icon.eyeOff}
+          </button>
+
+          <button
+            class="geneo-layer-toggle"
+            type="button"
+            data-geneo-toggle-lock="${object.id}"
+            aria-label="${object.locked ? 'Unlock' : 'Lock'} ${escapeHtml(object.title)}">
+            ${object.locked ? icon.lock : icon.unlock}
+          </button>
+        </div>`;
     }
 
-    function geneoObjectGlyph(type) {
-      return ({ frame:'?', person:'O', evidence:'?', image:'?', note:'?', hypothesis:'?', question:'?', todo:'!' })[type] || '?';
+    function geneoObjectIcon(type) {
+      return ({
+        frame: icon.frame,
+        person: icon.profile,
+        evidence: icon.file,
+        image: icon.image,
+        note: icon.note,
+        place: icon.mapPin,
+        hypothesis: icon.hypothesis,
+        question: icon.help,
+        todo: icon.checklist,
+        case: icon.researchCase,
+        shape: icon.shape,
+        connector: icon.link,
+        text: icon.text
+      })[type] || icon.note;
     }
 
     function renderGeneographConnectors() {
@@ -27188,7 +27991,33 @@ function renderTreeCardDateLines(person) {
 
     function renderGeneoObjectContent(object) {
       if (object.type === 'person') {
-        return `<div class="geneo-card-inner"><div class="geneo-person-row"><div class="geneo-avatar ${object.avatar || ''}">${escapeHtml(object.initials || '?')}</div><div><strong class="geneo-card-title">${escapeHtml(object.title)}</strong><div class="geneo-card-meta">${escapeHtml(object.subtitle || '')}<br>${escapeHtml(object.meta || '')}</div><span class="geneo-badge ${object.visualOnly ? 'visual' : ''}">${object.visualOnly ? 'Visual only' : 'Linked to person'}</span></div></div></div>`;
+        const avatarContent = object.initials
+          ? escapeHtml(object.initials)
+          : icon.profile;
+
+        return `
+          <div class="geneo-card-inner">
+            <div class="geneo-person-row">
+              <div class="geneo-avatar ${object.avatar || ''}">
+                ${avatarContent}
+              </div>
+
+              <div>
+                <strong class="geneo-card-title">
+                  ${escapeHtml(object.title)}
+                </strong>
+
+                <div class="geneo-card-meta">
+                  ${escapeHtml(object.subtitle || '')}<br>
+                  ${escapeHtml(object.meta || '')}
+                </div>
+
+                <span class="geneo-badge ${object.visualOnly ? 'visual' : ''}">
+                  ${object.visualOnly ? 'Visual only' : 'Linked to person'}
+                </span>
+              </div>
+            </div>
+          </div>`;
       }
       if (object.type === 'evidence') {
         return `<div class="geneo-card-inner"><div class="geneo-evidence-row"><div class="geneo-layer-icon" style="width:34px;height:34px">${icon.file}</div><div><strong class="geneo-card-title">${escapeHtml(object.title)}</strong><div class="geneo-card-meta">${escapeHtml(object.subtitle)}<br>${escapeHtml(object.meta)}<br>${icon.file} 1 file</div></div></div></div>`;
@@ -27207,13 +28036,21 @@ function renderTreeCardDateLines(person) {
         return `<aside class="geneo-inspector collapsed"><button class="geneo-inspector-rail-button" type="button" data-geneo-collapse-inspector="false" aria-label="Open properties inspector">${icon.expand}</button></aside>`;
       }
       const object = selectedGeneographObject();
+      const inspectorIcon = object.type === 'person' && object.initials
+        ? escapeHtml(object.initials)
+        : geneoObjectIcon(object.type);
       if (state.geneoInspectorTab === 'comments') {
         return `<aside class="geneo-inspector"><div class="geneo-inspector-tabs"><button class="geneo-inspector-tab" type="button" data-geneo-inspector-tab="properties">Properties</button><button class="geneo-inspector-tab active" type="button" data-geneo-inspector-tab="comments">Comments</button></div><div class="geneo-comments-placeholder"><strong>Comments placeholder</strong><br>Object comments and review notes will be added later.</div></aside>`;
       }
       return `<aside class="geneo-inspector">
         <div class="geneo-inspector-tabs"><button class="geneo-inspector-tab active" type="button" data-geneo-inspector-tab="properties">Properties</button><button class="geneo-inspector-tab" type="button" data-geneo-inspector-tab="comments">Comments</button></div>
         <div class="geneo-inspector-body">
-          <div class="geneo-inspector-header"><div class="geneo-avatar ${object.avatar || ''}" style="width:54px;height:54px">${escapeHtml(object.initials || geneoObjectGlyph(object.type))}</div><div class="geneo-inspector-title"><h2>${escapeHtml(geneoObjectTypeLabel(object))}</h2><span>ID: ${escapeHtml(object.id)}</span></div><button class="geneo-mini-action" type="button" data-geneo-collapse-inspector="true" aria-label="Collapse inspector">${icon.collapse}</button></div>
+          <div class="geneo-inspector-header">
+            <div class="geneo-avatar ${object.avatar || ''}"
+              style="width:54px;height:54px">
+              ${inspectorIcon}
+            </div>
+              <div class="geneo-inspector-title"><h2>${escapeHtml(geneoObjectTypeLabel(object))}</h2><span>ID: ${escapeHtml(object.id)}</span></div><button class="geneo-mini-action" type="button" data-geneo-collapse-inspector="true" aria-label="Collapse inspector">${icon.collapse}</button></div>
           ${renderGeneoLinkStatus(object)}
           ${renderGeneoContentInspector(object)}
           ${renderGeneoAppearanceInspector(object)}
