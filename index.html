@@ -582,24 +582,24 @@
       background-size: 12px 7px;
       background-repeat: no-repeat;
     }
-    .project-sort-field {
+    .sort-field {
       position: relative;
       display: inline-flex;
       align-items: center;
       min-width: 215px;
     }
 
-    .project-sort-select {
+    .sort-select {
       width: 100%;
       min-width: 0;
-      background-image: none;
       padding-right: 42px;
+      background-image: none;
     }
 
-    .project-sort-chevron {
+    .sort-chevron {
       position: absolute;
-      right: 14px;
       top: 50%;
+      right: 14px;
       width: 18px;
       height: 18px;
       display: grid;
@@ -609,20 +609,30 @@
       transform: translateY(-50%);
     }
 
-    .project-sort-chevron svg {
+    .sort-chevron svg {
       width: 16px;
       height: 16px;
       display: block;
       transform: rotate(90deg);
     }
 
-    .project-sort-field:hover .project-sort-select {
+    .sort-field:hover .sort-select {
       background-color: var(--surface-card-hover);
       border-color: var(--border-strong);
       color: var(--text-primary);
     }
 
-    .project-sort-field:hover .project-sort-chevron {
+    .sort-field:hover .sort-chevron {
+      color: var(--text-primary);
+    }
+
+    .sort-field:focus-within .sort-select {
+      border-color: rgba(98, 217, 154, .55);
+      outline: 0;
+      box-shadow: 0 0 0 3px rgba(98, 217, 154, .1);
+    }
+
+    .sort-field:focus-within .sort-chevron {
       color: var(--text-primary);
     }
     .toolbar-button {
@@ -5731,41 +5741,130 @@
     }
 
     .people-filter-button {
-      position: relative;
-      white-space: nowrap;
-      justify-content: center;
-    }
-
-    .people-filter-button.active {
-      background: var(--surface-selected);
-      border-color: rgba(98,217,154,.3);
-      color: var(--brand-green-300);
-    }
-
-    .people-filter-count {
-      min-width: 22px;
-      height: 22px;
-      padding: 0 7px;
-      border-radius: 999px;
+      height: 44px;
+      min-height: 44px;
+      padding: 0 14px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-card);
+      color: var(--text-secondary);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: rgba(47,174,116,.2);
+      gap: var(--space-2);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1;
+      white-space: nowrap;
+      cursor: pointer;
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease),
+        box-shadow var(--ease);
+    }
+
+    .people-filter-button:hover {
+      border-color: var(--border-strong);
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
+    }
+
+    .people-filter-button:focus-visible {
+      border-color: rgba(98, 217, 154, .55);
+      outline: 0;
+      box-shadow:
+        0 0 0 3px rgba(98, 217, 154, .1);
+    }
+
+    .people-filter-button.active {
+      border-color: rgba(98, 217, 154, .38);
+      background: var(--surface-selected);
       color: var(--brand-green-300);
-      font-size: 12px;
+    }
+
+    .people-filter-icon {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+      display: grid;
+      place-items: center;
+    }
+
+    .people-filter-icon svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+
+    .people-filter-count {
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 999px;
+      background: var(--brand-green-500);
+      color: var(--brand-green-900);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
       font-weight: 900;
-      margin-left: 4px;
+      line-height: 1;
     }
 
     .people-filter-chip {
-      background: rgba(47,174,116,.08);
-      border-color: rgba(98,217,154,.22);
+      min-height: 34px;
+      padding: 4px 5px 4px 10px;
+      border-color: rgba(98, 217, 154, .22);
+      background: rgba(47, 174, 116, .08);
       color: var(--text-secondary);
+      gap: var(--space-2);
+    }
+
+    .people-filter-chip-copy {
+      min-width: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .people-filter-chip strong {
       color: var(--text-primary);
       font-weight: 900;
+    }
+
+    .people-filter-chip-remove {
+      width: 24px;
+      height: 24px;
+      flex: 0 0 24px;
+      padding: 0;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text-tertiary);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition:
+        background var(--ease),
+        color var(--ease);
+    }
+
+    .people-filter-chip-remove:hover {
+      background: rgba(255, 255, 255, .07);
+      color: var(--text-primary);
+    }
+
+    .people-filter-chip-remove:focus-visible {
+      outline: 2px solid var(--brand-green-400);
+      outline-offset: 1px;
+    }
+
+    .people-filter-chip-remove svg {
+      width: 14px;
+      height: 14px;
+      display: block;
     }
 
     .people-filter-popover {
@@ -8208,43 +8307,195 @@
     .albums-header-actions svg, .albums-selection-actions svg, .albums-filter-button svg { width: 17px; height: 17px; flex: 0 0 17px; }
 
     .albums-toolbar {
-      flex: 0 0 auto; min-height: 54px; padding: var(--space-3);
-      border: 1px solid var(--border-default); border-radius: var(--radius-sm);
-      background: var(--surface-panel); display: flex; align-items: center;
-      justify-content: space-between; gap: var(--space-3);
+      flex: 0 0 auto;
+      min-width: 0;
+      min-height: 44px;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
     }
-    .albums-toolbar-left { flex: 1 1 560px; min-width: 0; }
-    .albums-toolbar-right { flex: 0 0 auto; justify-content: flex-end; }
+
+    .albums-toolbar-left {
+      min-width: 0;
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+    }
+
+    .albums-toolbar-right {
+      min-width: 0;
+      flex: 0 0 auto;
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-2);
+    }
+
+    /* Compact search remains isolated on the left. */
     .albums-search {
-      flex: 1 1 280px; min-width: 180px; height: var(--control-height);
-      padding: 0 var(--space-3); border: 1px solid var(--border-default);
-      border-radius: var(--radius-sm); background: var(--surface-input);
-      display: flex; align-items: center; gap: var(--space-2); color: var(--text-tertiary);
+      width: 260px;
+      min-width: 200px;
+      height: 44px;
+      padding: 0 var(--space-3);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-card);
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease),
+        box-shadow var(--ease);
     }
-    .albums-search:focus-within { border-color: rgba(98,217,154,.55); box-shadow: 0 0 0 3px rgba(98,217,154,.1); }
-    .albums-search svg { width: 17px; height: 17px; flex: 0 0 17px; }
-    .albums-search input { width: 100%; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: transparent; color: var(--text-primary); }
-    .albums-filter-button { min-width: 94px; justify-content: center; white-space: nowrap; }
-    .albums-filter-button.active { border-color: rgba(98,217,154,.35); background: var(--surface-selected); color: var(--brand-green-300); }
+
+    .albums-search:hover {
+      border-color: var(--border-strong);
+      background: var(--surface-card-hover);
+    }
+
+    .albums-search:focus-within {
+      border-color: rgba(98, 217, 154, .55);
+      background: var(--surface-card);
+      box-shadow: 0 0 0 3px rgba(98, 217, 154, .1);
+    }
+
+    .albums-search svg {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+    }
+
+    .albums-search input {
+      width: 100%;
+      min-width: 0;
+      height: 100%;
+      padding: 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text-primary);
+    }
+
+    .albums-search input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .albums-filter-button {
+      height: 44px;
+      min-height: 44px;
+      padding: 0 14px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-card);
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1;
+      white-space: nowrap;
+      cursor: pointer;
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease),
+        box-shadow var(--ease);
+    }
+
+    .albums-filter-button:hover {
+      border-color: var(--border-strong);
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
+    }
+
+    .albums-filter-button:focus-visible {
+      border-color: rgba(98, 217, 154, .55);
+      outline: 0;
+      box-shadow: 0 0 0 3px rgba(98, 217, 154, .1);
+    }
+
+    .albums-filter-button.active {
+      border-color: rgba(98, 217, 154, .38);
+      background: var(--surface-selected);
+      color: var(--brand-green-300);
+    }
+
+    .albums-filter-icon {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+      display: grid;
+      place-items: center;
+    }
+
+    .albums-filter-icon svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+
     .albums-filter-count {
-      min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px;
-      background: var(--brand-green-500); color: #10251a; display: inline-flex;
-      align-items: center; justify-content: center; font-size: 10px; font-weight: 900;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 999px;
+      background: var(--brand-green-500);
+      color: #10251a;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 900;
     }
+
+    /* Albums-specific width only; shared Sort controls own the styling. */
+    .albums-sort-field {
+      width: 190px;
+      min-width: 190px;
+    }
+
     .albums-select {
-      width: 174px; height: var(--control-height); padding: 0 36px 0 var(--space-3);
-      border: 1px solid var(--border-default); border-radius: var(--radius-sm);
-      background: var(--surface-input); color: var(--text-secondary);
+      height: 44px;
     }
-    .albums-view-button, .albums-check, .albums-fav-button, .albums-card-more,
-    .albums-row-more, .albums-detail-collapse, .albums-detail-restore, .albums-album-more {
-      border: 1px solid transparent; background: transparent; color: var(--text-tertiary);
-      display: inline-grid; place-items: center; cursor: pointer;
+
+    /* Shared toolbar buttons own size, border, hover, and active styling. */
+    .albums-view-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
     }
-    .albums-view-button { width: var(--control-height); height: var(--control-height); border-color: var(--border-default); background: var(--surface-input); }
-    .albums-view-button:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
-    .albums-view-button:last-child { margin-left: -9px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
-    .albums-view-button.active { border-color: rgba(98,217,154,.4); background: var(--surface-selected); color: var(--brand-green-300); }
+
+    .albums-view-button {
+      flex: 0 0 auto;
+    }
+
+    .albums-view-button svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .albums-toolbar .albums-search svg,
+    .albums-toolbar .albums-filter-button svg,
+    .albums-toolbar .albums-view-button svg {
+      width: 18px;
+      height: 18px;
+      max-width: 18px;
+      max-height: 18px;
+      flex: 0 0 18px;
+      display: block;
+    }
     .albums-view-button svg, .albums-check svg, .albums-fav-button svg,
     .albums-card-more svg, .albums-row-more svg, .albums-detail-collapse svg,
     .albums-detail-restore svg, .albums-album-more svg { width: 17px; height: 17px; }
@@ -8401,10 +8652,17 @@
     .albums-detail-actions .button.danger { border-color: rgba(212,107,107,.35); background: rgba(212,107,107,.08); color: #f2b3b3; }
 
     .albums-sidebar {
+      height: 100%;
+      min-height: 0;
       padding-bottom: var(--space-4);
       display: flex;
       flex-direction: column;
       gap: var(--space-5);
+    }
+
+    .albums-sidebar-tip {
+      margin-top: auto;
+      flex: 0 0 auto;
     }
 
     .albums-side-album-row {
@@ -8511,11 +8769,70 @@
       .geneo-editor-main { grid-template-columns: minmax(0,1fr) 300px; }
       .geneo-toolbar-button[data-geneo-templates] { display: none; }
     }
-    @media (max-width: 1180px) {
-      .albums-shell { grid-template-columns: minmax(0,1fr) 320px; }
-      .albums-toolbar { align-items: stretch; flex-wrap: wrap; }
-      .albums-toolbar-left { flex-basis: 100%; }
-      .albums-toolbar-right { margin-left: auto; }
+    @media (max-width: 720px) {
+      .albums-main {
+        padding: var(--space-4);
+      }
+
+      .albums-header {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .albums-header-actions {
+        justify-content: flex-start;
+      }
+
+      .albums-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .albums-toolbar-left,
+      .albums-toolbar-right {
+        width: 100%;
+      }
+
+      .albums-toolbar-right {
+        margin-left: 0;
+        justify-content: flex-start;
+      }
+
+      .albums-search {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .albums-sort-field {
+        width: min(100%, 190px);
+        min-width: 0;
+      }
+
+      .albums-selection-bar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .albums-selection-actions {
+        justify-content: flex-start;
+      }
+
+      .albums-grid {
+        display: grid;
+        grid-template-columns:
+          repeat(
+            auto-fill,
+            minmax(150px, 1fr)
+          );
+      }
+
+      .album-photo-card,
+      .album-photo-card.ratio-portrait,
+      .album-photo-card.ratio-square,
+      .album-photo-card.ratio-landscape,
+      .album-photo-card.ratio-wide {
+        width: 100%;
+      }
     }
     @media (max-width: 1080px) {
       .geneo-board-grid { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
@@ -9938,10 +10255,17 @@
 
     /* People columns and preview refinements */
     
-    .people-columns-button,
-    .people-filter-button { white-space: nowrap; min-width: 110px; justify-content: center; }
-    .people-columns-button.active,
-    .people-filter-button.active { background: var(--surface-selected); border-color: rgba(98,217,154,.32); color: var(--brand-green-300); }
+    .people-columns-button {
+      min-width: 110px;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    .people-columns-button.active {
+      border-color: rgba(98, 217, 154, .32);
+      background: var(--surface-selected);
+      color: var(--brand-green-300);
+    }
     .people-columns-popover {
       position: fixed;
       z-index: 90;
@@ -9969,19 +10293,7 @@
     .people-columns-option.locked { cursor: default; color: var(--text-tertiary); }
     .people-columns-option input { position: absolute; opacity: 0; pointer-events: none; }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+       
     /* People tab refinement overrides */
     .people-columns-option input {
       position: static !important;
@@ -10754,6 +11066,8 @@
       file: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/><path d="M14 3v6h6"/></svg>',
       focus: '<svg width="512" height="512" viewBox="0 0 512 512" fill="none" ><path d="M30 421.929L30.0049 422.704C30.417 455.226 56.7031 481.511 89.2246 481.923L90 481.929H184.496C192.78 481.929 199.496 488.644 199.496 496.929C199.496 505.213 192.78 511.929 184.496 511.929H90C40.2945 511.929 0.000263889 471.634 0 421.929V327.456C0 319.172 6.71573 312.456 15 312.456C23.2843 312.456 30 319.172 30 327.456V421.929Z" fill="currentColor"/><path d="M511.991 421.929C511.991 471.634 471.697 511.929 421.991 511.929H327.494C319.21 511.929 312.494 505.213 312.494 496.929C312.494 488.644 319.21 481.929 327.494 481.929H421.991C454.869 481.929 481.571 455.484 481.986 422.704L481.991 421.929V327.456C481.991 319.172 488.707 312.456 496.991 312.456C505.275 312.456 511.991 319.172 511.991 327.456V421.929Z" fill="currentColor"/><path d="M199.496 15C199.496 23.2843 192.78 30 184.496 30H90C56.863 30 30.0002 56.8631 30 90V184.474C30 192.758 23.2843 199.474 15 199.474C6.71573 199.474 0 192.758 0 184.474V90C0.000191733 40.2945 40.2945 0 90 0H184.496C192.78 0 199.496 6.71573 199.496 15Z" fill="currentColor"/><path d="M421.991 0C471.697 3.29903e-05 511.991 40.2946 511.991 90V184.474C511.991 192.758 505.275 199.474 496.991 199.474C488.707 199.474 481.991 192.758 481.991 184.474V90C481.991 57.1219 455.546 30.4201 422.767 30.0049L421.991 30H327.494C319.21 30 312.494 23.2843 312.494 15C312.494 6.71573 319.21 0 327.494 0H421.991Z" fill="currentColor"/><path d="M256.435 269.927C322.84 269.927 378.178 319.907 390.479 386.148C393.302 401.352 380.443 413.999 364.979 413.999H147.968C132.504 413.999 119.567 401.352 122.39 386.148C134.69 319.907 190.029 269.927 256.435 269.927Z" fill="currentColor"/><path d="M334.469 174.5C334.469 216.75 299.771 251 256.969 251C214.167 251 179.469 216.75 179.469 174.5C179.469 132.25 214.167 98 256.969 98C299.771 98 334.469 132.25 334.469 174.5Z" fill="currentColor"/></svg>',
       folder: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h7l2 2h9v9.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5Z"/></svg>',
+      filter: '<svg width="512" height="512" viewBox="0 0 24 24"><path fill="currentColor" d="M14 12v7.88c.04.3-.06.62-.29.83a.996.996 0 0 1-1.41 0l-2.01-2.01a.99.99 0 0 1-.29-.83V12h-.03L4.21 4.62a1 1 0 0 1 .17-1.4c.19-.14.4-.22.62-.22h14c.22 0 .43.08.62.22a1 1 0 0 1 .17 1.4L14.03 12z"/></svg>',
+      filterclear: '<svg width="512" height="512" viewBox="0 0 24 24"><path fill="currentColor" d="M2.39 1.73L1.11 3l8.39 8.37l.47.63H10v5.87c-.04.29.06.6.29.83l2.01 2.01c.39.39 1.02.39 1.41 0c.23-.21.33-.53.29-.83v-3.99l6.84 6.84l1.27-1.27L14 13.35L9.41 8.76L4.15 3.5zM6.21 3l8.33 8.34l5.25-6.72a1 1 0 0 0-.17-1.4c-.19-.14-.4-.22-.62-.22z"/></svg>',
       grid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>',
       help: '<svg viewBox="0 0 24 24" fill="none" ><path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2"></path> <path d="M10.5 8.67709C10.8665 8.26188 11.4027 8 12 8C13.1046 8 14 8.89543 14 10C14 10.9337 13.3601 11.718 12.4949 11.9383C12.2273 12.0064 12 12.2239 12 12.5V12.5V13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M12 16H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>',
       home: '<svg width="512" height="512" viewBox="0 0 512 512" fill="none" ><path d="M244.338 1.18588C231.329 4.79163 234.931 1.48636 119.647 116.67C59.8028 176.565 9.46586 227.547 7.86469 229.95C-4.54441 248.48 -2.04258 273.32 13.769 289.245C22.9758 298.36 34.6843 303.167 48.0942 303.167H54.8992V383.295C54.8992 437.481 55.2995 465.025 56 468.631C59.8028 486.86 74.5136 503.386 92.7269 509.696C99.3318 512 99.8321 512 148.168 512C195.803 512 196.903 512 199.605 509.897C201.106 508.795 203.308 506.591 204.409 505.089C206.51 502.385 206.51 501.083 207.011 435.478L207.511 368.571L210.513 363.664C214.316 357.554 222.022 352.646 229.427 351.745C232.229 351.344 246.239 351.244 260.55 351.444L286.569 351.745L291.873 354.649C296.877 357.454 300.079 360.759 303.181 366.268C304.282 368.371 304.682 380.691 305.083 435.578C305.583 501.083 305.583 502.385 307.685 505.089C308.785 506.591 310.987 508.795 312.488 509.897C315.19 512 316.291 512 363.926 512C412.261 512 412.762 512 419.366 509.696C437.58 503.386 452.291 486.86 456.093 468.631C456.794 465.025 457.194 437.481 457.194 383.295V303.167H463.999C488.017 303.167 507.431 286.841 511.434 263.304C512.935 254.089 511.434 244.273 507.131 235.059C504.229 229.049 495.522 220.035 395.249 119.575C335.505 59.6791 284.467 9.29883 281.866 7.5961C279.264 5.8934 274.76 3.58972 271.858 2.48798C264.853 -0.21637 251.443 -0.817322 244.338 1.18588Z" fill="currentColor"/></svg>',
@@ -14285,13 +14599,13 @@
                 <label class="search" aria-label="Search projects">${icon.search}<input id="projectSearch" type="search" placeholder="Search projects..." value="${escapeHtml(state.search)}"></label>
               </div>
               <div class="toolbar-right">
-                  <span class="project-sort-field">
-                    <select class="select project-sort-select" id="sortProjects" aria-label="Sort projects">
+                  <span class="sort-field">
+                    <select class="select sort-select" id="sortProjects" aria-label="Sort projects">
                       <option value="modified" ${state.sort === 'modified' ? 'selected' : ''}>Sort: Date modified</option>
                       <option value="name" ${state.sort === 'name' ? 'selected' : ''}>Sort: Name</option>
                       <option value="people" ${state.sort === 'people' ? 'selected' : ''}>Sort: People count</option>
                     </select>
-                    <span class="project-sort-chevron" aria-hidden="true">${icon.chevron}</span>
+                    <span class="sort-chevron" aria-hidden="true">${icon.chevron}</span>
                   </span>
                 <button class="toolbar-button ${state.viewMode === 'grid' ? 'active' : ''}" type="button" data-view="grid" aria-label="Grid view">${icon.grid}</button>
                 <button class="toolbar-button ${state.viewMode === 'list' ? 'active' : ''}" type="button" data-view="list" aria-label="List view">${icon.list}</button>
@@ -21909,26 +22223,176 @@ function renderTreeCardDateLines(person) {
     }
 
     function renderPeopleActiveFilters() {
-      if (!hasActivePeopleFilters()) return '';
-      const chips = activePeopleFilterEntries().map(([key, label, value]) => `<span class="filter-chip people-filter-chip"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)} <button type="button" data-people-remove-filter="${key}" aria-label="Remove ${escapeHtml(label)} filter">${icon.close}</button></span>`).join('');
-      return `<div class="people-filterbar" aria-label="Active People filters">${chips}<span class="people-filter-actions"><button class="link" type="button" id="peopleClearFilters">Clear all</button><button class="people-save-view" type="button" id="peopleSaveView">Save filter</button></span></div>`;
+      if (!hasActivePeopleFilters()) {
+        return '';
+      }
+
+      const chips = activePeopleFilterEntries()
+        .map(([key, label, value]) => `
+          <span class="filter-chip people-filter-chip">
+            <span class="people-filter-chip-copy">
+              <strong>${escapeHtml(label)}:</strong>
+              ${escapeHtml(value)}
+            </span>
+
+            <button
+              class="people-filter-chip-remove"
+              type="button"
+              data-people-remove-filter="${escapeHtml(key)}"
+              aria-label="Remove ${escapeHtml(label)} filter"
+              title="Remove filter">
+              ${icon.close}
+            </button>
+          </span>
+        `)
+        .join('');
+
+      return `
+        <div
+          class="people-filterbar"
+          aria-label="Active People filters">
+          ${chips}
+
+          <span class="people-filter-actions">
+            <button
+              class="link"
+              type="button"
+              id="peopleClearFilters">
+              Clear all
+            </button>
+
+            <button
+              class="people-save-view"
+              type="button"
+              id="peopleSaveView">
+              Save filter
+            </button>
+          </span>
+        </div>
+      `;
     }
 
     function renderPeopleNormalToolbar() {
-      return `<div class="people-toolbar people-normal-toolbar">
-        <label class="search-input">${icon.search}<input id="peopleSearch" type="search" placeholder="Search people..." value="${escapeHtml(state.peopleSearch)}"></label>
-        <button class="button secondary people-columns-button ${peopleColumnsCustomized() ? 'active' : ''}" type="button" id="peopleColumnsButton" aria-haspopup="dialog">${icon.grid} Columns</button>
-        <button class="button secondary people-filter-button ${hasActivePeopleFilters() ? 'active' : ''}" type="button" id="peopleFilterButton">Filter${activePeopleFilterCount() ? `<span class="people-filter-count">${activePeopleFilterCount()}</span>` : ''}</button>
-        <span class="people-sort-field">
-          <select class="people-sort-select" id="peopleSort" aria-label="Sort people">
-            <option value="modified" ${state.peopleSort === 'modified' ? 'selected' : ''}>Sort: Date modified</option>
-            <option value="name" ${state.peopleSort === 'name' ? 'selected' : ''}>Sort: Name</option>
-            <option value="birth" ${state.peopleSort === 'birth' ? 'selected' : ''}>Sort: Birth date</option>
-          </select>
-          <span class="people-sort-chevron" aria-hidden="true">${icon.chevron}</span>
-        </span>
-        <button class="button primary" type="button" id="addPeoplePerson">${icon.plus} Add person</button>
-      </div>`;
+      const activeFilterCount =
+        activePeopleFilterCount();
+
+      const hasActiveFilters =
+        activeFilterCount > 0;
+
+      return `
+        <div class="people-toolbar people-normal-toolbar">
+          <label class="search-input">
+            ${icon.search}
+
+            <input
+              id="peopleSearch"
+              type="search"
+              placeholder="Search people..."
+              value="${escapeHtml(state.peopleSearch)}">
+          </label>
+
+          <button
+            class="button secondary people-columns-button ${
+              peopleColumnsCustomized()
+                ? 'active'
+                : ''
+            }"
+            type="button"
+            id="peopleColumnsButton"
+            aria-haspopup="dialog">
+            ${icon.grid}
+            <span>Columns</span>
+          </button>
+
+          <button
+            class="people-filter-button ${
+              hasActiveFilters
+                ? 'active'
+                : ''
+            }"
+            type="button"
+            id="peopleFilterButton"
+            aria-haspopup="dialog"
+            aria-label="${
+              hasActiveFilters
+                ? `Filters, ${activeFilterCount} active`
+                : 'Open people filters'
+            }">
+            <span
+              class="people-filter-icon"
+              aria-hidden="true">
+              ${
+                hasActiveFilters
+                  ? icon.filterclear
+                  : icon.filter
+              }
+            </span>
+
+            <span>Filters</span>
+
+            ${
+              hasActiveFilters
+                ? `
+                  <span class="people-filter-count">
+                    ${activeFilterCount}
+                  </span>
+                `
+                : ''
+            }
+          </button>
+
+          <span class="people-sort-field">
+            <select
+              class="people-sort-select"
+              id="peopleSort"
+              aria-label="Sort people">
+              <option
+                value="modified"
+                ${
+                  state.peopleSort === 'modified'
+                    ? 'selected'
+                    : ''
+                }>
+                Sort: Date modified
+              </option>
+
+              <option
+                value="name"
+                ${
+                  state.peopleSort === 'name'
+                    ? 'selected'
+                    : ''
+                }>
+                Sort: Name
+              </option>
+
+              <option
+                value="birth"
+                ${
+                  state.peopleSort === 'birth'
+                    ? 'selected'
+                    : ''
+                }>
+                Sort: Birth date
+              </option>
+            </select>
+
+            <span
+              class="people-sort-chevron"
+              aria-hidden="true">
+              ${icon.chevron}
+            </span>
+          </span>
+
+          <button
+            class="button primary"
+            type="button"
+            id="addPeoplePerson">
+            ${icon.plus}
+            <span>Add person</span>
+          </button>
+        </div>
+      `;
     }
 
     function renderPeopleBulkToolbar(rows) {
@@ -26338,7 +26802,7 @@ function renderTreeCardDateLines(person) {
       };
       return contexts[state.albumsView] || {
         title: 'All photos',
-        subtitle: 'Central media records in this project.',
+        subtitle: 'Your photos and visual memories.',
         empty: 'No photos match this view.'
       };
     }
@@ -26529,25 +26993,177 @@ function renderTreeCardDateLines(person) {
                     </button>
                   </div>`;
               }).join('')}
-            </div>
-          </div>
-        </nav>`;
+                </div>
+              </div>
+              <div class="tip-card albums-sidebar-tip">
+                <div class="tip-title">
+                  ${icon.tip}
+                  <span>Tip of the day</span>
+                </div>
+
+                <p>
+                  Add people, dates, and places as you identify them.
+                  Even partial details make photos easier to find later.
+                </p>
+
+                <button
+                  class="link tip-link"
+                  type="button"
+                  data-toast="More photo organization guidance will be added later.">
+                  <span class="tip-link-text">
+                    Learn more
+                  </span>
+
+                  <span
+                    class="tip-link-icon"
+                    aria-hidden="true">
+                    ${icon.openlink}
+                  </span>
+                </button>
+              </div>
+            </nav>`;
     }
 
     function renderAlbumsMainMarkup() {
       const photos = filteredAlbumPhotos();
       const context = albumContext();
+      const activeFilterCount = albumFilterCount();
       const activeFilters = renderAlbumsActiveFilterbar();
       return `<header class="albums-header">
         <div class="albums-title"><h1>${escapeHtml(context.title)}</h1><p>${escapeHtml(context.subtitle)}</p></div>
         ${state.albumsView === 'deleted' ? '' : `<div class="albums-header-actions"><button class="button primary" type="button" id="albumsAddPhotos">${icon.plus} Add photos</button></div>`}
       </header>
-      <div class="albums-toolbar">
-        <div class="albums-toolbar-left"><label class="albums-search" aria-label="Search photos">${icon.search}<input id="albumsSearch" type="search" value="${escapeHtml(state.albumsSearch || '')}" placeholder="Search photos"></label>
-          <button class="button secondary albums-filter-button ${albumFilterCount() ? 'active' : ''}" type="button" id="albumsFilterButton">${icon.settings} Filters${albumFilterCount() ? `<span class="albums-filter-count">${albumFilterCount()}</span>` : ''}</button>
-          <select class="albums-select" id="albumsSort" aria-label="Sort photos"><option value="modified" ${state.albumsSort === 'modified' ? 'selected' : ''}>Recently modified</option><option value="oldest" ${state.albumsSort === 'oldest' ? 'selected' : ''}>Oldest added</option><option value="title" ${state.albumsSort === 'title' ? 'selected' : ''}>Title</option></select>
+      <div
+        class="albums-toolbar"
+        aria-label="Photo controls">
+
+        <div class="albums-toolbar-left">
+          <label
+            class="albums-search"
+            aria-label="Search photos">
+            ${icon.search}
+
+            <input
+              id="albumsSearch"
+              type="search"
+              value="${escapeHtml(state.albumsSearch || '')}"
+              placeholder="Search photos">
+          </label>
         </div>
-        <div class="albums-toolbar-right"><button class="albums-view-button ${state.albumsViewMode === 'grid' ? 'active' : ''}" type="button" data-albums-mode="grid" aria-label="Grid view" aria-pressed="${state.albumsViewMode === 'grid'}">${icon.grid}</button><button class="albums-view-button ${state.albumsViewMode === 'list' ? 'active' : ''}" type="button" data-albums-mode="list" aria-label="List view" aria-pressed="${state.albumsViewMode === 'list'}">${icon.list}</button></div>
+
+        <div class="albums-toolbar-right">
+          <button
+            class="albums-filter-button ${
+              activeFilterCount ? 'active' : ''
+            }"
+            type="button"
+            id="albumsFilterButton"
+            aria-label="${
+              activeFilterCount
+                ? `Filters, ${activeFilterCount} active`
+                : 'Open photo filters'
+            }"
+            aria-expanded="false">
+            <span
+              class="albums-filter-icon"
+              aria-hidden="true">
+              ${
+                activeFilterCount
+                  ? icon.filterclear
+                  : icon.filter
+              }
+            </span>
+
+            <span>Filters</span>
+
+            ${
+              activeFilterCount
+                ? `<span class="albums-filter-count">
+                    ${activeFilterCount}
+                  </span>`
+                : ''
+            }
+          </button>
+
+          <span class="sort-field albums-sort-field">
+            <select
+              class="select sort-select albums-select"
+              id="albumsSort"
+              aria-label="Sort photos">
+              <option
+                value="modified"
+                ${
+                  state.albumsSort === 'modified'
+                    ? 'selected'
+                    : ''
+                }>
+                Recently modified
+              </option>
+
+              <option
+                value="oldest"
+                ${
+                  state.albumsSort === 'oldest'
+                    ? 'selected'
+                    : ''
+                }>
+                Oldest added
+              </option>
+
+              <option
+                value="title"
+                ${
+                  state.albumsSort === 'title'
+                    ? 'selected'
+                    : ''
+                }>
+                Title
+              </option>
+            </select>
+
+            <span
+              class="sort-chevron"
+              aria-hidden="true">
+              ${icon.chevron}
+            </span>
+          </span>
+
+          <div
+            class="albums-view-switch"
+            role="group"
+            aria-label="View mode">
+
+            <button
+              class="toolbar-button albums-view-button ${
+                state.albumsViewMode === 'grid'
+                  ? 'active'
+                  : ''
+              }"
+              type="button"
+              data-albums-mode="grid"
+              aria-label="Grid view"
+              aria-pressed="${
+                state.albumsViewMode === 'grid'
+              }">
+              ${icon.grid}
+            </button>
+
+            <button
+              class="toolbar-button albums-view-button ${
+                state.albumsViewMode === 'list'
+                  ? 'active'
+                  : ''
+              }"
+              type="button"
+              data-albums-mode="list"
+              aria-label="List view"
+              aria-pressed="${
+                state.albumsViewMode === 'list'
+              }">
+              ${icon.list}
+            </button>
+          </div>
+        </div>
       </div>
       ${activeFilters}
       ${state.selectedPhotoIds.length ? renderAlbumsSelectionBar() : ''}
@@ -27012,6 +27628,9 @@ function renderTreeCardDateLines(person) {
       sidebar.querySelectorAll('[data-album-open]').forEach(button => button.addEventListener('click', () => { state.albumsView = 'album'; state.activeAlbumId = button.dataset.albumOpen; state.selectedPhotoIds = []; renderAlbums(); }));
       sidebar.querySelectorAll('[data-album-menu]').forEach(button => button.addEventListener('click', event => { event.stopPropagation(); openAlbumSidebarMenu(button.dataset.albumMenu, button); }));
       sidebar.querySelector('#albumsNewAlbum')?.addEventListener('click', openNewAlbumModal);
+      sidebar.querySelector('#albumsNewAlbum') ?.addEventListener('click', openNewAlbumModal);
+
+      bindToasts(sidebar);
     }
 
     function bindAlbumsControls() {
