@@ -8286,9 +8286,13 @@
     .album-photo-card.ratio-landscape { width: 252px; }
     .album-photo-card.ratio-wide { width: 318px; }
     .album-photo-card:hover, .albums-list-row:not(.header):hover { border-color: var(--border-strong); background: var(--surface-card-hover); }
-    .album-photo-card:focus-visible, .albums-list-row:focus-visible,
-    .albums-nav-row:focus-visible, .albums-album-main:focus-visible,
-    .albums-album-more:focus-visible { outline: 2px solid var(--brand-green-400); outline-offset: 2px; }
+    .album-photo-card:focus-visible,
+    .albums-list-row:focus-visible,
+    .albums-album-main:focus-visible,
+    .albums-album-more:focus-visible {
+      outline: 2px solid var(--brand-green-400);
+      outline-offset: 2px;
+    }
     .album-photo-card.selected-detail, .albums-list-row.selected-detail { border-color: rgba(98,217,154,.5); box-shadow: inset 0 0 0 1px rgba(98,217,154,.2); }
     .album-photo-card.is-checked, .albums-list-row.is-checked { background: var(--surface-selected); }
     .albums-thumb { position: relative; width: 100%; height: 170px; min-height: 170px; overflow: hidden; background: var(--surface-input); }
@@ -8396,23 +8400,92 @@
     .albums-field textarea { width: 100%; min-height: 100px; resize: vertical; border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--surface-input); color: var(--text-primary); padding: var(--space-3); }
     .albums-detail-actions .button.danger { border-color: rgba(212,107,107,.35); background: rgba(212,107,107,.08); color: #f2b3b3; }
 
-    .albums-sidebar { padding-bottom: var(--space-4); }
-    .albums-sidebar .side-section-label { margin-top: var(--space-4); }
-    .albums-nav-row, .albums-side-album-row, .albums-album-main { min-width: 0; min-height: 42px; }
-    .albums-nav-row, .albums-side-album-row { width: 100%; border: 1px solid transparent; border-radius: var(--radius-sm); background: transparent; color: var(--text-secondary); }
-    .albums-nav-row { padding: 0 10px; display: grid; grid-template-columns: 20px minmax(0,1fr) auto; align-items: center; gap: 9px; text-align: left; cursor: pointer; }
-    .albums-side-album-row { position: relative; display: grid; grid-template-columns: minmax(0,1fr) 34px; align-items: center; overflow: hidden; }
-    .albums-album-main { padding: 0 2px 0 10px; border: 0; background: transparent; color: inherit; display: grid; grid-template-columns: 20px minmax(0,1fr) auto; align-items: center; gap: 9px; text-align: left; cursor: pointer; }
-    .albums-nav-row:hover, .albums-side-album-row:hover { background: var(--surface-card-hover); color: var(--text-primary); }
-    .albums-nav-row.active, .albums-side-album-row.active { border-color: rgba(98,217,154,.25); background: var(--surface-selected); color: var(--brand-green-300); }
-    .albums-nav-icon { width: 20px; height: 20px; display: inline-grid; place-items: center; }
-    .albums-nav-icon svg { width: 18px; height: 18px; }
-    .albums-nav-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 800; }
-    .albums-nav-count { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: rgba(255,255,255,.045); color: var(--text-tertiary); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; }
-    .albums-album-more { width: 30px; height: 30px; margin-right: 2px; border-radius: var(--radius-sm); opacity: 0; }
-    .albums-side-album-row:hover .albums-album-more, .albums-side-album-row.active .albums-album-more,
-    .albums-side-album-row:focus-within .albums-album-more { opacity: 1; }
-    .albums-new-album { margin-top: var(--space-3); border-top-color: var(--border-default); border-radius: 0; color: var(--brand-green-300); }
+    .albums-sidebar {
+      padding-bottom: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+    }
+
+    .albums-side-album-row {
+      width: 100%;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease);
+    }
+
+    .albums-side-album-row:hover {
+      background: rgba(255, 255, 255, .035);
+    }
+
+    .albums-side-album-row.active {
+      background: var(--surface-selected);
+      border-color: rgba(98, 217, 154, .12);
+    }
+
+    .albums-album-main {
+      min-width: 0;
+      min-height: 42px;
+      flex: 1 1 auto;
+      padding: 0 var(--space-3);
+      border: 0;
+      background: transparent;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      text-align: left;
+      font-weight: 700;
+      letter-spacing: .03em;
+      cursor: pointer;
+    }
+
+    .albums-album-main svg {
+      width: 19px;
+      height: 19px;
+      flex: 0 0 auto;
+      color: var(--text-tertiary);
+    }
+
+    .albums-album-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .albums-side-album-row.active
+    .albums-album-main {
+      color: var(--text-primary);
+    }
+
+    .albums-side-album-row.active
+    .albums-album-main svg {
+      color: var(--brand-green-300);
+    }
+
+    .albums-album-more {
+      flex: 0 0 34px;
+      margin: 0 var(--space-2) 0 0;
+      opacity: 0;
+      transition: opacity var(--ease);
+    }
+
+    .albums-side-album-row:hover
+    .albums-album-more,
+    .albums-side-album-row:focus-within
+    .albums-album-more,
+    .albums-side-album-row.active
+    .albums-album-more {
+      opacity: 1;
+    }
 
     .albums-filter-popover { position: fixed; z-index: 190; width: min(340px, calc(100vw - 24px)); max-height: calc(100vh - 24px); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface-card); box-shadow: var(--shadow-soft); overflow: auto; }
     .albums-filter-popover-head, .albums-filter-popover-body, .albums-filter-popover-footer { padding: var(--space-4); }
@@ -26346,22 +26419,119 @@ function renderTreeCardDateLines(person) {
 
     function renderAlbumsSidebar() {
       const projectAlbums = getProjectAlbums();
-      const activeCount = getProjectPhotos().length;
-      return `<nav class="side-scroll albums-sidebar" aria-label="Albums navigation">
-        <div class="side-section-label">Photos</div>
-        ${[
-          ['all', 'All photos', icon.image, activeCount],
-          ['favorites', 'Favorites', icon.star, getProjectPhotos().filter(photo => photo.favorite).length],
-          ['unassigned', 'Not in an album', icon.folder, getProjectPhotos().filter(photo => !(photo.albumIds || []).length).length],
-          ['deleted', 'Recently deleted', icon.trash, getProjectPhotos(currentProjectId(), { includeDeleted: true }).filter(photoIsDeleted).length]
-        ].map(([view, label, glyph, count]) => `<button class="albums-nav-row ${state.albumsView === view ? 'active' : ''}" type="button" data-albums-view="${view}"><span class="albums-nav-icon" aria-hidden="true">${glyph}</span><span class="albums-nav-label">${label}</span><span class="albums-nav-count">${count}</span></button>`).join('')}
-        <div class="side-section-label">Albums</div>
-        ${projectAlbums.map(album => `<div class="albums-side-album-row ${state.albumsView === 'album' && state.activeAlbumId === album.id ? 'active' : ''}">
-          <button class="albums-album-main" type="button" data-album-open="${escapeHtml(album.id)}"><span class="albums-nav-icon" aria-hidden="true">${icon.folder}</span><span class="albums-nav-label">${escapeHtml(album.name)}</span><span class="albums-nav-count">${getAlbumPhotoCount(album.id)}</span></button>
-          <button class="albums-album-more" type="button" data-album-menu="${escapeHtml(album.id)}" aria-label="Album actions">${icon.more}</button>
-        </div>`).join('')}
-        <button class="albums-nav-row albums-new-album" type="button" id="albumsNewAlbum"><span class="albums-nav-icon" aria-hidden="true">${icon.plus}</span><span class="albums-nav-label">New album</span></button>
-      </nav>`;
+
+      return `
+        <nav
+          class="albums-sidebar"
+          aria-label="Albums navigation">
+
+          <div>
+            <div class="side-section-title">
+              Navigation
+            </div>
+
+            <div class="side-nav">
+              <button
+                class="side-link ${
+                  state.albumsView === 'all'
+                    ? 'active'
+                    : ''
+                }"
+                type="button"
+                data-albums-view="all">
+                ${icon.image}
+                <span>All photos</span>
+              </button>
+
+              <button
+                class="side-link ${
+                  state.albumsView === 'favorites'
+                    ? 'active'
+                    : ''
+                }"
+                type="button"
+                data-albums-view="favorites">
+                ${icon.star}
+                <span>Favorites</span>
+              </button>
+
+              <button
+                class="side-link ${
+                  state.albumsView === 'unassigned'
+                    ? 'active'
+                    : ''
+                }"
+                type="button"
+                data-albums-view="unassigned">
+                ${icon.folder}
+                <span>Not in an album</span>
+              </button>
+
+              <button
+                class="side-link ${
+                  state.albumsView === 'deleted'
+                    ? 'active'
+                    : ''
+                }"
+                type="button"
+                data-albums-view="deleted">
+                ${icon.trash}
+                <span>Recently deleted</span>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <div class="side-section-title with-add">
+              <span>Albums</span>
+
+              <button
+                class="side-add-button"
+                type="button"
+                id="albumsNewAlbum"
+                aria-label="Create album"
+                title="Create album">
+                ${icon.plus}
+              </button>
+            </div>
+
+            <div class="side-nav">
+              ${projectAlbums.map(album => {
+                const isActive =
+                  state.albumsView === 'album'
+                  && state.activeAlbumId === album.id;
+
+                return `
+                  <div
+                    class="albums-side-album-row ${
+                      isActive ? 'active' : ''
+                    }">
+
+                    <button
+                      class="albums-album-main"
+                      type="button"
+                      data-album-open="${escapeHtml(album.id)}"
+                      title="${escapeHtml(album.name)}">
+                      ${icon.folder}
+
+                      <span class="albums-album-name">
+                        ${escapeHtml(album.name)}
+                      </span>
+                    </button>
+
+                    <button
+                      class="more-button albums-album-more"
+                      type="button"
+                      data-album-menu="${escapeHtml(album.id)}"
+                      aria-label="Actions for ${escapeHtml(album.name)}"
+                      aria-haspopup="menu">
+                      ${icon.more}
+                    </button>
+                  </div>`;
+              }).join('')}
+            </div>
+          </div>
+        </nav>`;
     }
 
     function renderAlbumsMainMarkup() {
