@@ -16307,11 +16307,17 @@ function renderTreeCardDateLines(person) {
         if (fromYear) return escapeHtml(fromYear);
         if (toYear) return escapeHtml(toYear);
 
-        return '-';
+        return '—';
       }
 
       const year = timelineYear(event);
-      const age = year === '-' ? '' : timelineAgeLabel(event, personId);
+      const hasYear = Boolean(
+        timelineYearFromValue(event)
+      );
+
+      const age = hasYear
+        ? timelineAgeLabel(event, personId)
+        : '';
 
       return `${escapeHtml(year)}${age ? `<span>${escapeHtml(age)}</span>` : ''}`;
     }
@@ -17689,13 +17695,13 @@ function renderTreeCardDateLines(person) {
           data-custom-fact-field="content">
 
           <label for="${escapeHtml(idPrefix)}Value">
-            Value
+            Fact details
           </label>
 
           <input
             id="${escapeHtml(idPrefix)}Value"
             value="${escapeHtml(value)}"
-            placeholder="What was true about this person?"
+            placeholder="e. g. Woodworking, served in the army, etc."
             aria-describedby="${escapeHtml(idPrefix)}ContentError">
 
           <div
