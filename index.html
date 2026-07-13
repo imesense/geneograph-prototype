@@ -5593,7 +5593,7 @@
 
     .filter-spacer { flex: 1; }
 
-    .people-filter-actions {
+    .active-filter-actions {
       margin-left: auto;
       display: inline-flex;
       align-items: center;
@@ -5813,7 +5813,7 @@
       line-height: 1;
     }
 
-    .people-filter-chip {
+    .active-filter-chip {
       min-height: 34px;
       padding: 4px 5px 4px 10px;
       border-color: rgba(98, 217, 154, .22);
@@ -5822,19 +5822,19 @@
       gap: var(--space-2);
     }
 
-    .people-filter-chip-copy {
+    .active-filter-chip-copy {
       min-width: 0;
       display: inline-flex;
       align-items: center;
       gap: 4px;
     }
 
-    .people-filter-chip strong {
+    .active-filter-chip strong {
       color: var(--text-primary);
       font-weight: 900;
     }
 
-    .people-filter-chip-remove {
+    .active-filter-chip-remove {
       width: 24px;
       height: 24px;
       flex: 0 0 24px;
@@ -5851,17 +5851,17 @@
         color var(--ease);
     }
 
-    .people-filter-chip-remove:hover {
+    .active-filter-chip-remove:hover {
       background: rgba(255, 255, 255, .07);
       color: var(--text-primary);
     }
 
-    .people-filter-chip-remove:focus-visible {
+    .active-filter-chip-remove:focus-visible {
       outline: 2px solid var(--brand-green-400);
       outline-offset: 1px;
     }
 
-    .people-filter-chip-remove svg {
+    .active-filter-chip-remove svg {
       width: 14px;
       height: 14px;
       display: block;
@@ -8287,11 +8287,26 @@
 
     /* Albums module */
     .albums-shell {
-      height: 100%; min-width: 0; display: grid;
-      grid-template-columns: minmax(0, 1fr) 360px;
-      background: var(--surface-main); overflow: hidden;
+      height: 100%;
+      min-width: 0;
+      display: grid;
+      grid-template-columns:
+        minmax(0, 1fr)
+        450px;
+      background: var(--surface-main);
+      overflow: hidden;
     }
-    .albums-shell.detail-collapsed { grid-template-columns: minmax(0, 1fr) 56px; }
+
+    .albums-shell.detail-collapsed {
+      grid-template-columns:
+        minmax(0, 1fr)
+        54px;
+    }
+
+    .albums-shell.no-detail {
+      grid-template-columns:
+        minmax(0, 1fr);
+    }
     .albums-main {
       min-width: 0; min-height: 0; padding: var(--space-6);
       display: flex; flex-direction: column; gap: var(--space-4); overflow: hidden;
@@ -8300,11 +8315,14 @@
     .albums-title { min-width: 0; }
     .albums-title h1 { margin: 0 0 3px; font-size: 30px; line-height: 1.12; letter-spacing: 0; }
     .albums-title p { margin: 0; color: var(--text-tertiary); font-size: 15px; font-weight: 700; }
-    .albums-header-actions, .albums-toolbar-left, .albums-toolbar-right,
-    .albums-selection-actions, .albums-detail-actions, .albums-active-filterbar,
-    .albums-chip-row { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
-    .albums-header-actions { justify-content: flex-end; }
-    .albums-header-actions svg, .albums-selection-actions svg, .albums-filter-button svg { width: 17px; height: 17px; flex: 0 0 17px; }
+    .albums-header-actions,
+    .albums-selection-actions,
+    .albums-active-filterbar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
 
     .albums-toolbar {
       flex: 0 0 auto;
@@ -8335,6 +8353,7 @@
       align-items: center;
       justify-content: flex-end;
       gap: var(--space-2);
+      flex-wrap: nowrap;
     }
 
     /* Compact search remains isolated on the left. */
@@ -8486,37 +8505,20 @@
       height: 22px;
     }
 
-    .albums-toolbar .albums-search svg,
-    .albums-toolbar .albums-filter-button svg,
-    .albums-toolbar .albums-view-button svg {
-      width: 18px;
-      height: 18px;
-      max-width: 18px;
-      max-height: 18px;
-      flex: 0 0 18px;
-      display: block;
+    .albums-check svg,
+    .albums-fav-button svg,
+    .albums-card-more svg,
+    .albums-row-more svg,
+    .albums-album-more svg {
+      width: 17px;
+      height: 17px;
     }
-    .albums-view-button svg, .albums-check svg, .albums-fav-button svg,
-    .albums-card-more svg, .albums-row-more svg, .albums-detail-collapse svg,
-    .albums-detail-restore svg, .albums-album-more svg { width: 17px; height: 17px; }
 
     .albums-active-filterbar, .albums-selection-bar {
       flex: 0 0 auto; min-height: 46px; padding: var(--space-2) var(--space-3);
-      border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--surface-panel);
+      border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--surface-card);
     }
     .albums-active-filterbar { justify-content: flex-start; }
-    .albums-filter-chip, .albums-chip {
-      min-width: 0; min-height: 30px; padding: 4px 6px 4px 10px;
-      border: 1px solid var(--border-default); border-radius: var(--radius-sm);
-      background: var(--surface-input); color: var(--text-secondary);
-      display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800;
-    }
-    .albums-filter-chip button, .albums-chip button {
-      width: 22px; height: 22px; padding: 0; border: 0; background: transparent;
-      color: var(--text-tertiary); display: inline-grid; place-items: center; cursor: pointer;
-    }
-    .albums-filter-chip svg, .albums-chip svg { width: 13px; height: 13px; }
-    .albums-chip-link { width: auto; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary); }
     .albums-selection-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
     .albums-selection-copy { flex: 0 0 auto; color: var(--text-primary); font-size: 13px; font-weight: 900; }
     .albums-selection-actions { justify-content: flex-end; }
@@ -8607,8 +8609,13 @@
     .albums-card-people { color: var(--text-secondary); font-size: 13px; font-weight: 800; }
     .albums-card-footer { min-height: 32px; margin-top: auto; display: grid; grid-template-columns: minmax(0,1fr) 32px; align-items: center; gap: var(--space-2); color: var(--text-tertiary); font-size: 12px; font-weight: 700; }
     .albums-card-more, .albums-row-more { width: 32px; height: 32px; border-radius: var(--radius-sm); }
-    .albums-card-more:hover, .albums-row-more:hover, .albums-album-more:hover,
-    .albums-detail-collapse:hover, .albums-detail-restore:hover { border-color: var(--border-default); background: var(--surface-card-hover); color: var(--text-primary); }
+    .albums-card-more:hover,
+    .albums-row-more:hover,
+    .albums-album-more:hover {
+      border-color: var(--border-default);
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
+    }
 
     .albums-list { min-width: 850px; border: 1px solid var(--border-default); border-radius: var(--radius-sm); overflow: hidden; }
     .albums-list-row {
@@ -8618,7 +8625,7 @@
       align-items: center; gap: var(--space-3); color: var(--text-secondary); font-size: 13px;
     }
     .albums-list-row:last-child { border-bottom: 0; }
-    .albums-list-row.header { min-height: 42px; background: var(--surface-panel); color: var(--text-tertiary); font-size: 11px; font-weight: 900; text-transform: uppercase; }
+    .albums-list-row.header { min-height: 42px; background: var(--surface-card); color: var(--text-tertiary); font-size: 11px; font-weight: 900; text-transform: uppercase; }
     .albums-list-row .albums-check { position: static; width: 28px; height: 28px; background: var(--surface-input); backdrop-filter: none; }
     .albums-list-thumb { width: 48px; height: 48px; border: 1px solid var(--border-default); border-radius: 4px; overflow: hidden; }
     .albums-list-title { min-width: 0; display: grid; gap: 3px; }
@@ -8632,24 +8639,487 @@
     .albums-empty-card h2 { margin: var(--space-3) 0 var(--space-2); color: var(--text-primary); font-size: 20px; }
     .albums-empty-card p { margin: 0 0 var(--space-4); line-height: 1.55; }
 
-    .albums-detail { position: relative; min-width: 0; min-height: 0; border-left: 1px solid var(--border-default); background: var(--surface-panel); overflow-y: auto; }
-    .albums-detail.collapsed { overflow: hidden; }
-    .albums-detail-collapse, .albums-detail-restore { position: absolute; z-index: 4; top: 12px; width: 32px; height: 32px; border-radius: var(--radius-sm); }
-    .albums-detail-collapse { right: 12px; }
-    .albums-detail-restore { left: 12px; transform: rotate(180deg); }
-    .albums-detail-header, .albums-detail-section { padding: var(--space-5); border-bottom: 1px solid var(--border-default); }
-    .albums-detail-top { display: grid; gap: var(--space-3); }
-    .albums-detail-preview { width: 100%; height: 200px; border: 1px solid var(--border-default); border-radius: var(--radius-sm); }
-    .albums-detail-header h2 { margin: var(--space-4) 42px 4px 0; color: var(--text-primary); font-size: 20px; line-height: 1.25; }
-    .albums-detail-header p { margin: 0; color: var(--text-tertiary); font-size: 12px; font-weight: 700; }
-    .albums-detail-actions { margin-top: var(--space-4); }
-    .albums-detail-section h3 { min-height: 30px; margin: 0 0 var(--space-3); display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); color: var(--text-primary); font-size: 13px; }
-    .albums-detail-section h3 .icon-button svg { width: 15px; height: 15px; }
-    .albums-form-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-3); }
-    .albums-field { min-width: 0; display: grid; gap: 7px; }
-    .albums-field label { color: var(--text-secondary); font-size: 12px; font-weight: 900; }
-    .albums-field textarea { width: 100%; min-height: 100px; resize: vertical; border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--surface-input); color: var(--text-primary); padding: var(--space-3); }
-    .albums-detail-actions .button.danger { border-color: rgba(212,107,107,.35); background: rgba(212,107,107,.08); color: #f2b3b3; }
+    /* Albums photo inspector */
+
+    .albums-detail {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      border-left: 1px solid var(--border-default);
+      background: var(--surface-sidebar);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+    }
+
+    .albums-detail.collapsed {
+      overflow: hidden;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: var(--space-3) 8px;
+    }
+
+    .albums-detail-toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 12;
+      min-height: 58px;
+      padding: 10px var(--space-4);
+      border-bottom: 1px solid var(--border-default);
+      background: rgba(21, 26, 26, .94);
+      backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .albums-detail-toolbar-spacer {
+      flex: 1 1 auto;
+    }
+
+    .albums-detail-collapse,
+    .albums-detail-restore {
+      flex: 0 0 34px;
+    }
+
+    .albums-detail-restore {
+      margin-top: 0;
+    }
+
+    .albums-detail-action {
+      width: 36px;
+      height: 36px;
+      flex: 0 0 36px;
+      padding: 0;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-secondary);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease);
+    }
+
+    .albums-detail-action:hover,
+    .albums-detail-action:focus-visible {
+      border-color: var(--border-default);
+      background: rgba(255, 255, 255, .055);
+      color: var(--text-primary);
+    }
+
+    .albums-detail-action:focus-visible {
+      outline: 2px solid var(--brand-green-400);
+      outline-offset: 1px;
+    }
+
+    .albums-detail-action svg {
+      width: 19px;
+      height: 19px;
+      display: block;
+    }
+
+    .albums-detail-action.active {
+      border-color: rgba(212, 170, 107, .32);
+      background: rgba(212, 170, 107, .1);
+      color: var(--amber);
+    }
+
+    .albums-detail-edit-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .albums-detail-edit-actions .button {
+      min-height: 38px;
+      height: 38px;
+      padding-inline: 14px;
+    }
+
+    .albums-detail-hero {
+      padding:
+        var(--space-4)
+        var(--space-5)
+        var(--space-5);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .albums-detail-preview-button {
+      width: 100%;
+      height: auto;
+      max-height: 300px;
+      aspect-ratio: 16 / 10;
+      padding: 0;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-input);
+      color: inherit;
+      display: block;
+      overflow: hidden;
+      cursor: zoom-in;
+    }
+
+    .albums-detail-preview-button:hover {
+      border-color: var(--border-strong);
+    }
+
+    .albums-detail-preview-button:focus-visible {
+      outline: 2px solid var(--brand-green-400);
+      outline-offset: 2px;
+    }
+
+    .albums-detail-preview {
+      width: 100%;
+      height: 100%;
+    }
+
+    .albums-detail-preview .thumb-img {
+      object-fit: contain;
+    }
+
+    .albums-detail-open {
+      width: 100%;
+      margin-top: var(--space-3);
+      justify-content: center;
+    }
+
+    .albums-detail-identity {
+      min-width: 0;
+      margin-top: var(--space-4);
+    }
+
+    .albums-detail-identity h2 {
+      display: -webkit-box;
+      margin: 0 0 var(--space-2);
+      overflow: hidden;
+      color: var(--text-primary);
+      font-size: 20px;
+      line-height: 1.3;
+      letter-spacing: .01em;
+      overflow-wrap: anywhere;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .albums-detail-summary {
+      margin: 0;
+      color: var(--text-tertiary);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .albums-detail-deleted-copy {
+      margin: var(--space-2) 0 0;
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .albums-detail-title-field {
+      min-width: 0;
+      display: grid;
+      gap: 7px;
+    }
+
+    .albums-detail-title-field span {
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .albums-detail-title-field input {
+      width: 100%;
+      min-width: 0;
+      height: var(--control-height);
+      padding: 0 var(--space-3);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-input);
+      color: var(--text-primary);
+      font: inherit;
+    }
+
+    .albums-detail-title-field input:focus {
+      border-color: rgba(98, 217, 154, .55);
+      outline: 0;
+      box-shadow:
+        0 0 0 3px rgba(98, 217, 154, .1);
+    }
+
+    .albums-detail .panel-section-body {
+      padding:
+        var(--space-4)
+        var(--space-4)
+        var(--space-5);
+    }
+
+    .albums-detail-read-list {
+      margin: 0;
+      padding: 0;
+      display: grid;
+    }
+
+    .albums-detail-read-row {
+      min-width: 0;
+      padding: 13px 0;
+      border-bottom:
+        1px solid rgba(45, 54, 52, .72);
+      display: grid;
+      grid-template-columns:
+        88px
+        minmax(0, 1fr);
+      gap: var(--space-3);
+      align-items: start;
+    }
+
+    .albums-detail-read-row:first-child {
+      padding-top: 2px;
+    }
+
+    .albums-detail-read-row:last-child {
+      padding-bottom: 2px;
+      border-bottom: 0;
+    }
+
+    .albums-detail-read-row dt,
+    .albums-detail-read-row dd {
+      min-width: 0;
+      margin: 0;
+    }
+
+    .albums-detail-read-row dt {
+      color: var(--text-tertiary);
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1.5;
+    }
+
+    .albums-detail-read-row dd {
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 650;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .albums-detail-read-caption {
+      white-space: pre-wrap;
+      text-align: left;
+    }
+
+    .albums-form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+    }
+
+    .albums-field {
+      min-width: 0;
+      display: grid;
+      gap: 7px;
+    }
+
+    .albums-field label {
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .albums-field textarea {
+      width: 100%;
+      min-height: 112px;
+      resize: vertical;
+      padding: var(--space-3);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-input);
+      color: var(--text-primary);
+      font: inherit;
+      line-height: 1.5;
+    }
+
+    .albums-field textarea:focus {
+      border-color: rgba(98, 217, 154, .55);
+      outline: 0;
+      box-shadow:
+        0 0 0 3px rgba(98, 217, 154, .1);
+    }
+
+    /* People rows reuse the shared relationship-row system. */
+
+    .albums-detail .relationship-list {
+      gap: var(--space-2);
+    }
+
+    .albums-detail .relation-row {
+      min-height: 60px;
+    }
+
+    .albums-detail .relation-row-main {
+      min-height: 58px;
+      padding: 7px 8px;
+    }
+
+    .albums-detail .relation-row-copy strong {
+      font-size: 14px;
+    }
+
+    .albums-detail .relation-row-copy span {
+      font-size: 12px;
+    }
+
+    /* Albums and future source rows. */
+
+    .albums-inspector-list {
+      display: grid;
+      gap: 6px;
+    }
+
+    .albums-inspector-row {
+      min-width: 0;
+      min-height: 50px;
+      display: grid;
+      grid-template-columns:
+        minmax(0, 1fr)
+        38px;
+      align-items: center;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      background: var(--surface-card);
+      overflow: hidden;
+    }
+
+    .albums-inspector-row:hover,
+    .albums-inspector-row:focus-within {
+      border-color: var(--border-default);
+      background: var(--surface-card-hover);
+    }
+
+    .albums-inspector-row-main {
+      min-width: 0;
+      min-height: 48px;
+      padding: 0 var(--space-3);
+      border: 0;
+      background: transparent;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      text-align: left;
+    }
+
+    button.albums-inspector-row-main {
+      cursor: pointer;
+    }
+
+    button.albums-inspector-row-main:focus-visible {
+      outline: 2px solid var(--brand-green-400);
+      outline-offset: -2px;
+    }
+
+    .albums-inspector-row-main svg {
+      width: 19px;
+      height: 19px;
+      flex: 0 0 19px;
+      color: var(--text-tertiary);
+    }
+
+    .albums-inspector-row-name {
+      min-width: 0;
+      overflow: hidden;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 750;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .albums-inspector-remove {
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border: 0;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-tertiary);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .albums-inspector-remove:hover,
+    .albums-inspector-remove:focus-visible {
+      background: rgba(212, 107, 107, .1);
+      color: var(--red);
+    }
+
+    .albums-inspector-remove svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .albums-inspector-empty {
+      min-height: 72px;
+      padding: var(--space-4);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, .018);
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .albums-metadata-list {
+      display: grid;
+      gap: 0;
+    }
+
+    .albums-metadata-row {
+      min-width: 0;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(45, 54, 52, .72);
+      display: grid;
+      grid-template-columns:
+        116px
+        minmax(0, 1fr);
+      gap: var(--space-3);
+      align-items: start;
+    }
+
+    .albums-metadata-row:last-child {
+      border-bottom: 0;
+    }
+
+    .albums-metadata-row span {
+      color: var(--text-tertiary);
+      font-size: 12px;
+    }
+
+    .albums-metadata-row strong {
+      min-width: 0;
+      color: var(--text-secondary);
+      font-size: 12px;
+      line-height: 1.4;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .albums-shell.photo-editing
+    .albums-toolbar
+    :disabled,
+    .albums-shell.photo-editing
+    .albums-header-actions
+    :disabled {
+      opacity: .52;
+      cursor: not-allowed;
+    }
 
     .albums-sidebar {
       height: 100%;
@@ -8769,6 +9239,22 @@
       .geneo-editor-main { grid-template-columns: minmax(0,1fr) 300px; }
       .geneo-toolbar-button[data-geneo-templates] { display: none; }
     }
+    @media (max-width: 1080px) {
+      .geneo-board-grid { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+      .geneo-editor-main { grid-template-columns: 1fr; }
+      .geneo-inspector { display: none; }
+      .geneo-editor-toolbar { grid-template-columns: 1fr; overflow: visible; }
+      .geneo-editor-toolbar-right { justify-content: flex-start; flex-wrap: wrap; }
+      .geneo-palette { width: 48px; }
+      .geneo-palette-button { justify-content: center; padding: 0; }
+      .geneo-palette-button span:last-child { display: none; }
+    }
+    @media (max-width: 980px) {
+      .albums-shell, .albums-shell.detail-collapsed { grid-template-columns: minmax(0,1fr); }
+      .albums-detail { display: none; }
+      .album-photo-card, .album-photo-card.ratio-portrait, .album-photo-card.ratio-square,
+      .album-photo-card.ratio-landscape, .album-photo-card.ratio-wide { width: min(100%, 240px); }
+    }
     @media (max-width: 720px) {
       .albums-main {
         padding: var(--space-4);
@@ -8796,6 +9282,7 @@
       .albums-toolbar-right {
         margin-left: 0;
         justify-content: flex-start;
+        flex-wrap: wrap;
       }
 
       .albums-search {
@@ -8833,34 +9320,11 @@
       .album-photo-card.ratio-wide {
         width: 100%;
       }
-    }
-    @media (max-width: 1080px) {
-      .geneo-board-grid { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
-      .geneo-editor-main { grid-template-columns: 1fr; }
-      .geneo-inspector { display: none; }
-      .geneo-editor-toolbar { grid-template-columns: 1fr; overflow: visible; }
-      .geneo-editor-toolbar-right { justify-content: flex-start; flex-wrap: wrap; }
-      .geneo-palette { width: 48px; }
-      .geneo-palette-button { justify-content: center; padding: 0; }
-      .geneo-palette-button span:last-child { display: none; }
-    }
-    @media (max-width: 980px) {
-      .albums-shell, .albums-shell.detail-collapsed { grid-template-columns: minmax(0,1fr); }
-      .albums-detail { display: none; }
-      .album-photo-card, .album-photo-card.ratio-portrait, .album-photo-card.ratio-square,
-      .album-photo-card.ratio-landscape, .album-photo-card.ratio-wide { width: min(100%, 240px); }
-    }
-    @media (max-width: 720px) {
-      .albums-main { padding: var(--space-4); }
-      .albums-header { align-items: stretch; flex-direction: column; }
-      .albums-header-actions { justify-content: flex-start; }
-      .albums-toolbar-left { display: grid; grid-template-columns: minmax(0,1fr); }
-      .albums-search, .albums-select, .albums-filter-button { width: 100%; min-width: 0; }
-      .albums-selection-bar { align-items: flex-start; flex-direction: column; }
-      .albums-selection-actions { justify-content: flex-start; }
-      .albums-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(150px,1fr)); }
-      .album-photo-card, .album-photo-card.ratio-portrait, .album-photo-card.ratio-square,
-      .album-photo-card.ratio-landscape, .album-photo-card.ratio-wide { width: 100%; }
+
+      .albums-detail-read-row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
     }
 
     /* Archive module */
@@ -13904,6 +14368,16 @@
       selectedPhotoId: 'photo-silver-portrait',
       selectedPhotoIds: [],
       albumsDetailCollapsed: false,
+      albumsDetailEditing: false,
+      albumsDetailEditOriginal: null,
+      albumsDetailDraft: null,
+      albumsDetailSections: {
+        details: true,
+        people: true,
+        albums: true,
+        sources: false,
+        metadata: false
+      },
       archiveView: 'files',
       archiveSelectedFolderId: 'delo44',
       archiveSelectedFileId: 'af1',
@@ -15789,20 +16263,123 @@ function renderTreeCardDateLines(person) {
       return state.inspectorSections[id] !== false;
     }
 
-    function renderInspectorSection(id, title, meta, content, actionHtml = '', options = {}) {
-      const open = sectionIsOpen(id);
-      const inlineAction = open && actionHtml && options.inlineAction ? `<span class="panel-section-inline-action">${actionHtml}</span>` : '';
-      const bodyAction = open && actionHtml && !options.inlineAction ? `<div class="panel-section-action">${actionHtml}</div>` : '';
-      const header = `<button class="panel-section-header" type="button" data-toggle-section="${id}" aria-expanded="${open ? 'true' : 'false'}" aria-controls="section-${id}">
-          <span class="panel-section-heading"><h3>${title}</h3>${meta ? `<span>${meta}</span>` : ''}</span>
-          ${inlineAction ? '' : '<span class="panel-section-extra"><span class="panel-section-arrow" aria-hidden="true"></span></span>'}
-        </button>`;
-      const headerRow = inlineAction ? `<div class="panel-section-header-row">${header}<span class="panel-section-extra">${inlineAction}<span class="panel-section-arrow" aria-hidden="true"></span></span></div>` : header;
-      return `<section class="panel-section ${open ? 'is-open' : ''}">
-        ${headerRow}
-        <div class="panel-section-body" id="section-${id}" ${open ? '' : 'hidden'}>${bodyAction}${content}</div>
-      </section>`;
+    function renderInspectorSection(
+      id,
+      title,
+      meta,
+      content,
+      actionHtml = '',
+      options = {}
+    ) {
+      const open =
+        typeof options.open === 'boolean'
+          ? options.open
+          : sectionIsOpen(id);
+
+      const toggleAttribute =
+        options.toggleAttribute
+        || 'data-toggle-section';
+
+      const sectionId =
+        options.sectionId
+        || `section-${id}`;
+
+      const showAction =
+        open
+        || options.alwaysShowAction;
+
+      const inlineAction =
+        showAction
+        && actionHtml
+        && options.inlineAction
+          ? `
+            <span class="panel-section-inline-action">
+              ${actionHtml}
+            </span>
+          `
+          : '';
+
+      const bodyAction =
+        open
+        && actionHtml
+        && !options.inlineAction
+          ? `
+            <div class="panel-section-action">
+              ${actionHtml}
+            </div>
+          `
+          : '';
+
+      const header = `
+        <button
+          class="panel-section-header"
+          type="button"
+          ${toggleAttribute}="${escapeHtml(id)}"
+          aria-expanded="${open ? 'true' : 'false'}"
+          aria-controls="${escapeHtml(sectionId)}">
+
+          <span class="panel-section-heading">
+            <h3>${escapeHtml(title)}</h3>
+
+            ${
+              meta
+                ? `<span>${escapeHtml(meta)}</span>`
+                : ''
+            }
+          </span>
+
+          ${
+            inlineAction
+              ? ''
+              : `
+                <span class="panel-section-extra">
+                  <span
+                    class="panel-section-arrow"
+                    aria-hidden="true">
+                  </span>
+                </span>
+              `
+          }
+        </button>
+      `;
+
+      const headerRow = inlineAction
+        ? `
+          <div class="panel-section-header-row">
+            ${header}
+
+            <span class="panel-section-extra">
+              ${inlineAction}
+
+              <span
+                class="panel-section-arrow"
+                aria-hidden="true">
+              </span>
+            </span>
+          </div>
+        `
+        : header;
+
+      return `
+        <section
+          class="panel-section ${
+            open ? 'is-open' : ''
+          }">
+
+          ${headerRow}
+
+          <div
+            class="panel-section-body"
+            id="${escapeHtml(sectionId)}"
+            ${open ? '' : 'hidden'}>
+
+            ${bodyAction}
+            ${content}
+          </div>
+        </section>
+      `;
     }
+
     function renderPanelButtonLabel(iconHtml, label) {
       return `<span class="panel-button-label">
         <span class="panel-button-icon" aria-hidden="true">${iconHtml}</span>
@@ -22229,8 +22806,8 @@ function renderTreeCardDateLines(person) {
 
       const chips = activePeopleFilterEntries()
         .map(([key, label, value]) => `
-          <span class="filter-chip people-filter-chip">
-            <span class="people-filter-chip-copy">
+          <span class="filter-chip active-filter-chip">
+            <span class="active-filter-chip-copy">
               <strong>${escapeHtml(label)}:</strong>
               ${escapeHtml(value)}
             </span>
@@ -22253,7 +22830,7 @@ function renderTreeCardDateLines(person) {
           aria-label="Active People filters">
           ${chips}
 
-          <span class="people-filter-actions">
+          <span class="active-filter-actions">
             <button
               class="link"
               type="button"
@@ -26853,12 +27430,41 @@ function renderTreeCardDateLines(person) {
     }
 
     function ensureSelectedAlbumPhoto() {
-      const visible = filteredAlbumPhotos();
-      if (!visible.some(photo => photo.id === state.selectedPhotoId)) {
-        state.selectedPhotoId = visible[0]?.id || null;
+      const visible =
+        filteredAlbumPhotos();
+
+      const currentIsVisible =
+        visible.some(
+          photo =>
+            photo.id === state.selectedPhotoId
+        );
+
+      if (!currentIsVisible) {
+        const nextPhotoId =
+          visible[0]?.id
+          || null;
+
+        if (
+          nextPhotoId
+          !== state.selectedPhotoId
+        ) {
+          resetAlbumsPhotoEditState();
+        }
+
+        state.selectedPhotoId =
+          nextPhotoId;
       }
-      const visibleIds = new Set(visible.map(photo => photo.id));
-      state.selectedPhotoIds = (state.selectedPhotoIds || []).filter(id => visibleIds.has(id));
+
+      const visibleIds =
+        new Set(
+          visible.map(photo => photo.id)
+        );
+
+      state.selectedPhotoIds =
+        (state.selectedPhotoIds || [])
+          .filter(
+            id => visibleIds.has(id)
+          );
     }
 
     function albumFilterCount() {
@@ -26872,11 +27478,59 @@ function renderTreeCardDateLines(person) {
 
     function renderAlbums() {
       ensureSelectedAlbumPhoto();
-      sidebar.innerHTML = renderAlbumsSidebar();
-      main.innerHTML = `<div class="albums-shell ${state.albumsDetailCollapsed ? 'detail-collapsed' : ''}">
-        <section class="albums-main">${renderAlbumsMainMarkup()}</section>
-        ${state.albumsDetailCollapsed ? renderAlbumsDetailCollapsed() : renderAlbumsDetailPane()}
-      </div>`;
+
+      const selectedPhoto =
+        getPhoto(
+          state.selectedPhotoId,
+          {
+            includeDeleted: true,
+            projectId:
+              currentProjectId()
+          }
+        );
+
+      if (!selectedPhoto) {
+        resetAlbumsPhotoEditState();
+      }
+
+      const shellClasses = [
+        'albums-shell',
+
+        selectedPhoto
+        && state.albumsDetailCollapsed
+          ? 'detail-collapsed'
+          : '',
+
+        !selectedPhoto
+          ? 'no-detail'
+          : '',
+
+        state.albumsDetailEditing
+          ? 'photo-editing'
+          : ''
+      ]
+        .filter(Boolean)
+        .join(' ');
+
+      sidebar.innerHTML =
+        renderAlbumsSidebar();
+
+      main.innerHTML = `
+        <div class="${shellClasses}">
+          <section class="albums-main">
+            ${renderAlbumsMainMarkup()}
+          </section>
+
+          ${
+            !selectedPhoto
+              ? ''
+              : state.albumsDetailCollapsed
+                ? renderAlbumsDetailCollapsed()
+                : renderAlbumsDetailPane()
+          }
+        </div>
+      `;
+
       bindAlbumsSidebar();
       bindAlbumsControls();
     }
@@ -27211,36 +27865,1232 @@ function renderTreeCardDateLines(person) {
       return `<div class="albums-empty"><div class="albums-empty-card">${icon.image}<h2>${escapeHtml(context.empty)}</h2><p>${copy}</p>${action}</div></div>`;
     }
 
+    function albumsDetailSectionIsOpen(id) {
+      return state.albumsDetailSections?.[id] !== false;
+    }
+
+    function renderAlbumsDetailSection(
+      id,
+      title,
+      content,
+      actionHtml = ''
+    ) {
+      return renderInspectorSection(
+        id,
+        title,
+        '',
+        content,
+        actionHtml,
+        {
+          inlineAction: Boolean(actionHtml),
+          alwaysShowAction: true,
+          open: albumsDetailSectionIsOpen(id),
+          toggleAttribute:
+            'data-albums-section-toggle',
+          sectionId:
+            `albums-detail-section-${id}`
+        }
+      );
+    }
+
+    function albumPhotoEditDraftFromPhoto(photo) {
+      return {
+        photoId: photo.id,
+
+        title:
+          photo.title
+          || photo.filename
+          || '',
+
+        date: {
+          ...photoDateModel(photo)
+        },
+
+        placeId:
+          photo.placeId
+          || '',
+
+        placeText:
+          photo.placeText
+          || '',
+
+        caption:
+          photo.caption
+          || ''
+      };
+    }
+
+    function normalizedAlbumPhotoEditDraft(draft) {
+      return {
+        title:
+          String(draft?.title || '')
+            .trim(),
+
+        date:
+          mediaDateFromGenealogyModel(
+            draft?.date || {}
+          ),
+
+        placeId:
+          String(draft?.placeId || ''),
+
+        placeText:
+          String(draft?.placeText || '')
+            .trim(),
+
+        caption:
+          String(draft?.caption || '')
+            .trim()
+      };
+    }
+
+    function collectAlbumsPhotoEditDraft() {
+      if (!state.albumsDetailEditing) {
+        return null;
+      }
+
+      const date =
+        collectGenealogyDateField(
+          'albumPhotoDate'
+        );
+
+      if (!date) {
+        return null;
+      }
+
+      const place =
+        resolvePlaceInputSelector(
+          '#albumPhotoPlace',
+          main
+        ) || {
+          placeId: '',
+          placeText: ''
+        };
+
+      return {
+        photoId:
+          state.selectedPhotoId,
+
+        title:
+          main
+            .querySelector('#albumPhotoTitle')
+            ?.value
+            .trim()
+          || '',
+
+        date,
+
+        placeId:
+          place.placeId
+          || '',
+
+        placeText:
+          place.placeText
+          || '',
+
+        caption:
+          main
+            .querySelector('#albumPhotoCaption')
+            ?.value
+            .trim()
+          || ''
+      };
+    }
+
+    function syncAlbumsPhotoEditDraftFromPane() {
+      const draft =
+        collectAlbumsPhotoEditDraft();
+
+      if (draft) {
+        state.albumsDetailDraft = draft;
+      }
+    }
+
+    function albumsPhotoEditIsDirty() {
+      if (
+        !state.albumsDetailEditing
+        || !state.albumsDetailEditOriginal
+      ) {
+        return false;
+      }
+
+      const current =
+        collectAlbumsPhotoEditDraft()
+        || state.albumsDetailDraft;
+
+      if (!current) {
+        return true;
+      }
+
+      return JSON.stringify(
+        normalizedAlbumPhotoEditDraft(current)
+      ) !== JSON.stringify(
+        normalizedAlbumPhotoEditDraft(
+          state.albumsDetailEditOriginal
+        )
+      );
+    }
+
+    function resetAlbumsPhotoEditState() {
+      state.albumsDetailEditing = false;
+      state.albumsDetailEditOriginal = null;
+      state.albumsDetailDraft = null;
+    }
+
+    function beginAlbumsPhotoEdit() {
+      const photo = getPhoto(
+        state.selectedPhotoId,
+        {
+          projectId: currentProjectId()
+        }
+      );
+
+      if (!photo || photoIsDeleted(photo)) {
+        return;
+      }
+
+      const draft =
+        albumPhotoEditDraftFromPhoto(photo);
+
+      state.albumsDetailEditing = true;
+      state.albumsDetailEditOriginal = {
+        ...draft,
+        date: { ...draft.date }
+      };
+      state.albumsDetailDraft = {
+        ...draft,
+        date: { ...draft.date }
+      };
+
+      state.albumsDetailSections.details =
+        true;
+
+      renderAlbums();
+    }
+
+    function cancelAlbumsPhotoEdit() {
+      resetAlbumsPhotoEditState();
+      renderAlbums();
+    }
+
+    function saveAlbumsPhotoEdit() {
+      const photo = getPhoto(
+        state.selectedPhotoId,
+        {
+          projectId: currentProjectId()
+        }
+      );
+
+      if (!photo) {
+        resetAlbumsPhotoEditState();
+        renderAlbums();
+        return;
+      }
+
+      const draft =
+        collectAlbumsPhotoEditDraft();
+
+      if (!draft) {
+        showToast(
+          'Check the historical date before saving.'
+        );
+        return;
+      }
+
+      if (!draft.title.trim()) {
+        showToast(
+          'Enter a photo name before saving.'
+        );
+
+        main
+          .querySelector('#albumPhotoTitle')
+          ?.focus();
+
+        return;
+      }
+
+      photo.title =
+        draft.title.trim();
+
+      photo.date =
+        mediaDateFromGenealogyModel(
+          draft.date
+        );
+
+      photo.placeId =
+        draft.placeId
+        || null;
+
+      photo.placeText =
+        draft.placeText
+        || '';
+
+      photo.caption =
+        draft.caption
+        || '';
+
+      photo.updatedAt =
+        new Date().toISOString();
+
+      resetAlbumsPhotoEditState();
+      renderAlbums();
+      showToast('Photo updated.');
+    }
+
+    function runAfterAlbumsPhotoEditGuard(
+      action
+    ) {
+      if (!state.albumsDetailEditing) {
+        action();
+        return;
+      }
+
+      if (!albumsPhotoEditIsDirty()) {
+        resetAlbumsPhotoEditState();
+        action();
+        return;
+      }
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="discardPhotoEditTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="discardPhotoEditTitle">
+                Discard photo changes?
+              </h2>
+
+              <p>
+                Your unsaved title and detail changes
+                will be lost.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close>
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+              Continue editing
+            </button>
+
+            <button
+              class="button danger"
+              type="button"
+              data-discard-photo-edit>
+              Discard changes
+            </button>
+          </div>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelector(
+          '[data-discard-photo-edit]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            closeModal();
+            resetAlbumsPhotoEditState();
+            action();
+          }
+        );
+    }
+
+    function knownPersonDateLabel(value) {
+      const label =
+        cleanGenealogyDateText(
+          formatGenealogyDateLabel(value)
+        );
+
+      if (
+        !label
+        || /^unknown/i.test(label)
+      ) {
+        return '';
+      }
+
+      return label;
+    }
+
+    function albumPhotoPersonDates(person) {
+      const birth =
+        knownPersonDateLabel(person?.birth);
+
+      const death =
+        knownPersonDateLabel(person?.death);
+
+      const status =
+        normalizeLivingStatus(
+          person?.livingStatus
+        );
+
+      if (birth && death) {
+        return `${birth} – ${death}`;
+      }
+
+      if (
+        birth
+        && status === 'Living'
+      ) {
+        return `${birth} – Living`;
+      }
+
+      if (birth) {
+        return `Born ${birth}`;
+      }
+
+      if (death) {
+        return `Died ${death}`;
+      }
+
+      return 'Dates unknown';
+    }
+
+    function formatMediaFileType(photo) {
+      const mimeType =
+        String(photo?.mimeType || '');
+
+      const subtype =
+        mimeType
+          .split('/')
+          .pop()
+          .toLowerCase();
+
+      const labels = {
+        jpeg: 'JPEG',
+        jpg: 'JPEG',
+        png: 'PNG',
+        gif: 'GIF',
+        webp: 'WebP',
+        tiff: 'TIFF',
+        heic: 'HEIC'
+      };
+
+      return labels[subtype]
+        || subtype.toUpperCase()
+        || 'Unknown';
+    }
+
+    function renderAlbumsPhotoToolbar(
+      photo,
+      editing,
+      deleted
+    ) {
+      const collapseButton = `
+        <button
+          class="people-collapse-button
+            people-sidebar-toggle-icon
+            albums-detail-collapse"
+          type="button"
+          data-albums-detail-toggle
+          aria-label="Collapse photo inspector">
+          ${icon.doublechevronSidebar}
+        </button>
+      `;
+
+      if (editing) {
+        return `
+          <div class="albums-detail-toolbar">
+            ${collapseButton}
+
+            <span
+              class="albums-detail-toolbar-spacer">
+            </span>
+
+            <div class="albums-detail-edit-actions">
+              <button
+                class="button secondary"
+                type="button"
+                id="albumsCancelPhotoEdit">
+                Cancel
+              </button>
+
+              <button
+                class="button primary"
+                type="button"
+                id="albumsSavePhotoEdit">
+                Save
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      if (deleted) {
+        return `
+          <div class="albums-detail-toolbar">
+            ${collapseButton}
+
+            <span
+              class="albums-detail-toolbar-spacer">
+            </span>
+
+            <button
+              class="button primary"
+              type="button"
+              id="albumsRestorePhoto">
+              Restore
+            </button>
+
+            <button
+              class="albums-detail-action"
+              type="button"
+              id="albumsInspectorMore"
+              aria-label="More photo actions"
+              aria-haspopup="menu">
+              ${icon.more}
+            </button>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="albums-detail-toolbar">
+          ${collapseButton}
+
+          <span
+            class="albums-detail-toolbar-spacer">
+          </span>
+
+          <button
+            class="albums-detail-action"
+            type="button"
+            id="albumsEditPhoto"
+            aria-label="Edit photo"
+            title="Edit photo">
+            ${icon.edit}
+          </button>
+
+          <button
+            class="albums-detail-action ${
+              photo.favorite
+                ? 'active'
+                : ''
+            }"
+            type="button"
+            data-photo-fav="${escapeHtml(photo.id)}"
+            aria-label="${
+              photo.favorite
+                ? 'Remove from favorites'
+                : 'Mark as favorite'
+            }"
+            aria-pressed="${
+              photo.favorite
+                ? 'true'
+                : 'false'
+            }"
+            title="${
+              photo.favorite
+                ? 'Remove from favorites'
+                : 'Mark as favorite'
+            }">
+            ${icon.star}
+          </button>
+
+          <button
+            class="albums-detail-action"
+            type="button"
+            id="albumsInspectorMore"
+            aria-label="More photo actions"
+            aria-haspopup="menu">
+            ${icon.more}
+          </button>
+        </div>
+      `;
+    }
+
+    function renderAlbumsPhotoHero(
+      photo,
+      editing,
+      deleted
+    ) {
+      const draft =
+        state.albumsDetailDraft
+        || albumPhotoEditDraftFromPhoto(photo);
+
+      return `
+        <div class="albums-detail-hero">
+          <button
+            class="albums-detail-preview-button"
+            type="button"
+            data-photo-open="${escapeHtml(photo.id)}"
+            aria-label="Open full-size preview of ${escapeHtml(
+              photo.title
+              || photo.filename
+              || 'photo'
+            )}">
+
+            ${renderPhotoThumbnail(
+              photo,
+              {
+                className:
+                  'albums-detail-preview',
+                label:
+                  photo.title
+                  || photo.filename
+              }
+            )}
+          </button>
+
+          <button
+            class="button secondary albums-detail-open"
+            type="button"
+            data-photo-open="${escapeHtml(photo.id)}">
+            Open preview
+          </button>
+
+          <div class="albums-detail-identity">
+            ${
+              editing
+                ? `
+                  <label class="albums-detail-title-field">
+                    <span>Photo name</span>
+
+                    <input
+                      id="albumPhotoTitle"
+                      maxlength="180"
+                      value="${escapeHtml(
+                        draft.title
+                        || ''
+                      )}">
+                  </label>
+                `
+                : `
+                  <h2>
+                    ${escapeHtml(
+                      photo.title
+                      || photo.filename
+                      || 'Untitled photo'
+                    )}
+                  </h2>
+                `
+            }
+
+            <p class="albums-detail-summary">
+              ${escapeHtml(
+                `${photo.width || 0} × ${
+                  photo.height || 0
+                } · ${
+                  formatMediaBytes(
+                    photo.sizeBytes
+                  )
+                }`
+              )}
+            </p>
+
+            ${
+              deleted
+                ? `
+                  <p class="albums-detail-deleted-copy">
+                    Deleted ${
+                      escapeHtml(
+                        formatMediaTimestamp(
+                          photo.deletedAt
+                        )
+                      )
+                    }
+                  </p>
+                `
+                : ''
+            }
+          </div>
+        </div>
+      `;
+    }
+    
+    function renderAlbumsPhotoDetails(
+      photo,
+      editing
+    ) {
+      if (editing) {
+        const draft =
+          state.albumsDetailDraft
+          || albumPhotoEditDraftFromPhoto(photo);
+
+        return `
+          <div class="albums-form-grid">
+            ${renderGenealogyDateField(
+              'albumPhotoDate',
+              'Historical date',
+              draft.date,
+              {
+                inputId:
+                  'albumPhotoDateInput',
+                typeId:
+                  'albumPhotoDateType',
+                defaultDateType:
+                  'Exact date',
+                className:
+                  'genealogy-date-inline-range'
+              }
+            )}
+
+            ${renderPlaceCombobox({
+              id: 'albumPhotoPlace',
+              label: 'Place',
+              value:
+                getPlaceDisplay(
+                  draft.placeId
+                )
+                || draft.placeText
+                || '',
+              selectedPlaceId:
+                draft.placeId
+                || '',
+              className: 'full'
+            })}
+
+            <div class="albums-field">
+              <label for="albumPhotoCaption">
+                Caption
+              </label>
+
+              <textarea
+                id="albumPhotoCaption"
+                maxlength="500"
+                placeholder="Add a description of this photo">${escapeHtml(
+                  draft.caption
+                  || ''
+                )}</textarea>
+            </div>
+          </div>
+        `;
+      }
+
+      const caption =
+        String(photo.caption || '').trim()
+        || 'No caption added.';
+
+      return `
+        <dl class="albums-detail-read-list">
+          <div class="albums-detail-read-row">
+            <dt>Date</dt>
+
+            <dd>
+              ${escapeHtml(
+                formatPhotoDate(photo)
+              )}
+            </dd>
+          </div>
+
+          <div class="albums-detail-read-row">
+            <dt>Place</dt>
+
+            <dd>
+              ${escapeHtml(
+                getPlaceDisplay(photo.placeId)
+                || photo.placeText
+                || 'Unknown place'
+              )}
+            </dd>
+          </div>
+
+          <div class="albums-detail-read-row">
+            <dt>Caption</dt>
+
+            <dd class="albums-detail-read-caption">${escapeHtml(caption)}</dd>
+          </div>
+        </dl>
+      `;
+    }
+
+    function renderAlbumsPhotoPeople(
+      photo,
+      readOnly
+    ) {
+      const people =
+        getPhotoPeople(photo);
+
+      if (!people.length) {
+        return `
+          <div class="albums-inspector-empty">
+            No people tagged on this photo.
+          </div>
+        `;
+      }
+
+      return `
+        <div class="relationship-list">
+          ${people.map(person => {
+            const name =
+              person.names?.display
+              || 'Unnamed person';
+
+            const mainContent = `
+              ${renderPersonAvatar(
+                person,
+                'small-avatar',
+                {
+                  element: 'span'
+                }
+              )}
+
+              <span class="relation-row-copy">
+                <strong>
+                  ${escapeHtml(name)}
+                </strong>
+
+                <span>
+                  ${escapeHtml(
+                    albumPhotoPersonDates(
+                      person
+                    )
+                  )}
+                </span>
+              </span>
+            `;
+
+            return `
+              <div class="relation-row">
+                ${
+                  readOnly
+                    ? `
+                      <div class="relation-row-main">
+                        ${mainContent}
+                      </div>
+                    `
+                    : `
+                      <button
+                        class="relation-row-main"
+                        type="button"
+                        data-photo-person-open="${escapeHtml(person.id)}"
+                        aria-label="Open profile for ${escapeHtml(name)}">
+                        ${mainContent}
+                      </button>
+                    `
+                }
+
+                ${
+                  readOnly
+                    ? ''
+                    : `
+                      <div class="relation-actions">
+                        <button
+                          class="relation-action-button"
+                          type="button"
+                          data-albums-photo-person-menu="${escapeHtml(person.id)}"
+                          aria-label="Actions for ${escapeHtml(name)}"
+                          aria-haspopup="menu">
+                          ${icon.more}
+                        </button>
+                      </div>
+                    `
+                }
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function renderAlbumsPhotoAlbums(
+      photo,
+      readOnly
+    ) {
+      const albums =
+        (photo.albumIds || [])
+          .map(id => ({
+            id,
+            name: getAlbumName(id)
+          }))
+          .filter(album => album.name);
+
+      if (!albums.length) {
+        return `
+          <div class="albums-inspector-empty">
+            This photo is not in an album.
+          </div>
+        `;
+      }
+
+      return `
+        <div class="albums-inspector-list">
+          ${albums.map(album => `
+            <div class="albums-inspector-row">
+              ${
+                readOnly
+                  ? `
+                    <div class="albums-inspector-row-main">
+                      ${icon.folder}
+
+                      <span class="albums-inspector-row-name">
+                        ${escapeHtml(album.name)}
+                      </span>
+                    </div>
+                  `
+                  : `
+                    <button
+                      class="albums-inspector-row-main"
+                      type="button"
+                      data-photo-album-open="${escapeHtml(album.id)}"
+                      aria-label="Open ${escapeHtml(album.name)}">
+                      ${icon.folder}
+
+                      <span class="albums-inspector-row-name">
+                        ${escapeHtml(album.name)}
+                      </span>
+                    </button>
+
+                    <button
+                      class="albums-inspector-remove"
+                      type="button"
+                      data-photo-remove-album="${escapeHtml(album.id)}"
+                      aria-label="Remove photo from ${escapeHtml(album.name)}"
+                      title="Remove from album">
+                      ${icon.close}
+                    </button>
+                  `
+              }
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderAlbumsPhotoSources() {
+      return `
+        <div class="albums-inspector-empty">
+          No sources linked to this photo.
+        </div>
+      `;
+    }
+
+    function renderAlbumsPhotoMetadata(photo) {
+      const rows = [
+        [
+          'File name',
+          photo.filename
+          || 'Unknown'
+        ],
+        [
+          'File format',
+          formatMediaFileType(photo)
+        ],
+        [
+          'Dimensions',
+          `${photo.width || 0} × ${
+            photo.height || 0
+          }`
+        ],
+        [
+          'File size',
+          formatMediaBytes(
+            photo.sizeBytes
+          )
+        ],
+        [
+          'Added',
+          formatMediaTimestamp(
+            photo.createdAt
+          )
+        ],
+        [
+          'Last modified',
+          formatMediaTimestamp(
+            photo.updatedAt
+          )
+        ],
+        [
+          'Origin',
+          photo.origin?.label
+          || photo.origin?.type
+          || 'Unknown'
+        ]
+      ];
+
+      if (photo.deletedAt) {
+        rows.push([
+          'Deleted',
+          formatMediaTimestamp(
+            photo.deletedAt
+          )
+        ]);
+      }
+
+      return `
+        <div class="albums-metadata-list">
+          ${rows.map(([label, value]) => `
+            <div class="albums-metadata-row">
+              <span>${escapeHtml(label)}</span>
+              <strong>${escapeHtml(value)}</strong>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
     function renderAlbumsDetailCollapsed() {
-      return `<aside class="albums-detail collapsed"><button class="albums-detail-restore" type="button" data-albums-detail-toggle aria-label="Show photo details">${icon.chevron}</button></aside>`;
+      return `
+        <aside
+          class="albums-detail collapsed"
+          aria-label="Collapsed photo inspector">
+
+          <button
+            class="people-collapse-button
+              person-sidebar-restore-button
+              albums-detail-restore
+              sidebar-toggle-icon
+              sidebar-toggle-icon-restore"
+            type="button"
+            data-albums-detail-toggle
+            aria-label="Show photo inspector">
+            ${icon.doublechevronSidebar}
+          </button>
+        </aside>
+      `;
     }
 
     function renderAlbumsDetailPane() {
-      const photo = getPhoto(state.selectedPhotoId, { includeDeleted: true, projectId: currentProjectId() });
-      if (!photo) return `<aside class="albums-detail"><button class="albums-detail-collapse" type="button" data-albums-detail-toggle aria-label="Hide photo details">${icon.chevron}</button><div class="panel-muted">Select a photo to inspect it.</div></aside>`;
-      const people = getPhotoPeople(photo);
-      const albums = (photo.albumIds || []).map(id => ({ id, name: getAlbumName(id) })).filter(item => item.name);
-      if (photoIsDeleted(photo)) {
-        return `<aside class="albums-detail"><button class="albums-detail-collapse" type="button" data-albums-detail-toggle aria-label="Hide photo details">${icon.chevron}</button><div class="albums-detail-header">${renderPhotoThumbnail(photo, { className: 'albums-detail-preview' })}<h2>${escapeHtml(photo.title)}</h2><p>Deleted ${escapeHtml(formatMediaTimestamp(photo.deletedAt))}</p><div class="albums-detail-actions"><button class="button primary" type="button" id="albumsRestorePhoto">Restore</button><button class="button danger" type="button" id="albumsDeletePhotoPermanent">Delete permanently</button></div></div></aside>`;
+      const photo = getPhoto(
+        state.selectedPhotoId,
+        {
+          includeDeleted: true,
+          projectId: currentProjectId()
+        }
+      );
+
+      if (!photo) {
+        return '';
       }
-      return `<aside class="albums-detail"><button class="albums-detail-collapse" type="button" data-albums-detail-toggle aria-label="Hide photo details">${icon.chevron}</button>
-        <div class="albums-detail-header"><div class="albums-detail-top">${renderPhotoThumbnail(photo, { className: 'albums-detail-preview' })}<button class="button secondary" type="button" data-photo-open="${escapeHtml(photo.id)}">Open</button></div><h2>${escapeHtml(photo.title || photo.filename)}</h2><p>${escapeHtml(`${photo.width} x ${photo.height} · ${formatMediaBytes(photo.sizeBytes)}`)}</p><div class="albums-detail-actions"><button class="button secondary" type="button" id="albumsTagPeople">Tag people</button><button class="button danger" type="button" id="albumsDeletePhoto">Delete</button></div></div>
-        <section class="albums-detail-section"><h3><span>People</span><button class="icon-button" type="button" id="albumsTagPeopleSecondary" aria-label="Edit people tags">${icon.edit}</button></h3><div class="albums-chip-row">${people.map(person => `<span class="albums-chip"><button class="albums-chip-link" type="button" data-photo-person-open="${escapeHtml(person.id)}">${escapeHtml(person.names?.display || 'Unknown')}</button><button type="button" data-photo-person-remove="${escapeHtml(person.id)}" aria-label="Remove ${escapeHtml(person.names?.display || 'person')}">${icon.close}</button></span>`).join('') || '<span class="panel-muted">No people tagged.</span>'}</div>${people.length ? `<button class="button secondary" type="button" id="albumsSetPrimary">Use as primary photo</button>` : ''}</section>
-        <section class="albums-detail-section"><h3><span>Albums</span><button class="icon-button" type="button" id="albumsLinkAlbum" aria-label="Edit albums">${icon.edit}</button></h3><div class="albums-chip-row">${albums.map(album => `<span class="albums-chip">${escapeHtml(album.name)}<button type="button" data-photo-remove-album="${escapeHtml(album.id)}" aria-label="Remove from ${escapeHtml(album.name)}">${icon.close}</button></span>`).join('') || '<span class="panel-muted">Not in an album.</span>'}</div></section>
-        <section class="albums-detail-section"><h3>Details</h3><div class="albums-form-grid">${renderGenealogyDateField('albumPhotoDate', 'Historical date', photoDateModel(photo), { inputId: 'albumPhotoDateInput', typeId: 'albumPhotoDateType', defaultDateType: 'Exact date', className: 'genealogy-date-inline-range' })}${renderPlaceCombobox({ id: 'albumPhotoPlace', label: 'Place', value: getPlaceDisplay(photo.placeId) || photo.placeText || '', selectedPlaceId: photo.placeId || '', className: 'full' })}<div class="albums-field"><label for="albumPhotoCaption">Caption</label><textarea id="albumPhotoCaption" maxlength="500">${escapeHtml(photo.caption || '')}</textarea></div><button class="button primary" type="button" id="albumsSaveDetails">Save details</button></div></section>
-        <section class="albums-detail-section"><h3>File</h3><div class="panel-muted">${escapeHtml(photo.filename)}<br>${escapeHtml(photo.mimeType)}<br>Added ${escapeHtml(formatMediaTimestamp(photo.createdAt))}<br>${escapeHtml(photo.origin?.label || 'Unknown origin')}</div></section>
-      </aside>`;
+
+      const deleted =
+        photoIsDeleted(photo);
+
+      if (
+        state.albumsDetailEditing
+        && state.albumsDetailDraft?.photoId
+          !== photo.id
+      ) {
+        resetAlbumsPhotoEditState();
+      }
+
+      const editing =
+        !deleted
+        && state.albumsDetailEditing
+        && state.albumsDetailDraft?.photoId
+          === photo.id;
+
+      const readOnly =
+        deleted
+        || editing;
+
+      const peopleAction =
+        readOnly
+          ? ''
+          : `
+            <button
+              class="link"
+              type="button"
+              id="albumsTagPeople">
+              ${renderPanelButtonLabel(
+                icon.plus,
+                'Tag person'
+              )}
+            </button>
+          `;
+
+      const albumAction =
+        readOnly
+          ? ''
+          : `
+            <button
+              class="link"
+              type="button"
+              id="albumsLinkAlbum">
+              ${renderPanelButtonLabel(
+                icon.plus,
+                'Add to album'
+              )}
+            </button>
+          `;
+
+      const sourceAction =
+        readOnly
+          ? ''
+          : `
+            <button
+              class="link"
+              type="button"
+              data-toast="Source linking will be added when Albums is connected to central Sources and Citations.">
+              ${renderPanelButtonLabel(
+                icon.plus,
+                'Add source'
+              )}
+            </button>
+          `;
+
+      return `
+        <aside
+          class="albums-detail ${
+            editing ? 'is-editing' : ''
+          }"
+          aria-label="Photo inspector"
+          ${
+            editing
+              ? 'data-albums-photo-edit-root'
+              : ''
+          }>
+
+          ${renderAlbumsPhotoToolbar(
+            photo,
+            editing,
+            deleted
+          )}
+
+          ${renderAlbumsPhotoHero(
+            photo,
+            editing,
+            deleted
+          )}
+
+          ${renderAlbumsDetailSection(
+            'details',
+            'Details',
+            renderAlbumsPhotoDetails(
+              photo,
+              editing
+            )
+          )}
+
+          ${renderAlbumsDetailSection(
+            'people',
+            'People',
+            renderAlbumsPhotoPeople(
+              photo,
+              readOnly
+            ),
+            peopleAction
+          )}
+
+          ${renderAlbumsDetailSection(
+            'albums',
+            'Albums',
+            renderAlbumsPhotoAlbums(
+              photo,
+              readOnly
+            ),
+            albumAction
+          )}
+
+          ${renderAlbumsDetailSection(
+            'sources',
+            'Sources',
+            renderAlbumsPhotoSources(),
+            sourceAction
+          )}
+
+          ${renderAlbumsDetailSection(
+            'metadata',
+            'Metadata',
+            renderAlbumsPhotoMetadata(
+              photo
+            )
+          )}
+        </aside>
+      `;
     }
 
     function renderAlbumsActiveFilterbar() {
-      const filters = state.albumsFilters || defaultAlbumFilters;
+      const filters =
+        state.albumsFilters
+        || defaultAlbumFilters;
+
       const chips = [];
-      if (filters.personId) chips.push(['personId', filters.personId === 'none' ? 'No people tagged' : getPersonDisplayName(filters.personId)]);
-      if (filters.placeId) chips.push(['placeId', filters.placeId === 'none' ? 'No known place' : getPlaceDisplay(filters.placeId)]);
-      if (filters.dateRange) chips.push(['dateRange', filters.dateRange === 'dated' ? 'Known date' : 'Unknown date']);
-      if (filters.favouriteOnly) chips.push(['favouriteOnly', 'Favorites only']);
-      if (!chips.length) return '';
-      return `<div class="albums-active-filterbar">${chips.map(([key, label]) => `<span class="albums-filter-chip">${escapeHtml(label)}<button type="button" data-albums-remove-filter="${key}" aria-label="Remove ${escapeHtml(label)} filter">${icon.close}</button></span>`).join('')}<button class="button secondary" type="button" id="albumsClearFilters">Clear filters</button></div>`;
+
+      if (filters.personId) {
+        chips.push([
+          'personId',
+          filters.personId === 'none'
+            ? 'No people tagged'
+            : getPersonDisplayName(
+                filters.personId
+              )
+        ]);
+      }
+
+      if (filters.placeId) {
+        chips.push([
+          'placeId',
+          filters.placeId === 'none'
+            ? 'No known place'
+            : getPlaceDisplay(
+                filters.placeId
+              )
+        ]);
+      }
+
+      if (filters.dateRange) {
+        chips.push([
+          'dateRange',
+          filters.dateRange === 'dated'
+            ? 'Known date'
+            : 'Unknown date'
+        ]);
+      }
+
+      if (filters.favouriteOnly) {
+        chips.push([
+          'favouriteOnly',
+          'Favorites only'
+        ]);
+      }
+
+      if (!chips.length) {
+        return '';
+      }
+
+      const chipMarkup = chips
+        .map(([key, label]) => `
+          <span
+            class="filter-chip active-filter-chip">
+
+            <span class="active-filter-chip-copy">
+              ${escapeHtml(label)}
+            </span>
+
+            <button
+              class="active-filter-chip-remove"
+              type="button"
+              data-albums-remove-filter="${escapeHtml(key)}"
+              aria-label="Remove ${escapeHtml(label)} filter"
+              title="Remove filter">
+              ${icon.close}
+            </button>
+          </span>
+        `)
+        .join('');
+
+      return `
+        <div
+          class="albums-active-filterbar"
+          aria-label="Active Albums filters">
+
+          ${chipMarkup}
+
+          <span class="active-filter-actions">
+            <button
+              class="link"
+              type="button"
+              id="albumsClearFilters">
+              Clear all
+            </button>
+          </span>
+        </div>
+      `;
     }
 
     function openAlbumsFilterPopover(anchor) {
@@ -27378,30 +29228,6 @@ function renderTreeCardDateLines(person) {
       modalBackdrop.querySelector('[data-remove-primary-tag]')?.addEventListener('click', () => { closeModal(); remove(); });
     }
 
-    function openPrimaryPhotoPersonModal(photoId) {
-      const photo = getPhoto(photoId);
-      const people = getPhotoPeople(photo);
-      if (!people.length) return;
-      if (people.length === 1) { setPersonPrimaryPhoto(people[0].id, photo.id); return; }
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="primaryPhotoTitle"><div class="modal-header"><div><h2 id="primaryPhotoTitle">Use as primary photo</h2><p>Choose which tagged person receives this primary photo.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body albums-modal-list">${people.map(person => `<button class="albums-modal-choice" type="button" data-primary-person="${escapeHtml(person.id)}">${renderPersonAvatar(person, 'small-avatar', { element: 'span' })}<span>${escapeHtml(person.names?.display || 'Unnamed person')}</span></button>`).join('')}</div></div>`);
-      modalBackdrop.querySelectorAll('[data-primary-person]').forEach(button => button.addEventListener('click', () => { closeModal(); setPersonPrimaryPhoto(button.dataset.primaryPerson, photo.id); }));
-    }
-
-    function savePhotoDetailsFromPane() {
-      const photo = getPhoto(state.selectedPhotoId, { projectId: currentProjectId() });
-      if (!photo) return;
-      const date = collectGenealogyDateField('albumPhotoDate');
-      if (!date) { showToast('Check the historical date before saving.'); return; }
-      const place = resolvePlaceInputSelector('#albumPhotoPlace', main);
-      photo.date = mediaDateFromGenealogyModel(date);
-      photo.placeId = place.placeId;
-      photo.placeText = place.placeText;
-      photo.caption = main.querySelector('#albumPhotoCaption')?.value.trim() || '';
-      photo.updatedAt = new Date().toISOString();
-      renderAlbums();
-      showToast('Photo details saved.');
-    }
-
     function toggleAlbumPhotoFavourite(photoId) {
       const photo = getPhoto(photoId);
       if (!photo) return;
@@ -27525,6 +29351,306 @@ function renderTreeCardDateLines(person) {
       setTimeout(() => document.addEventListener('click', closeMenu), 0);
     }
 
+    function mountAlbumsActionMenu(
+      anchor,
+      markup,
+      attributeName,
+      onAction
+    ) {
+      closeMenu();
+
+      const rect =
+        anchor.getBoundingClientRect();
+
+      const menu =
+        document.createElement('div');
+
+      menu.className = 'menu-popover';
+      menu.id = 'projectMenu';
+      menu.setAttribute('role', 'menu');
+
+      menu.style.visibility = 'hidden';
+      menu.style.top =
+        `${rect.bottom + 6}px`;
+      menu.style.left = '0px';
+
+      menu.innerHTML = markup;
+
+      document.body.appendChild(menu);
+
+      const margin = 12;
+      const menuRect =
+        menu.getBoundingClientRect();
+
+      menu.style.left = `${
+        Math.max(
+          margin,
+          Math.min(
+            rect.right - menuRect.width,
+            window.innerWidth
+              - menuRect.width
+              - margin
+          )
+        )
+      }px`;
+
+      const below =
+        rect.bottom + 6;
+
+      menu.style.top = `${
+        below + menuRect.height
+          <= window.innerHeight - margin
+            ? below
+            : Math.max(
+                margin,
+                rect.top
+                  - menuRect.height
+                  - 6
+              )
+      }px`;
+
+      menu.style.visibility = 'visible';
+
+      menu.addEventListener(
+        'click',
+        event => {
+          const target =
+            event.target.closest(
+              `[${attributeName}]`
+            );
+
+          const action =
+            target?.getAttribute(
+              attributeName
+            );
+
+          if (!action) return;
+
+          closeMenu();
+          onAction(action);
+        }
+      );
+
+      setTimeout(() => {
+        document.addEventListener(
+          'click',
+          closeMenu
+        );
+
+        document.addEventListener(
+          'scroll',
+          closeMenu,
+          true
+        );
+      }, 0);
+    }
+
+    function openAlbumsInspectorMenu(
+      photoId,
+      anchor
+    ) {
+      const photo = getPhoto(
+        photoId,
+        {
+          includeDeleted: true,
+          projectId: currentProjectId()
+        }
+      );
+
+      if (!photo) return;
+
+      if (photoIsDeleted(photo)) {
+        mountAlbumsActionMenu(
+          anchor,
+          `
+            <button
+              class="danger"
+              type="button"
+              role="menuitem"
+              data-albums-inspector-action="permanent">
+              Delete permanently
+            </button>
+          `,
+          'data-albums-inspector-action',
+          action => {
+            if (action === 'permanent') {
+              openDeletePhotoConfirm(
+                [photo.id],
+                true
+              );
+            }
+          }
+        );
+
+        return;
+      }
+
+      mountAlbumsActionMenu(
+        anchor,
+        `
+          <button
+            type="button"
+            role="menuitem"
+            data-albums-inspector-action="save-copy">
+            Save copy
+          </button>
+
+          <button
+            type="button"
+            role="menuitem"
+            data-albums-inspector-action="album">
+            Add to album
+          </button>
+
+          <button
+            class="danger"
+            type="button"
+            role="menuitem"
+            data-albums-inspector-action="delete">
+            Delete photo
+          </button>
+        `,
+        'data-albums-inspector-action',
+        action => {
+          if (action === 'save-copy') {
+            showToast(
+              'Save copy will be available when real photo files are implemented.'
+            );
+          }
+
+          if (action === 'album') {
+            state.selectedPhotoIds = [
+              photo.id
+            ];
+
+            openAddToAlbumModal();
+          }
+
+          if (action === 'delete') {
+            openDeletePhotoConfirm([
+              photo.id
+            ]);
+          }
+        }
+      );
+    }
+
+    function clearPersonPrimaryPhoto(
+      personId,
+      photoId
+    ) {
+      const person =
+        getPerson(personId);
+
+      if (
+        !person
+        || person.primaryPhotoId
+          !== photoId
+      ) {
+        return;
+      }
+
+      person.primaryPhotoId = '';
+
+      renderAlbums();
+      showToast(
+        'Primary photo removed.'
+      );
+    }
+
+    function openAlbumsPhotoPersonMenu(
+      photoId,
+      personId,
+      anchor
+    ) {
+      const photo =
+        getPhoto(photoId);
+
+      const person =
+        getPerson(personId);
+
+      if (!photo || !person) {
+        return;
+      }
+
+      const isPrimary =
+        person.primaryPhotoId
+          === photo.id;
+
+      mountAlbumsActionMenu(
+        anchor,
+        `
+          <button
+            type="button"
+            role="menuitem"
+            data-albums-person-action="tree">
+            Show in Family Tree
+          </button>
+
+          <button
+            type="button"
+            role="menuitem"
+            data-albums-person-action="profile">
+            Open profile
+          </button>
+
+          <button
+            type="button"
+            role="menuitem"
+            data-albums-person-action="primary">
+            ${
+              isPrimary
+                ? 'Remove as primary photo'
+                : 'Use as primary photo'
+            }
+          </button>
+
+          <button
+            class="danger"
+            type="button"
+            role="menuitem"
+            data-albums-person-action="remove">
+            Remove tag
+          </button>
+        `,
+        'data-albums-person-action',
+        action => {
+          if (action === 'tree') {
+            showPersonInFamilyTree(
+              person.id
+            );
+          }
+
+          if (action === 'profile') {
+            openPeopleProfileFromRow(
+              person.id
+            );
+          }
+
+          if (action === 'primary') {
+            if (isPrimary) {
+              clearPersonPrimaryPhoto(
+                person.id,
+                photo.id
+              );
+            } else {
+              setPersonPrimaryPhoto(
+                person.id,
+                photo.id
+              );
+            }
+          }
+
+          if (action === 'remove') {
+            removePhotoPersonTag(
+              photo.id,
+              person.id
+            );
+          }
+        }
+      );
+    }
+
     function openNewAlbumModal() {
       openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="newAlbumTitle"><div class="modal-header"><div><h2 id="newAlbumTitle">New album</h2><p>Create a named group of photos.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="newAlbumForm"><div class="modal-body form-grid"><div class="field"><label for="albumName">Album name</label><input id="albumName" required></div><div class="field"><label for="albumDescription">Description</label><textarea id="albumDescription"></textarea></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create album</button></div></form></div>`);
       modalBackdrop.querySelector('#newAlbumForm')?.addEventListener('submit', event => {
@@ -27587,12 +29713,146 @@ function renderTreeCardDateLines(person) {
       });
     }
 
-    function removeAlbumFromSelectedPhoto(albumId) {
-      const photo = getPhoto(state.selectedPhotoId);
-      if (!photo) return;
-      photo.albumIds = (photo.albumIds || []).filter(id => id !== albumId);
-      photo.updatedAt = new Date().toISOString();
-      renderAlbums();
+    function removePhotoFromAlbum(
+      photoId,
+      albumId
+    ) {
+      const photo = getPhoto(
+        photoId,
+        {
+          projectId: currentProjectId()
+        }
+      );
+
+      if (
+        !photo
+        || !(photo.albumIds || [])
+          .includes(albumId)
+      ) {
+        return false;
+      }
+
+      photo.albumIds =
+        photo.albumIds.filter(
+          id => id !== albumId
+        );
+
+      photo.updatedAt =
+        new Date().toISOString();
+
+      return true;
+    }
+
+    function openRemovePhotoFromAlbumConfirm(
+      photoId,
+      albumId
+    ) {
+      const photo =
+        getPhoto(photoId);
+
+      const album =
+        getProjectAlbums()
+          .find(item => item.id === albumId);
+
+      if (!photo || !album) {
+        return;
+      }
+
+      const leavesCurrentView =
+        state.albumsView === 'album'
+        && state.activeAlbumId === album.id;
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="removePhotoAlbumTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="removePhotoAlbumTitle">
+                Remove from album?
+              </h2>
+
+              <p>
+                ${escapeHtml(album.name)}
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close>
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <p>
+              Remove this photo from
+              “${escapeHtml(album.name)}”?
+            </p>
+
+            <p>
+              The photo will remain in All photos
+              and in any other albums.
+            </p>
+
+            ${
+              leavesCurrentView
+                ? `
+                  <p>
+                    It will disappear from the
+                    current album after removal.
+                  </p>
+                `
+                : ''
+            }
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+              Cancel
+            </button>
+
+            <button
+              class="button danger"
+              type="button"
+              data-confirm-photo-album-remove>
+              Remove from album
+            </button>
+          </div>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelector(
+          '[data-confirm-photo-album-remove]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            closeModal();
+
+            if (
+              removePhotoFromAlbum(
+                photo.id,
+                album.id
+              )
+            ) {
+              ensureSelectedAlbumPhoto();
+              renderAlbums();
+
+              showToast(
+                `Removed from ${album.name}.`
+              );
+            }
+          }
+        );
     }
 
     function removeSelectedFromCurrentAlbum() {
@@ -27624,11 +29884,86 @@ function renderTreeCardDateLines(person) {
     }
 
     function bindAlbumsSidebar() {
-      sidebar.querySelectorAll('[data-albums-view]').forEach(button => button.addEventListener('click', () => { state.albumsView = button.dataset.albumsView; state.activeAlbumId = null; state.selectedPhotoIds = []; renderAlbums(); }));
-      sidebar.querySelectorAll('[data-album-open]').forEach(button => button.addEventListener('click', () => { state.albumsView = 'album'; state.activeAlbumId = button.dataset.albumOpen; state.selectedPhotoIds = []; renderAlbums(); }));
-      sidebar.querySelectorAll('[data-album-menu]').forEach(button => button.addEventListener('click', event => { event.stopPropagation(); openAlbumSidebarMenu(button.dataset.albumMenu, button); }));
-      sidebar.querySelector('#albumsNewAlbum')?.addEventListener('click', openNewAlbumModal);
-      sidebar.querySelector('#albumsNewAlbum') ?.addEventListener('click', openNewAlbumModal);
+      sidebar
+        .querySelectorAll(
+          '[data-albums-view]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              runAfterAlbumsPhotoEditGuard(
+                () => {
+                  state.albumsView =
+                    button.dataset.albumsView;
+
+                  state.activeAlbumId = null;
+                  state.selectedPhotoIds = [];
+
+                  renderAlbums();
+                }
+              );
+            }
+          );
+        });
+
+      sidebar
+        .querySelectorAll(
+          '[data-album-open]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              runAfterAlbumsPhotoEditGuard(
+                () => {
+                  state.albumsView =
+                    'album';
+
+                  state.activeAlbumId =
+                    button.dataset.albumOpen;
+
+                  state.selectedPhotoIds = [];
+
+                  renderAlbums();
+                }
+              );
+            }
+          );
+        });
+
+      sidebar
+        .querySelectorAll(
+          '[data-album-menu]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              event.stopPropagation();
+
+              runAfterAlbumsPhotoEditGuard(
+                () => {
+                  openAlbumSidebarMenu(
+                    button.dataset.albumMenu,
+                    button
+                  );
+                }
+              );
+            }
+          );
+        });
+
+      sidebar
+        .querySelector('#albumsNewAlbum')
+        ?.addEventListener(
+          'click',
+          () => {
+            runAfterAlbumsPhotoEditGuard(
+              openNewAlbumModal
+            );
+          }
+        );
 
       bindToasts(sidebar);
     }
@@ -27637,53 +29972,625 @@ function renderTreeCardDateLines(person) {
       bindToasts(main);
       bindGenealogyDateFields(main);
       bindPlaceComboboxes(main);
-      bindSearchInput(main, '#albumsSearch', 'albumsSearch', renderAlbums);
-      main.querySelector('#albumsSort')?.addEventListener('change', event => { state.albumsSort = event.target.value; renderAlbums(); });
-      main.querySelector('#albumsFilterButton')?.addEventListener('click', event => openAlbumsFilterPopover(event.currentTarget));
-      main.querySelector('#albumsClearFilters')?.addEventListener('click', clearAlbumFilters);
-      main.querySelectorAll('[data-albums-remove-filter]').forEach(button => button.addEventListener('click', () => removeAlbumFilter(button.dataset.albumsRemoveFilter)));
-      main.querySelectorAll('[data-albums-mode]').forEach(button => button.addEventListener('click', () => { state.albumsViewMode = button.dataset.albumsMode; renderAlbums(); }));
-      main.querySelectorAll('[data-photo-id]').forEach(card => {
-        card.addEventListener('click', event => { if (event.target.closest('button,input,a,select')) return; state.selectedPhotoId = card.dataset.photoId; renderAlbums(); });
-        card.addEventListener('keydown', event => { if ((event.key === 'Enter' || event.key === ' ') && !event.target.closest('button,input,a,select')) { event.preventDefault(); state.selectedPhotoId = card.dataset.photoId; renderAlbums(); } });
-      });
-      main.querySelectorAll('[data-photo-check]').forEach(button => button.addEventListener('click', event => { event.stopPropagation(); togglePhotoSelection(button.dataset.photoCheck); }));
-      main.querySelectorAll('[data-photo-fav]').forEach(button => button.addEventListener('click', event => { event.stopPropagation(); toggleAlbumPhotoFavourite(button.dataset.photoFav); }));
-      main.querySelectorAll('[data-photo-more]').forEach(button => button.addEventListener('click', event => { event.stopPropagation(); openAlbumPhotoMenu(button.dataset.photoMore, button); }));
-      main.querySelectorAll('[data-photo-open]').forEach(button => button.addEventListener('click', () => openPhotoLightbox(button.dataset.photoOpen)));
-      main.querySelectorAll('[data-photo-person-open]').forEach(button => button.addEventListener('click', () => { clearPeopleSelection(); state.activeModule = 'People'; state.peopleView = 'profile'; state.selectedPeopleId = button.dataset.photoPersonOpen; state.selectedPersonId = button.dataset.photoPersonOpen; render(); }));
-      main.querySelectorAll('[data-photo-person-remove]').forEach(button => button.addEventListener('click', () => removePhotoPersonTag(state.selectedPhotoId, button.dataset.photoPersonRemove)));
-      main.querySelectorAll('[data-photo-remove-album]').forEach(button => button.addEventListener('click', () => removeAlbumFromSelectedPhoto(button.dataset.photoRemoveAlbum)));
-      main.querySelectorAll('[data-albums-detail-toggle]').forEach(button => button.addEventListener('click', () => { state.albumsDetailCollapsed = !state.albumsDetailCollapsed; renderAlbums(); }));
-      main.querySelector('#albumsAddPhotos')?.addEventListener('click', openAddPhotosModal);
-      main.querySelector('#albumsEmptyAction')?.addEventListener('click', openAddPhotosModal);
-      main.querySelector('#albumsEmptyClear')?.addEventListener('click', () => {
-        state.albumsSearch = '';
-        state.albumsFilters = { ...defaultAlbumFilters };
-        renderAlbums();
-      });
-      main.querySelector('#albumsTagPeople')?.addEventListener('click', () => openPhotoPeopleModal(state.selectedPhotoId));
-      main.querySelector('#albumsTagPeopleSecondary')?.addEventListener('click', () => openPhotoPeopleModal(state.selectedPhotoId));
-      main.querySelector('#albumsSetPrimary')?.addEventListener('click', () => openPrimaryPhotoPersonModal(state.selectedPhotoId));
-      main.querySelector('#albumsSaveDetails')?.addEventListener('click', savePhotoDetailsFromPane);
-      main.querySelector('#albumsDeletePhoto')?.addEventListener('click', () => openDeletePhotoConfirm([state.selectedPhotoId]));
-      main.querySelector('#albumsDeleteSelected')?.addEventListener('click', () => openDeletePhotoConfirm(state.selectedPhotoIds));
-      main.querySelector('#albumsRestorePhoto')?.addEventListener('click', () => restorePhotos([state.selectedPhotoId]));
-      main.querySelector('#albumsDeletePhotoPermanent')?.addEventListener('click', () => openDeletePhotoConfirm([state.selectedPhotoId], true));
-      main.querySelector('#albumsCancelSelection')?.addEventListener('click', () => clearAlbumSelection());
-      main.querySelector('#albumsSelectAll')?.addEventListener('click', () => {
-        const visibleIds = filteredAlbumPhotos().map(photo => photo.id);
-        const selected = new Set(state.selectedPhotoIds || []);
-        const allVisibleSelected = visibleIds.length > 0 && visibleIds.every(id => selected.has(id));
-        visibleIds.forEach(id => allVisibleSelected ? selected.delete(id) : selected.add(id));
-        state.selectedPhotoIds = [...selected];
-        renderAlbums();
-      });
-      main.querySelector('#albumsAddSelectedToAlbum')?.addEventListener('click', openAddToAlbumModal);
-      main.querySelector('#albumsRemoveFromCurrent')?.addEventListener('click', removeSelectedFromCurrentAlbum);
-      main.querySelector('#albumsRestoreSelected')?.addEventListener('click', () => restorePhotos(state.selectedPhotoIds));
-      main.querySelector('#albumsDeleteSelectedPermanent')?.addEventListener('click', () => openDeletePhotoConfirm(state.selectedPhotoIds, true));
-      main.querySelector('#albumsLinkAlbum')?.addEventListener('click', () => { state.selectedPhotoIds = [state.selectedPhotoId]; openAddToAlbumModal(); });
+
+      const browsingLocked =
+        state.albumsDetailEditing;
+
+      const lockableControls =
+        main.querySelectorAll(`
+          #albumsSearch,
+          #albumsFilterButton,
+          #albumsSort,
+          [data-albums-mode],
+          #albumsAddPhotos,
+          #albumsClearFilters,
+          [data-albums-remove-filter]
+        `);
+
+      if (browsingLocked) {
+        lockableControls.forEach(
+          control => {
+            if (
+              'disabled' in control
+            ) {
+              control.disabled = true;
+            } else {
+              control.setAttribute(
+                'aria-disabled',
+                'true'
+              );
+            }
+          }
+        );
+      } else {
+        bindSearchInput(
+          main,
+          '#albumsSearch',
+          'albumsSearch',
+          renderAlbums
+        );
+
+        main
+          .querySelector('#albumsSort')
+          ?.addEventListener(
+            'change',
+            event => {
+              state.albumsSort =
+                event.target.value;
+
+              renderAlbums();
+            }
+          );
+
+        main
+          .querySelector(
+            '#albumsFilterButton'
+          )
+          ?.addEventListener(
+            'click',
+            event => {
+              openAlbumsFilterPopover(
+                event.currentTarget
+              );
+            }
+          );
+
+        main
+          .querySelector(
+            '#albumsClearFilters'
+          )
+          ?.addEventListener(
+            'click',
+            clearAlbumFilters
+          );
+
+        main
+          .querySelectorAll(
+            '[data-albums-remove-filter]'
+          )
+          .forEach(button => {
+            button.addEventListener(
+              'click',
+              () => {
+                removeAlbumFilter(
+                  button.dataset
+                    .albumsRemoveFilter
+                );
+              }
+            );
+          });
+
+        main
+          .querySelectorAll(
+            '[data-albums-mode]'
+          )
+          .forEach(button => {
+            button.addEventListener(
+              'click',
+              () => {
+                state.albumsViewMode =
+                  button.dataset.albumsMode;
+
+                renderAlbums();
+              }
+            );
+          });
+
+        main
+          .querySelector('#albumsAddPhotos')
+          ?.addEventListener(
+            'click',
+            openAddPhotosModal
+          );
+
+        main
+          .querySelector('#albumsEmptyAction')
+          ?.addEventListener(
+            'click',
+            openAddPhotosModal
+          );
+      }
+
+      main
+        .querySelector('#albumsEmptyClear')
+        ?.addEventListener(
+          'click',
+          () => {
+            state.albumsSearch = '';
+
+            state.albumsFilters = {
+              ...defaultAlbumFilters
+            };
+
+            renderAlbums();
+          }
+        );
+
+      main
+        .querySelectorAll('[data-photo-id]')
+        .forEach(card => {
+          const selectPhoto = () => {
+            runAfterAlbumsPhotoEditGuard(
+              () => {
+                state.selectedPhotoId =
+                  card.dataset.photoId;
+
+                renderAlbums();
+              }
+            );
+          };
+
+          card.addEventListener(
+            'click',
+            event => {
+              if (
+                event.target.closest(
+                  'button,input,a,select'
+                )
+              ) {
+                return;
+              }
+
+              selectPhoto();
+            }
+          );
+
+          card.addEventListener(
+            'keydown',
+            event => {
+              if (
+                event.key !== 'Enter'
+                && event.key !== ' '
+              ) {
+                return;
+              }
+
+              if (
+                event.target.closest(
+                  'button,input,a,select'
+                )
+              ) {
+                return;
+              }
+
+              event.preventDefault();
+              selectPhoto();
+            }
+          );
+        });
+
+      main
+        .querySelectorAll(
+          '[data-photo-check]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              event.stopPropagation();
+
+              runAfterAlbumsPhotoEditGuard(
+                () => {
+                  togglePhotoSelection(
+                    button.dataset.photoCheck
+                  );
+                }
+              );
+            }
+          );
+        });
+
+      main
+        .querySelectorAll(
+          '[data-photo-fav]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              event.stopPropagation();
+
+              runAfterAlbumsPhotoEditGuard(
+                () => {
+                  toggleAlbumPhotoFavourite(
+                    button.dataset.photoFav
+                  );
+                }
+              );
+            }
+          );
+        });
+
+      main
+        .querySelectorAll(
+          '[data-photo-more]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              event.stopPropagation();
+
+              runAfterAlbumsPhotoEditGuard(
+                () => {
+                  openAlbumPhotoMenu(
+                    button.dataset.photoMore,
+                    button
+                  );
+                }
+              );
+            }
+          );
+        });
+
+      main
+        .querySelectorAll(
+          '[data-photo-open]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              openPhotoLightbox(
+                button.dataset.photoOpen
+              );
+            }
+          );
+        });
+
+      main
+        .querySelectorAll(
+          '[data-photo-person-open]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              openPeopleProfileFromRow(
+                button.dataset.photoPersonOpen
+              );
+            }
+          );
+        });
+
+      main
+        .querySelectorAll(
+          '[data-albums-photo-person-menu]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              event.stopPropagation();
+
+              openAlbumsPhotoPersonMenu(
+                state.selectedPhotoId,
+                button.dataset
+                  .albumsPhotoPersonMenu,
+                button
+              );
+            }
+          );
+        });
+
+      main
+        .querySelectorAll(
+          '[data-photo-album-open]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              state.albumsView = 'album';
+
+              state.activeAlbumId =
+                button.dataset.photoAlbumOpen;
+
+              state.selectedPhotoIds = [];
+
+              renderAlbums();
+            }
+          );
+        });
+
+      main
+        .querySelectorAll(
+          '[data-photo-remove-album]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              openRemovePhotoFromAlbumConfirm(
+                state.selectedPhotoId,
+                button.dataset.photoRemoveAlbum
+              );
+            }
+          );
+        });
+
+      main
+        .querySelectorAll(
+          '[data-albums-detail-toggle]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              if (
+                state.albumsDetailCollapsed
+              ) {
+                state.albumsDetailCollapsed =
+                  false;
+
+                renderAlbums();
+                return;
+              }
+
+              runAfterAlbumsPhotoEditGuard(
+                () => {
+                  state.albumsDetailCollapsed =
+                    true;
+
+                  renderAlbums();
+                }
+              );
+            }
+          );
+        });
+
+      main
+        .querySelectorAll(
+          '[data-albums-section-toggle]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              if (
+                event.target.closest(
+                  '.link'
+                )
+              ) {
+                return;
+              }
+
+              const sectionId =
+                button.dataset
+                  .albumsSectionToggle;
+
+              const open =
+                !albumsDetailSectionIsOpen(
+                  sectionId
+                );
+
+              state.albumsDetailSections[
+                sectionId
+              ] = open;
+
+              const section =
+                button.closest(
+                  '.panel-section'
+                );
+
+              const body =
+                section?.querySelector(
+                  '.panel-section-body'
+                );
+
+              section
+                ?.classList
+                .toggle(
+                  'is-open',
+                  open
+                );
+
+              button.setAttribute(
+                'aria-expanded',
+                String(open)
+              );
+
+              if (body) {
+                body.hidden = !open;
+              }
+            }
+          );
+        });
+
+      main
+        .querySelector('#albumsEditPhoto')
+        ?.addEventListener(
+          'click',
+          beginAlbumsPhotoEdit
+        );
+
+      main
+        .querySelector(
+          '#albumsCancelPhotoEdit'
+        )
+        ?.addEventListener(
+          'click',
+          cancelAlbumsPhotoEdit
+        );
+
+      main
+        .querySelector(
+          '#albumsSavePhotoEdit'
+        )
+        ?.addEventListener(
+          'click',
+          saveAlbumsPhotoEdit
+        );
+
+      main
+        .querySelector(
+          '#albumsInspectorMore'
+        )
+        ?.addEventListener(
+          'click',
+          event => {
+            openAlbumsInspectorMenu(
+              state.selectedPhotoId,
+              event.currentTarget
+            );
+          }
+        );
+
+      main
+        .querySelector('#albumsTagPeople')
+        ?.addEventListener(
+          'click',
+          () => {
+            openPhotoPeopleModal(
+              state.selectedPhotoId
+            );
+          }
+        );
+
+      main
+        .querySelector('#albumsLinkAlbum')
+        ?.addEventListener(
+          'click',
+          () => {
+            state.selectedPhotoIds = [
+              state.selectedPhotoId
+            ];
+
+            openAddToAlbumModal();
+          }
+        );
+
+      const editRoot =
+        main.querySelector(
+          '[data-albums-photo-edit-root]'
+        );
+
+      editRoot
+        ?.addEventListener(
+          'input',
+          syncAlbumsPhotoEditDraftFromPane
+        );
+
+      editRoot
+        ?.addEventListener(
+          'change',
+          syncAlbumsPhotoEditDraftFromPane
+        );
+
+      main
+        .querySelector(
+          '#albumsDeleteSelected'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            openDeletePhotoConfirm(
+              state.selectedPhotoIds
+            );
+          }
+        );
+
+      main
+        .querySelector('#albumsRestorePhoto')
+        ?.addEventListener(
+          'click',
+          () => {
+            restorePhotos([
+              state.selectedPhotoId
+            ]);
+          }
+        );
+
+      main
+        .querySelector(
+          '#albumsCancelSelection'
+        )
+        ?.addEventListener(
+          'click',
+          () => clearAlbumSelection()
+        );
+
+      main
+        .querySelector('#albumsSelectAll')
+        ?.addEventListener(
+          'click',
+          () => {
+            const visibleIds =
+              filteredAlbumPhotos()
+                .map(photo => photo.id);
+
+            const selected =
+              new Set(
+                state.selectedPhotoIds
+                || []
+              );
+
+            const allVisibleSelected =
+              visibleIds.length > 0
+              && visibleIds.every(
+                id => selected.has(id)
+              );
+
+            visibleIds.forEach(id => {
+              if (allVisibleSelected) {
+                selected.delete(id);
+              } else {
+                selected.add(id);
+              }
+            });
+
+            state.selectedPhotoIds = [
+              ...selected
+            ];
+
+            renderAlbums();
+          }
+        );
+
+      main
+        .querySelector(
+          '#albumsAddSelectedToAlbum'
+        )
+        ?.addEventListener(
+          'click',
+          openAddToAlbumModal
+        );
+
+      main
+        .querySelector(
+          '#albumsRemoveFromCurrent'
+        )
+        ?.addEventListener(
+          'click',
+          removeSelectedFromCurrentAlbum
+        );
+
+      main
+        .querySelector(
+          '#albumsRestoreSelected'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            restorePhotos(
+              state.selectedPhotoIds
+            );
+          }
+        );
+
+      main
+        .querySelector(
+          '#albumsDeleteSelectedPermanent'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            openDeletePhotoConfirm(
+              state.selectedPhotoIds,
+              true
+            );
+          }
+        );
     }
 
     let geneoDragState = null;
