@@ -8591,6 +8591,327 @@
     .photo-picker-modal { width: min(680px, calc(100vw - 32px)); }
     .photo-picker-modal .albums-modal-list { max-height: min(52vh, 440px); }
 
+    /* Shared person primary-photo control and picker */
+    .person-avatar-viewport {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      border-radius: inherit;
+    }
+    .person-avatar-media {
+      position: absolute;
+      inset: 0;
+      transform-origin: center;
+      transform:
+        translate(var(--person-photo-shift-x, 0), var(--person-photo-shift-y, 0))
+        scale(var(--person-photo-zoom, 1))
+        rotate(var(--person-photo-rotation, 0deg));
+    }
+    .person-avatar-media > .photo-thumbnail { position: absolute; inset: 0; }
+    .person-photo-control {
+      position: relative;
+      width: max-content;
+      max-width: 100%;
+      display: inline-grid;
+      isolation: isolate;
+    }
+    .person-photo-edit-button {
+      position: absolute;
+      z-index: 4;
+      right: 4px;
+      bottom: 4px;
+      left: 4px;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0 var(--space-2);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 6px;
+      background: rgba(8,12,10,.82);
+      color: var(--text-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 1;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(4px);
+      transition: opacity var(--ease), transform var(--ease), background var(--ease), border-color var(--ease);
+      backdrop-filter: blur(8px);
+    }
+    .person-photo-edit-button svg { width: 17px; height: 17px; display: block; flex: 0 0 auto; }
+    .person-photo-control:hover .person-photo-edit-button,
+    .person-photo-control:focus-within .person-photo-edit-button {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .person-photo-edit-button:hover { background: rgba(18,29,24,.94); border-color: rgba(98,217,154,.48); }
+    .person-photo-edit-button:focus-visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+      outline: 2px solid var(--brand-green-300);
+      outline-offset: 2px;
+    }
+
+    .person-photo-picker-modal { width: min(980px, calc(100vw - 32px)); }
+    .person-photo-picker-body {
+      max-height: min(72vh, 720px);
+      overflow: auto;
+      display: grid;
+      gap: var(--space-4);
+    }
+    .person-photo-picker-step {
+      color: var(--text-tertiary);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .person-photo-picker-modal .modal-footer {
+      margin: var(--space-2) calc(0px - var(--space-6)) calc(0px - var(--space-6));
+      padding: var(--space-4) var(--space-6);
+      justify-content: space-between;
+      align-items: center;
+    }
+    .person-photo-picker-modal .modal-footer-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-3);
+    }
+    .person-photo-picker-tabs,
+    .person-photo-scope-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 3px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-input);
+    }
+    .person-photo-picker-tabs { justify-self: start; }
+    .person-photo-picker-tab,
+    .person-photo-scope-button {
+      min-height: 36px;
+      padding: 0 var(--space-3);
+      border: 0;
+      border-radius: 5px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-weight: 850;
+    }
+    .person-photo-picker-tab[aria-selected="true"],
+    .person-photo-scope-button[aria-pressed="true"] {
+      background: var(--surface-selected);
+      color: var(--text-primary);
+      box-shadow: inset 0 0 0 1px rgba(98,217,154,.22);
+    }
+    .person-photo-picker-tab:focus-visible,
+    .person-photo-scope-button:focus-visible,
+    .person-photo-candidate:focus-visible,
+    .person-photo-tool-button:focus-visible {
+      outline: 2px solid var(--brand-green-300);
+      outline-offset: 2px;
+    }
+    .person-photo-project-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+    .person-photo-project-controls .search-input { flex: 1 1 260px; max-width: 420px; }
+    .person-photo-candidate-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: var(--space-3);
+    }
+    .person-photo-candidate {
+      min-width: 0;
+      padding: 0;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-card);
+      color: var(--text-primary);
+      text-align: left;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: 124px auto;
+      transition: border-color var(--ease), background var(--ease), box-shadow var(--ease);
+    }
+    .person-photo-candidate:hover { border-color: var(--border-strong); background: var(--surface-card-hover); }
+    .person-photo-candidate[aria-pressed="true"] {
+      border-color: var(--brand-green-500);
+      box-shadow: 0 0 0 1px rgba(47,174,116,.3);
+    }
+    .person-photo-candidate-preview { position: relative; min-width: 0; overflow: hidden; background: var(--surface-input); }
+    .person-photo-candidate-preview > .photo-thumbnail { position: absolute; inset: 0; }
+    .person-photo-candidate-copy { min-width: 0; padding: 10px; display: grid; gap: 4px; }
+    .person-photo-candidate-copy strong,
+    .person-photo-candidate-copy span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .person-photo-candidate-copy span { color: var(--text-tertiary); font-size: 12px; }
+    .person-photo-current-badge,
+    .person-photo-untagged-badge {
+      position: absolute;
+      z-index: 3;
+      top: 8px;
+      left: 8px;
+      min-height: 24px;
+      padding: 0 7px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      color: var(--text-primary);
+      background: rgba(8,12,10,.82);
+      font-size: 10px;
+      font-weight: 900;
+      backdrop-filter: blur(6px);
+    }
+    .person-photo-untagged-badge { top: auto; bottom: 8px; color: var(--brand-green-200); }
+    .person-photo-picker-notice,
+    .person-photo-deleted-notice {
+      padding: var(--space-3);
+      border: 1px solid rgba(98,217,154,.2);
+      border-radius: var(--radius-sm);
+      background: rgba(47,174,116,.08);
+      color: var(--text-secondary);
+    }
+    .person-photo-deleted-notice { border-color: rgba(241,201,108,.25); background: rgba(241,201,108,.07); }
+    .person-photo-empty { min-height: 220px; display: grid; place-items: center; text-align: center; }
+    .person-photo-empty > div { max-width: 440px; display: grid; justify-items: center; gap: var(--space-3); }
+    .person-photo-empty-actions { display: flex; justify-content: center; gap: var(--space-2); flex-wrap: wrap; }
+
+    .person-photo-upload-dropzone {
+      min-height: 270px;
+      padding: var(--space-5);
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,.018);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      transition: border-color var(--ease), background var(--ease);
+    }
+    .person-photo-upload-dropzone.is-dragging { border-color: var(--brand-green-500); background: rgba(47,174,116,.08); }
+    .person-photo-upload-prompt { max-width: 440px; display: grid; justify-items: center; gap: var(--space-2); }
+    .person-photo-upload-prompt > svg { width: 34px; height: 34px; color: var(--brand-green-300); }
+    .person-photo-upload-prompt p { margin: 0; color: var(--text-secondary); }
+    .person-photo-upload-preview {
+      width: min(100%, 520px);
+      display: grid;
+      grid-template-columns: 150px minmax(0,1fr);
+      gap: var(--space-4);
+      align-items: center;
+      text-align: left;
+    }
+    .person-photo-upload-thumb { position: relative; height: 150px; border-radius: var(--radius-sm); overflow: hidden; }
+    .person-photo-upload-thumb > .photo-thumbnail { position: absolute; inset: 0; }
+    .person-photo-upload-copy { min-width: 0; display: grid; gap: var(--space-2); }
+    .person-photo-upload-copy strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .person-photo-upload-error { color: var(--red); font-size: 13px; font-weight: 750; }
+
+    .person-photo-adjust-layout {
+      display: grid;
+      grid-template-columns: minmax(340px, 1fr) 220px;
+      gap: var(--space-5);
+      align-items: start;
+    }
+    .person-photo-crop-column { min-width: 0; display: grid; justify-items: center; gap: var(--space-3); }
+    .person-photo-crop-stage {
+      position: relative;
+      width: min(100%, 520px);
+      aspect-ratio: 1;
+      overflow: hidden;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: #101513;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+    }
+    .person-photo-crop-stage.is-dragging { cursor: grabbing; }
+    .person-photo-crop-media {
+      position: absolute;
+      inset: 0;
+      transform-origin: center;
+      transform:
+        translate(var(--person-photo-shift-x, 0), var(--person-photo-shift-y, 0))
+        scale(var(--person-photo-zoom, 1))
+        rotate(var(--person-photo-rotation, 0deg));
+    }
+    .person-photo-crop-media > .photo-thumbnail { position: absolute; inset: 0; }
+    .person-photo-crop-mask {
+      position: absolute;
+      z-index: 3;
+      inset: 9%;
+      border: 2px solid rgba(255,255,255,.82);
+      border-radius: 10px;
+      box-shadow: 0 0 0 999px rgba(2,5,4,.48);
+      pointer-events: none;
+    }
+    .person-photo-crop-hint { margin: 0; color: var(--text-tertiary); font-size: 12px; }
+    .person-photo-crop-controls { width: min(100%, 520px); display: grid; gap: var(--space-3); }
+    .person-photo-zoom-row { display: grid; grid-template-columns: 40px minmax(0,1fr) 40px; align-items: center; gap: var(--space-2); }
+    .person-photo-zoom-row input { width: 100%; accent-color: var(--brand-green-500); }
+    .person-photo-crop-toolbar { display: flex; align-items: center; justify-content: center; gap: var(--space-2); flex-wrap: wrap; }
+    .person-photo-tool-button {
+      min-width: 40px;
+      min-height: 40px;
+      padding: 0 var(--space-3);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-input);
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .person-photo-tool-button:hover { background: var(--surface-card-hover); color: var(--text-primary); }
+    .person-photo-tool-button svg { width: 17px; height: 17px; display: block; }
+    .person-photo-preview-column { min-width: 0; display: grid; gap: var(--space-4); }
+    .person-photo-preview-card { padding: var(--space-3); border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--surface-card); display: grid; gap: var(--space-2); }
+    .person-photo-preview-card strong { font-size: 12px; }
+    .person-photo-preview-avatar { position: relative; overflow: hidden; margin: auto; border: 1px solid rgba(255,255,255,.12); background: var(--surface-input); }
+    .person-photo-preview-avatar.tree { width: 96px; height: 112px; border-radius: var(--radius-sm); }
+    .person-photo-preview-avatar.profile { width: 132px; height: 132px; border-radius: var(--radius-sm); }
+    .person-photo-preview-avatar .person-photo-crop-media { inset: 0; }
+
+    @media (hover: none) {
+      .person-photo-edit-button {
+        right: -4px;
+        bottom: -4px;
+        left: auto;
+        width: 44px;
+        padding: 0;
+        border-radius: 50%;
+        opacity: 1;
+        pointer-events: auto;
+        transform: none;
+      }
+      .person-photo-edit-button span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    }
+    @media (max-width: 760px) {
+      .person-photo-adjust-layout { grid-template-columns: 1fr; }
+      .person-photo-preview-column { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .person-photo-upload-preview { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+      .person-photo-upload-copy { justify-items: center; }
+    }
+    @media (max-width: 520px) {
+      .person-photo-picker-modal { width: calc(100vw - 16px); }
+      .person-photo-picker-body { padding: var(--space-3); }
+      .person-photo-project-controls { align-items: stretch; flex-direction: column; }
+      .person-photo-project-controls .search-input { max-width: none; }
+      .person-photo-scope-switch { width: 100%; }
+      .person-photo-scope-button { flex: 1 1 0; }
+      .person-photo-candidate-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .person-photo-preview-column { grid-template-columns: 1fr; }
+    }
+
     .photo-abstract {
       --abstract-a: #20352d; --abstract-b: #4d8067; --abstract-c: #c7c29b;
       position: absolute; inset: 0; overflow: hidden;
@@ -11608,6 +11929,7 @@
       bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
       birth: `<svg viewBox="0 0 512 512" fill="none"  aria-hidden="true"><path d="M453 15L427 4L405 0L363 4L335 16L322 25L295 56L282 87L278 121L271 147L255 177L234 202L237 216L294 273L300 276L309 275L330 257L359 241L388 233L419 230L441 223L470 205L496 174L507 148L511 126L507 84L488 46L469 26Z" fill="currentColor"/><path d="M114 90L101 105L95 122L94 147L99 172L113 208L129 237L180 304L216 339L250 366L314 403L339 412L365 417L389 416L413 405L424 392L430 377L431 346L420 306L399 264L386 264L365 271L317 304L298 306L279 299L214 235L204 214L206 191L235 153L246 127L248 113L215 95L172 81L138 80Z" fill="currentColor"/><path d="M54 225L30 252L13 282L3 314L0 336L2 375L12 410L25 435L39 454L70 482L94 496L130 508L152 511L192 509L224 500L250 487L284 459L303 434L303 430L254 405L234 426L211 440L182 448L154 448L128 441L111 432L98 422L79 400L64 363L64 322L79 285L106 255L80 206Z" fill="currentColor"/></svg>`,
       calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 9h18"/><path d="M8 13h.01M12 13h.01M16 13h.01M8 17h.01M12 17h.01"/></svg>',
+      camera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5h3l1.5-2h7l1.5 2h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="14" r="3.5"/></svg>',
       clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>',
       command: '<svg viewBox="0 0 24 24" fill="none" ><g id="Interface / Command"> <path id="Vector" d="M9 15V18C9 19.6569 7.65685 21 6 21C4.34315 21 3 19.6569 3 18C3 16.3431 4.34315 15 6 15H9ZM9 15H15M9 15V9M15 15V18C15 19.6569 16.3431 21 18 21C19.6569 21 21 19.6569 21 18C21 16.3431 19.6569 15 18 15H15ZM15 15V9M15 9H9M15 9V6C15 4.34315 16.3431 3 18 3C19.6569 3 21 4.34315 21 6C21 7.65685 19.6569 9 18 9H15ZM9 9V6C9 4.34315 7.65685 3 6 3C4.34315 3 3 4.34315 3 6C3 7.65685 4.34315 9 6 9H9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g> </g></svg>',
       compass: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.2 5-5 2.2 2.2-5 5-2.2Z"/></svg>',
@@ -11666,6 +11988,8 @@
 
       undo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 7H5V3"/><path d="M5 7a8 8 0 1 1-1 8"/></svg>',
       redo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 7h4V3"/><path d="M19 7a8 8 0 1 0 1 8"/></svg>',
+      rotateLeft: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7H3V3"/><path d="M3.5 7.5A9 9 0 1 1 5 18"/></svg>',
+      rotateRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 7h4V3"/><path d="M20.5 7.5A9 9 0 1 0 19 18"/></svg>',
       cursorSelect: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 3 12 10-6 1 3 6-3 1-3-6-3 4Z"/></svg>',
       pan: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 11V7a1.5 1.5 0 0 1 3 0v3-5a1.5 1.5 0 0 1 3 0v5-4a1.5 1.5 0 0 1 3 0v5-2a1.5 1.5 0 0 1 3 0v5c0 4-3 7-7 7h-1c-3 0-5-2-6-4l-2-4a1.5 1.5 0 0 1 2.6-1.5L7 13"/></svg>',
       eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>',
@@ -12401,12 +12725,42 @@
       return `<span class="${escapeHtml(className)}${src ? ' has-image' : ''}" data-photo-thumbnail role="img" aria-label="${escapeHtml(label)}">${renderPhotoAbstract(photo)}${src ? `<img class="thumb-img" src="${escapeHtml(src)}" alt="" loading="lazy" onerror="this.closest('[data-photo-thumbnail]').classList.remove('has-image');this.remove()">` : ''}</span>`;
     }
 
+    const PERSON_PHOTO_CROP_DEFAULT = Object.freeze({
+      centerX: 0.5,
+      centerY: 0.5,
+      zoom: 1,
+      rotation: 0
+    });
+    const PERSON_PHOTO_ZOOM_MIN = 1;
+    const PERSON_PHOTO_ZOOM_MAX = 3;
+    const PERSON_PHOTO_ROTATIONS = Object.freeze([0, 90, 180, 270]);
+
+    function clampPersonPhotoValue(value, minimum, maximum, fallback) {
+      const number = Number(value);
+      return Number.isFinite(number)
+        ? Math.min(maximum, Math.max(minimum, number))
+        : fallback;
+    }
+
+    function normalizePersonPhotoCrop(crop) {
+      const rotation = Number(crop?.rotation);
+      return {
+        centerX: clampPersonPhotoValue(crop?.centerX, 0, 1, PERSON_PHOTO_CROP_DEFAULT.centerX),
+        centerY: clampPersonPhotoValue(crop?.centerY, 0, 1, PERSON_PHOTO_CROP_DEFAULT.centerY),
+        zoom: clampPersonPhotoValue(crop?.zoom, PERSON_PHOTO_ZOOM_MIN, PERSON_PHOTO_ZOOM_MAX, PERSON_PHOTO_CROP_DEFAULT.zoom),
+        rotation: PERSON_PHOTO_ROTATIONS.includes(rotation) ? rotation : PERSON_PHOTO_CROP_DEFAULT.rotation
+      };
+    }
+
     function repairPrimaryPhotoReferences(photoIds = []) {
       const ids = new Set(photoIds);
       sampleData.people.forEach(person => {
         if (!person.primaryPhotoId || (ids.size && !ids.has(person.primaryPhotoId))) return;
         const photo = getPhoto(person.primaryPhotoId, { projectId: person.projectId });
-        if (!photo || !(photo.personIds || []).includes(person.id)) person.primaryPhotoId = '';
+        if (!photo || !(photo.personIds || []).includes(person.id)) {
+          person.primaryPhotoId = '';
+          person.primaryPhotoCrop = null;
+        }
       });
     }
 
@@ -12443,13 +12797,19 @@
       return true;
     }
 
-    function setPersonPrimaryPhoto(personId, photoId) {
+    function setPersonPrimaryPhoto(personId, photoId, crop = null, { rerender = true, notify = true } = {}) {
       const person = getPerson(personId);
       const photo = getPhoto(photoId, { projectId: person?.projectId || '' });
       if (!person || !photo || !(photo.personIds || []).includes(personId)) return false;
+      const previousPhotoId = person.primaryPhotoId || '';
       person.primaryPhotoId = photo.id;
-      render();
-      showToast('Primary photo updated.');
+      person.primaryPhotoCrop = normalizePersonPhotoCrop(
+        crop || (previousPhotoId === photo.id ? person.primaryPhotoCrop : null)
+      );
+      person.meta = person.meta || {};
+      person.meta.updated = 'Just now';
+      if (rerender) render();
+      if (notify) showToast('Primary photo updated.');
       return true;
     }
 
@@ -14527,6 +14887,13 @@
           else if (photoIsDeleted(primaryPhoto)) warn(`Person ${person.id} primary photo is deleted`);
           else if (!(primaryPhoto.personIds || []).includes(person.id)) warn(`Person ${person.id} is not tagged in primary photo ${primaryPhoto.id}`);
         }
+        if (person.primaryPhotoCrop != null) {
+          const crop = person.primaryPhotoCrop;
+          if (!Number.isFinite(crop.centerX) || crop.centerX < 0 || crop.centerX > 1) warn(`Person ${person.id} has invalid primary photo centerX`);
+          if (!Number.isFinite(crop.centerY) || crop.centerY < 0 || crop.centerY > 1) warn(`Person ${person.id} has invalid primary photo centerY`);
+          if (!Number.isFinite(crop.zoom) || crop.zoom < PERSON_PHOTO_ZOOM_MIN || crop.zoom > PERSON_PHOTO_ZOOM_MAX) warn(`Person ${person.id} has invalid primary photo zoom`);
+          if (!PERSON_PHOTO_ROTATIONS.includes(crop.rotation)) warn(`Person ${person.id} has invalid primary photo rotation`);
+        }
       });
 
       centralFamilyRecords().forEach(family => {
@@ -14618,6 +14985,20 @@
         albums: true,
         sources: false,
         metadata: false
+      },
+      personPhotoPicker: {
+        open: false,
+        personId: null,
+        step: 'choose',
+        sourceTab: 'project',
+        projectScope: 'tagged',
+        search: '',
+        selectedPhotoId: null,
+        initialPhotoId: null,
+        uploadDraft: null,
+        uploadError: '',
+        crop: null,
+        dirty: false
       },
       archiveView: 'files',
       archiveSelectedFolderId: 'delo44',
@@ -16763,7 +17144,7 @@ function renderTreeCardDateLines(person) {
           <button class="tree-person-hero-profile" type="button" data-tree-view-profile="${escapeHtml(person.id)}" aria-label="View ${escapeHtml(person.name)} profile"><span>View profile</span></button>
         </div>
         <div class="tree-person-hero-main">
-          ${renderPersonAvatar(person, 'tree-person-hero-photo')}
+          ${renderEditablePersonAvatar(person, 'tree-person-hero-photo', { controlClass: 'tree-person-photo-control' })}
           <div class="tree-person-hero-copy"><h2>${escapeHtml(person.name)}</h2>${renderFamilyTreeHeroLifeDetails(person)}</div>
         </div>
         <div class="person-chip-row tree-person-hero-tags">
@@ -23457,9 +23838,10 @@ function renderTreeCardDateLines(person) {
               <span>Back to people</span>
             </button>
 
-            ${renderPersonAvatar(
+            ${renderEditablePersonAvatar(
               person,
-              'profile-hero-photo'
+              'profile-hero-photo',
+              { controlClass: 'profile-person-photo-control' }
             )}
 
             <div class="profile-hero-copy">
@@ -27594,17 +27976,694 @@ function renderTreeCardDateLines(person) {
       return person?.avatarClass || person?.avatar || '';
     }
 
+    function personPhotoCropStyle(cropValue) {
+      const crop = normalizePersonPhotoCrop(cropValue);
+      return `--person-photo-shift-x:${(0.5 - crop.centerX) * 100}%;--person-photo-shift-y:${(0.5 - crop.centerY) * 100}%;--person-photo-zoom:${crop.zoom};--person-photo-rotation:${crop.rotation}deg`;
+    }
+
     function renderPersonAvatar(person, className, { element = 'div', attrs = '' } = {}) {
-      const primaryPhoto = getPhoto(personPrimaryPhotoId(person), {
-        projectId: person?.projectId || ''
+      const centralPerson = getPerson(person?.id) || person;
+      const primaryPhoto = getPhoto(personPrimaryPhotoId(centralPerson), {
+        projectId: centralPerson?.projectId || ''
       });
       const classes = [className, personAvatarClass(person), primaryPhoto ? 'has-photo' : '']
         .filter(Boolean)
         .join(' ');
       const content = primaryPhoto
-        ? renderPhotoThumbnail(primaryPhoto, { className: 'person-avatar-photo', label: person?.names?.display || 'Person' })
+        ? `<span class="person-avatar-viewport"><span class="person-avatar-media" style="${personPhotoCropStyle(centralPerson?.primaryPhotoCrop)}">${renderPhotoThumbnail(primaryPhoto, { className: 'person-avatar-photo', label: centralPerson?.names?.display || person?.name || 'Person' })}</span></span>`
         : escapeHtml(personAvatarInitials(person));
       return `<${element} class="${escapeHtml(classes)}" ${attrs}>${content}</${element}>`;
+    }
+
+    function renderEditablePersonAvatar(person, className, options = {}) {
+      const centralPerson = getPerson(person?.id) || person;
+      if (!centralPerson?.id) return renderPersonAvatar(person, className, options);
+      const name = centralPerson.names?.display || person?.name || 'Person';
+      const hasPrimaryPhoto = Boolean(getPhoto(centralPerson.primaryPhotoId, {
+        projectId: centralPerson.projectId
+      }));
+      const actionLabel = hasPrimaryPhoto ? 'Change photo' : 'Add photo';
+      const wrapperClass = ['person-photo-control', options.controlClass || '']
+        .filter(Boolean)
+        .join(' ');
+      return `<div class="${escapeHtml(wrapperClass)}">
+        ${renderPersonAvatar(person, className, options)}
+        <button class="person-photo-edit-button" type="button" data-person-photo-edit="${escapeHtml(centralPerson.id)}" aria-label="${escapeHtml(`${actionLabel} for ${name}`)}">
+          ${icon.camera}
+          <span>${actionLabel}</span>
+        </button>
+      </div>`;
+    }
+
+    const PERSON_PHOTO_MAX_BYTES = 20 * 1024 * 1024;
+    const PERSON_PHOTO_ALLOWED_TYPES = Object.freeze([
+      'image/jpeg',
+      'image/png',
+      'image/webp'
+    ]);
+
+    function resetPersonPhotoPickerState() {
+      state.personPhotoPicker = {
+        open: false,
+        personId: null,
+        step: 'choose',
+        sourceTab: 'project',
+        projectScope: 'tagged',
+        search: '',
+        selectedPhotoId: null,
+        initialPhotoId: null,
+        uploadDraft: null,
+        uploadError: '',
+        crop: null,
+        dirty: false
+      };
+    }
+
+    function personPhotoPickerPerson() {
+      return getPerson(state.personPhotoPicker?.personId) || null;
+    }
+
+    function personPhotoPickerDeletedPrimary() {
+      const person = personPhotoPickerPerson();
+      if (!person?.primaryPhotoId) return null;
+      const photo = getPhoto(person.primaryPhotoId, {
+        includeDeleted: true,
+        projectId: person.projectId
+      });
+      return photoIsDeleted(photo) ? photo : null;
+    }
+
+    function personPhotoUploadDraftAsPhoto(draft = state.personPhotoPicker?.uploadDraft) {
+      if (!draft) return null;
+      return {
+        id: 'person-photo-upload-draft',
+        projectId: personPhotoPickerPerson()?.projectId || '',
+        kind: 'photo',
+        title: draft.filename,
+        filename: draft.filename,
+        src: draft.src,
+        mimeType: draft.mimeType,
+        width: draft.width,
+        height: draft.height,
+        sizeBytes: draft.sizeBytes,
+        placeholder: { pattern: 'orbit', palette: 'moss', seed: 97 },
+        personIds: [],
+        albumIds: [],
+        date: emptyGenealogyDate('Exact date'),
+        placeId: null,
+        placeText: '',
+        caption: '',
+        origin: { type: 'upload', label: 'Person photo upload' },
+        favorite: false,
+        createdAt: '',
+        updatedAt: '',
+        deletedAt: null
+      };
+    }
+
+    function personPhotoPickerSourcePhoto() {
+      if (state.personPhotoPicker.sourceTab === 'upload') {
+        return personPhotoUploadDraftAsPhoto();
+      }
+      const person = personPhotoPickerPerson();
+      return getPhoto(state.personPhotoPicker.selectedPhotoId, {
+        projectId: person?.projectId || ''
+      });
+    }
+
+    function personPhotoPickerProjectPhotos() {
+      const person = personPhotoPickerPerson();
+      if (!person) return [];
+      const query = state.personPhotoPicker.search.trim().toLowerCase();
+      return getProjectPhotos(person.projectId).filter(photo => {
+        if (
+          state.personPhotoPicker.projectScope === 'tagged'
+          && !(photo.personIds || []).includes(person.id)
+        ) {
+          return false;
+        }
+        return !query || photoSearchText(photo).includes(query);
+      });
+    }
+
+    function personPhotoPickerHasSource() {
+      return Boolean(personPhotoPickerSourcePhoto());
+    }
+
+    function renderPersonPhotoCandidate(photo, person) {
+      const selected = photo.id === state.personPhotoPicker.selectedPhotoId;
+      const current = photo.id === person.primaryPhotoId;
+      const tagged = (photo.personIds || []).includes(person.id);
+      return `<button class="person-photo-candidate" type="button" data-person-photo-candidate="${escapeHtml(photo.id)}" aria-pressed="${selected}">
+        <span class="person-photo-candidate-preview">
+          ${renderPhotoThumbnail(photo, { label: photo.title || photo.filename })}
+          ${current ? '<span class="person-photo-current-badge">Current photo</span>' : ''}
+          ${tagged ? '' : '<span class="person-photo-untagged-badge">Not tagged</span>'}
+        </span>
+        <span class="person-photo-candidate-copy">
+          <strong>${escapeHtml(photo.title || photo.filename)}</strong>
+          <span>${escapeHtml(formatPhotoDate(photo) || 'Unknown date')}</span>
+        </span>
+      </button>`;
+    }
+
+    function renderPersonPhotoProjectResults() {
+      const person = personPhotoPickerPerson();
+      if (!person) return '';
+      const allProjectPhotos = getProjectPhotos(person.projectId);
+      const photos = personPhotoPickerProjectPhotos();
+      const selectedPhoto = getPhoto(state.personPhotoPicker.selectedPhotoId, {
+        projectId: person.projectId
+      });
+      const selectedIsUntagged = selectedPhoto
+        && !(selectedPhoto.personIds || []).includes(person.id);
+
+      if (!allProjectPhotos.length) {
+        return `<div class="person-photo-empty"><div>
+          <strong>Upload the first photo for this project.</strong>
+          <button class="button primary" type="button" data-person-photo-show-upload>Upload new photo</button>
+        </div></div>`;
+      }
+
+      if (!photos.length) {
+        const hasSearch = Boolean(state.personPhotoPicker.search.trim());
+        const taggedScope = state.personPhotoPicker.projectScope === 'tagged';
+        const message = hasSearch
+          ? 'No matching project photos.'
+          : `No photos are tagged with ${person.names?.display || 'this person'}.`;
+        return `<div class="person-photo-empty"><div>
+          <strong>${escapeHtml(message)}</strong>
+          <div class="person-photo-empty-actions">
+            ${hasSearch ? '<button class="button secondary" type="button" data-person-photo-clear-search>Clear search</button>' : ''}
+            ${taggedScope ? '<button class="button secondary" type="button" data-person-photo-browse-all>Browse all project photos</button>' : ''}
+            <button class="button primary" type="button" data-person-photo-show-upload>Upload new photo</button>
+          </div>
+        </div></div>`;
+      }
+
+      return `${selectedIsUntagged ? `<div class="person-photo-picker-notice">${escapeHtml(person.names?.display || 'This person')} will also be tagged in this photo.</div>` : ''}
+        <div class="person-photo-candidate-grid">${photos.map(photo => renderPersonPhotoCandidate(photo, person)).join('')}</div>`;
+    }
+
+    function renderPersonPhotoProjectPanel() {
+      return `<div class="person-photo-project-controls">
+        <label class="search-input" aria-label="Search project photos">
+          ${icon.search}
+          <input data-person-photo-search type="search" value="${escapeHtml(state.personPhotoPicker.search)}" placeholder="Search project photos">
+        </label>
+        <div class="person-photo-scope-switch" role="group" aria-label="Project photo scope">
+          <button class="person-photo-scope-button" type="button" data-person-photo-scope="tagged" aria-pressed="${state.personPhotoPicker.projectScope === 'tagged'}">Tagged with this person</button>
+          <button class="person-photo-scope-button" type="button" data-person-photo-scope="all" aria-pressed="${state.personPhotoPicker.projectScope === 'all'}">All project photos</button>
+        </div>
+      </div>
+      <div data-person-photo-project-results>${renderPersonPhotoProjectResults()}</div>`;
+    }
+
+    function renderPersonPhotoUploadPanel() {
+      const draftPhoto = personPhotoUploadDraftAsPhoto();
+      const maxMegabytes = Math.round(PERSON_PHOTO_MAX_BYTES / (1024 * 1024));
+      return `<div class="person-photo-upload-dropzone" data-person-photo-dropzone>
+        <input type="file" accept="${PERSON_PHOTO_ALLOWED_TYPES.join(',')}" data-person-photo-file hidden>
+        ${draftPhoto ? `<div class="person-photo-upload-preview">
+          <div class="person-photo-upload-thumb">${renderPhotoThumbnail(draftPhoto, { label: draftPhoto.filename })}</div>
+          <div class="person-photo-upload-copy">
+            <strong>${escapeHtml(draftPhoto.filename)}</strong>
+            <span class="muted">${escapeHtml(`${draftPhoto.width} x ${draftPhoto.height} - ${formatMediaBytes(draftPhoto.sizeBytes)}`)}</span>
+            <button class="button secondary" type="button" data-person-photo-choose-file>Choose a different photo</button>
+          </div>
+        </div>` : `<div class="person-photo-upload-prompt">
+          ${icon.import}
+          <strong>Drop a photo here</strong>
+          <p>JPEG, PNG, or WebP up to ${maxMegabytes} MB.</p>
+          <button class="button primary" type="button" data-person-photo-choose-file>Choose photo</button>
+        </div>`}
+      </div>
+      ${state.personPhotoPicker.uploadError ? `<div class="person-photo-upload-error" role="alert">${escapeHtml(state.personPhotoPicker.uploadError)}</div>` : ''}`;
+    }
+
+    function renderPersonPhotoChooseStage() {
+      const person = personPhotoPickerPerson();
+      const deletedPrimary = personPhotoPickerDeletedPrimary();
+      const hasStoredPrimaryReference = Boolean(person?.primaryPhotoId);
+      return `<div class="person-photo-picker-tabs" role="tablist" aria-label="Photo source">
+        <button class="person-photo-picker-tab" type="button" role="tab" data-person-photo-tab="project" aria-selected="${state.personPhotoPicker.sourceTab === 'project'}">Project photos</button>
+        <button class="person-photo-picker-tab" type="button" role="tab" data-person-photo-tab="upload" aria-selected="${state.personPhotoPicker.sourceTab === 'upload'}">Upload new</button>
+      </div>
+      ${deletedPrimary ? `<div class="person-photo-deleted-notice">
+        <strong>The previous profile photo is in Recently deleted.</strong>
+        <div class="person-photo-empty-actions">
+          <button class="button secondary" type="button" data-person-photo-browse-all>Choose another photo</button>
+          <button class="button secondary" type="button" data-person-photo-view-deleted="${escapeHtml(deletedPrimary.id)}">View Recently deleted</button>
+        </div>
+      </div>` : ''}
+      <div role="tabpanel">
+        ${state.personPhotoPicker.sourceTab === 'project'
+          ? renderPersonPhotoProjectPanel()
+          : renderPersonPhotoUploadPanel()}
+      </div>
+      <div class="modal-footer">
+        <div>${hasStoredPrimaryReference ? '<button class="button secondary" type="button" data-person-photo-remove-current>Remove current photo</button>' : ''}</div>
+        <div class="modal-footer-actions">
+          <button class="button secondary" type="button" data-close>Cancel</button>
+          <button class="button primary" type="button" data-person-photo-continue ${personPhotoPickerHasSource() ? '' : 'disabled'}>Continue</button>
+        </div>
+      </div>`;
+    }
+
+    function renderPersonPhotoCropMedia(photo, crop, className = '') {
+      return `<span class="person-photo-crop-media ${escapeHtml(className)}" style="${personPhotoCropStyle(crop)}">${renderPhotoThumbnail(photo, { label: photo.title || photo.filename })}</span>`;
+    }
+
+    function renderPersonPhotoAdjustStage() {
+      const photo = personPhotoPickerSourcePhoto();
+      if (!photo) return '<div class="panel-muted">The selected photo is no longer available.</div>';
+      const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
+      return `<div class="person-photo-adjust-layout">
+        <div class="person-photo-crop-column">
+          <div class="person-photo-crop-stage" data-person-photo-crop-stage tabindex="0" aria-label="Drag to reposition photo">
+            ${renderPersonPhotoCropMedia(photo, crop)}
+            <span class="person-photo-crop-mask" aria-hidden="true"></span>
+          </div>
+          <p class="person-photo-crop-hint">Drag the photo to reposition it inside the crop.</p>
+          <div class="person-photo-crop-controls">
+            <div class="person-photo-zoom-row">
+              <button class="person-photo-tool-button" type="button" data-person-photo-zoom="-0.1" aria-label="Zoom out">${icon.zoomOut}</button>
+              <input type="range" min="${PERSON_PHOTO_ZOOM_MIN}" max="${PERSON_PHOTO_ZOOM_MAX}" step="0.01" value="${crop.zoom}" data-person-photo-zoom-slider aria-label="Photo zoom">
+              <button class="person-photo-tool-button" type="button" data-person-photo-zoom="0.1" aria-label="Zoom in">${icon.zoomIn}</button>
+            </div>
+            <div class="person-photo-crop-toolbar">
+              <button class="person-photo-tool-button" type="button" data-person-photo-rotate="-90">${icon.rotateLeft}<span>Rotate left</span></button>
+              <button class="person-photo-tool-button" type="button" data-person-photo-rotate="90">${icon.rotateRight}<span>Rotate right</span></button>
+              <button class="person-photo-tool-button" type="button" data-person-photo-reset>Reset</button>
+            </div>
+          </div>
+        </div>
+        <aside class="person-photo-preview-column" aria-label="Avatar previews">
+          <div class="person-photo-preview-card"><strong>Family Tree preview</strong><div class="person-photo-preview-avatar tree">${renderPersonPhotoCropMedia(photo, crop)}</div></div>
+          <div class="person-photo-preview-card"><strong>Profile preview</strong><div class="person-photo-preview-avatar profile">${renderPersonPhotoCropMedia(photo, crop)}</div></div>
+        </aside>
+      </div>
+      <div class="modal-footer">
+        <button class="button secondary" type="button" data-person-photo-back>Back</button>
+        <div class="modal-footer-actions">
+          <button class="button secondary" type="button" data-close>Cancel</button>
+          <button class="button primary" type="button" data-person-photo-use>Use photo</button>
+        </div>
+      </div>`;
+    }
+
+    function renderPersonPhotoPickerModal() {
+      const person = personPhotoPickerPerson();
+      if (!person) return;
+      const adjust = state.personPhotoPicker.step === 'adjust';
+      openModal(`<div class="modal person-photo-picker-modal" data-person-photo-picker role="dialog" aria-modal="true" aria-labelledby="personPhotoPickerTitle">
+        <div class="modal-header">
+          <div>
+            <h2 id="personPhotoPickerTitle">Change photo for ${escapeHtml(person.names?.display || 'Person')}</h2>
+            <p>This photo will appear in Family Tree, People, and Profile.</p>
+          </div>
+          <button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button>
+        </div>
+        <div class="modal-body person-photo-picker-body">
+          <div class="person-photo-picker-step" aria-label="${adjust ? 'Adjust photo' : 'Choose photo'}">${adjust ? 'Adjust photo' : 'Choose photo'}</div>
+          ${adjust ? renderPersonPhotoAdjustStage() : renderPersonPhotoChooseStage()}
+        </div>
+      </div>`);
+      bindPersonPhotoPickerModal();
+    }
+
+    function bindPersonPhotoProjectResultActions(root = modalBackdrop) {
+      root.querySelectorAll('[data-person-photo-candidate]').forEach(button => button.addEventListener('click', () => {
+        const nextId = button.dataset.personPhotoCandidate;
+        if (nextId !== state.personPhotoPicker.selectedPhotoId) {
+          state.personPhotoPicker.selectedPhotoId = nextId;
+          if (nextId !== state.personPhotoPicker.initialPhotoId) state.personPhotoPicker.dirty = true;
+        }
+        renderPersonPhotoPickerModal();
+      }));
+      root.querySelector('[data-person-photo-clear-search]')?.addEventListener('click', () => {
+        state.personPhotoPicker.search = '';
+        renderPersonPhotoPickerModal();
+      });
+      root.querySelectorAll('[data-person-photo-browse-all]').forEach(button => button.addEventListener('click', () => {
+        state.personPhotoPicker.sourceTab = 'project';
+        state.personPhotoPicker.projectScope = 'all';
+        state.personPhotoPicker.search = '';
+        renderPersonPhotoPickerModal();
+      }));
+      root.querySelectorAll('[data-person-photo-show-upload]').forEach(button => button.addEventListener('click', () => {
+        state.personPhotoPicker.sourceTab = 'upload';
+        renderPersonPhotoPickerModal();
+      }));
+    }
+
+    function updatePersonPhotoProjectResults() {
+      const host = modalBackdrop.querySelector('[data-person-photo-project-results]');
+      if (!host) return;
+      host.innerHTML = renderPersonPhotoProjectResults();
+      bindPersonPhotoProjectResultActions(host);
+    }
+
+    function readPersonPhotoFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.addEventListener('load', () => resolve(String(reader.result || '')));
+        reader.addEventListener('error', () => reject(new Error('File cannot be read.')));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function loadPersonPhotoDimensions(src) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.addEventListener('load', () => resolve({ width: image.naturalWidth, height: image.naturalHeight }));
+        image.addEventListener('error', () => reject(new Error('File cannot be read as an image.')));
+        image.src = src;
+      });
+    }
+
+    async function processPersonPhotoUpload(file) {
+      if (!state.personPhotoPicker.open || !file) return;
+      state.personPhotoPicker.uploadError = '';
+      if (!PERSON_PHOTO_ALLOWED_TYPES.includes(file.type)) {
+        state.personPhotoPicker.uploadError = 'Unsupported file type. Choose a JPEG, PNG, or WebP image.';
+        renderPersonPhotoPickerModal();
+        return;
+      }
+      if (file.size > PERSON_PHOTO_MAX_BYTES) {
+        state.personPhotoPicker.uploadError = `Photo is too large. Choose a file smaller than ${Math.round(PERSON_PHOTO_MAX_BYTES / (1024 * 1024))} MB.`;
+        renderPersonPhotoPickerModal();
+        return;
+      }
+      const pickerPersonId = state.personPhotoPicker.personId;
+      try {
+        const src = await readPersonPhotoFile(file);
+        const dimensions = await loadPersonPhotoDimensions(src);
+        if (!dimensions.width || !dimensions.height) throw new Error('Photo has invalid or missing image dimensions.');
+        if (!state.personPhotoPicker.open || state.personPhotoPicker.personId !== pickerPersonId) return;
+        state.personPhotoPicker.uploadDraft = {
+          file,
+          src,
+          filename: file.name || 'Uploaded photo',
+          mimeType: file.type,
+          width: dimensions.width,
+          height: dimensions.height,
+          sizeBytes: file.size
+        };
+        state.personPhotoPicker.selectedPhotoId = null;
+        state.personPhotoPicker.uploadError = '';
+        state.personPhotoPicker.dirty = true;
+      } catch (error) {
+        state.personPhotoPicker.uploadDraft = null;
+        state.personPhotoPicker.uploadError = error?.message || 'File cannot be read.';
+      }
+      renderPersonPhotoPickerModal();
+    }
+
+    function updatePersonPhotoCropDom() {
+      const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
+      state.personPhotoPicker.crop = crop;
+      modalBackdrop.querySelectorAll('.person-photo-crop-media').forEach(media => {
+        media.setAttribute('style', personPhotoCropStyle(crop));
+      });
+      const slider = modalBackdrop.querySelector('[data-person-photo-zoom-slider]');
+      if (slider) slider.value = String(crop.zoom);
+    }
+
+    function setPersonPhotoCrop(nextCrop, { dirty = true } = {}) {
+      state.personPhotoPicker.crop = normalizePersonPhotoCrop(nextCrop);
+      if (dirty) state.personPhotoPicker.dirty = true;
+      updatePersonPhotoCropDom();
+    }
+
+    function bindPersonPhotoCropDrag() {
+      const stage = modalBackdrop.querySelector('[data-person-photo-crop-stage]');
+      if (!stage) return;
+      let drag = null;
+      stage.addEventListener('pointerdown', event => {
+        if (event.button !== 0) return;
+        const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
+        drag = { x: event.clientX, y: event.clientY, crop };
+        stage.classList.add('is-dragging');
+        stage.setPointerCapture(event.pointerId);
+      });
+      stage.addEventListener('pointermove', event => {
+        if (!drag) return;
+        const rect = stage.getBoundingClientRect();
+        const zoom = Math.max(PERSON_PHOTO_ZOOM_MIN, drag.crop.zoom);
+        setPersonPhotoCrop({
+          ...drag.crop,
+          centerX: drag.crop.centerX - (event.clientX - drag.x) / (rect.width * zoom),
+          centerY: drag.crop.centerY - (event.clientY - drag.y) / (rect.height * zoom)
+        });
+      });
+      const finish = event => {
+        if (!drag) return;
+        drag = null;
+        stage.classList.remove('is-dragging');
+        if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
+      };
+      stage.addEventListener('pointerup', finish);
+      stage.addEventListener('pointercancel', finish);
+    }
+
+    function initializePersonPhotoCrop() {
+      const person = personPhotoPickerPerson();
+      const source = personPhotoPickerSourcePhoto();
+      if (!person || !source) return false;
+      state.personPhotoPicker.crop = normalizePersonPhotoCrop(
+        source.id === person.primaryPhotoId ? person.primaryPhotoCrop : null
+      );
+      state.personPhotoPicker.step = 'adjust';
+      return true;
+    }
+
+    function uniquePersonPhotoUploadId(personId) {
+      const base = `photo-${personId}-${Date.now()}`;
+      let id = base;
+      let suffix = 2;
+      while (getPhoto(id, { includeDeleted: true })) {
+        id = `${base}-${suffix}`;
+        suffix += 1;
+      }
+      return id;
+    }
+
+    function createMediaFromPersonPhotoUpload(person, draft) {
+      const now = new Date().toISOString();
+      const title = String(draft.filename || 'Uploaded photo').replace(/\.[^.]+$/, '') || 'Uploaded photo';
+      const photo = {
+        id: uniquePersonPhotoUploadId(person.id),
+        projectId: person.projectId,
+        kind: 'photo',
+        title,
+        filename: draft.filename,
+        src: draft.src,
+        mimeType: draft.mimeType,
+        width: draft.width,
+        height: draft.height,
+        sizeBytes: draft.sizeBytes,
+        placeholder: {
+          pattern: PHOTO_ABSTRACT_PATTERNS[(sampleData.media.length + 1) % PHOTO_ABSTRACT_PATTERNS.length],
+          palette: PHOTO_ABSTRACT_PALETTES[(sampleData.media.length + 2) % PHOTO_ABSTRACT_PALETTES.length],
+          seed: Math.max(1, Date.now() % 100000)
+        },
+        personIds: [person.id],
+        albumIds: [],
+        date: emptyGenealogyDate('Exact date'),
+        placeId: null,
+        placeText: '',
+        caption: '',
+        origin: { type: 'upload', label: 'Person photo upload' },
+        favorite: false,
+        createdAt: now,
+        updatedAt: now,
+        deletedAt: null
+      };
+      sampleData.media.push(photo);
+      return photo;
+    }
+
+    function ensurePhotoPersonTag(photo, person) {
+      photo.personIds = [...new Set([...(photo.personIds || []), person.id])]
+        .filter(personId => getPerson(personId)?.projectId === photo.projectId);
+      photo.updatedAt = new Date().toISOString();
+    }
+
+    function renderAfterPersonPrimaryPhotoChange() {
+      if (state.activeModule === 'Family Tree') {
+        renderFamilyTreePreserveScroll();
+        return;
+      }
+      if (state.activeModule === 'People') {
+        const mainScrollTop = main.scrollTop;
+        const tableWrap = main.querySelector('.people-table-wrap');
+        const tableScrollTop = tableWrap?.scrollTop || 0;
+        const tableScrollLeft = tableWrap?.scrollLeft || 0;
+        renderPeople();
+        requestAnimationFrame(() => {
+          main.scrollTop = mainScrollTop;
+          const nextTableWrap = main.querySelector('.people-table-wrap');
+          if (nextTableWrap) {
+            nextTableWrap.scrollTop = tableScrollTop;
+            nextTableWrap.scrollLeft = tableScrollLeft;
+          }
+        });
+        return;
+      }
+      render();
+    }
+
+    function applyPersonPrimaryPhoto({ personId, existingPhotoId = '', uploadDraft = null, crop = null } = {}) {
+      const person = getPerson(personId);
+      if (!person) return false;
+      let photo = null;
+      if (uploadDraft) {
+        const validDraft = PERSON_PHOTO_ALLOWED_TYPES.includes(uploadDraft.mimeType)
+          && uploadDraft.sizeBytes <= PERSON_PHOTO_MAX_BYTES
+          && Number(uploadDraft.width) > 0
+          && Number(uploadDraft.height) > 0
+          && Boolean(uploadDraft.src);
+        if (!validDraft) {
+          state.personPhotoPicker.uploadError = 'The uploaded photo is no longer valid. Choose it again.';
+          state.personPhotoPicker.step = 'choose';
+          state.personPhotoPicker.sourceTab = 'upload';
+          renderPersonPhotoPickerModal();
+          return false;
+        }
+        photo = createMediaFromPersonPhotoUpload(person, uploadDraft);
+      } else {
+        photo = getPhoto(existingPhotoId, { projectId: person.projectId });
+      }
+      if (!photo) return false;
+      ensurePhotoPersonTag(photo, person);
+      setPersonPrimaryPhoto(person.id, photo.id, crop, { rerender: false, notify: false });
+      const name = person.names?.display || 'Person';
+      resetPersonPhotoPickerState();
+      closeModal({ force: true });
+      renderAfterPersonPrimaryPhotoChange();
+      showToast(`Profile photo updated for ${name}.`);
+      return true;
+    }
+
+    function removeCurrentPersonPhoto() {
+      const person = personPhotoPickerPerson();
+      if (!person?.primaryPhotoId) return;
+      const name = person.names?.display || 'Person';
+      person.primaryPhotoId = '';
+      person.primaryPhotoCrop = null;
+      person.meta = person.meta || {};
+      person.meta.updated = 'Just now';
+      resetPersonPhotoPickerState();
+      closeModal({ force: true });
+      renderAfterPersonPrimaryPhotoChange();
+      showToast(`Profile photo removed for ${name}.`);
+    }
+
+    function bindPersonPhotoPickerModal() {
+      modalBackdrop.querySelectorAll('[data-person-photo-tab]').forEach(button => {
+        button.addEventListener('click', () => {
+          state.personPhotoPicker.sourceTab = button.dataset.personPhotoTab;
+          state.personPhotoPicker.uploadError = '';
+          renderPersonPhotoPickerModal();
+        });
+        button.addEventListener('keydown', event => {
+          if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+          event.preventDefault();
+          state.personPhotoPicker.sourceTab = state.personPhotoPicker.sourceTab === 'project' ? 'upload' : 'project';
+          renderPersonPhotoPickerModal();
+          modalBackdrop.querySelector(`[data-person-photo-tab="${state.personPhotoPicker.sourceTab}"]`)?.focus();
+        });
+      });
+      modalBackdrop.querySelectorAll('[data-person-photo-scope]').forEach(button => button.addEventListener('click', () => {
+        state.personPhotoPicker.projectScope = button.dataset.personPhotoScope;
+        renderPersonPhotoPickerModal();
+      }));
+      modalBackdrop.querySelector('[data-person-photo-search]')?.addEventListener('input', event => {
+        state.personPhotoPicker.search = event.target.value;
+        updatePersonPhotoProjectResults();
+      });
+      bindPersonPhotoProjectResultActions(modalBackdrop);
+      const fileInput = modalBackdrop.querySelector('[data-person-photo-file]');
+      modalBackdrop.querySelector('[data-person-photo-choose-file]')?.addEventListener('click', () => fileInput?.click());
+      fileInput?.addEventListener('change', () => processPersonPhotoUpload(fileInput.files?.[0]));
+      const dropzone = modalBackdrop.querySelector('[data-person-photo-dropzone]');
+      if (dropzone) {
+        ['dragenter', 'dragover'].forEach(type => dropzone.addEventListener(type, event => {
+          event.preventDefault();
+          dropzone.classList.add('is-dragging');
+        }));
+        ['dragleave', 'drop'].forEach(type => dropzone.addEventListener(type, event => {
+          event.preventDefault();
+          dropzone.classList.remove('is-dragging');
+        }));
+        dropzone.addEventListener('drop', event => processPersonPhotoUpload(event.dataTransfer?.files?.[0]));
+      }
+      modalBackdrop.querySelector('[data-person-photo-continue]')?.addEventListener('click', () => {
+        if (!initializePersonPhotoCrop()) return;
+        renderPersonPhotoPickerModal();
+      });
+      modalBackdrop.querySelector('[data-person-photo-back]')?.addEventListener('click', () => {
+        state.personPhotoPicker.step = 'choose';
+        renderPersonPhotoPickerModal();
+      });
+      modalBackdrop.querySelectorAll('[data-person-photo-zoom]').forEach(button => button.addEventListener('click', () => {
+        const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
+        setPersonPhotoCrop({ ...crop, zoom: crop.zoom + Number(button.dataset.personPhotoZoom) });
+      }));
+      modalBackdrop.querySelector('[data-person-photo-zoom-slider]')?.addEventListener('input', event => {
+        setPersonPhotoCrop({
+          ...normalizePersonPhotoCrop(state.personPhotoPicker.crop),
+          zoom: Number(event.target.value)
+        });
+      });
+      modalBackdrop.querySelectorAll('[data-person-photo-rotate]').forEach(button => button.addEventListener('click', () => {
+        const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
+        const rotation = (crop.rotation + Number(button.dataset.personPhotoRotate) + 360) % 360;
+        setPersonPhotoCrop({ ...crop, rotation });
+      }));
+      modalBackdrop.querySelector('[data-person-photo-reset]')?.addEventListener('click', () => {
+        const current = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
+        const next = normalizePersonPhotoCrop(null);
+        setPersonPhotoCrop(next, { dirty: JSON.stringify(current) !== JSON.stringify(next) });
+      });
+      modalBackdrop.querySelector('[data-person-photo-use]')?.addEventListener('click', () => {
+        const uploadDraft = state.personPhotoPicker.sourceTab === 'upload'
+          ? state.personPhotoPicker.uploadDraft
+          : null;
+        applyPersonPrimaryPhoto({
+          personId: state.personPhotoPicker.personId,
+          existingPhotoId: uploadDraft ? '' : state.personPhotoPicker.selectedPhotoId,
+          uploadDraft,
+          crop: state.personPhotoPicker.crop
+        });
+      });
+      modalBackdrop.querySelector('[data-person-photo-remove-current]')?.addEventListener('click', removeCurrentPersonPhoto);
+      modalBackdrop.querySelector('[data-person-photo-view-deleted]')?.addEventListener('click', event => {
+        const photoId = event.currentTarget.dataset.personPhotoViewDeleted;
+        resetPersonPhotoPickerState();
+        closeModal({ force: true });
+        openAlbumsForPhoto(photoId);
+      });
+      bindPersonPhotoCropDrag();
+    }
+
+    function openPersonPhotoPicker(personId) {
+      const person = getPerson(personId);
+      if (!person) return;
+      const projectPhotos = getProjectPhotos(person.projectId);
+      const activePrimary = getPhoto(person.primaryPhotoId, { projectId: person.projectId });
+      resetPersonPhotoPickerState();
+      Object.assign(state.personPhotoPicker, {
+        open: true,
+        personId: person.id,
+        sourceTab: projectPhotos.length ? 'project' : 'upload',
+        projectScope: 'tagged',
+        selectedPhotoId: activePrimary?.id || null,
+        initialPhotoId: person.primaryPhotoId || null,
+        crop: normalizePersonPhotoCrop(person.primaryPhotoCrop)
+      });
+      renderPersonPhotoPickerModal();
     }
 
     function albumContext() {
@@ -29627,7 +30686,11 @@ function renderTreeCardDateLines(person) {
       const photos = albumMutationPhotos(photoIds);
       if (!photos.length) return;
       const ids = new Set(photos.map(photo => photo.id));
-      sampleData.people.forEach(person => { if (ids.has(person.primaryPhotoId)) person.primaryPhotoId = ''; });
+      sampleData.people.forEach(person => {
+        if (!ids.has(person.primaryPhotoId)) return;
+        person.primaryPhotoId = '';
+        person.primaryPhotoCrop = null;
+      });
       sampleData.people.forEach(person => {
         (person.events || []).forEach(event => { event.mediaIds = (event.mediaIds || []).filter(id => !ids.has(id)); });
         (person.attributes || []).forEach(attribute => { attribute.mediaIds = (attribute.mediaIds || []).filter(id => !ids.has(id)); });
@@ -29892,6 +30955,7 @@ function renderTreeCardDateLines(person) {
       }
 
       person.primaryPhotoId = '';
+      person.primaryPhotoCrop = null;
 
       renderAlbums();
       showToast(
@@ -33695,7 +34759,48 @@ function renderTreeCardDateLines(person) {
       modalBackdrop.addEventListener('click', backdropClose);
       localizeUI(modalBackdrop);
     }
-    function closeModal() { document.getElementById('addPersonMiniOverlay')?.remove(); modalBackdrop.classList.remove('open'); modalBackdrop.setAttribute('aria-hidden', 'true'); modalBackdrop.innerHTML = ''; modalBackdrop.removeEventListener('click', backdropClose); }
+
+    function openPersonPhotoDiscardConfirm() {
+      if (document.getElementById('personPhotoDiscardOverlay')) return;
+      const overlay = document.createElement('div');
+      overlay.className = 'add-person-mini-backdrop';
+      overlay.id = 'personPhotoDiscardOverlay';
+      overlay.innerHTML = `<div class="add-person-mini-card" role="alertdialog" aria-modal="true" aria-labelledby="personPhotoDiscardTitle">
+        <div class="add-person-mini-head"><div><h3 id="personPhotoDiscardTitle">Discard photo changes?</h3><p>Your selected photo and crop adjustments will not be saved.</p></div></div>
+        <div class="add-person-mini-footer">
+          <button class="button secondary" type="button" data-person-photo-continue-editing>Continue editing</button>
+          <button class="button danger" type="button" data-person-photo-discard>Discard changes</button>
+        </div>
+      </div>`;
+      document.body.appendChild(overlay);
+      overlay.querySelector('[data-person-photo-continue-editing]')?.addEventListener('click', () => overlay.remove());
+      overlay.querySelector('[data-person-photo-discard]')?.addEventListener('click', () => {
+        resetPersonPhotoPickerState();
+        closeModal({ force: true });
+      });
+      overlay.addEventListener('click', event => {
+        if (event.target === overlay) overlay.remove();
+      });
+      overlay.querySelector('[data-person-photo-continue-editing]')?.focus();
+    }
+
+    function closeModal({ force = false } = {}) {
+      const closingPersonPhotoPicker = Boolean(
+        state.personPhotoPicker?.open
+        && modalBackdrop.querySelector('[data-person-photo-picker]')
+      );
+      if (closingPersonPhotoPicker && state.personPhotoPicker.dirty && !force) {
+        openPersonPhotoDiscardConfirm();
+        return;
+      }
+      if (closingPersonPhotoPicker) resetPersonPhotoPickerState();
+      document.getElementById('personPhotoDiscardOverlay')?.remove();
+      document.getElementById('addPersonMiniOverlay')?.remove();
+      modalBackdrop.classList.remove('open');
+      modalBackdrop.setAttribute('aria-hidden', 'true');
+      modalBackdrop.innerHTML = '';
+      modalBackdrop.removeEventListener('click', backdropClose);
+    }
     function backdropClose(e) { if (e.target === modalBackdrop) closeModal(); }
 
     function bindToasts(root) { root.querySelectorAll('[data-toast]').forEach(button => button.addEventListener('click', () => showToast(button.dataset.toast))); }
@@ -33791,6 +34896,12 @@ function renderTreeCardDateLines(person) {
       }
     });
     main.addEventListener('click', e => {
+      const personPhotoEdit = e.target.closest('[data-person-photo-edit]');
+      if (personPhotoEdit) {
+        e.preventDefault();
+        openPersonPhotoPicker(personPhotoEdit.dataset.personPhotoEdit);
+        return;
+      }
       const side = e.target.closest('[data-open-side-main]')?.dataset.openSideMain;
       if (side) { state.openSide = side; renderOpenProject(); }
       const shortcut = e.target.closest('[data-shortcut]')?.dataset.shortcut;
