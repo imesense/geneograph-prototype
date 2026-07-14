@@ -2821,55 +2821,6 @@
     .tree-person-card.unknown-gender.selected {
       border-color: var(--brand-green-500);
     }
-    .tree-avatar,
-    .panel-avatar,
-    .small-avatar {
-      border-radius: 7px;
-      background: linear-gradient(145deg, #45504b, #202827);
-      display: grid;
-      place-items: center;
-      color: var(--text-primary);
-      font-weight: 900;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.06);
-    }
-    .tree-avatar { width: 74px; height: 74px; font-size: 24px; }
-    .panel-avatar { width: 90px; height: 100px; font-size: 24px; }
-    .small-avatar { width: 45px; height: 45px; font-size: 15px; flex: 0 0 auto; }
-    .avatar-green { background: linear-gradient(145deg, #2d6b4d, #17231f); }
-    .avatar-purple { background: linear-gradient(145deg, #594688, #1d1c2c); }
-    .avatar-amber { background: linear-gradient(145deg, #7b6641, #262219); }
-    .tree-avatar.has-photo,
-    .panel-avatar.has-photo,
-    .people-photo.has-photo,
-    .profile-hero-photo.has-photo,
-    .tree-person-hero-photo.has-photo {
-      overflow: hidden;
-      padding: 0;
-      background: var(--surface-input);
-    }
-    .small-avatar.has-photo {
-      overflow: hidden;
-      padding: 0;
-      background: var(--surface-input);
-    }
-
-    .tree-avatar.has-photo img,
-    .people-photo.has-photo img,
-    .panel-avatar.has-photo img,
-    .profile-hero-photo.has-photo img,
-    .tree-person-hero-photo.has-photo img {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-    }
-    .small-avatar.has-photo img {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-    }
     .tree-card-content { min-width: 0; }
     .tree-name { margin: 0 0 6px; font-size: 15px; line-height: 1.18; letter-spacing: .01em; }
     .tree-dates { color: var(--text-secondary); font-size: 13px; display: grid; gap: 2px; margin-bottom: 8px; }
@@ -3005,19 +2956,6 @@
       grid-template-columns: 96px minmax(0, 1fr);
       gap: var(--space-3);
       align-items: start;
-    }
-    .tree-person-hero-photo {
-      width: 96px;
-      height: 112px;
-      border-radius: var(--radius-sm);
-      border: 1px solid rgba(255,255,255,.14);
-      background: linear-gradient(145deg, rgba(47,174,116,.50), rgba(16,36,27,.92));
-      display: grid;
-      place-items: center;
-      color: var(--text-primary);
-      font-size: 32px;
-      font-weight: 900;
-      box-shadow: 0 10px 26px rgba(0,0,0,.24);
     }
     .tree-person-hero-copy { min-width: 0; padding-top: 2px; }
     .tree-person-hero-copy h2 {
@@ -3496,8 +3434,6 @@
       }
     }
     
-    .photo-thumb { width: 58px; height: 58px; border-radius: 7px; background: linear-gradient(145deg, #c7b09a, #3f4d46); display: grid; place-items: center; font-weight: 900; }
-    
     .archive-list, .note-list { display: grid; gap: var(--space-3); }
     .archive-row { display: flex; align-items: center; gap: var(--space-3); color: var(--text-secondary); }
     .file-badge { width: 34px; height: 40px; border-radius: 4px; background: #e9eeee; color: #b32626; display: grid; place-items: end center; padding-bottom: 3px; font-size: 10px; font-weight: 900; }
@@ -3510,7 +3446,11 @@
       gap: var(--space-2);
     }
     .family-photo-thumb {
-      min-height: 74px;
+      position: relative;
+      isolation: isolate;
+      width: 100%;
+      min-width: 0;
+      height: 74px;
       border: 1px solid var(--border-default);
       border-radius: 9px;
       background: linear-gradient(145deg, #c7b09a, #3f4d46);
@@ -3528,11 +3468,6 @@
       border-color: rgba(98,217,154,.42);
       box-shadow: 0 0 0 1px rgba(47,174,116,.12);
     }
-    .family-photo-thumb.green { background: linear-gradient(145deg, #2d6b4d, #17231f); }
-    .family-photo-thumb.purple { background: linear-gradient(145deg, #594688, #1d1c2c); }
-    .family-photo-thumb.amber { background: linear-gradient(145deg, #7b6641, #262219); }
-    .family-photo-thumb.mono { background: linear-gradient(145deg, #343938, #b6bbb8); color: #101615; }
-    .family-photo-thumb.sepia { background: linear-gradient(145deg, #5e533a, #d7c39b); color: #17120b; }
     .family-photo-more { background: var(--surface-input); color: var(--text-secondary); font-size: 13px; line-height: 1.25; }
     .family-archive-list,
     .family-note-list { display: grid; gap: var(--space-2); }
@@ -4012,34 +3947,6 @@
       align-content: center;
     }
 
-    .connect-person-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 9px;
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-      font-size: 12px;
-      font-weight: 900;
-      line-height: 1;
-      letter-spacing: -.02em;
-      color: var(--text-primary);
-      background: linear-gradient(145deg, #45504b, #202827);
-      border: 1px solid rgba(255,255,255,.06);
-    }
-
-    .connect-person-avatar.has-photo {
-      padding: 0;
-      background: var(--surface-input);
-    }
-
-    .connect-person-avatar.has-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
     .connect-person-create {
       width: 100%;
       border: 0;
@@ -4322,24 +4229,6 @@
     .match-row.is-possible-duplicate:focus-visible {
       outline: 2px solid var(--brand-green-400);
       outline-offset: 2px;
-    }
-
-    .match-row.is-possible-duplicate .small-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 8px;
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-      font-size: 12px;
-      font-weight: 900;
-      line-height: 1;
-    }
-
-    .match-row.is-possible-duplicate .small-avatar.has-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
     }
 
     .add-person-match-action {
@@ -4628,12 +4517,6 @@
       padding: 0 var(--space-3);
       font-weight: 800;
       min-width: 0;
-    }
-
-    .add-person-relationship-partner .small-avatar {
-      width: 30px;
-      height: 30px;
-      flex: 0 0 30px;
     }
 
     .add-person-relationship-partner span:last-child {
@@ -5261,7 +5144,6 @@
       background: linear-gradient(180deg, rgba(22,58,42,.98), rgba(26,32,31,.96));
       z-index: 20;
     }
-    .tree-avatar { width: 68px; height: 68px; font-size: 22px; }
     .tree-name { font-size: 13px; margin-bottom: 5px; }
     .tree-dates { font-size: 12px; gap: 1px; margin-bottom: 6px; }
     .add-parent-card {
@@ -5382,7 +5264,6 @@
     @media (max-width: 1180px) {.tree-workspace { grid-template-columns: 1fr 360px; }
       .tree-inspector { width: 360px; min-width: 360px; }
       .tree-person-hero-main { grid-template-columns: 88px minmax(0, 1fr); }
-      .tree-person-hero-photo { width: 88px; height: 104px; }
       .tree-toolbar { overflow-x: auto; }
       .tree-search { width: 190px; }}
     @media (max-width: 900px) {.tree-shell { height: calc(100vh - var(--topbar-h)); }
@@ -6188,17 +6069,6 @@
       box-shadow: none;
     }
 
-    .person-cell {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      min-width: 230px;
-    }
-
-    .person-cell .small-avatar { flex: 0 0 auto; }
-    .person-cell strong { display: block; color: var(--text-primary); line-height: 1.2; }
-    .person-cell span { display: block; color: var(--text-tertiary); font-size: 12px; margin-top: 2px; }
-
     .people-select-column {
       width: 48px;
       min-width: 48px;
@@ -6224,6 +6094,52 @@
     .people-select-checkbox:focus-visible {
       outline: 2px solid var(--brand-green-300);
       outline-offset: 2px;
+    }
+
+    /* People table identity cell */
+    .person-cell {
+      min-width: 230px;
+
+      display: grid;
+      grid-template-columns:
+        auto
+        minmax(0, 1fr);
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .person-cell-copy {
+      min-width: 0;
+
+      display: grid;
+      align-content: center;
+      gap: 2px;
+    }
+
+    .person-cell-copy
+    > strong,
+    .person-cell-copy
+    > span {
+      min-width: 0;
+      margin: 0;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .person-cell-copy
+    > strong {
+      color: var(--text-primary);
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .person-cell-copy
+    > span {
+      color: var(--text-tertiary);
+      font-size: 12px;
+      line-height: 1.25;
     }
 
     .table-footer {
@@ -6409,21 +6325,6 @@
       filter: saturate(.72) brightness(.82);
       pointer-events: none;
       z-index: 0;
-    }
-
-    .profile-hero-photo {
-      width: 132px;
-      height: 132px;
-      border-radius: var(--radius-sm);
-      border: 1px solid rgba(255,255,255,.12);
-      background: linear-gradient(145deg, rgba(47,174,116,.55), rgba(16,36,27,.9));
-      display: grid;
-      place-items: center;
-      color: var(--text-primary);
-      font-size: 42px;
-      font-weight: 900;
-      position: relative;
-      z-index: 1;
     }
 
     .profile-hero-copy { position: relative; z-index: 1; min-width: 0; }
@@ -7166,9 +7067,14 @@
     }
 
     .profile-photo-thumb {
+      position: relative;
+      isolation: isolate;
+      width: 118px;
+      min-width: 118px;
       height: 118px;
-      flex: 0 0 calc((100% - 16px) / 3);
+      flex: 0 0 118px;
       scroll-snap-align: start;
+      padding: 0;
       border: 1px solid rgba(255, 255, 255, .08);
       border-radius: 9px;
       background:
@@ -7189,28 +7095,6 @@
     .profile-photo-thumb:focus-visible {
       transform: translateY(-1px);
       border-color: rgba(98, 217, 154, .42);
-    }
-
-    .profile-photo-thumb.sepia {
-      background:
-        linear-gradient(135deg, #5e533a, #d7c39b);
-      color: #14100a;
-    }
-
-    .profile-photo-thumb.mono {
-      background:
-        linear-gradient(135deg, #373b39, #d8d8d5);
-      color: #141716;
-    }
-
-    .profile-photo-thumb.purple {
-      background:
-        linear-gradient(135deg, #352a58, #8669d7);
-    }
-
-    .profile-photo-thumb.amber {
-      background:
-        linear-gradient(135deg, #5c4522, #d4aa6b);
     }
 
     .profile-photo-carousel-button {
@@ -8579,35 +8463,166 @@
       background: var(--surface-input);
     }
 
+    /* Shared media thumbnail */
     .photo-thumbnail {
-      position: relative; width: 100%; height: 100%; min-width: 0; min-height: 0;
-      display: block; overflow: hidden; background: #1d2320; color: var(--text-primary);
-    }
-    .photo-thumbnail .thumb-img { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; object-fit: cover; display: block; }
-    .person-avatar-photo, .family-photo-thumb > .photo-thumbnail,
-    .profile-photo-thumb > .photo-thumbnail { position: absolute; inset: 0; }
-    .tree-avatar, .panel-avatar, .small-avatar, .people-photo, .profile-hero-photo,
-    .tree-person-hero-photo, .family-photo-thumb, .profile-photo-thumb { position: relative; }
-    .photo-picker-modal { width: min(680px, calc(100vw - 32px)); }
-    .photo-picker-modal .albums-modal-list { max-height: min(52vh, 440px); }
+      position: relative;
 
-    /* Shared person primary-photo control and picker */
-    .person-avatar-viewport {
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+
+      display: block;
+      overflow: hidden;
+
+      background: #1d2320;
+      color: var(--text-primary);
+    }
+
+    .photo-thumbnail
+    .thumb-img {
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+
+      width: 100%;
+      height: 100%;
+
+      display: block;
+      object-fit: cover;
+    }
+
+    /* Shared photo-preview containers */
+    .family-photo-thumb
+    > .photo-thumbnail,
+    .profile-photo-thumb
+    > .photo-thumbnail {
       position: absolute;
       inset: 0;
+    }
+
+    /* Canonical person-avatar system */
+    .person-avatar {
+      --person-avatar-width: 45px;
+      --person-avatar-height: var(--person-avatar-width);
+      --person-avatar-radius: var(--radius-sm);
+      --person-avatar-font-size: 15px;
+
+      position: relative;
+      isolation: isolate;
+      width: var(--person-avatar-width);
+      min-width: var(--person-avatar-width);
+      height: var(--person-avatar-height);
+      min-height: var(--person-avatar-height);
+      flex: 0 0 var(--person-avatar-width);
+      padding: 0;
+      border: 1px solid rgba(255, 255, 255, .06);
+      border-radius: var(--person-avatar-radius);
+      background: linear-gradient(145deg, #45504b, #202827);
+      color: var(--text-primary);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      font-size: var(--person-avatar-font-size);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .person-avatar.avatar-green {
+      background: linear-gradient(145deg, #2d6b4d, #17231f);
+    }
+
+    .person-avatar.avatar-purple {
+      background: linear-gradient(145deg, #594688, #1d1c2c);
+    }
+
+    .person-avatar.avatar-amber {
+      background: linear-gradient(145deg, #7b6641, #262219);
+    }
+
+    .person-avatar.avatar-blue {
+      background: linear-gradient(145deg, #31566f, #17242d);
+    }
+
+    .person-avatar.has-photo {
+      background: var(--surface-input);
+    }
+
+    .person-avatar-initials {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      color: inherit;
+      font: inherit;
+      line-height: 1;
+    }
+
+    .person-avatar-viewport,
+    .person-avatar-media,
+    .person-avatar-media > .person-avatar-photo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .person-avatar-viewport {
+      z-index: 1;
       overflow: hidden;
       border-radius: inherit;
     }
+
     .person-avatar-media {
-      position: absolute;
-      inset: 0;
       transform-origin: center;
       transform:
-        translate(var(--person-photo-shift-x, 0), var(--person-photo-shift-y, 0))
+        translate(
+          var(--person-photo-shift-x, 0%),
+          var(--person-photo-shift-y, 0%)
+        )
         scale(var(--person-photo-zoom, 1))
         rotate(var(--person-photo-rotation, 0deg));
     }
-    .person-avatar-media > .photo-thumbnail { position: absolute; inset: 0; }
+
+    .tree-avatar {
+      --person-avatar-width: 68px;
+      --person-avatar-font-size: 22px;
+    }
+
+    .small-avatar {
+      --person-avatar-width: 45px;
+      --person-avatar-font-size: 15px;
+    }
+
+    .connect-person-avatar,
+    .match-row.is-possible-duplicate .small-avatar {
+      --person-avatar-width: 44px;
+      --person-avatar-radius: 9px;
+      --person-avatar-font-size: 12px;
+    }
+
+    .add-person-relationship-partner .small-avatar {
+      --person-avatar-width: 30px;
+      --person-avatar-font-size: 12px;
+    }
+
+    .tree-person-hero-photo {
+      --person-avatar-width: 96px;
+      --person-avatar-height: 112px;
+      --person-avatar-font-size: 32px;
+      border-color: rgba(255, 255, 255, .14);
+      background: linear-gradient(145deg, rgba(47, 174, 116, .50), rgba(16, 36, 27, .92));
+      box-shadow: 0 10px 26px rgba(0, 0, 0, .24);
+    }
+
+    .profile-hero-photo {
+      --person-avatar-width: 132px;
+      --person-avatar-font-size: 42px;
+      z-index: 1;
+      border-color: rgba(255, 255, 255, .12);
+      background: linear-gradient(145deg, rgba(47, 174, 116, .55), rgba(16, 36, 27, .9));
+    }
+
     .person-photo-control {
       position: relative;
       width: max-content;
@@ -9021,6 +9036,13 @@
     .person-photo-preview-avatar.tree { width: 96px; height: 112px; border-radius: var(--radius-sm); }
     .person-photo-preview-avatar.profile { width: 132px; height: 132px; border-radius: var(--radius-sm); }
     .person-photo-preview-avatar .person-photo-crop-media { inset: 0; }
+
+    @media (max-width: 1180px) {
+      .tree-person-hero-photo {
+        --person-avatar-width: 88px;
+        --person-avatar-height: 104px;
+      }
+    }
 
     @media (hover: none) {
       .person-photo-edit-button {
@@ -17316,7 +17338,7 @@ function renderTreeCardDateLines(person) {
           <button class="tree-person-hero-profile" type="button" data-tree-view-profile="${escapeHtml(person.id)}" aria-label="View ${escapeHtml(person.name)} profile"><span>View profile</span></button>
         </div>
         <div class="tree-person-hero-main">
-          ${renderEditablePersonAvatar(person, 'tree-person-hero-photo', { controlClass: 'tree-person-photo-control' })}
+          ${renderEditablePersonAvatar(person, 'tree-person-hero-photo')}
           <div class="tree-person-hero-copy"><h2>${escapeHtml(person.name)}</h2>${renderFamilyTreeHeroLifeDetails(person)}</div>
         </div>
         <div class="person-chip-row tree-person-hero-tags">
@@ -24012,8 +24034,7 @@ function renderTreeCardDateLines(person) {
 
             ${renderEditablePersonAvatar(
               person,
-              'profile-hero-photo',
-              { controlClass: 'profile-person-photo-control' }
+              'profile-hero-photo'
             )}
 
             <div class="profile-hero-copy">
@@ -28148,23 +28169,110 @@ function renderTreeCardDateLines(person) {
       return person?.avatarClass || person?.avatar || '';
     }
 
-    function personPhotoCropStyle(cropValue) {
-      const crop = normalizePersonPhotoCrop(cropValue);
-      return `--person-photo-shift-x:${(0.5 - crop.centerX) * 100}%;--person-photo-shift-y:${(0.5 - crop.centerY) * 100}%;--person-photo-zoom:${crop.zoom};--person-photo-rotation:${crop.rotation}deg`;
+    function personPhotoCropStyle(
+      cropValue
+    ) {
+      const crop =
+        normalizePersonPhotoCrop(
+          cropValue
+        );
+
+      return [
+        `--person-photo-shift-x:${
+          (0.5 - crop.centerX) * 100
+        }%`,
+        `--person-photo-shift-y:${
+          (0.5 - crop.centerY) * 100
+        }%`,
+        `--person-photo-zoom:${
+          crop.zoom
+        }`,
+        `--person-photo-rotation:${
+          crop.rotation
+        }deg`
+      ].join(';');
     }
 
-    function renderPersonAvatar(person, className, { element = 'div', attrs = '' } = {}) {
-      const centralPerson = getPerson(person?.id) || person;
-      const primaryPhoto = getPhoto(personPrimaryPhotoId(centralPerson), {
-        projectId: centralPerson?.projectId || ''
-      });
-      const classes = [className, personAvatarClass(person), primaryPhoto ? 'has-photo' : '']
+    function renderPersonAvatar(
+      person,
+      className,
+      {
+        element = 'div',
+        attrs = ''
+      } = {}
+    ) {
+      const centralPerson =
+        getPerson(person?.id)
+        || person;
+
+      const primaryPhoto =
+        getPhoto(
+          personPrimaryPhotoId(
+            centralPerson
+          ),
+          {
+            projectId:
+              centralPerson?.projectId
+              || ''
+          }
+        );
+
+      const label =
+        centralPerson?.names?.display
+        || person?.name
+        || 'Person';
+
+      const classes = [
+        'person-avatar',
+        className,
+        personAvatarClass(person),
+        primaryPhoto
+          ? 'has-photo'
+          : ''
+      ]
         .filter(Boolean)
         .join(' ');
+
       const content = primaryPhoto
-        ? `<span class="person-avatar-viewport"><span class="person-avatar-media" style="${personPhotoCropStyle(centralPerson?.primaryPhotoCrop)}">${renderPhotoThumbnail(primaryPhoto, { className: 'person-avatar-photo', label: centralPerson?.names?.display || person?.name || 'Person' })}</span></span>`
-        : escapeHtml(personAvatarInitials(person));
-      return `<${element} class="${escapeHtml(classes)}" ${attrs}>${content}</${element}>`;
+        ? `
+          <span
+            class="person-avatar-viewport">
+            <span
+              class="person-avatar-media"
+              style="${escapeHtml(
+                personPhotoCropStyle(
+                  centralPerson
+                    ?.primaryPhotoCrop
+                )
+              )}">
+              ${renderPhotoThumbnail(
+                primaryPhoto,
+                {
+                  className:
+                    'person-avatar-photo',
+                  label
+                }
+              )}
+            </span>
+          </span>
+        `
+        : `
+          <span
+            class="person-avatar-initials"
+            aria-hidden="true">
+            ${escapeHtml(
+              personAvatarInitials(person)
+            )}
+          </span>
+        `;
+
+      return `
+        <${element}
+          class="${escapeHtml(classes)}"
+          ${attrs}>
+          ${content}
+        </${element}>
+      `;
     }
 
     function renderEditablePersonAvatar(person, className, options = {}) {
@@ -28175,10 +28283,7 @@ function renderTreeCardDateLines(person) {
         projectId: centralPerson.projectId
       }));
       const actionLabel = hasPrimaryPhoto ? 'Change photo' : 'Add photo';
-      const wrapperClass = ['person-photo-control', options.controlClass || '']
-        .filter(Boolean)
-        .join(' ');
-      return `<div class="${escapeHtml(wrapperClass)}">
+      return `<div class="person-photo-control">
         ${renderPersonAvatar(person, className, options)}
         <button
           class="person-photo-edit-button"
@@ -28451,8 +28556,29 @@ function renderTreeCardDateLines(person) {
       </div>`;
     }
 
-    function renderPersonPhotoCropMedia(photo, crop, className = '') {
-      return `<span class="person-photo-crop-media ${escapeHtml(className)}" style="${personPhotoCropStyle(crop)}">${renderPhotoThumbnail(photo, { label: photo.title || photo.filename })}</span>`;
+    function renderPersonPhotoCropMedia(
+      photo,
+      crop,
+      className = ''
+    ) {
+      return `
+        <span
+          class="person-photo-crop-media ${
+            escapeHtml(className)
+          }"
+          style="${escapeHtml(
+            personPhotoCropStyle(crop)
+          )}">
+          ${renderPhotoThumbnail(
+            photo,
+            {
+              label:
+                photo.title
+                || photo.filename
+            }
+          )}
+        </span>
+      `;
     }
 
     function renderPersonPhotoAdjustStage() {
@@ -28604,9 +28730,16 @@ function renderTreeCardDateLines(person) {
     function updatePersonPhotoCropDom() {
       const crop = normalizePersonPhotoCrop(state.personPhotoPicker.crop);
       state.personPhotoPicker.crop = crop;
-      modalBackdrop.querySelectorAll('.person-photo-crop-media').forEach(media => {
-        media.setAttribute('style', personPhotoCropStyle(crop));
-      });
+      modalBackdrop
+        .querySelectorAll(
+          '.person-photo-crop-media'
+        )
+        .forEach(media => {
+          media.setAttribute(
+            'style',
+            personPhotoCropStyle(crop)
+          );
+        });
       const slider = modalBackdrop.querySelector('[data-person-photo-zoom-slider]');
       if (slider) slider.value = String(crop.zoom);
     }
