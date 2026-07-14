@@ -8512,6 +8512,7 @@
     .albums-album-more svg {
       width: 17px;
       height: 17px;
+      display: block;
     }
 
     .albums-active-filterbar, .albums-selection-bar {
@@ -8527,17 +8528,38 @@
       overflow: auto; overscroll-behavior: contain; scrollbar-gutter: stable;
     }
 
-    .albums-grid { min-width: 0; display: flex; flex-wrap: wrap; align-content: flex-start; align-items: flex-start; gap: var(--space-3); }
+    .albums-justified-grid {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    .albums-justified-row {
+      min-width: 0;
+      width: 100%;
+      display: flex;
+      align-items: stretch;
+      gap: var(--space-3);
+    }
+    .albums-justified-row .album-photo-card {
+      width: var(--albums-card-width);
+      flex: 0 0 var(--albums-card-width);
+    }
+    .albums-justified-grid.is-measuring .albums-justified-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+    .albums-justified-grid.is-measuring .album-photo-card {
+      width: 100%;
+      min-width: 0;
+    }
     .album-photo-card {
-      flex: 0 0 auto; width: 238px; height: 314px;
+      min-width: 0;
       border: 1px solid var(--border-default); border-radius: var(--radius-sm);
-      background: var(--surface-card); display: grid; grid-template-rows: 170px minmax(0, 1fr);
+      background: var(--surface-card); display: grid;
+      grid-template-rows: var(--albums-row-preview-height, 184px) 116px;
       overflow: hidden; cursor: pointer; transition: border-color .16s ease, background .16s ease, box-shadow .16s ease;
     }
-    .album-photo-card.ratio-portrait { width: 184px; }
-    .album-photo-card.ratio-square { width: 214px; }
-    .album-photo-card.ratio-landscape { width: 252px; }
-    .album-photo-card.ratio-wide { width: 318px; }
     .album-photo-card:hover, .albums-list-row:not(.header):hover { border-color: var(--border-strong); background: var(--surface-card-hover); }
     .album-photo-card:focus-visible,
     .albums-list-row:focus-visible,
@@ -8548,7 +8570,14 @@
     }
     .album-photo-card.selected-detail, .albums-list-row.selected-detail { border-color: rgba(98,217,154,.5); box-shadow: inset 0 0 0 1px rgba(98,217,154,.2); }
     .album-photo-card.is-checked, .albums-list-row.is-checked { background: var(--surface-selected); }
-    .albums-thumb { position: relative; width: 100%; height: 170px; min-height: 170px; overflow: hidden; background: var(--surface-input); }
+    .albums-thumb {
+      position: relative;
+      width: 100%;
+      height: var(--albums-row-preview-height, 184px);
+      min-height: 0;
+      overflow: hidden;
+      background: var(--surface-input);
+    }
 
     .photo-thumbnail {
       position: relative; width: 100%; height: 100%; min-width: 0; min-height: 0;
@@ -8594,6 +8623,20 @@
     .photo-abstract.pattern-archive .two { width: 36%; height: 72%; left: var(--photo-abstract-x); top: 14%; background: color-mix(in srgb,var(--abstract-a) 64%,transparent); }
     .photo-abstract.pattern-archive .three { width: 54%; height: 22%; right: -10%; bottom: 8%; background: var(--abstract-c); transform: rotate(-20deg); }
 
+    .albums-check,
+    .albums-fav-button,
+    .albums-card-more,
+    .albums-row-more {
+      padding: 0;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-tertiary);
+      display: inline-grid;
+      place-items: center;
+      line-height: 0;
+      flex: 0 0 auto;
+      transition: background var(--ease), border-color var(--ease), color var(--ease);
+    }
     .albums-check, .albums-fav-button {
       position: absolute; z-index: 3; top: 10px; width: 30px; height: 30px;
       border-color: rgba(255,255,255,.14); border-radius: var(--radius-sm);
@@ -8601,10 +8644,30 @@
     }
     .albums-check { left: 10px; }
     .albums-fav-button { right: 10px; }
+    .albums-check:hover, .albums-fav-button:hover {
+      border-color: rgba(255,255,255,.26);
+      background: rgba(28,35,32,.9);
+      color: var(--text-primary);
+    }
+    .albums-check:focus-visible,
+    .albums-fav-button:focus-visible,
+    .albums-card-more:focus-visible,
+    .albums-row-more:focus-visible {
+      outline: 2px solid var(--brand-green-300);
+      outline-offset: 2px;
+    }
+    .albums-check:active,
+    .albums-fav-button:active,
+    .albums-card-more:active,
+    .albums-row-more:active {
+      border-color: var(--border-strong);
+      background: var(--surface-selected);
+    }
     .albums-check[aria-pressed="true"] { border-color: rgba(98,217,154,.55); background: var(--brand-green-500); color: #10251a; }
     .albums-fav-button.active { color: #f1c96c; }
-    .albums-card-body { min-width: 0; min-height: 0; padding: var(--space-3); display: grid; grid-template-rows: auto auto minmax(0,1fr) auto; gap: 6px; overflow: hidden; }
-    .albums-card-body strong, .albums-card-people, .albums-card-footer > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .albums-card-body { min-width: 0; height: 116px; padding: var(--space-3); display: grid; grid-template-rows: minmax(0,2.5em) 1.25em minmax(0,1fr) 32px; gap: 5px; overflow: hidden; }
+    .albums-card-body strong { min-width: 0; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+    .albums-card-people, .albums-card-footer > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .albums-card-body strong { color: var(--text-primary); font-size: 14px; font-weight: 900; line-height: 1.25; }
     .albums-card-people { color: var(--text-secondary); font-size: 13px; font-weight: 800; }
     .albums-card-footer { min-height: 32px; margin-top: auto; display: grid; grid-template-columns: minmax(0,1fr) 32px; align-items: center; gap: var(--space-2); color: var(--text-tertiary); font-size: 12px; font-weight: 700; }
@@ -8626,7 +8689,18 @@
     }
     .albums-list-row:last-child { border-bottom: 0; }
     .albums-list-row.header { min-height: 42px; background: var(--surface-card); color: var(--text-tertiary); font-size: 11px; font-weight: 900; text-transform: uppercase; }
-    .albums-list-row .albums-check { position: static; width: 28px; height: 28px; background: var(--surface-input); backdrop-filter: none; }
+    .albums-select-checkbox {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      place-self: center;
+      accent-color: var(--brand-green-500);
+      cursor: pointer;
+    }
+    .albums-select-checkbox:focus-visible {
+      outline: 2px solid var(--brand-green-300);
+      outline-offset: 2px;
+    }
     .albums-list-thumb { width: 48px; height: 48px; border: 1px solid var(--border-default); border-radius: 4px; overflow: hidden; }
     .albums-list-title { min-width: 0; display: grid; gap: 3px; }
     .albums-list-title strong, .albums-list-title span, .albums-list-row > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -9252,8 +9326,6 @@
     @media (max-width: 980px) {
       .albums-shell, .albums-shell.detail-collapsed { grid-template-columns: minmax(0,1fr); }
       .albums-detail { display: none; }
-      .album-photo-card, .album-photo-card.ratio-portrait, .album-photo-card.ratio-square,
-      .album-photo-card.ratio-landscape, .album-photo-card.ratio-wide { width: min(100%, 240px); }
     }
     @media (max-width: 720px) {
       .albums-main {
@@ -9304,7 +9376,8 @@
         justify-content: flex-start;
       }
 
-      .albums-grid {
+      .albums-justified-grid,
+      .albums-justified-grid.is-measuring {
         display: grid;
         grid-template-columns:
           repeat(
@@ -9313,17 +9386,37 @@
           );
       }
 
-      .album-photo-card,
-      .album-photo-card.ratio-portrait,
-      .album-photo-card.ratio-square,
-      .album-photo-card.ratio-landscape,
-      .album-photo-card.ratio-wide {
+      .albums-justified-row,
+      .albums-justified-grid.is-measuring
+        .albums-justified-row {
+        display: contents;
+      }
+
+      .albums-justified-row .album-photo-card,
+      .albums-justified-grid.is-measuring
+        .album-photo-card {
         width: 100%;
+        min-width: 0;
+        flex: none;
+        grid-template-rows: auto 116px;
+      }
+
+      .albums-justified-row .albums-thumb {
+        height: auto;
+        min-height: 150px;
+        aspect-ratio: 4 / 3;
       }
 
       .albums-detail-read-row {
         grid-template-columns: 1fr;
         gap: 4px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .albums-justified-grid,
+      .albums-justified-grid.is-measuring {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -12118,11 +12211,158 @@
       }).format(new Date(timestamp));
     }
 
-    function photoOrientation(photo) {
-      const width = Number(photo?.width) || 0;
-      const height = Number(photo?.height) || 0;
-      if (width === height) return 'square';
-      return width > height ? (width / Math.max(height, 1) > 1.55 ? 'wide' : 'landscape') : 'portrait';
+    const ALBUMS_JUSTIFIED_LAYOUT = Object.freeze({
+      targetHeight: 184,
+      minHeight: 150,
+      maxHeight: 220,
+      minCardWidth: 180,
+      preferredMaxCardWidth: 360,
+      gap: 12,
+      lastRowMaxScale: 1.15,
+      narrowBreakpoint: 720
+    });
+
+    function photoAspectRatio(photo) {
+      const width = Number(photo?.width);
+      const height = Number(photo?.height);
+      const ratio = Number.isFinite(width)
+        && Number.isFinite(height)
+        && width > 0
+        && height > 0
+          ? width / height
+          : 4 / 3;
+
+      return Math.min(3, Math.max(0.45, ratio));
+    }
+
+    function buildJustifiedPhotoRows(photos, containerWidth, options = {}) {
+      const settings = {
+        ...ALBUMS_JUSTIFIED_LAYOUT,
+        ...options
+      };
+      const width = Number(containerWidth);
+
+      if (!Number.isFinite(width) || width <= 0) return [];
+
+      const minimumLayoutRatio = settings.minCardWidth / settings.minHeight;
+      const source = (Array.isArray(photos) ? photos : []).map(photo => {
+        const naturalRatio = photoAspectRatio(photo);
+        return {
+          photo,
+          ratio: Math.max(naturalRatio, minimumLayoutRatio)
+        };
+      });
+      const rows = [];
+      let pending = [];
+
+      const rowHeight = items => {
+        const photoWidth = width - settings.gap * Math.max(0, items.length - 1);
+        const ratioTotal = items.reduce((sum, item) => sum + item.ratio, 0);
+        return ratioTotal > 0 ? photoWidth / ratioTotal : settings.targetHeight;
+      };
+
+      const rowScore = items => {
+        if (!items.length) return Number.POSITIVE_INFINITY;
+        const height = rowHeight(items);
+        const narrowest = Math.min(...items.map(item => item.ratio * height));
+        const widest = Math.max(...items.map(item => item.ratio * height));
+        let score = Math.abs(height - settings.targetHeight);
+        if (height < settings.minHeight) score += (settings.minHeight - height) * 4;
+        if (height > settings.maxHeight) score += (height - settings.maxHeight) * 3;
+        if (narrowest < settings.minCardWidth) score += (settings.minCardWidth - narrowest) * 2;
+        if (widest > settings.preferredMaxCardWidth) score += widest - settings.preferredMaxCardWidth;
+        return score;
+      };
+
+      const justify = items => {
+        const height = rowHeight(items);
+        const available = Math.round(width - settings.gap * Math.max(0, items.length - 1));
+        const itemWidths = items.map(item => Math.floor(height * item.ratio));
+        const difference = available - itemWidths.reduce((sum, itemWidth) => sum + itemWidth, 0);
+        itemWidths[itemWidths.length - 1] += difference;
+        return {
+          height: Math.round(height * 10) / 10,
+          justified: true,
+          items: items.map((item, index) => ({
+            photo: item.photo,
+            width: itemWidths[index]
+          }))
+        };
+      };
+
+      const natural = items => {
+        let height = settings.targetHeight;
+        if (items.length === 1) {
+          height = Math.min(
+            settings.targetHeight,
+            settings.preferredMaxCardWidth / items[0].ratio
+          );
+        }
+        return {
+          height: Math.round(height * 10) / 10,
+          justified: false,
+          items: items.map(item => ({
+            photo: item.photo,
+            width: Math.round(item.ratio * height)
+          }))
+        };
+      };
+
+      source.forEach(item => {
+        pending.push(item);
+        const height = rowHeight(pending);
+        if (height > settings.targetHeight) return;
+
+        if (pending.length > 1) {
+          const withoutLast = pending.slice(0, -1);
+
+          if (height < settings.minHeight) {
+            rows.push(justify(withoutLast));
+            pending = [item];
+            return;
+          }
+
+          if (
+            rowScore(withoutLast) < rowScore(pending)
+          ) {
+            rows.push(justify(withoutLast));
+            pending = [item];
+            return;
+          }
+        }
+
+        rows.push(justify(pending));
+        pending = [];
+      });
+
+      if (pending.length === 1 && rows.length) {
+        const previous = rows[rows.length - 1];
+        if (previous.items.length >= 3) {
+          const previousSource = previous.items.map(item => {
+            const naturalRatio = photoAspectRatio(item.photo);
+            return {
+              photo: item.photo,
+              ratio: Math.max(naturalRatio, minimumLayoutRatio)
+            };
+          });
+          const moved = previousSource.pop();
+          const rebalancedHeight = rowHeight(previousSource);
+          if (rebalancedHeight >= settings.minHeight && rebalancedHeight <= settings.maxHeight) {
+            rows[rows.length - 1] = justify(previousSource);
+            pending.unshift(moved);
+          }
+        }
+      }
+
+      if (pending.length) {
+        const height = rowHeight(pending);
+        const canJustify = pending.length > 1
+          && height >= settings.minHeight
+          && height <= settings.targetHeight * settings.lastRowMaxScale;
+        rows.push(canJustify ? justify(pending) : natural(pending));
+      }
+
+      return rows;
     }
 
     const PHOTO_ABSTRACT_PATTERNS = Object.freeze(['orbit', 'bands', 'window', 'fold', 'halo', 'archive']);
@@ -14365,6 +14605,7 @@
       albumsSort: 'modified',
       albumsFilters: { personId: '', placeId: '', dateRange: '', favouriteOnly: false },
       albumsViewMode: 'grid',
+      albumsGridWidth: 0,
       selectedPhotoId: 'photo-silver-portrait',
       selectedPhotoIds: [],
       albumsDetailCollapsed: false,
@@ -14735,6 +14976,9 @@
     function render() {
       if (state.activeModule !== 'People' && state.peopleSelectedIds.length) {
         clearPeopleSelection();
+      }
+      if (state.activeModule !== 'Albums') {
+        disconnectAlbumsGridResizeObserver();
       }
       applyLanguage();
       main.classList.remove('people-profile-main');
@@ -27476,7 +27720,51 @@ function renderTreeCardDateLines(person) {
       return Boolean(String(state.albumsSearch || '').trim() || albumFilterCount());
     }
 
+    let albumsGridResizeObserver = null;
+    let albumsGridResizeFrame = null;
+
+    function disconnectAlbumsGridResizeObserver() {
+      albumsGridResizeObserver?.disconnect();
+      albumsGridResizeObserver = null;
+      if (albumsGridResizeFrame !== null) {
+        cancelAnimationFrame(albumsGridResizeFrame);
+        albumsGridResizeFrame = null;
+      }
+    }
+
+    function updateAlbumsGridLayout() {
+      if (state.activeModule !== 'Albums' || state.albumsViewMode !== 'grid') return;
+      const content = main.querySelector('.albums-content');
+      if (!content?.querySelector('[data-albums-justified-grid]')) return;
+      const photos = filteredAlbumPhotos();
+      if (!photos.length) return;
+      content.innerHTML = renderAlbumsGrid(photos);
+      bindAlbumsCardControls(content);
+    }
+
+    function bindAlbumsGridResizeObserver() {
+      disconnectAlbumsGridResizeObserver();
+      if (state.activeModule !== 'Albums' || state.albumsViewMode !== 'grid') return;
+      const content = main.querySelector('.albums-content');
+      if (!content?.querySelector('[data-albums-justified-grid]')) return;
+
+      albumsGridResizeObserver = new ResizeObserver(entries => {
+        const width = entries[0]?.contentRect?.width;
+        if (!Number.isFinite(width) || width <= 0) return;
+        if (Math.abs(width - Number(state.albumsGridWidth || 0)) < 1.5) return;
+        if (albumsGridResizeFrame !== null) cancelAnimationFrame(albumsGridResizeFrame);
+        albumsGridResizeFrame = requestAnimationFrame(() => {
+          albumsGridResizeFrame = null;
+          state.albumsGridWidth = width;
+          updateAlbumsGridLayout();
+        });
+      });
+
+      albumsGridResizeObserver.observe(content);
+    }
+
     function renderAlbums() {
+      disconnectAlbumsGridResizeObserver();
       ensureSelectedAlbumPhoto();
 
       const selectedPhoto =
@@ -27533,6 +27821,7 @@ function renderTreeCardDateLines(person) {
 
       bindAlbumsSidebar();
       bindAlbumsControls();
+      bindAlbumsGridResizeObserver();
     }
 
     function renderAlbumsSidebar() {
@@ -27827,26 +28116,46 @@ function renderTreeCardDateLines(person) {
     function renderAlbumsSelectionBar() {
       const count = state.selectedPhotoIds.length;
       const deleted = state.albumsView === 'deleted';
+      const selectAllAction = state.albumsViewMode === 'list'
+        ? ''
+        : '<button class="button secondary" type="button" id="albumsSelectAll">Select all visible</button>';
       const actions = deleted
         ? `<button class="button primary" type="button" id="albumsRestoreSelected">Restore selected</button><button class="button danger" type="button" id="albumsDeleteSelectedPermanent">Delete permanently</button>`
         : `<button class="button secondary" type="button" id="albumsAddSelectedToAlbum">Add to album</button>${state.albumsView === 'album' ? '<button class="button secondary" type="button" id="albumsRemoveFromCurrent">Remove from album</button>' : ''}<button class="button danger" type="button" id="albumsDeleteSelected">Delete</button>`;
-      return `<div class="albums-selection-bar"><span class="albums-selection-copy">${count} selected</span><div class="albums-selection-actions"><button class="button secondary" type="button" id="albumsSelectAll">Select all visible</button>${actions}<button class="button secondary" type="button" id="albumsCancelSelection">Clear</button></div></div>`;
+      return `<div class="albums-selection-bar"><span class="albums-selection-copy">${count} selected</span><div class="albums-selection-actions">${selectAllAction}${actions}<button class="button secondary" type="button" id="albumsCancelSelection">Clear</button></div></div>`;
+    }
+
+    function renderAlbumsPhotoCard(photo, selectedIds, width = 0) {
+      const names = getPhotoPeople(photo)
+        .map(person => person.names?.display)
+        .filter(Boolean);
+      const selected = selectedIds.has(photo.id);
+      const widthStyle = width > 0
+        ? ` style="--albums-card-width:${width}px"`
+        : '';
+
+      return `<article class="album-photo-card ${state.selectedPhotoId === photo.id ? 'selected-detail' : ''} ${selected ? 'is-checked' : ''}"${widthStyle} tabindex="0" data-photo-id="${escapeHtml(photo.id)}" aria-selected="${selected}">
+        <div class="albums-thumb">${renderPhotoThumbnail(photo, { label: photo.title })}<button class="albums-check" type="button" data-photo-check="${escapeHtml(photo.id)}" aria-pressed="${selected}" aria-label="${selected ? 'Deselect' : 'Select'} ${escapeHtml(photo.title)}">${selected ? icon.check : ''}</button>${state.albumsView === 'deleted' ? '' : `<button class="albums-fav-button ${photo.favorite ? 'active' : ''}" type="button" data-photo-fav="${escapeHtml(photo.id)}" aria-pressed="${photo.favorite}" aria-label="Toggle favorite">${icon.star}</button>`}</div>
+        <div class="albums-card-body"><strong>${escapeHtml(photo.title || photo.filename)}</strong><span class="albums-card-people">${escapeHtml(names.join(', ') || 'No people tagged')}</span><div class="albums-card-footer"><span>${escapeHtml(formatPhotoDate(photo))}</span><button class="albums-card-more" type="button" data-photo-more="${escapeHtml(photo.id)}" aria-label="Photo actions">${icon.more}</button></div></div>
+      </article>`;
     }
 
     function renderAlbumsGrid(photos) {
       const selectedIds = new Set(state.selectedPhotoIds || []);
-      return `<div class="albums-grid">${photos.map(photo => {
-        const names = getPhotoPeople(photo).map(person => person.names?.display).filter(Boolean);
-        return `<article class="album-photo-card ratio-${photoOrientation(photo)} ${state.selectedPhotoId === photo.id ? 'selected-detail' : ''} ${selectedIds.has(photo.id) ? 'is-checked' : ''}" tabindex="0" data-photo-id="${escapeHtml(photo.id)}" aria-selected="${selectedIds.has(photo.id)}">
-          <div class="albums-thumb">${renderPhotoThumbnail(photo, { label: photo.title })}<button class="albums-check" type="button" data-photo-check="${escapeHtml(photo.id)}" aria-pressed="${selectedIds.has(photo.id)}" aria-label="${selectedIds.has(photo.id) ? 'Deselect' : 'Select'} ${escapeHtml(photo.title)}">${selectedIds.has(photo.id) ? icon.check : ''}</button>${state.albumsView === 'deleted' ? '' : `<button class="albums-fav-button ${photo.favorite ? 'active' : ''}" type="button" data-photo-fav="${escapeHtml(photo.id)}" aria-pressed="${photo.favorite}" aria-label="Toggle favorite">${icon.star}</button>`}</div>
-          <div class="albums-card-body"><strong>${escapeHtml(photo.title || photo.filename)}</strong><span class="albums-card-people">${escapeHtml(names.join(', ') || 'No people tagged')}</span><div class="albums-card-footer"><span>${escapeHtml(formatPhotoDate(photo))}</span><button class="albums-card-more" type="button" data-photo-more="${escapeHtml(photo.id)}" aria-label="Photo actions">${icon.more}</button></div></div>
-        </article>`;
-      }).join('')}</div>`;
+      const measuredWidth = Number(state.albumsGridWidth);
+      const hasMeasuredWidth = Number.isFinite(measuredWidth) && measuredWidth > 0;
+
+      if (!hasMeasuredWidth) {
+        return `<div class="albums-justified-grid is-measuring" data-albums-justified-grid><div class="albums-justified-row">${photos.map(photo => renderAlbumsPhotoCard(photo, selectedIds)).join('')}</div></div>`;
+      }
+
+      const rows = buildJustifiedPhotoRows(photos, measuredWidth);
+      return `<div class="albums-justified-grid" data-albums-justified-grid>${rows.map(row => `<div class="albums-justified-row ${row.justified ? 'is-justified' : 'is-incomplete'}" style="--albums-row-preview-height:${row.height}px">${row.items.map(item => renderAlbumsPhotoCard(item.photo, selectedIds, item.width)).join('')}</div>`).join('')}</div>`;
     }
 
     function renderAlbumsList(photos) {
       const selectedIds = new Set(state.selectedPhotoIds || []);
-      return `<div class="albums-list" role="table" aria-label="Photos"><div class="albums-list-row header" role="row"><span></span><span></span><span>Photo</span><span>People</span><span>Date</span><span>Place</span><span></span></div>${photos.map(photo => `<div class="albums-list-row ${state.selectedPhotoId === photo.id ? 'selected-detail' : ''} ${selectedIds.has(photo.id) ? 'is-checked' : ''}" role="row" tabindex="0" data-photo-id="${escapeHtml(photo.id)}" aria-selected="${selectedIds.has(photo.id)}"><button class="albums-check" type="button" data-photo-check="${escapeHtml(photo.id)}" aria-pressed="${selectedIds.has(photo.id)}" aria-label="${selectedIds.has(photo.id) ? 'Deselect' : 'Select'} ${escapeHtml(photo.title)}">${selectedIds.has(photo.id) ? icon.check : ''}</button><span class="albums-list-thumb">${renderPhotoThumbnail(photo, { label: photo.title })}</span><span class="albums-list-title"><strong>${escapeHtml(photo.title || photo.filename)}</strong><span>${escapeHtml(formatMediaBytes(photo.sizeBytes))}</span></span><span>${escapeHtml(getPhotoPeople(photo).map(person => person.names?.display).join(', ') || 'No people')}</span><span>${escapeHtml(formatPhotoDate(photo))}</span><span>${escapeHtml(getPlaceDisplay(photo.placeId) || photo.placeText || 'Unknown')}</span><button class="albums-row-more" type="button" data-photo-more="${escapeHtml(photo.id)}" aria-label="Photo actions">${icon.more}</button></div>`).join('')}</div>`;
+      return `<div class="albums-list" role="table" aria-label="Photos"><div class="albums-list-row header" role="row"><input class="albums-select-checkbox" type="checkbox" data-albums-select-visible aria-label="Select all visible photos"><span></span><span>Photo</span><span>People</span><span>Date</span><span>Place</span><span></span></div>${photos.map(photo => `<div class="albums-list-row ${state.selectedPhotoId === photo.id ? 'selected-detail' : ''} ${selectedIds.has(photo.id) ? 'is-checked' : ''}" role="row" tabindex="0" data-photo-id="${escapeHtml(photo.id)}" aria-selected="${selectedIds.has(photo.id)}"><input class="albums-select-checkbox" type="checkbox" data-photo-check="${escapeHtml(photo.id)}" aria-label="${selectedIds.has(photo.id) ? 'Deselect' : 'Select'} ${escapeHtml(photo.title)}" ${selectedIds.has(photo.id) ? 'checked' : ''}><span class="albums-list-thumb">${renderPhotoThumbnail(photo, { label: photo.title })}</span><span class="albums-list-title"><strong>${escapeHtml(photo.title || photo.filename)}</strong><span>${escapeHtml(formatMediaBytes(photo.sizeBytes))}</span></span><span>${escapeHtml(getPhotoPeople(photo).map(person => person.names?.display).join(', ') || 'No people')}</span><span>${escapeHtml(formatPhotoDate(photo))}</span><span>${escapeHtml(getPlaceDisplay(photo.placeId) || photo.placeText || 'Unknown')}</span><button class="albums-row-more" type="button" data-photo-more="${escapeHtml(photo.id)}" aria-label="Photo actions">${icon.more}</button></div>`).join('')}</div>`;
     }
 
     function renderAlbumsEmpty(context) {
@@ -29244,6 +29553,38 @@ function renderTreeCardDateLines(person) {
       renderAlbums();
     }
 
+    function albumsVisibleSelectionState(photos = filteredAlbumPhotos()) {
+      const visibleIds = (Array.isArray(photos) ? photos : [])
+        .map(photo => photo?.id)
+        .filter(Boolean);
+      const selectedIds = new Set(state.selectedPhotoIds || []);
+      const selectedVisibleIds = visibleIds.filter(id => selectedIds.has(id));
+
+      return {
+        visibleIds,
+        selectedVisibleIds,
+        allVisibleSelected: visibleIds.length > 0
+          && selectedVisibleIds.length === visibleIds.length,
+        someVisibleSelected: selectedVisibleIds.length > 0
+      };
+    }
+
+    function toggleAllVisibleAlbumPhotos(photos = filteredAlbumPhotos()) {
+      const selection = albumsVisibleSelectionState(photos);
+      const selectedIds = new Set(state.selectedPhotoIds || []);
+
+      selection.visibleIds.forEach(id => {
+        if (selection.allVisibleSelected) {
+          selectedIds.delete(id);
+        } else {
+          selectedIds.add(id);
+        }
+      });
+
+      state.selectedPhotoIds = [...selectedIds];
+      renderAlbums();
+    }
+
     function clearAlbumSelection(rerender = true) {
       state.selectedPhotoIds = [];
       if (rerender) renderAlbums();
@@ -29968,6 +30309,74 @@ function renderTreeCardDateLines(person) {
       bindToasts(sidebar);
     }
 
+    function bindAlbumsCardControls(root = main) {
+      root
+        .querySelectorAll('[data-photo-id]')
+        .forEach(card => {
+          const selectPhoto = () => {
+            runAfterAlbumsPhotoEditGuard(() => {
+              state.selectedPhotoId = card.dataset.photoId;
+              renderAlbums();
+            });
+          };
+
+          card.addEventListener('click', event => {
+            if (event.target.closest('button,input,a,select')) return;
+            selectPhoto();
+          });
+
+          card.addEventListener('keydown', event => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            if (event.target.closest('button,input,a,select')) return;
+            event.preventDefault();
+            selectPhoto();
+          });
+        });
+
+      root
+        .querySelectorAll('[data-photo-check]')
+        .forEach(control => {
+          const toggleSelection = () => {
+            runAfterAlbumsPhotoEditGuard(() => {
+              togglePhotoSelection(control.dataset.photoCheck);
+            });
+          };
+
+          if (control.matches('input[type="checkbox"]')) {
+            control.addEventListener('click', event => event.stopPropagation());
+            control.addEventListener('change', toggleSelection);
+            return;
+          }
+
+          control.addEventListener('click', event => {
+            event.stopPropagation();
+            toggleSelection();
+          });
+        });
+
+      root
+        .querySelectorAll('[data-photo-fav]')
+        .forEach(button => {
+          button.addEventListener('click', event => {
+            event.stopPropagation();
+            runAfterAlbumsPhotoEditGuard(() => {
+              toggleAlbumPhotoFavourite(button.dataset.photoFav);
+            });
+          });
+        });
+
+      root
+        .querySelectorAll('[data-photo-more]')
+        .forEach(button => {
+          button.addEventListener('click', event => {
+            event.stopPropagation();
+            runAfterAlbumsPhotoEditGuard(() => {
+              openAlbumPhotoMenu(button.dataset.photoMore, button);
+            });
+          });
+        });
+    }
+
     function bindAlbumsControls() {
       bindToasts(main);
       bindGenealogyDateFields(main);
@@ -30106,122 +30515,23 @@ function renderTreeCardDateLines(person) {
           }
         );
 
-      main
-        .querySelectorAll('[data-photo-id]')
-        .forEach(card => {
-          const selectPhoto = () => {
-            runAfterAlbumsPhotoEditGuard(
-              () => {
-                state.selectedPhotoId =
-                  card.dataset.photoId;
+      bindAlbumsCardControls(main);
 
-                renderAlbums();
-              }
-            );
-          };
+      const visibleSelection = albumsVisibleSelectionState();
+      const selectVisibleCheckbox = main.querySelector(
+        '[data-albums-select-visible]'
+      );
 
-          card.addEventListener(
-            'click',
-            event => {
-              if (
-                event.target.closest(
-                  'button,input,a,select'
-                )
-              ) {
-                return;
-              }
-
-              selectPhoto();
-            }
-          );
-
-          card.addEventListener(
-            'keydown',
-            event => {
-              if (
-                event.key !== 'Enter'
-                && event.key !== ' '
-              ) {
-                return;
-              }
-
-              if (
-                event.target.closest(
-                  'button,input,a,select'
-                )
-              ) {
-                return;
-              }
-
-              event.preventDefault();
-              selectPhoto();
-            }
-          );
+      if (selectVisibleCheckbox) {
+        selectVisibleCheckbox.checked = visibleSelection.allVisibleSelected;
+        selectVisibleCheckbox.indeterminate = visibleSelection.someVisibleSelected
+          && !visibleSelection.allVisibleSelected;
+        selectVisibleCheckbox.disabled = visibleSelection.visibleIds.length === 0;
+        selectVisibleCheckbox.addEventListener('click', event => {
+          event.stopPropagation();
+          toggleAllVisibleAlbumPhotos();
         });
-
-      main
-        .querySelectorAll(
-          '[data-photo-check]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            event => {
-              event.stopPropagation();
-
-              runAfterAlbumsPhotoEditGuard(
-                () => {
-                  togglePhotoSelection(
-                    button.dataset.photoCheck
-                  );
-                }
-              );
-            }
-          );
-        });
-
-      main
-        .querySelectorAll(
-          '[data-photo-fav]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            event => {
-              event.stopPropagation();
-
-              runAfterAlbumsPhotoEditGuard(
-                () => {
-                  toggleAlbumPhotoFavourite(
-                    button.dataset.photoFav
-                  );
-                }
-              );
-            }
-          );
-        });
-
-      main
-        .querySelectorAll(
-          '[data-photo-more]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            event => {
-              event.stopPropagation();
-
-              runAfterAlbumsPhotoEditGuard(
-                () => {
-                  openAlbumPhotoMenu(
-                    button.dataset.photoMore,
-                    button
-                  );
-                }
-              );
-            }
-          );
-        });
+      }
 
       main
         .querySelectorAll(
@@ -30514,37 +30824,7 @@ function renderTreeCardDateLines(person) {
         .querySelector('#albumsSelectAll')
         ?.addEventListener(
           'click',
-          () => {
-            const visibleIds =
-              filteredAlbumPhotos()
-                .map(photo => photo.id);
-
-            const selected =
-              new Set(
-                state.selectedPhotoIds
-                || []
-              );
-
-            const allVisibleSelected =
-              visibleIds.length > 0
-              && visibleIds.every(
-                id => selected.has(id)
-              );
-
-            visibleIds.forEach(id => {
-              if (allVisibleSelected) {
-                selected.delete(id);
-              } else {
-                selected.add(id);
-              }
-            });
-
-            state.selectedPhotoIds = [
-              ...selected
-            ];
-
-            renderAlbums();
-          }
+          () => toggleAllVisibleAlbumPhotos()
         );
 
       main
