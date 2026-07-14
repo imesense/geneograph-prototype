@@ -17373,12 +17373,74 @@ function renderTreeCardDateLines(person) {
       </div>`;
     }
 
-    function renderPersonSidebar(personOrId, context = 'tree') {
-      const isPeopleContext = context === 'people';
-      const person = personSidebarTreePerson(personOrId);
-      if (!person) return `<aside class="tree-inspector family-person-pane ${isPeopleContext ? 'people-person-sidebar' : ''}" aria-label="Selected person details"><div class="panel-muted">Select a person to view details.</div></aside>`;
-      if (isPeopleContext && state.peoplePreviewCollapsed) {
-        return `<aside class="tree-inspector family-person-pane people-person-sidebar collapsed" aria-label="Selected person sidebar collapsed"><button class="inspector-restore person-sidebar-restore-button sidebar-toggle-icon sidebar-toggle-icon-restore" type="button" id="restoreInspector" aria-label="Show person sidebar">${icon.doublechevronSidebar}</button></aside>`;
+    function renderPersonSidebar(
+      personOrId,
+      context = 'tree'
+    ) {
+      const isPeopleContext =
+        context === 'people';
+
+      const person =
+        personSidebarTreePerson(
+          personOrId
+        );
+
+      const contextAttribute = `
+        data-person-sidebar-context="${
+          escapeHtml(context)
+        }"
+      `;
+
+      if (!person) {
+        return `
+          <aside
+            class="
+              tree-inspector
+              family-person-pane
+              ${
+                isPeopleContext
+                  ? 'people-person-sidebar'
+                  : ''
+              }
+            "
+            ${contextAttribute}
+            aria-label="Selected person details">
+            <div class="panel-muted">
+              Select a person to view details.
+            </div>
+          </aside>
+        `;
+      }
+
+      if (
+        isPeopleContext
+        && state.peoplePreviewCollapsed
+      ) {
+        return `
+          <aside
+            class="
+              tree-inspector
+              family-person-pane
+              people-person-sidebar
+              collapsed
+            "
+            ${contextAttribute}
+            aria-label="Selected person sidebar collapsed">
+
+            <button
+              class="
+                inspector-restore
+                person-sidebar-restore-button
+                sidebar-toggle-icon
+                sidebar-toggle-icon-restore
+              "
+              type="button"
+              id="restoreInspector"
+              aria-label="Show person sidebar">
+              ${icon.doublechevronSidebar}
+            </button>
+          </aside>
+        `;
       }
 
       const actionsContent = `<div class="panel-actions">
@@ -17410,7 +17472,11 @@ function renderTreeCardDateLines(person) {
       const noteCount = familyNoteLinks(person).length;
       const contextClass = isPeopleContext ? ' people-person-sidebar' : '';
 
-      return `<aside class="tree-inspector family-person-pane${contextClass}" aria-label="Selected person details" data-person-sidebar-context="${escapeHtml(context)}">
+      return `
+        <aside
+          class="tree-inspector family-person-pane${contextClass}"
+          ${contextAttribute}
+          aria-label="Selected person details">
         ${renderFamilyTreePersonHero(person)}
         <div class="family-person-actions">${actionsContent}</div>
         ${renderInspectorSection('insights', 'Insights', 'No insights found', '<div class="panel-muted">No insights found for this person.</div>')}
@@ -26874,15 +26940,6 @@ function renderTreeCardDateLines(person) {
         });
     }
 
-    function bindAccordion(root, rerender = renderPeople) {
-      root.querySelectorAll('[data-toggle-section]').forEach(button => button.addEventListener('click', (event) => {
-        if (event.target.closest('.link')) return;
-        const id = button.dataset.toggleSection;
-        state.inspectorSections[id] = !sectionIsOpen(id);
-        rerender();
-      }));
-    }
-
     function closePeopleColumnsPopover() {
       document.getElementById('peopleColumnsPopover')?.remove();
       document.removeEventListener('click', closePeopleColumnsOnOutside);
@@ -27677,9 +27734,200 @@ function renderTreeCardDateLines(person) {
       if (context === 'people') state.selectedPeopleId = personId;
     }
 
-    function rerenderPersonSidebarContext(context) {
-      if (context === 'people') renderPeople();
-      else renderFamilyTreePreserveScroll();
+const personSidebarScrollByContext = {
+  tree: 0,
+  people: 0
+};
+
+function getPersonSidebarElement(
+  context
+) {
+  return main.querySelector(
+    `[data-person-sidebar-context="${
+      CSS.escape(context)
+    }"]`
+  );
+}
+
+function syncPersonSidebarLayoutState(
+  context
+) {
+  if (context === 'people') {
+    main
+      .querySelector('.people-layout')
+      ?.classList.toggle(
+        'preview-collapsed',
+        Boolean(
+          state.peoplePreviewCollapsed
+        )
+      );
+
+    return;
+  }
+
+  main
+    .querySelector('.tree-workspace')
+    ?.classList.toggle(
+      'inspector-collapsed',
+      Boolean(
+        state.treeInspectorCollapsed
+      )
+    );
+}
+
+function personSidebarCanProvideScroll(
+  panel
+) {
+  return Boolean(
+    panel
+    && !panel.classList.contains(
+      'collapsed'
+    )
+    && panel.getClientRects().length
+  );
+}
+
+function createPersonSidebarElement(
+  context
+) {
+  const template =
+    document.createElement(
+      'template'
+    );
+
+  template.innerHTML =
+    renderPersonSidebar(
+      personSidebarSelectedId(
+        context
+      ),
+      context
+    ).trim();
+
+  return (
+    template.content.firstElementChild
+    || null
+  );
+}
+
+    function rerenderPersonSidebarContext(
+      context,
+      {
+        focusSectionId = ''
+      } = {}
+    ) {
+      const currentPanel =
+        getPersonSidebarElement(
+          context
+        );
+
+      /*
+      * This should only be missing during an
+      * unexpected or incomplete module render.
+      * Keep a safe full-render fallback.
+      */
+      if (!currentPanel) {
+        if (context === 'people') {
+          renderPeople();
+        } else {
+          renderFamilyTreePreserveScroll();
+        }
+
+        return;
+      }
+
+      /*
+      * Save the position only when the current
+      * panel is expanded and visible.
+      *
+      * This also retains the previous position
+      * while the whole inspector is collapsed.
+      */
+      if (
+        personSidebarCanProvideScroll(
+          currentPanel
+        )
+      ) {
+        personSidebarScrollByContext[
+          context
+        ] = currentPanel.scrollTop;
+      }
+
+      const nextPanel =
+        createPersonSidebarElement(
+          context
+        );
+
+      if (!nextPanel) return;
+
+      /*
+      * The parent grid owns the expanded or
+      * collapsed inspector width.
+      */
+      syncPersonSidebarLayoutState(
+        context
+      );
+
+      /*
+      * Replace only the right-side panel.
+      * The tree toolbar, tree canvas, People
+      * toolbar, and People table remain intact.
+      */
+      currentPanel.replaceWith(
+        nextPanel
+      );
+
+      /*
+      * The new panel is fresh DOM and therefore
+      * needs its own handlers.
+      */
+      bindPersonSidebar(
+        nextPanel,
+        context
+      );
+
+      requestAnimationFrame(() => {
+        if (
+          !nextPanel.classList.contains(
+            'collapsed'
+          )
+          && nextPanel.getClientRects()
+            .length
+        ) {
+          const maximumScroll =
+            Math.max(
+              0,
+              nextPanel.scrollHeight
+              - nextPanel.clientHeight
+            );
+
+          nextPanel.scrollTop =
+            Math.min(
+              personSidebarScrollByContext[
+                context
+              ] || 0,
+              maximumScroll
+            );
+        }
+
+        /*
+        * Replacing the panel removes the clicked
+        * header from the DOM. Restore keyboard
+        * focus without moving the scroll position.
+        */
+        if (focusSectionId) {
+          nextPanel
+            .querySelector(
+              `[data-toggle-section="${
+                CSS.escape(
+                  focusSectionId
+                )
+              }"]`
+            )
+            ?.focus({
+              preventScroll: true
+            });
+        }
+      });
     }
 
     function relationshipContextFromRow(
@@ -27873,12 +28121,41 @@ function renderTreeCardDateLines(person) {
         const personId = event.currentTarget.dataset.treeViewProfile;
         if (personId) openPeopleProfileFromRow(personId);
       });
-      root.querySelectorAll('[data-toggle-section]').forEach(button => button.addEventListener('click', event => {
-        if (event.target.closest('.link')) return;
-        const id = button.dataset.toggleSection;
-        state.inspectorSections[id] = !sectionIsOpen(id);
-        rerenderPersonSidebarContext(context);
-      }));
+      root
+        .querySelectorAll(
+          '[data-toggle-section]'
+        )
+        .forEach(button =>
+          button.addEventListener(
+            'click',
+            event => {
+              if (
+                event.target.closest(
+                  '.link'
+                )
+              ) {
+                return;
+              }
+
+              const id =
+                button.dataset
+                  .toggleSection;
+
+              if (!id) return;
+
+              state.inspectorSections[
+                id
+              ] = !sectionIsOpen(id);
+
+              rerenderPersonSidebarContext(
+                context,
+                {
+                  focusSectionId: id
+                }
+              );
+            }
+          )
+        );
       bindRelationshipList(root, context);
       bindToasts(root);
     }
