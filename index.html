@@ -3114,6 +3114,76 @@
     .panel-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
     .panel-actions .button { min-height: 42px; justify-content: flex-start; text-align: left; align-items: center; letter-spacing: .01em; padding: 0 var(--space-3); }
     .panel-actions .button svg { flex: 0 0 auto; }
+
+    .panel-section-footer {
+      margin-top: var(--space-3);
+      padding-top: var(--space-2);
+      border-top:
+        1px solid
+        var(--border-default);
+    }
+
+    .panel-section-view-all {
+      width: 100%;
+      min-height: 40px;
+      padding: 0;
+
+      border: 0;
+      border-radius: var(--radius-sm);
+
+      background: transparent;
+      color: var(--text-secondary);
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+
+      font-size: 13px;
+      font-weight: 800;
+      text-align: left;
+
+      cursor: pointer;
+
+      transition:
+        background var(--ease),
+        color var(--ease);
+    }
+
+    .panel-section-view-all:hover {
+      background:
+        rgba(255, 255, 255, .035);
+
+      color:
+        var(--text-primary);
+    }
+
+    .panel-section-view-all:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset: 2px;
+    }
+
+    .panel-section-view-all-icon {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+
+      display: grid;
+      place-items: center;
+
+      color:
+        var(--text-tertiary);
+    }
+
+    .panel-section-view-all-icon svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
+
     .timeline {
       --timeline-date-w: 72px;
       --timeline-node: 44px;
@@ -3468,7 +3538,6 @@
       border-color: rgba(98,217,154,.42);
       box-shadow: 0 0 0 1px rgba(47,174,116,.12);
     }
-    .family-photo-more { background: var(--surface-input); color: var(--text-secondary); font-size: 13px; line-height: 1.25; }
     .family-archive-list,
     .family-note-list { display: grid; gap: var(--space-2); }
     .family-archive-row,
@@ -3498,15 +3567,64 @@
       transform: translateY(-1px);
     }
     .family-archive-copy { min-width: 0; }
-    .family-archive-copy strong,
-    .family-note-card strong { display: block; color: var(--text-primary); margin-bottom: 3px; }
-    .family-archive-copy span,
-    .family-note-card span { display: block; color: var(--text-tertiary); font-size: 12px; line-height: 1.4; }
-    .family-item-arrow { color: var(--text-tertiary); font-size: 20px; opacity: 0; transition: opacity var(--ease), color var(--ease); }
-    .family-archive-row:hover .family-item-arrow,
-    .family-archive-row:focus-visible .family-item-arrow { opacity: 1; color: var(--text-primary); }
     .family-note-card { padding: var(--space-3); display: grid; gap: 5px; }
-    .family-note-card em { font-style: normal; margin-top: 4px; color: var(--text-tertiary); }
+    .family-archive-copy strong,
+    .family-archive-copy span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .family-item-arrow {
+      opacity: .42;
+    }
+
+    .family-archive-row:hover
+    .family-item-arrow,
+    .family-archive-row:focus-visible
+    .family-item-arrow {
+      opacity: 1;
+    }
+
+    .family-note-card strong {
+      margin-bottom: 0;
+
+      display: -webkit-box;
+      overflow: hidden;
+
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+
+      line-height: 1.35;
+    }
+
+    .family-note-card > span {
+      display: -webkit-box;
+      overflow: hidden;
+
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+
+      line-height: 1.45;
+    }
+
+    .family-note-card em {
+      min-width: 0;
+      margin-top: var(--space-1);
+    }
+
+    .resource-person-filterbar {
+      padding:
+        0
+        var(--space-5)
+        var(--space-3);
+
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
     .family-actions-menu { min-width: 210px; }
 
     .relative-popover {
@@ -11118,6 +11236,13 @@
     .notes-shell.editor-open.right-collapsed { grid-template-columns: minmax(0, 1fr) 58px; }
     .notes-browser-pane { min-width: 0; min-height: 0; display: grid; grid-template-rows: auto 1fr; overflow: hidden; background: radial-gradient(circle at 92% -5%, rgba(47,174,116,.055), transparent 28%), var(--surface-main); }
     .notes-browser-header { padding: var(--space-5) var(--space-6) var(--space-4); border-bottom: 1px solid var(--border-default); background: rgba(15,20,19,.82); display: grid; gap: var(--space-4); }
+    .notes-browser-header
+    .resource-person-filterbar {
+      padding:
+        0
+        0
+        var(--space-3);
+    }
     .notes-browser-top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
     .notes-browser-title h1 { margin: 0; font-size: 26px; line-height: 1.08; letter-spacing: -.03em; }
     .notes-browser-title p { margin: 5px 0 0; color: var(--text-tertiary); font-weight: 800; }
@@ -13774,6 +13899,84 @@
       render();
     }
 
+    function openArchiveForPerson(
+      personId
+    ) {
+      const person =
+        getPerson(personId);
+
+      if (!person) return;
+
+      const files =
+        getArchiveFilesForPerson(
+          person.id
+        );
+
+      state.activeModule =
+        'Archive';
+
+      state.archiveView =
+        'files';
+
+      state.archivePersonFilterId =
+        person.id;
+
+      state.archiveSelectedFolderId =
+        'archive';
+
+      state.archiveSelectedFileId =
+        files[0]?.id || null;
+
+      state.archiveSelectedFileIds =
+        [];
+
+      state.archiveSearch =
+        '';
+
+      state.archiveInspectorCollapsed =
+        true;
+
+      render();
+    }
+
+    function openNotesForPerson(
+      personId
+    ) {
+      const person =
+        getPerson(personId);
+
+      if (!person) return;
+
+      state.activeModule =
+        'Notes';
+
+      state.notesView =
+        'all';
+
+      state.notesPersonFilterId =
+        person.id;
+
+      state.notesActiveCollectionId =
+        null;
+
+      state.notesActiveCaseId =
+        null;
+
+      state.selectedNoteId =
+        null;
+
+      state.notesSearch =
+        '';
+
+      state.notesTypeFilter =
+        'all';
+
+      state.notesRightCollapsed =
+        true;
+
+      render();
+    }
+
     function getPlace(placeId) {
       return sampleData.places.find(place => place.id === placeId) || null;
     }
@@ -15953,6 +16156,7 @@
       archiveViewMode: 'table',
       archiveSearch: '',
       archiveSort: 'updated',
+      archivePersonFilterId: '',
       archiveInspectorCollapsed: false,
       archiveExpandedFolders: { archive: true, pawford: true, fond12: true, opis3: true, documents: true },
       archiveIssueFilter: 'All',
@@ -15962,6 +16166,7 @@
       selectedNoteId: null,
       notesSearch: '',
       notesSort: 'updated',
+      notesPersonFilterId: '',
       notesTypeFilter: 'all',
       notesViewMode: 'cards',
       notesRightCollapsed: true,
@@ -17804,149 +18009,218 @@
 
       return 'unknown-gender';
     }
-function renderTreeCardDateLines(person) {
-      const lines = [];
-      const status = normalizeLivingStatus(person.status);
 
-      if (person.birth) {
-        lines.push(`<span>Born: ${escapeHtml(person.birth)}</span>`);
-      }
+    function renderTreeCardDateLines(person) {
+          const lines = [];
+          const status = normalizeLivingStatus(person.status);
 
-      if (status === 'Deceased' && person.death) {
-        lines.push(`<span>Died: ${escapeHtml(person.death)}</span>`);
-      }
+          if (person.birth) {
+            lines.push(`<span>Born: ${escapeHtml(person.birth)}</span>`);
+          }
 
-      return lines.length ? `<div class="tree-dates">${lines.join('')}</div>` : '';
-    }
+          if (status === 'Deceased' && person.death) {
+            lines.push(`<span>Died: ${escapeHtml(person.death)}</span>`);
+          }
 
-    function renderTreeCardStatus(person) {
-      const safeStatus = normalizeLivingStatus(person.status);
+          return lines.length ? `<div class="tree-dates">${lines.join('')}</div>` : '';
+        }
 
-      return `<span class="status-dot ${statusDotClass(safeStatus)}">
-        ${escapeHtml(safeStatus)}
-      </span>`;
-    }
+        function renderTreeCardStatus(person) {
+          const safeStatus = normalizeLivingStatus(person.status);
 
-    function sectionIsOpen(id) {
-      return state.inspectorSections[id] !== false;
-    }
+          return `<span class="status-dot ${statusDotClass(safeStatus)}">
+            ${escapeHtml(safeStatus)}
+          </span>`;
+        }
 
-    function renderInspectorSection(
-      id,
-      title,
-      meta,
-      content,
-      actionHtml = '',
-      options = {}
-    ) {
-      const open =
-        typeof options.open === 'boolean'
-          ? options.open
-          : sectionIsOpen(id);
+        function sectionIsOpen(id) {
+          return state.inspectorSections[id] !== false;
+        }
 
-      const toggleAttribute =
-        options.toggleAttribute
-        || 'data-toggle-section';
+        function renderInspectorSection(
+          id,
+          title,
+          meta,
+          content,
+          actionHtml = '',
+          options = {}
+        ) {
+          const open =
+            typeof options.open === 'boolean'
+              ? options.open
+              : sectionIsOpen(id);
 
-      const sectionId =
-        options.sectionId
-        || `section-${id}`;
+          const toggleAttribute =
+            options.toggleAttribute
+            || 'data-toggle-section';
 
-      const showAction =
-        open
-        || options.alwaysShowAction;
+          const sectionId =
+            options.sectionId
+            || `section-${id}`;
 
-      const inlineAction =
-        showAction
-        && actionHtml
-        && options.inlineAction
-          ? `
-            <span class="panel-section-inline-action">
-              ${actionHtml}
-            </span>
-          `
-          : '';
+          const showAction =
+            open
+            || options.alwaysShowAction;
 
-      const bodyAction =
-        open
-        && actionHtml
-        && !options.inlineAction
-          ? `
-            <div class="panel-section-action">
-              ${actionHtml}
-            </div>
-          `
-          : '';
+          const inlineAction =
+            showAction
+            && actionHtml
+            && options.inlineAction
+              ? `
+                <span class="panel-section-inline-action">
+                  ${actionHtml}
+                </span>
+              `
+              : '';
 
-      const header = `
-        <button
-          class="panel-section-header"
-          type="button"
-          ${toggleAttribute}="${escapeHtml(id)}"
-          aria-expanded="${open ? 'true' : 'false'}"
-          aria-controls="${escapeHtml(sectionId)}">
+          const bodyAction =
+            open
+            && actionHtml
+            && !options.inlineAction
+              ? `
+                <div class="panel-section-action">
+                  ${actionHtml}
+                </div>
+              `
+              : '';
 
-          <span class="panel-section-heading">
-            <h3>${escapeHtml(title)}</h3>
+          const footerHtml =
+            open
+            && options.footerHtml
+              ? `
+                <div class="panel-section-footer">
+                  ${options.footerHtml}
+                </div>
+              `
+              : '';
 
-            ${
-              meta
-                ? `<span>${escapeHtml(meta)}</span>`
-                : ''
-            }
-          </span>
+          const header = `
+            <button
+              class="panel-section-header"
+              type="button"
+              ${toggleAttribute}="${escapeHtml(id)}"
+              aria-expanded="${open ? 'true' : 'false'}"
+              aria-controls="${escapeHtml(sectionId)}">
 
-          ${
-            inlineAction
-              ? ''
-              : `
+              <span class="panel-section-heading">
+                <h3>${escapeHtml(title)}</h3>
+
+                ${
+                  meta
+                    ? `<span>${escapeHtml(meta)}</span>`
+                    : ''
+                }
+              </span>
+
+              ${
+                inlineAction
+                  ? ''
+                  : `
+                    <span class="panel-section-extra">
+                      <span
+                        class="panel-section-arrow"
+                        aria-hidden="true">
+                      </span>
+                    </span>
+                  `
+              }
+            </button>
+          `;
+
+          const headerRow = inlineAction
+            ? `
+              <div class="panel-section-header-row">
+                ${header}
+
                 <span class="panel-section-extra">
+                  ${inlineAction}
+
                   <span
                     class="panel-section-arrow"
                     aria-hidden="true">
                   </span>
                 </span>
-              `
-          }
-        </button>
-      `;
+              </div>
+            `
+            : header;
 
-      const headerRow = inlineAction
-        ? `
-          <div class="panel-section-header-row">
-            ${header}
+          return `
+            <section
+              class="panel-section ${
+                open ? 'is-open' : ''
+              }">
 
-            <span class="panel-section-extra">
-              ${inlineAction}
+              ${headerRow}
 
-              <span
-                class="panel-section-arrow"
-                aria-hidden="true">
-              </span>
+              <div
+                class="panel-section-body"
+                id="${escapeHtml(sectionId)}"
+                ${open ? '' : 'hidden'}>
+
+                ${bodyAction}
+                ${content}
+                ${footerHtml}
+              </div>
+            </section>
+          `;
+        }
+
+      function renderPersonPanelViewAll({
+        resource,
+        count,
+        personId
+      }) {
+        if (!count || !personId) {
+          return '';
+        }
+
+        const nouns = {
+          photos:
+            count === 1
+              ? 'photo'
+              : 'photos',
+
+          archive:
+            count === 1
+              ? 'file'
+              : 'files',
+
+          notes:
+            count === 1
+              ? 'note'
+              : 'notes'
+        };
+
+        const noun =
+          nouns[resource]
+          || 'items';
+
+        return `
+          <button
+            class="panel-section-view-all"
+            type="button"
+            data-person-resource-view="${
+              escapeHtml(resource)
+            }"
+            data-person-resource-person="${
+              escapeHtml(personId)
+            }">
+
+            <span>
+              View all ${count}
+              ${escapeHtml(noun)}
             </span>
-          </div>
-        `
-        : header;
 
-      return `
-        <section
-          class="panel-section ${
-            open ? 'is-open' : ''
-          }">
-
-          ${headerRow}
-
-          <div
-            class="panel-section-body"
-            id="${escapeHtml(sectionId)}"
-            ${open ? '' : 'hidden'}>
-
-            ${bodyAction}
-            ${content}
-          </div>
-        </section>
-      `;
-    }
+            <span
+              class="
+                panel-section-view-all-icon
+              "
+              aria-hidden="true">
+              ${icon.chevron}
+            </span>
+          </button>
+        `;
+      }
 
     function renderPanelButtonLabel(iconHtml, label) {
       return `<span class="panel-button-label">
@@ -17999,19 +18273,322 @@ function renderTreeCardDateLines(person) {
       return links[person?.id] || [{ title: 'Linked research note', body: 'This note preview is linked to the selected person.', noteId: null, updated: 'Updated recently' }];
     }
 
-    function renderFamilyPhotos(person) {
-      const photos = getPhotosForPerson(person?.id);
-      const visiblePhotos = photos.slice(0, 3);
-      const remaining = Math.max(0, photos.length - visiblePhotos.length);
-      if (!photos.length) return '<div class="panel-muted">No photos linked to this person.</div>';
-      return `<div class="family-photo-grid">${visiblePhotos.map(photo => `<button class="family-photo-thumb" type="button" data-family-photo="${escapeHtml(photo.id)}" title="${escapeHtml(photo.title)}">${renderPhotoThumbnail(photo, { label: photo.title })}</button>`).join('')}${remaining ? `<button class="family-photo-thumb family-photo-more" type="button" data-family-photo-person="${escapeHtml(person.id)}" title="Open all linked photos">+${remaining}<br>more</button>` : ''}</div>`;
+    const PERSON_PANEL_PREVIEW_LIMITS =
+      Object.freeze({
+        photos: 3,
+        archive: 3,
+        notes: 2
+      });
+
+    function personResourceDisplayName(person) {
+      return (
+        person?.names?.display
+        || person?.name
+        || 'Person'
+      );
     }
+
+    function resourceLabelsIncludePerson(
+      labels,
+      person
+    ) {
+      const name =
+        personResourceDisplayName(person);
+
+      return (labels || []).some(
+        label =>
+          String(label || '').trim()
+          === name
+      );
+    }
+
+    function getArchiveFilesForPerson(
+      personId,
+      {
+        includeDeleted = false
+      } = {}
+    ) {
+      const person =
+        getPerson(personId);
+
+      if (!person) return [];
+
+      /*
+      * The current prototype still has some
+      * inspector-specific link IDs. Include
+      * those while also supporting the Archive
+      * module's linkedPersonIds and linkedTo
+      * fields.
+      */
+      const inspectorFileIds =
+        new Set(
+          familyArchiveLinks(person)
+            .map(item => item.fileId)
+            .filter(Boolean)
+        );
+
+      return sampleData.archiveFiles
+        .filter(file =>
+          includeDeleted
+          || !file.deleted
+        )
+        .filter(file =>
+          inspectorFileIds.has(file.id)
+          || (
+            file.linkedPersonIds || []
+          ).includes(person.id)
+          || resourceLabelsIncludePerson(
+            file.linkedTo,
+            person
+          )
+        );
+    }
+
+    function getNotesForPerson(
+      personId,
+      {
+        includeArchived = false,
+        includeDeleted = false
+      } = {}
+    ) {
+      const person =
+        getPerson(personId);
+
+      if (!person) return [];
+
+      const inspectorNoteIds =
+        new Set(
+          familyNoteLinks(person)
+            .map(item => item.noteId)
+            .filter(Boolean)
+        );
+
+      return sampleData.notes
+        .filter(note =>
+          includeDeleted
+          || !note.deleted
+        )
+        .filter(note =>
+          includeArchived
+          || !note.archived
+        )
+        .filter(note =>
+          inspectorNoteIds.has(note.id)
+          || (
+            note.linkedPersonIds || []
+          ).includes(person.id)
+          || resourceLabelsIncludePerson(
+            note.linkedPeople,
+            person
+          )
+        )
+        .sort(
+          (a, b) =>
+            Number(b.sortRank || 0)
+            - Number(a.sortRank || 0)
+        );
+    }
+
+    function renderFamilyPhotos(person) {
+      const photos =
+        getPhotosForPerson(person?.id)
+          .slice(
+            0,
+            PERSON_PANEL_PREVIEW_LIMITS
+              .photos
+          );
+
+      if (!photos.length) {
+        return `
+          <div class="panel-muted">
+            No photos linked to this person.
+          </div>
+        `;
+      }
+
+      return `
+        <div class="family-photo-grid">
+          ${photos
+            .map(photo => `
+              <button
+                class="family-photo-thumb"
+                type="button"
+                data-family-photo="${
+                  escapeHtml(photo.id)
+                }"
+                title="${
+                  escapeHtml(
+                    photo.title
+                    || photo.filename
+                    || 'Photo'
+                  )
+                }">
+                ${renderPhotoThumbnail(
+                  photo,
+                  {
+                    label:
+                      photo.title
+                      || photo.filename
+                      || 'Photo'
+                  }
+                )}
+              </button>
+            `)
+            .join('')}
+        </div>
+      `;
+    }
+
     function renderFamilyArchiveItems(person) {
-      return `<div class="archive-list family-archive-list">${familyArchiveLinks(person).map(item => `<button class="family-archive-row" type="button" data-family-archive="${escapeHtml(item.fileId || '')}"><span class="file-badge">${escapeHtml(item.type)}</span><span class="family-archive-copy"><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.meta)}</span></span><span class="family-item-arrow">${icon.chevron}</span></button>`).join('')}</div>`;
+      const files =
+        getArchiveFilesForPerson(
+          person?.id
+        ).slice(
+          0,
+          PERSON_PANEL_PREVIEW_LIMITS
+            .archive
+        );
+
+      if (!files.length) {
+        return `
+          <div class="panel-muted">
+            No archive files linked to this person.
+          </div>
+        `;
+      }
+
+      return `
+        <div
+          class="
+            archive-list
+            family-archive-list
+          ">
+          ${files
+            .map(file => `
+              <button
+                class="family-archive-row"
+                type="button"
+                data-family-archive="${
+                  escapeHtml(file.id)
+                }">
+
+                <span class="file-badge">
+                  ${escapeHtml(
+                    file.type
+                    || file.kind
+                    || 'FILE'
+                  )}
+                </span>
+
+                <span
+                  class="
+                    family-archive-copy
+                  ">
+                  <strong>
+                    ${escapeHtml(
+                      file.name
+                      || 'Untitled file'
+                    )}
+                  </strong>
+
+                  <span>
+                    ${escapeHtml(
+                      file.added
+                        ? `Added ${file.added}`
+                        : file.updated
+                          ? `Updated ${file.updated}`
+                          : 'Linked file'
+                    )}
+                  </span>
+                </span>
+
+                <span
+                  class="
+                    family-item-arrow
+                  "
+                  aria-hidden="true">
+                  ${icon.chevron}
+                </span>
+              </button>
+            `)
+            .join('')}
+        </div>
+      `;
     }
 
     function renderFamilyNotes(person) {
-      return `<div class="note-list family-note-list">${familyNoteLinks(person).map(note => `<button class="family-note-card" type="button" data-family-note="${escapeHtml(note.noteId || '')}"><strong>${escapeHtml(note.title)}</strong><span>${escapeHtml(note.body)}</span><em class="status-dot">${escapeHtml(note.updated)}</em></button>`).join('')}</div>`;
+      const notes =
+        getNotesForPerson(
+          person?.id
+        ).slice(
+          0,
+          PERSON_PANEL_PREVIEW_LIMITS
+            .notes
+        );
+
+      if (!notes.length) {
+        return `
+          <div class="panel-muted">
+            No notes linked to this person.
+          </div>
+        `;
+      }
+
+      return `
+        <div
+          class="
+            note-list
+            family-note-list
+          ">
+          ${notes
+            .map(note => {
+              const updated =
+                String(
+                  note.updated
+                  || 'recently'
+                );
+
+              const updatedLabel =
+                /^updated\b/i.test(
+                  updated
+                )
+                  ? updated
+                  : `Updated ${updated}`;
+
+              return `
+                <button
+                  class="family-note-card"
+                  type="button"
+                  data-family-note="${
+                    escapeHtml(note.id)
+                  }">
+
+                  <strong>
+                    ${escapeHtml(
+                      note.title
+                      || 'Untitled note'
+                    )}
+                  </strong>
+
+                  <span>
+                    ${escapeHtml(
+                      note.excerpt
+                      || note.body
+                      || 'No note preview'
+                    )}
+                  </span>
+
+                  <em class="status-dot">
+                    ${escapeHtml(
+                      updatedLabel
+                    )}
+                  </em>
+                </button>
+              `;
+            })
+            .join('')}
+        </div>
+      `;
     }
 
     function openFamilyPhoto(photoId) {
@@ -18217,8 +18794,8 @@ function renderTreeCardDateLines(person) {
       const archiveContent = renderFamilyArchiveItems(person);
       const notesContent = renderFamilyNotes(person);
       const photoCount = getPersonPhotoCount(person.id);
-      const archiveCount = familyArchiveLinks(person).length;
-      const noteCount = familyNoteLinks(person).length;
+      const archiveCount = getArchiveFilesForPerson(person.id).length;
+      const noteCount = getNotesForPerson(person.id).length;
       const contextClass = isPeopleContext ? ' people-person-sidebar' : '';
 
       return `
@@ -18264,23 +18841,100 @@ function renderTreeCardDateLines(person) {
               : 'photos'
           }`,
           photosContent,
-          `<button
-            class="link"
-            type="button"
-            data-person-add-photos="${
-              escapeHtml(person.id)
-            }">
-            ${renderPanelButtonLabel(
-              icon.plus,
-              'Add photos'
-            )}
-          </button>`,
+          `
+            <button
+              class="link"
+              type="button"
+              data-person-add-photos="${
+                escapeHtml(person.id)
+              }">
+              ${renderPanelButtonLabel(
+                icon.plus,
+                'Add photos'
+              )}
+            </button>
+          `,
           {
-            inlineAction: true
+            inlineAction: true,
+
+            footerHtml:
+              renderPersonPanelViewAll({
+                resource: 'photos',
+                count: photoCount,
+                personId: person.id
+              })
           }
         )}
-        ${renderInspectorSection('archive', 'Archive', `${archiveCount} ${archiveCount === 1 ? 'file' : 'files'}`, archiveContent, `<button class="link" type="button" data-toast="Archive linking will be added in the Archive tab.">${renderPanelButtonLabel(icon.plus, 'Add file')}</button>`, { inlineAction: true })}
-        ${renderInspectorSection('notes', 'Notes', `${noteCount} ${noteCount === 1 ? 'note' : 'notes'}`, notesContent, `<button class="link" type="button" data-toast="Notes module will define the full note editor.">${renderPanelButtonLabel(icon.plus, 'Add note')}</button>`, { inlineAction: true })}
+
+        ${renderInspectorSection(
+          'archive',
+          'Archive',
+          `${archiveCount} ${
+            archiveCount === 1
+              ? 'file'
+              : 'files'
+          }`,
+          archiveContent,
+          `
+            <button
+              class="link"
+              type="button"
+              data-toast="
+                Archive linking will be added
+                in the Archive tab.
+              ">
+              ${renderPanelButtonLabel(
+                icon.plus,
+                'Add file'
+              )}
+            </button>
+          `,
+          {
+            inlineAction: true,
+
+            footerHtml:
+              renderPersonPanelViewAll({
+                resource: 'archive',
+                count: archiveCount,
+                personId: person.id
+              })
+          }
+        )}
+
+        ${renderInspectorSection(
+          'notes',
+          'Notes',
+          `${noteCount} ${
+            noteCount === 1
+              ? 'note'
+              : 'notes'
+          }`,
+          notesContent,
+          `
+            <button
+              class="link"
+              type="button"
+              data-toast="
+                Notes module will define
+                the full note editor.
+              ">
+              ${renderPanelButtonLabel(
+                icon.plus,
+                'Add note'
+              )}
+            </button>
+          `,
+          {
+            inlineAction: true,
+
+            footerHtml:
+              renderPersonPanelViewAll({
+                resource: 'notes',
+                count: noteCount,
+                personId: person.id
+              })
+          }
+        )}
         ${renderInspectorSection('record', 'Record Info', '', renderPersonRecordInfo(person.id))}
       </aside>`;
     }
@@ -28899,7 +29553,6 @@ function renderTreeCardDateLines(person) {
           }
         );
       root.querySelectorAll('[data-family-photo]').forEach(button => button.addEventListener('click', () => openFamilyPhoto(button.dataset.familyPhoto)));
-      root.querySelectorAll('[data-family-photo-person]').forEach(button => button.addEventListener('click', () => openAlbumsForPerson(button.dataset.familyPhotoPerson)));
       root
         .querySelectorAll(
           '[data-person-add-photos]'
@@ -28924,6 +29577,54 @@ function renderTreeCardDateLines(person) {
         });
       root.querySelectorAll('[data-family-archive]').forEach(button => button.addEventListener('click', () => openFamilyArchiveItem(button.dataset.familyArchive)));
       root.querySelectorAll('[data-family-note]').forEach(button => button.addEventListener('click', () => openFamilyNote(button.dataset.familyNote)));
+      root
+        .querySelectorAll(
+          '[data-person-resource-view]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              const resource =
+                button.dataset
+                  .personResourceView;
+
+              const personId =
+                button.dataset
+                  .personResourcePerson;
+
+              if (!personId) return;
+
+              if (
+                resource === 'photos'
+              ) {
+                openAlbumsForPerson(
+                  personId
+                );
+
+                return;
+              }
+
+              if (
+                resource === 'archive'
+              ) {
+                openArchiveForPerson(
+                  personId
+                );
+
+                return;
+              }
+
+              if (
+                resource === 'notes'
+              ) {
+                openNotesForPerson(
+                  personId
+                );
+              }
+            }
+          );
+        });
       root.querySelector('#collapseInspector')?.addEventListener('click', () => {
         if (context === 'people') state.peoplePreviewCollapsed = true;
         else state.treeInspectorCollapsed = true;
@@ -37564,6 +38265,7 @@ function renderTreeCardDateLines(person) {
       sidebar.querySelectorAll('[data-archive-view]').forEach(button => button.addEventListener('click', () => {
         state.archiveView = button.dataset.archiveView;
         state.archiveSelectedFileIds = [];
+        state.archivePersonFilterId = '';
         ensureArchiveSelection();
         renderArchive();
       }));
@@ -37578,6 +38280,7 @@ function renderTreeCardDateLines(person) {
         state.archiveSelectedFolderId = button.dataset.archiveFolder;
         state.archiveSelectedFileId = null;
         state.archiveSelectedFileIds = [];
+        state.archivePersonFilterId = '';
         renderArchive();
       }));
       bindToasts(sidebar);
@@ -37603,27 +38306,294 @@ function renderTreeCardDateLines(person) {
       return `<div class="archive-header"><div class="archive-title"><h1>${escapeHtml(title)}</h1><p>${escapeHtml(subtitle)}</p></div><div class="archive-header-actions">${actionHtml}</div></div>`;
     }
 
-    function renderArchiveFiles() {
-      const files = filteredArchiveFiles();
-      const childFolders = filteredArchiveChildFolders();
-      const folder = archiveFolderById(state.archiveSelectedFolderId);
-      const hasContent = files.length || childFolders.length;
+    function renderArchivePersonFilterBar() {
+      const person =
+        getPerson(
+          state.archivePersonFilterId
+        );
+
+      if (!person) return '';
+
+      const name =
+        personResourceDisplayName(
+          person
+        );
+
       return `
-        ${renderArchiveHeader('Files', `${archiveFolderPath(folder.id)} - ${childFolders.length} folder${childFolders.length === 1 ? '' : 's'} - ${files.length} file${files.length === 1 ? '' : 's'}`, `<button class="button secondary" type="button" id="archiveCreateFolder">${icon.plus} Create folder</button>`)}
-        <div class="archive-toolbar archive-toolbar-compact" aria-label="Archive file controls">
-          <div class="archive-toolbar-left">
-            <label class="archive-search" aria-label="Search archive folder contents">${icon.search}<input id="archiveSearch" type="search" placeholder="Search this folder..." value="${escapeHtml(state.archiveSearch)}"></label>
+        <div
+          class="
+            resource-person-filterbar
+          "
+          aria-label="
+            Active Archive filters
+          ">
+
+          <span
+            class="
+              filter-chip
+              active-filter-chip
+            ">
+
+            <span
+              class="
+                active-filter-chip-copy
+              ">
+              <strong>Person:</strong>
+              ${escapeHtml(name)}
+            </span>
+
+            <button
+              class="
+                active-filter-chip-remove
+              "
+              type="button"
+              data-clear-archive-person-filter
+              aria-label="${
+                escapeHtml(
+                  `Remove ${name} filter`
+                )
+              }"
+              title="Remove filter">
+              ${icon.close}
+            </button>
+          </span>
+        </div>
+      `;
+    }
+
+    function renderArchiveFiles() {
+      const files =
+        filteredArchiveFiles();
+
+      const person =
+        getPerson(
+          state.archivePersonFilterId
+        );
+
+      const childFolders =
+        person
+          ? []
+          : filteredArchiveChildFolders();
+
+      const folder =
+        archiveFolderById(
+          state.archiveSelectedFolderId
+        );
+
+      const hasContent =
+        files.length
+        || childFolders.length;
+
+      const subtitle =
+        person
+          ? `${files.length} ${
+              files.length === 1
+                ? 'file'
+                : 'files'
+            } linked to ${
+              personResourceDisplayName(
+                person
+              )
+            }`
+          : `${
+              archiveFolderPath(
+                folder.id
+              )
+            } - ${
+              childFolders.length
+            } folder${
+              childFolders.length === 1
+                ? ''
+                : 's'
+            } - ${
+              files.length
+            } file${
+              files.length === 1
+                ? ''
+                : 's'
+            }`;
+
+      const emptyTitle =
+        person
+          ? 'No linked archive files'
+          : 'No folders or files here';
+
+      const emptyCopy =
+        state.archiveSearch
+          ? 'Try a different search term or clear the search field.'
+          : person
+            ? 'No Archive records are currently linked to this person.'
+            : 'Open another folder from the left tree, create a folder, or add files from the Archive sidebar.';
+
+      return `
+        ${renderArchiveHeader(
+          'Files',
+          subtitle,
+          person
+            ? ''
+            : `
+              <button
+                class="button secondary"
+                type="button"
+                id="archiveCreateFolder">
+                ${icon.plus}
+                Create folder
+              </button>
+            `
+        )}
+
+        ${renderArchivePersonFilterBar()}
+
+        <div
+          class="
+            archive-toolbar
+            archive-toolbar-compact
+          "
+          aria-label="
+            Archive file controls
+          ">
+
+          <div
+            class="
+              archive-toolbar-left
+            ">
+            <label
+              class="archive-search"
+              aria-label="
+                Search archive contents
+              ">
+              ${icon.search}
+
+              <input
+                id="archiveSearch"
+                type="search"
+                placeholder="${
+                  person
+                    ? 'Search linked files...'
+                    : 'Search this folder...'
+                }"
+                value="${
+                  escapeHtml(
+                    state.archiveSearch
+                  )
+                }">
+            </label>
           </div>
-          <div class="archive-toolbar-right">
-            <select class="archive-select" id="archiveSort" aria-label="Sort archive files"><option value="updated" ${state.archiveSort === 'updated' ? 'selected' : ''}>Sort: Updated</option><option value="name" ${state.archiveSort === 'name' ? 'selected' : ''}>Sort: Name</option><option value="source" ${state.archiveSort === 'source' ? 'selected' : ''}>Sort: Source status</option></select>
-            <button class="archive-view-button ${state.archiveViewMode === 'table' ? 'active' : ''}" type="button" data-archive-mode="table" aria-label="Table view">${icon.list}</button>
-            <button class="archive-view-button ${state.archiveViewMode === 'grid' ? 'active' : ''}" type="button" data-archive-mode="grid" aria-label="Grid view">${icon.grid}</button>
+
+          <div
+            class="
+              archive-toolbar-right
+            ">
+            <select
+              class="archive-select"
+              id="archiveSort"
+              aria-label="
+                Sort archive files
+              ">
+              <option
+                value="updated"
+                ${
+                  state.archiveSort
+                    === 'updated'
+                    ? 'selected'
+                    : ''
+                }>
+                Sort: Updated
+              </option>
+
+              <option
+                value="name"
+                ${
+                  state.archiveSort
+                    === 'name'
+                    ? 'selected'
+                    : ''
+                }>
+                Sort: Name
+              </option>
+
+              <option
+                value="source"
+                ${
+                  state.archiveSort
+                    === 'source'
+                    ? 'selected'
+                    : ''
+                }>
+                Sort: Source status
+              </option>
+            </select>
+
+            <button
+              class="
+                archive-view-button
+                ${
+                  state.archiveViewMode
+                    === 'table'
+                    ? 'active'
+                    : ''
+                }
+              "
+              type="button"
+              data-archive-mode="table"
+              aria-label="Table view">
+              ${icon.list}
+            </button>
+
+            <button
+              class="
+                archive-view-button
+                ${
+                  state.archiveViewMode
+                    === 'grid'
+                    ? 'active'
+                    : ''
+                }
+              "
+              type="button"
+              data-archive-mode="grid"
+              aria-label="Grid view">
+              ${icon.grid}
+            </button>
           </div>
         </div>
-        <div class="archive-file-area archive-file-area-full">
-          ${state.archiveSelectedFileIds.length ? renderArchiveSelectionBar(files) : ''}
-          ${hasContent ? (state.archiveViewMode === 'table' ? renderArchiveFileTable(files, childFolders) : renderArchiveFileGrid(files, childFolders)) : renderArchiveEmpty('No folders or files here', state.archiveSearch ? 'Try a different search term or clear the search field.' : 'Open another folder from the left tree, create a folder, or add files from the Archive sidebar.', '')}
-        </div>`;
+
+        <div
+          class="
+            archive-file-area
+            archive-file-area-full
+          ">
+          ${
+            state.archiveSelectedFileIds
+              .length
+              ? renderArchiveSelectionBar(
+                  files
+                )
+              : ''
+          }
+
+          ${
+            hasContent
+              ? (
+                  state.archiveViewMode
+                    === 'table'
+                    ? renderArchiveFileTable(
+                        files,
+                        childFolders
+                      )
+                    : renderArchiveFileGrid(
+                        files,
+                        childFolders
+                      )
+                )
+              : renderArchiveEmpty(
+                  emptyTitle,
+                  emptyCopy,
+                  ''
+                )
+          }
+        </div>
+      `;
     }
 
     function renderArchiveFolderTree() {
@@ -37806,6 +38776,11 @@ function renderTreeCardDateLines(person) {
     }
 
     function bindArchiveControls() {
+      main.querySelector('[data-clear-archive-person-filter]') ?.addEventListener('click', () => {state.archivePersonFilterId = ''; state.archiveSelectedFileId = null; state.archiveSelectedFileIds = [];
+            ensureArchiveSelection();
+            renderArchiveMain();
+          }
+        );
       main.querySelector('#archiveCreateSourceInline')?.addEventListener('click', () => openArchiveCreateSourceModal());
       main.querySelector('#archiveCreateFolder')?.addEventListener('click', openArchiveCreateFolderModal);
       bindSearchInput(main, '#archiveSearch', 'archiveSearch', renderArchiveMain);
@@ -37844,15 +38819,66 @@ function renderTreeCardDateLines(person) {
     }
 
     function filteredArchiveFiles() {
-      let files = sampleData.archiveFiles.filter(file => !file.deleted && file.folderId === state.archiveSelectedFolderId);
-      const q = state.archiveSearch.trim().toLowerCase();
-      if (q) files = files.filter(file => `${file.name} ${file.type} ${file.datePlace} ${file.review} ${file.ocr} ${file.linkedTo.join(' ')} ${effectiveArchiveSource(file)?.title || ''}`.toLowerCase().includes(q));
-      if (state.archiveSort === 'name') files.sort((a,b) => a.name.localeCompare(b.name));
-      if (state.archiveSort === 'source') files.sort((a,b) => archiveProvenanceState(a).localeCompare(archiveProvenanceState(b)) || a.name.localeCompare(b.name));
+      let files =
+        state.archivePersonFilterId
+          ? getArchiveFilesForPerson(
+              state.archivePersonFilterId
+            )
+          : sampleData.archiveFiles.filter(file =>
+              !file.deleted
+              && file.folderId
+                === state.archiveSelectedFolderId
+            );
+
+      const query =
+        state.archiveSearch
+          .trim()
+          .toLowerCase();
+
+      if (query) {
+        files = files.filter(file => {
+          const searchText = [
+            file.name,
+            file.type,
+            file.datePlace,
+            file.review,
+            file.ocr,
+            ...(file.linkedTo || []),
+            effectiveArchiveSource(file)
+              ?.title || ''
+          ]
+            .join(' ')
+            .toLowerCase();
+
+          return searchText.includes(query);
+        });
+      }
+
+      if (
+        state.archiveSort === 'name'
+      ) {
+        files.sort((a, b) =>
+          a.name.localeCompare(b.name)
+        );
+      }
+
+      if (
+        state.archiveSort === 'source'
+      ) {
+        files.sort((a, b) =>
+          archiveProvenanceState(a)
+            .localeCompare(
+              archiveProvenanceState(b)
+            )
+          || a.name.localeCompare(b.name)
+        );
+      }
+
       return files;
     }
 
     function filteredArchiveChildFolders() {
+      if (state.archivePersonFilterId) {return [];}
       let folders = sampleData.archiveFolders.filter(folder => folder.parent === state.archiveSelectedFolderId);
       const q = state.archiveSearch.trim().toLowerCase();
       if (q) folders = folders.filter(folder => `${folder.name} ${archiveFolderPath(folder.id)} ${inheritedFolderSource(folder.id)?.title || ''}`.toLowerCase().includes(q));
@@ -38061,14 +39087,85 @@ function renderTreeCardDateLines(person) {
       bindNotesSidebarControls(sidebar);
     }
 
+    function renderNotesPersonFilterBar() {
+      const person =
+        getPerson(
+          state.notesPersonFilterId
+        );
+
+      if (!person) return '';
+
+      const name =
+        personResourceDisplayName(
+          person
+        );
+
+      return `
+        <div
+          class="
+            resource-person-filterbar
+          "
+          aria-label="
+            Active Notes filters
+          ">
+
+          <span
+            class="
+              filter-chip
+              active-filter-chip
+            ">
+
+            <span
+              class="
+                active-filter-chip-copy
+              ">
+              <strong>Person:</strong>
+              ${escapeHtml(name)}
+            </span>
+
+            <button
+              class="
+                active-filter-chip-remove
+              "
+              type="button"
+              data-clear-notes-person-filter
+              aria-label="${
+                escapeHtml(
+                  `Remove ${name} filter`
+                )
+              }"
+              title="Remove filter">
+              ${icon.close}
+            </button>
+          </span>
+        </div>
+      `;
+    }
+
     function renderNotesBrowserPane(list) {
       const isCases = state.notesView === 'cases';
       const typeOptions = [['all','All types'],['note','Notes'],['question','Questions'],['hypothesis','Hypotheses'],['source','Source analysis'],['interview','Interviews'],['story','Stories']].map(([id,label]) => `<option value="${id}" ${state.notesTypeFilter === id ? 'selected' : ''}>${label}</option>`).join('');
       const headerAction = isCases ? `<div class="notes-browser-actions"><button class="button primary" type="button" id="notesNewCaseButton">${icon.plus} New case</button></div>` : '';
-      return `<section class="notes-browser-pane" aria-label="Notes browser"><header class="notes-browser-header"><div class="notes-browser-top"><div class="notes-browser-title"><h1>${escapeHtml(notesTitle())}</h1><p>${notesBrowserSubtitle(list)}</p></div>${headerAction}</div><div class="notes-toolbar-line"><label class="notes-search" aria-label="Search notes">${icon.search}<input id="notesSearch" type="search" placeholder="Search ${isCases ? 'cases' : 'notes'}..." value="${escapeHtml(state.notesSearch)}"></label>${isCases ? '' : `<select class="notes-select" id="notesTypeFilter" aria-label="Filter by type">${typeOptions}</select>`}<select class="notes-select" id="notesSort" aria-label="Sort notes"><option value="updated" ${state.notesSort === 'updated' ? 'selected' : ''}>Sort: Updated</option><option value="title" ${state.notesSort === 'title' ? 'selected' : ''}>Sort: Title</option><option value="created" ${state.notesSort === 'created' ? 'selected' : ''}>Sort: Created</option></select><div class="notes-view-toggle" role="group" aria-label="Notes view mode"><button class="${state.notesViewMode === 'cards' ? 'active' : ''}" type="button" data-notes-view-mode="cards" aria-label="Cards view" aria-pressed="${state.notesViewMode === 'cards'}">${icon.grid}</button><button class="${state.notesViewMode === 'list' ? 'active' : ''}" type="button" data-notes-view-mode="list" aria-label="List view" aria-pressed="${state.notesViewMode === 'list'}">${icon.list}</button></div></div></header><div class="notes-browser-scroll">${list.length ? (state.notesViewMode === 'list' ? renderNotesListView(list) : renderNotesCardsView(list)) : renderNotesBrowserEmpty()}</div></section>`;
+      return `<section class="notes-browser-pane" aria-label="Notes browser"><header class="notes-browser-header"><div class="notes-browser-top"><div class="notes-browser-title"><h1>${escapeHtml(notesTitle())}</h1><p>${notesBrowserSubtitle(list)}</p></div>${headerAction}</div>${renderNotesPersonFilterBar()}<div class="notes-toolbar-line"><label class="notes-search" aria-label="Search notes">${icon.search}<input id="notesSearch" type="search" placeholder="Search ${isCases ? 'cases' : 'notes'}..." value="${escapeHtml(state.notesSearch)}"></label>${isCases ? '' : `<select class="notes-select" id="notesTypeFilter" aria-label="Filter by type">${typeOptions}</select>`}<select class="notes-select" id="notesSort" aria-label="Sort notes"><option value="updated" ${state.notesSort === 'updated' ? 'selected' : ''}>Sort: Updated</option><option value="title" ${state.notesSort === 'title' ? 'selected' : ''}>Sort: Title</option><option value="created" ${state.notesSort === 'created' ? 'selected' : ''}>Sort: Created</option></select><div class="notes-view-toggle" role="group" aria-label="Notes view mode"><button class="${state.notesViewMode === 'cards' ? 'active' : ''}" type="button" data-notes-view-mode="cards" aria-label="Cards view" aria-pressed="${state.notesViewMode === 'cards'}">${icon.grid}</button><button class="${state.notesViewMode === 'list' ? 'active' : ''}" type="button" data-notes-view-mode="list" aria-label="List view" aria-pressed="${state.notesViewMode === 'list'}">${icon.list}</button></div></div></header><div class="notes-browser-scroll">${list.length ? (state.notesViewMode === 'list' ? renderNotesListView(list) : renderNotesCardsView(list)) : renderNotesBrowserEmpty()}</div></section>`;
     }
 
     function notesBrowserSubtitle(list) {
+      const person =
+        getPerson(
+          state.notesPersonFilterId
+        );
+
+      if (person) {
+        return `${list.length} ${
+          list.length === 1
+            ? 'note'
+            : 'notes'
+        } linked to ${
+          personResourceDisplayName(
+            person
+          )
+        }.`;
+      }
       const noun = state.notesView === 'cases' ? 'case' : 'note';
       const count = `${list.length} ${noun}${list.length === 1 ? '' : 's'}`;
       if (state.notesView === 'all') return count;
@@ -38156,14 +39253,75 @@ function renderTreeCardDateLines(person) {
       root.querySelector('#notesNewNote')?.addEventListener('click', openNewNoteModal);
       root.querySelector('#notesNewCollection')?.addEventListener('click', openNewCollectionModal);
       root.querySelector('#notesAddCollection')?.addEventListener('click', openNewCollectionModal);
-      root.querySelectorAll('[data-notes-view]').forEach(btn => btn.addEventListener('click', () => { state.notesView = btn.dataset.notesView; state.notesActiveCollectionId = null; state.notesActiveCaseId = null; state.notesTypeFilter = 'all'; if (state.notesView === 'cases') state.notesViewMode = 'cards'; renderNotes(); }));
-      root.querySelectorAll('[data-notes-collection]').forEach(btn => btn.addEventListener('click', () => { state.notesView = 'collection'; state.notesActiveCollectionId = btn.dataset.notesCollection; state.notesActiveCaseId = null; state.notesTypeFilter = 'all'; renderNotes(); }));
+      root
+        .querySelectorAll(
+          '[data-notes-view]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              state.notesPersonFilterId =
+                '';
+
+              state.notesView =
+                button.dataset.notesView;
+
+              state.notesActiveCollectionId =
+                null;
+
+              state.notesActiveCaseId =
+                null;
+
+              state.notesTypeFilter =
+                'all';
+
+              if (
+                state.notesView === 'cases'
+              ) {
+                state.notesViewMode =
+                  'cards';
+              }
+
+              renderNotes();
+            }
+          );
+        });
+      root
+        .querySelectorAll(
+          '[data-notes-collection]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              state.notesPersonFilterId =
+                '';
+
+              state.notesView =
+                'collection';
+
+              state.notesActiveCollectionId =
+                button.dataset
+                  .notesCollection;
+
+              state.notesActiveCaseId =
+                null;
+
+              state.notesTypeFilter =
+                'all';
+
+              renderNotes();
+            }
+          );
+        });
       root.querySelectorAll('[data-notes-collection-menu]').forEach(btn => btn.addEventListener('click', e => { e.stopPropagation(); openNotesCollectionMenu(btn.dataset.notesCollectionMenu, btn); }));
     }
 
     function bindNotesControls() {
       bindToasts(main);
       bindSearchInput(main, '#notesSearch', 'notesSearch', renderNotes);
+      main.querySelector('[data-clear-notes-person-filter]') ?.addEventListener('click', () => {state.notesPersonFilterId = ''; state.selectedNoteId = null; state.notesRightCollapsed = true; renderNotes();});
       main.querySelector('#notesSort')?.addEventListener('change', e => { state.notesSort = e.target.value; renderNotes(); });
       main.querySelector('#notesTypeFilter')?.addEventListener('change', e => { state.notesTypeFilter = e.target.value; renderNotes(); });
       main.querySelector('#notesClearSearch')?.addEventListener('click', () => { state.notesSearch = ''; renderNotes(); });
@@ -38254,6 +39412,23 @@ function renderTreeCardDateLines(person) {
         if (state.notesView === 'collection') return note.collectionId === state.notesActiveCollectionId;
         return true;
       });
+      if (
+        state.notesPersonFilterId
+      ) {
+        const linkedNoteIds =
+          new Set(
+            getNotesForPerson(
+              state.notesPersonFilterId
+            ).map(note => note.id)
+          );
+
+        list =
+          list.filter(note =>
+            linkedNoteIds.has(
+              note.id
+            )
+          );
+      }
       if (state.notesView !== 'cases' && state.notesTypeFilter !== 'all') list = list.filter(note => note.type === state.notesTypeFilter);
       const q = state.notesSearch.trim().toLowerCase();
       if (q) list = list.filter(note => `${note.title} ${note.body} ${note.excerpt} ${(note.tags||[]).join(' ')} ${(note.linkedPeople||[]).join(' ')}`.toLowerCase().includes(q));
