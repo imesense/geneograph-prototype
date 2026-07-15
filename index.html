@@ -9181,7 +9181,7 @@
     .albums-check[aria-pressed="true"] { border-color: rgba(98,217,154,.55); background: var(--brand-green-500); color: #10251a; }
     .albums-fav-button.active { color: #f1c96c; }
     .albums-card-body { min-width: 0; height: 116px; padding: var(--space-3); display: grid; grid-template-rows: minmax(0,2.5em) 1.25em minmax(0,1fr) 32px; gap: 5px; overflow: hidden; }
-    .albums-card-body strong { min-width: 0; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+    .albums-card-body strong { min-width: 0; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;  line-clamp: 2;}
     .albums-card-people, .albums-card-footer > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .albums-card-body strong { color: var(--text-primary); font-size: 14px; font-weight: 900; line-height: 1.25; }
     .albums-card-people { color: var(--text-secondary); font-size: 13px; font-weight: 800; }
@@ -9392,6 +9392,7 @@
       letter-spacing: .01em;
       overflow-wrap: anywhere;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
       -webkit-box-orient: vertical;
     }
 
@@ -9400,6 +9401,14 @@
       color: var(--text-tertiary);
       font-size: 13px;
       font-weight: 700;
+    }
+
+    .albums-detail.is-editing
+    .albums-detail-summary {
+      padding:
+        var(--space-2)
+        0
+        0;
     }
 
     .albums-detail-deleted-copy {
@@ -9818,6 +9827,432 @@
     .albums-modal-choice { width: 100%; min-height: 52px; padding: var(--space-2) var(--space-3); border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--surface-card); color: var(--text-secondary); display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: var(--space-3); text-align: left; }
     .albums-modal-choice:hover, .albums-modal-choice:focus-within { border-color: var(--border-strong); background: var(--surface-card-hover); }
     .albums-modal-choice > span { min-width: 0; }
+
+    /* Albums: Tag people modal */
+    .photo-people-modal {
+      width:
+        min(
+          680px,
+          calc(100vw - 32px)
+        );
+
+      height:
+        min(
+          760px,
+          calc(100vh - 48px)
+        );
+
+      max-height:
+        calc(100vh - 48px);
+
+      overflow: hidden;
+
+      display: grid;
+      grid-template-rows:
+        auto
+        minmax(0, 1fr)
+        auto;
+    }
+
+    .photo-people-body {
+      min-width: 0;
+      min-height: 0;
+
+      padding: var(--space-5);
+
+      display: grid;
+      grid-template-rows:
+        auto
+        auto
+        minmax(0, 1fr);
+      gap: var(--space-4);
+
+      overflow: hidden;
+    }
+
+    .photo-people-search-field,
+    .photo-people-selected-panel,
+    .photo-people-results-panel {
+      min-width: 0;
+    }
+
+    .photo-people-search-field
+    .search-input
+    input {
+      padding: 0;
+      text-align: left;
+    }
+
+    .photo-people-selected-panel,
+    .photo-people-results-panel {
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .photo-people-selected-panel[hidden] {
+      display: none;
+    }
+
+    .photo-people-results-panel {
+      min-height: 0;
+
+      grid-template-rows:
+        auto
+        minmax(0, 1fr);
+    }
+
+    .photo-people-selected-head,
+    .photo-people-results-head {
+      min-width: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    .photo-people-selected-head
+    strong,
+    .photo-people-results-head
+    strong {
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .photo-people-selected-head
+    span,
+    .photo-people-results-head
+    span {
+      color: var(--text-tertiary);
+      font-size: 12px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .photo-people-selected-list {
+      min-width: 0;
+
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .photo-people-selected-chip {
+      min-width: 0;
+      max-width: 100%;
+      min-height: 38px;
+
+      padding:
+        4px
+        7px
+        4px
+        4px;
+
+      border:
+        1px solid
+        rgba(
+          98,
+          217,
+          154,
+          .24
+        );
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        rgba(
+          22,
+          58,
+          42,
+          .32
+        );
+
+      color: var(--text-primary);
+
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .photo-people-selected-chip:hover,
+    .photo-people-selected-chip:focus-visible {
+      border-color:
+        rgba(
+          98,
+          217,
+          154,
+          .48
+        );
+
+      background:
+        rgba(
+          22,
+          58,
+          42,
+          .5
+        );
+    }
+
+    .photo-people-selected-chip:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-400);
+
+      outline-offset: 2px;
+    }
+
+    .photo-people-chip-avatar {
+      --person-avatar-width: 28px;
+      --person-avatar-radius: 7px;
+      --person-avatar-font-size: 10px;
+    }
+
+    .photo-people-selected-name {
+      min-width: 0;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .photo-people-selected-remove {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 16px;
+
+      display: grid;
+      place-items: center;
+
+      color: var(--text-tertiary);
+    }
+
+    .photo-people-selected-remove
+    svg {
+      width: 14px;
+      height: 14px;
+      display: block;
+    }
+
+    .photo-people-results {
+      min-width: 0;
+      min-height: 0;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        rgba(
+          0,
+          0,
+          0,
+          .08
+        );
+
+      overflow-x: hidden;
+      overflow-y: auto;
+
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+    }
+
+    .photo-people-result {
+      width: 100%;
+      min-height: 78px;
+
+      padding:
+        var(--space-3)
+        var(--space-4);
+
+      border-bottom:
+        1px solid
+        var(--border-default);
+
+      color: var(--text-secondary);
+
+      display: grid;
+      grid-template-columns:
+        44px
+        minmax(0, 1fr)
+        auto;
+      gap: var(--space-3);
+      align-items: center;
+
+      cursor: pointer;
+    }
+
+    .photo-people-result:last-child {
+      border-bottom: 0;
+    }
+
+    .photo-people-result:hover,
+    .photo-people-result:focus-within {
+      background:
+        var(--surface-card-hover);
+    }
+
+    .photo-people-result:focus-within {
+      outline:
+        2px solid
+        var(--brand-green-400);
+
+      outline-offset: -2px;
+    }
+
+    .photo-people-result-avatar {
+      --person-avatar-width: 44px;
+      --person-avatar-radius: 9px;
+      --person-avatar-font-size: 12px;
+    }
+
+    .photo-people-result-copy {
+      min-width: 0;
+
+      display: grid;
+      gap: 2px;
+    }
+
+    .photo-people-result-copy
+    strong,
+    .photo-people-result-copy
+    span {
+      min-width: 0;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .photo-people-result-copy
+    strong {
+      color: var(--text-primary);
+      font-size: 14px;
+      line-height: 1.25;
+    }
+
+    .photo-people-result-copy
+    span {
+      color: var(--text-tertiary);
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .photo-people-result
+    input {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+
+      accent-color:
+        var(--brand-green-500);
+
+      cursor: pointer;
+    }
+
+    .photo-people-empty {
+      min-height: 100%;
+
+      padding: var(--space-5);
+
+      color: var(--text-tertiary);
+
+      display: grid;
+      place-items: center;
+
+      text-align: center;
+      line-height: 1.45;
+    }
+
+    .photo-people-footer {
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .photo-people-selection-count {
+      color: var(--text-tertiary);
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .photo-people-footer-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .photo-people-save:disabled,
+    .photo-people-save:disabled:hover {
+      opacity: .48;
+      cursor: not-allowed;
+      transform: none;
+      filter: none;
+    }
+
+    .photo-people-primary-copy {
+      margin: 0;
+
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .photo-people-primary-list {
+      margin: 0;
+      padding-left: var(--space-5);
+
+      color: var(--text-primary);
+
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    @media (max-width: 620px) {
+      .photo-people-modal {
+        width:
+          min(
+            100%,
+            calc(100vw - 24px)
+          );
+
+        height:
+          min(
+            760px,
+            calc(100vh - 24px)
+          );
+
+        max-height:
+          calc(100vh - 24px);
+      }
+
+      .photo-people-body {
+        padding: var(--space-4);
+      }
+
+      .photo-people-result {
+        padding-inline:
+          var(--space-3);
+      }
+
+      .photo-people-footer {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .photo-people-footer-actions {
+        justify-content: flex-end;
+      }
+    }
+
     .photo-picker-thumb { width: 48px; height: 48px; border-radius: 4px; }
     .albums-delete-copy { padding: var(--space-4); border: 1px solid rgba(212,107,107,.24); border-radius: var(--radius-sm); background: rgba(212,107,107,.08); color: #f0b8b8; }
     .albums-lightbox-photo { width: 100%; height: min(64vh, 720px); border-radius: var(--radius-sm); }
@@ -31259,30 +31694,981 @@ function createPersonSidebarElement(
     }
 
     function openPhotoPeopleModal(photoId) {
-      const photo = getPhoto(photoId, { projectId: currentProjectId() });
+      const photo = getPhoto(
+        photoId,
+        {
+          projectId: currentProjectId()
+        }
+      );
+
       if (!photo) return;
-      let selectedIds = new Set(photo.personIds || []);
+
+      const initialSelectedIds = new Set(
+        [
+          ...new Set(
+            photo.personIds || []
+          )
+        ].filter(personId =>
+          getPerson(personId)?.projectId
+            === photo.projectId
+        )
+      );
+
+      const selectedIds =
+        new Set(initialSelectedIds);
+
       let query = '';
-      const renderChoices = () => {
-        const people = getPeople(photo.projectId).filter(person =>
-          (person.names?.display || '').toLowerCase().includes(query.toLowerCase())
+
+      const personName = person =>
+        person?.names?.display
+        || 'Unnamed person';
+
+      const personContext = person =>
+        getPlaceEventDisplay(
+          person?.birth
+        )
+        || getPlaceEventDisplay(
+          person?.death
+        )
+        || person?.branch
+        || person?.role
+        || '';
+
+      const personSearchText = person => [
+        personName(person),
+        person?.names?.first,
+        person?.names?.middle,
+        person?.names?.last,
+        person?.names?.maiden,
+        albumPhotoPersonDates(person),
+        getPlaceEventDisplay(
+          person?.birth
+        ),
+        getPlaceEventDisplay(
+          person?.death
+        ),
+        person?.branch,
+        person?.role
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+
+      const selectionChanged = () =>
+        initialSelectedIds.size
+          !== selectedIds.size
+        || [
+          ...initialSelectedIds
+        ].some(personId =>
+          !selectedIds.has(personId)
         );
-        const host = modalBackdrop.querySelector('[data-photo-people-choices]');
-        if (!host) return;
-        host.innerHTML = people.map(person => `<label class="albums-modal-choice">${renderPersonAvatar(person, 'small-avatar', { element: 'span' })}<span>${escapeHtml(person.names?.display || 'Unnamed person')}</span><input type="checkbox" value="${escapeHtml(person.id)}" ${selectedIds.has(person.id) ? 'checked' : ''}></label>`).join('') || '<div class="panel-muted">No people match this search.</div>';
-        host.querySelectorAll('input[type="checkbox"]').forEach(input => input.addEventListener('change', () => {
-          if (input.checked) selectedIds.add(input.value);
-          else selectedIds.delete(input.value);
-        }));
+
+      const getCandidates = () => {
+        const normalizedQuery =
+          query.trim().toLowerCase();
+
+        const photoAlbumIds =
+          new Set(photo.albumIds || []);
+
+        const photoPlace = String(
+          getPlaceDisplay(
+            photo.placeId
+          )
+          || photo.placeText
+          || ''
+        ).toLowerCase();
+
+        const projectPhotos =
+          getProjectPhotos(
+            photo.projectId
+          ).filter(item =>
+            item.id !== photo.id
+          );
+
+        const ranked =
+          getPeople(photo.projectId)
+            .filter(person =>
+              person?.id
+              && !person.deleted
+            )
+            .filter(person =>
+              !selectedIds.has(
+                person.id
+              )
+            )
+            .filter(person =>
+              !normalizedQuery
+              || personSearchText(
+                person
+              ).includes(
+                normalizedQuery
+              )
+            )
+            .map(person => {
+              const displayName =
+                personName(
+                  person
+                ).toLowerCase();
+
+              const nameParts = [
+                person?.names?.first,
+                person?.names?.middle,
+                person?.names?.last,
+                person?.names?.maiden
+              ]
+                .filter(Boolean)
+                .map(value =>
+                  String(
+                    value
+                  ).toLowerCase()
+                );
+
+              let score = 0;
+
+              if (normalizedQuery) {
+                if (
+                  displayName
+                    === normalizedQuery
+                ) {
+                  score = 500;
+                } else if (
+                  displayName.startsWith(
+                    normalizedQuery
+                  )
+                ) {
+                  score = 400;
+                } else if (
+                  nameParts.some(value =>
+                    value.startsWith(
+                      normalizedQuery
+                    )
+                  )
+                ) {
+                  score = 300;
+                } else if (
+                  displayName.includes(
+                    normalizedQuery
+                  )
+                ) {
+                  score = 200;
+                } else {
+                  score = 100;
+                }
+
+                score += Math.min(
+                  getPersonPhotoCount(
+                    person.id
+                  ),
+                  50
+                );
+              } else {
+                let taggedPhotos = 0;
+                let sharedAlbums = 0;
+                let coTaggedPhotos = 0;
+
+                projectPhotos.forEach(
+                  item => {
+                    const personIds =
+                      item.personIds || [];
+
+                    if (
+                      !personIds.includes(
+                        person.id
+                      )
+                    ) {
+                      return;
+                    }
+
+                    taggedPhotos += 1;
+
+                    if (
+                      photoAlbumIds.size
+                      && (
+                        item.albumIds || []
+                      ).some(albumId =>
+                        photoAlbumIds.has(
+                          albumId
+                        )
+                      )
+                    ) {
+                      sharedAlbums += 1;
+                    }
+
+                    if (
+                      selectedIds.size
+                      && personIds.some(
+                        personId =>
+                          selectedIds.has(
+                            personId
+                          )
+                      )
+                    ) {
+                      coTaggedPhotos += 1;
+                    }
+                  }
+                );
+
+                const personPlaces = [
+                  getPlaceEventDisplay(
+                    person?.birth
+                  ),
+                  getPlaceEventDisplay(
+                    person?.death
+                  )
+                ]
+                  .filter(Boolean)
+                  .map(value =>
+                    String(
+                      value
+                    ).toLowerCase()
+                  );
+
+                score =
+                  coTaggedPhotos * 1000
+                  + sharedAlbums * 100
+                  + (
+                    photoPlace
+                    && personPlaces
+                      .includes(
+                        photoPlace
+                      )
+                      ? 50
+                      : 0
+                  )
+                  + taggedPhotos;
+              }
+
+              return {
+                person,
+                score
+              };
+            })
+            .sort((a, b) =>
+              b.score - a.score
+              || personName(
+                a.person
+              ).localeCompare(
+                personName(
+                  b.person
+                )
+              )
+            );
+
+        return {
+          total: ranked.length,
+
+          people: ranked
+            .slice(0, 5)
+            .map(item =>
+              item.person
+            )
+        };
       };
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="photoPeopleTitle"><div class="modal-header"><div><h2 id="photoPeopleTitle">Tag people</h2><p>${escapeHtml(photo.title)}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body form-grid"><label class="search-input">${icon.search}<input data-photo-people-search placeholder="Search people"></label><div class="albums-modal-list" data-photo-people-choices></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-photo-people-save>Save people</button></div></div>`);
-      renderChoices();
-      modalBackdrop.querySelector('[data-photo-people-search]')?.addEventListener('input', event => { query = event.target.value; renderChoices(); });
-      modalBackdrop.querySelector('[data-photo-people-save]')?.addEventListener('click', () => {
+
+      const renderSelected = () => {
+        const people = [
+          ...selectedIds
+        ]
+          .map(getPerson)
+          .filter(person =>
+            person
+            && person.projectId
+              === photo.projectId
+          );
+
+        if (!people.length) {
+          return '';
+        }
+
+        return `
+          <div
+            class="
+              photo-people-selected-head
+            ">
+            <strong>
+              Tagged people
+            </strong>
+
+            <span>
+              ${people.length}
+            </span>
+          </div>
+
+          <div
+            class="
+              photo-people-selected-list
+            ">
+            ${people.map(person => {
+              const name =
+                personName(person);
+
+              return `
+                <button
+                  class="
+                    photo-people-selected-chip
+                  "
+                  type="button"
+                  data-photo-people-remove="${
+                    escapeHtml(
+                      person.id
+                    )
+                  }"
+                  aria-label="${
+                    escapeHtml(
+                      `Remove tag for ${name}`
+                    )
+                  }">
+
+                  ${renderPersonAvatar(
+                    person,
+                    'photo-people-chip-avatar',
+                    {
+                      element: 'span'
+                    }
+                  )}
+
+                  <span
+                    class="
+                      photo-people-selected-name
+                    ">
+                    ${escapeHtml(name)}
+                  </span>
+
+                  <span
+                    class="
+                      photo-people-selected-remove
+                    "
+                    aria-hidden="true">
+                    ${icon.close}
+                  </span>
+                </button>
+              `;
+            }).join('')}
+          </div>
+        `;
+      };
+
+      const renderResults =
+        candidates => {
+          if (
+            !candidates.people.length
+          ) {
+            return `
+              <div
+                class="
+                  photo-people-empty
+                ">
+                ${
+                  query.trim()
+                    ? `
+                      No matching people
+                      found. Try another
+                      name, date, place,
+                      or branch.
+                    `
+                    : `
+                      No additional people
+                      to suggest.
+                    `
+                }
+              </div>
+            `;
+          }
+
+          return candidates.people
+            .map(person => {
+              const name =
+                personName(person);
+
+              const dates =
+                albumPhotoPersonDates(
+                  person
+                )
+                || 'Dates unknown';
+
+              const context =
+                personContext(person);
+
+              return `
+                <label
+                  class="
+                    photo-people-result
+                  ">
+
+                  ${renderPersonAvatar(
+                    person,
+                    'photo-people-result-avatar',
+                    {
+                      element: 'span'
+                    }
+                  )}
+
+                  <span
+                    class="
+                      photo-people-result-copy
+                    ">
+                    <strong>
+                      ${escapeHtml(name)}
+                    </strong>
+
+                    <span>
+                      ${escapeHtml(dates)}
+                    </span>
+
+                    ${
+                      context
+                        ? `
+                          <span>
+                            ${
+                              escapeHtml(
+                                context
+                              )
+                            }
+                          </span>
+                        `
+                        : ''
+                    }
+                  </span>
+
+                  <input
+                    type="checkbox"
+                    value="${
+                      escapeHtml(
+                        person.id
+                      )
+                    }"
+                    data-photo-people-choice
+                    aria-label="${
+                      escapeHtml(
+                        `Tag ${name}`
+                      )
+                    }">
+                </label>
+              `;
+            })
+            .join('');
+        };
+
+      openModal(`
+        <div
+          class="
+            modal
+            photo-people-modal
+          "
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="
+            photoPeopleTitle
+          ">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="photoPeopleTitle">
+                Tag people
+              </h2>
+
+              <p>
+                ${escapeHtml(
+                  photo.title
+                  || photo.filename
+                  || 'Untitled photo'
+                )}
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="
+                Close tag people dialog
+              ">
+              ${icon.close}
+            </button>
+          </div>
+
+          <div
+            class="
+              photo-people-body
+            ">
+
+            <div
+              class="
+                field
+                photo-people-search-field
+              ">
+              <label
+                for="photoPeopleSearch">
+                Find people
+              </label>
+
+              <div
+                class="search-input">
+                ${icon.search}
+
+                <input
+                  id="photoPeopleSearch"
+                  type="search"
+                  data-photo-people-search placeholder="Search by name, dates, place, or branch" autocomplete="off">
+              </div>
+            </div>
+
+            <section
+              class="
+                photo-people-selected-panel
+              "
+              data-photo-people-selected-panel
+              hidden>
+            </section>
+
+            <section
+              class="
+                photo-people-results-panel
+              ">
+
+              <div
+                class="
+                  photo-people-results-head
+                ">
+                <strong
+                  data-photo-people-results-title>
+                </strong>
+
+                <span
+                  data-photo-people-results-meta>
+                </span>
+              </div>
+
+              <div
+                class="
+                  photo-people-results
+                "
+                data-photo-people-choices>
+              </div>
+            </section>
+          </div>
+
+          <div
+            class="
+              modal-footer
+              photo-people-footer
+            ">
+
+            <span
+              class="
+                photo-people-selection-count
+              "
+              data-photo-people-selection-count>
+            </span>
+
+            <div
+              class="
+                photo-people-footer-actions
+              ">
+              <button
+                class="
+                  button
+                  secondary
+                "
+                type="button"
+                data-close>
+                Cancel
+              </button>
+
+              <button
+                class="
+                  button
+                  primary
+                  photo-people-save
+                "
+                type="button"
+                data-photo-people-save
+                disabled>
+                Save people
+              </button>
+            </div>
+          </div>
+        </div>
+      `);
+
+      const modal =
+        modalBackdrop.querySelector(
+          '.photo-people-modal'
+        );
+
+      if (!modal) return;
+
+      const refresh = () => {
+        const selectedHtml =
+          renderSelected();
+
+        const selectedPanel =
+          modal.querySelector(
+            '[data-photo-people-selected-panel]'
+          );
+
+        const candidates =
+          getCandidates();
+
+        const queryActive =
+          Boolean(query.trim());
+
+        selectedPanel.hidden =
+          !selectedHtml;
+
+        selectedPanel.innerHTML =
+          selectedHtml;
+
+        modal
+          .querySelector(
+            '[data-photo-people-results-title]'
+          )
+          .textContent =
+            queryActive
+              ? 'Search results'
+              : 'Suggested people';
+
+        modal
+          .querySelector(
+            '[data-photo-people-results-meta]'
+          )
+          .textContent =
+            candidates.total
+              > candidates.people.length
+              ? `
+                Showing
+                ${candidates.people.length}
+                of ${candidates.total}
+              `.replace(
+                /\s+/g,
+                ' '
+              ).trim()
+              : candidates.total
+                ? `
+                  ${candidates.total}
+                  ${
+                    queryActive
+                      ? 'match'
+                      : 'suggestion'
+                  }${
+                    candidates.total
+                      === 1
+                        ? ''
+                        : 's'
+                  }
+                `.replace(
+                  /\s+/g,
+                  ' '
+                ).trim()
+                : '';
+
+        modal
+          .querySelector(
+            '[data-photo-people-choices]'
+          )
+          .innerHTML =
+            renderResults(
+              candidates
+            );
+
+        modal
+          .querySelector(
+            '[data-photo-people-selection-count]'
+          )
+          .textContent = `
+            ${selectedIds.size}
+            ${
+              selectedIds.size === 1
+                ? 'person'
+                : 'people'
+            }
+            selected
+          `.replace(
+            /\s+/g,
+            ' '
+          ).trim();
+
+        modal
+          .querySelector(
+            '[data-photo-people-save]'
+          )
+          .disabled =
+            !selectionChanged();
+
+        localizeUI(modal);
+      };
+
+      const applySelection = () => {
         closeModal();
-        setPhotoPersonIds(photo.id, [...selectedIds]);
-        showToast('People tags updated.');
-      });
+
+        setPhotoPersonIds(
+          photo.id,
+          [
+            ...selectedIds
+          ]
+        );
+
+        showToast(
+          'People tags updated.'
+        );
+      };
+
+      const saveSelection = () => {
+        if (!selectionChanged()) {
+          return;
+        }
+
+        const primaryPhotoRemovals = [
+          ...initialSelectedIds
+        ]
+          .filter(personId =>
+            !selectedIds.has(
+              personId
+            )
+          )
+          .map(getPerson)
+          .filter(person =>
+            person?.primaryPhotoId
+              === photo.id
+          );
+
+        if (
+          !primaryPhotoRemovals.length
+        ) {
+          applySelection();
+          return;
+        }
+
+        const existingOverlay =
+          document.getElementById(
+            'photoPeoplePrimaryRemovalOverlay'
+          );
+
+        if (existingOverlay) {
+          return;
+        }
+
+        const overlay =
+          document.createElement(
+            'div'
+          );
+
+        overlay.className =
+          'add-person-mini-backdrop';
+
+        overlay.id =
+          'photoPeoplePrimaryRemovalOverlay';
+
+        overlay.innerHTML = `
+          <div
+            class="
+              add-person-mini-card
+            "
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="
+              photoPeoplePrimaryRemovalTitle
+            ">
+
+            <div
+              class="
+                add-person-mini-head
+              ">
+              <div>
+                <h3
+                  id="
+                    photoPeoplePrimaryRemovalTitle
+                  ">
+                  Remove primary
+                  photo tags?
+                </h3>
+
+                <p>
+                  ${escapeHtml(
+                    photo.title
+                    || photo.filename
+                    || 'Selected photo'
+                  )}
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="
+                add-person-mini-body
+              ">
+              <p
+                class="
+                  photo-people-primary-copy
+                ">
+                Removing these tags
+                will also clear this
+                image as the primary
+                photo for:
+              </p>
+
+              <ul
+                class="
+                  photo-people-primary-list
+                ">
+                ${
+                  primaryPhotoRemovals
+                    .map(person => `
+                      <li>
+                        ${
+                          escapeHtml(
+                            personName(
+                              person
+                            )
+                          )
+                        }
+                      </li>
+                    `)
+                    .join('')
+                }
+              </ul>
+            </div>
+
+            <div
+              class="
+                add-person-mini-footer
+              ">
+              <button
+                class="
+                  button
+                  secondary
+                "
+                type="button"
+                data-photo-people-keep-editing>
+                Keep editing
+              </button>
+
+              <button
+                class="
+                  button
+                  danger
+                "
+                type="button"
+                data-photo-people-confirm-save>
+                Remove tags and save
+              </button>
+            </div>
+          </div>
+        `;
+
+        const closeConfirm = () => {
+          overlay.remove();
+
+          modal
+            .querySelector(
+              '[data-photo-people-save]'
+            )
+            ?.focus({
+              preventScroll: true
+            });
+        };
+
+        document.body.appendChild(
+          overlay
+        );
+
+        overlay
+          .querySelector(
+            '[data-photo-people-keep-editing]'
+          )
+          ?.addEventListener(
+            'click',
+            closeConfirm
+          );
+
+        overlay
+          .querySelector(
+            '[data-photo-people-confirm-save]'
+          )
+          ?.addEventListener(
+            'click',
+            () => {
+              overlay.remove();
+              applySelection();
+            }
+          );
+
+        overlay
+          .querySelector(
+            '[data-photo-people-keep-editing]'
+          )
+          ?.focus();
+      };
+
+      modal
+        .querySelector(
+          '[data-photo-people-search]'
+        )
+        ?.addEventListener(
+          'input',
+          event => {
+            query =
+              event.currentTarget.value;
+
+            refresh();
+          }
+        );
+
+      modal.addEventListener(
+        'change',
+        event => {
+          const input =
+            event.target.closest(
+              '[data-photo-people-choice]'
+            );
+
+          if (!input) return;
+
+          selectedIds.add(
+            input.value
+          );
+
+          refresh();
+        }
+      );
+
+      modal.addEventListener(
+        'click',
+        event => {
+          const remove =
+            event.target.closest(
+              '[data-photo-people-remove]'
+            );
+
+          if (remove) {
+            selectedIds.delete(
+              remove.dataset
+                .photoPeopleRemove
+            );
+
+            refresh();
+            return;
+          }
+
+          if (
+            event.target.closest(
+              '[data-photo-people-save]'
+            )
+          ) {
+            saveSelection();
+          }
+        }
+      );
+
+      refresh();
+
+      modal
+        .querySelector(
+          '[data-photo-people-search]'
+        )
+        ?.focus({
+          preventScroll: true
+        });
     }
 
     function openLinkPhotosToPersonModal(personId, options = {}) {
