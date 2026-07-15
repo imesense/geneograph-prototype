@@ -7069,32 +7069,45 @@
     .profile-photo-thumb {
       position: relative;
       isolation: isolate;
+
       width: 118px;
       min-width: 118px;
       height: 118px;
       flex: 0 0 118px;
+
       scroll-snap-align: start;
+
       padding: 0;
-      border: 1px solid rgba(255, 255, 255, .08);
+      border: 1px solid var(--border-default);
       border-radius: 9px;
-      background:
-        linear-gradient(135deg, #163a2a, #2fae74);
-      color: var(--text-primary);
+
+      background: transparent;
+      color: inherit;
+
       display: grid;
       place-items: center;
+
       overflow: hidden;
-      font-size: 15px;
-      font-weight: 900;
+
+      appearance: none;
       cursor: pointer;
+
       transition:
         transform var(--ease),
         border-color var(--ease);
     }
 
-    .profile-photo-thumb:hover,
+    .profile-photo-thumb:hover {
+      transform: translateY(-1px);
+      border-color: var(--border-strong);
+    }
+
     .profile-photo-thumb:focus-visible {
       transform: translateY(-1px);
-      border-color: rgba(98, 217, 154, .42);
+      border-color: var(--border-strong);
+
+      outline: 2px solid var(--text-tertiary);
+      outline-offset: 2px;
     }
 
     .profile-photo-carousel-button {
@@ -24133,7 +24146,7 @@ function renderTreeCardDateLines(person) {
             </span>
 
             <button
-              class="people-filter-chip-remove"
+              class="active-filter-chip-remove"
               type="button"
               data-people-remove-filter="${escapeHtml(key)}"
               aria-label="Remove ${escapeHtml(label)} filter"
@@ -24449,7 +24462,20 @@ function renderTreeCardDateLines(person) {
           const isPreviewed = person.id === state.selectedPeopleId;
           const isSelected = selectedIds.has(person.id);
           const rowClasses = [isPreviewed ? 'is-previewed' : '', isSelected ? 'is-selected' : ''].filter(Boolean).join(' ');
-          return `<tr class="${rowClasses}" data-people-row="${person.id}" tabindex="0">
+          return `
+            <tr
+              class="${escapeHtml(
+                rowClasses
+              )}"
+              data-people-row="${escapeHtml(
+                person.id
+              )}"
+              ${
+                isPreviewed
+                  ? 'aria-current="true"'
+                  : ''
+              }
+              tabindex="0">
             <td class="people-select-column">
             <input class="people-select-checkbox" type="checkbox" data-people-select-id="${escapeHtml(person.id)}" aria-label="Select ${escapeHtml(person.name)}" ${isSelected ? 'checked' : ''}></td>
             <td>
@@ -28169,85 +28195,86 @@ function renderTreeCardDateLines(person) {
       if (context === 'people') state.selectedPeopleId = personId;
     }
 
-const personSidebarScrollByContext = {
-  tree: 0,
-  people: 0
-};
+    const personSidebarScrollByContext = {
+      tree: 0,
+      people: 0
+    };
 
-function getPersonSidebarElement(
-  context
-) {
-  return main.querySelector(
-    `[data-person-sidebar-context="${
-      CSS.escape(context)
-    }"]`
-  );
-}
-
-function syncPersonSidebarLayoutState(
-  context
-) {
-  if (context === 'people') {
-    main
-      .querySelector('.people-layout')
-      ?.classList.toggle(
-        'preview-collapsed',
-        Boolean(
-          state.peoplePreviewCollapsed
-        )
-      );
-
-    return;
-  }
-
-  main
-    .querySelector('.tree-workspace')
-    ?.classList.toggle(
-      'inspector-collapsed',
-      Boolean(
-        state.treeInspectorCollapsed
-      )
-    );
-}
-
-function personSidebarCanProvideScroll(
-  panel
-) {
-  return Boolean(
-    panel
-    && !panel.classList.contains(
-      'collapsed'
-    )
-    && panel.getClientRects().length
-  );
-}
-
-function createPersonSidebarElement(
-  context
-) {
-  const template =
-    document.createElement(
-      'template'
-    );
-
-  template.innerHTML =
-    renderPersonSidebar(
-      personSidebarSelectedId(
-        context
-      ),
+    function getPersonSidebarElement(
       context
-    ).trim();
+    ) {
+      return main.querySelector(
+        `[data-person-sidebar-context="${
+          CSS.escape(context)
+        }"]`
+      );
+    }
 
-  return (
-    template.content.firstElementChild
-    || null
-  );
-}
+    function syncPersonSidebarLayoutState(
+      context
+    ) {
+      if (context === 'people') {
+        main
+          .querySelector('.people-layout')
+          ?.classList.toggle(
+            'preview-collapsed',
+            Boolean(
+              state.peoplePreviewCollapsed
+            )
+          );
+
+        return;
+      }
+
+      main
+        .querySelector('.tree-workspace')
+        ?.classList.toggle(
+          'inspector-collapsed',
+          Boolean(
+            state.treeInspectorCollapsed
+          )
+        );
+    }
+
+    function personSidebarCanProvideScroll(
+      panel
+    ) {
+      return Boolean(
+        panel
+        && !panel.classList.contains(
+          'collapsed'
+        )
+        && panel.getClientRects().length
+      );
+    }
+
+    function createPersonSidebarElement(
+      context
+    ) {
+      const template =
+        document.createElement(
+          'template'
+        );
+
+      template.innerHTML =
+        renderPersonSidebar(
+          personSidebarSelectedId(
+            context
+          ),
+          context
+        ).trim();
+
+      return (
+        template.content.firstElementChild
+        || null
+      );
+    }
 
     function rerenderPersonSidebarContext(
       context,
       {
-        focusSectionId = ''
+        focusSectionId = '',
+        preserveScroll = true
       } = {}
     ) {
       const currentPanel =
@@ -28256,9 +28283,8 @@ function createPersonSidebarElement(
         );
 
       /*
-      * This should only be missing during an
-      * unexpected or incomplete module render.
-      * Keep a safe full-render fallback.
+      * Safe fallback for an incomplete or
+      * unexpected module render.
       */
       if (!currentPanel) {
         if (context === 'people') {
@@ -28271,20 +28297,24 @@ function createPersonSidebarElement(
       }
 
       /*
-      * Save the position only when the current
-      * panel is expanded and visible.
-      *
-      * This also retains the previous position
-      * while the whole inspector is collapsed.
+      * Accordion changes preserve the current
+      * inspector position. Selecting another
+      * person intentionally starts the new
+      * inspector at the top.
       */
       if (
-        personSidebarCanProvideScroll(
+        preserveScroll
+        && personSidebarCanProvideScroll(
           currentPanel
         )
       ) {
         personSidebarScrollByContext[
           context
         ] = currentPanel.scrollTop;
+      } else if (!preserveScroll) {
+        personSidebarScrollByContext[
+          context
+        ] = 0;
       }
 
       const nextPanel =
@@ -28294,27 +28324,14 @@ function createPersonSidebarElement(
 
       if (!nextPanel) return;
 
-      /*
-      * The parent grid owns the expanded or
-      * collapsed inspector width.
-      */
       syncPersonSidebarLayoutState(
         context
       );
 
-      /*
-      * Replace only the right-side panel.
-      * The tree toolbar, tree canvas, People
-      * toolbar, and People table remain intact.
-      */
       currentPanel.replaceWith(
         nextPanel
       );
 
-      /*
-      * The new panel is fresh DOM and therefore
-      * needs its own handlers.
-      */
       bindPersonSidebar(
         nextPanel,
         context
@@ -28335,20 +28352,22 @@ function createPersonSidebarElement(
               - nextPanel.clientHeight
             );
 
+          const requestedScroll =
+            preserveScroll
+              ? (
+                  personSidebarScrollByContext[
+                    context
+                  ] || 0
+                )
+              : 0;
+
           nextPanel.scrollTop =
             Math.min(
-              personSidebarScrollByContext[
-                context
-              ] || 0,
+              requestedScroll,
               maximumScroll
             );
         }
 
-        /*
-        * Replacing the panel removes the clicked
-        * header from the DOM. Restore keyboard
-        * focus without moving the scroll position.
-        */
         if (focusSectionId) {
           nextPanel
             .querySelector(
@@ -28762,25 +28781,138 @@ function createPersonSidebarElement(
       });
     }
 
-    function bindPeopleTableNavigation(rows) {
-      main.querySelectorAll('[data-people-row]').forEach(row => {
-        const previewPerson = () => {
-          state.selectedPeopleId = row.dataset.peopleRow;
-          state.selectedPersonId = row.dataset.peopleRow;
-          resetPersonSidebarSections();
-          renderPeople();
-        };
+    function updatePeoplePreviewRows(
+      personId
+    ) {
+      main
+        .querySelectorAll(
+          '[data-people-row]'
+        )
+        .forEach(row => {
+          const isPreviewed =
+            row.dataset.peopleRow
+            === personId;
 
-        row.addEventListener('click', event => {
-          if (event.target.closest('button, input, select, a, [data-people-select-id]')) return;
-          previewPerson();
+          row.classList.toggle(
+            'is-previewed',
+            isPreviewed
+          );
+
+          if (isPreviewed) {
+            row.setAttribute(
+              'aria-current',
+              'true'
+            );
+          } else {
+            row.removeAttribute(
+              'aria-current'
+            );
+          }
         });
-        row.addEventListener('keydown', event => {
-          if (event.target !== row || event.key !== 'Enter') return;
-          event.preventDefault();
-          previewPerson();
+    }
+
+    function previewPeoplePerson(
+      personId
+    ) {
+      const person =
+        getPerson(personId);
+
+      if (
+        !person
+        || person.projectId
+          !== currentProjectId()
+      ) {
+        return;
+      }
+
+      if (
+        state.selectedPeopleId
+        === personId
+      ) {
+        return;
+      }
+
+      state.selectedPeopleId =
+        personId;
+
+      state.selectedPersonId =
+        personId;
+
+      resetPersonSidebarSections();
+
+      /*
+      * Update only the row preview styling.
+      * The table DOM and its scroll position
+      * remain untouched.
+      */
+      updatePeoplePreviewRows(
+        personId
+      );
+
+      /*
+      * Replace only the right-side panel.
+      * A different person's panel begins
+      * at the top.
+      */
+      rerenderPersonSidebarContext(
+        'people',
+        {
+          preserveScroll: false
+        }
+      );
+    }
+
+    function bindPeopleTableNavigation(
+      rows
+    ) {
+      main
+        .querySelectorAll(
+          '[data-people-row]'
+        )
+        .forEach(row => {
+          const previewPerson = () => {
+            previewPeoplePerson(
+              row.dataset.peopleRow
+            );
+          };
+
+          row.addEventListener(
+            'click',
+            event => {
+              if (
+                event.target.closest(
+                  [
+                    'button',
+                    'input',
+                    'select',
+                    'a',
+                    '[data-people-select-id]'
+                  ].join(',')
+                )
+              ) {
+                return;
+              }
+
+              previewPerson();
+            }
+          );
+
+          row.addEventListener(
+            'keydown',
+            event => {
+              if (
+                event.target !== row
+                || event.key !== 'Enter'
+              ) {
+                return;
+              }
+
+              event.preventDefault();
+
+              previewPerson();
+            }
+          );
         });
-      });
     }
 
     function bindPeopleRowActions(rows) {
