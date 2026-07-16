@@ -332,10 +332,10 @@
     .startup-page::before {
       content: "";
       position: fixed;
-      top: 40px;
+      top: 650px;
       right: 320px;
-      width: min(42vw, 450px);
-      height: 220px;
+      width: min(42vw, 750px);
+      height: 420px;
       pointer-events: none;
       opacity: .2;
       background: var(--geneograph-cover-tree-image) center / contain no-repeat;
@@ -688,7 +688,7 @@
     .startup-continue-eyebrow {
       display: block;
       margin-bottom: 2px;
-      color: var(--brand-green-300);
+      color: var(--brand-green-500);
       font-size: 11px;
       font-weight: 850;
       text-transform: uppercase;
@@ -828,7 +828,15 @@
     }
     .project-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+
+      grid-template-columns:
+        repeat(
+          4,
+          minmax(0, 1fr)
+        );
+
+      align-items: stretch;
+
       gap: var(--space-3);
       margin-bottom: var(--space-6);
     }
@@ -942,6 +950,29 @@
     .list-card .project-body h3 { min-height: 0; }
     .list-card .project-footer { padding: 0 var(--space-3) 0 0; }
 
+    .project-grid .project-card {
+      min-width: 0;
+      min-height: 238px;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .project-grid .project-cover {
+      height: 92px;
+      flex: 0 0 92px;
+    }
+
+    .project-grid .project-body {
+      flex: 1;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .project-grid .modified {
+      margin-top: auto;
+    }
     .right-card, .panel {
       border: 1px solid var(--border-default);
       background: rgba(26,32,31,.9);
@@ -954,8 +985,187 @@
       padding: var(--space-4);
       border-bottom: 1px solid var(--border-default);
     }
-    
-    
+        
+    .startup-import-tile {
+      min-width: 0;
+      min-height: 238px;
+      padding: var(--space-4);
+      border:
+        1px dashed
+        var(--border-strong);
+      border-radius:
+        var(--radius-sm);
+      background:
+        rgba(255, 255, 255, 0.012);
+      color:
+        var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-3);
+      text-align: center;
+      font: inherit;
+      cursor: pointer;
+      transition:
+        transform var(--ease),
+        background var(--ease),
+        border-color var(--ease),
+        box-shadow var(--ease);
+    }
+
+    .startup-import-tile:hover {
+      transform:
+        translateY(-1px);
+
+      border-color:
+        rgba(98, 217, 154, 0.42);
+
+      background:
+        rgba(47, 174, 116, 0.035);
+    }
+
+    .startup-import-tile:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-500);
+
+      outline-offset: 2px;
+    }
+
+    .startup-import-tile.is-dragging {
+      border-color:
+        var(--brand-green-400);
+
+      background:
+        rgba(47, 174, 116, 0.09);
+
+      box-shadow:
+        inset 0 0 0 1px
+        rgba(98, 217, 154, 0.16);
+    }
+
+    .startup-import-tile-icon {
+      width: 42px;
+      height: 42px;
+
+      border:
+        1px solid
+        rgba(98, 217, 154, 0.2);
+
+      border-radius: 10px;
+
+      background:
+        rgba(47, 174, 116, 0.1);
+
+      color:
+        var(--brand-green-300);
+
+      display: grid;
+      place-items: center;
+    }
+
+    .startup-import-tile-icon svg {
+      width: 21px;
+      height: 21px;
+      display: block;
+    }
+
+    .startup-import-tile-copy {
+      min-width: 0;
+
+      display: grid;
+      justify-items: center;
+      gap: 4px;
+    }
+
+    .startup-import-tile-copy strong {
+      color:
+        var(--text-primary);
+
+      font-size: 15px;
+      line-height: 1.3;
+    }
+
+    .startup-import-tile-copy span {
+      color:
+        var(--text-tertiary);
+
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .startup-import-tile-action {
+      min-height: 34px;
+
+      padding:
+        0 var(--space-4);
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius: 7px;
+
+      background:
+        var(--surface-card);
+
+      color:
+        var(--text-primary);
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .startup-import-tile:hover
+    .startup-import-tile-action {
+      border-color:
+        rgba(98, 217, 154, 0.35);
+
+      background:
+        var(--surface-card-hover);
+    }
+
+    .project-list
+    .startup-import-tile {
+      min-height: 82px;
+
+      padding: var(--space-3);
+
+      display: grid;
+      grid-template-columns:
+        44px
+        minmax(0, 1fr)
+        auto;
+
+      align-items: center;
+      justify-items: start;
+
+      gap: var(--space-3);
+
+      text-align: left;
+    }
+
+    .project-list
+    .startup-import-tile-icon {
+      width: 44px;
+      height: 44px;
+    }
+
+    .project-list
+    .startup-import-tile-copy {
+      justify-items: start;
+      text-align: left;
+    }
+
+    .project-list
+    .startup-import-tile-action {
+      margin-left: auto;
+    }
     
     .marker {
       width: 34px;
@@ -1264,12 +1474,6 @@
     }
     .dropzone svg { width: 34px; height: 34px; color: var(--brand-green-500); }
     .dropzone span { display: block; color: var(--text-tertiary); margin-top: 2px; }
-    .startup-page .dropzone {
-      min-height: 78px;
-      margin-top: var(--space-4);
-      gap: var(--space-3);
-    }
-    .startup-page .dropzone svg { width: 28px; height: 28px; }
     .create-gedcom-field {
       grid-column: 1 / -1;
     }
@@ -2964,6 +3168,7 @@
       background-color: #090f0d;
       background-image: radial-gradient(rgba(127,138,134,.18) 1px, transparent 1px);
       background-size: 20px 20px;
+      cursor: grab;
     }
     .tree-stage {
       position: relative;
@@ -3066,6 +3271,27 @@
       margin-bottom: 8px;
     }
     .add-parent-card .add-label { display: block; line-height: 1.05; }
+
+    .tree-person-card,
+    .add-parent-card,
+    .zoom-button {
+      cursor: pointer;
+    }
+
+    .tree-canvas.is-panning,
+    .tree-canvas.is-panning .tree-stage,
+    .tree-canvas.is-panning .tree-person-card,
+    .tree-canvas.is-panning .add-parent-card,
+    .tree-canvas.is-panning .tree-zoom,
+    .tree-canvas.is-panning .zoom-button {
+      cursor: grabbing;
+    }
+
+    .tree-canvas.is-panning {
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
     .tree-zoom {
       position: fixed;
       left: 28px;
@@ -5571,13 +5797,48 @@
       .startup-page [data-view="list"] { grid-column: 3; grid-row: 1; }
     }
 
-    @media (max-width: 1500px) {.project-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      .page-grid { gap: var(--space-5); }
-      .project-hero-layout { grid-template-columns: minmax(0, 1fr) 172px; gap: var(--space-5); }}
-    @media (max-width: 1260px) {:root { --right-w: 300px; --sidebar-w: 260px; }
-      .project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .module-shortcuts { grid-template-columns: repeat(2, 1fr); }
-      .global-search { display: none; }}
+    @media (max-width: 1500px) {
+      .page-grid {
+        gap: var(--space-5);
+      }
+
+      .project-hero-layout {
+        grid-template-columns:
+          minmax(0, 1fr)
+          172px;
+
+        gap: var(--space-5);
+      }
+      .project-grid {
+        grid-template-columns:
+          repeat(
+            3,
+            minmax(0, 1fr)
+          );
+      }
+    }
+    @media (max-width: 1260px) {
+      :root {
+        --right-w: 300px;
+        --sidebar-w: 260px;
+      }
+
+      .module-shortcuts {
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
+      .global-search {
+        display: none;
+      }
+      .project-grid {
+        grid-template-columns:
+          repeat(
+            2,
+            minmax(0, 1fr)
+          );
+      }
+    }
     @media (max-width: 900px) {body { overflow: auto; }
       .app { height: auto; min-height: 100vh; }
       .workspace, .page-grid { grid-template-columns: 1fr; }
@@ -5606,7 +5867,23 @@
       .list-card { grid-template-columns: 1fr; }
       .list-card .project-cover { border-right: 0; border-bottom: 1px solid var(--border-default); }
       .list-card .project-footer { padding: 0 var(--space-4) var(--space-4); }
-      .choice-grid, .module-shortcuts { grid-template-columns: 1fr; }}
+      .choice-grid, .module-shortcuts { grid-template-columns: 1fr; }
+      .project-list
+      .startup-import-tile {
+        grid-template-columns:
+          44px
+          minmax(0, 1fr);
+      }
+
+      .project-list
+      .startup-import-tile-action {
+        width: 100%;
+        margin-left: 0;
+
+        grid-column:
+          1 / -1;
+      }
+    }
 
     @media (max-width: 1180px) {.tree-workspace { grid-template-columns: 1fr 360px; }
       .tree-inspector { width: 360px; min-width: 360px; }
@@ -14007,7 +14284,7 @@
       'Project overview': '----- -------', 'Recent activity': '-------- ----------', 'Project settings': '--------- -------', 'Back to all projects': '----- -- ---- --------',
       'Project identity': '------------- -------', 'Project name': '-------- -------', 'Project description': '-------- -------', 'Project location': '------------ -------',
       'Cover image': '-------', 'Data and privacy': '------ - ------------------', 'View in folder': '-------- - -----', 'Move project': '----------- ------', 'Create local backup': '------- --------- -----',
-      'Enable sync now': '-------- -------------', 'Cloud backup disabled': '-------- ----- ---------', 'Last local backup': '--------- --------- -----',
+      'Cloud backup disabled': '-------- ----- ---------', 'Last local backup': '--------- --------- -----',
       'Living-person protection': '------ ------- -----', 'Hide living people in Publish outputs': '-------- ------- ----- - -----------', 'Private notes in exports': '------ ------- - --------',
       'Date format': '------ ----', 'Reset changes': '-------- ---------', 'Offline project': '-------------', 'Offline projects': '--------------',
       'All files are stored locally': '--- ----- -------- --------', 'All files are stored locally on this device.': '--- ----- -------- -------- -- ---- ----------.',
@@ -17930,9 +18207,20 @@
                 <button class="toolbar-button ${state.viewMode === 'list' ? 'active' : ''}" type="button" data-view="list" aria-label="List view" aria-pressed="${state.viewMode === 'list'}">${icon.list}</button>
               </div>
             </div>
-            ${renderStartupProjectsHeading(projects.length, totalProjects, Boolean(searchQuery))}
-            ${projects.length ? renderProjectCollection(projects) : renderStartupProjectEmpty(searchQuery, totalProjects)}
-            <div class="dropzone" id="startupDropzone">${icon.import}<div><strong>Drop a GeneoGraph or GEDCOM file here to open or import</strong><span>Supports .ggproj and .ged files</span></div></div>
+            ${renderStartupProjectsHeading(
+              projects.length,
+              totalProjects,
+              Boolean(searchQuery)
+            )}
+
+            ${projects.length
+              ? renderProjectCollection(
+                  projects
+                )
+              : renderStartupProjectEmpty(
+                  searchQuery,
+                  totalProjects
+                )}
           </section>
           <aside class="right-column">
             ${continuation ? renderStartupContinuation(continuation) : ''}
@@ -17943,7 +18231,6 @@
       `;
       bindProjectControls();
       bindStartupRightColumn();
-      document.getElementById('startupDropzone').addEventListener('click', openImportModal);
       scheduleLocalize();
     }
 
@@ -18294,7 +18581,7 @@
               <button class="button secondary" type="button" id="viewProjectFolder">${icon.folder} View in folder</button>
               <button class="button secondary" type="button" id="moveProjectLocation">${icon.movefolder} Move project</button>
               <button class="button secondary" type="button" id="createProjectBackup">${icon.file} Create local backup</button>
-              <button class="button primary" type="button" id="enableProjectSync">${icon.sync} Enable sync now</button>
+              <button class="button primary" type="button" id="enableProjectSync">${icon.sync} Sync now</button>
             </div>
           </div>
         </section>
@@ -18415,9 +18702,63 @@
     }
 
 
-    function renderProjectCollection(list) {
-      const cls = state.viewMode === 'grid' ? 'project-grid' : 'project-list';
-      return `<div class="${cls}">${list.map(renderProjectCard).join('')}</div>`;
+    function renderStartupImportTile() {
+      return `
+        <button
+          class="startup-import-tile"
+          id="startupDropzone"
+          type="button"
+          data-startup-import-tile
+          aria-label="
+            Open or import a GeneoGraph
+            or GEDCOM file
+          ">
+
+          <span
+            class="startup-import-tile-icon"
+            aria-hidden="true">
+            ${icon.import}
+          </span>
+
+          <span
+            class="startup-import-tile-copy">
+
+            <strong>
+              Open or import a file
+            </strong>
+
+            <span>
+              Drop a .ggproj or .ged
+              file here
+            </span>
+          </span>
+
+          <span
+            class="startup-import-tile-action"
+            aria-hidden="true">
+            Choose file
+          </span>
+        </button>
+      `;
+    }
+
+    function renderProjectCollection(
+      list
+    ) {
+      const cls =
+        state.viewMode === 'grid'
+          ? 'project-grid'
+          : 'project-list';
+
+      return `
+        <div class="${cls}">
+          ${list
+            .map(renderProjectCard)
+            .join('')}
+
+          ${renderStartupImportTile()}
+        </div>
+      `;
     }
 
     function renderProjectCard(project) {
@@ -18446,7 +18787,11 @@
             style="${coverStyleAttr}">
           </div>
           <div class="project-body">
-            <div class="project-title-row"><h3>${escapeHtml(project.name)}</h3></div>
+            <div class="project-title-row">
+              <h3>
+                ${escapeHtml(project.name)}
+              </h3>
+            </div>
             <div class="project-meta">
               <span>
                 ${icon.peoplegroup}
@@ -18467,8 +18812,7 @@
       const items = [
         { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'Albums', context: 'Albums', icon: icon.image, tone: 'red', title: '4 photos added', detail: 'Whiskerfield family album photos are ready to organize', occurredAt: '2026-05-24T10:42:00Z' },
         { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'People', context: 'People', icon: icon.people, tone: 'purple', title: 'Profile updated', detail: 'Luna Purrington now has a verified birth place', occurredAt: '2026-05-23T18:20:00Z' },
-        { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'Family Tree', context: 'Family Tree', icon: icon.import, tone: 'amber', title: 'GEDCOM import reviewed', detail: '17 people were added to the project', occurredAt: '2026-05-22T10:42:00Z' },
-        { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'Archive', context: 'Archive', icon: icon.file, tone: 'blue', title: 'Archive link created', detail: 'Pawford household register linked to Silver Whiskerfield birth fact', occurredAt: '2026-05-21T09:30:00Z' }
+        { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'Family Tree', context: 'Family Tree', icon: icon.import, tone: 'amber', title: 'GEDCOM import reviewed', detail: '17 people were added to the project', occurredAt: '2026-05-22T10:42:00Z' }
       ].filter(item => sampleData.projects.some(project => project.id === item.projectId));
       if (!items.length) {
         return '';
@@ -18542,9 +18886,9 @@
 
     function renderOpenProjectOfflineCard(project) {
       return `<div class="right-card offline-project-card">
-        <div class="offline-card-titlebar"><h2>Sync status</h2><button class="link" type="button" data-toast="Cloud sync is optional. This project is currently stored locally.">Enable sync now</button></div>
+        <div class="offline-card-titlebar"><h2>Sync status</h2><button class="link" type="button" data-toast="Cloud sync is optional. This project is currently stored locally.">Sync now</button></div>
         <div class="offline-card-body">
-          <div class="offline-card-main"><div class="sync-icon offline-icon">${icon.syncoffline}</div><div><strong>Offline project</strong><span>Cloud backup is disabled. Project files, photos, archive files, notes, and boards are stored locally.</span></div></div>
+          <div class="offline-card-main"><div class="sync-icon offline-icon">${icon.syncoffline}</div><div><strong>Offline project</strong><span>Cloud backup is disabled. Project files, photos, archive files, notes, and boards stay on this device.</span></div></div>
         <button class="offline-card-learn link project-overview-link" type="button" data-toast="Cloud backup help is a placeholder for a later flow.">
           <span class="project-overview-link-text">Learn more about cloud backup</span>
           <span class="project-overview-link-icon" aria-hidden="true">${icon.openlink}</span>
@@ -19002,6 +19346,204 @@
       }
     }
 
+    function bindTreeCanvasPan() {
+      const canvas =
+        main.querySelector(
+          '.tree-canvas'
+        );
+
+      if (!canvas) {
+        return;
+      }
+
+      const DRAG_THRESHOLD = 4;
+
+      const interactiveSelector = [
+        '.tree-person-card',
+        '.add-parent-card',
+        '.tree-zoom',
+        'button',
+        'input',
+        'select',
+        'textarea',
+        'a',
+        '[contenteditable="true"]'
+      ].join(', ');
+
+      let drag = null;
+
+      const finishPan = event => {
+        if (!drag) {
+          return;
+        }
+
+        if (
+          event?.pointerId !== undefined
+          && event.pointerId
+            !== drag.pointerId
+        ) {
+          return;
+        }
+
+        const pointerId =
+          drag.pointerId;
+
+        drag = null;
+
+        canvas.classList.remove(
+          'is-panning'
+        );
+
+        if (
+          canvas.hasPointerCapture
+          ?.(
+            pointerId
+          )
+        ) {
+          try {
+            canvas.releasePointerCapture(
+              pointerId
+            );
+          } catch {
+            /*
+            * Pointer capture may already have been
+            * released by the browser.
+            */
+          }
+        }
+      };
+
+      canvas.addEventListener(
+        'pointerdown',
+        event => {
+          /*
+          * Support the primary left mouse button.
+          * Pen input can use the same interaction.
+          */
+          if (
+            event.button !== 0
+            || event.isPrimary === false
+            || event.pointerType === 'touch'
+          ) {
+            return;
+          }
+
+          const target =
+            event.target instanceof Element
+              ? event.target
+              : null;
+
+          /*
+          * Do not begin panning from cards,
+          * placeholders, zoom controls, or
+          * other interactive elements.
+          */
+          if (
+            target?.closest(
+              interactiveSelector
+            )
+          ) {
+            return;
+          }
+
+          drag = {
+            pointerId:
+              event.pointerId,
+
+            startX:
+              event.clientX,
+
+            startY:
+              event.clientY,
+
+            startScrollLeft:
+              canvas.scrollLeft,
+
+            startScrollTop:
+              canvas.scrollTop,
+
+            moved: false
+          };
+
+          canvas.setPointerCapture
+            ?.(
+              event.pointerId
+            );
+        }
+      );
+
+      canvas.addEventListener(
+        'pointermove',
+        event => {
+          if (
+            !drag
+            || event.pointerId
+              !== drag.pointerId
+          ) {
+            return;
+          }
+
+          const deltaX =
+            event.clientX
+            - drag.startX;
+
+          const deltaY =
+            event.clientY
+            - drag.startY;
+
+          if (!drag.moved) {
+            const distance =
+              Math.hypot(
+                deltaX,
+                deltaY
+              );
+
+            if (
+              distance
+              < DRAG_THRESHOLD
+            ) {
+              return;
+            }
+
+            drag.moved = true;
+
+            canvas.classList.add(
+              'is-panning'
+            );
+          }
+
+          event.preventDefault();
+
+          /*
+          * Subtract the pointer movement so the tree
+          * behaves like a physical sheet being moved.
+          */
+          canvas.scrollLeft =
+            drag.startScrollLeft
+            - deltaX;
+
+          canvas.scrollTop =
+            drag.startScrollTop
+            - deltaY;
+        }
+      );
+
+      canvas.addEventListener(
+        'pointerup',
+        finishPan
+      );
+
+      canvas.addEventListener(
+        'pointercancel',
+        finishPan
+      );
+
+      canvas.addEventListener(
+        'lostpointercapture',
+        finishPan
+      );
+    }
+
     function renderFamilyTree() {
       sidebar.innerHTML = '';
       const treeProjectId =
@@ -19075,6 +19617,7 @@
           </div>
         </div>
       `;
+      bindTreeCanvasPan();
       main.querySelectorAll('[data-person-id]').forEach(card => card.addEventListener('click', e => {
         if (e.target.closest('button')) return;
 
@@ -44231,6 +44774,110 @@
       return list;
     }
 
+    function bindStartupImportTile() {
+      const tile =
+        main.querySelector(
+          '[data-startup-import-tile]'
+        );
+
+      if (!tile) {
+        return;
+      }
+
+      const clearDragState =
+        () => {
+          tile.classList.remove(
+            'is-dragging'
+          );
+        };
+
+      tile.addEventListener(
+        'click',
+        openImportModal
+      );
+
+      [
+        'dragenter',
+        'dragover'
+      ].forEach(type => {
+        tile.addEventListener(
+          type,
+          event => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (
+              event.dataTransfer
+            ) {
+              event.dataTransfer
+                .dropEffect = 'copy';
+            }
+
+            tile.classList.add(
+              'is-dragging'
+            );
+          }
+        );
+      });
+
+      tile.addEventListener(
+        'dragleave',
+        event => {
+          /*
+          * Do not remove the state when moving
+          * between descendants inside the tile.
+          */
+          if (
+            event.relatedTarget
+            && tile.contains(
+              event.relatedTarget
+            )
+          ) {
+            return;
+          }
+
+          clearDragState();
+        }
+      );
+
+      tile.addEventListener(
+        'drop',
+        event => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          clearDragState();
+
+          const file =
+            event.dataTransfer
+              ?.files
+              ?.[0];
+
+          if (!file) {
+            return;
+          }
+
+          const supported =
+            /\.(ggproj|ged)$/i
+              .test(file.name);
+
+          if (!supported) {
+            showToast(
+              'Choose a .ggproj or .ged file.'
+            );
+
+            return;
+          }
+
+          /*
+          * File handling remains simulated,
+          * so use the existing import flow.
+          */
+          openImportModal();
+        }
+      );
+    }
+
     function bindProjectControls() {
       bindSearchInput(main, '#projectSearch', 'search', renderStartup);
       main.querySelector('#sortProjects')?.addEventListener('change', e => { state.sort = e.target.value; renderStartup(); });
@@ -44259,6 +44906,7 @@
       });
       main.querySelector('[data-startup-empty-create]')?.addEventListener('click', openCreateModal);
       main.querySelector('[data-startup-empty-import]')?.addEventListener('click', openImportModal);
+      bindStartupImportTile();
       bindToasts(main);
     }
 
