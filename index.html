@@ -44737,6 +44737,7 @@
       const project = sampleData.projects.find(item => item.id === projectId && !item.deleted && item.available !== false);
       const nextModule = moduleName === 'Projects' || modules.includes(moduleName) ? moduleName : 'Projects';
       if (!project) return false;
+      closeMenu();
       clearPeopleSelection();
       state.projectOpen = true;
       state.currentProjectId = project.id;
