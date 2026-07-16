@@ -6524,6 +6524,130 @@
 
     .page-button.active { background: var(--surface-selected); color: var(--brand-green-300); }
 
+    .page-button:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .pagination-ellipsis {
+      min-width: 20px;
+
+      display: inline-grid;
+      place-items: center;
+
+      color:
+        var(--text-tertiary);
+    }
+
+    .people-table-footer-summary {
+      white-space: nowrap;
+    }
+
+    .people-rows-per-page {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+
+      white-space: nowrap;
+    }
+
+    .people-rows-per-page-label {
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    .people-rows-select-shell {
+      width: 82px;
+      height: 34px;
+      min-height: 34px;
+      max-height: 34px;
+
+      flex: 0 0 82px;
+    }
+
+    .people-rows-select {
+      padding:
+        0 34px
+        0 12px;
+      text-align: left;
+    }
+
+    .people-rows-select:hover {
+      border-color:
+        var(--border-strong);
+      background:
+        rgba(255, 255, 255, 0.025);
+    }
+
+    .people-rows-select:focus {
+      outline: 0;
+      border-color:
+        rgba(
+          98,
+          217,
+          154,
+          0.5
+        );
+
+      box-shadow:
+        0 0 0 2px
+        rgba(
+          47,
+          174,
+          116,
+          0.1
+        );
+    }
+
+    .people-rows-select-chevron {
+      right: 10px;
+      width: 14px;
+      color:
+        var(--text-tertiary);
+    }
+
+    .people-rows-select-chevron svg {
+      width: 13px;
+      height: 13px;
+      display: block;
+      transform: rotate(90deg);
+    }
+
+    .people-rows-select-shell:hover
+    .people-rows-select-chevron,
+    .people-rows-select-shell:focus-within
+    .people-rows-select-chevron {
+      color:
+        var(--text-primary);
+    }
+
+    .people-rows-select-shell
+    .people-rows-select {
+      border: 0px;
+      background-color:
+        transparent;
+    }
+
+    .people-table-footer {
+      min-height: 50px;
+      padding-block: 8px;
+    }
+
+    @media (
+      max-width: 760px
+    ) {
+      .people-table-footer {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .people-table-footer-summary {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
     .people-collapse-button, .person-sidebar-restore-button {
       border: 1px solid transparent;
       background: transparent;
@@ -17014,6 +17138,11 @@
       peopleSelectionAnchorId: '',
       peopleSearch: '',
       peopleSort: 'modified',
+
+      peoplePage: 1,
+      peopleRowsPerPage: 25,
+      peoplePaginationQueryKey: '',
+
       peopleSavedView: 'All people',
       peopleSavedViewId: '',
       peopleFilters: { surname: '', birthPlace: '', living: 'Any', branch: '', sourceStatus: '', reviewStatus: '' },
@@ -18462,14 +18591,14 @@
 
     function renderActivityRows(count) {
       const rows = [
-        { module: 'Albums', svg: icon.image, tone: 'red', title: 'Photos added', detail: '4 photos added to Family photos', time: '2026-05-24T10:42:00Z' },
-        { module: 'People', svg: icon.people, tone: 'purple', title: 'Person updated', detail: 'Luna Purrington profile updated', time: '2026-05-23T10:42:00Z' },
-        { module: 'Family Tree', svg: icon.file, tone: 'amber', title: 'GEDCOM imported', detail: '24 people imported from GEDCOM', time: '2026-05-25T09:00:00Z' },
-        { module: 'Notes', svg: icon.note, tone: '', title: 'Research note added', detail: 'Surname origin note updated', time: '2026-05-21T11:00:00Z' },
-        { module: 'Family Tree', svg: icon.tree, tone: '', title: 'Relationship connected', detail: 'Luna Purrington was connected to the tree', time: '2026-05-18T12:00:00Z' },
-        { module: 'Archive', svg: icon.file, tone: 'amber', title: 'Archive file linked', detail: 'Pawford household register linked to Silver Whiskerfield', time: '2026-05-14T09:00:00Z' },
-        { module: 'People', svg: icon.people, tone: '', title: 'Duplicate reviewed', detail: 'Possible duplicate was marked reviewed', time: '2026-05-10T14:00:00Z' },
-        { module: 'Albums', svg: icon.image, tone: 'red', title: 'Photo tags added', detail: 'Three portraits were linked to people', time: '2026-05-07T15:00:00Z' }
+        { module: 'Albums', svg: icon.image, tone: 'red', title: 'Photos added', detail: '4 photos added to Family photos', occurredAt: '2026-05-24T10:42:00Z' },
+        { module: 'People', svg: icon.people, tone: 'purple', title: 'Person updated', detail: 'Luna Purrington profile updated', occurredAt: '2026-05-23T10:42:00Z' },
+        { module: 'Family Tree', svg: icon.file, tone: 'amber', title: 'GEDCOM imported', detail: '24 people imported from GEDCOM', occurredAt: '2026-05-25T09:00:00Z' },
+        { module: 'Notes', svg: icon.note, tone: '', title: 'Research note added', detail: 'Surname origin note updated', occurredAt: '2026-05-21T11:00:00Z' },
+        { module: 'Family Tree', svg: icon.tree, tone: '', title: 'Relationship connected', detail: 'Luna Purrington was connected to the tree', occurredAt: '2026-05-18T12:00:00Z' },
+        { module: 'Archive', svg: icon.file, tone: 'amber', title: 'Archive file linked', detail: 'Pawford household register linked to Silver Whiskerfield', occurredAt: '2026-05-14T09:00:00Z' },
+        { module: 'People', svg: icon.people, tone: '', title: 'Duplicate reviewed', detail: 'Possible duplicate was marked reviewed', occurredAt: '2026-05-10T14:00:00Z' },
+        { module: 'Albums', svg: icon.image, tone: 'red', title: 'Photo tags added', detail: 'Three portraits were linked to people', occurredAt: '2026-05-07T15:00:00Z' }
       ];
       return `<div class="project-activity-list">${rows.slice(0,count).map(row => `<button class="project-activity-row" type="button" data-open-project-module="${row.module}">
         <span class="project-activity-icon ${row.tone}">${row.svg}</span>
@@ -18875,8 +19004,15 @@
 
     function renderFamilyTree() {
       sidebar.innerHTML = '';
+      const treeProjectId =
+        currentFamilyTreeProjectId();
       const treePeopleSource = currentTreePeople();
       const treeFamiliesSource = currentTreeFamilies();
+      const familyPeopleCountLabel =
+        formatProjectPeopleCount(
+          treeProjectId
+        );
+      
       if (!treePeopleSource.some(person => person.id === state.selectedPersonId)) {
         state.selectedPersonId = treePeopleSource.find(person => person.id === 'silver')?.id || treePeopleSource[0]?.id || '';
       }
@@ -18896,7 +19032,22 @@
               <div class="view-modes" role="tablist" aria-label="Tree view mode">
                 ${['Classic','Pedigree','Fan'].map(view => `<button class="view-mode ${state.treeView === view ? 'active' : ''}" type="button" role="tab" aria-selected="${state.treeView === view ? 'true' : 'false'}" aria-disabled="${view === 'Classic' ? 'false' : 'true'}" data-tree-view="${view}" title="${view === 'Classic' ? 'Classic view' : view + ' view will be added later'}">${view}</button>`).join('')}
               </div>
-              <span class="people-count">${icon.peoplegroup} 24 people</span>
+            <span
+              class="people-count"
+              aria-label="${
+                escapeHtml(
+                  familyPeopleCountLabel
+                )
+              }">
+
+              ${icon.peoplegroup}
+
+              <span>
+                ${escapeHtml(
+                  familyPeopleCountLabel
+                )}
+              </span>
+            </span>
             </div>
             <div class="tree-toolbar-right">
               <label class="tree-search">${icon.search}<input type="search" placeholder="Search people..." id="treeSearch"></label>
@@ -26178,6 +26329,423 @@
       return sortPeopleRecords(list);
     }
 
+    const PEOPLE_ROWS_PER_PAGE_OPTIONS =
+      Object.freeze([
+        10,
+        25,
+        50,
+        100
+      ]);
+
+    function normalizePeopleRowsPerPage(
+      value = state.peopleRowsPerPage
+    ) {
+      const parsedValue =
+        Number(value);
+
+      return PEOPLE_ROWS_PER_PAGE_OPTIONS
+        .includes(parsedValue)
+          ? parsedValue
+          : 25;
+    }
+
+    /*
+    * Search, sorting, filters, saved views, and project changes
+    * should return the user to the first page.
+    *
+    * Keeping the reset here avoids duplicating page-reset logic
+    * across every filter and search handler.
+    */
+    function peoplePaginationQueryKey() {
+      return JSON.stringify({
+        projectId:
+          currentProjectId(),
+
+        search:
+          String(
+            state.peopleSearch || ''
+          )
+            .trim()
+            .toLowerCase(),
+
+        sort:
+          state.peopleSort
+          || 'modified',
+
+        filters:
+          peopleFiltersWithDefaults()
+      });
+    }
+
+    function syncPeoplePaginationQuery() {
+      const nextKey =
+        peoplePaginationQueryKey();
+
+      if (
+        state.peoplePaginationQueryKey
+        === nextKey
+      ) {
+        return;
+      }
+
+      state.peoplePaginationQueryKey =
+        nextKey;
+
+      state.peoplePage = 1;
+    }
+
+    function getPeoplePagination(
+      totalCount
+    ) {
+      const normalizedTotal =
+        Math.max(
+          0,
+          Number(totalCount) || 0
+        );
+
+      const rowsPerPage =
+        normalizePeopleRowsPerPage();
+
+      state.peopleRowsPerPage =
+        rowsPerPage;
+
+      const totalPages =
+        Math.max(
+          1,
+          Math.ceil(
+            normalizedTotal
+            / rowsPerPage
+          )
+        );
+
+      const requestedPage =
+        Number(state.peoplePage)
+        || 1;
+
+      const currentPage =
+        Math.min(
+          totalPages,
+          Math.max(
+            1,
+            Math.trunc(
+              requestedPage
+            )
+          )
+        );
+
+      state.peoplePage =
+        currentPage;
+
+      const startIndex =
+        normalizedTotal
+          ? (
+              currentPage - 1
+            ) * rowsPerPage
+          : 0;
+
+      const endIndex =
+        Math.min(
+          startIndex
+          + rowsPerPage,
+          normalizedTotal
+        );
+
+      return {
+        totalCount:
+          normalizedTotal,
+
+        rowsPerPage,
+
+        totalPages,
+
+        currentPage,
+
+        startIndex,
+
+        endIndex,
+
+        firstVisible:
+          normalizedTotal
+            ? startIndex + 1
+            : 0,
+
+        lastVisible:
+          normalizedTotal
+            ? endIndex
+            : 0
+      };
+    }
+
+    function peoplePaginationTokens(
+      currentPage,
+      totalPages
+    ) {
+      if (
+        totalPages <= 7
+      ) {
+        return Array.from(
+          {
+            length:
+              totalPages
+          },
+          (_, index) =>
+            index + 1
+        );
+      }
+
+      const importantPages =
+        [
+          1,
+          currentPage - 1,
+          currentPage,
+          currentPage + 1,
+          totalPages
+        ]
+          .filter(
+            page =>
+              page >= 1
+              && page <= totalPages
+          );
+
+      const pages =
+        [
+          ...new Set(
+            importantPages
+          )
+        ].sort(
+          (a, b) =>
+            a - b
+        );
+
+      const tokens = [];
+      let previousPage = 0;
+
+      pages.forEach(page => {
+        const gap =
+          page - previousPage;
+
+        if (
+          previousPage
+          && gap === 2
+        ) {
+          tokens.push(
+            previousPage + 1
+          );
+        } else if (
+          previousPage
+          && gap > 2
+        ) {
+          tokens.push(
+            'ellipsis'
+          );
+        }
+
+        tokens.push(page);
+
+        previousPage =
+          page;
+      });
+
+      return tokens;
+    }
+
+    function renderPeoplePagination(
+      pagination
+    ) {
+      if (
+        pagination.totalPages <= 1
+      ) {
+        return '';
+      }
+
+      const tokens =
+        peoplePaginationTokens(
+          pagination.currentPage,
+          pagination.totalPages
+        );
+
+      return `
+        <nav
+          class="pagination"
+          aria-label="People pages">
+
+          <button
+            class="
+              page-button
+              icon-rotate-left
+            "
+            type="button"
+            data-people-page="${
+              pagination.currentPage - 1
+            }"
+            aria-label="Previous page"
+            ${
+              pagination.currentPage === 1
+                ? 'disabled'
+                : ''
+            }>
+            ${icon.chevron}
+          </button>
+
+          ${tokens.map(
+            (token, index) => {
+              if (
+                token === 'ellipsis'
+              ) {
+                return `
+                  <span
+                    class="
+                      pagination-ellipsis
+                    "
+                    aria-hidden="true"
+                    data-pagination-gap="${
+                      index
+                    }">
+                    …
+                  </span>
+                `;
+              }
+
+              const active =
+                token
+                === pagination.currentPage;
+
+              return `
+                <button
+                  class="
+                    page-button
+                    ${
+                      active
+                        ? 'active'
+                        : ''
+                    }
+                  "
+                  type="button"
+                  data-people-page="${
+                    token
+                  }"
+                  aria-label="
+                    Go to page ${token}
+                  "
+                  ${
+                    active
+                      ? 'aria-current="page"'
+                      : ''
+                  }>
+                  ${token}
+                </button>
+              `;
+            }
+          ).join('')}
+
+          <button
+            class="page-button"
+            type="button"
+            data-people-page="${
+              pagination.currentPage + 1
+            }"
+            aria-label="Next page"
+            ${
+              pagination.currentPage
+                === pagination.totalPages
+                  ? 'disabled'
+                  : ''
+            }>
+            ${icon.chevron}
+          </button>
+        </nav>
+      `;
+    }
+
+    function renderPeopleTableFooter(
+      pagination
+    ) {
+      const rangeLabel =
+        pagination.totalCount
+          ? `${
+              pagination.firstVisible
+            }–${
+              pagination.lastVisible
+            }`
+          : '0';
+
+      const peopleNoun =
+        pagination.totalCount === 1
+          ? 'person'
+          : 'people';
+
+      return `
+        <div
+          class="
+            table-footer
+            people-table-footer
+          ">
+
+          <span
+            class="
+              people-table-footer-summary
+            "
+            aria-live="polite">
+            Showing ${rangeLabel}
+            of ${pagination.totalCount}
+            ${peopleNoun}
+          </span>
+
+          ${renderPeoplePagination(
+            pagination
+          )}
+          <label
+            class="people-rows-per-page"
+            for="peopleRowsPerPage">
+
+            <span class="people-rows-per-page-label">
+              Rows per page
+            </span>
+
+            <span
+              class="
+                common-select-shell
+                people-rows-select-shell
+              ">
+
+              <select
+                class="
+                  common-select
+                  people-rows-select
+                "
+                id="peopleRowsPerPage"
+                aria-label="Rows per page">
+
+                ${PEOPLE_ROWS_PER_PAGE_OPTIONS
+                  .map(option => `
+                    <option
+                      value="${option}"
+                      ${
+                        pagination.rowsPerPage
+                          === option
+                            ? 'selected'
+                            : ''
+                      }>
+                      ${option}
+                    </option>
+                  `)
+                  .join('')}
+              </select>
+
+              <span
+                class="
+                  common-select-chevron
+                  people-rows-select-chevron
+                "
+                aria-hidden="true">
+                ${icon.chevron}
+              </span>
+            </span>
+          </label>
+        </div>
+      `;
+    }
+
     function peopleSelectedIdSet() {
       return new Set(Array.isArray(state.peopleSelectedIds) ? state.peopleSelectedIds : []);
     }
@@ -26437,29 +27005,98 @@
     }
 
     function renderPeople() {
-      workspace.classList.remove('no-sidebar');
+      workspace.classList.remove(
+        'no-sidebar'
+      );
+
       sidebar.innerHTML = '';
+
       prunePeopleSelection();
-      const selected = selectedPeopleRecord();
-      const allPeopleRecords = currentPeopleRecords();
-      if (state.peopleView === 'profile') {
+
+      const selected =
+        selectedPeopleRecord();
+
+      if (
+        state.peopleView === 'profile'
+      ) {
         clearPeopleSelection();
+
         renderPeopleSidebar();
-        renderPeopleProfile(selected);
+
+        renderPeopleProfile(
+          selected
+        );
+
         return;
       }
-      main.classList.remove('people-profile-main');
+
+      main.classList.remove(
+        'people-profile-main'
+      );
+
       renderPeopleSidebar();
-      const rows = filteredPeople();
-      main.innerHTML = `<div class="people-layout ${state.peoplePreviewCollapsed ? 'preview-collapsed' : ''}">
-        <section class="people-content" aria-label="People directory">
-          ${renderPeopleDirectoryControls(rows)}
-          <div class="people-table-wrap">${renderPeopleTable(rows)}</div>
-          <div class="table-footer"><span>Showing ${rows.length ? 1 : 0}-${rows.length} of ${allPeopleRecords.length} people</span><div class="pagination"><button class="page-button icon-rotate-left" type="button" aria-label="Previous page">${icon.chevron}</button><button class="page-button active" type="button">1</button><button class="page-button" type="button">2</button><button class="page-button" type="button" aria-label="Next page">${icon.chevron}</button></div><span>Rows per page: 25</span></div>
-        </section>
-        ${renderPersonSidebar(selected?.id, 'people')}
-      </div>`;
-      bindPeopleControls(rows);
+
+      /*
+      * filteredPeople() returns the complete filtered and sorted
+      * result. Pagination is deliberately applied afterward.
+      */
+      const filteredRows =
+        filteredPeople();
+
+      syncPeoplePaginationQuery();
+
+      const pagination =
+        getPeoplePagination(
+          filteredRows.length
+        );
+
+      const visibleRows =
+        filteredRows.slice(
+          pagination.startIndex,
+          pagination.endIndex
+        );
+
+      main.innerHTML = `
+        <div
+          class="
+            people-layout
+            ${
+              state.peoplePreviewCollapsed
+                ? 'preview-collapsed'
+                : ''
+            }
+          ">
+
+          <section
+            class="people-content"
+            aria-label="People directory">
+
+            ${renderPeopleDirectoryControls(
+              visibleRows
+            )}
+
+            <div
+              class="people-table-wrap">
+              ${renderPeopleTable(
+                visibleRows
+              )}
+            </div>
+
+            ${renderPeopleTableFooter(
+              pagination
+            )}
+          </section>
+
+          ${renderPersonSidebar(
+            selected?.id,
+            'people'
+          )}
+        </div>
+      `;
+
+      bindPeopleControls(
+        visibleRows
+      );
     }
 
     function renderPeopleSidebar() {
@@ -31099,13 +31736,98 @@
       });
     }
 
-    function bindPeopleControls(rows) {
+    function bindPeoplePaginationControls() {
+      main
+        .querySelectorAll(
+          '[data-people-page]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              if (
+                button.disabled
+              ) {
+                return;
+              }
+
+              const nextPage =
+                Number(
+                  button.dataset
+                    .peoplePage
+                );
+
+              if (
+                !Number.isInteger(
+                  nextPage
+                )
+                || nextPage < 1
+              ) {
+                return;
+              }
+
+              state.peoplePage =
+                nextPage;
+
+              renderPeople();
+            }
+          );
+        });
+
+      main
+        .querySelector(
+          '#peopleRowsPerPage'
+        )
+        ?.addEventListener(
+          'change',
+          event => {
+            const rowsPerPage =
+              normalizePeopleRowsPerPage(
+                event.currentTarget.value
+              );
+
+            state.peopleRowsPerPage =
+              rowsPerPage;
+
+            /*
+            * Reset to page 1 because the previous page number
+            * may represent a completely different item range.
+            */
+            state.peoplePage = 1;
+
+            renderPeople();
+          }
+        );
+    }
+
+    function bindPeopleControls(
+      rows
+    ) {
       bindPeopleSidebar(main);
-      bindPeopleToolbarControls(rows);
-      bindPeopleSelectionControls(rows);
-      bindPeopleTableNavigation(rows);
-      bindPeopleRowActions(rows);
-      bindPersonSidebar(main, 'people');
+
+      bindPeopleToolbarControls(
+        rows
+      );
+
+      bindPeoplePaginationControls();
+
+      bindPeopleSelectionControls(
+        rows
+      );
+
+      bindPeopleTableNavigation(
+        rows
+      );
+
+      bindPeopleRowActions(
+        rows
+      );
+
+      bindPersonSidebar(
+        main,
+        'people'
+      );
+
       bindToasts(main);
     }
 
