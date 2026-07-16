@@ -332,10 +332,10 @@
     .startup-page::before {
       content: "";
       position: fixed;
-      top: 50px;
-      right: 330px;
-      width: min(42vw, 520px);
-      height: 300px;
+      top: 40px;
+      right: 320px;
+      width: min(42vw, 450px);
+      height: 220px;
       pointer-events: none;
       opacity: .2;
       background: var(--geneograph-cover-tree-image) center / contain no-repeat;
@@ -344,7 +344,7 @@
       z-index: 0;
     }
     .startup-page .right-column {
-      padding-top: calc(var(--space-8) + 60px);
+      padding-top: calc(var(--space-8) + 78px);
     }
 
     .logo-lockup {
@@ -657,11 +657,114 @@
       letter-spacing: .01em;
     }
     .section-heading svg { width: 22px; height: 22px; color: var(--brand-green-500); }
+    .startup-page .header-row { margin-bottom: calc(var(--space-6) + 26px); }
+    .startup-page .toolbar { margin-bottom: var(--space-4); }
+    .startup-continue {
+      width: 100%;
+      min-width: 0;
+      min-height: 0;
+      margin: 0;
+      padding: var(--space-4);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: rgba(26,32,31,.9);
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr);
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .startup-continue-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      color: var(--brand-green-300);
+      background: rgba(47,174,116,.14);
+      border: 1px solid rgba(98,217,154,.18);
+    }
+    .startup-continue-icon svg { width: 20px; height: 20px; display: block; }
+    .startup-continue-copy { min-width: 0; }
+    .startup-continue-eyebrow {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--brand-green-300);
+      font-size: 11px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+    .startup-continue-copy strong {
+      display: block;
+      overflow: hidden;
+      color: var(--text-primary);
+      font-size: 14px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .startup-continue-context {
+      display: block;
+      margin-top: 2px;
+      overflow: hidden;
+      color: var(--text-tertiary);
+      font-size: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .startup-continue-action {
+      grid-column: 1 / -1;
+      width: 100%;
+      min-height: 36px;
+      padding: 0 var(--space-3);
+      border: 1px solid var(--border-default);
+      border-radius: 7px;
+      background: var(--surface-card);
+      color: var(--text-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      font-weight: 850;
+    }
+    .startup-continue-action:hover { border-color: rgba(98,217,154,.4); background: var(--surface-card-hover); }
+    .startup-continue-action svg { width: 16px; height: 16px; }
+    .startup-projects-heading {
+      margin: 0 0 var(--space-3);
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+    .startup-projects-heading h2 { margin: 0; font-size: 18px; }
+    .startup-projects-count { color: var(--text-tertiary); font-size: 12px; font-weight: 750; }
+    .startup-project-empty {
+      min-height: 210px;
+      margin-bottom: var(--space-6);
+      padding: var(--space-7);
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,.018);
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+    .startup-project-empty-copy { max-width: 470px; }
+    .startup-project-empty-icon {
+      width: 42px;
+      height: 42px;
+      margin: 0 auto var(--space-3);
+      display: grid;
+      place-items: center;
+      color: var(--brand-green-300);
+    }
+    .startup-project-empty-icon svg { width: 32px; height: 32px; }
+    .startup-project-empty h3 { margin: 0 0 var(--space-2); font-size: 18px; }
+    .startup-project-empty p { margin: 0; color: var(--text-tertiary); line-height: 1.55; }
+    .startup-project-empty-actions { margin-top: var(--space-4); display: flex; justify-content: center; gap: var(--space-3); flex-wrap: wrap; }
     .project-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: var(--space-4);
-      margin-bottom: var(--space-7, 28px);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
     }
     .project-list {
       display: grid;
@@ -676,11 +779,12 @@
       min-width: 0;
       transition: transform var(--ease), background var(--ease), border-color var(--ease), box-shadow var(--ease);
       position: relative;
+      cursor: pointer;
     }
     .project-card:hover { transform: translateY(-1px); background: var(--surface-card-hover); border-color: var(--border-strong); }
-    .project-card.selected { border-color: rgba(98,217,154,.55); box-shadow: 0 0 0 1px rgba(47,174,116,.12); }
+    .project-card:focus-visible { outline: 2px solid var(--brand-green-500); outline-offset: 2px; }
     .project-cover {
-      height: 108px;
+      height: 86px;
       border-bottom: 1px solid var(--border-default);
       background: var(--cover, linear-gradient(145deg, rgba(22,58,42,.9), rgba(26,32,31,.8)));
       background-size: contain;
@@ -693,15 +797,25 @@
     .project-cover.tree::after {
       content: none;
     }
-    .project-body { padding: var(--space-4); }
+    .project-body { padding: var(--space-3); }
     .project-title-row { display: flex; align-items: flex-start; gap: var(--space-2); justify-content: space-between; }
-    .project-body h3 { margin: 0 0 var(--space-2); font-size: 16px; }
+    .project-body h3 {
+      min-height: 38px;
+      margin: 0 0 var(--space-2);
+      overflow: hidden;
+      display: -webkit-box;
+      font-size: 15px;
+      line-height: 1.28;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
     .project-meta {
       display: flex;
       flex-wrap: wrap;
-      gap: var(--space-3);
+      gap: var(--space-2);
       color: var(--text-tertiary);
-      margin-bottom: var(--space-3);
+      margin-bottom: var(--space-2);
+      font-size: 12px;
     }
     .project-meta span { display: inline-flex; align-items: center; gap: 5px; }
     .project-meta svg { width: 14px; height: 14px; }
@@ -720,12 +834,12 @@
       flex: 0 0 4px;
       transform: translateY(1px);
     }
-    .project-footer { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: 0 var(--space-4) var(--space-4); }
-    .modified { color: var(--text-secondary); }
+    .project-footer { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); padding: 0 var(--space-3) var(--space-3); }
+    .modified { min-width: 0; color: var(--text-secondary); font-size: 12px; line-height: 1.35; }
     .small-open {
-      height: 36px;
-      min-width: 128px;
-      padding: 0 var(--space-6);
+      height: 34px;
+      min-width: 92px;
+      padding: 0 var(--space-4);
       border: 0;
       border-radius: 7px;
       background: var(--brand-green-500);
@@ -737,21 +851,30 @@
     .project-more {
       width: 34px;
       height: 34px;
+      min-width: 34px;
+      flex: 0 0 34px;
+      padding: 0;
       border: 1px solid transparent;
       background: transparent;
       border-radius: 8px;
       color: var(--text-primary);
+      display: inline-grid;
+      place-items: center;
+      line-height: 0;
       font-weight: 900;
-      transition: background var(--ease), border-color var(--ease);
+      transition: background var(--ease), border-color var(--ease), color var(--ease);
     }
+    .project-more svg { width: 18px; height: 18px; display: block; }
+    .project-more:focus-visible { outline: 2px solid var(--brand-green-500); outline-offset: 2px; }
     .list-card {
       display: grid;
-      grid-template-columns: 110px 1fr auto;
+      grid-template-columns: 104px minmax(0, 1fr) auto;
       align-items: center;
     }
-    .list-card .project-cover { height: 88px; border-bottom: 0; border-right: 1px solid var(--border-default); }
-    .list-card .project-body { padding: var(--space-3) var(--space-4); }
-    .list-card .project-footer { padding: 0 var(--space-4) 0 0; }
+    .list-card .project-cover { height: 82px; border-bottom: 0; border-right: 1px solid var(--border-default); }
+    .list-card .project-body { padding: var(--space-3); }
+    .list-card .project-body h3 { min-height: 0; }
+    .list-card .project-footer { padding: 0 var(--space-3) 0 0; }
 
     .right-card, .panel {
       border: 1px solid var(--border-default);
@@ -1075,6 +1198,12 @@
     }
     .dropzone svg { width: 34px; height: 34px; color: var(--brand-green-500); }
     .dropzone span { display: block; color: var(--text-tertiary); margin-top: 2px; }
+    .startup-page .dropzone {
+      min-height: 78px;
+      margin-top: var(--space-4);
+      gap: var(--space-3);
+    }
+    .startup-page .dropzone svg { width: 28px; height: 28px; }
     .create-gedcom-field {
       grid-column: 1 / -1;
     }
@@ -5345,7 +5474,21 @@
     .tree-lines { width: 100%; height: 100%; }
     .tree-line.descendant { stroke: rgba(245,247,246,.88); }
     
-    @media (max-width: 1500px) {.project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (min-width: 901px) and (max-width: 1400px) {
+      .startup-page .toolbar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 52px 52px;
+        align-items: start;
+        gap: var(--space-3);
+      }
+      .startup-page .toolbar-left { grid-column: 1; grid-row: 1; }
+      .startup-page .toolbar-right { display: contents; }
+      .startup-page .sort-field { grid-column: 1 / -1; grid-row: 2; width: 215px; }
+      .startup-page [data-view="grid"] { grid-column: 2; grid-row: 1; }
+      .startup-page [data-view="list"] { grid-column: 3; grid-row: 1; }
+    }
+
+    @media (max-width: 1500px) {.project-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .page-grid { gap: var(--space-5); }
       .project-hero-layout { grid-template-columns: minmax(0, 1fr) 172px; gap: var(--space-5); }}
     @media (max-width: 1260px) {:root { --right-w: 300px; --sidebar-w: 260px; }
@@ -5374,6 +5517,9 @@
       .search { width: 100%; }
       .select { width: 100%; }
       .project-grid { grid-template-columns: 1fr; }
+      .startup-continue { grid-template-columns: 38px minmax(0, 1fr); }
+      .startup-continue-action { grid-column: 1 / -1; justify-content: center; }
+      .startup-projects-heading { align-items: flex-start; flex-direction: column; gap: 2px; }
       .list-card { grid-template-columns: 1fr; }
       .list-card .project-cover { border-right: 0; border-bottom: 1px solid var(--border-default); }
       .list-card .project-footer { padding: 0 var(--space-4) var(--space-4); }
@@ -13570,6 +13716,7 @@
 
     const SUPPORTED_LANGUAGES = ['en', 'ru'];
     const LANGUAGE_STORAGE_KEY = 'geneograph.language';
+    const PROJECT_CONTINUATION_STORAGE_KEY = 'geneograph.projectContinuation';
     const RU_UI = {
       'Projects': '-------', 'Family Tree': '-------- ------', 'People': '----', 'Geneograph': '---------', 'Albums': '-------', 'Archive': '-----', 'Notes': '-------', 'Places': '-----', 'Publish': '----------',
       'Family history workspace': '------- ------------ -------- -------', 'Search anything...': '------ -----', 'Ctrl + K': 'Ctrl + K',
@@ -13584,7 +13731,7 @@
       'Choose which app reminders appear in the notification overlay.': '-------- ----------- --- ---- -----------.', 'Archive review reminders': '----------- - -------- ------', 'Missing sources, OCR suggestions, and unlinked files.': '------------- ---------, ----------- OCR - ----------- -----.', 'Backup reminders': '----------- - --------- -----', 'Remind me when a local backup is recommended.': '----------, ----- ----- --------- -----.', 'Unresolved places reminders': '----------- - ------------- ------', 'Imported place names and missing coordinates.': '--------------- -------- ---- - ------------- ----------.', 'Photo organization reminders': '----------- -- ----------- ----', 'Photos not assigned to albums.': '---------- --- --------.', 'Product tips': '------ -- --------', 'Occasional workflow tips inside the app.': '------------- ------ -- ------.',
       'Adjust interface density, contrast, and motion behavior.': '--------- ---------, -------- - -------- ----------.', 'Reduce motion': '--------- --------', 'Limit non-essential transitions.': '---------- -------------- --------.', 'Increase contrast': '-------- --------', 'Strengthen borders and text contrast.': '------- ------- - -------- ------.', 'Interface density': '--------- ----------', 'Choose comfortable or compact spacing.': '-------- ------- --- ---------- -------.', 'Comfortable': '-------', 'Compact': '----------', 'Font size': '------ ------', 'Default app text size.': '------ ------ -- ---------.', 'Default': '-- ---------', 'Large': '-------', 'Always show focus outlines': '------ ---------- -----', 'Keep keyboard focus visible.': '---------- ----- ----------.',
       'About GeneoGraph': '- GeneoGraph', 'Prototype information and reference links.': '---------- - --------- - ------.', 'GeneoGraph prototype': '-------- GeneoGraph', 'Version 0.1 prototype - local-first genealogy workspace': '-------- 0.1 - --------- ------- ------------ ----------', 'Active': '-------', 'Help Center would open here.': '----- -------- -- ----- ------.', 'Release notes': '------- - -------', 'Product updates and prototype changes.': '---------- -------- - --------- ---------.', 'View': '--------', 'Privacy policy': '-------- ------------------', 'Privacy documentation placeholder.': '-------- ------------ - ------------------.',
-      'Welcome back!': '- ------------!', 'Continue your family history research': '----------- ------------ -------- -------', 'Create family tree': '------- -------- ------', 'Import GEDCOM': '------------- GEDCOM', 'Open project': '------- ------', 'Tip of the day': '----- ---', 'You can drag and drop a GEDCOM file anywhere to import it.': '---------- GEDCOM----- - ----- -----, ----- ------------- ---.', 'Learn more': '--------- ?', 'Search projects...': '----- --------', 'Sort: Date modified': '----------: ---- ---------', 'Sort: Name': '----------: ---', 'Sort: People count': '----------: ----- -----', 'Recent projects': '-------- -------', 'All projects': '--- -------', 'Drop a GeneoGraph or GEDCOM file here to open or import': '---------- ---- GeneoGraph --- GEDCOM --- -------- --- -------', 'Supports .ggproj and .ged files': '-------------- .ggproj - .ged', 'Recent activity': '-------- --------', 'Insights': '-------', 'Sync status': '-------------', 'Project': '------', 'Project overview': '----- -------', 'Project settings': '--------- -------', 'Back to all projects': '----- -- ---- --------', 'Go to Family Tree': '------- - ------', 'Export': '-------', 'Delete project': '------- ------', 'Manage backups': '--------- -------', 'Open': '-------',
+      'Create family tree': '------- -------- ------', 'Import GEDCOM': '------------- GEDCOM', 'Open project': '------- ------', 'Tip of the day': '----- ---', 'You can drag and drop a GEDCOM file anywhere to import it.': '---------- GEDCOM----- - ----- -----, ----- ------------- ---.', 'Learn more': '--------- ?', 'Search projects...': '----- --------', 'Sort: Date modified': '----------: ---- ---------', 'Sort: Recently modified': '----------: ------- ---------', 'Sort: Name': '----------: ---', 'Sort: People count': '----------: ----- -----', 'All projects': '--- -------', 'Search results': '---------- ------', 'Continue where you left off': '---------- - -----, --- -- ----------', 'Last opened': '--------- -------', 'No projects yet': '------- ---- ---', 'No projects match': '------- -- ----------', 'Try another project name or clear the search.': '---------- ------- ----- ------- --- ------- -----.', 'Clear search': '------- -----', 'Welcome back! Here you can create, open, and manage your family-history projects.': '----------, ---------- - ----------- --------- -------- -------.', 'Drop a GeneoGraph or GEDCOM file here to open or import': '---------- ---- GeneoGraph --- GEDCOM --- -------- --- -------', 'Supports .ggproj and .ged files': '-------------- .ggproj - .ged', 'Recent activity': '-------- --------', 'Insights': '-------', 'Sync status': '-------------', 'Project': '------', 'Project overview': '----- -------', 'Project settings': '--------- -------', 'Back to all projects': '----- -- ---- --------', 'Go to Family Tree': '------- - ------', 'Export': '-------', 'Delete project': '------- ------', 'Manage backups': '--------- -------', 'Open': '-------',
       'Navigation': '---------', 'Saved filters': '---------- ----', 'Review center': '----- --------', 'Statistics': '----------', 'Profile': '-------', 'Search people...': '----- -----...', 'Columns': '-------', 'Filter': '------', 'Add person': '-------- --------', 'Sort: Birth date': '----------: ---- --------', 'Name': '---', 'Living': '---', 'Deceased': '----', 'Unknown': '----------', 'Living status': '------ -----', 'Birth date': '---- --------', 'Birth place': '----- --------', 'Death date': '---- ------', 'Death place': '----- ------', 'Updated': '---------', 'Actions': '--------', 'Record Info': '---------- - ------', 'Facts': '-----', 'Relationships': '-----', 'Photos': '----', 'Files': '-----', 'Full profile': '------ -------', 'Open profile': '------- -------', 'Add relative': '-------- ------------', 'Connect relative': '------- ------------', 'More actions': '--- --------', 'Back to people': '----- - -----', 'Edit profile': '------------- -------', 'Save changes': '--------- ---------', 'Cancel': '------', 'Locked': '-------------', 'Editing': '--------------', 'Main information': '-------- ----------', 'Education': '-----------', 'Work': '------', 'Other': '------', 'First name': '---', 'Last name': '-------', 'Patronym': '--------', 'Maiden name': '------- -------', 'Prefix': '-------', 'Suffix': '-------', 'Exact date': '------ ----', 'Before': '--', 'After': '-----', 'Between': '-----', 'About / Circa': '-----', 'Cause of Death': '------- ------', 'Death reason': '------- ------', 'Burial place': '----- -----------', 'Record info': '---------- - ------', 'Profile ID': 'ID -------', 'Created': '-------', 'Review issues': '-------- --------', 'Source status': '------ ----------', 'Partly sourced': '-------- ------------', 'Living protected': '------- --------', 'Immediate Family': '--------- -----', 'Parents': '--------', 'Children': '----', 'Siblings': '------ - -----', 'Grandparents': '------- - -------', 'Partners': '-------', 'Partner': '------', 'Spouse': '------(-)', 'Father': '----', 'Mother': '----', 'Brother': '----', 'Sister': '------', 'Grandmother': '-------', 'Grandfather': '-------', 'Cat': '---', 'Timeline': '----------', 'Add fact': '-------- ----', 'Birth': '--------', 'Wedding': '-------', 'Education start': '------ --------', 'Education finish': '--------- --------', 'Archive': '-----', 'Add': '--------', 'Open ?': '------- ?',
       'Create new board': '------- -----', 'Import board': '------------- -----', 'Board type': '---------', 'Categories': '---------', 'All Boards': '--- -----', 'Recently viewed': '--------', 'Favourites': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'DNA': '---', 'Publication': '----------', 'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '---- ------------ --- ------------, ------------ - ----------.', 'Search boards...': '----- -----', 'Sort: Board type': '----------: --- -----', 'All boards': '--- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Note': '-------', 'Image': '-----------', 'Place': '-----', 'Case': '------', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '-----------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Appearance': '------- ---', 'Layout': '-----', 'Linked to person': '------- - ---------', 'Visual only': '------ ---------',
       'Add photos': '-------- ----', 'New album': '----- ------', 'All photos': '--- ----', 'Not in Album': '--- -------', 'Recently deleted': '------- --------', 'Search photos...': '----- ----...', 'Sort: Filename': '----------: --- -----', 'Sort: Photo date': '----------: ---- ----', 'People in this photo': '---- -- ----', 'Date': '----', 'Caption / story': '------- / -------', 'Source': '--------', 'Delete photo': '------- ----', 'Make favourite': '-------- - ---------', 'Remove favourite': '------ -- ----------', 'Tag people': '-------- -----', 'Open photo': '------- ----', 'No people tagged': '---- -- --------', 'Unknown date': '---- ----------', 'Unknown place': '----- ----------',
@@ -13608,6 +13755,8 @@
       event: { one: '-------', few: '-------', many: '-------', other: '-------' },
       sources: { one: '--------', few: '---------', many: '----------', other: '---------' },
       questions: { one: '------', few: '-------', many: '--------', other: '-------' },
+      projects: { one: '------', few: '-------', many: '--------', other: '-------' },
+      project: { one: '------', few: '-------', many: '--------', other: '-------' },
       Objects: { one: '------', few: '-------', many: '--------', other: '-------' }
     };
 
@@ -13629,6 +13778,7 @@
       'You are not signed in.': '-- -- ----- - -------.', 'GeneoGraph account': '------- GeneoGraph', 'Signed in': '-------- ----', 'Local account': '--------- -------',
       'Cancel': '------', 'Save changes': '--------- ---------', 'Got it': '-------', 'Learn more': '--------- ?', 'Learn more': '---------', 'More actions': '--- --------', 'Actions': '--------',
       'Open': '-------', 'Close': '-------', 'Back': '-----', 'Continue': '----------', 'Export': '-------', 'Import': '------', 'Rename': '-------------', 'Duplicate': '-----------',
+      'Rename project': '------------- ------', 'Update cover': '--------- -------', 'Project renamed.': '------ -------------..', 'Project duplicated.': '------ -----------.', 'Project cover updated.': '------- ------ ---------.', 'Project deleted.': '------ ------.', 'Delete project?': '------- ------?', 'Project name cannot be empty.': '------- ------ -- ----- ---- ----.',
       'Archive': '-----', 'Restore': '------------', 'Permanent delete': '------- --------', 'Delete permanently': '------- --------', 'Create folder': '------- -----',
       'Open profile': '------- -------', 'Full profile': '------ -------', 'Edit relationship': '------------- -----', 'Unlink': '--------', 'Remove connection?': '------- -----?',
       'This removes the relationship link. The person record remains in the project.': '----- ------- ------ -----. ------ -------- --------- - -------.',
@@ -13641,7 +13791,11 @@
       'Missing links': '--- ------', 'Incomplete source': '-------- --------', 'Unreviewed': '-- ---------', 'In review': '-- --------', 'Folder': '-----', 'File': '----', 'Image': '-----------', 'Audio': '-----', 'PDF': 'PDF',
 
       // Projects
-      'Welcome back!': '- ------------!', 'Continue your family history research.': '----------- ------------ -------- -------.', 'Recent projects': '-------- -------', 'All projects': '--- -------',
+      'Projects': '-------', 'Create, open, and manage your family-history projects.': '----------, ---------- - ----------- --------- -------- -------.', 'All projects': '--- -------', 'Search results': '---------- ------',
+      'Continue where you left off': '---------- - -----, --- -- ----------', 'Continue': '----------', 'Last opened': '--------- -------',
+      'Modified': '--------', 'Last modified': '--------- --------', 'today at': '------- -', 'yesterday at': '----- -',
+      'No projects yet': '------- ---- ---', 'No projects match': '------- -- ----------', 'Try another project name or clear the search.': '---------- ------- ----- ------- --- ------- -----.', 'Clear search': '------- -----',
+      'Create a family tree or import a GEDCOM file': '-------- -------- ------ --- ------------ ---- GEDCOM', 'to begin your family-history workspace.': '----- ------- --------- - --------- -------- -------.',
       'Create family tree': '------- -----', 'Import GEDCOM': '------ GEDCOM', 'Open project': '------- ------', 'Open project overview': '------- ----- -------',
       'Project overview': '----- -------', 'Recent activity': '-------- ----------', 'Project settings': '--------- -------', 'Back to all projects': '----- -- ---- --------',
       'Project identity': '------------- -------', 'Project name': '-------- -------', 'Project description': '-------- -------', 'Project location': '------------ -------',
@@ -13695,7 +13849,7 @@
 
     function translateCountPhrase(text) {
       if (state.language !== 'ru') return text;
-      return String(text).replace(/(\d[\d\s.,]*)\s+(people|person|photos|photo|files|file|notes|note|events|event|sources|questions|Objects)\b/gi, (match, rawNumber, noun) => {
+      return String(text).replace(/(\d[\d\s.,]*)\s+(people|person|photos|photo|files|file|notes|note|events|event|sources|questions|projects|project|Objects)\b/gi, (match, rawNumber, noun) => {
         const n = Number(String(rawNumber).replace(/[\s,]/g, ''));
         if (!Number.isFinite(n)) return match;
         const forms = RU_PLURALS[noun] || RU_PLURALS[noun.toLowerCase()];
@@ -13809,10 +13963,15 @@
     */
     const sampleData = {
       projects: [
-        { id: 'p1', name: 'Whiskerfield Family Tree', people: 17, created: 'May 1, 2026', modified: 'May 24, 2026', status: 'Local project', cover: 'paper', files: 5, notes: 7, desc: 'Research into the Whiskerfield and Purrington family lines from Pawford, Meowbridge, Fishmarket Row, and Old Cattery.' },
-        { id: 'p2', name: 'Silver Family Tree', people: 23, created: 'May 12, 2025', modified: 'Sep 20, 2025', status: 'Local project', cover: 'tree', files: 8, notes: 19, desc: 'Small personal tree for close cat-family members and modern household records.' },
-        { id: 'p3', name: 'Meowbridge Branch Study', people: 42, created: 'Apr 14, 2025', modified: 'June 2, 2025', status: 'Local project', cover: 'photo', files: 15, notes: 22, desc: 'Extended branch research and family photos collected from relatives.' }
+        { id: 'p1', name: 'Whiskerfield Family Tree', people: 17, created: 'May 1, 2026', modified: 'May 24, 2026', modifiedAt: '2026-05-24T10:42:00Z', status: 'Local project', cover: 'paper', files: 5, notes: 7, desc: 'Research into the Whiskerfield and Purrington family lines from Pawford, Meowbridge, Fishmarket Row, and Old Cattery.' },
+        { id: 'p2', name: 'Silver Family Tree', people: 23, created: 'May 12, 2025', modified: 'Sep 20, 2025', modifiedAt: '2025-09-20T16:18:00Z', status: 'Local project', cover: 'tree', files: 8, notes: 19, desc: 'Small personal tree for close cat-family members and modern household records.' },
+        { id: 'p3', name: 'Meowbridge Branch Study', people: 42, created: 'Apr 14, 2025', modified: 'June 2, 2025', modifiedAt: '2025-06-02T09:30:00Z', status: 'Local project', cover: 'photo', files: 15, notes: 22, desc: 'Extended branch research and family photos collected from relatives.' }
       ],
+      projectContinuation: {
+        projectId: 'p1',
+        module: 'Albums',
+        openedAt: '2026-06-16T10:42:00Z'
+      },
       people: [
         { id: 'silver', projectId: 'p1', primaryPhotoId: 'photo-silver-portrait', names: { first: 'Silver', middle: '', last: 'Whiskerfield', maiden: '', display: 'Silver Whiskerfield', initials: 'SW' }, gender: 'male', livingStatus: 'Living', role: 'Self', branch: 'Whiskerfield line', avatarClass: 'avatar-green', birth: { date: '03.03.1998', dateLabel: '03 Mar 1998', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 5, notes: 7 }, meta: { updated: '10 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
         { id: 'luna', projectId: 'p1', primaryPhotoId: 'photo-luna-portrait', names: { first: 'Luna', middle: '', last: 'Purrington', maiden: 'Purrington', display: 'Luna Purrington', initials: 'LP' }, gender: 'female', livingStatus: 'Living', role: 'Spouse', branch: 'Purrington line', avatarClass: 'avatar-purple', birth: { date: '12.08.1999', dateLabel: '12 Aug 1999', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 3 }, meta: { updated: '10 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
@@ -16733,6 +16892,7 @@
       search: '',
       sort: 'modified',
       openSide: 'overview',
+      projectContinuation: null,
       treeView: 'Classic',
       treeZoom: 100,
       selectedPersonId: 'silver',
@@ -17259,8 +17419,15 @@
           <button class="avatar" type="button" data-topbar-profile aria-haspopup="dialog" aria-label="User profile">${signedLabel}</button>
         </div>
       `;
-      topbar.querySelector('[data-home]')?.addEventListener('click', () => { closeTopbarPopover(); state.activeModule = 'Projects'; render(); });
-      topbar.querySelectorAll('[data-module]').forEach(button => button.addEventListener('click', () => { closeTopbarPopover(); state.activeModule = button.dataset.module; render(); }));
+      topbar.querySelector('[data-home]')?.addEventListener('click', () => {
+        closeTopbarPopover();
+        if (state.projectOpen) navigateToProjectModule(currentProjectId(), 'Projects');
+        else { state.activeModule = 'Projects'; render(); }
+      });
+      topbar.querySelectorAll('[data-module]').forEach(button => button.addEventListener('click', () => {
+        closeTopbarPopover();
+        navigateToProjectModule(currentProjectId(), button.dataset.module);
+      }));
       topbar.querySelector('[data-topbar-help]')?.addEventListener('click', event => { event.stopPropagation(); openTopbarPopover('help', event.currentTarget); });
       topbar.querySelector('[data-topbar-notifications]')?.addEventListener('click', event => { event.stopPropagation(); openTopbarPopover('notifications', event.currentTarget); });
       topbar.querySelector('[data-topbar-settings]')?.addEventListener('click', event => { event.stopPropagation(); closeTopbarPopover(); openGlobalSettingsModal(); });
@@ -17398,12 +17565,12 @@
       if (item.openSide) {
         state.activeModule = 'Projects';
         state.openSide = item.openSide;
+        persistProjectContinuation({ projectId: currentProjectId(), module: 'Projects', openedAt: new Date().toISOString() });
         render();
         return;
       }
       if (item.module && state.projectOpen) {
-        state.activeModule = item.module;
-        render();
+        navigateToProjectModule(currentProjectId(), item.module);
         return;
       }
       showToast(item.title);
@@ -17475,6 +17642,10 @@
     }
 
     function renderStartup() {
+      const projects = filteredProjects();
+      const totalProjects = sampleData.projects.length;
+      const searchQuery = state.search.trim();
+      const continuation = resolveProjectContinuation();
       sidebar.innerHTML = `
         <div class="logo-lockup">
           <div class="large-logo">${icon.logo}</div>
@@ -17503,7 +17674,7 @@
         <div class="page-grid startup-page">
           <section class="main-column">
             <div class="header-row">
-              <div class="title"><h1>Welcome back!</h1><p>Continue your family history research</p></div>
+              <div class="title"><h1>${escapeHtml(t('Projects'))}</h1><p>${escapeHtml(t('Welcome back! Here you can create, open, and manage your family-history projects.'))}</p></div>
             </div>
             <div class="toolbar">
               <div class="toolbar-left">
@@ -17512,23 +17683,22 @@
               <div class="toolbar-right">
                   <span class="sort-field">
                     <select class="select sort-select" id="sortProjects" aria-label="Sort projects">
-                      <option value="modified" ${state.sort === 'modified' ? 'selected' : ''}>Sort: Date modified</option>
+                      <option value="modified" ${state.sort === 'modified' ? 'selected' : ''}>Sort: Recently modified</option>
                       <option value="name" ${state.sort === 'name' ? 'selected' : ''}>Sort: Name</option>
                       <option value="people" ${state.sort === 'people' ? 'selected' : ''}>Sort: People count</option>
                     </select>
                     <span class="sort-chevron" aria-hidden="true">${icon.chevron}</span>
                   </span>
-                <button class="toolbar-button ${state.viewMode === 'grid' ? 'active' : ''}" type="button" data-view="grid" aria-label="Grid view">${icon.grid}</button>
-                <button class="toolbar-button ${state.viewMode === 'list' ? 'active' : ''}" type="button" data-view="list" aria-label="List view">${icon.list}</button>
+                <button class="toolbar-button ${state.viewMode === 'grid' ? 'active' : ''}" type="button" data-view="grid" aria-label="Grid view" aria-pressed="${state.viewMode === 'grid'}">${icon.grid}</button>
+                <button class="toolbar-button ${state.viewMode === 'list' ? 'active' : ''}" type="button" data-view="list" aria-label="List view" aria-pressed="${state.viewMode === 'list'}">${icon.list}</button>
               </div>
             </div>
-            <h2 class="section-heading">${icon.clock} Recent projects</h2>
-            ${renderProjectCollection(sampleData.projects.slice(0,3))}
-            <h2 class="section-heading">${icon.folder} All projects (${sampleData.projects.length})</h2>
-            ${renderProjectCollection(filteredProjects())}
+            ${renderStartupProjectsHeading(projects.length, totalProjects, Boolean(searchQuery))}
+            ${projects.length ? renderProjectCollection(projects) : renderStartupProjectEmpty(searchQuery, totalProjects)}
             <div class="dropzone" id="startupDropzone">${icon.import}<div><strong>Drop a GeneoGraph or GEDCOM file here to open or import</strong><span>Supports .ggproj and .ged files</span></div></div>
           </section>
           <aside class="right-column">
+            ${continuation ? renderStartupContinuation(continuation) : ''}
             ${renderStartupRecentActivityCard()}
             ${renderOfflineProjectsCard()}
           </aside>
@@ -17537,6 +17707,58 @@
       bindProjectControls();
       bindStartupRightColumn();
       document.getElementById('startupDropzone').addEventListener('click', openImportModal);
+      scheduleLocalize();
+    }
+
+    function renderStartupContinuation(context) {
+      return `<section class="startup-continue" aria-label="Continue where you left off">
+        <span class="startup-continue-icon" aria-hidden="true">${context.icon}</span>
+        <div class="startup-continue-copy">
+          <span class="startup-continue-eyebrow">${escapeHtml(t('Continue where you left off'))}</span>
+          <strong>${escapeHtml(context.project.name)}</strong>
+          <span class="startup-continue-context">${escapeHtml(t(context.module))} · ${escapeHtml(formatContinuationOpenedAt(context.openedAt))}</span>
+        </div>
+        <button class="startup-continue-action" type="button" data-continue-project="${escapeHtml(context.project.id)}" data-continue-module="${escapeHtml(context.module)}">
+          <span>${escapeHtml(t('Continue'))}</span>${icon.chevron}
+        </button>
+      </section>`;
+    }
+
+    function renderStartupProjectsHeading(visibleCount, totalCount, searchActive) {
+      const title = searchActive ? t('Search results') : t('All projects');
+      const count = searchActive
+        ? `${visibleCount} of ${formatProjectCount(totalCount)}`
+        : formatProjectCount(totalCount);
+      return `<div class="startup-projects-heading">
+        <h2>${escapeHtml(title)}</h2>
+        <span class="startup-projects-count">${escapeHtml(count)}</span>
+      </div>`;
+    }
+
+    function renderStartupProjectEmpty(searchQuery, totalProjects) {
+      if (!totalProjects) {
+        return `<section class="startup-project-empty">
+          <div class="startup-project-empty-copy">
+            <span class="startup-project-empty-icon" aria-hidden="true">${icon.folder}</span>
+            <h3>${escapeHtml(t('No projects yet'))}</h3>
+            <p>${escapeHtml(t('Create a family tree or import a GEDCOM file'))}<br>${escapeHtml(t('to begin your family-history workspace.'))}</p>
+            <div class="startup-project-empty-actions">
+              <button class="button primary" type="button" data-startup-empty-create>${icon.plus} Create family tree</button>
+              <button class="button secondary" type="button" data-startup-empty-import>${icon.import} Import GEDCOM</button>
+            </div>
+          </div>
+        </section>`;
+      }
+      return `<section class="startup-project-empty">
+        <div class="startup-project-empty-copy">
+          <span class="startup-project-empty-icon" aria-hidden="true">${icon.search}</span>
+          <h3>${escapeHtml(t('No projects match'))} “${escapeHtml(searchQuery)}”</h3>
+          <p>${escapeHtml(t('Try another project name or clear the search.'))}</p>
+          <div class="startup-project-empty-actions">
+            <button class="button secondary" type="button" data-clear-project-search>Clear search</button>
+          </div>
+        </div>
+      </section>`;
     }
 
     function openProjectNameOverlay(anchor, project) {
@@ -17561,7 +17783,7 @@
       const save = () => {
         const value = input.value.trim();
         if (!value) { showToast('Project name cannot be empty.'); return; }
-        project.name = value;
+        updateProjectName(project.id, value);
         closeProjectNameOverlay();
         renderOpenProject();
         showToast('Project name updated.');
@@ -17604,7 +17826,11 @@
         <button class="side-link" type="button" id="backToProjects">${icon.arrow}<span>Back to all projects</span></button>
       `;
       sidebar.querySelector('#backToProjects').addEventListener('click', () => { state.projectOpen = false; state.currentProjectId = null; state.activeModule = 'Projects'; render(); });
-      sidebar.querySelectorAll('[data-open-side]').forEach(button => button.addEventListener('click', () => { state.openSide = button.dataset.openSide; renderOpenProject(); }));
+      sidebar.querySelectorAll('[data-open-side]').forEach(button => button.addEventListener('click', () => {
+        state.openSide = button.dataset.openSide;
+        persistProjectContinuation({ projectId: project.id, module: 'Projects', openedAt: new Date().toISOString() });
+        renderOpenProject();
+      }));
 
       if (state.openSide === 'settings') {
         main.innerHTML = `<div class="project-settings-view">${renderProjectSettings(project)}</div>`;
@@ -17632,7 +17858,7 @@
                   <div class="meta-row project-hero-meta">
                     <span><span class="project-hero-meta-dot" aria-hidden="true"></span>${escapeHtml(project.status)}</span>
                     <span><span class="project-hero-meta-dot" aria-hidden="true"></span>Created ${escapeHtml(project.created || 'Unknown')}</span>
-                    <span><span class="project-hero-meta-dot" aria-hidden="true"></span>Last modified ${escapeHtml(project.modified || 'Unknown')}</span>
+                    <span><span class="project-hero-meta-dot" aria-hidden="true"></span>${escapeHtml(formatProjectModified(project, 'Last modified'))}</span>
                   </div>
                   <div class="project-desc">${escapeHtml(project.desc)}</div>
                   <div class="stat-chips">
@@ -17660,7 +17886,7 @@
       `;
       document.getElementById('heroImportGedcom')?.addEventListener('click', openImportModal);
       document.getElementById('openDropzone')?.addEventListener('click', openImportModal);
-      document.getElementById('deleteProject')?.addEventListener('click', openDeleteModal);
+      document.getElementById('deleteProject')?.addEventListener('click', () => openDeleteProjectConfirm(project.id));
       document.getElementById('editProjectTitle')?.addEventListener('click', event => openProjectNameOverlay(event.currentTarget, project));
       bindOpenProjectRightColumn();
       bindToasts(main);
@@ -17814,13 +18040,14 @@
       main.querySelector('#createProjectBackup')?.addEventListener('click', () => {
         const project = currentProject();
         project.lastBackup = 'Just now';
+        touchProjectModified(project);
         renderOpenProject();
         showToast('Local backup created.');
       });
       main.querySelector('#enableProjectSync')?.addEventListener('click', () => showToast('Cloud sync is optional. This project is currently stored locally.'));
       main.querySelectorAll('[data-cover-style]').forEach(button => button.addEventListener('click', () => {
         const project = currentProject();
-        project.cover = button.dataset.coverStyle;
+        setProjectCover(project.id, button.dataset.coverStyle);
         showToast('Cover style updated. Save settings to keep other changes.');
         renderOpenProject();
       }));
@@ -17832,9 +18059,8 @@
       const name = main.querySelector('#settingsProjectName')?.value.trim();
       const desc = main.querySelector('#settingsProjectDescription')?.value.trim();
       if (!name) { showToast('Project name cannot be empty.'); return; }
-      project.name = name;
+      updateProjectName(project.id, name);
       project.desc = desc || project.desc;
-      project.modified = 'Just now';
       renderOpenProject();
       showToast('Project settings saved.');
     }
@@ -17856,6 +18082,7 @@
         const nextPath = modalBackdrop.querySelector('#newProjectLocation')?.value.trim();
         if (!nextPath) { showToast('Choose a project location.'); return; }
         project.projectPath = nextPath;
+        touchProjectModified(project);
         closeModal();
         renderOpenProject();
         showToast('Project location updated.');
@@ -17864,13 +18091,11 @@
 
 
     function renderProjectCollection(list) {
-      if (!list.length) return '<div class="panel"><div class="panel-body" style="color:var(--text-tertiary)">No projects found.</div></div>';
       const cls = state.viewMode === 'grid' ? 'project-grid' : 'project-list';
       return `<div class="${cls}">${list.map(renderProjectCard).join('')}</div>`;
     }
 
     function renderProjectCard(project) {
-      const selected = state.selectedProjectId === project.id;
       const coverClass = project.cover === 'tree' ? 'tree' : '';
       const coverStyle = project.cover === 'paper'
         ? "--cover: linear-gradient(135deg, #e9d6b8, #f3e8cf 48%, #d7bf9b);"
@@ -17878,7 +18103,7 @@
           ? "--cover: linear-gradient(135deg, rgba(85,95,84,.9), rgba(218,218,196,.65)), url('data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 140\"%3E%3Crect width=\"400\" height=\"140\" fill=\"%239aa08b\"/%3E%3Ccircle cx=\"76\" cy=\"58\" r=\"22\" fill=\"%232b332d\"/%3E%3Ccircle cx=\"137\" cy=\"54\" r=\"22\" fill=\"%232b332d\"/%3E%3Ccircle cx=\"197\" cy=\"60\" r=\"22\" fill=\"%232b332d\"/%3E%3Ccircle cx=\"263\" cy=\"56\" r=\"22\" fill=\"%232b332d\"/%3E%3Ccircle cx=\"328\" cy=\"54\" r=\"22\" fill=\"%232b332d\"/%3E%3C/svg%3E'); background-size: cover;"
           : "--cover: linear-gradient(180deg, rgba(15,20,19,.04), rgba(15,20,19,.14)), var(--geneograph-cover-tree-image);";
       return `
-        <article class="project-card ${state.viewMode === 'list' ? 'list-card' : ''} ${selected ? 'selected' : ''}" data-project-id="${project.id}" tabindex="0">
+        <article class="project-card ${state.viewMode === 'list' ? 'list-card' : ''}" data-project-id="${escapeHtml(project.id)}" tabindex="0" role="button" aria-label="Open ${escapeHtml(project.name)}">
           <div class="project-cover ${coverClass}" style="${coverStyle}"></div>
           <div class="project-body">
             <div class="project-title-row"><h3>${escapeHtml(project.name)}</h3></div>
@@ -17886,7 +18111,7 @@
               <span>${icon.peoplegroup}${project.people} people</span>
               <span class="project-status-meta"><span class="project-status-dot" aria-hidden="true"></span>${escapeHtml(project.status)}</span>
             </div>
-            <div class="modified">Modified ${escapeHtml(project.modified)}</div>
+            <div class="modified">${escapeHtml(formatProjectModified(project))}</div>
           </div>
           <div class="project-footer"><button class="small-open" type="button" data-open="${project.id}">Open</button><button class="project-more" type="button" data-menu="${project.id}" aria-label="More actions">${icon.more}</button></div>
         </article>
@@ -17899,7 +18124,7 @@
         { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'People', context: 'People', icon: icon.people, tone: 'purple', title: 'Profile updated', detail: 'Luna Purrington now has a verified birth place', time: 'Yesterday, 18:20' },
         { projectId: 'p2', project: 'Silver Family Tree', module: 'Family Tree', context: 'Family Tree', icon: icon.import, tone: 'amber', title: 'GEDCOM import reviewed', detail: '17 cat-family people were added to the project', time: 'May 25, 2026' },
         { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'Archive', context: 'Archive', icon: icon.file, tone: 'blue', title: 'Archive link created', detail: 'Pawford household register linked to Silver Whiskerfield birth fact', time: 'May 21, 2026' }
-      ];
+      ].filter(item => sampleData.projects.some(project => project.id === item.projectId));
       return `<div class="right-card"><h2>Recent activity</h2><div class="startup-action-list">
         ${items.map(item => `<button class="startup-action-row startup-activity-row" type="button" data-startup-open-module="${item.module}" data-startup-project="${item.projectId}" aria-label="Open ${escapeHtml(item.project)} ${escapeHtml(item.context)} activity">
           <span class="startup-action-icon ${item.tone}">${item.icon}</span>
@@ -17938,13 +18163,7 @@
     }
 
     function openStartupProjectModule(projectId, moduleName) {
-      clearPeopleSelection();
-      state.projectOpen = true;
-      state.currentProjectId = projectId;
-      state.selectedProjectId = projectId;
-      state.activeModule = moduleName === 'Projects' ? 'Projects' : moduleName;
-      state.openSide = 'overview';
-      render();
+      navigateToProjectModule(projectId, moduleName);
     }
 
     function renderOpenProjectInsightsCard(project) {
@@ -17980,8 +18199,7 @@
       const openModule = element => {
         const moduleName = element.dataset.openProjectModule;
         if (!moduleName) return;
-        state.activeModule = moduleName;
-        render();
+        navigateToProjectModule(currentProjectId(), moduleName);
       };
       main.querySelectorAll('[data-open-project-module]').forEach(element => {
         element.addEventListener('click', event => {
@@ -17998,13 +18216,13 @@
       });
       main.querySelectorAll('[data-shortcut]').forEach(button => {
         button.addEventListener('click', () => {
-          state.activeModule = button.dataset.shortcut;
-          render();
+          navigateToProjectModule(currentProjectId(), button.dataset.shortcut);
         });
       });
       main.querySelectorAll('[data-open-side-main]').forEach(button => {
         button.addEventListener('click', () => {
           state.openSide = button.dataset.openSideMain;
+          persistProjectContinuation({ projectId: currentProjectId(), module: 'Projects', openedAt: new Date().toISOString() });
           renderOpenProject();
         });
       });
@@ -42647,16 +42865,169 @@
 
     function renderModulePlaceholder() {
       sidebar.innerHTML = `<div class="side-section-title">Current project</div><button class="side-link" type="button" data-back-project>${icon.home}<span>Project overview</span></button>`;
-      sidebar.querySelector('[data-back-project]').addEventListener('click', () => { state.activeModule = 'Projects'; render(); });
+      sidebar.querySelector('[data-back-project]').addEventListener('click', () => navigateToProjectModule(currentProjectId(), 'Projects'));
       main.innerHTML = `<div class="placeholder"><div class="placeholder-card"><h1>${escapeHtml(state.activeModule)}</h1><p>This module will be built in a later iteration. The Projects tab already exposes it once a project is open.</p></div></div>`;
     }
 
+    function projectModifiedTimestamp(project) {
+      const preferred = Date.parse(project?.modifiedAt || '');
+      if (Number.isFinite(preferred)) return preferred;
+      const legacy = Date.parse(project?.modified || '');
+      return Number.isFinite(legacy) ? legacy : Number.NEGATIVE_INFINITY;
+    }
+
+    function formatProjectModified(project, prefix = 'Modified') {
+      const timestamp = projectModifiedTimestamp(project);
+      if (!Number.isFinite(timestamp)) return `${t(prefix)} ${t('Unknown')}`;
+      const date = new Date(timestamp);
+      const now = new Date();
+      const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+      const startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+      const dayDifference = Math.round((startToday - startDate) / 86400000);
+      const locale = state.language === 'ru' ? 'ru' : undefined;
+      const time = new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: '2-digit' }).format(date);
+      if (dayDifference === 0) return `${t(prefix)} ${t('today at')} ${time}`;
+      if (dayDifference === 1) return `${t(prefix)} ${t('yesterday at')} ${time}`;
+      const absolute = new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric' }).format(date);
+      return `${t(prefix)} ${absolute}`;
+    }
+
+    function touchProjectModified(project) {
+      if (project) project.modifiedAt = new Date().toISOString();
+    }
+
+    function updateProjectName(projectId, value) {
+      const project = sampleData.projects.find(item => item.id === projectId);
+      const name = cleanEditFieldValue(value);
+      if (!project || !name) return false;
+      project.name = name;
+      touchProjectModified(project);
+      return true;
+    }
+
+    function setProjectCover(projectId, coverStyle) {
+      const project = sampleData.projects.find(item => item.id === projectId);
+      if (!project || !['paper', 'tree', 'photo'].includes(coverStyle)) return false;
+      project.cover = coverStyle;
+      touchProjectModified(project);
+      return true;
+    }
+
+    function formatProjectCount(count) {
+      const value = Number.isFinite(Number(count)) ? Number(count) : 0;
+      return `${value} ${value === 1 ? 'project' : 'projects'}`;
+    }
+
+    function projectModuleIcon(moduleName) {
+      if (moduleName === 'Projects') return icon.home;
+      if (moduleName === 'Family Tree') return icon.tree;
+      if (moduleName === 'People') return icon.people;
+      if (moduleName === 'Geneograph') return icon.whiteboard;
+      if (moduleName === 'Albums') return icon.image;
+      if (moduleName === 'Archive') return icon.file;
+      if (moduleName === 'Notes') return icon.note;
+      if (moduleName === 'Places') return icon.mapPin;
+      if (moduleName === 'Publish') return icon.export;
+      return icon.home;
+    }
+
+    function normalizeProjectContinuation(value) {
+      if (!value || typeof value !== 'object') return null;
+      const project = sampleData.projects.find(item => item.id === value.projectId && !item.deleted && item.available !== false);
+      const moduleName = value.module === 'Projects' || modules.includes(value.module) ? value.module : '';
+      const openedAt = Date.parse(value.openedAt || '');
+      if (!project || !moduleName || !Number.isFinite(openedAt)) return null;
+      return { projectId: project.id, module: moduleName, openedAt: new Date(openedAt).toISOString() };
+    }
+
+    function clearProjectContinuation() {
+      state.projectContinuation = null;
+      try { localStorage.removeItem(PROJECT_CONTINUATION_STORAGE_KEY); } catch (error) {}
+    }
+
+    function readProjectContinuation() {
+      let storedValue = null;
+      try { storedValue = localStorage.getItem(PROJECT_CONTINUATION_STORAGE_KEY); } catch (error) {}
+      if (storedValue == null) {
+        const fallback = normalizeProjectContinuation(sampleData.projectContinuation);
+        if (fallback) {
+          try { localStorage.setItem(PROJECT_CONTINUATION_STORAGE_KEY, JSON.stringify(fallback)); } catch (error) {}
+        }
+        return fallback;
+      }
+      try {
+        const normalized = normalizeProjectContinuation(JSON.parse(storedValue));
+        if (!normalized) clearProjectContinuation();
+        return normalized;
+      } catch (error) {
+        clearProjectContinuation();
+        return null;
+      }
+    }
+
+    function persistProjectContinuation(value) {
+      const normalized = normalizeProjectContinuation(value);
+      if (!normalized) {
+        clearProjectContinuation();
+        return null;
+      }
+      state.projectContinuation = normalized;
+      try { localStorage.setItem(PROJECT_CONTINUATION_STORAGE_KEY, JSON.stringify(normalized)); } catch (error) {}
+      return normalized;
+    }
+
+    function resolveProjectContinuation() {
+      const normalized = normalizeProjectContinuation(state.projectContinuation);
+      if (!normalized) {
+        if (state.projectContinuation) clearProjectContinuation();
+        return null;
+      }
+      const project = sampleData.projects.find(item => item.id === normalized.projectId);
+      return { ...normalized, project, icon: projectModuleIcon(normalized.module) };
+    }
+
+    function formatContinuationOpenedAt(value) {
+      const timestamp = Date.parse(value || '');
+      if (!Number.isFinite(timestamp)) return `${t('Last opened')} ${t('Unknown')}`;
+      const difference = timestamp - Date.now();
+      const absoluteDifference = Math.abs(difference);
+      let unit = 'day';
+      let divisor = 86400000;
+      if (absoluteDifference < 3600000) { unit = 'minute'; divisor = 60000; }
+      else if (absoluteDifference < 86400000) { unit = 'hour'; divisor = 3600000; }
+      const relativeValue = Math.round(difference / divisor);
+      const locale = state.language === 'ru' ? 'ru' : 'en';
+      const relative = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(relativeValue, unit);
+      return `${t('Last opened')} ${relative}`;
+    }
+
+    function navigateToProjectModule(projectId, moduleName = 'Projects') {
+      const project = sampleData.projects.find(item => item.id === projectId && !item.deleted && item.available !== false);
+      const nextModule = moduleName === 'Projects' || modules.includes(moduleName) ? moduleName : 'Projects';
+      if (!project) return false;
+      clearPeopleSelection();
+      state.projectOpen = true;
+      state.currentProjectId = project.id;
+      state.selectedProjectId = project.id;
+      state.activeModule = nextModule;
+      if (nextModule === 'Projects') state.openSide = 'overview';
+      persistProjectContinuation({ projectId: project.id, module: nextModule, openedAt: new Date().toISOString() });
+      render();
+      return true;
+    }
+
     function filteredProjects() {
+      const originalOrder = new Map(sampleData.projects.map((project, index) => [project.id, index]));
       let list = [...sampleData.projects];
       const q = state.search.trim().toLowerCase();
-      if (q) list = list.filter(p => `${p.name} ${p.status} ${p.desc}`.toLowerCase().includes(q));
-      if (state.sort === 'name') list.sort((a,b) => a.name.localeCompare(b.name));
-      if (state.sort === 'people') list.sort((a,b) => b.people - a.people);
+      if (q) list = list.filter(project => `${project.name} ${project.status} ${project.desc}`.toLowerCase().includes(q));
+      list.sort((a, b) => {
+        let comparison = 0;
+        if (state.sort === 'modified') comparison = projectModifiedTimestamp(b) - projectModifiedTimestamp(a);
+        if (state.sort === 'name') comparison = a.name.localeCompare(b.name);
+        if (state.sort === 'people') comparison = Number(b.people || 0) - Number(a.people || 0);
+        return comparison || a.name.localeCompare(b.name) || originalOrder.get(a.id) - originalOrder.get(b.id);
+      });
       return list;
     }
 
@@ -42665,28 +43036,229 @@
       main.querySelector('#sortProjects')?.addEventListener('change', e => { state.sort = e.target.value; renderStartup(); });
       main.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => { state.viewMode = button.dataset.view; renderStartup(); }));
       main.querySelectorAll('[data-project-id]').forEach(card => {
-        card.addEventListener('click', e => { if (!e.target.closest('button')) { clearPeopleSelection(); state.selectedProjectId = card.dataset.projectId; renderStartup(); }});
-        card.addEventListener('keydown', e => { if (e.key === 'Enter') { clearPeopleSelection(); state.selectedProjectId = card.dataset.projectId; renderStartup(); }});
+        card.addEventListener('click', event => {
+          if (!event.target.closest('button, input, select, a')) openProject(card.dataset.projectId);
+        });
+        card.addEventListener('keydown', event => {
+          if ((event.key === 'Enter' || event.key === ' ') && !event.target.closest('button, input, select, a')) {
+            event.preventDefault();
+            openProject(card.dataset.projectId);
+          }
+        });
       });
       main.querySelectorAll('[data-open]').forEach(button => button.addEventListener('click', e => { e.stopPropagation(); openProject(button.dataset.open); }));
       main.querySelectorAll('[data-menu]').forEach(button => button.addEventListener('click', e => { e.stopPropagation(); openProjectMenu(button.dataset.menu, button); }));
+      main.querySelector('[data-continue-project]')?.addEventListener('click', event => {
+        const button = event.currentTarget;
+        navigateToProjectModule(button.dataset.continueProject, button.dataset.continueModule);
+      });
+      main.querySelector('[data-clear-project-search]')?.addEventListener('click', () => {
+        state.search = '';
+        renderStartup();
+        restoreSearchInputFocus('#projectSearch');
+      });
+      main.querySelector('[data-startup-empty-create]')?.addEventListener('click', openCreateModal);
+      main.querySelector('[data-startup-empty-import]')?.addEventListener('click', openImportModal);
       bindToasts(main);
     }
 
     function openProject(id) {
-      clearPeopleSelection();
-      state.currentProjectId = id;
-      state.selectedProjectId = id;
-      state.projectOpen = true;
-      state.activeModule = 'Projects';
-      state.openSide = 'overview';
-      render();
+      navigateToProjectModule(id, 'Projects');
     }
 
     function currentProject() {
       return sampleData.projects.find(p => p.id === state.currentProjectId) || sampleData.projects[0];
     }
 
+    function uniqueProjectId() {
+      const base = `project-${Date.now().toString(36)}`;
+      let candidate = base;
+      let suffix = 2;
+      while (sampleData.projects.some(project => project.id === candidate)) {
+        candidate = `${base}-${suffix}`;
+        suffix += 1;
+      }
+      return candidate;
+    }
+
+    function uniqueProjectCopyName(projectName) {
+      const base = `${cleanEditFieldValue(projectName) || 'Untitled project'} copy`;
+      const names = new Set(sampleData.projects.map(project => project.name.toLocaleLowerCase()));
+      if (!names.has(base.toLocaleLowerCase())) return base;
+      let suffix = 2;
+      while (names.has(`${base} ${suffix}`.toLocaleLowerCase())) suffix += 1;
+      return `${base} ${suffix}`;
+    }
+
+    function bindProjectActionModalReturnFocus(anchor) {
+      if (!anchor?.isConnected) return;
+      modalBackdrop.querySelectorAll('[data-close]').forEach(button => {
+        button.addEventListener('click', () => {
+          if (anchor.isConnected) anchor.focus();
+        }, { once: true });
+      });
+    }
+
+    function openRenameProjectModal(projectId, anchor = null) {
+      const project = sampleData.projects.find(item => item.id === projectId);
+      if (!project) return;
+      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="renameProjectTitle">
+        <div class="modal-header"><div><h2 id="renameProjectTitle">Rename project</h2><p>Update the project name shown throughout GeneoGraph.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div>
+        <form id="renameProjectForm">
+          <div class="modal-body form-grid"><div class="field"><label for="renameProjectName">Project name</label><input id="renameProjectName" value="${escapeHtml(project.name)}" autocomplete="off" required></div></div>
+          <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Save changes</button></div>
+        </form>
+      </div>`);
+      bindProjectActionModalReturnFocus(anchor);
+      const input = modalBackdrop.querySelector('#renameProjectName');
+      input?.focus();
+      input?.select();
+      modalBackdrop.querySelector('#renameProjectForm')?.addEventListener('submit', event => {
+        event.preventDefault();
+        const name = cleanEditFieldValue(input?.value);
+        if (!name) {
+          input?.setCustomValidity('Project name cannot be empty.');
+          input?.reportValidity();
+          return;
+        }
+        input.setCustomValidity('');
+        updateProjectName(project.id, name);
+        closeModal();
+        renderStartup();
+        showToast('Project renamed.');
+      });
+    }
+
+    function duplicateProject(projectId) {
+      const project = sampleData.projects.find(item => item.id === projectId);
+      if (!project) return null;
+      const now = new Date();
+      const timestamp = now.toISOString();
+      const copy = {
+        id: uniqueProjectId(),
+        name: uniqueProjectCopyName(project.name),
+        people: 0,
+        created: new Intl.DateTimeFormat(state.language === 'ru' ? 'ru' : undefined, {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        }).format(now),
+        createdAt: timestamp,
+        modifiedAt: timestamp,
+        status: project.status || 'Local project',
+        cover: project.cover || 'paper',
+        files: 0,
+        notes: 0,
+        desc: project.desc || ''
+      };
+      sampleData.projects.unshift(copy);
+      state.selectedProjectId = copy.id;
+      renderStartup();
+      showToast('Project duplicated.');
+      return copy;
+    }
+
+    function openProjectCoverModal(projectId, anchor = null) {
+      const project = sampleData.projects.find(item => item.id === projectId);
+      if (!project) return;
+      let selectedCover = ['paper', 'tree', 'photo'].includes(project.cover) ? project.cover : 'paper';
+      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="projectCoverTitle">
+        <div class="modal-header"><div><h2 id="projectCoverTitle">Update cover</h2><p>Choose the cover shown on this project card.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div>
+        <div class="modal-body">
+          <div class="project-cover-options" role="group" aria-label="Cover style">
+            <button class="project-cover-option ${selectedCover === 'paper' ? 'active' : ''}" type="button" data-project-cover-choice="paper" aria-pressed="${selectedCover === 'paper'}">Archival paper</button>
+            <button class="project-cover-option ${selectedCover === 'tree' ? 'active' : ''}" type="button" data-project-cover-choice="tree" aria-pressed="${selectedCover === 'tree'}">Family tree</button>
+            <button class="project-cover-option ${selectedCover === 'photo' ? 'active' : ''}" type="button" data-project-cover-choice="photo" aria-pressed="${selectedCover === 'photo'}">Family photo</button>
+          </div>
+        </div>
+        <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-save-project-cover>Save changes</button></div>
+      </div>`);
+      bindProjectActionModalReturnFocus(anchor);
+      modalBackdrop.querySelectorAll('[data-project-cover-choice]').forEach(button => {
+        button.addEventListener('click', () => {
+          selectedCover = button.dataset.projectCoverChoice;
+          modalBackdrop.querySelectorAll('[data-project-cover-choice]').forEach(option => {
+            const active = option.dataset.projectCoverChoice === selectedCover;
+            option.classList.toggle('active', active);
+            option.setAttribute('aria-pressed', String(active));
+          });
+        });
+      });
+      modalBackdrop.querySelector('[data-save-project-cover]')?.addEventListener('click', () => {
+        setProjectCover(project.id, selectedCover);
+        closeModal();
+        renderStartup();
+        showToast('Project cover updated.');
+      });
+    }
+
+    function openDeleteProjectConfirm(projectId, anchor = null) {
+      const project = sampleData.projects.find(item => item.id === projectId);
+      if (!project) return;
+      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteProjectTitle">
+        <div class="modal-header"><div><h2 id="deleteProjectTitle">Delete project?</h2><p>Delete ${escapeHtml(project.name)} and all people, relationships, media, and research records owned by this project.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div>
+        <div class="modal-body"><div class="panel-muted">This action cannot be undone during this prototype session.</div></div>
+        <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-confirm-project-delete>Delete project</button></div>
+      </div>`);
+      bindProjectActionModalReturnFocus(anchor);
+      modalBackdrop.querySelector('[data-confirm-project-delete]')?.addEventListener('click', () => deleteProject(project.id));
+    }
+
+    function deleteProject(projectId) {
+      const project = sampleData.projects.find(item => item.id === projectId);
+      if (!project) return false;
+
+      const projectCollections = [
+        'people',
+        'families',
+        'relationshipSeed',
+        'educationSeed',
+        'places',
+        'events',
+        'media',
+        'albums',
+        'archiveFiles',
+        'sources',
+        'notes',
+        'boards',
+        'links'
+      ];
+      projectCollections.forEach(collectionName => {
+        if (!Array.isArray(sampleData[collectionName])) return;
+        sampleData[collectionName] = sampleData[collectionName].filter(record => record?.projectId !== project.id);
+      });
+      sampleData.projects = sampleData.projects.filter(item => item.id !== project.id);
+
+      if (sampleData.projectContinuation?.projectId === project.id) sampleData.projectContinuation = null;
+      if (state.projectContinuation?.projectId === project.id) clearProjectContinuation();
+
+      const nextProject = sampleData.projects[0] || null;
+      const nextProjectId = nextProject?.id || '';
+      const nextPerson = sampleData.people.find(person => person.projectId === nextProjectId) || null;
+      const nextPhoto = sampleData.media.find(photo => photo.projectId === nextProjectId && !photo.deletedAt) || null;
+      const nextPlace = sampleData.places.find(place => place.projectId === nextProjectId) || null;
+
+      state.projectOpen = false;
+      state.currentProjectId = null;
+      state.selectedProjectId = nextProjectId;
+      state.activeModule = 'Projects';
+      state.openSide = 'overview';
+      clearPeopleSelection();
+      state.selectedPersonId = nextPerson?.id || '';
+      state.treeCenterTargetId = nextPerson?.id || '';
+      state.selectedPeopleId = nextPerson?.id || '';
+      state.selectedPhotoId = nextPhoto?.id || '';
+      state.selectedPhotoIds = [];
+      state.activeAlbumId = null;
+      state.albumsFilters.personId = '';
+      state.selectedPlaceId = nextPlace?.id || '';
+      sampleData.events = buildSampleEvents();
+
+      closeModal({ force: true });
+      render();
+      showToast('Project deleted.');
+      return true;
+    }
 
     function openProjectMenu(id, anchor) {
       closeMenu();
@@ -42696,13 +43268,16 @@
       menu.id = 'projectMenu';
       menu.style.top = `${rect.bottom + 6}px`;
       menu.style.left = `${Math.max(12, rect.right - 190)}px`;
-      menu.innerHTML = `<button type="button" data-action="rename">Rename</button><button type="button" data-action="duplicate">Duplicate</button><button type="button" data-action="cover">Update cover</button><button type="button" class="danger" data-action="delete">Delete</button>`;
+      menu.innerHTML = `<button type="button" data-action="rename">${escapeHtml(t('Rename'))}</button><button type="button" data-action="duplicate">${escapeHtml(t('Duplicate'))}</button><button type="button" data-action="cover">${escapeHtml(t('Update cover'))}</button><button type="button" class="danger" data-action="delete">${escapeHtml(t('Delete'))}</button>`;
       document.body.appendChild(menu);
       menu.addEventListener('click', e => {
         const action = e.target.closest('[data-action]')?.dataset.action;
         if (!action) return;
-        showToast(`${capitalize(action)} action simulated.`);
         closeMenu();
+        if (action === 'rename') openRenameProjectModal(id, anchor);
+        if (action === 'duplicate') duplicateProject(id);
+        if (action === 'cover') openProjectCoverModal(id, anchor);
+        if (action === 'delete') openDeleteProjectConfirm(id, anchor);
       });
       setTimeout(() => document.addEventListener('click', closeMenu), 0);
     }
@@ -42806,15 +43381,6 @@
           <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-simulate-import>Choose file</button></div>
         </div>`);
       modalBackdrop.querySelector('[data-simulate-import]').addEventListener('click', () => showToast('File picker would open here.'));
-    }
-
-    function openDeleteModal() {
-      openModal(`
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
-          <div class="modal-header"><div><h2 id="deleteTitle">Delete project?</h2><p>This is a prototype confirmation. No real files will be deleted.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div>
-          <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-confirm-delete>Delete project</button></div>
-        </div>`);
-      modalBackdrop.querySelector('[data-confirm-delete]').addEventListener('click', () => { closeModal(); showToast('Delete action simulated.'); });
     }
 
     function openModal(html) {
@@ -42959,6 +43525,7 @@
     }
 
     normalizeCentralRuntimeData();
+    state.projectContinuation = readProjectContinuation();
 
     document.addEventListener('keydown', event => {
       if (event.key !== 'Escape') return;
@@ -42980,10 +43547,6 @@
         openPersonPhotoPicker(personPhotoEdit.dataset.personPhotoEdit);
         return;
       }
-      const side = e.target.closest('[data-open-side-main]')?.dataset.openSideMain;
-      if (side) { state.openSide = side; renderOpenProject(); }
-      const shortcut = e.target.closest('[data-shortcut]')?.dataset.shortcut;
-      if (shortcut) { state.activeModule = shortcut; render(); }
     });
 
     render();
