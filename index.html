@@ -14046,9 +14046,7 @@
     */
     const sampleData = {
       projects: [
-        { id: 'p1', name: 'Whiskerfield Family Tree', people: 17, created: 'May 1, 2026', modified: 'May 24, 2026', modifiedAt: '2026-05-24T10:42:00Z', status: 'Local project', cover: 'paper', files: 5, notes: 7, desc: 'Research into the Whiskerfield and Purrington family lines from Pawford, Meowbridge, Fishmarket Row, and Old Cattery.' },
-        { id: 'p2', name: 'Silver Family Tree', people: 23, created: 'May 12, 2025', modified: 'Sep 20, 2025', modifiedAt: '2025-09-20T16:18:00Z', status: 'Local project', cover: 'tree', files: 8, notes: 19, desc: 'Small personal tree for close family members and modern household records.' },
-        { id: 'p3', name: 'Meowbridge Branch Study', people: 42, created: 'Apr 14, 2025', modified: 'June 2, 2025', modifiedAt: '2025-06-02T09:30:00Z', status: 'Local project', cover: 'photo', files: 15, notes: 22, desc: 'Extended branch research and family photos collected from relatives.' }
+        { id: 'p1', name: 'Whiskerfield Family Tree', created: '01 May 2026', modified: '24 May 2026', modifiedAt: '2026-05-24T10:42:00Z', status: 'Local project', cover: 'paper', files: 5, notes: 7, desc: 'Research into the Whiskerfield and Purrington family lines from Pawford, Meowbridge, Fishmarket Row, and Old Cattery.' }
       ],
       projectContinuation: {
         projectId: 'p1',
@@ -14220,6 +14218,33 @@
 
     function getPeople(projectId) {
       return sampleData.people.filter(person => !projectId || person.projectId === projectId);
+    }
+
+    function getProjectPeopleCount(
+      projectId = currentProjectId()
+    ) {
+      if (!projectId) {
+        return 0;
+      }
+
+      return getPeople(
+        projectId
+      ).length;
+    }
+
+    function formatProjectPeopleCount(
+      projectId
+    ) {
+      const count =
+        getProjectPeopleCount(
+          projectId
+        );
+
+      return `${count} ${
+        count === 1
+          ? 'person'
+          : 'people'
+      }`;
     }
 
     function getPerson(personId) {
@@ -17990,12 +18015,18 @@
                   </div>
                   <div class="meta-row project-hero-meta">
                     <span><span class="project-hero-meta-dot" aria-hidden="true"></span>${escapeHtml(project.status)}</span>
-                    <span><span class="project-hero-meta-dot" aria-hidden="true"></span>Created ${escapeHtml(project.created || 'Unknown')}</span>
+                    <span><span class="project-hero-meta-dot" aria-hidden="true"></span>${escapeHtml(formatProjectCreated(project))}</span>
                     <span><span class="project-hero-meta-dot" aria-hidden="true"></span>${escapeHtml(formatProjectModified(project, 'Last modified'))}</span>
                   </div>
                   <div class="project-desc">${escapeHtml(project.desc)}</div>
                   <div class="stat-chips">
-                    <span class="chip">${project.people} people</span>
+                    <span class="chip">
+                      ${escapeHtml(
+                        formatProjectPeopleCount(
+                          project.id
+                        )
+                      )}
+                    </span>
                     <span class="chip red">${getProjectPhotos(project.id).length} photos</span>
                     <span class="chip amber">${project.files} files</span>
                     <span class="chip purple">${project.notes} notes</span>
@@ -18084,8 +18115,11 @@
         || `C:\\Users\\Silver\\Documents\\GeneoGraph\\${safeFileTitle}.ggproj`;
 
       const lastBackup =
-        project.lastBackup
-        || 'Not created yet';
+        project.lastBackupAt
+          ? formatProjectDate(
+              project.lastBackupAt
+            )
+          : t('Not created yet');
 
       const coverStyleAttr =
         projectCoverStyleAttribute(
@@ -18170,9 +18204,15 @@
               <div class="project-settings-field project-settings-select-field">
                 <label for="settingsDateFormat">Date format</label>
                 <select id="settingsDateFormat">
-                  <option>DD.MM.YYYY</option>
-                  <option selected>MMM D, YYYY</option>
-                  <option>YYYY-MM-DD</option>
+                  <option selected>
+                    DD MMM YYYY
+                  </option>
+                  <option>
+                    DD.MM.YYYY
+                  </option>
+                  <option>
+                    YYYY-MM-DD
+                  </option>
                 </select>
                 <span class="project-settings-select-chevron" aria-hidden="true">${icon.chevron}</span>
               </div>
@@ -18192,7 +18232,10 @@
       main.querySelector('#moveProjectLocation')?.addEventListener('click', openMoveProjectModal);
       main.querySelector('#createProjectBackup')?.addEventListener('click', () => {
         const project = currentProject();
-        project.lastBackup = 'Just now';
+        project.lastBackupAt =
+          new Date().toISOString();
+
+        delete project.lastBackup;
         touchProjectModified(project);
         renderOpenProject();
         showToast('Local backup created.');
@@ -18263,6 +18306,10 @@
         projectCoverStyleAttribute(
           coverStyle
         );
+      const peopleCountLabel =
+        formatProjectPeopleCount(
+          project.id
+        );
       return `
         <article class="project-card ${state.viewMode === 'list' ? 'list-card' : ''}" data-project-id="${escapeHtml(project.id)}" tabindex="0" role="button" aria-label="Open ${escapeHtml(project.name)}">
           <div
@@ -18272,7 +18319,12 @@
           <div class="project-body">
             <div class="project-title-row"><h3>${escapeHtml(project.name)}</h3></div>
             <div class="project-meta">
-              <span>${icon.peoplegroup}${project.people} people</span>
+              <span>
+                ${icon.peoplegroup}
+                ${escapeHtml(
+                  peopleCountLabel
+                )}
+              </span>
               <span class="project-status-meta"><span class="project-status-dot" aria-hidden="true"></span>${escapeHtml(project.status)}</span>
             </div>
             <div class="modified">${escapeHtml(formatProjectModified(project))}</div>
@@ -18284,10 +18336,10 @@
 
     function renderStartupRecentActivityCard() {
       const items = [
-        { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'Albums', context: 'Albums', icon: icon.image, tone: 'red', title: '4 photos added', detail: 'Whiskerfield family album photos are ready to organize', time: 'Today, 10:42' },
-        { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'People', context: 'People', icon: icon.people, tone: 'purple', title: 'Profile updated', detail: 'Luna Purrington now has a verified birth place', time: 'Yesterday, 18:20' },
-        { projectId: 'p2', project: 'Silver Family Tree', module: 'Family Tree', context: 'Family Tree', icon: icon.import, tone: 'amber', title: 'GEDCOM import reviewed', detail: '17 people were added to the project', time: 'May 25, 2026' },
-        { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'Archive', context: 'Archive', icon: icon.file, tone: 'blue', title: 'Archive link created', detail: 'Pawford household register linked to Silver Whiskerfield birth fact', time: 'May 21, 2026' }
+        { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'Albums', context: 'Albums', icon: icon.image, tone: 'red', title: '4 photos added', detail: 'Whiskerfield family album photos are ready to organize', occurredAt: '2026-05-24T10:42:00Z' },
+        { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'People', context: 'People', icon: icon.people, tone: 'purple', title: 'Profile updated', detail: 'Luna Purrington now has a verified birth place', occurredAt: '2026-05-23T18:20:00Z' },
+        { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'Family Tree', context: 'Family Tree', icon: icon.import, tone: 'amber', title: 'GEDCOM import reviewed', detail: '17 people were added to the project', occurredAt: '2026-05-22T10:42:00Z' },
+        { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'Archive', context: 'Archive', icon: icon.file, tone: 'blue', title: 'Archive link created', detail: 'Pawford household register linked to Silver Whiskerfield birth fact', occurredAt: '2026-05-21T09:30:00Z' }
       ].filter(item => sampleData.projects.some(project => project.id === item.projectId));
       if (!items.length) {
         return '';
@@ -18298,7 +18350,17 @@
           <span class="startup-action-copy">
             <strong>${escapeHtml(item.title)}</strong>
             <span class="startup-action-project">${escapeHtml(item.project)} · ${escapeHtml(item.context)}</span>
-            <span>${escapeHtml(item.detail)} · ${escapeHtml(item.time)}</span>
+            <span>
+              ${escapeHtml(
+                item.detail
+              )}
+              ·
+              ${escapeHtml(
+                formatProjectDate(
+                  item.occurredAt
+                )
+              )}
+            </span>
           </span>
           <span class="startup-activity-chevron" aria-hidden="true">›</span>
         </button>`).join('')}
@@ -18400,19 +18462,19 @@
 
     function renderActivityRows(count) {
       const rows = [
-        { module: 'Albums', svg: icon.image, tone: 'red', title: 'Photos added', detail: '4 photos added to Family photos', time: 'Today, 10:42' },
-        { module: 'People', svg: icon.people, tone: 'purple', title: 'Person updated', detail: 'Luna Purrington profile updated', time: 'Yesterday, 10:42' },
-        { module: 'Family Tree', svg: icon.file, tone: 'amber', title: 'GEDCOM imported', detail: '24 people imported from GEDCOM', time: 'May 25, 2026' },
-        { module: 'Notes', svg: icon.note, tone: '', title: 'Research note added', detail: 'Surname origin note updated', time: 'May 21, 2026' },
-        { module: 'Family Tree', svg: icon.tree, tone: '', title: 'Relationship connected', detail: 'Luna Purrington was connected to the tree', time: 'May 18, 2026' },
-        { module: 'Archive', svg: icon.file, tone: 'amber', title: 'Archive file linked', detail: 'Pawford household register linked to Silver Whiskerfield', time: 'May 14, 2026' },
-        { module: 'People', svg: icon.people, tone: '', title: 'Duplicate reviewed', detail: 'Possible duplicate was marked reviewed', time: 'May 10, 2026' },
-        { module: 'Albums', svg: icon.image, tone: 'red', title: 'Photo tags added', detail: 'Three portraits were linked to people', time: 'May 7, 2026' }
+        { module: 'Albums', svg: icon.image, tone: 'red', title: 'Photos added', detail: '4 photos added to Family photos', time: '2026-05-24T10:42:00Z' },
+        { module: 'People', svg: icon.people, tone: 'purple', title: 'Person updated', detail: 'Luna Purrington profile updated', time: '2026-05-23T10:42:00Z' },
+        { module: 'Family Tree', svg: icon.file, tone: 'amber', title: 'GEDCOM imported', detail: '24 people imported from GEDCOM', time: '2026-05-25T09:00:00Z' },
+        { module: 'Notes', svg: icon.note, tone: '', title: 'Research note added', detail: 'Surname origin note updated', time: '2026-05-21T11:00:00Z' },
+        { module: 'Family Tree', svg: icon.tree, tone: '', title: 'Relationship connected', detail: 'Luna Purrington was connected to the tree', time: '2026-05-18T12:00:00Z' },
+        { module: 'Archive', svg: icon.file, tone: 'amber', title: 'Archive file linked', detail: 'Pawford household register linked to Silver Whiskerfield', time: '2026-05-14T09:00:00Z' },
+        { module: 'People', svg: icon.people, tone: '', title: 'Duplicate reviewed', detail: 'Possible duplicate was marked reviewed', time: '2026-05-10T14:00:00Z' },
+        { module: 'Albums', svg: icon.image, tone: 'red', title: 'Photo tags added', detail: 'Three portraits were linked to people', time: '2026-05-07T15:00:00Z' }
       ];
       return `<div class="project-activity-list">${rows.slice(0,count).map(row => `<button class="project-activity-row" type="button" data-open-project-module="${row.module}">
         <span class="project-activity-icon ${row.tone}">${row.svg}</span>
         <span class="project-activity-copy"><strong>${escapeHtml(row.title)}</strong><span>${escapeHtml(row.detail)}</span></span>
-        <span class="project-activity-time">${escapeHtml(row.time)}</span>
+        <span class="project-activity-time">${escapeHtml(formatProjectDate(row.occurredAt))}</span>
       </button>`).join('')}</div>`;
     }
 
@@ -43036,6 +43098,81 @@
       main.innerHTML = `<div class="placeholder"><div class="placeholder-card"><h1>${escapeHtml(state.activeModule)}</h1><p>This module will be built in a later iteration. The Projects tab already exposes it once a project is open.</p></div></div>`;
     }
 
+    const PROJECT_DATE_MONTHS = Object.freeze([
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ]);
+
+    function projectDateTimestamp(value) {
+      if (value instanceof Date) {
+        const timestamp = value.getTime();
+
+        return Number.isFinite(timestamp)
+          ? timestamp
+          : null;
+      }
+
+      if (
+        typeof value === 'number'
+        && Number.isFinite(value)
+      ) {
+        return value;
+      }
+
+      const source =
+        String(value || '').trim();
+
+      if (!source) {
+        return null;
+      }
+
+      const timestamp =
+        Date.parse(source);
+
+      return Number.isFinite(timestamp)
+        ? timestamp
+        : null;
+    }
+
+    function formatProjectDate(
+      value,
+      fallback = t('Unknown')
+    ) {
+      const timestamp =
+        projectDateTimestamp(value);
+
+      if (timestamp === null) {
+        return fallback;
+      }
+
+      const date =
+        new Date(timestamp);
+
+      const day =
+        String(date.getDate())
+          .padStart(2, '0');
+
+      const month =
+        PROJECT_DATE_MONTHS[
+          date.getMonth()
+        ];
+
+      const year =
+        date.getFullYear();
+
+      return `${day} ${month} ${year}`;
+    }
+
     function projectModifiedTimestamp(project) {
       const preferred = Date.parse(project?.modifiedAt || '');
       if (Number.isFinite(preferred)) return preferred;
@@ -43043,20 +43180,60 @@
       return Number.isFinite(legacy) ? legacy : Number.NEGATIVE_INFINITY;
     }
 
-    function formatProjectModified(project, prefix = 'Modified') {
-      const timestamp = projectModifiedTimestamp(project);
-      if (!Number.isFinite(timestamp)) return `${t(prefix)} ${t('Unknown')}`;
-      const date = new Date(timestamp);
-      const now = new Date();
-      const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-      const startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
-      const dayDifference = Math.round((startToday - startDate) / 86400000);
-      const locale = state.language === 'ru' ? 'ru' : undefined;
-      const time = new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: '2-digit' }).format(date);
-      if (dayDifference === 0) return `${t(prefix)} ${t('today at')} ${time}`;
-      if (dayDifference === 1) return `${t(prefix)} ${t('yesterday at')} ${time}`;
-      const absolute = new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric' }).format(date);
-      return `${t(prefix)} ${absolute}`;
+    function projectCreatedTimestamp(project) {
+      const preferred =
+        Date.parse(
+          project?.createdAt || ''
+        );
+
+      if (
+        Number.isFinite(preferred)
+      ) {
+        return preferred;
+      }
+
+      const legacy =
+        Date.parse(
+          project?.created || ''
+        );
+
+      return Number.isFinite(legacy)
+        ? legacy
+        : Number.NEGATIVE_INFINITY;
+    }
+
+    function formatProjectCreated(
+      project,
+      prefix = 'Created'
+    ) {
+      const timestamp =
+        projectCreatedTimestamp(
+          project
+        );
+
+      return `${t(prefix)} ${
+        formatProjectDate(
+          timestamp,
+          t('Unknown')
+        )
+      }`;
+    }
+
+    function formatProjectModified(
+      project,
+      prefix = 'Modified'
+    ) {
+      const timestamp =
+        projectModifiedTimestamp(
+          project
+        );
+
+      return `${t(prefix)} ${
+        formatProjectDate(
+          timestamp,
+          t('Unknown')
+        )
+      }`;
     }
 
     function touchProjectModified(project) {
@@ -43278,19 +43455,17 @@
       return { ...normalized, project, icon: projectModuleIcon(normalized.module) };
     }
 
-    function formatContinuationOpenedAt(value) {
-      const timestamp = Date.parse(value || '');
-      if (!Number.isFinite(timestamp)) return `${t('Last opened')} ${t('Unknown')}`;
-      const difference = timestamp - Date.now();
-      const absoluteDifference = Math.abs(difference);
-      let unit = 'day';
-      let divisor = 86400000;
-      if (absoluteDifference < 3600000) { unit = 'minute'; divisor = 60000; }
-      else if (absoluteDifference < 86400000) { unit = 'hour'; divisor = 3600000; }
-      const relativeValue = Math.round(difference / divisor);
-      const locale = state.language === 'ru' ? 'ru' : 'en';
-      const relative = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(relativeValue, unit);
-      return `${t('Last opened')} ${relative}`;
+    function formatContinuationOpenedAt(
+      value
+    ) {
+      return `${
+        t('Last opened')
+      } ${
+        formatProjectDate(
+          value,
+          t('Unknown')
+        )
+      }`;
     }
 
     function navigateToProjectModule(projectId, moduleName = 'Projects') {
@@ -43310,6 +43485,17 @@
 
     function filteredProjects() {
       const originalOrder = new Map(sampleData.projects.map((project, index) => [project.id, index]));
+      const peopleCounts =
+        new Map(
+          sampleData.projects.map(
+            project => [
+              project.id,
+              getProjectPeopleCount(
+                project.id
+              )
+            ]
+          )
+        );
       let list = [...sampleData.projects];
       const q = state.search.trim().toLowerCase();
       if (q) list = list.filter(project => `${project.name} ${project.status} ${project.desc}`.toLowerCase().includes(q));
@@ -43317,7 +43503,7 @@
         let comparison = 0;
         if (state.sort === 'modified') comparison = projectModifiedTimestamp(b) - projectModifiedTimestamp(a);
         if (state.sort === 'name') comparison = a.name.localeCompare(b.name);
-        if (state.sort === 'people') comparison = Number(b.people || 0) - Number(a.people || 0);
+        if (state.sort === 'people') {comparison = (peopleCounts.get(b.id) || 0) - (peopleCounts.get(a.id) || 0);}
         return comparison || a.name.localeCompare(b.name) || originalOrder.get(a.id) - originalOrder.get(b.id);
       });
       return list;
@@ -43429,12 +43615,6 @@
       const copy = {
         id: uniqueProjectId(),
         name: uniqueProjectCopyName(project.name),
-        people: 0,
-        created: new Intl.DateTimeFormat(state.language === 'ru' ? 'ru' : undefined, {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric'
-        }).format(now),
         createdAt: timestamp,
         modifiedAt: timestamp,
         status: project.status || 'Local project',
