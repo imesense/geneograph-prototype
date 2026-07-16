@@ -33463,6 +33463,90 @@
       albumsGridResizeObserver.observe(content);
     }
 
+    function renderAlbumsPreserveViewport({
+      focusPhotoId = '',
+      focusTarget = ''
+    } = {}) {
+      const content =
+        main.querySelector(
+          '.albums-content'
+        );
+
+      const scrollTop =
+        content?.scrollTop || 0;
+
+      const scrollLeft =
+        content?.scrollLeft || 0;
+
+      renderAlbums();
+
+      requestAnimationFrame(() => {
+        const nextContent =
+          main.querySelector(
+            '.albums-content'
+          );
+
+        if (nextContent) {
+          const maximumTop =
+            Math.max(
+              0,
+              nextContent.scrollHeight
+              - nextContent.clientHeight
+            );
+
+          const maximumLeft =
+            Math.max(
+              0,
+              nextContent.scrollWidth
+              - nextContent.clientWidth
+            );
+
+          nextContent.scrollTop =
+            Math.min(
+              scrollTop,
+              maximumTop
+            );
+
+          nextContent.scrollLeft =
+            Math.min(
+              scrollLeft,
+              maximumLeft
+            );
+        }
+
+        if (!focusPhotoId) {
+          return;
+        }
+
+        const escapedPhotoId =
+          CSS.escape(focusPhotoId);
+
+        const focusSelectors = {
+          card:
+            `[data-photo-id="${escapedPhotoId}"]`,
+
+          selection:
+            `[data-photo-check="${escapedPhotoId}"]`,
+
+          favorite:
+            `.albums-main [data-photo-fav="${escapedPhotoId}"]`,
+
+          favoriteDetail:
+            `.albums-detail [data-photo-fav="${escapedPhotoId}"]`
+        };
+
+        const selector =
+          focusSelectors[focusTarget]
+          || focusSelectors.card;
+
+        main
+          .querySelector(selector)
+          ?.focus({
+            preventScroll: true
+          });
+      });
+    }
+
     function renderAlbums() {
       disconnectAlbumsGridResizeObserver();
       ensureSelectedAlbumPhoto();
@@ -36899,20 +36983,59 @@
       modalBackdrop.querySelector('[data-remove-primary-tag]')?.addEventListener('click', () => { closeModal(); remove(); });
     }
 
-    function toggleAlbumPhotoFavourite(photoId) {
-      const photo = getPhoto(photoId);
-      if (!photo) return;
-      photo.favorite = !photo.favorite;
-      photo.updatedAt = new Date().toISOString();
-      renderAlbums();
+    function toggleAlbumPhotoFavourite(
+      photoId,
+      {
+        focusTarget = 'favorite'
+      } = {}
+    ) {
+      const photo =
+        getPhoto(
+          photoId,
+          {
+            projectId:
+              currentProjectId()
+          }
+        );
+
+      if (!photo) {
+        return;
+      }
+
+      photo.favorite =
+        !photo.favorite;
+      photo.favoriteUpdatedAt =
+        new Date().toISOString();
+
+      renderAlbumsPreserveViewport({
+        focusPhotoId: photo.id,
+        focusTarget
+      });
     }
 
-    function togglePhotoSelection(photoId) {
-      const selected = new Set(state.selectedPhotoIds || []);
-      selected.has(photoId) ? selected.delete(photoId) : selected.add(photoId);
-      state.selectedPhotoIds = [...selected];
-      state.selectedPhotoId = photoId;
-      renderAlbums();
+    function togglePhotoSelection(
+      photoId
+    ) {
+      const selected =
+        new Set(
+          state.selectedPhotoIds || []
+        );
+
+      selected.has(photoId)
+        ? selected.delete(photoId)
+        : selected.add(photoId);
+
+      state.selectedPhotoIds = [
+        ...selected
+      ];
+
+      state.selectedPhotoId =
+        photoId;
+
+      renderAlbumsPreserveViewport({
+        focusPhotoId: photoId,
+        focusTarget: 'selection'
+      });
     }
 
     function albumsVisibleSelectionState(photos = filteredAlbumPhotos()) {
@@ -36944,12 +37067,17 @@
       });
 
       state.selectedPhotoIds = [...selectedIds];
-      renderAlbums();
+      renderAlbumsPreserveViewport();
     }
 
-    function clearAlbumSelection(rerender = true) {
+    function clearAlbumSelection(
+      rerender = true
+    ) {
       state.selectedPhotoIds = [];
-      if (rerender) renderAlbums();
+
+      if (rerender) {
+        renderAlbumsPreserveViewport();
+      }
     }
 
     function albumMutationPhotos(photoIds, { deleted } = {}) {
@@ -38814,10 +38942,20 @@
         .querySelectorAll('[data-photo-id]')
         .forEach(card => {
           const selectPhoto = () => {
-            runAfterAlbumsPhotoEditGuard(() => {
-              state.selectedPhotoId = card.dataset.photoId;
-              renderAlbums();
-            });
+            runAfterAlbumsPhotoEditGuard(
+              () => {
+                const photoId =
+                  card.dataset.photoId;
+
+                state.selectedPhotoId =
+                  photoId;
+
+                renderAlbumsPreserveViewport({
+                  focusPhotoId: photoId,
+                  focusTarget: 'card'
+                });
+              }
+            );
           };
 
           card.addEventListener('click', event => {
@@ -38855,14 +38993,34 @@
         });
 
       root
-        .querySelectorAll('[data-photo-fav]')
+        .querySelectorAll(
+          '[data-photo-fav]'
+        )
         .forEach(button => {
-          button.addEventListener('click', event => {
-            event.stopPropagation();
-            runAfterAlbumsPhotoEditGuard(() => {
-              toggleAlbumPhotoFavourite(button.dataset.photoFav);
-            });
-          });
+          button.addEventListener(
+            'click',
+            event => {
+              event.stopPropagation();
+
+              const focusTarget =
+                button.closest(
+                  '.albums-detail'
+                )
+                  ? 'favoriteDetail'
+                  : 'favorite';
+
+              runAfterAlbumsPhotoEditGuard(
+                () => {
+                  toggleAlbumPhotoFavourite(
+                    button.dataset.photoFav,
+                    {
+                      focusTarget
+                    }
+                  );
+                }
+              );
+            }
+          );
         });
 
       root
