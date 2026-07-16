@@ -748,6 +748,44 @@
       text-align: center;
     }
     .startup-project-empty-copy { max-width: 470px; }
+
+    .startup-project-empty-title {
+      width: fit-content;
+      max-width: 100%;
+
+      margin:
+        0 auto
+        var(--space-2);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+    }
+
+    .startup-project-empty-title-icon {
+      width: 24px;
+      height: 24px;
+
+      flex: 0 0 24px;
+
+      display: grid;
+      place-items: center;
+
+      color:
+        var(--brand-green-300);
+    }
+
+    .startup-project-empty-title-icon svg {
+      width: 22px;
+      height: 22px;
+
+      display: block;
+    }
+
+    .startup-project-empty-title h3 {
+      margin: 0;
+    }
     .startup-project-empty-icon {
       width: 42px;
       height: 42px;
@@ -757,9 +795,37 @@
       color: var(--brand-green-300);
     }
     .startup-project-empty-icon svg { width: 32px; height: 32px; }
-    .startup-project-empty h3 { margin: 0 0 var(--space-2); font-size: 18px; }
+    .startup-project-empty h3 {
+      margin:
+        0 0
+        var(--space-2);
+
+      font-size: 18px;
+      line-height: 1.25;
+    }
+    .startup-project-empty-title h3 {
+      margin: 0;
+      line-height: 1.2;
+    }
     .startup-project-empty p { margin: 0; color: var(--text-tertiary); line-height: 1.55; }
-    .startup-project-empty-actions { margin-top: var(--space-4); display: flex; justify-content: center; gap: var(--space-3); flex-wrap: wrap; }
+    .startup-project-empty-actions {
+      margin-top:
+        var(--space-4);
+
+      display: flex;
+      justify-content: center;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    .startup-project-empty.is-library-empty
+    .startup-project-empty-actions
+    .button {
+      min-width: 168px;
+
+      padding-inline:
+        var(--space-6);
+    }
     .project-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1187,7 +1253,7 @@
     .dropzone {
       min-height: 96px;
       border: 1px dashed var(--border-strong);
-      background: rgba(255,255,255,.018);
+      background: transparent;
       border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
@@ -2095,6 +2161,23 @@
     }
     .project-cover-preview.tree::after {
       content: none;
+    }
+    .project-cover-modal-body {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .project-cover-modal-preview {
+      width: 100%;
+      height: 184px;
+    }
+
+    @media (
+      max-width: 600px
+    ) {
+      .project-cover-modal-preview {
+        height: 140px;
+      }
     }
     .project-cover-options {
       display: grid;
@@ -13964,7 +14047,7 @@
     const sampleData = {
       projects: [
         { id: 'p1', name: 'Whiskerfield Family Tree', people: 17, created: 'May 1, 2026', modified: 'May 24, 2026', modifiedAt: '2026-05-24T10:42:00Z', status: 'Local project', cover: 'paper', files: 5, notes: 7, desc: 'Research into the Whiskerfield and Purrington family lines from Pawford, Meowbridge, Fishmarket Row, and Old Cattery.' },
-        { id: 'p2', name: 'Silver Family Tree', people: 23, created: 'May 12, 2025', modified: 'Sep 20, 2025', modifiedAt: '2025-09-20T16:18:00Z', status: 'Local project', cover: 'tree', files: 8, notes: 19, desc: 'Small personal tree for close cat-family members and modern household records.' },
+        { id: 'p2', name: 'Silver Family Tree', people: 23, created: 'May 12, 2025', modified: 'Sep 20, 2025', modifiedAt: '2025-09-20T16:18:00Z', status: 'Local project', cover: 'tree', files: 8, notes: 19, desc: 'Small personal tree for close family members and modern household records.' },
         { id: 'p3', name: 'Meowbridge Branch Study', people: 42, created: 'Apr 14, 2025', modified: 'June 2, 2025', modifiedAt: '2025-06-02T09:30:00Z', status: 'Local project', cover: 'photo', files: 15, notes: 22, desc: 'Extended branch research and family photos collected from relatives.' }
       ],
       projectContinuation: {
@@ -17737,17 +17820,67 @@
 
     function renderStartupProjectEmpty(searchQuery, totalProjects) {
       if (!totalProjects) {
-        return `<section class="startup-project-empty">
-          <div class="startup-project-empty-copy">
-            <span class="startup-project-empty-icon" aria-hidden="true">${icon.folder}</span>
-            <h3>${escapeHtml(t('No projects yet'))}</h3>
-            <p>${escapeHtml(t('Create a family tree or import a GEDCOM file'))}<br>${escapeHtml(t('to begin your family-history workspace.'))}</p>
-            <div class="startup-project-empty-actions">
-              <button class="button primary" type="button" data-startup-empty-create>${icon.plus} Create family tree</button>
-              <button class="button secondary" type="button" data-startup-empty-import>${icon.import} Import GEDCOM</button>
+        return `
+          <section
+            class="
+              startup-project-empty
+              is-library-empty">
+
+            <div class="startup-project-empty-copy">
+
+              <div class="startup-project-empty-title">
+
+                <span class="startup-project-empty-title-icon"
+                  aria-hidden="true">
+                  ${icon.folder}
+                </span>
+
+                <h3>
+                  ${escapeHtml(
+                    t('No projects yet')
+                  )}
+                </h3>
+              </div>
+
+              <p>
+                ${escapeHtml(
+                  t(
+                    'Create a family tree or import a GEDCOM file'
+                  )
+                )}
+                <br>
+                ${escapeHtml(
+                  t(
+                    'to begin your family-history workspace.'
+                  )
+                )}
+              </p>
+
+              <div class="startup-project-empty-actions">
+
+                <button
+                  class="button primary"
+                  type="button"
+                  data-startup-empty-create>
+                  ${icon.plus}
+                  ${escapeHtml(
+                    t('Create family tree')
+                  )}
+                </button>
+
+                <button
+                  class="button secondary"
+                  type="button"
+                  data-startup-empty-import>
+                  ${icon.import}
+                  ${escapeHtml(
+                    t('Import GEDCOM')
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
-        </section>`;
+          </section>
+        `;
       }
       return `<section class="startup-project-empty">
         <div class="startup-project-empty-copy">
@@ -17929,15 +18062,35 @@
 
     function renderProjectSettings(project) {
       const title = project.name.replace('Tree', 'History');
-      const coverStyle = project.cover || 'paper';
-      const safeFileTitle = title.replace(/[^a-zA-Z0-9\s-]/g, '').trim().replace(/\s+/g, ' ');
-      const projectPath = project.projectPath || `C:\\Users\\Silver\\Documents\\GeneoGraph\\${safeFileTitle}.ggproj`;
-      const lastBackup = project.lastBackup || 'Not created yet';
-      const coverStyleAttr = coverStyle === 'paper'
-        ? "--cover: linear-gradient(135deg, #e9d6b8, #f3e8cf 48%, #d7bf9b);"
-        : coverStyle === 'photo'
-          ? "--cover: linear-gradient(135deg, rgba(85,95,84,.9), rgba(218,218,196,.65)), url('data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 140\"%3E%3Crect width=\"400\" height=\"140\" fill=\"%239aa08b\"/%3E%3Ccircle cx=\"76\" cy=\"58\" r=\"22\" fill=\"%232b332d\"/%3E%3Ccircle cx=\"137\" cy=\"54\" r=\"22\" fill=\"%232b332d\"/%3E%3Ccircle cx=\"197\" cy=\"60\" r=\"22\" fill=\"%232b332d\"/%3E%3Ccircle cx=\"263\" cy=\"56\" r=\"22\" fill=\"%232b332d\"/%3E%3Ccircle cx=\"328\" cy=\"54\" r=\"22\" fill=\"%232b332d\"/%3E%3C/svg%3E'); background-size: cover;"
-          : "--cover: linear-gradient(180deg, rgba(15,20,19,.04), rgba(15,20,19,.14)), var(--geneograph-cover-tree-image);";
+      const coverStyle =
+        normalizeProjectCoverStyle(
+          project.cover
+        );
+
+      const safeFileTitle =
+        title
+          .replace(
+            /[^a-zA-Z0-9\s-]/g,
+            ''
+          )
+          .trim()
+          .replace(
+            /\s+/g,
+            ' '
+          );
+
+      const projectPath =
+        project.projectPath
+        || `C:\\Users\\Silver\\Documents\\GeneoGraph\\${safeFileTitle}.ggproj`;
+
+      const lastBackup =
+        project.lastBackup
+        || 'Not created yet';
+
+      const coverStyleAttr =
+        projectCoverStyleAttribute(
+          coverStyle
+        );
       return `<div class="project-settings-page">
         <div class="project-settings-section-one">
           <section class="project-settings-section project-settings-card project-settings-identity-card">
@@ -18096,15 +18249,26 @@
     }
 
     function renderProjectCard(project) {
-      const coverClass = project.cover === 'tree' ? 'tree' : '';
-      const coverStyle = project.cover === 'paper'
-        ? "--cover: linear-gradient(135deg, #e9d6b8, #f3e8cf 48%, #d7bf9b);"
-        : project.cover === 'photo'
-          ? "--cover: linear-gradient(135deg, rgba(85,95,84,.9), rgba(218,218,196,.65)), url('data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 140\"%3E%3Crect width=\"400\" height=\"140\" fill=\"%239aa08b\"/%3E%3Ccircle cx=\"76\" cy=\"58\" r=\"22\" fill=\"%232b332d\"/%3E%3Ccircle cx=\"137\" cy=\"54\" r=\"22\" fill=\"%232b332d\"/%3E%3Ccircle cx=\"197\" cy=\"60\" r=\"22\" fill=\"%232b332d\"/%3E%3Ccircle cx=\"263\" cy=\"56\" r=\"22\" fill=\"%232b332d\"/%3E%3Ccircle cx=\"328\" cy=\"54\" r=\"22\" fill=\"%232b332d\"/%3E%3C/svg%3E'); background-size: cover;"
-          : "--cover: linear-gradient(180deg, rgba(15,20,19,.04), rgba(15,20,19,.14)), var(--geneograph-cover-tree-image);";
+      const coverStyle =
+        normalizeProjectCoverStyle(
+          project.cover
+        );
+
+      const coverClass =
+        coverStyle === 'tree'
+          ? 'tree'
+          : '';
+
+      const coverStyleAttr =
+        projectCoverStyleAttribute(
+          coverStyle
+        );
       return `
         <article class="project-card ${state.viewMode === 'list' ? 'list-card' : ''}" data-project-id="${escapeHtml(project.id)}" tabindex="0" role="button" aria-label="Open ${escapeHtml(project.name)}">
-          <div class="project-cover ${coverClass}" style="${coverStyle}"></div>
+          <div
+            class="project-cover ${coverClass}"
+            style="${coverStyleAttr}">
+          </div>
           <div class="project-body">
             <div class="project-title-row"><h3>${escapeHtml(project.name)}</h3></div>
             <div class="project-meta">
@@ -18122,9 +18286,12 @@
       const items = [
         { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'Albums', context: 'Albums', icon: icon.image, tone: 'red', title: '4 photos added', detail: 'Whiskerfield family album photos are ready to organize', time: 'Today, 10:42' },
         { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'People', context: 'People', icon: icon.people, tone: 'purple', title: 'Profile updated', detail: 'Luna Purrington now has a verified birth place', time: 'Yesterday, 18:20' },
-        { projectId: 'p2', project: 'Silver Family Tree', module: 'Family Tree', context: 'Family Tree', icon: icon.import, tone: 'amber', title: 'GEDCOM import reviewed', detail: '17 cat-family people were added to the project', time: 'May 25, 2026' },
+        { projectId: 'p2', project: 'Silver Family Tree', module: 'Family Tree', context: 'Family Tree', icon: icon.import, tone: 'amber', title: 'GEDCOM import reviewed', detail: '17 people were added to the project', time: 'May 25, 2026' },
         { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'Archive', context: 'Archive', icon: icon.file, tone: 'blue', title: 'Archive link created', detail: 'Pawford household register linked to Silver Whiskerfield birth fact', time: 'May 21, 2026' }
       ].filter(item => sampleData.projects.some(project => project.id === item.projectId));
+      if (!items.length) {
+        return '';
+      }
       return `<div class="right-card"><h2>Recent activity</h2><div class="startup-action-list">
         ${items.map(item => `<button class="startup-action-row startup-activity-row" type="button" data-startup-open-module="${item.module}" data-startup-project="${item.projectId}" aria-label="Open ${escapeHtml(item.project)} ${escapeHtml(item.context)} activity">
           <span class="startup-action-icon ${item.tone}">${item.icon}</span>
@@ -26555,7 +26722,7 @@
       };
       const noteMap = {
         silver: [
-          { title: 'Whiskerfield family album', noteId: 'n5', type: 'Story draft', updated: 'Jun 18, 2026', body: 'Narrative draft for a future cat-family history chapter.' },
+          { title: 'Whiskerfield family album', noteId: 'n5', type: 'Story draft', updated: 'Jun 18, 2026', body: 'Narrative draft for a future family history chapter.' },
           { title: 'Whiskerfield surname notes', noteId: 'n6', type: 'Research note', updated: 'Jun 15, 2026', body: 'Spelling variants and origin notes for the Whiskerfield surname.' },
           { title: 'Profile cleanup checklist', noteId: null, type: 'Task note', updated: 'Jun 10, 2026', body: 'Add sources for residence and kitten portrait facts.' }
         ],
@@ -42905,11 +43072,136 @@
       return true;
     }
 
-    function setProjectCover(projectId, coverStyle) {
-      const project = sampleData.projects.find(item => item.id === projectId);
-      if (!project || !['paper', 'tree', 'photo'].includes(coverStyle)) return false;
-      project.cover = coverStyle;
-      touchProjectModified(project);
+    const PROJECT_COVER_STYLES = [
+      'paper',
+      'tree',
+      'photo'
+    ];
+
+    function isProjectCoverStyle(
+      coverStyle
+    ) {
+      return PROJECT_COVER_STYLES
+        .includes(coverStyle);
+    }
+
+    function normalizeProjectCoverStyle(
+      coverStyle
+    ) {
+      return isProjectCoverStyle(
+        coverStyle
+      )
+        ? coverStyle
+        : 'paper';
+    }
+
+    function projectCoverStyleAttribute(
+      coverStyle
+    ) {
+      const normalizedCover =
+        normalizeProjectCoverStyle(
+          coverStyle
+        );
+
+      if (
+        normalizedCover === 'paper'
+      ) {
+        return `
+          --cover:
+            linear-gradient(
+              135deg,
+              #e9d6b8,
+              #f3e8cf 48%,
+              #d7bf9b
+            );
+        `;
+      }
+
+      if (
+        normalizedCover === 'photo'
+      ) {
+        return `
+          --cover:
+            linear-gradient(
+              135deg,
+              rgba(85, 95, 84, .9),
+              rgba(218, 218, 196, .65)
+            ),
+            url(
+              'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 140%22%3E%3Crect width=%22400%22 height=%22140%22 fill=%22%239aa08b%22/%3E%3Ccircle cx=%2276%22 cy=%2258%22 r=%2222%22 fill=%22%232b332d%22/%3E%3Ccircle cx=%22137%22 cy=%2254%22 r=%2222%22 fill=%22%232b332d%22/%3E%3Ccircle cx=%22197%22 cy=%2260%22 r=%2222%22 fill=%22%232b332d%22/%3E%3Ccircle cx=%22263%22 cy=%2256%22 r=%2222%22 fill=%22%232b332d%22/%3E%3Ccircle cx=%22328%22 cy=%2254%22 r=%2222%22 fill=%22%232b332d%22/%3E%3C/svg%3E'
+            );
+
+          background-size:
+            cover;
+        `;
+      }
+
+      return `
+        --cover:
+          linear-gradient(
+            180deg,
+            rgba(15, 20, 19, .04),
+            rgba(15, 20, 19, .14)
+          ),
+          var(
+            --geneograph-cover-tree-image
+          );
+      `;
+    }
+
+    function updateProjectCoverPreview(
+      preview,
+      coverStyle
+    ) {
+      if (!preview) {
+        return;
+      }
+
+      const normalizedCover =
+        normalizeProjectCoverStyle(
+          coverStyle
+        );
+
+      preview.classList.toggle(
+        'tree',
+        normalizedCover === 'tree'
+      );
+
+      preview.style.cssText =
+        projectCoverStyleAttribute(
+          normalizedCover
+        );
+
+      preview.dataset.coverStyle =
+        normalizedCover;
+    }
+
+    function setProjectCover(
+      projectId,
+      coverStyle
+    ) {
+      const project =
+        sampleData.projects.find(
+          item =>
+            item.id === projectId
+        );
+
+      if (
+        !project
+        || !isProjectCoverStyle(
+          coverStyle
+        )
+      ) {
+        return false;
+      }
+
+      project.cover =
+        coverStyle;
+
+      touchProjectModified(
+        project
+      );
+
       return true;
     }
 
@@ -43158,38 +43450,244 @@
       return copy;
     }
 
-    function openProjectCoverModal(projectId, anchor = null) {
-      const project = sampleData.projects.find(item => item.id === projectId);
-      if (!project) return;
-      let selectedCover = ['paper', 'tree', 'photo'].includes(project.cover) ? project.cover : 'paper';
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="projectCoverTitle">
-        <div class="modal-header"><div><h2 id="projectCoverTitle">Update cover</h2><p>Choose the cover shown on this project card.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div>
-        <div class="modal-body">
-          <div class="project-cover-options" role="group" aria-label="Cover style">
-            <button class="project-cover-option ${selectedCover === 'paper' ? 'active' : ''}" type="button" data-project-cover-choice="paper" aria-pressed="${selectedCover === 'paper'}">Archival paper</button>
-            <button class="project-cover-option ${selectedCover === 'tree' ? 'active' : ''}" type="button" data-project-cover-choice="tree" aria-pressed="${selectedCover === 'tree'}">Family tree</button>
-            <button class="project-cover-option ${selectedCover === 'photo' ? 'active' : ''}" type="button" data-project-cover-choice="photo" aria-pressed="${selectedCover === 'photo'}">Family photo</button>
+    function openProjectCoverModal(
+      projectId,
+      anchor = null
+    ) {
+      const project =
+        sampleData.projects.find(
+          item =>
+            item.id === projectId
+        );
+
+      if (!project) {
+        return;
+      }
+
+      let selectedCover =
+        normalizeProjectCoverStyle(
+          project.cover
+        );
+
+      const initialPreviewStyle =
+        projectCoverStyleAttribute(
+          selectedCover
+        );
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="projectCoverTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="projectCoverTitle">
+                Update cover
+              </h2>
+
+              <p>
+                Choose the cover shown
+                on this project card.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close">
+              ${icon.close}
+            </button>
+          </div>
+
+          <div
+            class="modal-body project-cover-modal-body">
+
+            <div class="project-cover-preview project-cover-modal-preview
+                ${selectedCover === 'tree'
+                    ? 'tree'
+                    : ''
+                }"
+              data-project-cover-preview
+              data-cover-style="${
+                escapeHtml(
+                  selectedCover
+                )
+              }"
+              style="${
+                initialPreviewStyle
+              }"
+              role="img"
+              aria-label="${
+                escapeHtml(
+                  `Preview of ${project.name} cover`
+                )
+              }">
+            </div>
+
+            <div
+              class="project-cover-options"
+              role="group"
+              aria-label="Cover style">
+              <button
+                class="project-cover-option ${
+                  selectedCover === 'paper'
+                    ? 'active'
+                    : ''
+                }"
+                type="button"
+                data-project-cover-choice="paper"
+                aria-pressed="${
+                  selectedCover === 'paper'
+                    ? 'true'
+                    : 'false'
+                }">
+                Archival paper
+              </button>
+
+              <button
+                class="project-cover-option ${
+                  selectedCover === 'tree'
+                    ? 'active'
+                    : ''
+                }"
+                type="button"
+                data-project-cover-choice="tree"
+                aria-pressed="${
+                  selectedCover === 'tree'
+                    ? 'true'
+                    : 'false'
+                }">
+                Family tree
+              </button>
+
+              <button
+                class="project-cover-option ${
+                  selectedCover === 'photo'
+                    ? 'active'
+                    : ''
+                }"
+                type="button"
+                data-project-cover-choice="photo"
+                aria-pressed="${
+                  selectedCover === 'photo'
+                    ? 'true'
+                    : 'false'
+                }">
+                Family photo
+              </button>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+              Cancel
+            </button>
+
+            <button
+              class="button primary"
+              type="button"
+              data-save-project-cover>
+              Save changes
+            </button>
           </div>
         </div>
-        <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-save-project-cover>Save changes</button></div>
-      </div>`);
-      bindProjectActionModalReturnFocus(anchor);
-      modalBackdrop.querySelectorAll('[data-project-cover-choice]').forEach(button => {
-        button.addEventListener('click', () => {
-          selectedCover = button.dataset.projectCoverChoice;
-          modalBackdrop.querySelectorAll('[data-project-cover-choice]').forEach(option => {
-            const active = option.dataset.projectCoverChoice === selectedCover;
-            option.classList.toggle('active', active);
-            option.setAttribute('aria-pressed', String(active));
-          });
+      `);
+
+      bindProjectActionModalReturnFocus(
+        anchor
+      );
+
+      const preview =
+        modalBackdrop.querySelector(
+          '[data-project-cover-preview]'
+        );
+
+      modalBackdrop
+        .querySelectorAll(
+          '[data-project-cover-choice]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              const nextCover =
+                String(
+                  button.dataset
+                    .projectCoverChoice
+                  || ''
+                ).trim();
+
+              if (
+                !isProjectCoverStyle(
+                  nextCover
+                )
+              ) {
+                return;
+              }
+
+              selectedCover =
+                nextCover;
+
+              modalBackdrop
+                .querySelectorAll(
+                  '[data-project-cover-choice]'
+                )
+                .forEach(option => {
+                  const active =
+                    option.dataset
+                      .projectCoverChoice
+                    === selectedCover;
+
+                  option.classList.toggle(
+                    'active',
+                    active
+                  );
+
+                  option.setAttribute(
+                    'aria-pressed',
+                    String(active)
+                  );
+                });
+
+              updateProjectCoverPreview(
+                preview,
+                selectedCover
+              );
+            }
+          );
         });
-      });
-      modalBackdrop.querySelector('[data-save-project-cover]')?.addEventListener('click', () => {
-        setProjectCover(project.id, selectedCover);
-        closeModal();
-        renderStartup();
-        showToast('Project cover updated.');
-      });
+
+      modalBackdrop
+        .querySelector(
+          '[data-save-project-cover]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const saved =
+              setProjectCover(
+                project.id,
+                selectedCover
+              );
+
+            if (!saved) {
+              return;
+            }
+
+            closeModal();
+            renderStartup();
+
+            showToast(
+              'Project cover updated.'
+            );
+          }
+        );
     }
 
     function openDeleteProjectConfirm(projectId, anchor = null) {
