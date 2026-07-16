@@ -8524,6 +8524,7 @@
     .albums-fav-button svg,
     .albums-card-more svg,
     .albums-row-more svg,
+    .albums-list-favourite svg,
     .albums-album-more svg {
       width: 17px;
       height: 17px;
@@ -9565,16 +9566,27 @@
     .albums-check,
     .albums-fav-button,
     .albums-card-more,
-    .albums-row-more {
+    .albums-row-more,
+    .albums-list-favourite {
       padding: 0;
-      border: 1px solid transparent;
+
+      border:
+        1px solid transparent;
+
       background: transparent;
       color: var(--text-tertiary);
+
       display: inline-grid;
       place-items: center;
+
       line-height: 0;
       flex: 0 0 auto;
-      transition: background var(--ease), border-color var(--ease), color var(--ease);
+
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease),
+        opacity var(--ease);
     }
     .albums-check, .albums-fav-button {
       position: absolute; z-index: 3; top: 10px; width: 30px; height: 30px;
@@ -9591,16 +9603,24 @@
     .albums-check:focus-visible,
     .albums-fav-button:focus-visible,
     .albums-card-more:focus-visible,
-    .albums-row-more:focus-visible {
-      outline: 2px solid var(--brand-green-300);
+    .albums-row-more:focus-visible,
+    .albums-list-favourite:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
       outline-offset: 2px;
     }
     .albums-check:active,
     .albums-fav-button:active,
     .albums-card-more:active,
-    .albums-row-more:active {
-      border-color: var(--border-strong);
-      background: var(--surface-selected);
+    .albums-row-more:active,
+    .albums-list-favourite:active {
+      border-color:
+        var(--border-strong);
+
+      background:
+        var(--surface-selected);
     }
     .albums-check[aria-pressed="true"] { border-color: rgba(98,217,154,.55); background: var(--brand-green-500); color: #10251a; }
     .albums-fav-button.active { color: #f1c96c; }
@@ -9610,21 +9630,105 @@
     .albums-card-body strong { color: var(--text-primary); font-size: 14px; font-weight: 900; line-height: 1.25; }
     .albums-card-people { color: var(--text-secondary); font-size: 13px; font-weight: 800; }
     .albums-card-footer { min-height: 32px; margin-top: auto; display: grid; grid-template-columns: minmax(0,1fr) 32px; align-items: center; gap: var(--space-2); color: var(--text-tertiary); font-size: 12px; font-weight: 700; }
-    .albums-card-more, .albums-row-more { width: 32px; height: 32px; border-radius: var(--radius-sm); }
+    .albums-card-more,
+    .albums-row-more,
+    .albums-list-favourite {
+      width: 32px;
+      height: 32px;
+
+      border-radius:
+        var(--radius-sm);
+    }
+    
     .albums-card-more:hover,
     .albums-row-more:hover,
+    .albums-list-favourite:hover,
     .albums-album-more:hover {
-      border-color: var(--border-default);
-      background: var(--surface-card-hover);
-      color: var(--text-primary);
+      border-color:
+        var(--border-default);
+
+      background:
+        var(--surface-card-hover);
+
+      color:
+        var(--text-primary);
+    }
+
+    .albums-list-favourite {
+      place-self: center;
+
+      opacity: .55;
+
+      cursor: pointer;
+    }
+
+    .albums-list-favourite:hover,
+    .albums-list-favourite:focus-visible,
+    .albums-list-favourite.active {
+      opacity: 1;
+    }
+
+    .albums-list-favourite.active {
+      color: #f1c96c;
+    }
+
+    .albums-list-favourite-heading {
+      width: 32px;
+      height: 32px;
+
+      place-self: center;
+
+      display: grid;
+      place-items: center;
+
+      color:
+        var(--text-tertiary);
+    }
+
+    .albums-list-favourite-heading svg {
+      width: 15px;
+      height: 15px;
+      display: block;
+    }
+
+    .albums-list-favourite-spacer {
+      width: 32px;
+      height: 32px;
+
+      place-self: center;
+
+      display: block;
     }
 
     .albums-list { min-width: 850px; border: 1px solid var(--border-default); border-radius: var(--radius-sm); overflow: hidden; }
     .albums-list-row {
-      min-height: 64px; padding: 7px var(--space-3); border-bottom: 1px solid var(--border-default);
-      background: var(--surface-card); display: grid;
-      grid-template-columns: 34px 52px minmax(180px,1.3fr) minmax(150px,1fr) 130px minmax(140px,.8fr) 36px;
-      align-items: center; gap: var(--space-3); color: var(--text-secondary); font-size: 13px;
+      min-height: 64px;
+      padding: 7px var(--space-3);
+      border-bottom:
+        1px solid
+        var(--border-default);
+
+      background:
+        var(--surface-card);
+
+      display: grid;
+      grid-template-columns:
+        34px
+        52px
+        minmax(180px, 1.3fr)
+        minmax(150px, 1fr)
+        130px
+        minmax(140px, .8fr)
+        36px
+        36px;
+
+      align-items: center;
+      gap: var(--space-3);
+
+      color:
+        var(--text-secondary);
+
+      font-size: 13px;
     }
     .albums-list-row:last-child { border-bottom: 0; }
     .albums-list-row.header { min-height: 42px; background: var(--surface-card); color: var(--text-tertiary); font-size: 11px; font-weight: 900; text-transform: uppercase; }
@@ -10245,13 +10349,403 @@
     .albums-filter-field { display: grid; gap: 7px; color: var(--text-secondary); font-size: 12px; font-weight: 900; }
     .albums-filter-field select { width: 100%; height: var(--control-height); border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--surface-input); color: var(--text-primary); padding: 0 var(--space-3); }
     .albums-filter-check { display: flex; align-items: center; gap: var(--space-2); color: var(--text-secondary); font-size: 13px; font-weight: 800; }
-    .albums-filter-check input, .albums-modal-choice input { accent-color: var(--brand-green-500); }
+    .albums-filter-check input,
+    .album-picker-result input {
+      accent-color:
+        var(--brand-green-500);
+    }
     .albums-filter-popover-footer { border-top: 1px solid var(--border-default); display: flex; justify-content: flex-end; gap: var(--space-2); }
-    .albums-modal-list { max-height: 420px; display: grid; gap: var(--space-2); overflow: auto; }
-    .albums-modal-choice { width: 100%; min-height: 52px; padding: var(--space-2) var(--space-3); border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--surface-card); color: var(--text-secondary); display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: var(--space-3); text-align: left; }
-    .albums-modal-choice:hover, .albums-modal-choice:focus-within { border-color: var(--border-strong); background: var(--surface-card-hover); }
-    .albums-modal-choice > span { min-width: 0; }
+    
+    /* Albums: Add to album picker */
+    .album-picker-body {
+      min-width: 0;
+      min-height: 0;
 
+      padding: var(--space-5);
+
+      display: grid;
+      overflow: hidden;
+    }
+
+    .album-picker-browse {
+      min-width: 0;
+      min-height: 0;
+
+      display: grid;
+      grid-template-rows:
+        auto
+        minmax(0, 1fr);
+      gap: var(--space-4);
+    }
+
+    .album-picker-browse[hidden],
+    .album-picker-create[hidden] {
+      display: none;
+    }
+
+    .album-picker-search {
+      min-width: 0;
+    }
+
+    .album-picker-search
+    .search-input
+    input {
+      padding: 0;
+      text-align: left;
+    }
+
+    .album-picker-results-panel {
+      min-width: 0;
+      min-height: 0;
+
+      display: grid;
+      grid-template-rows:
+        auto
+        minmax(0, 1fr);
+      gap: var(--space-2);
+    }
+
+    .album-picker-results-head {
+      min-width: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content:
+        space-between;
+      gap: var(--space-3);
+    }
+
+    .album-picker-results-heading {
+      min-width: 0;
+
+      display: grid;
+      gap: 2px;
+    }
+
+    .album-picker-results-heading
+    strong {
+      color:
+        var(--text-secondary);
+
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .album-picker-results-heading
+    span {
+      color:
+        var(--text-tertiary);
+
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .album-picker-new-button {
+      flex: 0 0 auto;
+    }
+
+    .album-picker-results {
+      padding: 0;
+    }
+
+    .album-picker-result {
+      width: 100%;
+      min-height: 82px;
+
+      padding:
+        var(--space-3)
+        var(--space-4);
+
+      border: 0;
+      border-bottom:
+        1px solid
+        var(--border-default);
+
+      background: transparent;
+      color:
+        var(--text-secondary);
+
+      display: grid;
+      grid-template-columns:
+        56px
+        minmax(0, 1fr)
+        auto;
+      align-items: center;
+      gap: var(--space-3);
+
+      cursor: pointer;
+    }
+
+    .album-picker-result:last-child {
+      border-bottom: 0;
+    }
+
+    .album-picker-result:hover,
+    .album-picker-result:focus-within {
+      background:
+        var(--surface-card-hover);
+    }
+
+    .album-picker-result.is-selected {
+      background:
+        rgba(
+          47,
+          174,
+          116,
+          .08
+        );
+    }
+
+    .album-picker-result.is-complete {
+      cursor: default;
+    }
+
+    .album-picker-result.is-complete:hover {
+      background: transparent;
+    }
+
+    .album-picker-cover {
+      position: relative;
+
+      width: 56px;
+      height: 56px;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        var(--surface-input);
+
+      display: grid;
+      place-items: center;
+
+      overflow: hidden;
+    }
+
+    .album-picker-cover
+    > .photo-thumbnail {
+      position: absolute;
+      inset: 0;
+    }
+
+    .album-picker-cover
+    > svg {
+      width: 24px;
+      height: 24px;
+
+      color:
+        var(--text-tertiary);
+    }
+
+    .album-picker-copy {
+      min-width: 0;
+
+      display: grid;
+      gap: 3px;
+    }
+
+    .album-picker-copy
+    strong,
+    .album-picker-copy
+    span {
+      min-width: 0;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .album-picker-copy
+    strong {
+      color:
+        var(--text-primary);
+
+      font-size: 14px;
+      line-height: 1.25;
+    }
+
+    .album-picker-description {
+      color:
+        var(--text-tertiary);
+
+      font-size: 12px;
+      line-height: 1.3;
+    }
+
+    .album-picker-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 5px;
+
+      color:
+        var(--text-tertiary);
+
+      font-size: 12px;
+      line-height: 1.3;
+    }
+
+    .album-picker-membership {
+      color:
+        var(--text-secondary);
+    }
+
+    .album-picker-membership.complete {
+      color:
+        var(--brand-green-300);
+    }
+
+    .album-picker-result
+    input {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+
+      cursor: pointer;
+    }
+
+    .album-picker-result
+    input:disabled {
+      cursor: default;
+    }
+
+    .album-picker-empty {
+      min-height: 100%;
+
+      padding: var(--space-6);
+
+      color:
+        var(--text-tertiary);
+
+      display: grid;
+      place-items: center;
+
+      text-align: center;
+    }
+
+    .album-picker-empty-card {
+      width:
+        min(
+          360px,
+          100%
+        );
+
+      display: grid;
+      justify-items: center;
+      gap: var(--space-3);
+    }
+
+    .album-picker-empty-card
+    strong {
+      color:
+        var(--text-primary);
+
+      font-size: 15px;
+    }
+
+    .album-picker-empty-card
+    p {
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .album-picker-empty-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .album-picker-create {
+      min-width: 0;
+
+      align-self: start;
+
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .album-picker-create-copy {
+      display: grid;
+      gap: 4px;
+    }
+
+    .album-picker-create-copy
+    strong {
+      color:
+        var(--text-primary);
+
+      font-size: 15px;
+    }
+
+    .album-picker-create-copy
+    span {
+      color:
+        var(--text-tertiary);
+
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .album-picker-create-fields {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .album-picker-footer {
+      align-items: center;
+      justify-content:
+        space-between;
+    }
+
+    .album-picker-footer-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .album-picker-save:disabled,
+    .album-picker-save:disabled:hover {
+      opacity: .48;
+      cursor: not-allowed;
+      transform: none;
+      filter: none;
+    }
+
+    @media (max-width: 620px) {
+      .album-picker-body {
+        padding: var(--space-4);
+      }
+
+      .album-picker-result {
+        grid-template-columns:
+          48px
+          minmax(0, 1fr)
+          auto;
+
+        padding-inline:
+          var(--space-3);
+      }
+
+      .album-picker-cover {
+        width: 48px;
+        height: 48px;
+      }
+
+      .album-picker-footer {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .album-picker-footer-actions {
+        justify-content:
+          flex-end;
+      }
+    }
     /* Albums: Tag people modal */
     .photo-people-modal {
       width:
@@ -13172,7 +13666,7 @@
       'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '------ ------------ --- ------------, ------------ - ----------.', 'Create new board': '------- -----', 'Import board': '------------- -----', 'All Boards': '--- -----', 'Recently viewed': '------- -------------', 'Favourites': '---------', 'Categories': '---------', 'Board type': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'Publication': '----------', 'DNA': '---', 'Search boards...': '----- -----', 'Sort: Board type': '----------: --- -----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '--------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Case': '----', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Object palette': '------- --------', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Display name': '------------ ---', 'Life dates': '---- -----', 'Metadata': '----------', 'Short note': '-------- -------', 'Body / description': '----- / --------', 'Delete object': '------- ------', 'Appearance': '------- ---', 'Layout': '-----', 'Card style': '----- --------', 'Show dates': '---------- ----', 'Show place': '---------- -----', 'Show badge': '---------- -----', 'Locked': '-------------', 'Layer': '----', 'Zoom controls': '-------', 'Zoom out': '---------', 'Zoom in': '---------', 'Fit board': '------- -----', 'Fit': '-------',
 
       // Albums
-      'Photos': '----', 'Photo details': '------ ----', 'Select a photo': '-------- ----', 'Select a photo to view details, albums, people, date, place and caption.': '-------- ----, ----- ------- ------, -------, -----, ----, ----- - -------.', 'Grid view': '------', 'List view': '------', 'Search photos-': '----- ----', 'Search photos...': '----- ----...', 'Sort: Filename': '----------: --- -----', 'Sort: Photo date': '----------: ---- ----', 'Date precision': '-------- ----', 'Caption / story': '------- / -------', 'Add to album': '-------- - ------', 'Choose one or more albums': '-------- ---- --- --------- --------', 'Delete photo?': '------- ----?', 'This photo will be moved to Recently deleted. You can restore it later from the Albums sidebar.': '---- ----- ---------- - ------- --------. --- ----- ----- ------------ -- ------ --------.', 'No photos yet': '---- ---- ---', 'No deleted photos': '-------- ---- ---', 'No favourite photos yet': '--------- ---- ---- ---', 'Every photo is in an album': '--- ---- --- - --------', 'Open photo': '------- ----',
+      'Photos': '----', 'Photo details': '------ ----', 'Select a photo': '-------- ----', 'Select a photo to view details, albums, people, date, place and caption.': '-------- ----, ----- ------- ------, -------, -----, ----, ----- - -------.', 'Grid view': '------', 'List view': '------', 'Search photos-': '----- ----', 'Search photos...': '----- ----...', 'Sort: Filename': '----------: --- -----', 'Sort: Photo date': '----------: ---- ----', 'Date precision': '-------- ----', 'Caption / story': '------- / -------', 'Add to album': '-------- - ------', 'Delete photo?': '------- ----?', 'This photo will be moved to Recently deleted. You can restore it later from the Albums sidebar.': '---- ----- ---------- - ------- --------. --- ----- ----- ------------ -- ------ --------.', 'No photos yet': '---- ---- ---', 'No deleted photos': '-------- ---- ---', 'No favourite photos yet': '--------- ---- ---- ---', 'Every photo is in an album': '--- ---- --- - --------', 'Open photo': '------- ----',
 
       // Archive
       'Archive workspace': '------- ------- ------', 'Files': '-----', 'Sources': '---------', 'Sources & provenance': '---------', 'Imports': '-------', 'Folders': '-----', 'Search sources...': '----- ----------...', 'Search this folder...': '----- - ---- -----...', 'Filter by type': '------ -- ----', 'Origin type': '--- -------------', 'Repository / holder': '----------- / --------', 'Reference': '------', 'Coverage': '-----', 'Attached': '-----------', 'Used as evidence': '------------ --- --------------', 'Citation': '-----------', 'Batch': '-----', 'Date added': '---- ----------', 'Destination': '----------', 'Review progress': '-------- --------', 'Issues': '--------', 'Status': '------', 'Issue': '--------', 'Affected item': '---------- -------', 'Severity': '--------', 'Suggested action': '------------ --------', 'No open issues in this filter': '--- -------- ------- - ---- -------', 'No deleted archive items': '--- -------- -------- ---------', 'File info': '---------- - -----', 'Size': '------', 'Added': '---------', 'Linked evidence': '--------- --------------', 'OCR / notes': 'OCR / -------', 'Folder contents': '---------- -----',
@@ -13545,6 +14039,176 @@
 
     function getAlbumName(albumId) {
       return sampleData.albums.find(album => album.id === albumId)?.name || '';
+    }
+
+    function getAlbumPreviewPhoto(albumId) {
+      const album =
+        getProjectAlbums().find(
+          item => item.id === albumId
+        );
+
+      if (!album) return null;
+
+      return getProjectPhotos(
+        album.projectId
+      ).find(photo =>
+        (photo.albumIds || [])
+          .includes(album.id)
+      ) || null;
+    }
+
+    function getAlbumSelectedPhotoMembership(
+      albumId,
+      photoIds
+    ) {
+      const ids = [
+        ...new Set(photoIds || [])
+      ];
+
+      const existingCount =
+        ids.reduce(
+          (count, photoId) => {
+            const photo =
+              getPhoto(
+                photoId,
+                {
+                  projectId:
+                    currentProjectId()
+                }
+              );
+
+            return (
+              count
+              + (
+                photo?.albumIds
+                  ?.includes(albumId)
+                  ? 1
+                  : 0
+              )
+            );
+          },
+          0
+        );
+
+      return {
+        selectedPhotoCount:
+          ids.length,
+
+        existingCount,
+
+        missingCount:
+          Math.max(
+            0,
+            ids.length
+            - existingCount
+          ),
+
+        complete:
+          ids.length > 0
+          && existingCount
+            === ids.length
+      };
+    }
+
+    function albumPickerSearchText(album) {
+      return [
+        album?.name || '',
+        album?.description || ''
+      ]
+        .join(' ')
+        .toLowerCase();
+    }
+
+    function addPhotosToAlbums(
+      photoIds,
+      albumIds
+    ) {
+      const projectId =
+        currentProjectId();
+
+      const validAlbumIds =
+        new Set(
+          getProjectAlbums(projectId)
+            .map(album => album.id)
+        );
+
+      const destinationIds = [
+        ...new Set(albumIds || [])
+      ].filter(albumId =>
+        validAlbumIds.has(albumId)
+      );
+
+      const changedPhotoIds =
+        new Set();
+
+      const changedAlbumIds =
+        new Set();
+
+      let membershipCount = 0;
+
+      const now =
+        new Date().toISOString();
+
+      [
+        ...new Set(photoIds || [])
+      ].forEach(photoId => {
+        const photo =
+          getPhoto(
+            photoId,
+            {
+              projectId
+            }
+          );
+
+        if (!photo) return;
+
+        const currentIds =
+          new Set(
+            photo.albumIds || []
+          );
+
+        let changed = false;
+
+        destinationIds.forEach(
+          albumId => {
+            if (
+              currentIds.has(albumId)
+            ) {
+              return;
+            }
+
+            currentIds.add(albumId);
+            changed = true;
+            membershipCount += 1;
+
+            changedAlbumIds.add(
+              albumId
+            );
+          }
+        );
+
+        if (!changed) return;
+
+        photo.albumIds = [
+          ...currentIds
+        ];
+
+        photo.updatedAt = now;
+
+        changedPhotoIds.add(
+          photo.id
+        );
+      });
+
+      return {
+        changedPhotoCount:
+          changedPhotoIds.size,
+
+        changedAlbumCount:
+          changedAlbumIds.size,
+
+        membershipCount
+      };
     }
 
     function photoDateModel(photo) {
@@ -33154,7 +33818,7 @@
       const deleted = state.albumsView === 'deleted';
       const selectAllAction = state.albumsViewMode === 'list'
         ? ''
-        : '<button class="button secondary" type="button" id="albumsSelectAll">Select all visible</button>';
+        : '<button class="button secondary" type="button" id="albumsSelectAll">Select all</button>';
       const actions = deleted
         ? `<button class="button primary" type="button" id="albumsRestoreSelected">Restore selected</button><button class="button danger" type="button" id="albumsDeleteSelectedPermanent">Delete permanently</button>`
         : `<button class="button secondary" type="button" id="albumsAddSelectedToAlbum">Add to album</button>${state.albumsView === 'album' ? '<button class="button secondary" type="button" id="albumsRemoveFromCurrent">Remove from album</button>' : ''}<button class="button danger" type="button" id="albumsDeleteSelected">Delete</button>`;
@@ -33190,8 +33854,250 @@
     }
 
     function renderAlbumsList(photos) {
-      const selectedIds = new Set(state.selectedPhotoIds || []);
-      return `<div class="albums-list" role="table" aria-label="Photos"><div class="albums-list-row header" role="row"><input class="albums-select-checkbox" type="checkbox" data-albums-select-visible aria-label="Select all visible photos"><span></span><span>Photo</span><span>People</span><span>Date</span><span>Place</span><span></span></div>${photos.map(photo => `<div class="albums-list-row ${state.selectedPhotoId === photo.id ? 'selected-detail' : ''} ${selectedIds.has(photo.id) ? 'is-checked' : ''}" role="row" tabindex="0" data-photo-id="${escapeHtml(photo.id)}" aria-selected="${selectedIds.has(photo.id)}"><input class="albums-select-checkbox" type="checkbox" data-photo-check="${escapeHtml(photo.id)}" aria-label="${selectedIds.has(photo.id) ? 'Deselect' : 'Select'} ${escapeHtml(photo.title)}" ${selectedIds.has(photo.id) ? 'checked' : ''}><span class="albums-list-thumb">${renderPhotoThumbnail(photo, { label: photo.title })}</span><span class="albums-list-title"><strong>${escapeHtml(photo.title || photo.filename)}</strong><span>${escapeHtml(formatMediaBytes(photo.sizeBytes))}</span></span><span>${escapeHtml(getPhotoPeople(photo).map(person => person.names?.display).join(', ') || 'No people')}</span><span>${escapeHtml(formatPhotoDate(photo))}</span><span>${escapeHtml(getPlaceDisplay(photo.placeId) || photo.placeText || 'Unknown')}</span><button class="albums-row-more" type="button" data-photo-more="${escapeHtml(photo.id)}" aria-label="Photo actions">${icon.more}</button></div>`).join('')}</div>`;
+      const selectedIds =
+        new Set(
+          state.selectedPhotoIds || []
+        );
+
+      const header = `
+        <div
+          class="
+            albums-list-row
+            header
+          "
+          role="row">
+
+          <input
+            class="
+              albums-select-checkbox
+            "
+            type="checkbox"
+            data-albums-select-visible
+            aria-label="
+              Select all visible photos
+            ">
+
+          <span
+            aria-hidden="true">
+          </span>
+
+          <span>Photo</span>
+          <span>People</span>
+          <span>Date</span>
+          <span>Place</span>
+
+          <span
+            class="
+              albums-list-favourite-heading
+            "
+            aria-label="Favorite"
+            title="Favorite">
+            ${icon.star}
+          </span>
+
+          <span
+            aria-hidden="true">
+          </span>
+        </div>
+      `;
+
+      const rows =
+        photos.map(photo => {
+          const selected =
+            selectedIds.has(
+              photo.id
+            );
+
+          const title =
+            photo.title
+            || photo.filename
+            || 'Untitled photo';
+
+          const people =
+            getPhotoPeople(photo)
+              .map(person =>
+                person.names?.display
+              )
+              .filter(Boolean)
+              .join(', ')
+            || 'No people';
+
+          const favoriteLabel =
+            photo.favorite
+              ? 'Remove from favorites'
+              : 'Mark as favorite';
+
+          const favoriteControl =
+            photoIsDeleted(photo)
+              ? `
+                <span
+                  class="
+                    albums-list-favourite-spacer
+                  "
+                  aria-hidden="true">
+                </span>
+              `
+              : `
+                <button
+                  class="
+                    albums-list-favourite
+                    ${
+                      photo.favorite
+                        ? 'active'
+                        : ''
+                    }
+                  "
+                  type="button"
+                  data-photo-fav="${
+                    escapeHtml(photo.id)
+                  }"
+                  aria-pressed="${
+                    photo.favorite
+                      ? 'true'
+                      : 'false'
+                  }"
+                  aria-label="${
+                    escapeHtml(
+                      favoriteLabel
+                    )
+                  }"
+                  title="${
+                    escapeHtml(
+                      favoriteLabel
+                    )
+                  }">
+                  ${icon.star}
+                </button>
+              `;
+
+          return `
+            <div
+              class="
+                albums-list-row
+                ${
+                  state.selectedPhotoId
+                    === photo.id
+                    ? 'selected-detail'
+                    : ''
+                }
+                ${
+                  selected
+                    ? 'is-checked'
+                    : ''
+                }
+              "
+              role="row"
+              tabindex="0"
+              data-photo-id="${
+                escapeHtml(photo.id)
+              }"
+              aria-selected="${
+                selected
+                  ? 'true'
+                  : 'false'
+              }">
+
+              <input
+                class="
+                  albums-select-checkbox
+                "
+                type="checkbox"
+                data-photo-check="${
+                  escapeHtml(photo.id)
+                }"
+                aria-label="${
+                  escapeHtml(
+                    `${
+                      selected
+                        ? 'Deselect'
+                        : 'Select'
+                    } ${title}`
+                  )
+                }"
+                ${
+                  selected
+                    ? 'checked'
+                    : ''
+                }>
+
+              <span
+                class="
+                  albums-list-thumb
+                ">
+                ${renderPhotoThumbnail(
+                  photo,
+                  {
+                    label: title
+                  }
+                )}
+              </span>
+
+              <span
+                class="
+                  albums-list-title
+                ">
+                <strong>
+                  ${escapeHtml(title)}
+                </strong>
+
+                <span>
+                  ${escapeHtml(
+                    formatMediaBytes(
+                      photo.sizeBytes
+                    )
+                  )}
+                </span>
+              </span>
+
+              <span>
+                ${escapeHtml(people)}
+              </span>
+
+              <span>
+                ${escapeHtml(
+                  formatPhotoDate(photo)
+                )}
+              </span>
+
+              <span>
+                ${escapeHtml(
+                  getPlaceDisplay(
+                    photo.placeId
+                  )
+                  || photo.placeText
+                  || 'Unknown'
+                )}
+              </span>
+
+              ${favoriteControl}
+
+              <button
+                class="albums-row-more"
+                type="button"
+                data-photo-more="${
+                  escapeHtml(photo.id)
+                }"
+                aria-label="${
+                  escapeHtml(
+                    `Actions for ${title}`
+                  )
+                }"
+                aria-haspopup="menu">
+                ${icon.more}
+              </button>
+            </div>
+          `;
+        }).join('');
+
+      return `
+        <div
+          class="albums-list"
+          role="table"
+          aria-label="Photos">
+          ${header}
+          ${rows}
+        </div>
+      `;
     }
 
     function renderAlbumsEmpty(context) {
@@ -36124,32 +37030,198 @@
       modalBackdrop.querySelector('[data-confirm-photo-delete]')?.addEventListener('click', () => { closeModal(); permanent ? permanentlyDeletePhotos(ids) : softDeletePhotos(ids); });
     }
 
-    function openAlbumPhotoMenu(photoId, anchor) {
-      const photo = getPhoto(photoId, { includeDeleted: true });
-      if (!photo) return;
+    function openAlbumPhotoMenu(
+      photoId,
+      anchor
+    ) {
+      const photo =
+        getPhoto(
+          photoId,
+          {
+            includeDeleted: true,
+            projectId:
+              currentProjectId()
+          }
+        );
+
+      if (!photo || !anchor) {
+        return;
+      }
+
       closeMenu();
-      const rect = anchor.getBoundingClientRect();
-      const menu = document.createElement('div');
-      menu.className = 'menu-popover';
-      menu.id = 'projectMenu';
-      menu.style.top = `${rect.bottom + 6}px`;
-      menu.style.left = `${Math.max(12, rect.right - 210)}px`;
-      menu.innerHTML = photoIsDeleted(photo)
-        ? `<button type="button" data-photo-action="restore">Restore</button><button class="danger" type="button" data-photo-action="permanent">Delete permanently</button>`
-        : `<button type="button" data-photo-action="open">Open</button><button type="button" data-photo-action="people">Tag people</button><button type="button" data-photo-action="album">Add to album</button><button class="danger" type="button" data-photo-action="delete">Delete</button>`;
-      document.body.appendChild(menu);
-      menu.addEventListener('click', event => {
-        const action = event.target.closest('[data-photo-action]')?.dataset.photoAction;
-        if (!action) return;
-        closeMenu();
-        if (action === 'open') openPhotoLightbox(photo.id);
-        if (action === 'people') openPhotoPeopleModal(photo.id);
-        if (action === 'album') { state.selectedPhotoIds = [photo.id]; openAddToAlbumModal(); }
-        if (action === 'delete') openDeletePhotoConfirm([photo.id]);
-        if (action === 'restore') restorePhotos([photo.id]);
-        if (action === 'permanent') openDeletePhotoConfirm([photo.id], true);
-      });
-      setTimeout(() => document.addEventListener('click', closeMenu), 0);
+
+      const rect =
+        anchor.getBoundingClientRect();
+
+      const menu =
+        document.createElement(
+          'div'
+        );
+
+      menu.className =
+        'menu-popover';
+
+      menu.id =
+        'projectMenu';
+
+      menu.style.top =
+        `${rect.bottom + 6}px`;
+
+      menu.style.left =
+        `${
+          Math.max(
+            12,
+            rect.right - 210
+          )
+        }px`;
+
+      if (photoIsDeleted(photo)) {
+        menu.innerHTML = `
+          <button
+            type="button"
+            data-photo-action="restore">
+            Restore
+          </button>
+
+          <button
+            class="danger"
+            type="button"
+            data-photo-action="permanent">
+            Delete permanently
+          </button>
+        `;
+      } else {
+        const favoriteLabel =
+          photo.favorite
+            ? 'Remove from favorites'
+            : 'Mark as favorite';
+
+        menu.innerHTML = `
+          <button
+            type="button"
+            data-photo-action="open">
+            Open
+          </button>
+
+          <button
+            type="button"
+            data-photo-action="favorite">
+            ${escapeHtml(
+              favoriteLabel
+            )}
+          </button>
+
+          <button
+            type="button"
+            data-photo-action="people">
+            Tag people
+          </button>
+
+          <button
+            type="button"
+            data-photo-action="album">
+            Add to album
+          </button>
+
+          <button
+            class="danger"
+            type="button"
+            data-photo-action="delete">
+            Delete
+          </button>
+        `;
+      }
+
+      document.body.appendChild(
+        menu
+      );
+
+      menu.addEventListener(
+        'click',
+        event => {
+          const action =
+            event.target
+              .closest(
+                '[data-photo-action]'
+              )
+              ?.dataset
+              .photoAction;
+
+          if (!action) {
+            return;
+          }
+
+          closeMenu();
+
+          if (action === 'open') {
+            openPhotoLightbox(
+              photo.id
+            );
+
+            return;
+          }
+
+          if (action === 'favorite') {
+            toggleAlbumPhotoFavourite(
+              photo.id
+            );
+
+            return;
+          }
+
+          if (action === 'people') {
+            openPhotoPeopleModal(
+              photo.id
+            );
+
+            return;
+          }
+
+          if (action === 'album') {
+            state.selectedPhotoIds = [
+              photo.id
+            ];
+
+            openAddToAlbumModal();
+            return;
+          }
+
+          if (action === 'delete') {
+            openDeletePhotoConfirm([
+              photo.id
+            ]);
+
+            return;
+          }
+
+          if (action === 'restore') {
+            restorePhotos([
+              photo.id
+            ]);
+
+            return;
+          }
+
+          if (
+            action === 'permanent'
+          ) {
+            openDeletePhotoConfirm(
+              [photo.id],
+              true
+            );
+          }
+        }
+      );
+
+      setTimeout(
+        () => {
+          document.addEventListener(
+            'click',
+            closeMenu
+          );
+        },
+        0
+      );
     }
 
     function mountAlbumsActionMenu(
@@ -36504,15 +37576,982 @@
     }
 
     function openAddToAlbumModal() {
-      const photoIds = [...new Set(state.selectedPhotoIds || [])].filter(id => getPhoto(id));
-      if (!photoIds.length) return;
-      const albums = getProjectAlbums();
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="addToAlbumTitle"><div class="modal-header"><div><h2 id="addToAlbumTitle">Add to album</h2><p>${photoIds.length} selected photo${photoIds.length === 1 ? '' : 's'}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body albums-modal-list">${albums.map(album => `<label class="albums-modal-choice"><input type="checkbox" value="${escapeHtml(album.id)}"><span>${escapeHtml(album.name)}</span><span>${getAlbumPhotoCount(album.id)} photos</span></label>`).join('')}</div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-add-to-albums>Apply</button></div></div>`);
-      modalBackdrop.querySelector('[data-add-to-albums]')?.addEventListener('click', () => {
-        const albumIds = [...modalBackdrop.querySelectorAll('.albums-modal-choice input:checked')].map(input => input.value);
-        photoIds.forEach(photoId => { const photo = getPhoto(photoId); photo.albumIds = [...new Set([...(photo.albumIds || []), ...albumIds])]; photo.updatedAt = new Date().toISOString(); });
-        state.selectedPhotoIds = []; closeModal(); renderAlbums(); showToast('Album membership updated.');
-      });
+      const projectId =
+        currentProjectId();
+
+      const photoIds = [
+        ...new Set(
+          state.selectedPhotoIds || []
+        )
+      ].filter(photoId =>
+        Boolean(
+          getPhoto(
+            photoId,
+            {
+              projectId
+            }
+          )
+        )
+      );
+
+      if (!photoIds.length) {
+        return;
+      }
+
+      let query = '';
+      let createMode = false;
+
+      const selectedAlbumIds =
+        new Set();
+
+      const createDraft = {
+        name: '',
+        description: ''
+      };
+
+      const allAlbums = () =>
+        getProjectAlbums(
+          projectId
+        );
+
+      const visibleAlbums = () => {
+        const normalizedQuery =
+          query
+            .trim()
+            .toLowerCase();
+
+        if (!normalizedQuery) {
+          return allAlbums();
+        }
+
+        return allAlbums().filter(
+          album =>
+            albumPickerSearchText(
+              album
+            ).includes(
+              normalizedQuery
+            )
+        );
+      };
+
+      const photoCountLabel = () =>
+        `${photoIds.length} selected ${
+          photoIds.length === 1
+            ? 'photo'
+            : 'photos'
+        }`;
+
+      const selectionLabel = () => {
+        const albumCount =
+          selectedAlbumIds.size;
+
+        return `${
+          photoIds.length
+        } ${
+          photoIds.length === 1
+            ? 'photo'
+            : 'photos'
+        } selected · ${
+          albumCount
+        } ${
+          albumCount === 1
+            ? 'album'
+            : 'albums'
+        } chosen`;
+      };
+
+      const saveLabel = () => {
+        const count =
+          selectedAlbumIds.size;
+
+        if (!count) {
+          return 'Add to albums';
+        }
+
+        return `Add to ${count} ${
+          count === 1
+            ? 'album'
+            : 'albums'
+        }`;
+      };
+
+      const renderAlbumRow =
+        album => {
+          const membership =
+            getAlbumSelectedPhotoMembership(
+              album.id,
+              photoIds
+            );
+
+          const selected =
+            selectedAlbumIds.has(
+              album.id
+            );
+
+          const previewPhoto =
+            getAlbumPreviewPhoto(
+              album.id
+            );
+
+          const albumPhotoCount =
+            getAlbumPhotoCount(
+              album.id
+            );
+
+          let membershipLabel = '';
+
+          if (membership.complete) {
+            membershipLabel =
+              'Already contains all selected photos';
+          } else if (
+            membership.existingCount
+          ) {
+            membershipLabel =
+              `${membership.existingCount} of ${
+                membership.selectedPhotoCount
+              } already added`;
+          }
+
+          return `
+            <label
+              class="
+                album-picker-result
+                ${
+                  selected
+                    ? 'is-selected'
+                    : ''
+                }
+                ${
+                  membership.complete
+                    ? 'is-complete'
+                    : ''
+                }
+              "
+              data-album-picker-row="${
+                escapeHtml(album.id)
+              }">
+
+              <span
+                class="
+                  album-picker-cover
+                ">
+                ${
+                  previewPhoto
+                    ? renderPhotoThumbnail(
+                        previewPhoto,
+                        {
+                          label:
+                            album.name
+                        }
+                      )
+                    : icon.folder
+                }
+              </span>
+
+              <span
+                class="
+                  album-picker-copy
+                ">
+                <strong>
+                  ${escapeHtml(
+                    album.name
+                    || 'Untitled album'
+                  )}
+                </strong>
+
+                <span
+                  class="
+                    album-picker-description
+                  ">
+                  ${escapeHtml(
+                    album.description
+                    || 'No description'
+                  )}
+                </span>
+
+                <span
+                  class="
+                    album-picker-meta
+                  ">
+                  <span>
+                    ${albumPhotoCount}
+                    ${
+                      albumPhotoCount === 1
+                        ? 'photo'
+                        : 'photos'
+                    }
+                  </span>
+
+                  ${
+                    membershipLabel
+                      ? `
+                        <span
+                          aria-hidden="true">
+                          ·
+                        </span>
+
+                        <span
+                          class="
+                            album-picker-membership
+                            ${
+                              membership.complete
+                                ? 'complete'
+                                : ''
+                            }
+                          ">
+                          ${escapeHtml(
+                            membershipLabel
+                          )}
+                        </span>
+                      `
+                      : ''
+                  }
+                </span>
+              </span>
+
+              <input
+                type="checkbox"
+                value="${
+                  escapeHtml(album.id)
+                }"
+                data-album-picker-choice
+                ${
+                  selected
+                  || membership.complete
+                    ? 'checked'
+                    : ''
+                }
+                ${
+                  membership.complete
+                    ? 'disabled'
+                    : ''
+                }
+                aria-label="${
+                  escapeHtml(
+                    membership.complete
+                      ? `${
+                          album.name
+                        } already contains all selected photos`
+                      : `${
+                          selected
+                            ? 'Remove'
+                            : 'Add'
+                        } ${
+                          album.name
+                        }`
+                  )
+                }">
+            </label>
+          `;
+        };
+
+      const renderResults = () => {
+        const albums =
+          visibleAlbums();
+
+        if (albums.length) {
+          return albums
+            .map(renderAlbumRow)
+            .join('');
+        }
+
+        if (query.trim()) {
+          return `
+            <div
+              class="
+                album-picker-empty
+              ">
+              <div
+                class="
+                  album-picker-empty-card
+                ">
+                <strong>
+                  No albums match this search
+                </strong>
+
+                <p>
+                  Try another album name
+                  or description.
+                </p>
+
+                <div
+                  class="
+                    album-picker-empty-actions
+                  ">
+                  <button
+                    class="
+                      button
+                      secondary
+                    "
+                    type="button"
+                    data-album-picker-clear-search>
+                    Clear search
+                  </button>
+
+                  <button
+                    class="
+                      button
+                      primary
+                    "
+                    type="button"
+                    data-album-picker-create>
+                    Create album
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        return `
+          <div
+            class="
+              album-picker-empty
+            ">
+            <div
+              class="
+                album-picker-empty-card
+              ">
+              <strong>
+                No albums yet
+              </strong>
+
+              <p>
+                Create an album to
+                organize the selected
+                photos.
+              </p>
+
+              <button
+                class="
+                  button
+                  primary
+                "
+                type="button"
+                data-album-picker-create>
+                Create album
+              </button>
+            </div>
+          </div>
+        `;
+      };
+
+      openModal(`
+        <div
+          class="
+            modal
+            photo-people-modal
+            album-picker-modal
+          "
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="
+            addToAlbumTitle
+          ">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="addToAlbumTitle">
+                Add to album
+              </h2>
+
+              <p>
+                ${escapeHtml(
+                  photoCountLabel()
+                )}
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="
+                Close add to album dialog
+              ">
+              ${icon.close}
+            </button>
+          </div>
+
+          <div
+            class="
+              album-picker-body
+            ">
+
+            <div
+              class="
+                album-picker-browse
+              "
+              data-album-picker-browse>
+
+              <div
+                class="
+                  field
+                  photo-people-search-field
+                  album-picker-search
+                ">
+                <label
+                  for="albumPickerSearch">
+                  Find albums
+                </label>
+
+                <div
+                  class="search-input">
+                  ${icon.search}
+
+                  <input
+                    id="albumPickerSearch"
+                    type="search"
+                    data-album-picker-search
+                    placeholder="Search albums"
+                    autocomplete="off">
+                </div>
+              </div>
+
+              <section
+                class="
+                  album-picker-results-panel
+                ">
+
+                <div
+                  class="
+                    album-picker-results-head
+                  ">
+
+                  <div
+                    class="
+                      album-picker-results-heading
+                    ">
+                    <strong
+                      data-album-picker-results-title>
+                      All albums
+                    </strong>
+
+                    <span
+                      data-album-picker-results-meta>
+                    </span>
+                  </div>
+
+                  <button
+                    class="
+                      button
+                      secondary
+                      compact
+                      album-picker-new-button
+                    "
+                    type="button"
+                    data-album-picker-create>
+                    ${icon.plus}
+                    New album
+                  </button>
+                </div>
+
+                <div
+                  class="
+                    photo-people-results
+                    album-picker-results
+                  "
+                  data-album-picker-results>
+                </div>
+              </section>
+            </div>
+
+            <form
+              id="albumPickerCreateForm"
+              class="album-picker-create"
+              data-album-picker-create-form
+              hidden>
+
+              <div
+                class="
+                  album-picker-create-copy
+                ">
+                <strong>
+                  Create a new album
+                </strong>
+
+                <span>
+                  The new album will be
+                  selected automatically.
+                </span>
+              </div>
+
+              <div
+                class="
+                  album-picker-create-fields
+                ">
+
+                <div class="field">
+                  <label
+                    for="albumPickerName">
+                    Album name
+                  </label>
+
+                  <input
+                    id="albumPickerName"
+                    data-album-picker-name
+                    required
+                    autocomplete="off">
+                </div>
+
+                <div class="field">
+                  <label
+                    for="
+                      albumPickerDescription
+                    ">
+                    Description
+                  </label>
+
+                  <textarea
+                    id="
+                      albumPickerDescription
+                    "
+                    data-album-picker-description>
+                  </textarea>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div
+            class="
+              modal-footer
+              photo-people-footer
+              album-picker-footer
+            ">
+
+            <span
+              class="
+                photo-people-selection-count
+              "
+              data-album-picker-count>
+            </span>
+
+            <div
+              class="
+                album-picker-footer-actions
+              "
+              data-album-picker-footer-actions>
+            </div>
+          </div>
+        </div>
+      `);
+
+      const modal =
+        modalBackdrop.querySelector(
+          '.album-picker-modal'
+        );
+
+      if (!modal) return;
+
+      const browsePanel =
+        modal.querySelector(
+          '[data-album-picker-browse]'
+        );
+
+      const createPanel =
+        modal.querySelector(
+          '[data-album-picker-create-form]'
+        );
+
+      const resultsHost =
+        modal.querySelector(
+          '[data-album-picker-results]'
+        );
+
+      const resultsTitle =
+        modal.querySelector(
+          '[data-album-picker-results-title]'
+        );
+
+      const resultsMeta =
+        modal.querySelector(
+          '[data-album-picker-results-meta]'
+        );
+
+      const countElement =
+        modal.querySelector(
+          '[data-album-picker-count]'
+        );
+
+      const footerActions =
+        modal.querySelector(
+          '[data-album-picker-footer-actions]'
+        );
+
+      const searchInput =
+        modal.querySelector(
+          '[data-album-picker-search]'
+        );
+
+      const nameInput =
+        modal.querySelector(
+          '[data-album-picker-name]'
+        );
+
+      const descriptionInput =
+        modal.querySelector(
+          '[data-album-picker-description]'
+        );
+
+      const refreshFooter = () => {
+        if (!countElement) return;
+
+        if (createMode) {
+          countElement.textContent =
+            'Create a new album';
+
+          footerActions.innerHTML = `
+            <button
+              class="
+                button
+                secondary
+              "
+              type="button"
+              data-album-picker-back>
+              Back
+            </button>
+            <button
+              class="button primary album-picker-save"
+              type="submit"
+              form="albumPickerCreateForm"
+              data-album-picker-create-save
+              ${
+                createDraft.name.trim()
+                  ? ''
+                  : 'disabled'
+              }>
+              Create and select
+            </button>
+          `;
+
+          return;
+        }
+
+        countElement.textContent =
+          selectionLabel();
+
+        footerActions.innerHTML = `
+          <button
+            class="
+              button
+              secondary
+            "
+            type="button"
+            data-close>
+            Cancel
+          </button>
+
+          <button
+            class="
+              button
+              primary
+              album-picker-save
+            "
+            type="button"
+            data-album-picker-save
+            ${
+              selectedAlbumIds.size
+                ? ''
+                : 'disabled'
+            }>
+            ${escapeHtml(
+              saveLabel()
+            )}
+          </button>
+        `;
+      };
+
+      const refreshResults = () => {
+        const albums =
+          visibleAlbums();
+
+        const total =
+          allAlbums().length;
+
+        const hasQuery =
+          Boolean(
+            query.trim()
+          );
+
+        if (resultsTitle) {
+          resultsTitle.textContent =
+            hasQuery
+              ? 'Search results'
+              : 'All albums';
+        }
+
+        if (resultsMeta) {
+          resultsMeta.textContent =
+            hasQuery
+              ? `${albums.length} of ${total} albums`
+              : `${total} ${
+                  total === 1
+                    ? 'album'
+                    : 'albums'
+                }`;
+        }
+
+        if (resultsHost) {
+          resultsHost.innerHTML =
+            renderResults();
+
+          localizeUI(resultsHost);
+        }
+
+        refreshFooter();
+      };
+
+      const showBrowse = () => {
+        createMode = false;
+
+        browsePanel.hidden = false;
+        createPanel.hidden = true;
+
+        refreshResults();
+
+        requestAnimationFrame(
+          () => {
+            searchInput?.focus({
+              preventScroll: true
+            });
+          }
+        );
+      };
+
+      const showCreate = () => {
+        createMode = true;
+
+        browsePanel.hidden = true;
+        createPanel.hidden = false;
+
+        if (nameInput) {
+          nameInput.value =
+            createDraft.name;
+        }
+
+        if (descriptionInput) {
+          descriptionInput.value =
+            createDraft.description;
+        }
+
+        refreshFooter();
+
+        requestAnimationFrame(
+          () => {
+            nameInput?.focus({
+              preventScroll: true
+            });
+          }
+        );
+      };
+
+      searchInput?.addEventListener(
+        'input',
+        event => {
+          query =
+            event.currentTarget.value;
+
+          refreshResults();
+        }
+      );
+
+      nameInput?.addEventListener(
+        'input',
+        event => {
+          createDraft.name =
+            event.currentTarget.value;
+
+          refreshFooter();
+        }
+      );
+
+      descriptionInput
+        ?.addEventListener(
+          'input',
+          event => {
+            createDraft.description =
+              event.currentTarget.value;
+          }
+        );
+
+      createPanel.addEventListener(
+        'submit',
+        event => {
+          event.preventDefault();
+
+          const name =
+            createDraft.name.trim();
+
+          if (!name) {
+            nameInput?.focus();
+            return;
+          }
+
+          const album = {
+            id:
+              `album-${Date.now()}`,
+
+            projectId,
+
+            name,
+
+            description:
+              createDraft.description
+                .trim(),
+
+            createdAt:
+              new Date()
+                .toISOString()
+          };
+
+          sampleData.albums.push(
+            album
+          );
+
+          selectedAlbumIds.add(
+            album.id
+          );
+
+          createDraft.name = '';
+          createDraft.description = '';
+          query = '';
+
+          if (searchInput) {
+            searchInput.value = '';
+          }
+
+          showBrowse();
+
+          requestAnimationFrame(
+            () => {
+              modal
+                .querySelector(
+                  `[data-album-picker-row="${
+                    CSS.escape(album.id)
+                  }"]`
+                )
+                ?.scrollIntoView({
+                  block: 'nearest'
+                });
+            }
+          );
+        }
+      );
+
+      modal.addEventListener(
+        'change',
+        event => {
+          const checkbox =
+            event.target.closest(
+              '[data-album-picker-choice]'
+            );
+
+          if (!checkbox) return;
+
+          const albumId =
+            checkbox.value;
+
+          if (checkbox.checked) {
+            selectedAlbumIds.add(
+              albumId
+            );
+          } else {
+            selectedAlbumIds.delete(
+              albumId
+            );
+          }
+
+          refreshResults();
+        }
+      );
+
+      modal.addEventListener(
+        'click',
+        event => {
+          if (
+            event.target.closest(
+              '[data-album-picker-create]'
+            )
+          ) {
+            showCreate();
+            return;
+          }
+
+          if (
+            event.target.closest(
+              '[data-album-picker-back]'
+            )
+          ) {
+            showBrowse();
+            return;
+          }
+
+          if (
+            event.target.closest(
+              '[data-album-picker-clear-search]'
+            )
+          ) {
+            query = '';
+
+            if (searchInput) {
+              searchInput.value = '';
+            }
+
+            refreshResults();
+
+            searchInput?.focus({
+              preventScroll: true
+            });
+
+            return;
+          }
+
+          if (
+            event.target.closest(
+              '[data-album-picker-save]'
+            )
+          ) {
+            const result =
+              addPhotosToAlbums(
+                photoIds,
+                [
+                  ...selectedAlbumIds
+                ]
+              );
+
+            if (
+              !result.membershipCount
+            ) {
+              refreshResults();
+              return;
+            }
+
+            state.selectedPhotoIds = [];
+
+            closeModal();
+            renderAlbums();
+
+            showToast(
+              `${result.changedPhotoCount} ${
+                result.changedPhotoCount
+                  === 1
+                  ? 'photo'
+                  : 'photos'
+              } added to ${
+                result.changedAlbumCount
+              } ${
+                result.changedAlbumCount
+                  === 1
+                  ? 'album'
+                  : 'albums'
+              }.`
+            );
+          }
+        }
+      );
+
+      refreshResults();
     }
 
     function removePhotoFromAlbum(
