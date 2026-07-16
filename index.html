@@ -4,6 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GeneoGraph - Interactive concept</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin="" />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
   <style>
     :root {
       --surface-app: #0B0F0E;
@@ -12663,48 +12672,47 @@
     .places-empty h3 { margin: 0 0 8px; color: var(--text-primary); }
     .places-empty p { margin: 0 0 var(--space-4); max-width: 460px; }
 
-    .places-map { position: absolute; inset: 0; overflow: hidden; background:
-      radial-gradient(circle at 23% 30%, rgba(47,174,116,.12), transparent 22%),
-      radial-gradient(circle at 72% 64%, rgba(93,173,236,.1), transparent 18%),
-      linear-gradient(140deg, rgba(22,58,42,.24), transparent 44%),
-      #0b100f; }
-    .places-map::before { content: ""; position: absolute; inset: 0; opacity: .36; background-image:
-      linear-gradient(27deg, transparent 46%, rgba(98,217,154,.12) 47%, transparent 48%),
-      linear-gradient(128deg, transparent 55%, rgba(184,192,189,.08) 56%, transparent 57%),
-      repeating-linear-gradient(0deg, transparent 0 31px, rgba(255,255,255,.025) 32px 33px),
-      repeating-linear-gradient(90deg, transparent 0 31px, rgba(255,255,255,.022) 32px 33px); }
-    .places-map::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at center, transparent 38%, rgba(0,0,0,.34)); }
-    .map-region { position: absolute; border: 1px solid rgba(184,192,189,.08); border-radius: 45% 55% 42% 58%; background: rgba(255,255,255,.018); filter: blur(.1px); }
-    .map-region.r1 { width: 340px; height: 220px; left: 13%; top: 18%; transform: rotate(-12deg); }
-    .map-region.r2 { width: 410px; height: 240px; right: 6%; bottom: 18%; transform: rotate(17deg); }
-    .map-route { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
-    .map-route path { fill: none; stroke: rgba(98,217,154,.62); stroke-width: 3; stroke-dasharray: 9 8; filter: drop-shadow(0 0 8px rgba(47,174,116,.15)); }
-    .map-label { position: absolute; z-index: 3; color: rgba(184,192,189,.36); font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; pointer-events: none; }
-    .map-marker { position: absolute; z-index: 5; width: 22px; height: 22px; border-radius: 50%; border: 2px solid rgba(11,15,14,.8); background: var(--brand-green-500); color: #07110d; display: grid; place-items: center; transform: translate(-50%,-50%); box-shadow: 0 0 0 4px rgba(47,174,116,.16), 0 10px 26px rgba(0,0,0,.28); cursor: pointer; transition: transform var(--ease), box-shadow var(--ease), background var(--ease); }
-    .map-marker:hover, .map-marker:focus-visible { transform: translate(-50%,-50%) scale(1.12); box-shadow: 0 0 0 7px rgba(98,217,154,.2), 0 12px 32px rgba(0,0,0,.36); }
-    .map-marker.selected { width: 28px; height: 28px; box-shadow: 0 0 0 7px rgba(98,217,154,.26), 0 0 0 11px rgba(47,174,116,.1), 0 14px 36px rgba(0,0,0,.36); }
-    .map-marker.approx, .map-marker.missing, .map-marker.ambiguous { background: var(--amber); box-shadow: 0 0 0 4px rgba(212,170,107,.18), 0 10px 26px rgba(0,0,0,.28); }
-    .map-marker.archive { background: var(--blue); box-shadow: 0 0 0 4px rgba(93,173,236,.18), 0 10px 26px rgba(0,0,0,.28); }
-    .map-marker.residence { background: var(--purple); box-shadow: 0 0 0 4px rgba(141,108,232,.18), 0 10px 26px rgba(0,0,0,.28); }
-    .map-cluster { position: absolute; z-index: 4; min-width: 34px; height: 34px; border-radius: 999px; border: 1px solid rgba(98,217,154,.45); background: rgba(22,58,42,.88); color: var(--brand-green-300); display: grid; place-items: center; font-size: 12px; font-weight: 900; transform: translate(-50%,-50%); box-shadow: 0 0 0 6px rgba(47,174,116,.08); }
-    .places-map-controls { position: absolute; z-index: 10; left: var(--space-4); bottom: var(--space-4); display: flex; align-items: center; gap: 8px; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: rgba(15,20,19,.9); padding: 8px; box-shadow: var(--shadow-soft); }
+    .places-map { position: absolute; inset: 0; overflow: hidden; background: #0b100f; isolation: isolate; }
+    .places-leaflet-host { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; min-height: 320px; background: #0b100f; }
+    .places-map .leaflet-container { width: 100%; height: 100%; background: #0b100f; color: var(--text-primary); font-family: inherit; }
+    .places-map .leaflet-control-attribution { border-radius: 6px 0 0 0; background: rgba(15,20,19,.84); color: var(--text-tertiary); }
+    .places-map .leaflet-control-attribution a { color: var(--brand-green-300); }
+    .places-map-preview-host,
+    .places-map-controls,
+    .places-map-top-actions,
+    .places-map-legend,
+    .places-map-status,
+    .places-map-unmapped { position: absolute; z-index: 600; }
+    .leaflet-place-marker { width: 22px; height: 22px; border-radius: 50%; border: 2px solid rgba(11,15,14,.88); background: var(--brand-green-500); display: block; box-shadow: 0 0 0 4px rgba(47,174,116,.16), 0 10px 26px rgba(0,0,0,.28); transition: transform var(--ease), box-shadow var(--ease), background var(--ease); }
+    .leaflet-place-marker:hover { transform: scale(1.12); box-shadow: 0 0 0 7px rgba(98,217,154,.2), 0 12px 32px rgba(0,0,0,.36); }
+    .leaflet-place-marker.selected { width: 28px; height: 28px; box-shadow: 0 0 0 7px rgba(98,217,154,.26), 0 0 0 11px rgba(47,174,116,.1), 0 14px 36px rgba(0,0,0,.36); }
+    .leaflet-place-marker.approximate,
+    .leaflet-place-marker.ambiguous { background: var(--amber); box-shadow: 0 0 0 4px rgba(212,170,107,.18), 0 10px 26px rgba(0,0,0,.28); }
+    .leaflet-place-marker.archive { background: var(--blue); box-shadow: 0 0 0 4px rgba(93,173,236,.18), 0 10px 26px rgba(0,0,0,.28); }
+    .leaflet-place-marker.residence { background: var(--purple); box-shadow: 0 0 0 4px rgba(141,108,232,.18), 0 10px 26px rgba(0,0,0,.28); }
+    .places-leaflet-route { filter: drop-shadow(0 0 8px rgba(47,174,116,.18)); }
+    .places-map-controls { left: var(--space-4); bottom: var(--space-4); display: flex; align-items: center; gap: 8px; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: rgba(15,20,19,.92); padding: 8px; box-shadow: var(--shadow-soft); }
     .places-map-controls button { width: 34px; height: 34px; border: 1px solid var(--border-default); border-radius: 9px; background: var(--surface-card); color: var(--text-secondary); display: grid; place-items: center; font-weight: 900; }
     .places-map-controls button:hover { background: var(--surface-card-hover); color: var(--text-primary); border-color: var(--border-strong); }
-    .places-map-controls .zoom { min-width: 50px; text-align: center; color: var(--text-secondary); font-weight: 900; }
-    .places-map-top-actions { position: absolute; z-index: 10; right: var(--space-4); top: var(--space-4); display: flex; align-items: center; gap: 8px; }
+    .places-map-controls .zoom { min-width: 62px; text-align: center; color: var(--text-secondary); font-weight: 900; }
+    .places-map-top-actions { right: var(--space-4); top: var(--space-4); display: flex; align-items: center; gap: 8px; }
     .places-route-toggle { min-width: 92px; height: 38px; flex: 0 0 auto; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: rgba(26,32,31,.94); color: var(--text-secondary); display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 14px; font-weight: 900; white-space: nowrap; box-shadow: var(--shadow-soft); }
     .places-route-toggle:hover { background: var(--surface-card-hover); color: var(--text-primary); border-color: var(--border-strong); }
     .places-route-toggle[aria-pressed="true"] { background: var(--surface-selected); color: var(--brand-green-300); border-color: rgba(98,217,154,.26); }
     .places-route-toggle svg { width: 16px; height: 16px; flex: 0 0 16px; }
-    .places-map-legend { position: absolute; z-index: 10; right: var(--space-4); bottom: var(--space-4); width: 210px; border: 1px solid var(--border-default); border-radius: var(--radius-lg); background: rgba(15,20,19,.9); box-shadow: var(--shadow-soft); overflow: hidden; }
+    .places-map-legend { right: var(--space-4); top: 66px; width: 210px; border: 1px solid var(--border-default); border-radius: var(--radius-lg); background: rgba(15,20,19,.92); box-shadow: var(--shadow-soft); overflow: hidden; }
     .places-map-legend-header { width: 100%; border: 0; border-bottom: 1px solid var(--border-default); background: transparent; color: var(--text-primary); min-height: 40px; padding: 0 var(--space-3); display: flex; align-items: center; justify-content: space-between; font-weight: 900; }
+    .places-map-legend-header svg { width: 16px; height: 16px; transition: transform var(--ease); }
+    .places-map-legend.collapsed .places-map-legend-header { border-bottom: 0; }
+    .places-map-legend.collapsed .places-map-legend-header svg { transform: rotate(-90deg); }
     .places-map-legend-body { display: grid; gap: 8px; padding: var(--space-3); }
     .legend-item { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); font-size: 12px; font-weight: 800; }
     .legend-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--brand-green-500); }
     .legend-dot.approx { background: var(--amber); }
     .legend-dot.archive { background: var(--blue); }
     .legend-dot.residence { background: var(--purple); }
-    .places-preview { position: absolute; z-index: 12; left: var(--space-4); top: var(--space-4); width: min(380px, calc(100% - 32px)); border: 1px solid var(--border-strong); border-radius: var(--radius-lg); background: rgba(26,32,31,.94); box-shadow: var(--shadow-soft); overflow: hidden; }
+    .places-map-preview-host { left: var(--space-4); top: var(--space-4); width: min(380px, calc(100% - 32px)); pointer-events: none; }
+    .places-preview { width: 100%; border: 1px solid var(--border-strong); border-radius: var(--radius-lg); background: rgba(26,32,31,.96); box-shadow: var(--shadow-soft); overflow: hidden; pointer-events: auto; }
     .places-preview-head { padding: var(--space-4); border-bottom: 1px solid var(--border-default); display: grid; gap: 8px; }
     .places-preview-head h3 { margin: 0; color: var(--text-primary); font-size: 18px; }
     .places-preview-body { padding: var(--space-4); display: grid; gap: var(--space-3); }
@@ -12712,6 +12720,20 @@
     .places-event { display: grid; grid-template-columns: 72px 1fr; gap: var(--space-2); color: var(--text-secondary); font-size: 12px; }
     .places-event strong { color: var(--text-primary); }
     .places-preview-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+    .places-map-status { left: 50%; top: var(--space-4); width: min(430px, calc(100% - 32px)); transform: translateX(-50%); border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: rgba(26,32,31,.96); color: var(--text-secondary); padding: var(--space-3); box-shadow: var(--shadow-soft); }
+    .places-map-status[hidden] { display: none; }
+    .places-map-status strong { display: block; color: var(--text-primary); margin-bottom: 4px; }
+    .places-map-status .button { margin-top: var(--space-2); }
+    .places-map-unmapped { left: var(--space-4); bottom: 76px; max-width: 280px; border: 1px solid rgba(212,170,107,.26); border-radius: var(--radius-sm); background: rgba(26,32,31,.9); color: var(--amber); padding: 8px 10px; font-size: 12px; font-weight: 800; pointer-events: none; }
+    .place-coordinate-error { grid-column: 1 / -1; min-height: 18px; color: var(--red); font-size: 12px; font-weight: 700; }
+    .place-geocoder { grid-column: 1 / -1; display: grid; gap: var(--space-2); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-3); background: rgba(255,255,255,.025); }
+    .place-geocoder-controls { display: flex; align-items: flex-end; gap: var(--space-2); }
+    .place-geocoder-controls .field { flex: 1 1 auto; }
+    .place-geocoder-results { display: grid; gap: 6px; }
+    .place-geocoder-result { width: 100%; border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--surface-card); color: var(--text-secondary); padding: 10px 12px; display: grid; gap: 3px; text-align: left; }
+    .place-geocoder-result:hover,
+    .place-geocoder-result:focus-visible { border-color: rgba(98,217,154,.38); background: var(--surface-card-hover); color: var(--text-primary); }
+    .place-geocoder-result span { color: var(--text-tertiary); font-size: 12px; }
 
     .places-detail { min-height: 0; overflow: auto; padding: var(--space-6); display: grid; gap: var(--space-5); }
     .places-detail-hero { border: 1px solid var(--border-default); border-radius: var(--radius-lg); background: linear-gradient(140deg, rgba(22,58,42,.92), rgba(15,20,19,.84)); padding: var(--space-6); display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); }
@@ -14105,6 +14127,12 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
+    window.GENEOGRAPH_CONFIG = {
+      maptilerKey: 'QoZYanI1MAQspHo09iET'
+    };
+  </script>
+
+  <script>
     const icon = {
       addperson: '<svg width="503" height="505" viewBox="0 0 503 505" fill="none" ><path d="M188.374 305C284.303 305 363.628 379.835 376.536 477.069C378.571 492.399 365.762 505 350.299 505H26.5604C11.0966 505 -1.82302 492.399 0.211725 477.069C13.1197 379.835 92.4446 305 188.374 305Z" fill="currentColor"/><path d="M316.374 128C316.374 198.692 259.066 256 188.374 256C117.681 256 60.3738 198.692 60.3738 128C60.3738 57.3075 117.681 0 188.374 0C259.066 0 316.374 57.3075 316.374 128Z" fill="currentColor"/><path d="M397 192C397 180.402 406.402 171 418 171C429.598 171 439 180.402 439 192V320C439 331.598 429.598 341 418 341C406.402 341 397 331.598 397 320V192Z" fill="currentColor"/><path d="M482 235C493.598 235 503 244.402 503 256C503 267.598 493.598 277 482 277H354C342.402 277 333 267.598 333 256C333 244.402 342.402 235 354 235H482Z" fill="currentColor"/></svg>',
       arrow: '<svg viewBox="0 0 24 24" fill="none" ><path d="M6 12H18M6 12L11 7M6 12L11 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>',
@@ -14192,6 +14220,54 @@
     };
 
     const modules = ['Family Tree', 'People', 'Geneograph', 'Albums', 'Archive', 'Notes', 'Places', 'Publish'];
+
+    const PLACE_COORDINATE_STATUSES = Object.freeze([
+      'resolved',
+      'approximate',
+      'missing',
+      'ambiguous'
+    ]);
+
+    const PLACE_COORDINATE_ACCURACIES = Object.freeze([
+      'address',
+      'site',
+      'locality',
+      'district',
+      'region',
+      'country',
+      'unknown'
+    ]);
+
+    const PLACES_MAP_CONFIG = Object.freeze({
+      provider: 'maptiler',
+      maptilerKey: window.GENEOGRAPH_CONFIG?.maptilerKey || '',
+      tileUrl: 'https://api.maptiler.com/maps/streets-v4/256/{z}/{x}/{y}.png?key={key}',
+      attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+      minZoom: 2,
+      maxZoom: 19,
+      defaultZoom: 5,
+      defaultCenter: Object.freeze({ lat: 50.05, lng: 20.25 }),
+      fitMaxZoom: 12,
+      tileErrorThreshold: 3
+    });
+
+    const placesMapRuntime = {
+      map: null,
+      host: null,
+      tileLayer: null,
+      markerLayer: null,
+      routeLayer: null,
+      markersById: new Map(),
+      resizeObserver: null,
+      tileErrorCount: 0,
+      mountedListKey: '',
+      currentPlaces: [],
+      suppressViewCapture: false
+    };
+
+    let placesSearchTimer = null;
+    let placeGeocoderController = null;
+    let placeGeocoderTimer = null;
 
     const DEMO_TREE_PROJECT_ID = 'p1';
         function currentFamilyTreeProjectId() {
@@ -14517,11 +14593,92 @@
         { id: 'rel-marigold-nora-parent', projectId: 'p1', type: 'parentChild', parentId: 'marigold', childId: 'nora', parentRole: 'mother' }
       ],
       places: [
-        { id: 'place-pawford', name: 'Pawford', country: 'England', display: 'Pawford, England', status: 'Resolved' },
-        { id: 'place-meowbridge', name: 'Meowbridge', country: 'England', display: 'Meowbridge, England', status: 'Resolved' },
-        { id: 'place-fishmarket-row', name: 'Fishmarket Row', country: 'England', display: 'Fishmarket Row, England', status: 'Resolved' },
-        { id: 'place-old-cattery', name: 'Old Cattery', country: 'England', display: 'Old Cattery, England', status: 'Resolved' },
-        { id: 'place-unknown', name: 'Unknown', country: '', display: 'Unknown', status: 'Unknown' }
+        {
+          id: 'place-pawford', projectId: 'p1', name: 'Krakow', display: 'Krakow, Lesser Poland, Poland', type: 'City',
+          hierarchy: { locality: 'Krakow', region: 'Lesser Poland', country: 'Poland', countryCode: 'PL' },
+          coordinates: { lat: 50.06465, lng: 19.94498 }, coordinateStatus: 'resolved', coordinateAccuracy: 'locality', coordinateSource: 'seed', coordinateProvider: null, externalPlaceId: null, boundingBox: null,
+          aliases: ['Cracow', 'Krakau'], markerType: 'resolved', collections: ['pc-pawford', 'pc-england', 'pc-migration'],
+          people: 12, events: 34, files: 8, photos: 5, notes: 7, updatedAt: '2026-05-10T00:00:00Z', deleted: false,
+          topEvents: [{ kind: 'Birth', text: 'Silver Whiskerfield, 1998' }, { kind: 'Residence', text: 'Barnaby Whiskerfield, 1976' }, { kind: 'Archive', text: 'Family register request' }]
+        },
+        {
+          id: 'place-meowbridge', projectId: 'p1', name: 'Tarnow', display: 'Tarnow, Lesser Poland, Poland', type: 'City',
+          hierarchy: { locality: 'Tarnow', region: 'Lesser Poland', country: 'Poland', countryCode: 'PL' },
+          coordinates: { lat: 50.0121, lng: 20.9858 }, coordinateStatus: 'resolved', coordinateAccuracy: 'locality', coordinateSource: 'seed', coordinateProvider: null, externalPlaceId: null, boundingBox: null,
+          aliases: ['Tarnow, Galicia'], markerType: 'resolved', collections: ['pc-england', 'pc-migration'],
+          people: 4, events: 8, files: 3, photos: 2, notes: 2, updatedAt: '2026-05-08T00:00:00Z', deleted: false,
+          topEvents: [{ kind: 'Birth', text: 'Luna Purrington, 2002' }, { kind: 'Photo', text: 'Family visit, 2025' }]
+        },
+        {
+          id: 'place-fishmarket-row', projectId: 'p1', name: 'Rzeszow', display: 'Rzeszow, Subcarpathia, Poland', type: 'City',
+          hierarchy: { locality: 'Rzeszow', region: 'Subcarpathia', country: 'Poland', countryCode: 'PL' },
+          coordinates: { lat: 50.04132, lng: 21.99901 }, coordinateStatus: 'resolved', coordinateAccuracy: 'locality', coordinateSource: 'seed', coordinateProvider: null, externalPlaceId: null, boundingBox: null,
+          aliases: ['Rzeszow, Galicia'], markerType: 'resolved', collections: ['pc-england', 'pc-migration'],
+          people: 3, events: 6, files: 2, photos: 1, notes: 1, updatedAt: '2026-05-06T00:00:00Z', deleted: false,
+          topEvents: [{ kind: 'Residence', text: 'Whiskerfield household, 1928' }]
+        },
+        {
+          id: 'place-old-cattery', projectId: 'p1', name: 'Nowy Sacz', display: 'Nowy Sacz, Lesser Poland, Poland', type: 'City',
+          hierarchy: { locality: 'Nowy Sacz', region: 'Lesser Poland', country: 'Poland', countryCode: 'PL' },
+          coordinates: { lat: 49.62177, lng: 20.69705 }, coordinateStatus: 'resolved', coordinateAccuracy: 'locality', coordinateSource: 'seed', coordinateProvider: null, externalPlaceId: null, boundingBox: null,
+          aliases: ['Neu Sandez'], markerType: 'resolved', collections: ['pc-england', 'pc-migration'],
+          people: 4, events: 8, files: 3, photos: 1, notes: 2, updatedAt: '2026-05-04T00:00:00Z', deleted: false,
+          topEvents: [{ kind: 'Birth', text: 'Daisy Milkpaw, 1946' }, { kind: 'Record', text: 'Birth register extract' }]
+        },
+        {
+          id: 'place-unknown', projectId: 'p1', name: 'Unidentified village near Krakow', display: 'Unidentified village near Krakow, Poland', type: 'Unknown',
+          hierarchy: { locality: 'Unidentified village', region: 'Lesser Poland', country: 'Poland', countryCode: 'PL' },
+          coordinates: null, coordinateStatus: 'missing', coordinateAccuracy: 'unknown', coordinateSource: 'import', coordinateProvider: null, externalPlaceId: null, boundingBox: null,
+          aliases: ['Imported raw place string'], markerType: 'missing', collections: ['pc-pawford'],
+          people: 1, events: 2, files: 1, photos: 0, notes: 2, updatedAt: '2026-04-25T00:00:00Z', deleted: false,
+          topEvents: [{ kind: 'Record', text: 'Unclear birthplace in GEDCOM import' }]
+        },
+        {
+          id: 'place-archive', projectId: 'p1', name: 'National Archives in Krakow', display: 'National Archives in Krakow, Poland', type: 'Archive',
+          hierarchy: { locality: 'Krakow', region: 'Lesser Poland', country: 'Poland', countryCode: 'PL' },
+          coordinates: { lat: 50.0722, lng: 19.9174 }, coordinateStatus: 'resolved', coordinateAccuracy: 'site', coordinateSource: 'seed', coordinateProvider: null, externalPlaceId: null, boundingBox: null,
+          aliases: ['Archiwum Narodowe w Krakowie'], markerType: 'archive', collections: ['pc-archives', 'pc-pawford'],
+          people: 8, events: 12, files: 24, photos: 0, notes: 5, updatedAt: '2026-05-01T00:00:00Z', deleted: false,
+          topEvents: [{ kind: 'Source', text: 'Family register collection' }, { kind: 'Visit', text: 'Archive request created' }]
+        },
+        {
+          id: 'place-residence', projectId: 'p1', name: 'Family residence near Wieliczka', display: 'Family residence near Wieliczka, Lesser Poland, Poland', type: 'Residence',
+          hierarchy: { locality: 'Wieliczka', region: 'Lesser Poland', country: 'Poland', countryCode: 'PL' },
+          coordinates: { lat: 49.9874, lng: 20.0648 }, coordinateStatus: 'approximate', coordinateAccuracy: 'district', coordinateSource: 'estimate', coordinateProvider: null, externalPlaceId: null, boundingBox: null,
+          aliases: ['Family house mentioned in oral history'], markerType: 'residence', collections: ['pc-residences', 'pc-pawford'],
+          people: 3, events: 5, files: 2, photos: 4, notes: 2, updatedAt: '2026-04-28T00:00:00Z', deleted: false,
+          topEvents: [{ kind: 'Residence', text: 'Luna Purrington, 1975' }, { kind: 'Interview', text: 'Mentioned in oral history' }]
+        },
+        {
+          id: 'place-cemetery', projectId: 'p1', name: 'Rakowicki Cemetery', display: 'Rakowicki Cemetery, Krakow, Poland', type: 'Cemetery',
+          hierarchy: { locality: 'Krakow', region: 'Lesser Poland', country: 'Poland', countryCode: 'PL' },
+          coordinates: { lat: 50.0753, lng: 19.9548 }, coordinateStatus: 'ambiguous', coordinateAccuracy: 'site', coordinateSource: 'archive', coordinateProvider: null, externalPlaceId: null, boundingBox: null,
+          aliases: ['Family cemetery note, unverified'], markerType: 'ambiguous', collections: ['pc-pawford'],
+          people: 2, events: 2, files: 0, photos: 2, notes: 1, updatedAt: '2026-04-20T00:00:00Z', deleted: false,
+          topEvents: [{ kind: 'Burial', text: 'Family note, unverified' }]
+        },
+        {
+          id: 'place-deleted', projectId: 'p1', name: 'Duplicate Krakow record', display: 'Krakow, Poland', type: 'City',
+          hierarchy: { locality: 'Krakow', region: 'Lesser Poland', country: 'Poland', countryCode: 'PL' },
+          coordinates: { lat: 50.06465, lng: 19.94498 }, coordinateStatus: 'resolved', coordinateAccuracy: 'locality', coordinateSource: 'import', coordinateProvider: null, externalPlaceId: null, boundingBox: null,
+          aliases: [], markerType: 'resolved', collections: [], people: 0, events: 0, files: 0, photos: 0, notes: 0, updatedAt: '2026-04-12T00:00:00Z', deleted: true, topEvents: []
+        }
+      ],
+      placeCollections: [
+        { id: 'pc-pawford', projectId: 'p1', name: 'Krakow line' },
+        { id: 'pc-england', projectId: 'p1', name: 'Poland places' },
+        { id: 'pc-migration', projectId: 'p1', name: 'Family migration route' },
+        { id: 'pc-archives', projectId: 'p1', name: 'Archives visited' },
+        { id: 'pc-residences', projectId: 'p1', name: 'Family residences' }
+      ],
+      placeRoutes: [
+        { id: 'route-family-migration', projectId: 'p1', name: 'Family migration', collectionId: 'pc-migration', placeIds: ['place-pawford', 'place-old-cattery', 'place-meowbridge', 'place-fishmarket-row'], status: 'active', deleted: false }
+      ],
+      placeIssues: [
+        { id: 'pi1', projectId: 'p1', placeId: 'place-unknown', raw: 'Village near Krakow', issue: 'Missing coordinates', suggestion: 'Keep unresolved until the source identifies a locality', confidence: 'medium' },
+        { id: 'pi2', projectId: 'p1', placeId: 'place-cemetery', raw: 'Cemetery in Krakow', issue: 'Ambiguous place', suggestion: 'Confirm Rakowicki Cemetery against the burial register', confidence: 'low' },
+        { id: 'pi3', projectId: 'p1', placeId: 'place-old-cattery', raw: 'Neu Sandez', issue: 'Historical German name', suggestion: 'Nowy Sacz, Lesser Poland, Poland', confidence: 'high' },
+        { id: 'pi4', projectId: 'p1', placeId: 'place-fishmarket-row', raw: 'Rzeszow, Galicia', issue: 'Historical jurisdiction mismatch', suggestion: 'Rzeszow, Subcarpathia, Poland with Galicia alias', confidence: 'medium' }
       ],
       events: [],
       educationSeed: [
@@ -15311,6 +15468,70 @@
 
     function getPlace(placeId) {
       return sampleData.places.find(place => place.id === placeId) || null;
+    }
+
+    function validLatitude(value) {
+      if (!['number', 'string'].includes(typeof value) || (typeof value === 'string' && !value.trim())) return false;
+      const number = Number(value);
+      return Number.isFinite(number) && number >= -90 && number <= 90;
+    }
+
+    function validLongitude(value) {
+      if (!['number', 'string'].includes(typeof value) || (typeof value === 'string' && !value.trim())) return false;
+      const number = Number(value);
+      return Number.isFinite(number) && number >= -180 && number <= 180;
+    }
+
+    function parseLegacyCoordinateString(value) {
+      if (typeof value !== 'string') return null;
+      const parts = value.split(',').map(part => Number(part.trim()));
+      if (parts.length !== 2 || !validLatitude(parts[0]) || !validLongitude(parts[1])) return null;
+      return { lat: parts[0], lng: parts[1] };
+    }
+
+    function normalizePlaceCoordinates(place) {
+      const source = place?.coordinates || parseLegacyCoordinateString(place?.coords);
+      if (!source || !validLatitude(source.lat) || !validLongitude(source.lng)) return null;
+      return { lat: Number(source.lat), lng: Number(source.lng) };
+    }
+
+    function placeHasCoordinates(place) {
+      return Boolean(normalizePlaceCoordinates(place));
+    }
+
+    function placeLatLng(place) {
+      const coordinates = normalizePlaceCoordinates(place);
+      return coordinates ? [coordinates.lat, coordinates.lng] : null;
+    }
+
+    function formatPlaceCoordinates(place) {
+      const coordinates = normalizePlaceCoordinates(place);
+      return coordinates ? `${coordinates.lat.toFixed(6)}, ${coordinates.lng.toFixed(6)}` : 'No coordinates recorded';
+    }
+
+    function placeCoordinateStatusLabel(place) {
+      return ({
+        resolved: 'Resolved',
+        approximate: 'Approximate',
+        missing: 'Missing coordinates',
+        ambiguous: 'Ambiguous'
+      })[place?.coordinateStatus] || 'Missing coordinates';
+    }
+
+    function placeHierarchyText(place) {
+      if (!place) return '';
+      if (typeof place.hierarchy === 'string') return place.hierarchy;
+      const hierarchy = place.hierarchy || {};
+      return [hierarchy.locality, hierarchy.region, hierarchy.country]
+        .map(value => String(value || '').trim())
+        .filter((value, index, values) => value && values.indexOf(value) === index)
+        .join(', ');
+    }
+
+    function placeUpdatedLabel(place) {
+      const timestamp = Date.parse(place?.updatedAt || '');
+      if (!Number.isFinite(timestamp)) return 'Unknown';
+      return new Intl.DateTimeFormat(undefined, { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(timestamp));
     }
 
     function getPlaceDisplay(placeId) {
@@ -16496,7 +16717,7 @@
         function placeMatchScore(place, q) {
           const nq = normalizePlaceLookupText(q);
           if (!nq) return 1;
-          const candidates = [place.display, place.name, place.hierarchy, place.country, ...(place.aliases || [])];
+          const candidates = [place.display, place.name, placeHierarchyText(place), placeCountry(place), ...(place.aliases || [])];
           for (const c of candidates) {
             if (!c) continue;
             const nc = normalizePlaceLookupText(c);
@@ -16540,7 +16761,7 @@
             }
             const p = opt.place;
             const primary = p.display || p.name || 'Place';
-            const secondary = p.hierarchy || p.country || '';
+            const secondary = placeHierarchyText(p);
             return `<div class="place-combobox-option${active}" role="option" data-place-opt="${i}" data-place-id="${escapeHtml(p.id)}">
               <div class="place-combobox-copy"><strong>${escapeHtml(primary)}</strong>${secondary ? `<span>${escapeHtml(secondary)}</span>` : ''}</div>
             </div>`;
@@ -17288,6 +17509,27 @@
 
       ['projects','people','families','places','sources','media','albums','notes','boards','boardObjects','boardConnectors','publishDrafts','notifications','activity'].forEach(seen);
 
+      (sampleData.places || []).forEach(place => {
+        if (!projectIds.has(place.projectId)) warn(`Place ${place.id} points to missing project ${place.projectId}`);
+        if (!String(place.name || '').trim()) warn(`Place ${place.id} has no name`);
+        if (!PLACE_COORDINATE_STATUSES.includes(place.coordinateStatus)) warn(`Place ${place.id} has invalid coordinate status ${place.coordinateStatus}`);
+        if (!PLACE_COORDINATE_ACCURACIES.includes(place.coordinateAccuracy)) warn(`Place ${place.id} has invalid coordinate accuracy ${place.coordinateAccuracy}`);
+        if (place.coordinates && (!validLatitude(place.coordinates.lat) || !validLongitude(place.coordinates.lng))) warn(`Place ${place.id} has invalid coordinates`);
+        if (['resolved', 'approximate'].includes(place.coordinateStatus) && !placeHasCoordinates(place)) warn(`Place ${place.id} requires coordinates for ${place.coordinateStatus} status`);
+        if (place.coordinateStatus === 'missing' && place.coordinates) warn(`Place ${place.id} must not keep coordinates while missing`);
+        if (!Number.isFinite(Date.parse(place.updatedAt || ''))) warn(`Place ${place.id} has an invalid updatedAt timestamp`);
+        if (new Set(place.collections || []).size !== (place.collections || []).length) warn(`Place ${place.id} has duplicate collection IDs`);
+      });
+
+      (sampleData.placeRoutes || []).forEach(route => {
+        if (!projectIds.has(route.projectId)) warn(`Place route ${route.id} points to missing project ${route.projectId}`);
+        (route.placeIds || []).forEach(placeId => {
+          const place = getPlace(placeId);
+          if (!place) warn(`Place route ${route.id} points to missing place ${placeId}`);
+          else if (place.projectId !== route.projectId) warn(`Place route ${route.id} and place ${placeId} are in different projects`);
+        });
+      });
+
       if (sampleData.media.length !== 15) warn(`Expected exactly 15 seeded media records; found ${sampleData.media.length}`);
 
       (sampleData.albums || []).forEach(album => {
@@ -17514,11 +17756,16 @@
       placesView: 'all',
       placesActiveCollectionId: null,
       placesActiveCountry: null,
-      selectedPlaceId: 'pl-pawford',
+      selectedPlaceId: 'place-pawford',
       placesSearch: '',
       placesSort: 'linked',
       placesViewMode: 'split',
-      placesMapZoom: 6,
+      placesMapView: {
+        center: null,
+        zoom: PLACES_MAP_CONFIG.defaultZoom,
+        userMoved: false,
+        lastFitKey: ''
+      },
       placesShowRoute: true,
       placesLegendCollapsed: false,
       placesDetailOpen: false,
@@ -17593,7 +17840,7 @@
         const values = [
           place.display,
           place.name,
-          place.hierarchy,
+          placeHierarchyText(place),
           ...(Array.isArray(place.aliases) ? place.aliases : [])
         ];
 
@@ -17633,16 +17880,22 @@
       const parts = display.split(',').map(part => part.trim()).filter(Boolean);
       const name = parts[0] || display;
       const country = parts.length > 1 ? parts[parts.length - 1] : '';
+      const region = parts.length > 2 ? parts.slice(1, -1).join(', ') : '';
 
       const place = {
         id: uniquePlaceIdFromText(display),
+        projectId: currentProjectId(),
         name,
-        country,
         display,
-        hierarchy: parts.length > 1 ? parts.slice(1).join(', ') : 'Unresolved place',
+        hierarchy: { locality: name, region, country, countryCode: '' },
+        coordinates: null,
+        coordinateStatus: 'missing',
+        coordinateAccuracy: 'unknown',
+        coordinateSource: 'manual',
+        coordinateProvider: null,
+        externalPlaceId: null,
+        boundingBox: null,
         type: 'Unknown',
-        status: 'missing',
-        statusLabel: 'Missing coordinates',
         markerType: 'missing',
         collections: [],
         people: 0,
@@ -17650,9 +17903,8 @@
         files: 0,
         photos: 0,
         notes: 0,
-        updated: 'Just now',
+        updatedAt: new Date().toISOString(),
         deleted: false,
-        coords: 'Unknown',
         aliases: [],
         topEvents: []
       };
@@ -17846,6 +18098,9 @@
       }
       if (state.activeModule !== 'Albums') {
         disconnectAlbumsGridResizeObserver();
+      }
+      if (state.activeModule !== 'Places') {
+        destroyPlacesMap();
       }
       applyLanguage();
       main.classList.remove('people-profile-main');
@@ -43386,32 +43641,348 @@
     function templateDescription(type) { return ({ note:'Freeform research note or reminder.', question:'Track an open question and next step.', hypothesis:'Structure a claim with supporting and contradicting evidence.', source:'Analyze a source, scan, citation, or transcription.', interview:'Capture oral history and follow-up questions.', story:'Draft narrative material for publishing.' })[type] || 'Research note template.'; }
 
 
-    sampleData.placeCollections = [
-      { id: 'pc-pawford', name: 'Pawford line' },
-      { id: 'pc-england', name: 'England places' },
-      { id: 'pc-migration', name: 'Migration route' },
-      { id: 'pc-archives', name: 'Archives visited' },
-      { id: 'pc-residences', name: 'Family residences' }
-    ];
+    function placesMaptilerKey() {
+      return window.GENEOGRAPH_CONFIG?.maptilerKey || PLACES_MAP_CONFIG.maptilerKey || '';
+    }
 
-    sampleData.placeDirectorySeed = [
-      { id: 'pl-pawford', name: 'Pawford', hierarchy: 'Pawford region, England', type: 'City', status: 'resolved', statusLabel: 'Resolved', markerType: 'resolved', x: 52, y: 42, collections: ['pc-pawford','pc-england','pc-migration'], people: 12, events: 34, files: 8, photos: 5, notes: 7, updated: '10 May 2026', deleted: false, coords: '49.9935, 36.2304', aliases: ['Pawford - historical English transliteration', 'Pawford - modern English transliteration'], topEvents: [{kind:'Birth', text:'Silver Whiskerfield, 1998'}, {kind:'Residence', text:'Barnaby Whiskerfield, 1976'}, {kind:'Archive', text:'Fond 12 / Opis 3'}] },
-      { id: 'pl-velyka', name: 'Old Cattery', hierarchy: 'Old Cattery region, England', type: 'Village', status: 'resolved', statusLabel: 'Resolved', markerType: 'resolved', x: 42, y: 61, collections: ['pc-england','pc-migration'], people: 4, events: 8, files: 3, photos: 1, notes: 2, updated: '08 May 2026', deleted: false, coords: '48.1200, 28.7800', aliases: ['Vel. Kosnytsia - abbreviated import value'], topEvents: [{kind:'Birth', text:'Daisy Milkpaw, 1946'}, {kind:'Record', text:'Birth register extract'}] },
-      { id: 'pl-meowbridge-region', name: 'Meowbridge', hierarchy: 'Meowbridge region, England', type: 'City', status: 'resolved', statusLabel: 'Resolved', markerType: 'resolved', x: 36, y: 74, collections: ['pc-england'], people: 2, events: 4, files: 1, photos: 2, notes: 1, updated: '04 May 2026', deleted: false, coords: '46.4825, 30.7233', aliases: ['Meowbridge - modern English transliteration'], topEvents: [{kind:'Birth', text:'Luna Purrington, 2002'}, {kind:'Photo', text:'Family visit, 2025'}] },
-      { id: 'pl-meowbridge-district', name: 'Meowbridge', hierarchy: 'Meowbridge district, England', type: 'City', status: 'approximate', statusLabel: 'Approximate', markerType: 'approx', x: 23, y: 43, collections: ['pc-migration'], people: 2, events: 3, files: 0, photos: 3, notes: 1, updated: '02 May 2026', deleted: false, coords: '50.0413, 21.9990', aliases: ['Meowbridge, England - historical jurisdiction note'], topEvents: [{kind:'Wedding', text:'Silver and Luna, 2025'}] },
-      { id: 'pl-archive', name: 'Pawford State Archive', hierarchy: 'Pawford, England', type: 'Archive', status: 'resolved', statusLabel: 'Resolved', markerType: 'archive', x: 57, y: 39, collections: ['pc-archives','pc-pawford'], people: 8, events: 12, files: 24, photos: 0, notes: 5, updated: '01 May 2026', deleted: false, coords: '49.9900, 36.2400', aliases: ['State archive repository'], topEvents: [{kind:'Source', text:'Fond 12, Opis 3'}, {kind:'Visit', text:'Archive request created'}] },
-      { id: 'pl-residence', name: 'Creamfur family residence', hierarchy: 'near Pawford, England', type: 'Residence', status: 'approximate', statusLabel: 'Approximate', markerType: 'residence', x: 61, y: 47, collections: ['pc-residences','pc-pawford'], people: 3, events: 5, files: 2, photos: 4, notes: 2, updated: '28 Apr 2026', deleted: false, coords: 'Approximate neighborhood', aliases: ['Family house mentioned in oral history'], topEvents: [{kind:'Residence', text:'Luna Purrington, 1975'}, {kind:'Interview', text:'Mentioned by Luna'}] },
-      { id: 'pl-unknown-village', name: 'Unknown village near Pawford', hierarchy: 'Pawford region, England', type: 'Unknown', status: 'missing', statusLabel: 'Missing coordinates', markerType: 'missing', x: 69, y: 52, collections: ['pc-pawford'], people: 1, events: 2, files: 1, photos: 0, notes: 2, updated: '25 Apr 2026', deleted: false, coords: 'Unknown', aliases: ['Imported raw place string'], topEvents: [{kind:'Record', text:'Unclear birthplace in GEDCOM import'}] },
-      { id: 'pl-cemetery', name: 'Cemetery near Pawford', hierarchy: 'Pawford region, England', type: 'Cemetery', status: 'ambiguous', statusLabel: 'Ambiguous', markerType: 'approx', x: 65, y: 34, collections: ['pc-pawford'], people: 2, events: 2, files: 0, photos: 2, notes: 1, updated: '20 Apr 2026', deleted: false, coords: 'Needs confirmation', aliases: ['Family cemetery note'], topEvents: [{kind:'Burial', text:'Family note, unverified'}] },
-      { id: 'pl-deleted', name: 'Deleted duplicate: Pawford', hierarchy: 'England', type: 'City', status: 'resolved', statusLabel: 'Resolved', markerType: 'resolved', x: 52, y: 42, collections: [], people: 0, events: 0, files: 0, photos: 0, notes: 0, updated: '12 Apr 2026', deleted: true, coords: '49.9935, 36.2304', aliases: [], topEvents: [] }
-    ];
+    function placesMapDataKey(places) {
+      return (places || []).map(place => {
+        const coordinates = normalizePlaceCoordinates(place);
+        return [place.id, coordinates?.lat ?? '', coordinates?.lng ?? '', place.markerType, place.deleted].join(':');
+      }).join('|');
+    }
 
-    sampleData.placeIssues = [
-      { id: 'pi1', placeId: 'pl-unknown-village', raw: 'Unknown village near Pawford', issue: 'Missing coordinates', suggestion: 'Mark approximate near Pawford region', confidence: 'medium' },
-      { id: 'pi2', placeId: 'pl-cemetery', raw: 'Cemetery near Pawford', issue: 'Ambiguous place', suggestion: 'Attach to Pawford region with approximate confidence', confidence: 'low' },
-      { id: 'pi3', placeId: 'pl-velyka', raw: 'Vel. Kosnytsia', issue: 'Imported abbreviation', suggestion: 'Old Cattery, Old Cattery region, England', confidence: 'high' },
-      { id: 'pi4', placeId: 'pl-meowbridge-district', raw: 'Meowbridge, England', issue: 'Historical jurisdiction mismatch', suggestion: 'Meowbridge, Meowbridge district, England with alias Galicia', confidence: 'medium' }
-    ];
+    function selectedPlaceFromList(list) {
+      return (list || []).find(place => place.id === state.selectedPlaceId)
+        || (list || [])[0]
+        || null;
+    }
+
+    function setPlacesMapStatus(title = '', message = '', { retry = false } = {}) {
+      const status = document.querySelector('[data-places-map-status]');
+      if (!status) return;
+      if (!title && !message) {
+        status.hidden = true;
+        status.innerHTML = '';
+        return;
+      }
+      status.hidden = false;
+      status.innerHTML = `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(message)}</span>${retry ? '<button class="button secondary" type="button" data-places-map-retry>Retry</button>' : ''}`;
+      status.querySelector('[data-places-map-retry]')?.addEventListener('click', () => {
+        const places = [...(placesMapRuntime.currentPlaces || [])];
+        destroyPlacesMap();
+        requestAnimationFrame(() => mountPlacesMap(places));
+      });
+    }
+
+    function createPlacesTileLayer() {
+      const key = placesMaptilerKey();
+      if (!placesMapRuntime.map || !key || !window.L) return null;
+      const layer = L.tileLayer(PLACES_MAP_CONFIG.tileUrl, {
+        key,
+        minZoom: PLACES_MAP_CONFIG.minZoom,
+        maxZoom: PLACES_MAP_CONFIG.maxZoom,
+        attribution: PLACES_MAP_CONFIG.attribution,
+        crossOrigin: true
+      });
+      layer.on('tileerror', handlePlacesTileError);
+      layer.on('tileload', handlePlacesTileLoad);
+      layer.on('loading', () => {
+        if (placesMapRuntime.tileErrorCount >= PLACES_MAP_CONFIG.tileErrorThreshold) {
+          setPlacesMapStatus('Loading map tiles', 'Retrying the hosted map connection.');
+        }
+      });
+      layer.on('load', handlePlacesTileLoad);
+      return layer;
+    }
+
+    function handlePlacesTileError() {
+      placesMapRuntime.tileErrorCount += 1;
+      if (placesMapRuntime.tileErrorCount < PLACES_MAP_CONFIG.tileErrorThreshold) return;
+      setPlacesMapStatus('Map tiles could not be loaded', 'Markers and routes remain available. Check the MapTiler key or network connection.', { retry: true });
+    }
+
+    function handlePlacesTileLoad() {
+      const hadErrors = placesMapRuntime.tileErrorCount >= PLACES_MAP_CONFIG.tileErrorThreshold;
+      placesMapRuntime.tileErrorCount = 0;
+      if (hadErrors) showToast('Map connection restored');
+      setPlacesMapStatus();
+    }
+
+    function createPlaceMarkerIcon(place, selected = false) {
+      const kind = place.markerType || place.coordinateStatus || 'resolved';
+      const size = selected ? 28 : 22;
+      return L.divIcon({
+        className: '',
+        html: `<span class="leaflet-place-marker ${escapeHtml(kind)} ${selected ? 'selected' : ''}" aria-hidden="true"></span>`,
+        iconSize: [size, size],
+        iconAnchor: [size / 2, size / 2]
+      });
+    }
+
+    function createPlaceLeafletMarker(place) {
+      const latLng = placeLatLng(place);
+      if (!latLng || !window.L) return null;
+      const marker = L.marker(latLng, {
+        icon: createPlaceMarkerIcon(place, place.id === state.selectedPlaceId),
+        keyboard: true,
+        title: place.display || place.name,
+        alt: place.display || place.name,
+        riseOnHover: true
+      });
+      marker.placeId = place.id;
+      marker.bindTooltip(escapeHtml(place.display || place.name), { direction: 'top', offset: [0, -12] });
+      marker.on('click', () => selectPlace(place.id, { source: 'map', focusMap: false }));
+      marker.on('add', () => bindPlaceMarkerElement(marker, place));
+      return marker;
+    }
+
+    function bindPlaceMarkerElement(marker, place) {
+      const markerElement = marker?.getElement();
+      if (!markerElement || markerElement.dataset.placeMarkerBound === 'true') return;
+      markerElement.dataset.placeMarkerBound = 'true';
+      markerElement.setAttribute('aria-label', `Select ${place.display || place.name}`);
+      markerElement.addEventListener('click', event => {
+        event.stopPropagation();
+        selectPlace(place.id, { source: 'map', focusMap: false });
+      }, { capture: true });
+      markerElement.addEventListener('keydown', event => {
+        if (!['Enter', ' '].includes(event.key)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        selectPlace(place.id, { source: 'map', focusMap: false });
+      });
+    }
+
+    function capturePlacesMapView() {
+      const map = placesMapRuntime.map;
+      if (!map || placesMapRuntime.suppressViewCapture) return;
+      const center = map.getCenter();
+      state.placesMapView.center = { lat: center.lat, lng: center.lng };
+      state.placesMapView.zoom = map.getZoom();
+      state.placesMapView.userMoved = true;
+      updatePlacesZoomLabel();
+    }
+
+    function restorePlacesMapView(places) {
+      const map = placesMapRuntime.map;
+      if (!map) return;
+      const view = state.placesMapView;
+      placesMapRuntime.suppressViewCapture = true;
+      if (view?.center && validLatitude(view.center.lat) && validLongitude(view.center.lng)) {
+        map.setView([view.center.lat, view.center.lng], Number.isFinite(view.zoom) ? view.zoom : PLACES_MAP_CONFIG.defaultZoom, { animate: false });
+      } else {
+        fitPlacesMap(places, { markUserMoved: false });
+      }
+      requestAnimationFrame(() => { placesMapRuntime.suppressViewCapture = false; updatePlacesZoomLabel(); });
+    }
+
+    function destroyPlacesMap() {
+      clearTimeout(placesSearchTimer);
+      if (placesMapRuntime.resizeObserver) placesMapRuntime.resizeObserver.disconnect();
+      placesMapRuntime.resizeObserver = null;
+      if (placesMapRuntime.tileLayer) placesMapRuntime.tileLayer.off();
+      if (placesMapRuntime.map) {
+        placesMapRuntime.map.off();
+        placesMapRuntime.map.remove();
+      }
+      placesMapRuntime.map = null;
+      placesMapRuntime.host = null;
+      placesMapRuntime.tileLayer = null;
+      placesMapRuntime.markerLayer = null;
+      placesMapRuntime.routeLayer = null;
+      placesMapRuntime.markersById.clear();
+      placesMapRuntime.tileErrorCount = 0;
+      placesMapRuntime.mountedListKey = '';
+      placesMapRuntime.currentPlaces = [];
+      placesMapRuntime.suppressViewCapture = false;
+    }
+
+    function mountPlacesMap(places) {
+      const host = document.getElementById('placesLeafletMap');
+      if (!host || state.activeModule !== 'Places' || state.placesViewMode === 'list') return;
+      if (!window.L) {
+        setPlacesMapStatus('Map library unavailable', 'Leaflet could not be loaded. The place list and editor remain available.', { retry: true });
+        return;
+      }
+      if (placesMapRuntime.map && placesMapRuntime.host === host) {
+        updatePlacesMapData(places);
+        return;
+      }
+      destroyPlacesMap();
+      placesMapRuntime.host = host;
+      placesMapRuntime.currentPlaces = [...(places || [])];
+      placesMapRuntime.map = L.map(host, {
+        zoomControl: false,
+        attributionControl: true,
+        minZoom: PLACES_MAP_CONFIG.minZoom,
+        maxZoom: PLACES_MAP_CONFIG.maxZoom,
+        preferCanvas: false
+      });
+      placesMapRuntime.markerLayer = L.featureGroup().addTo(placesMapRuntime.map);
+      placesMapRuntime.tileLayer = createPlacesTileLayer();
+      if (placesMapRuntime.tileLayer) {
+        placesMapRuntime.tileLayer.addTo(placesMapRuntime.map);
+      } else {
+        setPlacesMapStatus('Map configuration required', 'Add a protected MapTiler browser key to window.GENEOGRAPH_CONFIG.maptilerKey.', { retry: true });
+      }
+      placesMapRuntime.map.on('moveend zoomend', capturePlacesMapView);
+      placesMapRuntime.resizeObserver = new ResizeObserver(() => {
+        placesMapRuntime.map?.invalidateSize({ pan: false, debounceMoveend: true });
+      });
+      placesMapRuntime.resizeObserver.observe(host.parentElement || host);
+      updatePlacesMapData(places, { force: true });
+      restorePlacesMapView(places);
+    }
+
+    function updatePlacesMapData(places, { force = false } = {}) {
+      const map = placesMapRuntime.map;
+      const markerLayer = placesMapRuntime.markerLayer;
+      if (!map || !markerLayer) return;
+      const list = (places || []).filter(place => !place.deleted);
+      const key = placesMapDataKey(list);
+      placesMapRuntime.currentPlaces = [...list];
+      if (!force && key === placesMapRuntime.mountedListKey) {
+        updatePlacesMapSelection(state.selectedPlaceId);
+        renderPlacesRouteLayer(list);
+        return;
+      }
+      markerLayer.clearLayers();
+      placesMapRuntime.markersById.clear();
+      list.filter(placeHasCoordinates).forEach(place => {
+        const marker = createPlaceLeafletMarker(place);
+        if (!marker) return;
+        marker.addTo(markerLayer);
+        bindPlaceMarkerElement(marker, place);
+        placesMapRuntime.markersById.set(place.id, marker);
+      });
+      placesMapRuntime.mountedListKey = key;
+      updatePlacesMapSelection(state.selectedPlaceId);
+      renderPlacesRouteLayer(list);
+      updatePlacesRouteControl(list);
+      const notice = document.querySelector('[data-places-unmapped]');
+      const omitted = list.filter(place => !placeHasCoordinates(place)).length;
+      if (notice) {
+        notice.hidden = omitted === 0;
+        notice.textContent = `${omitted} ${omitted === 1 ? 'place has' : 'places have'} no map coordinates`;
+      }
+    }
+
+    function updatePlacesMapSelection(placeId, { focusMap = false } = {}) {
+      placesMapRuntime.markersById.forEach((marker, id) => {
+        const place = getPlace(id);
+        if (place) marker.setIcon(createPlaceMarkerIcon(place, id === placeId));
+      });
+      const place = getPlace(placeId);
+      if (focusMap && placeHasCoordinates(place) && placesMapRuntime.map) {
+        const padding = placesMapPadding();
+        placesMapRuntime.map.panInside(placeLatLng(place), {
+          paddingTopLeft: padding.topLeft,
+          paddingBottomRight: padding.bottomRight
+        });
+      }
+    }
+
+    function placesMapPadding() {
+      const width = placesMapRuntime.host?.clientWidth || 900;
+      const height = placesMapRuntime.host?.clientHeight || 600;
+      return {
+        topLeft: [Math.round(Math.min(420, Math.max(48, width * 0.34))), Math.round(Math.min(80, Math.max(32, height * 0.1)))],
+        bottomRight: [Math.round(Math.min(240, Math.max(36, width * 0.12))), Math.round(Math.min(100, Math.max(40, height * 0.12)))]
+      };
+    }
+
+    function activePlacesRoute(places) {
+      const visibleIds = new Set((places || []).map(place => place.id));
+      return (sampleData.placeRoutes || []).find(route => route.projectId === currentProjectId() && !route.deleted && route.status === 'active' && route.placeIds.some(id => visibleIds.has(id))) || null;
+    }
+
+    function placesRouteLatLngs(places) {
+      const route = activePlacesRoute(places);
+      const visibleIds = new Set((places || []).map(place => place.id));
+      return route ? route.placeIds.filter(id => visibleIds.has(id)).map(getPlace).filter(placeHasCoordinates).map(placeLatLng) : [];
+    }
+
+    function renderPlacesRouteLayer(places) {
+      const map = placesMapRuntime.map;
+      if (!map || !window.L) return;
+      if (placesMapRuntime.routeLayer) {
+        placesMapRuntime.routeLayer.remove();
+        placesMapRuntime.routeLayer = null;
+      }
+      const latLngs = placesRouteLatLngs(places);
+      if (!state.placesShowRoute || latLngs.length < 2) return;
+      placesMapRuntime.routeLayer = L.polyline(latLngs, {
+        className: 'places-leaflet-route',
+        color: '#62D99A',
+        weight: 3,
+        opacity: 0.78,
+        dashArray: '9 8'
+      }).addTo(map);
+    }
+
+    function updatePlacesRouteControl(places = placesMapRuntime.currentPlaces || []) {
+      const button = document.getElementById('placesToggleRoute');
+      if (!button) return;
+      const available = placesRouteLatLngs(places).length >= 2;
+      button.disabled = !available;
+      button.setAttribute('aria-pressed', String(state.placesShowRoute && available));
+      const label = button.querySelector('[data-route-label]');
+      if (label) label.textContent = state.placesShowRoute && available ? 'Hide route' : 'Route';
+    }
+
+    function fitPlacesMap(places = placesMapRuntime.currentPlaces || [], { markUserMoved = true } = {}) {
+      const map = placesMapRuntime.map;
+      if (!map) return;
+      const points = (places || []).filter(placeHasCoordinates);
+      const padding = placesMapPadding();
+      placesMapRuntime.suppressViewCapture = !markUserMoved;
+      if (points.length > 1) {
+        map.fitBounds(L.latLngBounds(points.map(placeLatLng)), {
+          paddingTopLeft: padding.topLeft,
+          paddingBottomRight: padding.bottomRight,
+          maxZoom: PLACES_MAP_CONFIG.fitMaxZoom,
+          animate: false
+        });
+      } else if (points.length === 1) {
+        map.setView(placeLatLng(points[0]), Math.min(11, PLACES_MAP_CONFIG.fitMaxZoom), { animate: false });
+      } else {
+        map.setView([PLACES_MAP_CONFIG.defaultCenter.lat, PLACES_MAP_CONFIG.defaultCenter.lng], PLACES_MAP_CONFIG.defaultZoom, { animate: false });
+        setPlacesMapStatus('No mapped places', 'Add coordinates to a place to show it on the map.');
+      }
+      state.placesMapView.lastFitKey = placesMapDataKey(points);
+      state.placesMapView.userMoved = markUserMoved;
+      requestAnimationFrame(() => { placesMapRuntime.suppressViewCapture = false; updatePlacesZoomLabel(); });
+    }
+
+    function updatePlacesZoomLabel() {
+      const label = document.querySelector('[data-places-zoom-label]');
+      if (label && placesMapRuntime.map) label.textContent = `Zoom ${placesMapRuntime.map.getZoom()}`;
+    }
+
+    function bindPlacePreviewActions(root = document) {
+      root.querySelector('#placesOpenDetail')?.addEventListener('click', () => { state.placesDetailOpen = true; renderPlaceDetail(); });
+      root.querySelector('#placesEditSelected')?.addEventListener('click', () => openPlaceModal(state.selectedPlaceId));
+      bindToasts(root);
+    }
+
+    function selectPlace(placeId, { source = 'list', focusMap = true } = {}) {
+      const place = sampleData.places.find(item => item.id === placeId && item.projectId === currentProjectId() && !item.deleted);
+      if (!place) return;
+      state.selectedPlaceId = place.id;
+      main.querySelectorAll('[data-place-id]').forEach(row => {
+        const selected = row.dataset.placeId === place.id;
+        row.classList.toggle('active', selected);
+        row.setAttribute('aria-selected', String(selected));
+      });
+      sidebar.querySelectorAll('[data-place-tree-item]').forEach(row => row.classList.toggle('active', row.dataset.placeTreeItem === place.id));
+      const preview = main.querySelector('[data-places-map-preview]');
+      if (preview) {
+        preview.innerHTML = renderPlacePreview(place);
+        bindPlacePreviewActions(preview);
+      }
+      updatePlacesMapSelection(place.id, { focusMap: focusMap && source !== 'map' });
+    }
 
     function renderPlaces() {
       if (!state.placesView || state.placesView === 'deleted') state.placesView = 'all';
@@ -43422,8 +43993,8 @@
 
     function renderPlacesSidebar() {
       if (state.placesView === 'deleted') state.placesView = 'all';
-      const collectionRows = sampleData.placeCollections.map(collection => {
-        const count = sampleData.places.filter(place => !place.deleted && place.collections.includes(collection.id)).length;
+      const collectionRows = sampleData.placeCollections.filter(collection => collection.projectId === currentProjectId()).map(collection => {
+        const count = sampleData.places.filter(place => place.projectId === currentProjectId() && !place.deleted && place.collections.includes(collection.id)).length;
         const active = state.placesView === 'collection' && state.placesActiveCollectionId === collection.id;
         return `<div class="places-collection-row ${active ? 'active' : ''}"><button class="places-collection-link" type="button" data-place-collection="${collection.id}">${icon.folder}<span>${escapeHtml(collection.name)}</span><span class="places-collection-count">${count}</span></button><button class="places-collection-menu" type="button" data-place-collection-menu="${collection.id}" aria-haspopup="menu" aria-label="Collection actions">${icon.more}</button></div>`;
       }).join('');
@@ -43435,7 +44006,7 @@
         <div class="side-section-title">Navigation</div>
         <div class="side-nav places-nav">
           <button class="side-link ${state.placesView === 'all' ? 'active' : ''}" type="button" data-places-view="all">${placesIcon('pin')}<span>All places</span></button>
-          <button class="side-link ${state.placesView === 'unresolved' ? 'active' : ''}" type="button" data-places-view="unresolved">${placesIcon('warning')}<span>Unresolved</span><span class="badge">${sampleData.placeIssues.length}</span></button>
+          <button class="side-link ${state.placesView === 'unresolved' ? 'active' : ''}" type="button" data-places-view="unresolved">${placesIcon('warning')}<span>Unresolved</span><span class="badge">${sampleData.placeIssues.filter(issue => issue.projectId === currentProjectId()).length}</span></button>
         </div>
         <div class="side-section-title">Places</div>
         <div class="places-country-tree" role="tree" aria-label="Places by country">${renderPlacesCountryTree()}</div>
@@ -43450,7 +44021,7 @@
         state.placesActiveCollectionId = null;
         state.placesActiveCountry = null;
         state.placesDetailOpen = false;
-        if (state.placesView === 'unresolved' && !state.placesSelectedIssueId) state.placesSelectedIssueId = sampleData.placeIssues[0]?.id;
+        if (state.placesView === 'unresolved' && !state.placesSelectedIssueId) state.placesSelectedIssueId = sampleData.placeIssues.find(issue => issue.projectId === currentProjectId())?.id;
         renderPlaces();
       }));
       sidebar.querySelectorAll('[data-place-country-toggle]').forEach(button => button.addEventListener('click', e => {
@@ -43466,7 +44037,7 @@
         state.placesActiveCollectionId = null;
         state.placesDetailOpen = false;
         state.placesExpandedCountries[country] = true;
-        const first = sampleData.places.find(place => !place.deleted && placeCountry(place) === country);
+        const first = sampleData.places.find(place => place.projectId === currentProjectId() && !place.deleted && placeCountry(place) === country);
         if (first) state.selectedPlaceId = first.id;
         renderPlaces();
       }));
@@ -43493,7 +44064,7 @@
 
     function renderPlacesCountryTree() {
       const countries = {};
-      sampleData.places.filter(place => !place.deleted).forEach(place => {
+      sampleData.places.filter(place => place.projectId === currentProjectId() && !place.deleted).forEach(place => {
         const country = placeCountry(place);
         if (!countries[country]) countries[country] = [];
         countries[country].push(place);
@@ -43513,6 +44084,7 @@
     }
 
     function renderPlacesMain() {
+      destroyPlacesMap();
       if (state.placesDetailOpen) {
         renderPlaceDetail();
         return;
@@ -43529,17 +44101,18 @@
         <div class="places-main">
           ${renderPlacesHeader(currentTitle, subtitle)}
           ${renderPlacesToolbar('Search places...')}
-          ${chips ? `<div class="places-filter-row">${chips}</div>` : ''}
+          <div class="places-filter-row" data-places-filter-row ${chips ? '' : 'hidden'}>${chips}</div>
           <div class="places-content ${state.placesViewMode}" aria-label="Places workspace">
-            <section class="places-list-panel" aria-label="Place list">${renderPlacesListPanel(list)}</section>
-            <section class="places-map-panel" aria-label="Places map">${renderPlacesMap(list)}</section>
+            <section class="places-list-panel" data-places-list-panel aria-label="Place list">${renderPlacesListPanel(list)}</section>
+            <section class="places-map-panel" aria-label="Places map">${renderPlacesMapShell(list)}</section>
           </div>
         </div>`;
-      bindPlacesEvents();
+      bindPlacesEvents(list);
+      if (state.placesViewMode !== 'list') requestAnimationFrame(() => mountPlacesMap(list));
     }
 
     function renderPlacesHeader(title, subtitle) {
-      return `<div class="places-header"><div><h1>${escapeHtml(title)}</h1><p>${escapeHtml(subtitle)}</p></div></div>`;
+      return `<div class="places-header"><div><h1 data-places-title>${escapeHtml(title)}</h1><p data-places-subtitle>${escapeHtml(subtitle)}</p></div></div>`;
     }
 
     function renderPlacesToolbar(searchPlaceholder) {
@@ -43584,58 +44157,55 @@
       return `<button class="place-row ${selected ? 'active' : ''}" type="button" data-place-id="${place.id}" aria-selected="${selected}" role="option">
         <span class="place-row-main">
           <span class="place-title-line"><span class="place-title">${escapeHtml(place.name)}</span>${renderPlaceTypeChip(place)}${renderPlaceStatusChip(place)}</span>
-          <span class="place-hierarchy">${escapeHtml(place.hierarchy)}</span>
+          <span class="place-hierarchy">${escapeHtml(placeHierarchyText(place))}</span>
           <span class="place-counts">${renderPlaceCounts(place)}</span>
         </span>
-        <span class="place-actions"><span class="place-updated">${escapeHtml(place.updated)}</span><span class="place-more" aria-hidden="true">...</span></span>
+        <span class="place-actions"><span class="place-updated">${escapeHtml(placeUpdatedLabel(place))}</span><span class="place-more" aria-hidden="true">${icon.more}</span></span>
       </button>`;
     }
 
     function renderPlacesTableRow(place) {
       const selected = place.id === state.selectedPlaceId;
       return `<button class="places-table-row ${selected ? 'active' : ''}" type="button" data-place-id="${place.id}" role="row" aria-selected="${selected}">
-        <span class="places-table-name"><strong>${escapeHtml(place.name)}</strong><span>${escapeHtml(place.hierarchy)}</span></span>
+        <span class="places-table-name"><strong>${escapeHtml(place.name)}</strong><span>${escapeHtml(placeHierarchyText(place))}</span></span>
         <span>${escapeHtml(place.type)}</span>
         <span>${renderPlaceStatusChip(place)}</span>
         <span>${renderPlaceCounts(place)}</span>
-        <span>${escapeHtml(place.updated)}</span>
-        <span><span class="place-more">...</span></span>
+        <span>${escapeHtml(placeUpdatedLabel(place))}</span>
+        <span><span class="place-more">${icon.more}</span></span>
       </button>`;
     }
 
-    function renderPlacesMap(list) {
-      const selected = sampleData.places.find(p => p.id === state.selectedPlaceId && !p.deleted) || list[0];
-      const markers = list.filter(place => place.status !== 'missing' || place.x).map(place => `<button class="map-marker ${place.markerType} ${place.id === state.selectedPlaceId ? 'selected' : ''}" type="button" data-map-place="${place.id}" aria-label="Select ${escapeHtml(place.name)}" style="left:${place.x}%;top:${place.y}%"></button>`).join('');
-      const route = state.placesShowRoute ? `<svg class="map-route" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M23 43 C35 37, 43 56, 52 42 S61 48, 66 52 C58 60, 47 65, 36 74"/></svg>` : '';
+    function renderPlacesMapShell(list) {
+      const selected = selectedPlaceFromList(list);
+      const omittedCount = list.filter(place => !placeHasCoordinates(place)).length;
+      const routeAvailable = placesRouteLatLngs(list).length >= 2;
       return `<div class="places-map">
-        <div class="map-region r1"></div><div class="map-region r2"></div>
-        ${route}
-        <span class="map-label" style="left:51%;top:35%">Pawford region</span>
-        <span class="map-label" style="left:31%;top:78%">Black Sea</span>
-        <span class="map-label" style="left:20%;top:36%">England</span>
-        <span class="map-cluster" style="left:54%;top:44%">6</span>
-        ${markers}
-        ${selected ? renderPlacePreview(selected) : ''}
+        <div class="places-leaflet-host" id="placesLeafletMap" role="application" aria-label="Interactive map of project places"></div>
+        <div class="places-map-status" data-places-map-status hidden></div>
+        <div class="places-map-preview-host" data-places-map-preview>${selected ? renderPlacePreview(selected) : ''}</div>
+        <div class="places-map-unmapped" data-places-unmapped ${omittedCount ? '' : 'hidden'}>${omittedCount} ${omittedCount === 1 ? 'place has' : 'places have'} no map coordinates</div>
         <div class="places-map-controls" aria-label="Map controls">
-          <button type="button" id="placesZoomOut" aria-label="Zoom out">${icon.zoomOut}</button><span class="zoom">${state.placesMapZoom}x</span><button type="button" id="placesZoomIn" aria-label="Zoom in">${icon.zoomIn}</button><button type="button" id="placesFitMap">Fit</button>
+          <button type="button" id="placesZoomOut" aria-label="Zoom out">${icon.zoomOut}</button><span class="zoom" data-places-zoom-label>Zoom ${state.placesMapView.zoom}</span><button type="button" id="placesZoomIn" aria-label="Zoom in">${icon.zoomIn}</button><button type="button" id="placesFitMap" aria-label="Fit visible places">Fit</button>
         </div>
-        <div class="places-map-top-actions"><button class="places-route-toggle" type="button" id="placesToggleRoute" aria-pressed="${state.placesShowRoute}">${placesIcon('route')} ${state.placesShowRoute ? 'Hide route' : 'Route'}</button></div>
+        <div class="places-map-top-actions"><button class="places-route-toggle" type="button" id="placesToggleRoute" aria-pressed="${state.placesShowRoute && routeAvailable}" ${routeAvailable ? '' : 'disabled'}>${placesIcon('route')} <span data-route-label>${state.placesShowRoute && routeAvailable ? 'Hide route' : 'Route'}</span></button></div>
         ${renderPlacesLegend()}
       </div>`;
     }
 
     function renderPlacesLegend() {
-      return `<div class="places-map-legend">
-        <button class="places-map-legend-header" type="button" id="placesLegendToggle" aria-expanded="${!state.placesLegendCollapsed}"><span>Legend</span><span>${state.placesLegendCollapsed ? 'v' : '^'}</span></button>
-        ${state.placesLegendCollapsed ? '' : `<div class="places-map-legend-body"><span class="legend-item"><span class="legend-dot"></span>Resolved</span><span class="legend-item"><span class="legend-dot approx"></span>Approximate / unresolved</span><span class="legend-item"><span class="legend-dot archive"></span>Archive / repository</span><span class="legend-item"><span class="legend-dot residence"></span>Residence / story place</span></div>`}
+      return `<div class="places-map-legend ${state.placesLegendCollapsed ? 'collapsed' : ''}">
+        <button class="places-map-legend-header" type="button" id="placesLegendToggle" aria-expanded="${!state.placesLegendCollapsed}"><span>Legend</span>${icon.chevron}</button>
+        <div class="places-map-legend-body" ${state.placesLegendCollapsed ? 'hidden' : ''}><span class="legend-item"><span class="legend-dot"></span>Resolved</span><span class="legend-item"><span class="legend-dot approx"></span>Approximate / unresolved</span><span class="legend-item"><span class="legend-dot archive"></span>Archive / repository</span><span class="legend-item"><span class="legend-dot residence"></span>Residence / story place</span></div>
       </div>`;
     }
 
     function renderPlacePreview(place) {
       return `<article class="places-preview" aria-label="Selected place preview">
-        <div class="places-preview-head"><h3>${escapeHtml(place.name)}, ${place.hierarchy.split(',').pop().trim()}</h3><div class="places-meta-row">${renderPlaceTypeChip(place)}${renderPlaceStatusChip(place)}</div><span class="place-hierarchy">${escapeHtml(place.hierarchy)}</span></div>
+        <div class="places-preview-head"><h3>${escapeHtml(place.name)}, ${escapeHtml(placeCountry(place))}</h3><div class="places-meta-row">${renderPlaceTypeChip(place)}${renderPlaceStatusChip(place)}</div><span class="place-hierarchy">${escapeHtml(placeHierarchyText(place))}</span></div>
         <div class="places-preview-body">
           <div class="place-counts">${renderPlaceCounts(place)}</div>
+          ${placeHasCoordinates(place) ? '' : '<span class="places-chip warn">No coordinates recorded</span>'}
           <div class="places-top-events">${(place.topEvents || []).slice(0,3).map(ev => `<div class="places-event"><strong>${escapeHtml(ev.kind)}</strong><span>${escapeHtml(ev.text)}</span></div>`).join('') || '<span class="muted">No events linked yet.</span>'}</div>
           <div class="places-preview-actions"><button class="button primary" type="button" id="placesOpenDetail">Open place</button><button class="button secondary" type="button" id="placesEditSelected">Edit</button><button class="button secondary" type="button" data-toast="Related people view is simulated here.">Related people</button></div>
         </div>
@@ -43643,18 +44213,21 @@
     }
 
     function renderPlacesUnresolved() {
+      destroyPlacesMap();
       const issues = filteredPlaceIssues();
-      const selectedIssue = sampleData.placeIssues.find(issue => issue.id === state.placesSelectedIssueId) || issues[0];
+      const selectedIssue = issues.find(issue => issue.id === state.placesSelectedIssueId) || issues[0];
       if (selectedIssue) state.selectedPlaceId = selectedIssue.placeId;
+      const list = issues.map(issue => sampleData.places.find(place => place.id === issue.placeId)).filter(Boolean);
       main.innerHTML = `<div class="places-main">
         ${renderPlacesHeader('Unresolved places', `${issues.length} ambiguous or incomplete place records`)}
         ${renderPlacesToolbar('Search unresolved places...')}
-        <div class="places-content split">
+        <div class="places-content ${state.placesViewMode}">
           <section class="places-list-panel" aria-label="Unresolved places">${renderUnresolvedList(issues)}</section>
-          <section class="places-map-panel" aria-label="Places map">${renderPlacesMap(issues.map(issue => sampleData.places.find(place => place.id === issue.placeId)).filter(Boolean))}</section>
+          <section class="places-map-panel" aria-label="Places map">${renderPlacesMapShell(list)}</section>
         </div>
       </div>`;
-      bindPlacesEvents();
+      bindPlacesEvents(list);
+      if (state.placesViewMode !== 'list') requestAnimationFrame(() => mountPlacesMap(list));
     }
 
     function renderUnresolvedList(issues) {
@@ -43667,16 +44240,17 @@
     }
 
     function renderPlaceDetail() {
+      destroyPlacesMap();
       const place = selectedPlace();
       if (!place) { state.placesDetailOpen = false; renderPlacesMain(); return; }
       main.innerHTML = `<div class="places-detail">
         <section class="places-detail-hero">
-          <div class="places-detail-hero-copy"><h1>${escapeHtml(place.name)}</h1><p>${escapeHtml(place.type)} - ${escapeHtml(place.hierarchy)}</p><div class="places-hero-chip-row">${renderPlaceHeroTags(place)}</div></div>
-          <div class="places-detail-hero-actions"><button class="button secondary" type="button" id="placesBackToList">Back to places</button><button class="button primary" type="button" id="placesDetailEdit">${icon.edit} Edit place</button></div>
+          <div class="places-detail-hero-copy"><h1>${escapeHtml(place.name)}</h1><p>${escapeHtml(place.type)} - ${escapeHtml(placeHierarchyText(place))}</p><div class="places-hero-chip-row">${renderPlaceHeroTags(place)}</div></div>
+          <div class="places-detail-hero-actions"><button class="button secondary" type="button" id="placesBackToList">Back to places</button>${placeHasCoordinates(place) ? `<button class="button secondary" type="button" id="placesOpenOnMap">${icon.mapPin} Open on map</button>` : ''}<button class="button primary" type="button" id="placesDetailEdit">${icon.edit} Edit place</button></div>
         </section>
         <div class="places-detail-grid">
           <div class="places-detail-left">
-            <section class="places-card"><div class="places-card-header"><h2>Identity</h2><button class="link" type="button" id="placesIdentityEdit">Edit</button></div><div class="places-card-body"><div class="places-kv"><span>Type</span><strong>${escapeHtml(place.type)}</strong></div><div class="places-kv"><span>Hierarchy</span><strong>${escapeHtml(place.hierarchy)}</strong></div><div class="places-kv"><span>Coordinates</span><strong>${escapeHtml(place.coords)}</strong></div><div class="places-kv"><span>Status</span><strong>${escapeHtml(place.statusLabel)}</strong></div></div></section>
+            <section class="places-card"><div class="places-card-header"><h2>Identity</h2><button class="link" type="button" id="placesIdentityEdit">Edit</button></div><div class="places-card-body"><div class="places-kv"><span>Type</span><strong>${escapeHtml(place.type)}</strong></div><div class="places-kv"><span>Hierarchy</span><strong>${escapeHtml(placeHierarchyText(place))}</strong></div><div class="places-kv"><span>Coordinates</span><strong>${escapeHtml(formatPlaceCoordinates(place))}</strong></div><div class="places-kv"><span>Accuracy</span><strong>${escapeHtml(capitalize(place.coordinateAccuracy || 'unknown'))}</strong></div><div class="places-kv"><span>Source</span><strong>${escapeHtml(capitalize(place.coordinateSource || 'unknown'))}</strong></div><div class="places-kv"><span>Status</span><strong>${escapeHtml(placeCoordinateStatusLabel(place))}</strong></div></div></section>
             <section class="places-card"><div class="places-card-header"><h2>Events here</h2><button class="link" type="button" data-toast="Event filtering is simulated.">View all</button></div><div class="places-card-body">${(place.topEvents || []).map(ev => `<div class="places-event"><strong>${escapeHtml(ev.kind)}</strong><span>${escapeHtml(ev.text)}</span></div>`).join('')}</div></section>
             <section class="places-card"><div class="places-card-header"><h2>Historical names</h2><button class="link" type="button" data-toast="Alias editing will be implemented later.">${icon.plus} Add alias</button></div><div class="places-card-body">${(place.aliases || []).map(alias => `<div class="places-kv"><span>Alias</span><strong>${escapeHtml(alias)}</strong></div>`).join('') || '<span class="muted">No aliases recorded.</span>'}</div></section>
           </div>
@@ -43684,6 +44258,11 @@
         </div>
       </div>`;
       main.querySelector('#placesBackToList')?.addEventListener('click', () => { state.placesDetailOpen = false; renderPlacesMain(); });
+      main.querySelector('#placesOpenOnMap')?.addEventListener('click', () => {
+        state.placesDetailOpen = false;
+        state.placesViewMode = 'map';
+        renderPlacesMain();
+      });
       main.querySelector('#placesDetailEdit')?.addEventListener('click', () => openPlaceModal(place.id));
       main.querySelector('#placesIdentityEdit')?.addEventListener('click', () => openPlaceModal(place.id));
       bindToasts(main);
@@ -43691,7 +44270,7 @@
 
     function renderPlacePeople(place) {
       const rows = [
-        ['SW','Silver Whiskerfield', place.name === 'Pawford' ? 'Birth - 1998' : 'Linked person'],
+        ['SW','Silver Whiskerfield', place.id === 'place-pawford' ? 'Birth - 1998' : 'Linked person'],
         ['SL','Barnaby Whiskerfield','Residence - 1976'],
         ['EL','Luna Purrington','Residence - 1975']
       ];
@@ -43704,29 +44283,29 @@
     }
 
     function placeCountry(place) {
-      return place.hierarchy.split(',').map(s => s.trim()).filter(Boolean).pop() || 'Unknown';
+      return place?.hierarchy?.country || 'Unknown';
     }
 
     function filteredPlaces() {
-      let list = sampleData.places.filter(place => !place.deleted);
+      let list = sampleData.places.filter(place => place.projectId === currentProjectId() && !place.deleted);
       if (state.placesView === 'country' && state.placesActiveCountry) list = list.filter(place => placeCountry(place) === state.placesActiveCountry);
       if (state.placesView === 'collection' && state.placesActiveCollectionId) list = list.filter(place => place.collections.includes(state.placesActiveCollectionId));
       const q = state.placesSearch.trim().toLowerCase();
-      if (q) list = list.filter(place => `${place.name} ${place.hierarchy} ${place.type} ${place.statusLabel}`.toLowerCase().includes(q));
+      if (q) list = list.filter(place => `${place.name} ${place.display} ${placeHierarchyText(place)} ${place.type} ${placeCoordinateStatusLabel(place)} ${(place.aliases || []).join(' ')}`.toLowerCase().includes(q));
       if (state.placesSort === 'name') list.sort((a,b) => a.name.localeCompare(b.name));
-      if (state.placesSort === 'updated') list.sort((a,b) => b.updated.localeCompare(a.updated));
+      if (state.placesSort === 'updated') list.sort((a,b) => (Date.parse(b.updatedAt) || 0) - (Date.parse(a.updatedAt) || 0));
       if (state.placesSort === 'linked') list.sort((a,b) => (b.people+b.events+b.files+b.photos+b.notes) - (a.people+a.events+a.files+a.photos+a.notes));
       return list;
     }
 
     function filteredPlaceIssues() {
-      let list = [...sampleData.placeIssues];
+      let list = sampleData.placeIssues.filter(issue => issue.projectId === currentProjectId());
       const q = state.placesSearch.trim().toLowerCase();
       if (q) list = list.filter(issue => `${issue.raw} ${issue.issue} ${issue.suggestion}`.toLowerCase().includes(q));
       return list;
     }
 
-    function selectedPlace() { return sampleData.places.find(place => place.id === state.selectedPlaceId); }
+    function selectedPlace() { return sampleData.places.find(place => place.id === state.selectedPlaceId && place.projectId === currentProjectId()); }
 
     function placesCurrentTitle() {
       if (state.placesView === 'country' && state.placesActiveCountry) return state.placesActiveCountry;
@@ -43743,8 +44322,8 @@
 
 
     function renderPlaceHeroTags(place) {
-      const statusClass = place.status === 'resolved' ? 'good' : 'warn';
-      return `<span class="places-hero-chip ${statusClass}">${escapeHtml(place.statusLabel)}</span><span class="places-hero-chip people">${place.people} people</span><span class="places-hero-chip events">${place.events} events</span><span class="places-hero-chip files">${place.files} files</span><span class="places-hero-chip photos">${place.photos} photos</span>`;
+      const statusClass = place.coordinateStatus === 'resolved' ? 'good' : 'warn';
+      return `<span class="places-hero-chip ${statusClass}">${escapeHtml(placeCoordinateStatusLabel(place))}</span><span class="places-hero-chip people">${place.people} people</span><span class="places-hero-chip events">${place.events} events</span><span class="places-hero-chip files">${place.files} files</span><span class="places-hero-chip photos">${place.photos} photos</span>`;
     }
 
     function renderPlaceCounts(place) {
@@ -43754,31 +44333,101 @@
     function renderPlaceTypeChip(place) { return `<span class="places-chip blue">${escapeHtml(place.type)}</span>`; }
 
     function renderPlaceStatusChip(place) {
-      const cls = place.status === 'resolved' ? 'good' : 'warn';
-      return `<span class="places-chip ${cls}">${escapeHtml(place.statusLabel)}</span>`;
+      const cls = place.coordinateStatus === 'resolved' ? 'good' : 'warn';
+      return `<span class="places-chip ${cls}">${escapeHtml(placeCoordinateStatusLabel(place))}</span>`;
     }
 
     function renderPlacesEmpty(title, copy, actionHtml) {
       return `<div class="places-empty"><div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(copy)}</p>${actionHtml || ''}</div></div>`;
     }
 
-    function bindPlacesEvents() {
-      bindSearchInput(main, '#placesSearch', 'placesSearch', renderPlacesMain);
-      main.querySelector('#placesSort')?.addEventListener('change', e => { state.placesSort = e.target.value; renderPlacesMain(); });
-      main.querySelectorAll('[data-places-mode]').forEach(button => button.addEventListener('click', () => { state.placesViewMode = button.dataset.placesMode; renderPlacesMain(); }));
-      main.querySelectorAll('[data-place-id]').forEach(button => button.addEventListener('click', e => { if (e.target.closest('.place-more')) return; state.selectedPlaceId = button.dataset.placeId; renderPlacesMain(); }));
-      main.querySelectorAll('[data-map-place]').forEach(button => button.addEventListener('click', () => { state.selectedPlaceId = button.dataset.mapPlace; renderPlacesMain(); }));
-      main.querySelectorAll('[data-place-issue]').forEach(button => button.addEventListener('click', () => { state.placesSelectedIssueId = button.dataset.placeIssue; const issue = sampleData.placeIssues.find(i => i.id === state.placesSelectedIssueId); if (issue) state.selectedPlaceId = issue.placeId; renderPlacesMain(); }));
-      main.querySelector('#placesOpenDetail')?.addEventListener('click', () => { state.placesDetailOpen = true; renderPlaceDetail(); });
-      main.querySelector('#placesEditSelected')?.addEventListener('click', () => openPlaceModal(state.selectedPlaceId));
+    function bindPlacesResultSelection() {
+      main.querySelectorAll('[data-place-id]').forEach(button => button.addEventListener('click', event => {
+        if (event.target.closest('.place-more')) return;
+        selectPlace(button.dataset.placeId, { source: 'list', focusMap: true });
+      }));
+      main.querySelectorAll('[data-place-issue]').forEach(button => button.addEventListener('click', () => {
+        state.placesSelectedIssueId = button.dataset.placeIssue;
+        main.querySelectorAll('[data-place-issue]').forEach(row => row.classList.toggle('active', row === button));
+        const issue = sampleData.placeIssues.find(item => item.id === state.placesSelectedIssueId);
+        if (issue) selectPlace(issue.placeId, { source: 'list', focusMap: true });
+      }));
       main.querySelector('#placesEmptyAdd')?.addEventListener('click', () => openPlaceModal());
-      main.querySelector('#placesClearFilters')?.addEventListener('click', () => { state.placesSearch = ''; state.placesView = 'all'; state.placesActiveCollectionId = null; state.placesActiveCountry = null; renderPlaces(); });
-      main.querySelector('#placesZoomIn')?.addEventListener('click', () => { state.placesMapZoom = Math.min(12, state.placesMapZoom + 1); renderPlacesMain(); });
-      main.querySelector('#placesZoomOut')?.addEventListener('click', () => { state.placesMapZoom = Math.max(1, state.placesMapZoom - 1); renderPlacesMain(); });
-      main.querySelector('#placesFitMap')?.addEventListener('click', () => showToast('Map fitted to visible places.'));
-      main.querySelector('#placesToggleRoute')?.addEventListener('click', () => { state.placesShowRoute = !state.placesShowRoute; renderPlacesMain(); });
-      main.querySelector('#placesLegendToggle')?.addEventListener('click', () => { state.placesLegendCollapsed = !state.placesLegendCollapsed; renderPlacesMain(); });
-      bindToasts(main);
+    }
+
+    function refreshPlacesResults() {
+      const unresolved = state.placesView === 'unresolved';
+      const listPanel = main.querySelector('[data-places-list-panel], .places-list-panel');
+      let places;
+      if (unresolved) {
+        const issues = filteredPlaceIssues();
+        places = issues.map(issue => getPlace(issue.placeId)).filter(Boolean);
+        if (listPanel) listPanel.innerHTML = renderUnresolvedList(issues);
+        const subtitle = main.querySelector('[data-places-subtitle]');
+        if (subtitle) subtitle.textContent = `${issues.length} ambiguous or incomplete place records`;
+      } else {
+        places = filteredPlaces();
+        if (listPanel) listPanel.innerHTML = renderPlacesListPanel(places);
+        const subtitle = main.querySelector('[data-places-subtitle]');
+        if (subtitle) subtitle.textContent = placesCurrentSubtitle(places.length);
+        const chips = renderPlacesFilterChips();
+        const chipRow = main.querySelector('[data-places-filter-row]');
+        if (chipRow) {
+          chipRow.innerHTML = chips;
+          chipRow.hidden = !chips;
+          chipRow.querySelector('#placesClearFilters')?.addEventListener('click', clearPlacesFilters);
+        }
+      }
+      bindPlacesResultSelection();
+      updatePlacesMapData(places);
+      const previewPlace = selectedPlaceFromList(places);
+      const preview = main.querySelector('[data-places-map-preview]');
+      if (!previewPlace && preview) preview.innerHTML = '';
+      if (previewPlace && !places.some(place => place.id === state.selectedPlaceId)) selectPlace(previewPlace.id, { source: 'filter', focusMap: false });
+    }
+
+    function clearPlacesFilters() {
+      state.placesSearch = '';
+      state.placesView = 'all';
+      state.placesActiveCollectionId = null;
+      state.placesActiveCountry = null;
+      renderPlaces();
+    }
+
+    function bindPlacesEvents(rows = []) {
+      const search = main.querySelector('#placesSearch');
+      search?.addEventListener('input', event => {
+        state.placesSearch = event.target.value;
+        clearTimeout(placesSearchTimer);
+        placesSearchTimer = setTimeout(refreshPlacesResults, 250);
+      });
+      main.querySelector('#placesSort')?.addEventListener('change', event => {
+        state.placesSort = event.target.value;
+        refreshPlacesResults();
+      });
+      main.querySelectorAll('[data-places-mode]').forEach(button => button.addEventListener('click', () => {
+        state.placesViewMode = button.dataset.placesMode;
+        renderPlacesMain();
+      }));
+      bindPlacesResultSelection();
+      bindPlacePreviewActions(main);
+      main.querySelector('#placesClearFilters')?.addEventListener('click', clearPlacesFilters);
+      main.querySelector('#placesZoomIn')?.addEventListener('click', () => placesMapRuntime.map?.zoomIn());
+      main.querySelector('#placesZoomOut')?.addEventListener('click', () => placesMapRuntime.map?.zoomOut());
+      main.querySelector('#placesFitMap')?.addEventListener('click', () => fitPlacesMap());
+      main.querySelector('#placesToggleRoute')?.addEventListener('click', () => {
+        state.placesShowRoute = !state.placesShowRoute;
+        renderPlacesRouteLayer(placesMapRuntime.currentPlaces || rows);
+        updatePlacesRouteControl(placesMapRuntime.currentPlaces || rows);
+      });
+      main.querySelector('#placesLegendToggle')?.addEventListener('click', event => {
+        state.placesLegendCollapsed = !state.placesLegendCollapsed;
+        const legend = event.currentTarget.closest('.places-map-legend');
+        legend?.classList.toggle('collapsed', state.placesLegendCollapsed);
+        const body = legend?.querySelector('.places-map-legend-body');
+        if (body) body.hidden = state.placesLegendCollapsed;
+        event.currentTarget.setAttribute('aria-expanded', String(!state.placesLegendCollapsed));
+      });
     }
 
     function openPlaceCollectionMenu(collectionId, anchor) {
@@ -43816,7 +44465,7 @@
           showToast('Collection updated.');
         } else {
           const id = `pc-${Date.now()}`;
-          sampleData.placeCollections.push({ id, name, description });
+          sampleData.placeCollections.push({ id, projectId: currentProjectId(), name, description });
           state.placesView = 'collection';
           state.placesActiveCollectionId = id;
           state.placesActiveCountry = null;
@@ -43835,6 +44484,7 @@
       openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deletePlaceCollectionTitle"><div class="modal-header"><div><h2 id="deletePlaceCollectionTitle">Delete collection?</h2><p>Places stay in All places. Only this collection grouping will be removed.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="notes-evidence-card"><strong>${escapeHtml(collection.name)}</strong><span>${count} places will remain in All places.</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" id="placesConfirmDeleteCollection">Delete collection</button></div></div>`);
       modalBackdrop.querySelector('#placesConfirmDeleteCollection')?.addEventListener('click', () => {
         sampleData.places.forEach(place => { place.collections = place.collections.filter(id => id !== collectionId); });
+        sampleData.placeRoutes.forEach(route => { if (route.collectionId === collectionId) route.collectionId = null; });
         const index = sampleData.placeCollections.findIndex(c => c.id === collectionId);
         if (index >= 0) sampleData.placeCollections.splice(index, 1);
         if (state.placesActiveCollectionId === collectionId) {
@@ -43847,51 +44497,213 @@
       });
     }
 
-    function openPlaceModal(placeId) {
-      const existing = sampleData.places.find(place => place.id === placeId);
-      const title = existing ? 'Edit place' : 'Add place';
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="placeModalTitle"><div class="modal-header"><div><h2 id="placeModalTitle">${title}</h2><p>Record a place identity, hierarchy, coordinate confidence, and historical names.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="placeForm"><div class="modal-body form-grid"><div class="field"><label>Place name</label><input id="placeNameInput" required value="${escapeHtml(existing?.name || '')}" placeholder="e.g. Pawford"></div><div class="field"><label>Type</label><select class="compact-select" id="placeTypeInput"><option>City</option><option>Village</option><option>Region</option><option>Residence</option><option>Cemetery</option><option>Church</option><option>Archive</option><option>Repository</option><option>Unknown</option></select></div><div class="field"><label>Hierarchy</label><input id="placeHierarchyInput" value="${escapeHtml(existing?.hierarchy || '')}" placeholder="Region, country"></div><div class="field"><label>Coordinate status</label><select class="compact-select" id="placeStatusInput"><option value="resolved">Resolved</option><option value="approximate">Approximate</option><option value="missing">Missing coordinates</option><option value="ambiguous">Ambiguous</option></select></div><div class="field"><label>Coordinates</label><input id="placeCoordsInput" value="${escapeHtml(existing?.coords || '')}" placeholder="Latitude, longitude or note"></div><div class="field"><label>Historical names / aliases</label><textarea id="placeAliasesInput" placeholder="One alias per line">${escapeHtml((existing?.aliases || []).join('\n'))}</textarea></div><div class="field"><label>Notes</label><textarea id="placeNotesInput" placeholder="Research notes about this place"></textarea></div></div><div class="modal-footer">${existing ? '<button class="button danger" type="button" id="placesDeletePlace">Delete permanently</button>' : ''}<button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">${existing ? 'Save changes' : 'Create place'}</button></div></form></div>`);
-      if (existing) {
-        const typeSelect = modalBackdrop.querySelector('#placeTypeInput');
-        const statusSelect = modalBackdrop.querySelector('#placeStatusInput');
-        if (typeSelect) typeSelect.value = existing.type;
-        if (statusSelect) statusSelect.value = existing.status;
-        modalBackdrop.querySelector('#placesDeletePlace')?.addEventListener('click', () => openDeletePlaceModal(existing.id));
+    function placeGeocoderFeatureCoordinates(feature) {
+      const coordinates = feature?.center || feature?.geometry?.coordinates;
+      if (!Array.isArray(coordinates) || !validLongitude(coordinates[0]) || !validLatitude(coordinates[1])) return null;
+      return { lat: Number(coordinates[1]), lng: Number(coordinates[0]) };
+    }
+
+    function placeGeocoderFeatureHierarchy(feature) {
+      const context = Array.isArray(feature?.context) ? feature.context : [];
+      const contextValue = prefix => context.find(item => String(item.id || '').startsWith(prefix)) || null;
+      const featureTypes = Array.isArray(feature?.place_type) ? feature.place_type : [];
+      const locality = feature.text || feature.place_name?.split(',')[0]?.trim() || '';
+      const region = contextValue('region.')?.text || (featureTypes.includes('region') ? locality : '');
+      const countryItem = contextValue('country.') || (featureTypes.includes('country') ? feature : null);
+      return {
+        locality,
+        region,
+        country: countryItem?.text || '',
+        countryCode: String(countryItem?.properties?.short_code || countryItem?.short_code || '').replace(/^.*-/, '').toUpperCase()
+      };
+    }
+
+    function placeGeocoderFeatureAccuracy(feature) {
+      const type = (feature?.place_type || [])[0] || '';
+      return ({ address: 'address', poi: 'site', locality: 'locality', place: 'locality', district: 'district', region: 'region', country: 'country' })[type] || 'unknown';
+    }
+
+    function populatePlaceFormFromGeocoderFeature(feature) {
+      const coordinates = placeGeocoderFeatureCoordinates(feature);
+      if (!coordinates) return;
+      const hierarchy = placeGeocoderFeatureHierarchy(feature);
+      const accuracy = placeGeocoderFeatureAccuracy(feature);
+      const setValue = (selector, value) => {
+        const field = modalBackdrop.querySelector(selector);
+        if (field) field.value = value ?? '';
+      };
+      setValue('#placeNameInput', hierarchy.locality || feature.text || '');
+      setValue('#placeLocalityInput', hierarchy.locality);
+      setValue('#placeRegionInput', hierarchy.region);
+      setValue('#placeCountryInput', hierarchy.country);
+      setValue('#placeCountryCodeInput', hierarchy.countryCode);
+      setValue('#placeLatitudeInput', coordinates.lat);
+      setValue('#placeLongitudeInput', coordinates.lng);
+      setValue('#placeAccuracyInput', accuracy);
+      setValue('#placeStatusInput', ['region', 'country'].includes(accuracy) ? 'approximate' : 'resolved');
+      setValue('#placeSourceInput', 'geocoder');
+      setValue('#placeExternalIdInput', feature.id || '');
+      setValue('#placeBoundingBoxInput', Array.isArray(feature.bbox) ? JSON.stringify(feature.bbox) : '');
+      const status = modalBackdrop.querySelector('[data-place-geocoder-status]');
+      if (status) status.textContent = `Selected ${feature.place_name || hierarchy.locality}.`;
+      const results = modalBackdrop.querySelector('[data-place-geocoder-results]');
+      if (results) results.innerHTML = '';
+    }
+
+    async function runPlaceGeocoder(query) {
+      const results = modalBackdrop.querySelector('[data-place-geocoder-results]');
+      const status = modalBackdrop.querySelector('[data-place-geocoder-status]');
+      const key = placesMaptilerKey();
+      if (!results || !status) return;
+      const normalized = String(query || '').trim();
+      if (normalized.length < 3) {
+        status.textContent = 'Enter at least three characters.';
+        results.innerHTML = '';
+        return;
       }
-      modalBackdrop.querySelector('#placeForm')?.addEventListener('submit', e => {
-        e.preventDefault();
-        const status = modalBackdrop.querySelector('#placeStatusInput').value;
-        const statusLabelMap = { resolved: 'Resolved', approximate: 'Approximate', missing: 'Missing coordinates', ambiguous: 'Ambiguous' };
-        if (existing) {
-          existing.name = modalBackdrop.querySelector('#placeNameInput').value.trim();
-          existing.type = modalBackdrop.querySelector('#placeTypeInput').value;
-          existing.hierarchy = modalBackdrop.querySelector('#placeHierarchyInput').value.trim();
-          existing.status = status;
-          existing.statusLabel = statusLabelMap[status];
-          existing.markerType = status === 'resolved' ? (existing.type === 'Archive' ? 'archive' : existing.type === 'Residence' ? 'residence' : 'resolved') : 'approx';
-          existing.coords = modalBackdrop.querySelector('#placeCoordsInput').value.trim() || 'Unknown';
-          existing.aliases = modalBackdrop.querySelector('#placeAliasesInput').value.split('\n').map(v => v.trim()).filter(Boolean);
-          existing.updated = 'Just now';
-          showToast('Place updated.');
-        } else {
-          const id = `pl-${Date.now()}`;
-          sampleData.places.unshift({ id, name: modalBackdrop.querySelector('#placeNameInput').value.trim(), hierarchy: modalBackdrop.querySelector('#placeHierarchyInput').value.trim() || 'Unknown hierarchy', type: modalBackdrop.querySelector('#placeTypeInput').value, status, statusLabel: statusLabelMap[status], markerType: status === 'resolved' ? 'resolved' : 'approx', x: 58, y: 56, collections: state.placesActiveCollectionId ? [state.placesActiveCollectionId] : [], people: 0, events: 0, files: 0, photos: 0, notes: 0, updated: 'Just now', deleted: false, coords: modalBackdrop.querySelector('#placeCoordsInput').value.trim() || 'Unknown', aliases: modalBackdrop.querySelector('#placeAliasesInput').value.split('\n').map(v => v.trim()).filter(Boolean), topEvents: [] });
-          state.selectedPlaceId = id;
-          state.placesView = 'all';
-          showToast('Place created.');
+      if (!key) {
+        status.textContent = 'A MapTiler browser key is required to find coordinates.';
+        return;
+      }
+      placeGeocoderController?.abort();
+      placeGeocoderController = new AbortController();
+      status.textContent = 'Finding coordinates...';
+      results.innerHTML = '';
+      try {
+        const url = `https://api.maptiler.com/geocoding/${encodeURIComponent(normalized)}.json?key=${encodeURIComponent(key)}&limit=5&autocomplete=true`;
+        const response = await fetch(url, { signal: placeGeocoderController.signal });
+        if (response.status === 429) throw new Error('Too many requests. Wait a moment and try again.');
+        if (response.status === 403) throw new Error('The MapTiler browser key is missing, invalid, or restricted for this origin.');
+        if (!response.ok) throw new Error('Coordinates could not be found right now.');
+        const data = await response.json();
+        const features = (data.features || []).filter(placeGeocoderFeatureCoordinates).slice(0, 5);
+        status.textContent = features.length ? `${features.length} ${features.length === 1 ? 'result' : 'results'}` : 'No matching places found.';
+        results.innerHTML = features.map((feature, index) => `<button class="place-geocoder-result" type="button" data-place-geocoder-result="${index}"><strong>${escapeHtml(feature.text || feature.place_name || 'Place')}</strong><span>${escapeHtml(feature.place_name || '')}</span></button>`).join('');
+        results.querySelectorAll('[data-place-geocoder-result]').forEach(button => button.addEventListener('click', () => populatePlaceFormFromGeocoderFeature(features[Number(button.dataset.placeGeocoderResult)])));
+      } catch (error) {
+        if (error.name === 'AbortError') return;
+        status.textContent = error.message || 'Coordinates could not be found right now.';
+      }
+    }
+
+    function bindPlaceGeocoder() {
+      const input = modalBackdrop.querySelector('#placeGeocoderQuery');
+      const button = modalBackdrop.querySelector('#placeFindCoordinates');
+      if (!input || !button) return;
+      button.disabled = !placesMaptilerKey();
+      button.addEventListener('click', () => {
+        clearTimeout(placeGeocoderTimer);
+        placeGeocoderTimer = setTimeout(() => runPlaceGeocoder(input.value), 350);
+      });
+      input.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          button.click();
         }
+        if (event.key === 'Escape') {
+          placeGeocoderController?.abort();
+          modalBackdrop.querySelector('[data-place-geocoder-results]').innerHTML = '';
+        }
+      });
+    }
+
+    function openPlaceModal(placeId) {
+      const existing = sampleData.places.find(place => place.id === placeId && place.projectId === currentProjectId());
+      const hierarchy = existing?.hierarchy || {};
+      const coordinates = normalizePlaceCoordinates(existing);
+      const title = existing ? 'Edit place' : 'Add place';
+      const option = (value, label, selected) => `<option value="${value}" ${value === selected ? 'selected' : ''}>${label}</option>`;
+      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="placeModalTitle"><div class="modal-header"><div><h2 id="placeModalTitle">${title}</h2><p>Record a place identity, hierarchy, coordinates, and historical names.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="placeForm"><div class="modal-body form-grid">
+        <div class="place-geocoder"><div class="place-geocoder-controls"><div class="field"><label for="placeGeocoderQuery">Place name or search query</label><input id="placeGeocoderQuery" value="${escapeHtml(existing?.display || existing?.name || '')}" placeholder="e.g. Krakow, Poland"></div><button class="button secondary" type="button" id="placeFindCoordinates">${icon.search} Find coordinates</button></div><span class="muted" data-place-geocoder-status>${placesMaptilerKey() ? 'Search MapTiler and choose a result to populate the fields.' : 'A MapTiler browser key is required to find coordinates.'}</span><div class="place-geocoder-results" data-place-geocoder-results></div></div>
+        <div class="field"><label for="placeNameInput">Place name</label><input id="placeNameInput" required value="${escapeHtml(existing?.name || '')}" placeholder="e.g. Krakow"></div>
+        <div class="field"><label for="placeTypeInput">Type</label><select class="compact-select" id="placeTypeInput">${['City','Village','Region','Residence','Cemetery','Church','Archive','Repository','Unknown'].map(value => option(value, value, existing?.type || 'City')).join('')}</select></div>
+        <div class="field"><label for="placeLocalityInput">Locality</label><input id="placeLocalityInput" value="${escapeHtml(hierarchy.locality || existing?.name || '')}" placeholder="City, town, or site"></div>
+        <div class="field"><label for="placeRegionInput">Region</label><input id="placeRegionInput" value="${escapeHtml(hierarchy.region || '')}" placeholder="State, province, or region"></div>
+        <div class="field"><label for="placeCountryInput">Country</label><input id="placeCountryInput" value="${escapeHtml(hierarchy.country || '')}" placeholder="Country"></div>
+        <div class="field"><label for="placeCountryCodeInput">Country code</label><input id="placeCountryCodeInput" maxlength="2" value="${escapeHtml(hierarchy.countryCode || '')}" placeholder="PL"></div>
+        <div class="field"><label for="placeLatitudeInput">Latitude</label><input id="placeLatitudeInput" type="number" min="-90" max="90" step="any" value="${coordinates?.lat ?? ''}" placeholder="50.064650"></div>
+        <div class="field"><label for="placeLongitudeInput">Longitude</label><input id="placeLongitudeInput" type="number" min="-180" max="180" step="any" value="${coordinates?.lng ?? ''}" placeholder="19.944980"></div>
+        <div class="field"><label for="placeStatusInput">Coordinate status</label><select class="compact-select" id="placeStatusInput">${option('resolved','Resolved',existing?.coordinateStatus || 'missing')}${option('approximate','Approximate',existing?.coordinateStatus || 'missing')}${option('missing','Missing coordinates',existing?.coordinateStatus || 'missing')}${option('ambiguous','Ambiguous',existing?.coordinateStatus || 'missing')}</select></div>
+        <div class="field"><label for="placeAccuracyInput">Coordinate accuracy</label><select class="compact-select" id="placeAccuracyInput">${PLACE_COORDINATE_ACCURACIES.map(value => option(value, capitalize(value), existing?.coordinateAccuracy || 'unknown')).join('')}</select></div>
+        <div class="field"><label for="placeSourceInput">Coordinate source</label><select class="compact-select" id="placeSourceInput">${option('manual','Manual',existing?.coordinateSource || 'manual')}${option('import','Imported',existing?.coordinateSource || 'manual')}${option('geocoder','Geocoded',existing?.coordinateSource || 'manual')}${option('archive','Archive record',existing?.coordinateSource || 'manual')}${option('estimate','Estimated',existing?.coordinateSource || 'manual')}${option('seed','Seed data',existing?.coordinateSource || 'manual')}</select></div>
+        <div class="field"><label for="placeAliasesInput">Historical names / aliases</label><textarea id="placeAliasesInput" placeholder="One alias per line">${escapeHtml((existing?.aliases || []).join('\n'))}</textarea></div>
+        <input id="placeExternalIdInput" type="hidden" value="${escapeHtml(existing?.externalPlaceId || '')}"><input id="placeBoundingBoxInput" type="hidden" value="${escapeHtml(existing?.boundingBox ? JSON.stringify(existing.boundingBox) : '')}">
+        <div class="place-coordinate-error" id="placeCoordinateError" role="alert"></div>
+      </div><div class="modal-footer">${existing ? '<button class="button danger" type="button" id="placesDeletePlace">Delete permanently</button>' : ''}<button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">${existing ? 'Save changes' : 'Create place'}</button></div></form></div>`);
+      bindPlaceGeocoder();
+      modalBackdrop.querySelector('#placesDeletePlace')?.addEventListener('click', () => openDeletePlaceModal(existing.id));
+      modalBackdrop.querySelector('#placeForm')?.addEventListener('submit', event => {
+        event.preventDefault();
+        const status = modalBackdrop.querySelector('#placeStatusInput').value;
+        const latitudeInput = modalBackdrop.querySelector('#placeLatitudeInput');
+        const longitudeInput = modalBackdrop.querySelector('#placeLongitudeInput');
+        const latitudeText = latitudeInput.value.trim();
+        const longitudeText = longitudeInput.value.trim();
+        const hasAnyCoordinate = Boolean(latitudeText || longitudeText);
+        const validCoordinates = validLatitude(latitudeText) && validLongitude(longitudeText);
+        const requiresCoordinates = ['resolved', 'approximate'].includes(status);
+        const error = modalBackdrop.querySelector('#placeCoordinateError');
+        latitudeInput.removeAttribute('aria-invalid');
+        longitudeInput.removeAttribute('aria-invalid');
+        if ((hasAnyCoordinate && !validCoordinates) || (requiresCoordinates && !validCoordinates)) {
+          error.textContent = requiresCoordinates
+            ? 'Resolved and approximate places require valid latitude and longitude.'
+            : 'Enter both latitude and longitude within the valid ranges.';
+          latitudeInput.setAttribute('aria-invalid', 'true');
+          longitudeInput.setAttribute('aria-invalid', 'true');
+          return;
+        }
+        const name = modalBackdrop.querySelector('#placeNameInput').value.trim();
+        const type = modalBackdrop.querySelector('#placeTypeInput').value;
+        const nextHierarchy = {
+          locality: modalBackdrop.querySelector('#placeLocalityInput').value.trim() || name,
+          region: modalBackdrop.querySelector('#placeRegionInput').value.trim(),
+          country: modalBackdrop.querySelector('#placeCountryInput').value.trim(),
+          countryCode: modalBackdrop.querySelector('#placeCountryCodeInput').value.trim().toUpperCase()
+        };
+        const nextCoordinates = status === 'missing' || !validCoordinates ? null : { lat: Number(latitudeText), lng: Number(longitudeText) };
+        const source = modalBackdrop.querySelector('#placeSourceInput').value;
+        const boundingBoxValue = modalBackdrop.querySelector('#placeBoundingBoxInput').value;
+        let boundingBox = null;
+        try { boundingBox = boundingBoxValue ? JSON.parse(boundingBoxValue) : null; } catch { boundingBox = null; }
+        const place = existing || { id: `place-${Date.now()}`, projectId: currentProjectId(), collections: state.placesActiveCollectionId ? [state.placesActiveCollectionId] : [], people: 0, events: 0, files: 0, photos: 0, notes: 0, deleted: false, topEvents: [] };
+        Object.assign(place, {
+          name,
+          display: [nextHierarchy.locality, nextHierarchy.region, nextHierarchy.country].filter((value, index, values) => value && values.indexOf(value) === index).join(', '),
+          type,
+          hierarchy: nextHierarchy,
+          coordinates: nextCoordinates,
+          coordinateStatus: status,
+          coordinateAccuracy: modalBackdrop.querySelector('#placeAccuracyInput').value,
+          coordinateSource: source,
+          coordinateProvider: source === 'geocoder' ? 'maptiler' : null,
+          externalPlaceId: modalBackdrop.querySelector('#placeExternalIdInput').value || null,
+          boundingBox: Array.isArray(boundingBox) ? boundingBox : null,
+          aliases: modalBackdrop.querySelector('#placeAliasesInput').value.split('\n').map(value => value.trim()).filter(Boolean),
+          markerType: type === 'Archive' || type === 'Repository' ? 'archive' : type === 'Residence' ? 'residence' : status === 'resolved' ? 'resolved' : status,
+          updatedAt: new Date().toISOString()
+        });
+        if (!existing) {
+          sampleData.places.unshift(place);
+          state.selectedPlaceId = place.id;
+          state.placesView = 'all';
+        }
+        placeGeocoderController?.abort();
         closeModal();
         renderPlaces();
+        showToast(existing ? 'Place updated.' : 'Place created.');
       });
     }
 
     function openDeletePlaceModal(placeId) {
-      const place = sampleData.places.find(p => p.id === placeId);
+      const place = sampleData.places.find(p => p.id === placeId && p.projectId === currentProjectId());
       if (!place) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deletePlaceTitle"><div class="modal-header"><div><h2 id="deletePlaceTitle">Delete place permanently?</h2><p>This place will be removed from the project. Linked people, facts, photos, files, and notes will remain, but their place link would need review in the full app.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="notes-evidence-card"><strong>${escapeHtml(place.name)}</strong><span>${escapeHtml(place.hierarchy)}</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" id="placesConfirmDeletePlace">Delete permanently</button></div></div>`);
+      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deletePlaceTitle"><div class="modal-header"><div><h2 id="deletePlaceTitle">Delete place permanently?</h2><p>This place will be removed from the project. Linked people, facts, photos, files, and notes will remain, but their place link would need review in the full app.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="notes-evidence-card"><strong>${escapeHtml(place.name)}</strong><span>${escapeHtml(placeHierarchyText(place))}</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" id="placesConfirmDeletePlace">Delete permanently</button></div></div>`);
       modalBackdrop.querySelector('#placesConfirmDeletePlace')?.addEventListener('click', () => {
         const index = sampleData.places.findIndex(p => p.id === placeId);
         if (index >= 0) sampleData.places.splice(index, 1);
+        sampleData.placeRoutes.forEach(route => { route.placeIds = route.placeIds.filter(id => id !== placeId); });
+        sampleData.placeIssues = sampleData.placeIssues.filter(issue => issue.placeId !== placeId);
         if (state.selectedPlaceId === placeId) state.selectedPlaceId = sampleData.places.find(p => !p.deleted)?.id || null;
         state.placesDetailOpen = false;
         closeModal();
@@ -43903,8 +44715,8 @@
     function placesIcon(kind) {
       if (kind === 'pin' || kind === 'map' || kind === 'route') return icon.mapPin;
       if (kind === 'warning') return icon.warning;
-      if (kind === 'split') return icon.placeholder;
-      return icon.placeholder;
+      if (kind === 'split') return icon.grid;
+      return icon.mapPin;
     }
 
 
@@ -45263,6 +46075,9 @@
         'relationshipSeed',
         'educationSeed',
         'places',
+        'placeCollections',
+        'placeRoutes',
+        'placeIssues',
         'events',
         'media',
         'albums',
@@ -45502,61 +46317,55 @@
     function capitalize(value) { return value.charAt(0).toUpperCase() + value.slice(1); }
 
     function normalizeCentralPlaceRecords() {
-      const legacyPlaces = Array.isArray(sampleData.placeDirectorySeed) ? sampleData.placeDirectorySeed : [];
-      if (!legacyPlaces.length) return;
-      const legacyIdMap = {
-        'pl-pawford': 'place-pawford',
-        'pl-velyka': 'place-old-cattery',
-        'pl-meowbridge-region': 'place-meowbridge',
-        'pl-meowbridge-district': 'place-meowbridge'
-      };
-      legacyPlaces.forEach(legacy => {
-        const id = legacyIdMap[legacy.id] || legacy.id;
-        let place = sampleData.places.find(item => item.id === id || item.name === legacy.name);
-        if (!place) {
-          place = { id, name: legacy.name, country: 'England', display: legacy.hierarchy || legacy.name, status: legacy.statusLabel || legacy.status || 'Resolved' };
-          sampleData.places.push(place);
-        }
-        Object.assign(place, legacy, {
-          id,
-          display: place.display || legacy.hierarchy || legacy.name,
-          hierarchy: legacy.hierarchy || place.display || legacy.name,
-          status: legacy.status || place.status || 'resolved',
-          statusLabel: legacy.statusLabel || place.statusLabel || place.status || 'Resolved',
-          collections: Array.isArray(legacy.collections) ? legacy.collections : [],
-          deleted: Boolean(legacy.deleted)
-        });
-      });
-      (sampleData.placeIssues || []).forEach(issue => {
-        issue.placeId = legacyIdMap[issue.placeId] || issue.placeId;
-      });
       sampleData.places.forEach(place => {
+        place.projectId = place.projectId || currentProjectId();
         place.collections = Array.isArray(place.collections) ? place.collections : [];
         place.aliases = Array.isArray(place.aliases) ? place.aliases : [];
         place.topEvents = Array.isArray(place.topEvents) ? place.topEvents : [];
         place.deleted = Boolean(place.deleted);
-        place.hierarchy = place.hierarchy || place.display || place.name;
-        place.status = place.status || 'resolved';
-        place.statusLabel = place.statusLabel || place.status || 'Resolved';
-        place.markerType = place.markerType || 'resolved';
-        place.x = typeof place.x === 'number' ? place.x : 50;
-        place.y = typeof place.y === 'number' ? place.y : 50;
+        if (!place.hierarchy || typeof place.hierarchy !== 'object' || Array.isArray(place.hierarchy)) {
+          const parts = String(place.hierarchy || place.display || place.name || '').split(',').map(part => part.trim()).filter(Boolean);
+          place.hierarchy = {
+            locality: parts[0] || place.name || '',
+            region: parts.length > 2 ? parts.slice(1, -1).join(', ') : '',
+            country: parts.length > 1 ? parts.at(-1) : '',
+            countryCode: ''
+          };
+        }
+        place.display = place.display || placeHierarchyText(place) || place.name;
+        place.coordinates = normalizePlaceCoordinates(place);
+        place.coordinateStatus = PLACE_COORDINATE_STATUSES.includes(place.coordinateStatus)
+          ? place.coordinateStatus
+          : (place.coordinates ? 'resolved' : 'missing');
+        if (place.coordinateStatus === 'missing') place.coordinates = null;
+        place.coordinateAccuracy = PLACE_COORDINATE_ACCURACIES.includes(place.coordinateAccuracy) ? place.coordinateAccuracy : 'unknown';
+        place.coordinateSource = place.coordinateSource || (place.coordinates ? 'manual' : 'import');
+        place.coordinateProvider = place.coordinateProvider || null;
+        place.externalPlaceId = place.externalPlaceId || null;
+        place.boundingBox = Array.isArray(place.boundingBox) ? place.boundingBox : null;
+        place.markerType = place.markerType || (place.coordinateStatus === 'resolved' ? 'resolved' : place.coordinateStatus);
         place.people = Number.isFinite(place.people) ? place.people : 0;
         place.events = Number.isFinite(place.events) ? place.events : 0;
         place.files = Number.isFinite(place.files) ? place.files : 0;
         place.photos = Number.isFinite(place.photos) ? place.photos : 0;
         place.notes = Number.isFinite(place.notes) ? place.notes : 0;
-        place.coords = place.coords || 'Unknown';
-        place.updated = place.updated || 'Just now';
+        place.updatedAt = Number.isFinite(Date.parse(place.updatedAt || '')) ? place.updatedAt : new Date().toISOString();
+        delete place.coords;
+        delete place.x;
+        delete place.y;
+        delete place.status;
+        delete place.statusLabel;
+        delete place.updated;
       });
-      if (state.selectedPlaceId) state.selectedPlaceId = legacyIdMap[state.selectedPlaceId] || state.selectedPlaceId;
-      delete sampleData.placeDirectorySeed;
     }
 
     function normalizeCentralRuntimeData() {
       sampleData.projects = Array.isArray(sampleData.projects) ? sampleData.projects : [];
       sampleData.people = Array.isArray(sampleData.people) ? sampleData.people : [];
       sampleData.places = Array.isArray(sampleData.places) ? sampleData.places : [];
+      sampleData.placeCollections = Array.isArray(sampleData.placeCollections) ? sampleData.placeCollections : [];
+      sampleData.placeRoutes = Array.isArray(sampleData.placeRoutes) ? sampleData.placeRoutes : [];
+      sampleData.placeIssues = Array.isArray(sampleData.placeIssues) ? sampleData.placeIssues : [];
       sampleData.sources = Array.isArray(sampleData.sources) ? sampleData.sources : [];
       sampleData.archiveFiles = Array.isArray(sampleData.archiveFiles) ? sampleData.archiveFiles : [];
       sampleData.notes = Array.isArray(sampleData.notes) ? sampleData.notes : [];
