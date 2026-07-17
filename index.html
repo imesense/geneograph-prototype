@@ -13004,6 +13004,33 @@
       flex-wrap: nowrap;
     }
 
+    .places-route-toolbar-button {
+      height: 44px;
+      min-height: 44px;
+      max-width: 220px;
+
+      white-space: nowrap;
+    }
+
+    .places-route-toolbar-button span {
+      min-width: 0;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .places-route-toolbar-button.active {
+      border-color:
+        rgba(98, 217, 154, .35);
+
+      background:
+        var(--surface-selected);
+
+      color:
+        var(--text-primary);
+    }
+
     .places-search {
       flex: 1 1 280px;
       max-width: 460px;
@@ -13106,7 +13133,6 @@
     .places-leaflet-map { position: absolute; inset: 0; z-index: 0; }
     .places-leaflet-map .leaflet-control-attribution { background: rgba(12, 17, 15, .84); color: var(--text-tertiary); }
     .places-leaflet-map .leaflet-control-attribution a { color: var(--text-secondary); }
-    .places-map-actions { position: absolute; z-index: 520; top: 14px; left: 64px; display: flex; flex-wrap: wrap; gap: 8px; }
     .places-map-status { position: absolute; z-index: 530; left: 50%; top: 72px; transform: translateX(-50%); max-width: min(460px, calc(100% - 32px)); padding: 12px 14px; display: grid; gap: 4px; background: var(--surface-elevated); border: 1px solid var(--border-default); border-radius: var(--radius-sm); box-shadow: var(--shadow-soft); }
     .places-map-status[hidden] { display: none; }
     .places-coordinate-bar { position: absolute; z-index: 540; left: 14px; right: 14px; bottom: 14px; padding: 10px; display: flex; align-items: center; gap: 8px; background: rgba(18, 24, 22, .97); border: 1px solid var(--border-strong); border-radius: var(--radius-md); box-shadow: var(--shadow-soft); }
@@ -13599,6 +13625,10 @@
     .place-map-location { padding: 12px; display: flex; align-items: center; gap: 8px; background: var(--surface-card); border: 1px solid var(--border-default); border-radius: var(--radius-sm); }
     .place-map-location > div { min-width: 0; margin-right: auto; display: grid; gap: 3px; }
     .place-map-location span { color: var(--text-tertiary); font-size: 12px; }
+    .places-map-panel.is-picking
+      .places-map-navigation-wrap {
+      bottom: 88px;
+    }
     .places-editor-disclosure { border: 1px solid var(--border-default); padding: 12px; border-radius: var(--radius-sm); }
     .places-editor-disclosure summary { cursor: pointer; font-weight: 600; }
     .places-editor-disclosure label { display: grid; gap: 6px; margin-top: 10px; color: var(--text-secondary); font-size: 12px; }
@@ -13615,11 +13645,6 @@
     .places-route-choices .notes-modal-list { max-height: 290px; overflow: auto; }
     .places-route-choices .place-coordinate-error { display: block; min-height: 18px; margin-top: 6px; }
 
-    @media (max-width: 1180px) {
-      .places-content.map { grid-template-columns: minmax(0, 1fr) 320px; }
-      .places-toolbar { flex-wrap: wrap; }
-      .places-search { max-width: none; }
-    }
 
     @media (max-width: 900px) {
       .places-content.map {
@@ -13699,8 +13724,6 @@
           1
           170px;
       }
-      .places-map-actions { right: 14px; left: 62px; }
-      .places-map-actions .button { padding-inline: 10px; }
       .places-coordinate-bar { align-items: stretch; flex-wrap: wrap; }
       .places-coordinate-bar > div { flex-basis: 100%; }
       .place-coordinate-fields { grid-template-columns: 1fr; }
@@ -13712,7 +13735,7 @@
 
       .places-map-panel.is-picking
         .places-map-navigation-wrap {
-        bottom: 88px;
+        bottom: 156px;
       }
     }
 
@@ -15189,9 +15212,6 @@
       draftMarker: null,
       pendingLatLng: null,
       editingPlaceId: null,
-      crosshairVisible: false,
-      mapClickHandler: null,
-      contextMenu: null,
       tilesAvailable: false
     };
 
@@ -44938,11 +44958,19 @@
     }
 
     function setPlacesMapPickingState(active) {
-      const host = placesMapRuntime.host;
-      host?.classList.toggle('is-picking', active);
-      const crosshair = document.querySelector('[data-places-map-crosshair]');
-      if (crosshair) crosshair.hidden = !active;
-      placesMapRuntime.crosshairVisible = active;
+      const panel =
+        placesMapRuntime
+          .host
+          ?.closest(
+            '.places-map-panel'
+          );
+
+      panel
+        ?.classList
+        .toggle(
+          'is-picking',
+          active
+        );
     }
 
     function updatePlacesMapInstruction(message = '') {
@@ -44953,20 +44981,35 @@
     }
 
     function updatePlacesMapToolControls() {
-      const available = Boolean(placesMapRuntime.map && placesMapRuntime.tilesAvailable);
-      const selected = getPlace(state.selectedPlaceId);
-      const pendingValid = placesPendingCoordinatesValid();
-      const addButton = document.querySelector('#placesMapAddHere');
-      const moveButton = document.querySelector('#placesMapEditPosition');
-      if (addButton) addButton.disabled = !available;
-      if (moveButton) moveButton.disabled = !available || !selected;
-      const copy = document.querySelector('#placesCopyCoordinates');
-      if (copy) copy.disabled = !pendingValid;
-      const confirm = document.querySelector('#placesConfirmMapEdit');
-      if (confirm) {
-        confirm.disabled = !pendingValid;
-        confirm.textContent = placesMapRuntime.mode === 'move' ? 'Save position' : 'Continue';
+      const pendingValid =
+        placesPendingCoordinatesValid();
+
+      const copyButton =
+        main.querySelector(
+          '#placesCopyCoordinates'
+        );
+
+      if (copyButton) {
+        copyButton.disabled =
+          !pendingValid;
       }
+
+      const confirmButton =
+        main.querySelector(
+          '#placesConfirmMapEdit'
+        );
+
+      if (confirmButton) {
+        confirmButton.disabled =
+          !pendingValid;
+
+        confirmButton.textContent =
+          placesMapRuntime.mode
+            === 'move'
+              ? 'Save position'
+              : 'Continue';
+      }
+
       updatePlacesMapModeUi();
     }
 
@@ -44988,31 +45031,76 @@
     }
 
     function enterPlacesMapAddMode() {
-      if (!placesMapRuntime.tilesAvailable) return;
+      if (!placesMapRuntime.map) {
+        showToast(
+          'The map is not ready yet.'
+        );
+
+        return;
+      }
+
       cancelPlacesMapEditing();
-      placesMapRuntime.mode = 'add';
-      state.placesMapInfoExpanded = false;
+
+      placesMapRuntime.mode =
+        'add';
+
+      state.placesMapInfoExpanded =
+        false;
+
       setPlacesMapPickingState(true);
       showPlacesCoordinateBar(true);
-      updatePlacesMapInstruction('Click the map to place a new location, or use the map centre.');
+
+      updatePlacesMapInstruction(
+        'Click the map to place a new location, or use the map centre.'
+      );
+
       updatePlacesMapToolControls();
     }
 
-    function enterPlacesMapMoveMode(placeId = state.selectedPlaceId) {
-      const place = getPlace(placeId);
-      if (!placesMapRuntime.tilesAvailable || !place) return;
+    function enterPlacesMapMoveMode(
+      placeId =
+        state.selectedPlaceId
+    ) {
+      const place =
+        getPlace(placeId);
+
+      if (
+        !placesMapRuntime.map
+        || !place
+      ) {
+        showToast(
+          'The map is not ready yet.'
+        );
+
+        return;
+      }
+
       cancelPlacesMapEditing();
-      placesMapRuntime.mode = 'move';
-      state.placesMapInfoExpanded = false;
-      placesMapRuntime.editingPlaceId = place.id;
+
+      placesMapRuntime.mode =
+        'move';
+
+      state.placesMapInfoExpanded =
+        false;
+
+      placesMapRuntime.editingPlaceId =
+        place.id;
+
       setPlacesMapPickingState(true);
       showPlacesCoordinateBar(true);
-      updatePlacesMapInstruction(placeHasCoordinates(place)
-        ? `Drag the draft marker or click the map to reposition ${place.name}.`
-        : `Click the map to position ${place.name}, or use the map centre.`);
+
+      updatePlacesMapInstruction(
+        placeHasCoordinates(place)
+          ? `Drag the draft marker or click the map to reposition ${place.name}.`
+          : `Click the map to position ${place.name}, or use the map centre.`
+      );
+
       if (placeHasCoordinates(place)) {
-        updatePlacesDraftCoordinates(place.coordinates);
+        updatePlacesDraftCoordinates(
+          place.coordinates
+        );
       }
+
       updatePlacesMapToolControls();
     }
 
@@ -45034,7 +45122,9 @@
     }
 
     function openPlacesMapContextMenu(event) {
-      if (!placesMapRuntime.tilesAvailable) return;
+      if (!placesMapRuntime.map) {
+        return;
+      }
       closeMenu();
       const point = event.originalEvent;
       const selected = getPlace(state.selectedPlaceId);
@@ -45098,7 +45188,6 @@
       state.placesMapView.center = { lat: center.lat, lng: center.lng };
       state.placesMapView.zoom = map.getZoom();
       state.placesMapView.userMoved = true;
-      updatePlacesZoomLabel();
     }
 
     function restorePlacesMapView(places) {
@@ -45111,7 +45200,7 @@
       } else {
         fitPlacesMap(places, { markUserMoved: false });
       }
-      requestAnimationFrame(() => { placesMapRuntime.suppressViewCapture = false; updatePlacesZoomLabel(); });
+      requestAnimationFrame(() => { placesMapRuntime.suppressViewCapture = false});
     }
 
     function destroyPlacesMap() {
@@ -45168,8 +45257,10 @@
         setPlacesMapStatus('Map configuration required', 'Add a protected MapTiler browser key to window.GENEOGRAPH_CONFIG.maptilerKey.', { retry: true });
       }
       placesMapRuntime.map.on('moveend zoomend', capturePlacesMapView);
-      placesMapRuntime.mapClickHandler = handlePlacesMapClick;
-      placesMapRuntime.map.on('click', placesMapRuntime.mapClickHandler);
+      placesMapRuntime.map.on(
+        'click',
+        handlePlacesMapClick
+      );
       placesMapRuntime.map.on('contextmenu', openPlacesMapContextMenu);
       placesMapRuntime.resizeObserver = new ResizeObserver(() => {
         placesMapRuntime.map?.invalidateSize({ pan: false, debounceMoveend: true });
@@ -45232,16 +45323,82 @@
       };
     }
 
-    function activePlacesRoute(places) {
-      const visibleIds = new Set((places || []).map(place => place.id));
-      const routes = (sampleData.placeRoutes || []).filter(route => route.projectId === currentProjectId() && !route.deleted && route.placeIds.some(id => visibleIds.has(id)));
-      return routes.find(route => route.id === state.placesActiveRouteId) || routes.find(route => route.status === 'active') || routes[0] || null;
+    function activePlacesRoute(places = []) {
+      const visiblePlaces =
+        Array.isArray(places)
+          ? places
+          : [];
+
+      const visibleIds = new Set(
+        visiblePlaces
+          .map(place => place?.id)
+          .filter(Boolean)
+      );
+
+      const routes =
+        placesProjectRoutes()
+          .filter(route => {
+            const routePlaceIds =
+              Array.isArray(route?.placeIds)
+                ? route.placeIds
+                : [];
+
+            return routePlaceIds.some(placeId =>
+              visibleIds.has(placeId)
+            );
+          });
+
+      return (
+        routes.find(route =>
+          route.id === state.placesActiveRouteId
+        )
+        || routes.find(route =>
+          route.status === 'active'
+        )
+        || routes[0]
+        || null
+      );
     }
 
-    function placesRouteLatLngs(places) {
-      const route = activePlacesRoute(places);
-      const visibleIds = new Set((places || []).map(place => place.id));
-      return route ? route.placeIds.filter(id => visibleIds.has(id)).map(getPlace).filter(placeHasCoordinates).map(placeLatLng) : [];
+    function placesRouteLatLngs(places = []) {
+      const visiblePlaces =
+        Array.isArray(places)
+          ? places
+          : [];
+
+      const route =
+        activePlacesRoute(visiblePlaces);
+
+      if (!route) {
+        return [];
+      }
+
+      const visibleIds = new Set(
+        visiblePlaces
+          .map(place => place?.id)
+          .filter(Boolean)
+      );
+
+      const routePlaceIds =
+        Array.isArray(route.placeIds)
+          ? route.placeIds
+          : [];
+
+      return routePlaceIds
+        .filter(placeId =>
+          visibleIds.has(placeId)
+        )
+        .map(placeId =>
+          getPlace(placeId)
+        )
+        .filter(Boolean)
+        .filter(place =>
+          placeHasCoordinates(place)
+        )
+        .map(place =>
+          placeLatLng(place)
+        )
+        .filter(Boolean);
     }
 
     function renderPlacesRouteLayer(places) {
@@ -45262,14 +45419,63 @@
       }).addTo(map);
     }
 
-    function updatePlacesRouteControl(places = placesMapRuntime.currentPlaces || []) {
-      const button = document.getElementById('placesRouteMenu');
-      if (!button) return;
-      const route = activePlacesRoute(places);
-      const available = placesRouteLatLngs(places).length >= 2;
-      button.setAttribute('aria-pressed', String(state.placesShowRoute && available));
-      const label = button.querySelector('[data-route-label]');
-      if (label) label.textContent = `${route?.name || 'Route'} · ${state.placesShowRoute && available ? 'Shown' : 'Hidden'}`;
+    function updatePlacesRouteControl(
+      places =
+        placesMapRuntime.currentPlaces
+        || []
+    ) {
+      const button =
+        document.getElementById(
+          'placesRouteMenu'
+        );
+
+      if (!button) {
+        return;
+      }
+
+      const visiblePlaces =
+        Array.isArray(places)
+          ? places
+          : [];
+
+      const route =
+        activePlacesRoute(
+          visiblePlaces
+        );
+
+      const shown =
+        Boolean(
+          route
+          && state.placesShowRoute
+          && placesRouteLatLngs(
+            visiblePlaces
+          ).length >= 2
+        );
+
+      button.classList.toggle(
+        'active',
+        shown
+      );
+
+      button.setAttribute(
+        'aria-label',
+        route
+          ? `${route.name || 'Route'} settings; route ${
+              shown
+                ? 'shown'
+                : 'hidden'
+            }`
+          : 'Route settings'
+      );
+
+      button.title =
+        route
+          ? `${route.name || 'Route'} · ${
+              shown
+                ? 'Shown'
+                : 'Hidden'
+            }`
+          : 'Route settings';
     }
 
     function fitPlacesMap(places = placesMapRuntime.currentPlaces || [], { markUserMoved = true } = {}) {
@@ -45293,12 +45499,7 @@
       }
       state.placesMapView.lastFitKey = placesMapDataKey(points);
       state.placesMapView.userMoved = markUserMoved;
-      requestAnimationFrame(() => { placesMapRuntime.suppressViewCapture = false; updatePlacesZoomLabel(); });
-    }
-
-    function updatePlacesZoomLabel() {
-      const label = document.querySelector('[data-places-zoom-label]');
-      if (label && placesMapRuntime.map) label.textContent = `Zoom ${placesMapRuntime.map.getZoom()}`;
+      requestAnimationFrame(() => { placesMapRuntime.suppressViewCapture = false});
     }
 
     function bindPlacesMapEditingControls() {
@@ -45338,49 +45539,117 @@
               );
           }
         );
-      main.querySelector('#placesMapAddHere')?.addEventListener('click', enterPlacesMapAddMode);
-      main.querySelector('#placesMapEditPosition')?.addEventListener('click', () => enterPlacesMapMoveMode(state.selectedPlaceId));
-      main.querySelector('#placesUseMapCentre')?.addEventListener('click', () => {
-        const center = placesMapRuntime.map?.getCenter();
-        if (center) updatePlacesDraftCoordinates(center);
-      });
-      main.querySelector('#placesCopyCoordinates')?.addEventListener('click', async () => {
-        const text = formatMapCoordinatePair(placesMapRuntime.pendingLatLng);
-        if (!placesMapRuntime.pendingLatLng) return;
-        try {
-          await navigator.clipboard.writeText(text);
-          showToast('Coordinates copied.');
-        } catch {
-          showToast(text);
-        }
-      });
-      main.querySelector('#placesCancelMapEdit')?.addEventListener('click', cancelPlacesMapEditing);
-      main.querySelector('#placesConfirmMapEdit')?.addEventListener('click', () => {
-        if (!placesPendingCoordinatesValid()) return;
-        if (placesMapRuntime.mode === 'move') {
-          savePlacesDraftPosition();
-          return;
-        }
-        const initialCoordinates = {
-          lat: Number(placesMapRuntime.pendingLatLng.lat),
-          lng: Number(placesMapRuntime.pendingLatLng.lng)
-        };
-        cancelPlacesMapEditing();
-        openPlaceModal(null, {
-          initialCoordinates,
-          initialCoordinateSource: 'manual',
-          initialCoordinateStatus: 'mapped'
-        });
-      });
-      main.querySelector('#placesRouteMenu')?.addEventListener('click', event => openPlacesRouteMenu(event.currentTarget));
-      updatePlacesMapToolControls();
-    }
 
-    function bindPlacesSelectionActions(root = document) {
-      root.querySelectorAll('[data-places-open-detail]').forEach(button => button.addEventListener('click', () => { state.placesDetailOpen = true; renderPlaceDetail(); }));
-      root.querySelectorAll('[data-places-edit-selected]').forEach(button => button.addEventListener('click', () => openPlaceModal(state.selectedPlaceId)));
-      root.querySelectorAll('[data-places-edit-position]').forEach(button => button.addEventListener('click', () => enterPlacesMapMoveMode(state.selectedPlaceId)));
-      bindToasts(root);
+      main
+        .querySelector(
+          '#placesUseMapCentre'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const center =
+              placesMapRuntime
+                .map
+                ?.getCenter();
+
+            if (center) {
+              updatePlacesDraftCoordinates(
+                center
+              );
+            }
+          }
+        );
+
+      main
+        .querySelector(
+          '#placesCopyCoordinates'
+        )
+        ?.addEventListener(
+          'click',
+          async () => {
+            const pending =
+              placesMapRuntime
+                .pendingLatLng;
+
+            if (!pending) {
+              return;
+            }
+
+            const text =
+              formatMapCoordinatePair(
+                pending
+              );
+
+            try {
+              await navigator
+                .clipboard
+                .writeText(text);
+
+              showToast(
+                'Coordinates copied.'
+              );
+            } catch {
+              showToast(text);
+            }
+          }
+        );
+
+      main
+        .querySelector(
+          '#placesCancelMapEdit'
+        )
+        ?.addEventListener(
+          'click',
+          cancelPlacesMapEditing
+        );
+
+      main
+        .querySelector(
+          '#placesConfirmMapEdit'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            if (
+              !placesPendingCoordinatesValid()
+            ) {
+              return;
+            }
+
+            if (
+              placesMapRuntime.mode
+                === 'move'
+            ) {
+              savePlacesDraftPosition();
+              return;
+            }
+
+            const initialCoordinates = {
+              lat: Number(
+                placesMapRuntime
+                  .pendingLatLng
+                  .lat
+              ),
+
+              lng: Number(
+                placesMapRuntime
+                  .pendingLatLng
+                  .lng
+              )
+            };
+
+            cancelPlacesMapEditing();
+
+            openPlaceModal(
+              null,
+              {
+                initialCoordinates
+              }
+            );
+          }
+        );
+
+      updatePlacesMapToolControls();
     }
 
     function projectPlaces(projectId = currentProjectId(), { includeDeleted = false } = {}) {
@@ -45679,12 +45948,18 @@
       return 'Map and organize the places connected to your family history.';
     }
 
+    
+
     function renderPlacesMain() {
       if (state.placesDetailOpen) { renderPlaceDetail(); return; }
       const list = filteredPlaces();
       const selected = selectedPlaceFromList(list) || getPlace(state.selectedPlaceId);
       if (selected && !state.selectedPlaceId) state.selectedPlaceId = selected.id;
       const isPlacesListView = state.placesViewMode === 'list';
+      const routeIsShown =
+        !isPlacesListView
+        && state.placesShowRoute
+        && placesRouteLatLngs(list).length >= 2;
       const showInspector =
         state.placesViewMode === 'map';
       const shellClasses = [
@@ -45745,7 +46020,7 @@
                     <input
                       id="placesSearch"
                       type="search"
-                      placeholder="Search places and alternative names"
+                      placeholder="Search places..."
                       value="${escapeHtml(
                         state.placesSearch || ''
                       )}">
@@ -45810,6 +46085,30 @@
                             ${icon.chevron}
                           </span>
                         </label>
+                      `
+                      : ''
+                  }
+                  ${
+                    !isPlacesListView
+                      ? `
+                        <button
+                          class="
+                            button
+                            secondary
+                            places-route-toolbar-button
+                            ${routeIsShown ? 'active' : ''}
+                          "
+                          type="button"
+                          id="placesRouteMenu"
+                          aria-label="Route settings"
+                          aria-haspopup="menu"
+                          aria-expanded="false"
+                          title="Route settings">
+
+                          ${icon.link}
+
+                          <span>Routes</span>
+                        </button>
                       `
                       : ''
                   }
@@ -46029,10 +46328,6 @@
             </div>
           </div>
 
-          <div class="places-map-actions">
-            <!-- Keep the current map action buttons. -->
-          </div>
-
           <div
             class="places-map-status"
             data-places-map-status
@@ -46043,7 +46338,47 @@
             class="places-coordinate-bar"
             data-places-coordinate-bar
             hidden>
-            <!-- Keep the current coordinate controls. -->
+
+            <div class="places-coordinate-summary">
+              <strong data-places-coordinate-output>
+                No point selected
+              </strong>
+
+              <span
+                data-places-map-instruction
+                hidden>
+              </span>
+            </div>
+
+            <button
+              class="button secondary"
+              type="button"
+              id="placesUseMapCentre">
+              Use map centre
+            </button>
+
+            <button
+              class="button secondary"
+              type="button"
+              id="placesCopyCoordinates"
+              disabled>
+              Copy
+            </button>
+
+            <button
+              class="button secondary"
+              type="button"
+              id="placesCancelMapEdit">
+              Cancel
+            </button>
+
+            <button
+              class="button primary"
+              type="button"
+              id="placesConfirmMapEdit"
+              disabled>
+              Continue
+            </button>
           </div>
         </section>
       `;
@@ -46392,6 +46727,18 @@
         row.addEventListener('dblclick', event => { if (event.target.closest('button,input,select,a')) return; showPlaceOnMap(row.dataset.placeId); });
       });
       main.querySelectorAll('.places-list-panel [data-place-menu]').forEach(button => button.addEventListener('click', event => { event.stopPropagation(); openPlaceActionsMenu(button.dataset.placeMenu, button); }));
+      main
+        .querySelector(
+          '#placesRouteMenu'
+        )
+        ?.addEventListener(
+          'click',
+          event => {
+            openPlacesRouteMenu(
+              event.currentTarget
+            );
+          }
+        );
       if (state.placesViewMode === 'map') {
         bindPlacesMapEditingControls();
         bindPlacesInspectorControls(main.querySelector('[data-places-map-inspector]') || main);
@@ -46538,29 +46885,157 @@
 
     function openPlacesRouteMenu(anchor) {
       closeMenu();
-      const routes = placesProjectRoutes();
-      const rect = anchor.getBoundingClientRect();
-      const menu = document.createElement('div');
-      menu.className = 'menu-popover';
-      menu.id = 'projectMenu';
-      menu.style.top = `${rect.bottom + 6}px`;
-      menu.style.left = `${Math.max(12, rect.right - 240)}px`;
-      menu.innerHTML = `<button type="button" data-route-toggle>${state.placesShowRoute ? 'Hide route' : 'Show route'}</button><button type="button" data-route-new>${icon.plus} New route</button>${routes.map(route => `<button type="button" data-route-edit="${escapeHtml(route.id)}">${icon.edit} Edit ${escapeHtml(route.name)}</button>`).join('')}`;
-      document.body.appendChild(menu);
-      menu.addEventListener('click', event => {
-        if (event.target.closest('[data-route-toggle]')) {
-          state.placesShowRoute = !state.placesShowRoute;
-          closeMenu();
-          renderPlacesRouteLayer(filteredPlaces());
-          updatePlacesRouteControl(filteredPlaces());
-          return;
+
+      const routes =
+        placesProjectRoutes();
+
+      const visiblePlaces =
+        filteredPlaces();
+
+      const activeRoute =
+        activePlacesRoute(
+          visiblePlaces
+        );
+
+      const canToggleRoute =
+        Boolean(
+          activeRoute
+          && placesRouteLatLngs(
+            visiblePlaces
+          ).length >= 2
+        );
+
+      const rect =
+        anchor.getBoundingClientRect();
+
+      const menu =
+        document.createElement('div');
+
+      menu.className =
+        'menu-popover';
+
+      menu.id =
+        'projectMenu';
+
+      menu.style.top =
+        `${rect.bottom + 6}px`;
+
+      menu.style.left =
+        `${
+          Math.max(
+            12,
+            rect.right - 240
+          )
+        }px`;
+
+      menu.innerHTML = `
+        <button
+          type="button"
+          data-route-toggle
+          ${canToggleRoute ? '' : 'disabled'}>
+
+          ${
+            state.placesShowRoute
+              ? 'Hide route'
+              : 'Show route'
+          }
+        </button>
+
+        <button
+          type="button"
+          data-route-new>
+          ${icon.plus}
+          New route
+        </button>
+
+        ${
+          routes
+            .map(route => `
+              <button
+                type="button"
+                data-route-edit="${
+                  escapeHtml(route.id)
+                }">
+
+                ${icon.edit}
+
+                ${
+                  route.id
+                    === activeRoute?.id
+                      ? 'Edit current route: '
+                      : 'Edit '
+                }
+
+                ${escapeHtml(
+                  route.name
+                  || 'Unnamed route'
+                )}
+              </button>
+            `)
+            .join('')
         }
-        const editId = event.target.closest('[data-route-edit]')?.dataset.routeEdit;
-        const addNew = event.target.closest('[data-route-new]');
-        closeMenu();
-        if (editId) openPlaceRouteModal(editId);
-        else if (addNew) openPlaceRouteModal();
-      });
+      `;
+
+      document.body.appendChild(menu);
+
+      anchor.setAttribute(
+        'aria-expanded',
+        'true'
+      );
+
+      menu.addEventListener(
+        'click',
+        event => {
+          const toggleButton =
+            event.target.closest(
+              '[data-route-toggle]'
+            );
+
+          if (
+            toggleButton
+            && canToggleRoute
+          ) {
+            state.placesShowRoute =
+              !state.placesShowRoute;
+
+            closeMenu();
+
+            renderPlacesRouteLayer(
+              visiblePlaces
+            );
+
+            updatePlacesRouteControl(
+              visiblePlaces
+            );
+
+            return;
+          }
+
+          const editId =
+            event.target
+              .closest(
+                '[data-route-edit]'
+              )
+              ?.dataset
+              .routeEdit;
+
+          const addNew =
+            event.target.closest(
+              '[data-route-new]'
+            );
+
+          closeMenu();
+
+          if (editId) {
+            openPlaceRouteModal(
+              editId
+            );
+          } else if (addNew) {
+            openPlaceRouteModal();
+          }
+        }
+      );
+
       bindMenuLifecycle(anchor);
     }
 
@@ -46611,7 +47086,40 @@
       bindPlaceGeocoder();
       modalBackdrop.querySelector('[data-place-clear-coordinates]')?.addEventListener('click', event => { modalBackdrop.querySelector('#placeLatitudeInput').value = ''; modalBackdrop.querySelector('#placeLongitudeInput').value = ''; modalBackdrop.querySelector('[data-place-map-summary]').textContent = 'Not on map'; event.currentTarget.hidden = true; });
       modalBackdrop.querySelector('[data-place-copy-coordinates]')?.addEventListener('click', () => { const lat = modalBackdrop.querySelector('#placeLatitudeInput').value; const lng = modalBackdrop.querySelector('#placeLongitudeInput').value; if (lat && lng) navigator.clipboard?.writeText(`${lat}, ${lng}`); });
-      modalBackdrop.querySelector('[data-place-choose-map]')?.addEventListener('click', () => { closeModal(); state.placesViewMode = 'map'; renderPlacesMain(); requestAnimationFrame(() => existing ? enterPlacesMapMoveMode(existing.id) : enterPlacesMapAddMode()); });
+      modalBackdrop
+        .querySelector(
+          '[data-place-choose-map]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            closeModal();
+
+            state.placesViewMode =
+              'map';
+
+            state.placesDetailOpen =
+              false;
+
+            renderPlacesMain();
+
+            /*
+            * First frame mounts Leaflet.
+            * Second frame starts coordinate editing.
+            */
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                if (existing) {
+                  enterPlacesMapMoveMode(
+                    existing.id
+                  );
+                } else {
+                  enterPlacesMapAddMode();
+                }
+              });
+            });
+          }
+        );
       modalBackdrop.querySelector('[data-delete-place]')?.addEventListener('click', () => openDeletePlaceModal(existing.id));
       modalBackdrop.querySelector('#placeForm')?.addEventListener('submit', event => {
         event.preventDefault();
