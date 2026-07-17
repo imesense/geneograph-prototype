@@ -47,6 +47,8 @@
       --right-w: 320px;
       --control-height: 42px;
       --control-icon-button-size: var(--control-height);
+      --inspector-width: 450px;
+      --inspector-collapsed-width: 54px;
       --space-1: 4px;
       --space-2: 8px;
       --space-3: 12px;
@@ -1865,7 +1867,7 @@
     .place-address-disclosure summary {
       width: fit-content;
       cursor: pointer;
-      color: var(--green);
+      color: var(--brand-green-500);
       font-weight: 600;
       list-style: none;
     }
@@ -8967,18 +8969,22 @@
     .albums-shell {
       height: 100%;
       min-width: 0;
+
       display: grid;
       grid-template-columns:
         minmax(0, 1fr)
-        450px;
-      background: var(--surface-main);
+        var(--inspector-width);
+
+      background:
+        var(--surface-main);
+
       overflow: hidden;
     }
 
     .albums-shell.detail-collapsed {
       grid-template-columns:
         minmax(0, 1fr)
-        54px;
+        var(--inspector-collapsed-width);
     }
 
     .albums-shell.no-detail {
@@ -12589,66 +12595,498 @@
     @media (max-width: 1320px) {.notes-shell { grid-template-columns: minmax(500px, 1fr) 390px; } .notes-row { grid-template-columns: minmax(220px, 1fr) 110px 120px 110px 38px; }}
     @media (max-width: 980px) {.notes-shell, .notes-shell.right-collapsed { grid-template-columns: 1fr; } .notes-right-pane, .notes-right-rail { display: none; } .notes-browser-header { padding: var(--space-4); } .notes-browser-scroll { padding: var(--space-4); } .notes-template-grid { grid-template-columns: 1fr; }}
 
+    .places-nav .badge {
+      margin-left: auto;
+    }
 
-    /* Places module */
-    .places-nav .badge { margin-left: auto; }
-    .places-section-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .places-section-add,
-    .places-row-more { width: 32px; height: 32px; min-width: 32px; border: 0; padding: 0; display: inline-grid; place-items: center; color: var(--text-tertiary); background: transparent; border-radius: var(--radius-sm); line-height: 0; }
-    .places-section-add:hover,
-    .places-row-more:hover { color: var(--text-primary); background: var(--surface-hover); }
-    .places-section-add:focus-visible,
-    .places-row-more:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
-    .places-section-add svg,
-    .places-row-more svg { width: 17px; height: 17px; display: block; }
-    .places-country-tree,
-    .places-collection-list { display: grid; gap: 2px; margin-bottom: var(--space-3); }
-    .places-country-group { min-width: 0; }
-    .places-country-row { width: 100%; min-width: 0; min-height: 38px; border: 0; padding: 7px 8px; display: grid; grid-template-columns: minmax(0, 1fr) 18px; align-items: center; gap: 8px; color: var(--text-secondary); background: transparent; border-radius: var(--radius-sm); text-align: left; }
-    .places-collection-link { width: 100%; min-width: 0; min-height: 38px; border: 0; padding: 7px 8px; display: grid; grid-template-columns: 18px minmax(0, 1fr); align-items: center; gap: 8px; color: var(--text-secondary); background: transparent; border-radius: var(--radius-sm); text-align: left; }
-    .places-country-row:hover,
+    /*
+    * Category contents sit four pixels below their labels.
+    * Section-to-section spacing is handled above.
+    */
+
+    .places-sidebar {
+      height: 100%;
+      min-height: 0;
+
+      padding-bottom:
+        var(--space-4);
+
+      display: flex;
+      flex-direction: column;
+
+      /*
+      * Match Albums section spacing.
+      */
+      gap:
+        var(--space-5);
+    }
+
+    .places-sidebar-section {
+      min-width: 0;
+    }
+
+    /*
+    * The shared .side-section-title already supplies the same
+    * title-to-content margin used by Albums.
+    */
+    .places-sidebar
+      .side-section-title {
+      margin:
+        var(--space-1)
+        0
+        var(--space-2);
+    }
+
+    .places-sidebar
+      .places-country-tree,
+    .places-sidebar
+      .places-collection-list {
+      margin: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+
+    .places-country-group {
+      min-width: 0;
+    }
+
+    /* Country disclosure row */
+    .places-country-row {
+      width: 100%;
+      min-width: 0;
+      min-height: 38px;
+      padding: 7px 8px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      display: grid;
+      grid-template-columns:
+        minmax(0, 1fr)
+        18px;
+      align-items: center;
+      gap: var(--space-2);
+      background: transparent;
+      color: var(--text-secondary);
+      text-align: left;
+      cursor: pointer;
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease);
+    }
+
+    .places-country-row:hover {
+      background: rgba(255, 255, 255, .035);
+      color: var(--text-primary);
+    }
+
+    .places-country-row:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+      outline-offset: 2px;
+    }
+
+    .places-country-row svg {
+      width: 16px;
+      height: 16px;
+
+      transition:
+        transform var(--ease);
+    }
+
+    .places-country-row[aria-expanded="true"] svg {
+      transform: rotate(90deg);
+    }
+
+    .places-country-row span {
+      min-width: 0;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .places-country-children {
+      display: grid;
+      gap: 2px;
+
+      padding-left: 18px;
+    }
+
+    .places-country-children[hidden] {
+      display: none;
+    }
+
+    /*
+    * Places and collections now follow the Albums sidebar-row pattern:
+    * one wrapper owns the hover and active background, while the main
+    * action and More action remain separate buttons inside that wrapper.
+    */
+    .places-country-place,
+    .places-collection-row {
+      width: 100%;
+      min-width: 0;
+      min-height: 44px;
+
+      display: flex;
+      align-items: center;
+
+      border:
+        1px solid
+        transparent;
+
+      border-radius:
+        var(--radius-sm);
+
+      overflow: hidden;
+
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease);
+    }
+
     .places-country-place:hover,
     .places-country-place:focus-within,
     .places-collection-row:hover,
-    .places-collection-row:focus-within,
-    .places-collection-row.active { background: var(--surface-hover); }
-    .places-country-row svg,
-    .places-collection-link svg { width: 16px; height: 16px; }
-    .places-country-row[aria-expanded="true"] svg { transform: rotate(90deg); }
-    .places-country-row span,
-    .places-collection-link span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .places-collection-link small { color: var(--text-tertiary); }
-    .places-country-children { display: grid; gap: 2px; padding-left: 18px; }
-    .places-country-children[hidden] { display: none; }
-    .places-country-place,
-    .places-collection-row { min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) 32px; align-items: center; border-radius: var(--radius-sm); }
-    .places-country-place.active { background: var(--surface-selected); }
-    .places-country-place > button:first-child { min-width: 0; min-height: 34px; border: 0; padding: 6px 8px; display: grid; grid-template-columns: 16px minmax(0, 1fr); align-items: center; gap: 8px; color: var(--text-secondary); background: transparent; text-align: left; }
-    .places-country-place > button:first-child svg { width: 15px; height: 15px; color: var(--text-tertiary); }
-    .places-country-place span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .places-sidebar-empty { margin: 4px 8px 12px; color: var(--text-tertiary); font-size: 12px; }
-    .places-country-place .places-row-more,
-    .places-collection-row .places-row-more { opacity: 0; transition: opacity 120ms ease; }
-    .places-country-place:hover .places-row-more,
-    .places-country-place:focus-within .places-row-more,
-    .places-country-place.active .places-row-more,
-    .places-collection-row:hover .places-row-more,
-    .places-collection-row:focus-within .places-row-more,
-    .places-collection-row.active .places-row-more { opacity: 1; }
+    .places-collection-row:focus-within {
+      background:
+        rgba(255, 255, 255, .035);
+    }
+
+    .places-country-place.active,
+    .places-collection-row.active {
+      background:
+        var(--surface-selected);
+
+      border-color:
+        rgba(98, 217, 154, .12);
+    }
+
+    /* Main place and collection actions */
+    .places-country-place
+      > button:first-child,
+    .places-collection-link {
+      min-width: 0;
+      min-height: 42px;
+      flex: 1 1 auto;
+      padding:
+        0
+        var(--space-3);
+      border: 0;
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      background: transparent;
+      color: var(--text-secondary);
+      text-align: left;
+      font-weight: 400;
+      letter-spacing: .03em;
+      cursor: pointer;
+    }
+
+    .places-country-place
+      > button:first-child:hover,
+    .places-collection-link:hover {
+      color: var(--text-primary);
+    }
+
+    .places-country-place.active
+      > button:first-child,
+    .places-collection-row.active
+      .places-collection-link {
+      color: var(--text-primary);
+    }
+
+    .places-country-place
+      > button:first-child svg,
+    .places-collection-link svg {
+      width: 19px;
+      height: 19px;
+      flex: 0 0 19px;
+
+      color: var(--text-tertiary);
+    }
+
+    .places-country-place.active
+      > button:first-child svg,
+    .places-collection-row.active
+      .places-collection-link svg {
+      color: var(--brand-green-300);
+    }
+
+    .places-country-place span,
+    .places-collection-link span {
+      min-width: 0;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /*
+    * More is visually contained by the row, matching Albums.
+    */
+    .places-row-more {
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      flex: 0 0 34px;
+
+      margin:
+        0
+        var(--space-2)
+        0
+        0;
+
+      padding: 0;
+
+      border:
+        1px solid
+        transparent;
+
+      border-radius:
+        var(--radius-sm);
+
+      display: inline-grid;
+      place-items: center;
+
+      background: transparent;
+      color: var(--text-tertiary);
+
+      line-height: 0;
+      opacity: 0;
+      cursor: pointer;
+
+      transition:
+        opacity var(--ease),
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease);
+    }
+
+    .places-row-more:hover,
+    .places-row-more:focus-visible {
+      background:
+        var(--surface-card-hover);
+
+      border-color:
+        var(--border-default);
+
+      color:
+        var(--text-primary);
+    }
+
+    .places-row-more:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset: -2px;
+    }
+
+    .places-row-more svg {
+      width: 17px;
+      height: 17px;
+      display: block;
+    }
+
+    .places-country-place:hover
+      .places-row-more,
+    .places-country-place:focus-within
+      .places-row-more,
+    .places-country-place.active
+      .places-row-more,
+    .places-collection-row:hover
+      .places-row-more,
+    .places-collection-row:focus-within
+      .places-row-more,
+    .places-collection-row.active
+      .places-row-more {
+      opacity: 1;
+    }
+
+    .places-sidebar-empty {
+      margin:
+        var(--space-1)
+        var(--space-2)
+        var(--space-3);
+
+      color:
+        var(--text-tertiary);
+
+      font-size: 12px;
+    }
 
     .places-page { height: 100%; min-height: 0; display: flex; flex-direction: column; background: var(--surface-base); }
-    .places-page-head { flex: 0 0 auto; padding: var(--space-6) var(--space-6) var(--space-4); display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
-    .places-page-head h1 { margin: 0; font-size: 28px; }
-    .places-page-head p { margin: 5px 0 0; color: var(--text-tertiary); }
-    .places-toolbar { flex: 0 0 auto; min-height: 54px; padding: 0 var(--space-6) var(--space-4); display: flex; align-items: center; gap: 10px; }
-    .places-search { flex: 1 1 280px; max-width: 460px; }
-    .places-sort { flex: 0 0 180px; }
-    .places-view-toggle { margin-left: auto; }
+    .places-page-head {
+      flex: 0 0 auto;
+
+      padding:
+        var(--space-6)
+        var(--space-6)
+        var(--space-4);
+
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-5);
+    }
+
+    .places-title {
+      min-width: 0;
+    }
+
+    .places-title h1 {
+      margin:
+        0
+        0
+        3px;
+
+      font-size: 30px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .places-title p {
+      margin: 0;
+
+      color:
+        var(--text-tertiary);
+
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .places-header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    .places-toolbar {
+      flex: 0 0 auto;
+      min-width: 0;
+      min-height: 54px;
+
+      padding:
+        0
+        var(--space-6)
+        var(--space-4);
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+    }
+
+    .places-toolbar-left {
+      min-width: 0;
+      flex: 1 1 auto;
+
+      display: flex;
+      align-items: center;
+    }
+
+    .places-toolbar-right {
+      min-width: 0;
+      flex: 0 0 auto;
+
+      margin-left: auto;
+
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-2);
+
+      flex-wrap: nowrap;
+    }
+
+    .places-search {
+      flex: 1 1 280px;
+      max-width: 460px;
+    }
+
+    .places-sort {
+      flex: 0 0 180px;
+    }
+
+    /*
+    * Size, border, background, hover and active styles are inherited
+    * from Albums' .albums-view-switch, .albums-view-button and the
+    * shared .toolbar-button classes.
+    */
+    .places-view-switch {
+      flex: 0 0 auto;
+    }
     .places-filter-chips { padding: 0 var(--space-6) var(--space-3); display: flex; flex-wrap: wrap; gap: 8px; }
     .places-filter-chips button { border: 1px solid var(--border-default); padding: 5px 9px; color: var(--text-secondary); background: var(--surface-card); border-radius: 999px; }
     .places-content { flex: 1 1 auto; min-height: 0; display: grid; overflow: hidden; }
-    .places-content.map { grid-template-columns: minmax(0, 1fr) clamp(310px, 25vw, 410px); }
-    .places-content.map.inspector-collapsed { grid-template-columns: minmax(0, 1fr) 48px; }
+    .places-shell {
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+
+      display: grid;
+      grid-template-columns:
+        minmax(0, 1fr)
+        var(--inspector-width);
+
+      background:
+        var(--surface-main);
+
+      overflow: hidden;
+    }
+
+    .places-shell.inspector-collapsed {
+      grid-template-columns:
+        minmax(0, 1fr)
+        var(--inspector-collapsed-width);
+    }
+
+    .places-shell.no-inspector {
+      grid-template-columns:
+        minmax(0, 1fr);
+    }
+
+    .places-main {
+      min-width: 0;
+      min-height: 0;
+
+      display: flex;
+      flex-direction: column;
+
+      overflow: hidden;
+    }
+
+    .places-content.map {
+      flex: 1 1 auto;
+      min-width: 0;
+      min-height: 0;
+      padding:
+        0
+        var(--space-6)
+        var(--space-6);
+      box-sizing: border-box;
+      display: block;
+      overflow: hidden;
+    }
+
+    .places-content.map
+      .places-map-panel {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      box-sizing: border-box;
+      border:
+        1px solid
+        var(--border-default);
+      border-radius:
+        var(--radius-md);
+      overflow: hidden;
+    }
 
     .places-list-panel { min-height: 0; margin: 0 var(--space-6) var(--space-6); overflow: auto; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--surface-card); }
     .places-list-head,
@@ -12656,7 +13094,7 @@
     .places-list-head { position: sticky; top: 0; z-index: 2; min-height: 42px; padding: 0 14px; color: var(--text-tertiary); background: var(--surface-elevated); border-bottom: 1px solid var(--border-default); font-size: 12px; font-weight: 600; }
     .places-list-row { min-height: 66px; padding: 8px 14px; color: var(--text-secondary); border-bottom: 1px solid var(--border-default); }
     .places-list-row:hover { background: var(--surface-hover); }
-    .places-list-row.active { background: var(--surface-selected); box-shadow: inset 3px 0 0 var(--green); }
+    .places-list-row.active { background: var(--surface-selected); box-shadow: inset 3px 0 0 var(--brand-green-500); }
     .places-list-row > div:first-child { min-width: 0; display: grid; gap: 3px; }
     .places-list-row strong,
     .places-list-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -12668,14 +13106,7 @@
     .places-leaflet-map { position: absolute; inset: 0; z-index: 0; }
     .places-leaflet-map .leaflet-control-attribution { background: rgba(12, 17, 15, .84); color: var(--text-tertiary); }
     .places-leaflet-map .leaflet-control-attribution a { color: var(--text-secondary); }
-    .places-map-tools { position: absolute; z-index: 520; top: 14px; left: 14px; display: grid; border: 1px solid var(--border-default); border-radius: var(--radius-sm); overflow: hidden; box-shadow: var(--shadow-soft); }
-    .places-map-tools button { width: 38px; height: 38px; border: 0; border-bottom: 1px solid var(--border-default); padding: 0; display: grid; place-items: center; color: var(--text-secondary); background: rgba(18, 24, 22, .94); }
-    .places-map-tools button:last-child { border-bottom: 0; }
-    .places-map-tools svg { width: 17px; height: 17px; }
     .places-map-actions { position: absolute; z-index: 520; top: 14px; left: 64px; display: flex; flex-wrap: wrap; gap: 8px; }
-    .places-map-info { position: absolute; z-index: 520; right: 14px; top: 14px; display: flex; align-items: flex-start; gap: 8px; }
-    .places-map-info > button { width: 38px; height: 38px; border: 1px solid var(--border-default); padding: 0; display: grid; place-items: center; color: var(--text-secondary); background: rgba(18, 24, 22, .94); border-radius: var(--radius-sm); }
-    .places-map-info > div { max-width: 250px; padding: 10px 12px; display: grid; gap: 4px; color: var(--text-secondary); background: rgba(18, 24, 22, .96); border: 1px solid var(--border-default); border-radius: var(--radius-sm); box-shadow: var(--shadow-soft); font-size: 12px; }
     .places-map-status { position: absolute; z-index: 530; left: 50%; top: 72px; transform: translateX(-50%); max-width: min(460px, calc(100% - 32px)); padding: 12px 14px; display: grid; gap: 4px; background: var(--surface-elevated); border: 1px solid var(--border-default); border-radius: var(--radius-sm); box-shadow: var(--shadow-soft); }
     .places-map-status[hidden] { display: none; }
     .places-coordinate-bar { position: absolute; z-index: 540; left: 14px; right: 14px; bottom: 14px; padding: 10px; display: flex; align-items: center; gap: 8px; background: rgba(18, 24, 22, .97); border: 1px solid var(--border-strong); border-radius: var(--radius-md); box-shadow: var(--shadow-soft); }
@@ -12683,25 +13114,458 @@
     .places-coordinate-bar > div { min-width: 0; margin-right: auto; display: grid; gap: 2px; }
     .places-coordinate-bar span { color: var(--text-tertiary); font-size: 12px; }
     .places-map-panel.is-picking .leaflet-container { cursor: crosshair; }
-    .leaflet-place-marker { width: 100%; height: 100%; display: block; background: var(--green); border: 3px solid #e5fff1; border-radius: 50% 50% 50% 0; box-shadow: 0 3px 10px rgba(0,0,0,.42); transform: rotate(-45deg); }
-    .leaflet-place-marker.selected { background: #f2c464; border-color: #fff4d3; box-shadow: 0 0 0 5px rgba(98,217,154,.2), 0 4px 12px rgba(0,0,0,.5); }
-    .leaflet-place-marker.draft { background: #8cb8ff; border-color: #eff6ff; }
+    .places-map-navigation-wrap {
+      position: absolute;
+      z-index: 520;
+      left: 14px;
+      bottom: 14px;
+      display: grid;
+      justify-items: start;
+      gap: 8px;
+    }
+
+    /*
+    * Floating navigation panel.
+    */
+    .places-map-navigation {
+      padding: 6px;
+      border: 0px solid;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+    }
+
+    .places-map-navigation button {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+
+      padding: 0;
+
+      border:
+        1px solid
+        transparent;
+
+      border-radius: 7px;
+
+      display: inline-grid;
+      place-items: center;
+
+      background:
+        #202726;
+
+      color:
+        var(--text-secondary);
+
+      cursor: pointer;
+
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease);
+    }
+
+    .places-map-navigation button:hover,
+    .places-map-navigation button:focus-visible {
+      background:
+        var(--surface-card-hover);
+
+      border-color:
+        var(--border-strong);
+
+      color:
+        var(--text-primary);
+    }
+
+    .places-map-navigation button:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-400);
+
+      outline-offset: 1px;
+    }
+
+    .places-map-navigation button.active {
+      background:
+        var(--surface-selected);
+
+      border-color:
+        rgba(98, 217, 154, .35);
+
+      color:
+        var(--brand-green-300);
+    }
+
+    .places-map-navigation button svg {
+      width: 16px;
+      height: 16px;
+
+      display: block;
+    }
+    .places-map-legend {
+      width:
+        min(
+          230px,
+          calc(100vw - 64px)
+        );
+
+      padding:
+        12px;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      display: grid;
+      gap: 10px;
+
+      background:
+        rgba(18, 24, 22, .96);
+
+      color:
+        var(--text-secondary);
+
+      box-shadow:
+        var(--shadow-soft);
+
+      backdrop-filter:
+        blur(12px);
+    }
+
+    .places-map-legend[hidden] {
+      display: none;
+    }
+
+    .places-map-legend-title {
+      color:
+        var(--text-primary);
+
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .places-map-legend-item {
+      min-width: 0;
+
+      display: grid;
+      grid-template-columns:
+        22px
+        minmax(0, 1fr);
+
+      align-items: center;
+      gap: 9px;
+
+      color:
+        var(--text-secondary);
+
+      font-size: 12px;
+    }
+
+    .places-map-legend-marker {
+      width: 15px;
+      height: 15px;
+      margin-left: 2px;
+      border:
+        2px solid
+        #e5fff1;
+      border-radius:
+        50%
+        50%
+        50%
+        0;
+      display: block;
+      background:
+        var(--brand-green-500);
+      border-color:
+        rgba(232, 255, 243, .98);
+      box-shadow:
+        0
+        2px
+        5px
+        rgba(0, 0, 0, .38);
+      transform:
+        rotate(-45deg);
+    }
+
+    .places-map-legend-marker.selected {
+      background:
+        #f2c464;
+
+      border-color:
+        #fff4d3;
+
+      box-shadow:
+        0
+        0
+        0
+        3px
+        rgba(98, 217, 154, .16);
+    }
+
+    .places-map-legend-route {
+      width: 20px;
+      height: 0;
+
+      display: block;
+
+      border-top:
+        3px dashed
+        var(--brand-green-300);
+    }
+    /* Places map pins */
+
+    .leaflet-place-marker {
+      position: relative;
+
+      width: 100%;
+      height: 100%;
+
+      display: block;
+
+      background:
+        var(--brand-green-500);
+
+      border:
+        3px solid
+        rgba(232, 255, 243, .98);
+
+      border-radius:
+        50%
+        50%
+        50%
+        0;
+
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .22),
+        0 1px 2px rgba(0, 0, 0, .36),
+        0 4px 12px rgba(0, 0, 0, .52);
+
+      opacity: 1;
+
+      transform:
+        rotate(-45deg);
+
+      transition:
+        transform var(--ease),
+        background var(--ease),
+        border-color var(--ease),
+        box-shadow var(--ease),
+        filter var(--ease);
+    }
+
+    /*
+    * Small dark centre improves visibility on both pale and dark
+    * map areas without adding another place-status symbol.
+    */
+    .leaflet-place-marker::after {
+      content: '';
+
+      position: absolute;
+      top: 50%;
+      left: 50%;
+
+      width: 5px;
+      height: 5px;
+
+      border-radius: 50%;
+
+      background:
+        rgba(5, 18, 12, .74);
+
+      box-shadow:
+        0 0 0 1px
+        rgba(255, 255, 255, .18);
+
+      transform:
+        translate(-50%, -50%);
+    }
+
+    /* Hover and keyboard focus */
+
+    .leaflet-marker-icon:hover
+      .leaflet-place-marker,
+    .leaflet-marker-icon:focus-visible
+      .leaflet-place-marker {
+      filter:
+        brightness(1.12);
+
+      transform:
+        rotate(-45deg)
+        scale(1.08);
+
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .28),
+        0 2px 3px rgba(0, 0, 0, .4),
+        0 6px 16px rgba(0, 0, 0, .58);
+    }
+
+    /* Selected place */
+
+    .leaflet-place-marker.selected {
+      background:
+        #f2c464;
+
+      border-color:
+        #fff4d3;
+
+      box-shadow:
+        0 0 0 5px
+          rgba(98, 217, 154, .22),
+        0 2px 3px
+          rgba(0, 0, 0, .42),
+        0 6px 16px
+          rgba(0, 0, 0, .6);
+    }
+
+    .leaflet-place-marker.selected::after {
+      background:
+        rgba(54, 39, 9, .78);
+
+      box-shadow:
+        0 0 0 1px
+        rgba(255, 255, 255, .28);
+    }
+
+    /* Temporary position-editing marker */
+
+    .leaflet-place-marker.draft {
+      background:
+        #8cb8ff;
+
+      border-color:
+        #eff6ff;
+
+      box-shadow:
+        0 0 0 5px
+          rgba(140, 184, 255, .2),
+        0 2px 3px
+          rgba(0, 0, 0, .4),
+        0 6px 16px
+          rgba(0, 0, 0, .58);
+    }
+
+    .leaflet-place-marker.draft::after {
+      background:
+        rgba(8, 28, 59, .78);
+    }
     .places-leaflet-route { pointer-events: none; }
 
-    .places-map-inspector { min-width: 0; min-height: 0; display: flex; flex-direction: column; overflow: hidden; background: var(--surface-card); border-left: 1px solid var(--border-default); }
-    .places-map-inspector.collapsed { align-items: center; }
-    .places-inspector-expand { width: 100%; height: 54px; border: 0; padding: 0; display: grid; place-items: center; color: var(--text-secondary); background: transparent; }
-    .places-inspector-expand svg { width: 18px; height: 18px; transform: rotate(180deg); }
-    .places-inspector-head { flex: 0 0 auto; padding: var(--space-5); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--border-default); }
-    .places-inspector-head > div:first-child { min-width: 0; display: grid; gap: 4px; }
-    .places-inspector-head > div:last-child { display: flex; gap: 4px; }
-    .places-inspector-head span,
-    .places-inspector-head p { margin: 0; color: var(--text-tertiary); font-size: 12px; }
-    .places-inspector-head h2 { margin: 0; font-size: 21px; }
-    .places-inspector-head button { width: 32px; height: 32px; border: 0; padding: 0; display: grid; place-items: center; color: var(--text-tertiary); background: transparent; border-radius: var(--radius-sm); }
-    .places-inspector-head button[data-places-inspector-toggle] svg { transform: rotate(180deg); }
-    .places-inspector-body { min-height: 0; padding: var(--space-5); display: grid; align-content: start; gap: var(--space-4); overflow: auto; }
-    .places-inspector-empty { padding: var(--space-5); color: var(--text-tertiary); }
+    .places-map-inspector {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      border-left:
+        1px solid
+        var(--border-default);
+      background:
+        var(--surface-sidebar);
+      overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior:
+        contain;
+      scrollbar-gutter:
+        stable;
+    }
+
+    .places-map-inspector.collapsed {
+      overflow: hidden;
+
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+
+      padding:
+        var(--space-3)
+        8px;
+    }
+
+    .places-inspector-toolbar {
+      /*
+      * Core layout and action-button appearance come from
+      * .albums-detail-toolbar and .albums-detail-action.
+      */
+      width: 100%;
+    }
+
+    .places-inspector-hero {
+      padding:
+        var(--space-4)
+        var(--space-5)
+        var(--space-5);
+
+      border-bottom:
+        1px solid
+        var(--border-default);
+
+      display: grid;
+      gap: 4px;
+    }
+
+    .places-inspector-hero > span {
+      color:
+        var(--text-tertiary);
+
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .places-inspector-hero h2 {
+      margin: 0;
+
+      font-size: 21px;
+      line-height: 1.2;
+    }
+
+    .places-inspector-hero p {
+      margin: 0;
+
+      color:
+        var(--text-tertiary);
+
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .places-inspector-body {
+      min-width: 0;
+
+      padding:
+        var(--space-5);
+
+      display: grid;
+      align-content: start;
+      gap: var(--space-4);
+
+      /*
+      * The full inspector scrolls, as in Albums.
+      * Avoid a nested body scrollbar.
+      */
+      overflow: visible;
+    }
+
+    .places-inspector-empty {
+      padding:
+        var(--space-5);
+
+      display: grid;
+      gap: var(--space-2);
+
+      color:
+        var(--text-tertiary);
+    }
+
+    .places-inspector-empty strong {
+      color:
+        var(--text-primary);
+
+      font-size: 16px;
+    }
+
     .places-attention { width: 100%; padding: 8px 10px; color: var(--amber); background: rgba(242,196,100,.08); border: 1px solid rgba(242,196,100,.25); border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; text-align: left; }
     .places-inspector-facts { display: grid; gap: 8px; }
     .places-inspector-facts > div,
@@ -12758,31 +13622,98 @@
     }
 
     @media (max-width: 900px) {
-      .places-page-head,
-      .places-toolbar { padding-inline: var(--space-4); }
-      .places-filter-chips { padding-inline: var(--space-4); }
-      .places-content.map,
-      .places-content.map.inspector-collapsed { grid-template-columns: 1fr; grid-template-rows: minmax(340px, 1fr) auto; overflow: auto; }
-      .places-map-panel { min-height: 440px; }
-      .places-map-inspector { max-height: min(46vh, 420px); border-left: 0; border-top: 1px solid var(--border-default); }
-      .places-map-inspector.collapsed { max-height: 48px; }
-      .places-inspector-expand svg { transform: rotate(-90deg); }
-      .places-list-panel { margin-inline: var(--space-4); }
-      .places-detail-grid { grid-template-columns: 1fr; }
+      .places-content.map {
+        padding-inline:
+          var(--space-4);
+        padding-bottom:
+          var(--space-4);
+      }
+      .places-shell,
+      .places-shell.inspector-collapsed {
+        grid-template-columns:
+          minmax(0, 1fr);
+
+        grid-template-rows:
+          minmax(340px, 1fr)
+          auto;
+      }
+
+      .places-shell.no-inspector {
+        grid-template-rows:
+          minmax(0, 1fr);
+      }
+
+      .places-map-inspector {
+        max-height:
+          min(46vh, 420px);
+
+        border-left: 0;
+
+        border-top:
+          1px solid
+          var(--border-default);
+      }
+
+      .places-map-inspector.collapsed {
+        max-height: 54px;
+      }
+
+      .places-map-panel {
+        min-height: 440px;
+      }
+
+      /* Keep the other existing responsive Places rules. */
     }
 
     @media (max-width: 720px) {
       .places-page-head { align-items: stretch; flex-direction: column; }
-      .places-toolbar { align-items: stretch; }
-      .places-search { flex-basis: 100%; }
-      .places-sort { flex: 1 1 150px; }
-      .places-view-toggle { margin-left: 0; }
+      .places-header-actions {
+          justify-content: flex-start;
+        }
+      .places-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .places-toolbar-left,
+      .places-toolbar-right {
+        width: 100%;
+      }
+
+      .places-toolbar-right {
+        margin-left: 0;
+
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .places-search {
+        width: 100%;
+        max-width: none;
+        flex-basis: auto;
+      }
+
+      .places-sort {
+        flex:
+          1
+          1
+          170px;
+      }
       .places-map-actions { right: 14px; left: 62px; }
       .places-map-actions .button { padding-inline: 10px; }
       .places-coordinate-bar { align-items: stretch; flex-wrap: wrap; }
       .places-coordinate-bar > div { flex-basis: 100%; }
       .place-coordinate-fields { grid-template-columns: 1fr; }
       .place-geocoder-controls { grid-template-columns: 1fr; }
+      .places-map-navigation-wrap {
+        left: 10px;
+        bottom: 10px;
+      }
+
+      .places-map-panel.is-picking
+        .places-map-navigation-wrap {
+        bottom: 88px;
+      }
     }
 
     /* Publish MVP */
@@ -14172,7 +15103,9 @@
       link: '<svg viewBox="0 0 24 24" fill="none" ><path d="M16.4437 2.00021C14.9719 1.98733 13.5552 2.55719 12.4986 3.58488L12.4883 3.59504L11.6962 4.38801C11.3059 4.77876 11.3063 5.41192 11.697 5.80222C12.0878 6.19252 12.721 6.19216 13.1113 5.80141L13.8979 5.01386C14.5777 4.35511 15.4855 3.99191 16.4262 4.00014C17.3692 4.00839 18.2727 4.38923 18.9416 5.06286C19.6108 5.73671 19.9916 6.64971 19.9998 7.6056C20.008 8.55874 19.6452 9.47581 18.9912 10.1607L16.2346 12.9367C15.8688 13.3052 15.429 13.5897 14.9453 13.7714C14.4616 13.9531 13.945 14.0279 13.4304 13.9907C12.9159 13.9536 12.4149 13.8055 11.9616 13.5561C11.5083 13.3067 11.1129 12.9617 10.8027 12.5441C10.4734 12.1007 9.847 12.0083 9.40364 12.3376C8.96029 12.6669 8.86785 13.2933 9.19718 13.7367C9.67803 14.384 10.2919 14.9202 10.9975 15.3084C11.7032 15.6966 12.4838 15.9277 13.2866 15.9856C14.0893 16.0435 14.8949 15.9268 15.6486 15.6437C16.4022 15.3606 17.0861 14.9177 17.654 14.3457L20.4168 11.5635L20.429 11.551C21.4491 10.4874 22.0125 9.0642 21.9997 7.58834C21.987 6.11247 21.3992 4.69931 20.3607 3.65359C19.3221 2.60764 17.9155 2.01309 16.4437 2.00021Z" fill="currentColor"></path> <path d="M10.7134 8.01444C9.91064 7.95655 9.10506 8.0732 8.35137 8.35632C7.59775 8.63941 6.91382 9.08232 6.34597 9.65431L3.5831 12.4365L3.57097 12.449C2.5508 13.5126 1.98748 14.9358 2.00021 16.4117C2.01295 17.8875 2.60076 19.3007 3.6392 20.3464C4.67787 21.3924 6.08439 21.9869 7.55623 21.9998C9.02807 22.0127 10.4447 21.4428 11.5014 20.4151L11.5137 20.4029L12.3012 19.6099C12.6903 19.218 12.6881 18.5849 12.2962 18.1957C11.9043 17.8066 11.2712 17.8088 10.882 18.2007L10.1011 18.9871C9.42133 19.6452 8.51402 20.0081 7.57373 19.9999C6.63074 19.9916 5.72728 19.6108 5.05834 18.9371C4.38918 18.2633 4.00839 17.3503 4.00014 16.3944C3.99191 15.4412 4.35479 14.5242 5.00874 13.8393L7.76537 11.0633C8.13118 10.6948 8.57097 10.4103 9.05467 10.2286C9.53836 10.0469 10.0549 9.97215 10.5695 10.0093C11.0841 10.0464 11.585 10.1945 12.0383 10.4439C12.4917 10.6933 12.887 11.0383 13.1972 11.4559C13.5266 11.8993 14.1529 11.9917 14.5963 11.6624C15.0397 11.3331 15.1321 10.7067 14.8028 10.2633C14.3219 9.61599 13.708 9.07982 13.0024 8.69161C12.2968 8.30338 11.5161 8.07233 10.7134 8.01444Z" fill="currentColor"></path> </g></svg>',
       list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>',
       logo: `<svg class="app-logo" aria-hidden="true" width="412" height="368" viewBox="0 0 412 368" fill="none" ><path fill-rule="evenodd" clip-rule="evenodd" d="M215.98 5.57987C158.387 20.2852 112.419 61.9959 93.8161 116.431C86.0485 139.163 81.0306 179.218 84.3407 192.07C86.1043 198.914 86.6765 199.063 101.622 196.592C116.037 194.207 143.515 195.393 159.015 199.071C165.629 200.639 165.706 200.378 163.813 182.375C160.365 149.584 173.856 114.148 197.816 93.051C217.694 75.5488 231.357 70.3638 260.873 69.1284C291.94 67.8243 312.796 73.5698 336.023 89.8336C343.925 95.3642 351.018 99.8913 351.784 99.8913C354.19 99.8913 397.328 48.3402 397.328 45.4632C397.328 41.8484 375.906 26.7541 358.462 18.0802C322.633 0.263432 258.757 -5.34187 215.98 5.57987ZM262.34 179.967V211.426H300.488H338.637V235.405C338.637 257.137 338.018 259.774 332.035 263.529C324.382 268.333 306.357 274.716 306.357 272.62C306.357 268.433 315.863 254.226 320.273 251.821C323.084 250.288 324.666 248.332 323.789 247.479C322.911 246.624 309.392 244.391 293.745 242.518C258.751 238.325 237.874 241.8 226.43 253.717C216.743 263.803 214.475 271.719 214.868 294.092C215.229 314.826 219.513 322.865 222.366 308.16C225.218 293.435 233.807 282.146 247.949 274.53L260.873 267.57L247.154 280.65C235.817 291.459 232.349 297.384 227.172 314.78C223.727 326.357 219.898 339.02 218.656 342.921L216.406 350.01L211.91 342.921C209.436 339.02 202.687 327.464 196.912 317.24C178.95 285.436 161.48 271.047 126.24 259.039C103.345 251.237 103.78 248.269 127.352 251.457C158.147 255.624 180.684 268.771 195.154 291.007L203.649 304.062V292.585C203.649 261.533 193.118 232.036 177.442 219.182C162.862 207.225 150.505 204.797 112.941 206.504C80.9631 207.96 41.7904 216.23 8.65386 228.525L0 231.736L14.5581 239.838C30.4338 248.675 50.4766 267.698 67.4821 290.072C95.9758 327.555 109.288 335.551 143.492 335.714C156.403 335.777 172.414 334.779 179.07 333.492L191.169 331.158L201.237 349.035C206.772 358.867 212.746 367.381 214.513 367.956C216.279 368.53 219.901 363.449 222.559 356.662L227.395 344.325L258.807 345.366C309.415 347.042 357.752 332.683 397.706 304.099L412 293.875V221.192V148.509H337.17H262.34V179.967Z" fill="#2FAE74"/></svg>`,
+      map: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"> <path d="m3 6 5-2 8 3 5-2v13l-5 2-8-3-5 2V6Z"/><path d="M8 4v13"/><path d="M16 7v13"/></svg>`,
       mapPin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.3 7-11a7 7 0 1 0-14 0c0 5.7 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+      mapCenter: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H4a1 1 0 0 0-1 1v4"/><path d="M16 3h4a1 1 0 0 1 1 1v4"/><path d="M21 16v4a1 1 0 0 1-1 1h-4"/><path d="M8 21H4a1 1 0 0 1-1-1v-4"/><circle cx="12" cy="12" r="2.5"/></svg>`,
       marriage: `<svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" ><path fill="currentColor" d="M244 163L227 158L225 169L227 205L262 225L282 244L294 260L304 279L312 304L314 347L305 382L296 400L284 417L257 442L230 457L207 464L180 467L157 465L129 457L111 448L94 436L69 409L54 382L45 347L45 316L49 296L62 265L78 243L96 226L122 210L120 200L121 161L88 176L57 199L40 217L25 238L9 272L0 313L0 350L5 378L15 406L33 437L59 466L86 486L123 503L161 511L198 511L233 504L254 496L285 478L314 452L334 425L350 391L359 350L359 313L352 278L344 257L326 226L302 199L276 179Z"/><path fill="currentColor" d="M269 10L238 25L211 45L185 74L167 105L157 133L152 161L153 206L164 247L185 285L209 312L229 328L249 340L284 353L286 342L284 306L262 295L243 281L219 254L205 227L197 195L197 164L201 144L215 111L227 94L251 71L281 54L304 47L331 44L354 46L382 54L409 69L436 94L448 111L457 129L466 164L464 207L458 227L449 246L438 262L421 280L404 293L389 301L391 313L390 350L428 332L454 312L478 285L496 254L507 222L511 198L510 153L499 112L486 86L466 59L437 33L406 15L378 5L350 0L313 0Z"/></svg>`,
       more: '<svg viewBox="0 0 24 24" fill="currentColor" ><title></title> <g id="Complete"> <g id="F-More"> <path d="M8,12a2,2,0,1,1-2-2A2,2,0,0,1,8,12Zm10-2a2,2,0,1,0,2,2A2,2,0,0,0,18,10Zm-6,0a2,2,0,1,0,2,2A2,2,0,0,0,12,10Z" id="Horizontal"></path> </g> </g> </g></svg>',
       movefolder: '<svg fill="currentColor" viewBox="0 0 32 32" id="icon" ><defs> <style> .cls-1 { fill: none; } </style> </defs> <polygon points="18 13 16.59 14.41 19.17 17 10 17 10 19 19.17 19 16.59 21.59 18 23 23 18 18 13"></polygon> <path d="M11.1716,6l3.4142,3.4142L15.1716,10H28V26H4V6h7.1716m0-2H4A2,2,0,0,0,2,6V26a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2H16L12.5858,4.5858A2,2,0,0,0,11.1716,4Z"></path> <rect id="_Transparent_Rectangle_" data-name="&lt;Transparent Rectangle&gt;" class="cls-1" width="32" height="32"></rect> </g></svg>',
@@ -14202,7 +15135,6 @@
       unlink: '<svg viewBox="0 0 24 24" fill="currentColor"><title>unlink_2_line</title> <g id="1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="File" transform="translate(-672.000000, -96.000000)" fill-rule="nonzero"> <g id="unlink_2_line" transform="translate(672.000000, 96.000000)"> <path d="M24,0 L24,24 L0,24 L0,0 L24,0 Z M12.5934901,23.257841 L12.5819402,23.2595131 L12.5108777,23.2950439 L12.4918791,23.2987469 L12.4918791,23.2987469 L12.4767152,23.2950439 L12.4056548,23.2595131 C12.3958229,23.2563662 12.3870493,23.2590235 12.3821421,23.2649074 L12.3780323,23.275831 L12.360941,23.7031097 L12.3658947,23.7234994 L12.3769048,23.7357139 L12.4804777,23.8096931 L12.4953491,23.8136134 L12.4953491,23.8136134 L12.5071152,23.8096931 L12.6106902,23.7357139 L12.6232938,23.7196733 L12.6232938,23.7196733 L12.6266527,23.7031097 L12.609561,23.275831 C12.6075724,23.2657013 12.6010112,23.2592993 12.5934901,23.257841 L12.5934901,23.257841 Z M12.8583906,23.1452862 L12.8445485,23.1473072 L12.6598443,23.2396597 L12.6498822,23.2499052 L12.6498822,23.2499052 L12.6471943,23.2611114 L12.6650943,23.6906389 L12.6699349,23.7034178 L12.6699349,23.7034178 L12.678386,23.7104931 L12.8793402,23.8032389 C12.8914285,23.8068999 12.9022333,23.8029875 12.9078286,23.7952264 L12.9118235,23.7811639 L12.8776777,23.1665331 C12.8752882,23.1545897 12.8674102,23.1470016 12.8583906,23.1452862 L12.8583906,23.1452862 Z M12.1430473,23.1473072 C12.1332178,23.1423925 12.1221763,23.1452606 12.1156365,23.1525954 L12.1099173,23.1665331 L12.0757714,23.7811639 C12.0751323,23.7926639 12.0828099,23.8018602 12.0926481,23.8045676 L12.108256,23.8032389 L12.3092106,23.7104931 L12.3186497,23.7024347 L12.3186497,23.7024347 L12.3225043,23.6906389 L12.340401,23.2611114 L12.337245,23.2485176 L12.337245,23.2485176 L12.3277531,23.2396597 L12.1430473,23.1473072 Z" id="MingCute" fill-rule="nonzero"> </path> <path d="M8,18 C8.51283143,18 8.93550653,18.386027 8.9932722,18.8833761 L9,19 L9,21 C9,21.5523 8.55228,22 8,22 C7.48716857,22 7.06449347,21.613973 7.0067278,21.1166239 L7,21 L7,19 C7,18.4477 7.44772,18 8,18 Z M16.2426,9.87845 C16.6030615,9.51797 17.1703207,9.49024077 17.5625973,9.79526231 L17.6568,9.87845 L19.7781,11.9998 C21.926,14.1477 21.926,17.6301 19.7781,19.7779 C17.6898639,21.8661361 14.340237,21.9241427 12.1819236,19.9519197 L11.9999,19.7779 L9.87861,17.6566 C9.48808,17.2661 9.48808,16.6329 9.87861,16.2424 C10.2390623,15.8819385 10.8063208,15.8542107 11.1985973,16.1592166 L11.2928,16.2424 L13.4141,18.3637 C14.781,19.7306 16.9971,19.7306 18.3639,18.3637 C19.6818857,17.0457143 19.7289566,14.9380096 18.5051128,13.5636154 L18.3639,13.414 L16.2426,11.2927 C15.852,10.9021 15.852,10.269 16.2426,9.87845 Z M5,16 C5.55228,16 6,16.4477 6,17 C6,17.51285 5.61395571,17.9355092 5.11662025,17.9932725 L5,18 L4,18 C3.44772,18 3,17.5523 3,17 C3,16.48715 3.38604429,16.0644908 3.88337975,16.0067275 L4,16 L5,16 Z M9.17136,9.17134 C9.53184923,8.81086 10.0991191,8.78313077 10.4913971,9.08815231 L10.5856,9.17134 L14.8282,13.414 C15.2187,13.8045 15.2187,14.4377 14.8282,14.8282 C14.4677385,15.1886615 13.9004793,15.2163893 13.5082027,14.9113834 L13.414,14.8282 L9.17136,10.5856 C8.78084,10.195 8.78084,9.56187 9.17136,9.17134 Z M4.22175,4.2216 C6.30997639,2.13338333 9.65960305,2.07537731 11.8178797,4.04758194 L11.9999,4.2216 L14.1212,6.34292 C14.5118,6.73344 14.5118,7.36661 14.1212,7.75713 C13.7607385,8.11761923 13.1935645,8.14534917 12.8012224,7.84031982 L12.707,7.75713 L10.5857,5.63581 C9.21888,4.26898 7.0028,4.26898 5.63597,5.63581 C4.31794571,6.95383429 4.27087342,9.06152179 5.49475311,10.4359775 L5.63597,10.5856 L7.75729,12.7069 C8.14781,13.0974 8.14781,13.7306 7.75729,14.1211 C7.39680077,14.4815615 6.82957355,14.5092893 6.43727848,14.2042834 L6.34307,14.1211 L4.22175,11.9998 C2.07387,9.85189 2.07387,6.36948 4.22175,4.2216 Z M20,6 C20.5523,6 21,6.44772 21,7 C21,7.55228 20.5523,8 20,8 L19,8 C18.4477,8 18,7.55228 18,7 C18,6.44772 18.4477,6 19,6 L20,6 Z M16,2 C16.51285,2 16.9355092,2.38604429 16.9932725,2.88337975 L17,3 L17,5 C17,5.55228 16.5523,6 16,6 C15.48715,6 15.0644908,5.61395571 15.0067275,5.11662025 L15,5 L15,3 C15,2.44772 15.4477,2 16,2 Z" id="??" fill="currentColor"> </path> </g> </g> </g> </g></svg>',
       warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v5M12 17h.01"/></svg>',
       work: '<svg viewBox="0 0 24 24" fill="none" ><path d="M9 7H5C3.89543 7 3 7.89543 3 9V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V9C21 7.89543 20.1046 7 19 7H15M9 7V5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7M9 7H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>',
-
       undo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 7H5V3"/><path d="M5 7a8 8 0 1 1-1 8"/></svg>',
       redo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 7h4V3"/><path d="M19 7a8 8 0 1 0 1 8"/></svg>',
       rotateLeft: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7H3V3"/><path d="M3.5 7.5A9 9 0 1 1 5 18"/></svg>',
@@ -14219,7 +15151,6 @@
       researchCase: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="6" width="16" height="14" rx="2"/><path d="M9 6V4h6v2M4 11h16M10 14h4"/></svg>',
       shape: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><circle cx="17" cy="17" r="4"/></svg>',
       text: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5h14M12 5v14M8 19h8"/></svg>',
-
       zoomIn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4M10.5 7.5v6M7.5 10.5h6"/></svg>',
       zoomOut: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4M7.5 10.5h6"/></svg>',
       whiteboard: '<svg viewBox="0 0 24 24" fill="currentColor"><title>ic_fluent_whiteboard_24_regular</title> <g id="Product-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="ic_fluent_whiteboard_24_regular" fill="currentColor" fill-rule="nonzero"> <path d="M15.989,4 L14.486,5.5 L5.25,5.5 L5.10647279,5.5058012 C4.20711027,5.57880766 3.5,6.3318266 3.5,7.25 L3.5,9.49 L6.11032966,7.8500658 C7.11458474,7.21884459 8.42578385,7.4788108 9.11805049,8.41878234 L9.21263533,8.55766707 C9.60754263,9.18595342 9.66531956,9.96466959 9.37643726,10.6398047 L9.29698911,10.8062836 L8.08925622,13.0916763 C7.8957274,13.4579003 8.03572001,13.911669 8.4019376,14.1051994 C8.59519714,14.2073288 8.82158817,14.2192865 9.02227723,14.1418514 L9.12020755,14.0956881 L10.8791978,13.102709 C11.2392458,12.8979206 11.6971362,13.0237834 11.9019246,13.3838314 C12.0896473,13.7138755 11.9995312,14.1261343 11.7058795,14.3502913 L11.6208022,14.4065583 L9.85592161,15.4028701 C9.18921021,15.7781116 8.37750848,15.7888601 7.70109472,15.4314042 C6.6502057,14.8760541 6.22026466,13.6064091 6.69296688,12.535549 L6.76304763,12.3908405 L7.97078427,10.1054407 C8.09599053,9.86851294 8.08527176,9.58278305 7.94266635,9.35590187 C7.74227866,9.03709073 7.34143087,8.9208341 7.00672527,9.06794099 L6.90856446,9.12003478 L3.5,11.262 L3.5,16.754591 C3.5,17.7210893 4.28350169,18.504591 5.25,18.504591 L18.75,18.504591 C19.7164983,18.504591 20.5,17.7210893 20.5,16.754591 L20.5,9.443 L22,7.946 L22,16.754591 C22,18.5495164 20.5449254,20.004591 18.75,20.004591 L5.25,20.004591 C3.45507456,20.004591 2,18.5495164 2,16.754591 L2,7.25 C2,5.51696854 3.35645477,4.10075407 5.06557609,4.00514479 L5.25,4 L15.989,4 Z M21.175499,3.54486123 L21.3057053,3.66549405 L21.4262125,3.79573486 C22.1894032,4.68737541 22.1487912,6.0305334 21.3046801,6.87410524 L17.0238193,11.1477533 C16.760843,11.4102865 16.4369385,11.6036013 16.0810348,11.7104319 L13.7534665,12.409092 C13.224498,12.5678711 12.6669685,12.2677732 12.5081894,11.7388048 C12.4499495,11.54478 12.4520104,11.3376424 12.5140993,11.1448148 L13.2530235,8.84996054 C13.3626608,8.50946335 13.5519023,8.20001385 13.805051,7.94727999 L18.095697,3.66366511 C18.9405104,2.82023607 20.2840592,2.78081537 21.175499,3.54486123 Z M19.155487,4.72519469 L14.864841,9.00880957 C14.7804581,9.09305419 14.7173776,9.19620402 14.6808318,9.30970309 L14.2335301,10.6988744 L15.6497924,10.2737587 C15.768427,10.2381485 15.8763951,10.1737102 15.9640539,10.0861992 L20.244074,5.81339079 L20.3188279,5.72689957 C20.5422483,5.42598751 20.517571,4.99885441 20.2447063,4.72581529 C19.9440539,4.42497074 19.456482,4.42469294 19.155487,4.72519469 Z" id="Color"> </path> </g> </g> </g></svg>'
@@ -43848,22 +44779,74 @@
       setPlacesMapStatus();
     }
 
-    function createPlaceMarkerIcon(place, selected = false) {
-      const size = selected ? 28 : 22;
+    function createPlaceMarkerIcon(
+      place,
+      selected = false
+    ) {
+      const size =
+        selected
+          ? 30
+          : 24;
+
       return L.divIcon({
-        className: '',
-        html: `<span class="leaflet-place-marker ${selected ? 'selected' : ''}" aria-hidden="true"></span>`,
-        iconSize: [size, size],
-        iconAnchor: [size / 2, size / 2]
+        className:
+          'places-leaflet-marker-icon',
+
+        html: `
+          <span
+            class="
+              leaflet-place-marker
+              ${selected ? 'selected' : ''}
+            "
+            aria-hidden="true">
+          </span>
+        `,
+
+        iconSize: [
+          size,
+          size
+        ],
+
+        iconAnchor: [
+          size / 2,
+          size
+        ],
+
+        tooltipAnchor: [
+          0,
+          -size + 3
+        ]
       });
     }
 
     function createPlaceDraftMarkerIcon() {
+      const size = 30;
+
       return L.divIcon({
-        className: '',
-        html: '<span class="leaflet-place-marker draft" aria-hidden="true"></span>',
-        iconSize: [28, 28],
-        iconAnchor: [14, 14]
+        className:
+          'places-leaflet-marker-icon draft',
+
+        html: `
+          <span
+            class="leaflet-place-marker draft"
+            aria-hidden="true">
+          </span>
+        `,
+
+        iconSize: [
+          size,
+          size
+        ],
+
+        iconAnchor: [
+          size / 2,
+          size
+        ],
+
+        tooltipAnchor: [
+          0,
+          -size + 3
+        ]
       });
     }
 
@@ -43923,9 +44906,33 @@
       shell?.classList.toggle('is-moving-position', mode === 'move');
       content?.classList.toggle('is-editing', editing);
       if (editing) {
-        const infoPanel = main.querySelector('#placesMapInfoPanel');
-        if (infoPanel) infoPanel.hidden = true;
-        main.querySelector('#placesMapInfoToggle')?.setAttribute('aria-expanded', 'false');
+        state.placesMapInfoExpanded =
+          false;
+
+        const infoPanel =
+          main.querySelector(
+            '#placesMapInfoPanel'
+          );
+
+        if (infoPanel) {
+          infoPanel.hidden = true;
+        }
+
+        const infoButton =
+          main.querySelector(
+            '#placesMapInfoToggle'
+          );
+
+        infoButton
+          ?.setAttribute(
+            'aria-expanded',
+            'false'
+          );
+
+        infoButton
+          ?.classList
+          .remove('active');
+
         closeMenu();
       }
     }
@@ -44198,9 +45205,6 @@
       updatePlacesMapSelection(state.selectedPlaceId);
       renderPlacesRouteLayer(list);
       updatePlacesRouteControl(list);
-      const omitted = list.filter(place => !placeHasCoordinates(place)).length;
-      const notice = document.querySelector('.places-map-info-unmapped');
-      if (notice) notice.textContent = `${omitted} ${omitted === 1 ? 'place has' : 'places have'} no map coordinates`;
       updatePlacesMapToolControls();
     }
 
@@ -44298,12 +45302,42 @@
     }
 
     function bindPlacesMapEditingControls() {
-      main.querySelector('#placesMapInfoToggle')?.addEventListener('click', event => {
-        state.placesMapInfoExpanded = !state.placesMapInfoExpanded;
-        const panel = main.querySelector('#placesMapInfoPanel');
-        if (panel) panel.hidden = !state.placesMapInfoExpanded;
-        event.currentTarget.setAttribute('aria-expanded', String(state.placesMapInfoExpanded));
-      });
+      main
+        .querySelector(
+          '#placesMapInfoToggle'
+        )
+        ?.addEventListener(
+          'click',
+          event => {
+            state.placesMapInfoExpanded =
+              !state.placesMapInfoExpanded;
+
+            const panel =
+              main.querySelector(
+                '#placesMapInfoPanel'
+              );
+
+            if (panel) {
+              panel.hidden =
+                !state.placesMapInfoExpanded;
+            }
+
+            event.currentTarget
+              .setAttribute(
+                'aria-expanded',
+                String(
+                  state.placesMapInfoExpanded
+                )
+              );
+
+            event.currentTarget
+              .classList
+              .toggle(
+                'active',
+                state.placesMapInfoExpanded
+              );
+          }
+        );
       main.querySelector('#placesMapAddHere')?.addEventListener('click', enterPlacesMapAddMode);
       main.querySelector('#placesMapEditPosition')?.addEventListener('click', () => enterPlacesMapMoveMode(state.selectedPlaceId));
       main.querySelector('#placesUseMapCentre')?.addEventListener('click', () => {
@@ -44428,21 +45462,140 @@
     }
 
     function renderPlacesSidebar() {
-      const issueCount = (sampleData.placeIssues || []).filter(issue => issue.projectId === currentProjectId() && issue.status === 'open').length;
-      const collections = placeCollectionsForProject();
+      const issueCount =
+        (sampleData.placeIssues || [])
+          .filter(issue =>
+            issue.projectId === currentProjectId()
+            && issue.status === 'open'
+          )
+          .length;
+
+      const collections =
+        placeCollectionsForProject();
+
       sidebar.innerHTML = `
-        <div class="side-section-title">Navigation</div>
-        <div class="side-nav places-nav">
-          <button class="side-link ${state.placesView === 'all' ? 'active' : ''}" type="button" data-places-view="all">${icon.mapPin}<span>All places</span></button>
-          <button class="side-link ${state.placesView === 'review' ? 'active' : ''}" type="button" data-places-view="review">${icon.warning}<span>Needs review</span><span class="badge">${issueCount}</span></button>
-        </div>
-        <div class="side-section-title">Countries</div>
-        <div class="places-country-tree" aria-label="Places by country">${renderPlacesCountryTree()}</div>
-        <div class="places-section-header"><div class="side-section-title">Collections</div><button class="places-section-add" type="button" id="placesCollectionPlus" aria-label="Create collection">${icon.plus}</button></div>
-        <div class="places-collection-list">${collections.map(collection => {
-          const active = state.placesView === 'collection' && state.placesActiveCollectionId === collection.id;
-          return `<div class="places-collection-row ${active ? 'active' : ''}"><button class="places-collection-link" type="button" data-place-collection="${escapeHtml(collection.id)}">${icon.folder}<span>${escapeHtml(collection.name)}</span></button><button class="places-row-more" type="button" data-place-collection-menu="${escapeHtml(collection.id)}" aria-label="Actions for ${escapeHtml(collection.name)}">${icon.more}</button></div>`;
-        }).join('') || '<p class="places-sidebar-empty">No collections</p>'}</div>`;
+        <nav
+          class="places-sidebar"
+          aria-label="Places navigation">
+
+          <div class="places-sidebar-section">
+            <div class="side-section-title">
+              Navigation
+            </div>
+
+            <div class="side-nav places-nav">
+              <button
+                class="side-link ${
+                  state.placesView === 'all'
+                    ? 'active'
+                    : ''
+                }"
+                type="button"
+                data-places-view="all">
+                ${icon.mapPin}
+                <span>All places</span>
+              </button>
+
+              <button
+                class="side-link ${
+                  state.placesView === 'review'
+                    ? 'active'
+                    : ''
+                }"
+                type="button"
+                data-places-view="review">
+                ${icon.warning}
+                <span>Needs review</span>
+
+                <span class="badge">
+                  ${issueCount}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <div class="places-sidebar-section">
+            <div class="side-section-title">
+              Countries
+            </div>
+
+            <div
+              class="places-country-tree"
+              aria-label="Places by country">
+              ${renderPlacesCountryTree()}
+            </div>
+          </div>
+
+          <div class="places-sidebar-section">
+            <div class="side-section-title with-add">
+              <span>Collections</span>
+
+              <button
+                class="side-add-button"
+                type="button"
+                id="placesCollectionPlus"
+                aria-label="Create collection"
+                title="Create collection">
+                ${icon.plus}
+              </button>
+            </div>
+
+            <div class="places-collection-list">
+              ${
+                collections
+                  .map(collection => {
+                    const active =
+                      state.placesView === 'collection'
+                      && state.placesActiveCollectionId
+                        === collection.id;
+
+                    return `
+                      <div
+                        class="
+                          places-collection-row
+                          ${active ? 'active' : ''}
+                        ">
+
+                        <button
+                          class="places-collection-link"
+                          type="button"
+                          data-place-collection="${
+                            escapeHtml(collection.id)
+                          }">
+                          ${icon.folder}
+
+                          <span>
+                            ${escapeHtml(collection.name)}
+                          </span>
+                        </button>
+
+                        <button
+                          class="places-row-more"
+                          type="button"
+                          data-place-collection-menu="${
+                            escapeHtml(collection.id)
+                          }"
+                          aria-label="Actions for ${
+                            escapeHtml(collection.name)
+                          }"
+                          aria-haspopup="menu">
+                          ${icon.more}
+                        </button>
+                      </div>
+                    `;
+                  })
+                  .join('')
+                || `
+                  <p class="places-sidebar-empty">
+                    No collections
+                  </p>
+                `
+              }
+            </div>
+          </div>
+        </nav>
+      `;
+
       bindPlacesSidebarControls();
     }
 
@@ -44514,22 +45667,241 @@
       return 'Places';
     }
 
+    function placesPageSubtitle() {
+      if (state.placesView === 'review') {
+        return 'Review place names and locations that need attention.';
+      }
+
+      if (state.placesView === 'collection') {
+        return 'Explore the places saved in this collection.';
+      }
+
+      return 'Map and organize the places connected to your family history.';
+    }
+
     function renderPlacesMain() {
       if (state.placesDetailOpen) { renderPlaceDetail(); return; }
       const list = filteredPlaces();
       const selected = selectedPlaceFromList(list) || getPlace(state.selectedPlaceId);
       if (selected && !state.selectedPlaceId) state.selectedPlaceId = selected.id;
-      main.innerHTML = `<div class="places-page">
-        <header class="places-page-head"><div><h1>${escapeHtml(placesPageTitle())}</h1><p>${list.length} ${list.length === 1 ? 'place' : 'places'}</p></div><button class="button primary" type="button" id="placesAddPlace">${icon.plus} Add place</button></header>
-        <div class="places-toolbar">
-          <label class="search-input places-search" aria-label="Search places">${icon.search}<input id="placesSearch" type="search" placeholder="Search places and alternative names" value="${escapeHtml(state.placesSearch || '')}"></label>
-          <button class="button secondary" type="button" id="placesFilterButton" aria-expanded="false">${icon.filter || icon.search} Filters</button>
-          <label class="common-select-shell places-sort"><select class="compact-select common-select" id="placesSort"><option value="name" ${state.placesSort === 'name' ? 'selected' : ''}>Name</option><option value="country" ${state.placesSort === 'country' ? 'selected' : ''}>Country</option><option value="updated" ${state.placesSort === 'updated' ? 'selected' : ''}>Recently updated</option></select><span class="common-select-chevron">${icon.chevron}</span></label>
-          <div class="view-toggle places-view-toggle" role="group" aria-label="Places view"><button class="${state.placesViewMode === 'map' ? 'active' : ''}" type="button" data-places-mode="map" aria-label="Map view" aria-pressed="${state.placesViewMode === 'map'}">${icon.mapPin}</button><button class="${state.placesViewMode === 'list' ? 'active' : ''}" type="button" data-places-mode="list" aria-label="List view" aria-pressed="${state.placesViewMode === 'list'}">${icon.list}</button></div>
+      const isPlacesListView = state.placesViewMode === 'list';
+      const showInspector =
+        state.placesViewMode === 'map';
+      const shellClasses = [
+        'places-shell',
+        showInspector
+        && state.placesInspectorCollapsed
+          ? 'inspector-collapsed'
+          : '',
+        !showInspector
+          ? 'no-inspector'
+          : ''
+      ]
+        .filter(Boolean)
+        .join(' ');
+
+      main.innerHTML = `
+        <div class="${shellClasses}">
+          <section class="places-main">
+            <div class="places-page">
+              <header class="places-page-head">
+                <div class="places-title">
+                  <h1>
+                    ${escapeHtml(placesPageTitle())}
+                  </h1>
+
+                  <p>
+                    ${escapeHtml(
+                      typeof placesPageSubtitle
+                        === 'function'
+                        ? placesPageSubtitle()
+                        : 'Map and organize the places connected to your family history.'
+                    )}
+                  </p>
+                </div>
+
+                <div class="places-header-actions">
+                  <button
+                    class="button primary"
+                    type="button"
+                    id="placesAddPlace">
+                    ${icon.plus}
+                    Add place
+                  </button>
+                </div>
+              </header>
+
+              <div
+                class="places-toolbar"
+                aria-label="Place controls">
+
+                <div class="places-toolbar-left">
+                  <label
+                    class="search-input places-search"
+                    aria-label="Search places">
+
+                    ${icon.search}
+
+                    <input
+                      id="placesSearch"
+                      type="search"
+                      placeholder="Search places and alternative names"
+                      value="${escapeHtml(
+                        state.placesSearch || ''
+                      )}">
+                  </label>
+                </div>
+
+                <div class="places-toolbar-right">
+                  ${
+                    isPlacesListView
+                      ? `
+                        <button
+                          class="button secondary"
+                          type="button"
+                          id="placesFilterButton"
+                          aria-expanded="false">
+                          ${icon.filter}
+                          Filters
+                        </button>
+
+                        <label
+                          class="common-select-shell places-sort">
+
+                          <select
+                            class="compact-select common-select"
+                            id="placesSort"
+                            aria-label="Sort places">
+
+                            <option
+                              value="name"
+                              ${
+                                state.placesSort === 'name'
+                                  ? 'selected'
+                                  : ''
+                              }>
+                              Name
+                            </option>
+
+                            <option
+                              value="country"
+                              ${
+                                state.placesSort === 'country'
+                                  ? 'selected'
+                                  : ''
+                              }>
+                              Country
+                            </option>
+
+                            <option
+                              value="updated"
+                              ${
+                                state.placesSort === 'updated'
+                                  ? 'selected'
+                                  : ''
+                              }>
+                              Recently updated
+                            </option>
+                          </select>
+
+                          <span
+                            class="common-select-chevron"
+                            aria-hidden="true">
+                            ${icon.chevron}
+                          </span>
+                        </label>
+                      `
+                      : ''
+                  }
+
+                  <div
+                    class="albums-view-switch places-view-switch"
+                    role="group"
+                    aria-label="Places view mode">
+
+                    <button
+                      class="
+                        toolbar-button
+                        albums-view-button
+                        places-view-button
+                        ${
+                          state.placesViewMode === 'map'
+                            ? 'active'
+                            : ''
+                        }
+                      "
+                      type="button"
+                      data-places-mode="map"
+                      aria-label="Map view"
+                      title="Map view"
+                      aria-pressed="${
+                        state.placesViewMode === 'map'
+                      }">
+
+                      ${icon.map}
+                    </button>
+
+                    <button
+                      class="
+                        toolbar-button
+                        albums-view-button
+                        places-view-button
+                        ${
+                          state.placesViewMode === 'list'
+                            ? 'active'
+                            : ''
+                        }
+                      "
+                      type="button"
+                      data-places-mode="list"
+                      aria-label="List view"
+                      title="List view"
+                      aria-pressed="${
+                        state.placesViewMode === 'list'
+                      }">
+
+                      ${icon.list}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              ${renderPlacesFilterChips()}
+
+              ${
+                state.placesViewMode === 'list'
+                  ? renderPlacesListPanel(list)
+                  : `
+                    <div class="places-content map">
+                      ${renderPlacesMapShell(list)}
+                    </div>
+                  `
+              }
+            </div>
+          </section>
+
+          ${
+            showInspector
+              ? `
+                <aside
+                  class="
+                    places-map-inspector
+                    ${
+                      state.placesInspectorCollapsed
+                        ? 'collapsed'
+                        : ''
+                    }
+                  "
+                  data-places-map-inspector
+                  aria-label="Selected place inspector">
+
+                  ${renderPlacesMapInspector(selected)}
+                </aside>
+              `
+              : ''
+          }
         </div>
-        ${renderPlacesFilterChips()}
-        ${state.placesViewMode === 'list' ? renderPlacesListPanel(list) : `<div class="places-content map ${state.placesInspectorCollapsed ? 'inspector-collapsed' : ''}">${renderPlacesMapShell(list)}<aside class="places-map-inspector ${state.placesInspectorCollapsed ? 'collapsed' : ''}" data-places-map-inspector aria-label="Selected place inspector">${renderPlacesMapInspector(selected)}</aside></div>`}
-      </div>`;
+      `;
       bindPlacesControls(list);
       if (state.placesViewMode === 'map') requestAnimationFrame(() => mountPlacesMap(list));
     }
@@ -44553,38 +45925,458 @@
     }
 
     function renderPlacesMapShell(list) {
-      const mapped = list.filter(placeHasCoordinates).length;
-      return `<section class="places-map-panel" aria-label="Places map"><div id="placesLeafletMap" class="places-leaflet-map"></div><div class="places-map-tools"><button type="button" data-map-zoom-in aria-label="Zoom in">${icon.plus}</button><button type="button" data-map-zoom-out aria-label="Zoom out">${icon.minus || icon.close}</button><button type="button" data-map-fit aria-label="Fit mapped places">${icon.mapPin}</button></div><div class="places-map-actions"><button class="button secondary" type="button" id="placesMapAddHere">${icon.plus} Add on map</button><button class="button secondary" type="button" id="placesMapEditPosition">${icon.edit} Edit position</button><button class="button secondary" type="button" id="placesRouteMenu" aria-pressed="${state.placesShowRoute}">${icon.link}<span data-route-label>Route</span></button></div><div class="places-map-info"><button type="button" id="placesMapInfoToggle" aria-expanded="${state.placesMapInfoExpanded}">${icon.help || icon.tip}</button><div id="placesMapInfoPanel" ${state.placesMapInfoExpanded ? '' : 'hidden'}><strong>${mapped} mapped</strong><span class="places-map-info-unmapped">${list.length - mapped} places have no map coordinates</span></div></div><div class="places-map-status" data-places-map-status hidden></div><div class="places-coordinate-bar" data-places-coordinate-bar hidden><div><strong data-places-coordinate-output>No point selected</strong><span data-places-map-instruction>Click the map to choose a point.</span></div><button class="button secondary" type="button" id="placesUseMapCentre">Use map centre</button><button class="button secondary" type="button" id="placesCopyCoordinates">Copy</button><button class="button secondary" type="button" id="placesCancelMapEdit">Cancel</button><button class="button primary" type="button" id="placesConfirmMapEdit">Continue</button></div></section>`;
+      return `
+        <section
+          class="places-map-panel"
+          aria-label="Places map">
+
+          <div
+            id="placesLeafletMap"
+            class="places-leaflet-map">
+          </div>
+
+          <div class="places-map-navigation-wrap">
+            <div
+              class="places-map-legend"
+              id="placesMapInfoPanel"
+              role="region"
+              aria-label="Map legend"
+              ${
+                state.placesMapInfoExpanded
+                  ? ''
+                  : 'hidden'
+              }>
+
+              <strong class="places-map-legend-title">
+                Map legend
+              </strong>
+
+              <div class="places-map-legend-item">
+                <span
+                  class="places-map-legend-marker"
+                  aria-hidden="true">
+                </span>
+
+                <span>Place</span>
+              </div>
+
+              <div class="places-map-legend-item">
+                <span
+                  class="
+                    places-map-legend-marker
+                    selected
+                  "
+                  aria-hidden="true">
+                </span>
+
+                <span>Selected place</span>
+              </div>
+
+              <div class="places-map-legend-item">
+                <span
+                  class="places-map-legend-route"
+                  aria-hidden="true">
+                </span>
+
+                <span>Migration route</span>
+              </div>
+            </div>
+
+            <div
+              class="places-map-navigation"
+              aria-label="Map navigation">
+
+              <button
+                type="button"
+                data-map-zoom-out
+                aria-label="Zoom out"
+                title="Zoom out">
+                ${icon.minus || icon.close}
+              </button>
+
+              <button
+                type="button"
+                data-map-zoom-in
+                aria-label="Zoom in"
+                title="Zoom in">
+                ${icon.plus}
+              </button>
+
+              <button
+                type="button"
+                data-map-fit
+                aria-label="Centre map on places"
+                title="Centre map on places">
+                ${icon.mapCenter}
+              </button>
+
+              <button
+                class="${
+                  state.placesMapInfoExpanded
+                    ? 'active'
+                    : ''
+                }"
+                type="button"
+                id="placesMapInfoToggle"
+                aria-label="Show map legend"
+                title="Map legend"
+                aria-controls="placesMapInfoPanel"
+                aria-expanded="${
+                  state.placesMapInfoExpanded
+                }">
+                ${icon.help || icon.tip}
+              </button>
+            </div>
+          </div>
+
+          <div class="places-map-actions">
+            <!-- Keep the current map action buttons. -->
+          </div>
+
+          <div
+            class="places-map-status"
+            data-places-map-status
+            hidden>
+          </div>
+
+          <div
+            class="places-coordinate-bar"
+            data-places-coordinate-bar
+            hidden>
+            <!-- Keep the current coordinate controls. -->
+          </div>
+        </section>
+      `;
     }
 
     function renderPlacesMapInspector(place) {
-      if (state.placesInspectorCollapsed) return `<button class="places-inspector-expand" type="button" data-places-inspector-toggle aria-label="Expand place details" aria-expanded="false">${icon.chevron}</button>`;
-      if (!place) return `<div class="places-inspector-head"><strong>Place details</strong><button type="button" data-places-inspector-toggle aria-label="Collapse place details" aria-expanded="true">${icon.chevron}</button></div><div class="places-inspector-empty">Select a place on the map.</div>`;
-      const people = getPeopleForPlace(place.id);
-      const events = getEventsForPlace(place.id);
-      const alternatives = placeAlternativeNames(place);
-      const issue = openPlaceIssueFor(place.id);
-      const eventPreview = events.slice(0, 3).map(event => `<div><strong>${escapeHtml(event.title || event.eventType || event.type || 'Event')}</strong><span>${escapeHtml(formatGenealogyDateLabel(event.date || event) || event.dateLabel || '')}</span></div>`).join('');
-      return `<div class="places-inspector-head"><div><span>Selected place</span><h2>${escapeHtml(placePrimaryName(place))}</h2><p>${escapeHtml(placeSecondaryName(place) || 'No broader place recorded')}</p></div><div><button class="places-row-more" type="button" data-place-menu="${escapeHtml(place.id)}" aria-label="Actions for ${escapeHtml(placePrimaryName(place))}">${icon.more}</button><button type="button" data-places-inspector-toggle aria-label="Collapse place details" aria-expanded="true">${icon.chevron}</button></div></div><div class="places-inspector-body">${!placeHasCoordinates(place) ? '<p class="places-inspector-note">Not on map</p>' : ''}${issue ? `<button class="places-attention" type="button" data-place-review-issue="${escapeHtml(issue.id)}">Needs review</button>` : ''}<div class="places-inspector-facts">${placeHasCoordinates(place) ? `<div><span>Coordinates</span><strong>${escapeHtml(formatPlaceCoordinates(place))}</strong></div>` : ''}<div><span>Linked people</span><strong>${people.length}</strong></div><div><span>Linked events</span><strong>${events.length}</strong></div></div>${alternatives.length ? `<details class="places-disclosure"><summary>Historical / alternative names <span>${alternatives.length}</span></summary><div>${alternatives.map(name => `<span>${escapeHtml(name)}</span>`).join('')}</div></details>` : ''}${eventPreview ? `<div class="places-event-preview"><span>Connected events</span>${eventPreview}</div>` : ''}<div class="places-inspector-actions"><button class="button secondary" type="button" data-places-open-detail="${escapeHtml(place.id)}">Place details</button><button class="button secondary" type="button" data-places-edit-place="${escapeHtml(place.id)}">Edit place</button><button class="button primary" type="button" data-places-edit-position="${escapeHtml(place.id)}">Edit position</button></div></div>`;
+      if (state.placesInspectorCollapsed) {
+        return `
+          <button
+            class="
+              people-collapse-button
+              person-sidebar-restore-button
+              albums-detail-restore
+              sidebar-toggle-icon
+              sidebar-toggle-icon-restore
+            "
+            type="button"
+            data-places-inspector-toggle
+            aria-label="Expand place details"
+            aria-expanded="false"
+            title="Expand place details">
+            ${icon.doublechevronSidebar}
+          </button>
+        `;
+      }
+
+      const collapseButton = `
+        <button
+          class="
+            people-collapse-button
+            people-sidebar-toggle-icon
+            albums-detail-collapse
+          "
+          type="button"
+          data-places-inspector-toggle
+          aria-label="Collapse place details"
+          aria-expanded="true"
+          title="Collapse place details">
+          ${icon.doublechevronSidebar}
+        </button>
+      `;
+
+      const toolbar = `
+        <div class="albums-detail-toolbar places-inspector-toolbar">
+          ${collapseButton}
+
+          <span class="albums-detail-toolbar-spacer"></span>
+
+          ${
+            place
+              ? `
+                <button
+                  class="albums-detail-action"
+                  type="button"
+                  data-places-inspector-edit="${
+                    escapeHtml(place.id)
+                  }"
+                  aria-label="Edit place"
+                  title="Edit place">
+                  ${icon.edit}
+                </button>
+
+                <button
+                  class="albums-detail-action"
+                  type="button"
+                  data-place-menu="${
+                    escapeHtml(place.id)
+                  }"
+                  aria-label="More actions for ${
+                    escapeHtml(
+                      placePrimaryName(place)
+                    )
+                  }"
+                  aria-haspopup="menu"
+                  title="More actions">
+                  ${icon.more}
+                </button>
+              `
+              : ''
+          }
+        </div>
+      `;
+
+      if (!place) {
+        return `
+          ${toolbar}
+
+          <div class="places-inspector-empty">
+            <strong>Place details</strong>
+
+            <span>
+              Select a place on the map to view its details.
+            </span>
+          </div>
+        `;
+      }
+
+      const people =
+        getPeopleForPlace(place.id);
+
+      const events =
+        getEventsForPlace(place.id);
+
+      const alternatives =
+        placeAlternativeNames(place);
+
+      const issue =
+        openPlaceIssueFor(place.id);
+
+      const eventPreview =
+        events
+          .slice(0, 3)
+          .map(event => `
+            <div>
+              <strong>
+                ${escapeHtml(
+                  event.title
+                  || event.eventType
+                  || event.type
+                  || 'Event'
+                )}
+              </strong>
+
+              <span>
+                ${escapeHtml(
+                  formatGenealogyDateLabel(
+                    event.date || event
+                  )
+                  || event.dateLabel
+                  || ''
+                )}
+              </span>
+            </div>
+          `)
+          .join('');
+
+      return `
+        ${toolbar}
+
+        <div class="places-inspector-hero">
+          <span>Selected place</span>
+
+          <h2>
+            ${escapeHtml(
+              placePrimaryName(place)
+            )}
+          </h2>
+
+          <p>
+            ${escapeHtml(
+              placeSecondaryName(place)
+              || 'No broader place recorded'
+            )}
+          </p>
+        </div>
+
+        <div class="places-inspector-body">
+          ${
+            !placeHasCoordinates(place)
+              ? `
+                <p class="places-inspector-note">
+                  Not on map
+                </p>
+              `
+              : ''
+          }
+
+          ${
+            issue
+              ? `
+                <button
+                  class="places-attention"
+                  type="button"
+                  data-place-review-issue="${
+                    escapeHtml(issue.id)
+                  }">
+                  Needs review
+                </button>
+              `
+              : ''
+          }
+
+          <div class="places-inspector-facts">
+            ${
+              placeHasCoordinates(place)
+                ? `
+                  <div>
+                    <span>Coordinates</span>
+
+                    <strong>
+                      ${escapeHtml(
+                        formatPlaceCoordinates(place)
+                      )}
+                    </strong>
+                  </div>
+                `
+                : ''
+            }
+
+            <div>
+              <span>Linked people</span>
+              <strong>${people.length}</strong>
+            </div>
+
+            <div>
+              <span>Linked events</span>
+              <strong>${events.length}</strong>
+            </div>
+          </div>
+
+          ${
+            alternatives.length
+              ? `
+                <details class="places-disclosure">
+                  <summary>
+                    Historical / alternative names
+
+                    <span>
+                      ${alternatives.length}
+                    </span>
+                  </summary>
+
+                  <div>
+                    ${alternatives
+                      .map(name => `
+                        <span>
+                          ${escapeHtml(name)}
+                        </span>
+                      `)
+                      .join('')}
+                  </div>
+                </details>
+              `
+              : ''
+          }
+
+          ${
+            eventPreview
+              ? `
+                <div class="places-event-preview">
+                  <span>Connected events</span>
+                  ${eventPreview}
+                </div>
+              `
+              : ''
+          }
+
+          <div class="places-inspector-actions">
+            <button
+              class="button secondary"
+              type="button"
+              data-places-open-detail="${
+                escapeHtml(place.id)
+              }">
+              Place details
+            </button>
+
+            <button
+              class="button primary"
+              type="button"
+              data-places-edit-position="${
+                escapeHtml(place.id)
+              }">
+              Edit position
+            </button>
+          </div>
+        </div>
+      `;
     }
 
     function bindPlacesInspectorControls(root) {
       root.querySelector('[data-places-inspector-toggle]')?.addEventListener('click', togglePlacesInspector);
+      root.querySelector('[data-places-inspector-edit]')?.addEventListener('click', event => { openPlaceModal(event.currentTarget.dataset.placesInspectorEdit);});
       root.querySelector('[data-place-menu]')?.addEventListener('click', event => { event.stopPropagation(); openPlaceActionsMenu(event.currentTarget.dataset.placeMenu, event.currentTarget); });
       root.querySelector('[data-places-open-detail]')?.addEventListener('click', event => { state.selectedPlaceId = event.currentTarget.dataset.placesOpenDetail; state.placesDetailOpen = true; renderPlaceDetail(); });
       root.querySelector('[data-places-edit-position]')?.addEventListener('click', event => enterPlacesMapMoveMode(event.currentTarget.dataset.placesEditPosition));
-      root.querySelector('[data-places-edit-place]')?.addEventListener('click', event => openPlaceModal(event.currentTarget.dataset.placesEditPlace));
       root.querySelector('[data-place-review-issue]')?.addEventListener('click', event => openPlaceIssueReviewModal(event.currentTarget.dataset.placeReviewIssue));
     }
 
     function togglePlacesInspector() {
-      state.placesInspectorCollapsed = !state.placesInspectorCollapsed;
-      const content = main.querySelector('.places-content.map');
-      const inspector = main.querySelector('[data-places-map-inspector]');
-      content?.classList.toggle('inspector-collapsed', state.placesInspectorCollapsed);
-      inspector?.classList.toggle('collapsed', state.placesInspectorCollapsed);
-      if (inspector) { inspector.innerHTML = renderPlacesMapInspector(getPlace(state.selectedPlaceId)); bindPlacesInspectorControls(inspector); }
-      requestAnimationFrame(() => placesMapRuntime.map?.invalidateSize({ pan: false }));
+      state.placesInspectorCollapsed =
+        !state.placesInspectorCollapsed;
+
+      const shell =
+        main.querySelector(
+          '.places-shell'
+        );
+
+      const inspector =
+        main.querySelector(
+          '[data-places-map-inspector]'
+        );
+
+      shell
+        ?.classList
+        .toggle(
+          'inspector-collapsed',
+          state.placesInspectorCollapsed
+        );
+
+      inspector
+        ?.classList
+        .toggle(
+          'collapsed',
+          state.placesInspectorCollapsed
+        );
+
+      if (inspector) {
+        inspector.innerHTML =
+          renderPlacesMapInspector(
+            getPlace(
+              state.selectedPlaceId
+            )
+          );
+
+        bindPlacesInspectorControls(
+          inspector
+        );
+      }
+
+      /*
+      * First frame applies the grid-column change.
+      * The second lets Leaflet measure the resulting map width.
+      */
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          placesMapRuntime
+            .map
+            ?.invalidateSize({
+              pan: false
+            });
+        });
+      });
     }
 
     function bindPlacesControls(list) {
