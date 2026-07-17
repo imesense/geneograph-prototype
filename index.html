@@ -12638,9 +12638,7 @@
     }
 
     .places-sidebar
-      .places-country-tree,
-    .places-sidebar
-      .places-collection-list {
+      .places-country-tree {
       margin: 0;
       display: grid;
       gap: 4px;
@@ -12723,8 +12721,7 @@
     * one wrapper owns the hover and active background, while the main
     * action and More action remain separate buttons inside that wrapper.
     */
-    .places-country-place,
-    .places-collection-row {
+    .places-country-place {
       width: 100%;
       min-width: 0;
       min-height: 44px;
@@ -12748,15 +12745,12 @@
     }
 
     .places-country-place:hover,
-    .places-country-place:focus-within,
-    .places-collection-row:hover,
-    .places-collection-row:focus-within {
+    .places-country-place:focus-within {
       background:
         rgba(255, 255, 255, .035);
     }
 
-    .places-country-place.active,
-    .places-collection-row.active {
+    .places-country-place.active {
       background:
         var(--surface-selected);
 
@@ -12766,8 +12760,7 @@
 
     /* Main place and collection actions */
     .places-country-place
-      > button:first-child,
-    .places-collection-link {
+      > button:first-child {
       min-width: 0;
       min-height: 42px;
       flex: 1 1 auto;
@@ -12793,15 +12786,12 @@
     }
 
     .places-country-place.active
-      > button:first-child,
-    .places-collection-row.active
-      .places-collection-link {
+      > button:first-child {
       color: var(--text-primary);
     }
 
     .places-country-place
-      > button:first-child svg,
-    .places-collection-link svg {
+      > button:first-child svg {
       width: 19px;
       height: 19px;
       flex: 0 0 19px;
@@ -12810,14 +12800,11 @@
     }
 
     .places-country-place.active
-      > button:first-child svg,
-    .places-collection-row.active
-      .places-collection-link svg {
+      > button:first-child svg {
       color: var(--brand-green-300);
     }
 
-    .places-country-place span,
-    .places-collection-link span {
+    .places-country-place span {
       min-width: 0;
 
       overflow: hidden;
@@ -12897,12 +12884,6 @@
     .places-country-place:focus-within
       .places-row-more,
     .places-country-place.active
-      .places-row-more,
-    .places-collection-row:hover
-      .places-row-more,
-    .places-collection-row:focus-within
-      .places-row-more,
-    .places-collection-row.active
       .places-row-more {
       opacity: 1;
     }
@@ -12964,6 +12945,140 @@
       align-items: center;
       gap: var(--space-2);
       flex-wrap: wrap;
+    }
+
+    /* Places saved-filter UI reuses People filter components. */
+
+    .places-filterbar {
+      margin:
+        0
+        var(--space-6)
+        var(--space-3);
+    }
+
+    .places-filter-popover {
+      width:
+        min(
+          560px,
+          calc(100vw - 24px)
+        );
+
+      max-height:
+        calc(100vh - 24px);
+
+      overflow-y:
+        auto;
+    }
+
+    .places-filter-popover
+      > .people-filter-grid {
+      padding:
+        var(--space-4);
+    }
+
+    .places-filter-check {
+      min-height:
+        38px;
+
+      padding:
+        0
+        var(--space-2);
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      display:
+        flex !important;
+
+      align-items:
+        center;
+
+      gap:
+        var(--space-2);
+
+      background:
+        var(--surface-input);
+
+      color:
+        var(--text-secondary);
+
+      cursor:
+        pointer;
+    }
+
+    .places-filter-check input {
+      width:
+        18px;
+
+      height:
+        18px;
+
+      padding:
+        0;
+
+      accent-color:
+        var(--brand-green-500);
+
+      appearance:
+        auto;
+    }
+
+    .places-filter-error {
+      margin:
+        0;
+
+      padding:
+        0
+        var(--space-4)
+        var(--space-3);
+
+      color:
+        var(--red);
+
+      font-size:
+        13px;
+
+      font-weight:
+        700;
+    }
+
+    .places-filter-error[hidden] {
+      display:
+        none;
+    }
+
+    .places-saved-filter-list {
+      display:
+        grid;
+
+      gap:
+        4px;
+    }
+
+    .places-saved-filter-modal {
+      width:
+        min(
+          720px,
+          calc(100vw - 32px)
+        );
+    }
+
+    @media (max-width: 900px) {
+      .places-filterbar {
+        margin-inline:
+          var(--space-4);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .places-filter-popover {
+        width:
+          calc(100vw - 24px);
+      }
     }
 
     .places-toolbar {
@@ -13048,8 +13163,6 @@
     .places-view-switch {
       flex: 0 0 auto;
     }
-    .places-filter-chips { padding: 0 var(--space-6) var(--space-3); display: flex; flex-wrap: wrap; gap: 8px; }
-    .places-filter-chips button { border: 1px solid var(--border-default); padding: 5px 9px; color: var(--text-secondary); background: var(--surface-card); border-radius: 999px; }
     .places-content { flex: 1 1 auto; min-height: 0; display: grid; overflow: hidden; }
     .places-shell {
       height: 100%;
@@ -13617,11 +13730,6 @@
     .places-detail-grid { margin-top: var(--space-5); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
     .places-card { padding: var(--space-5); display: grid; align-content: start; gap: var(--space-4); background: var(--surface-card); border: 1px solid var(--border-default); border-radius: var(--radius-md); }
     .places-card h2 { margin: 0; font-size: 17px; }
-    .places-filter-menu { width: 288px; padding: 12px; display: grid; gap: 12px; }
-    .places-filter-menu label { display: grid; gap: 6px; color: var(--text-secondary); font-size: 12px; }
-    .places-filter-menu select { width: 100%; min-height: 36px; color: var(--text-primary); background: var(--surface-card); border: 1px solid var(--border-default); border-radius: var(--radius-sm); }
-    .places-filter-menu .places-filter-check { display: flex; align-items: center; }
-    .places-filter-menu > div { display: flex; justify-content: flex-end; gap: 8px; }
     .place-map-location { padding: 12px; display: flex; align-items: center; gap: 8px; background: var(--surface-card); border: 1px solid var(--border-default); border-radius: var(--radius-sm); }
     .place-map-location > div { min-width: 0; margin-right: auto; display: grid; gap: 3px; }
     .place-map-location span { color: var(--text-tertiary); font-size: 12px; }
@@ -15553,15 +15661,62 @@
         { id: 'place-cemetery', projectId: 'p1', name: 'Pawford Cemetery, North Yorkshire, England', alternativeNames: ['Pawford burial ground'], coordinates: { lat: 53.94978, lng: -1.07004 }, updatedAt: '2026-04-20T00:00:00Z', deleted: false },
         { id: 'place-deleted', projectId: 'p1', name: 'Pawford, North Yorkshire, England', alternativeNames: ['Duplicate Pawford record'], coordinates: { lat: 53.9594, lng: -1.082 }, updatedAt: '2026-04-12T00:00:00Z', deleted: true }
       ],
-      placeCollections: [
-        { id: 'pc-pawford', projectId: 'p1', name: 'Pawford line', description: '', placeIds: ['place-pawford', 'place-unknown', 'place-archive', 'place-residence', 'place-cemetery'] },
-        { id: 'pc-england', projectId: 'p1', name: 'North Yorkshire places', description: '', placeIds: ['place-pawford', 'place-meowbridge', 'place-fishmarket-row', 'place-old-cattery'] },
-        { id: 'pc-migration', projectId: 'p1', name: 'Family migration route', description: '', placeIds: ['place-pawford', 'place-meowbridge', 'place-fishmarket-row', 'place-old-cattery'] },
-        { id: 'pc-archives', projectId: 'p1', name: 'Archives visited', description: '', placeIds: ['place-archive'] },
-        { id: 'pc-residences', projectId: 'p1', name: 'Family residences', description: '', placeIds: ['place-residence'] }
+      placeSavedFilters: [
+        {
+          id: 'place-filter-whiskerfield',
+          projectId: 'p1',
+          name: 'Whiskerfield places',
+          description:
+            'Places connected to members of the Whiskerfield family.',
+          filters: {
+            surname: 'Whiskerfield'
+          },
+          createdAt: '2026-05-01T00:00:00Z',
+          updatedAt: '2026-05-01T00:00:00Z'
+        },
+
+        {
+          id: 'place-filter-silver',
+          projectId: 'p1',
+          name: "Silver's places",
+          description:
+            'Places connected to Silver Whiskerfield.',
+          filters: {
+            personId: 'silver'
+          },
+          createdAt: '2026-05-01T00:00:00Z',
+          updatedAt: '2026-05-01T00:00:00Z'
+        },
+
+        {
+          id: 'place-filter-historic',
+          projectId: 'p1',
+          name: 'Historic family places',
+          description:
+            'Places linked to events before 1900.',
+          filters: {
+            yearTo: '1899'
+          },
+          createdAt: '2026-05-01T00:00:00Z',
+          updatedAt: '2026-05-01T00:00:00Z'
+        },
+
+        {
+          id: 'place-filter-unmapped-review',
+          projectId: 'p1',
+          name: 'Unmapped places to review',
+          description:
+            'Places requiring review that do not yet have coordinates.',
+          filters: {
+            mapped: 'unmapped',
+            needsReview: true
+          },
+          createdAt: '2026-05-01T00:00:00Z',
+          updatedAt: '2026-05-01T00:00:00Z'
+        }
       ],
       placeRoutes: [
-        { id: 'route-family-migration', projectId: 'p1', name: 'Family migration', collectionId: 'pc-migration', placeIds: ['place-pawford', 'place-old-cattery', 'place-meowbridge', 'place-fishmarket-row'], status: 'active', deleted: false }
+        { id: 'route-family-migration', projectId: 'p1', name: 'Family migration', placeIds: ['place-pawford', 'place-old-cattery', 'place-meowbridge', 'place-fishmarket-row'], status: 'active', deleted: false }
       ],
       placeIssues: [
         { id: 'pi1', projectId: 'p1', placeId: 'place-unknown', type: 'missing_coordinates', status: 'open', raw: 'Village near Pawford', suggestion: 'Keep under review until the source identifies a locality', confidence: 'medium', resolution: null, createdAt: '2026-04-25T00:00:00Z', closedAt: null },
@@ -18531,7 +18686,7 @@
         });
       };
 
-      ['projects','people','families','places','placeCollections','placeRoutes','placeIssues','sources','media','albums','notes','boards','boardObjects','boardConnectors','publishDrafts','notifications','activity'].forEach(seen);
+      ['projects','people','families','places','placeSavedFilters','placeRoutes','placeIssues','sources','media','albums','notes','boards','boardObjects','boardConnectors','publishDrafts','notifications','activity'].forEach(seen);
 
       (sampleData.places || []).forEach(place => {
         if (!projectIds.has(place.projectId)) warn(`Place ${place.id} points to missing project ${place.projectId}`);
@@ -18542,17 +18697,40 @@
         if (!Number.isFinite(Date.parse(place.updatedAt || ''))) warn(`Place ${place.id} has an invalid updatedAt timestamp`);
       });
 
-      (sampleData.placeCollections || []).forEach(collection => {
-        if (!projectIds.has(collection.projectId)) warn(`Place collection ${collection.id} points to missing project ${collection.projectId}`);
-        if (!String(collection.name || '').trim()) warn(`Place collection ${collection.id} has no name`);
-        if (!Array.isArray(collection.placeIds)) warn(`Place collection ${collection.id} placeIds must be an array`);
-        if (new Set(collection.placeIds || []).size !== (collection.placeIds || []).length) warn(`Place collection ${collection.id} has duplicate place IDs`);
-        (collection.placeIds || []).forEach(placeId => {
-          const place = getPlace(placeId);
-          if (!placeIds.has(placeId)) warn(`Place collection ${collection.id} points to missing place ${placeId}`);
-          else if (place.projectId !== collection.projectId) warn(`Place collection ${collection.id} and place ${placeId} are in different projects`);
+      (
+        sampleData.placeSavedFilters || []
+      )
+        .forEach(savedFilter => {
+          if (
+            !projectIds.has(
+              savedFilter.projectId
+            )
+          ) {
+            warn(
+              `Place saved filter ${savedFilter.id} points to missing project ${savedFilter.projectId}`
+            );
+          }
+
+          if (
+            !String(
+              savedFilter.name || ''
+            ).trim()
+          ) {
+            warn(
+              `Place saved filter ${savedFilter.id} has no name`
+            );
+          }
+
+          if (
+            !savedFilter.filters
+            || typeof savedFilter.filters
+              !== 'object'
+          ) {
+            warn(
+              `Place saved filter ${savedFilter.id} has invalid filters`
+            );
+          }
         });
-      });
 
       (sampleData.placeIssues || []).forEach(issue => {
         const place = getPlace(issue.placeId);
@@ -18672,8 +18850,16 @@
       });
     }
 
-    validateSampleData();
-
+    const defaultPlaceFilters = Object.freeze({
+      personId: '',
+      surname: '',
+      yearFrom: '',
+      yearTo: '',
+      eventType: '',
+      country: '',
+      mapped: 'all',
+      needsReview: false
+    });
 
     const state = {
       projectOpen: false,
@@ -18795,7 +18981,7 @@
       notesSavedStatus: 'Saved',
       notesOpenBlocks: { people: true, sources: true, places: false, related: false, tasks: true, info: false },
       placesView: 'all',
-      placesActiveCollectionId: null,
+      placesSavedFilterId: '',
       selectedPlaceId: 'place-pawford',
       placesSearch: '',
       placesSort: 'name',
@@ -18809,7 +18995,9 @@
       },
       placesShowRoute: true,
       placesMapInfoExpanded: false,
-      placesFilters: { mapped: 'all', needsReview: false },
+      placesFilters: {
+        ...defaultPlaceFilters
+      },
       placesActiveRouteId: 'route-family-migration',
       placesDetailOpen: false,
       placesExpandedCountries: ['England'],
@@ -31810,7 +31998,12 @@
     function openProfileAllPlaces() {
       state.activeModule = 'Places';
       state.placesView = 'all';
-      state.placesActiveCollectionId = null;
+      state.placesSavedFilterId =
+        '';
+
+      state.placesFilters = {
+        ...defaultPlaceFilters
+      };
       state.selectedPlaceId = null;
       state.placesSearch = '';
       state.placesDetailOpen = false;
@@ -45656,12 +45849,787 @@
       return (sampleData.places || []).filter(place => place.projectId === projectId && (includeDeleted || !place.deleted));
     }
 
-    function placeCollectionsForProject() {
-      return (sampleData.placeCollections || []).filter(collection => collection.projectId === currentProjectId());
+    function placeSavedFiltersForProject(
+      projectId = currentProjectId()
+    ) {
+      return (
+        sampleData.placeSavedFilters || []
+      ).filter(savedFilter =>
+        savedFilter.projectId === projectId
+      );
     }
 
-    function placeCollectionById(collectionId) {
-      return placeCollectionsForProject().find(collection => collection.id === collectionId) || null;
+    function placeSavedFilterById(savedFilterId) {
+      return placeSavedFiltersForProject()
+        .find(savedFilter =>
+          savedFilter.id === savedFilterId
+        ) || null;
+    }
+
+    function uniquePlaceSavedFilterId() {
+      const usedIds = new Set(
+        (
+          sampleData.placeSavedFilters || []
+        ).map(savedFilter =>
+          savedFilter.id
+        )
+      );
+
+      let index = Date.now();
+      let id = `place-saved-filter-${index}`;
+
+      while (usedIds.has(id)) {
+        index += 1;
+        id = `place-saved-filter-${index}`;
+      }
+
+      return id;
+    }
+
+    function placeFiltersWithDefaults(
+      filters = state.placesFilters
+    ) {
+      const source =
+        filters && typeof filters === 'object'
+          ? filters
+          : {};
+
+      return {
+        personId:
+          String(
+            source.personId || ''
+          ).trim(),
+
+        surname:
+          String(
+            source.surname || ''
+          ).trim(),
+
+        yearFrom:
+          String(
+            source.yearFrom || ''
+          ).trim(),
+
+        yearTo:
+          String(
+            source.yearTo || ''
+          ).trim(),
+
+        eventType:
+          String(
+            source.eventType || ''
+          ).trim(),
+
+        country:
+          String(
+            source.country || ''
+          ).trim(),
+
+        mapped:
+          [
+            'all',
+            'mapped',
+            'unmapped'
+          ].includes(source.mapped)
+            ? source.mapped
+            : 'all',
+
+        needsReview:
+          Boolean(source.needsReview)
+      };
+    }
+
+    function projectPeopleForPlaceFilters() {
+      return (
+        sampleData.people || []
+      )
+        .filter(person =>
+          person.projectId === currentProjectId()
+        )
+        .sort((a, b) =>
+          placeFilterPersonName(a)
+            .localeCompare(
+              placeFilterPersonName(b)
+            )
+        );
+    }
+
+    function placeFilterPersonName(person) {
+      return (
+        person?.names?.display
+        || person?.name
+        || 'Unnamed person'
+      );
+    }
+
+    function placeFilterPersonSurname(person) {
+      return String(
+        person?.names?.last
+        || person?.surname
+        || ''
+      ).trim();
+    }
+
+    function placeFilterSurnames() {
+      return [
+        ...new Set(
+          projectPeopleForPlaceFilters()
+            .map(placeFilterPersonSurname)
+            .filter(Boolean)
+        )
+      ].sort((a, b) =>
+        a.localeCompare(b)
+      );
+    }
+
+    function placeFilterCountries() {
+      return [
+        ...new Set(
+          projectPlaces()
+            .map(place =>
+              placeCountry(place)
+            )
+            .filter(Boolean)
+        )
+      ].sort((a, b) =>
+        a.localeCompare(b)
+      );
+    }
+
+    const placeEventTypeLabels =
+      Object.freeze({
+        birth: 'Birth',
+        childBirth: 'Birth of child',
+        marriage: 'Marriage',
+        death: 'Death',
+        baptism: 'Baptism',
+        burial: 'Burial',
+        education: 'Education',
+        occupation: 'Occupation',
+        customFact: 'Other fact'
+      });
+
+    function placeEventTypeLabel(type) {
+      if (!type) {
+        return 'Other event';
+      }
+
+      if (placeEventTypeLabels[type]) {
+        return placeEventTypeLabels[type];
+      }
+
+      return String(type)
+        .replace(
+          /([a-z])([A-Z])/g,
+          '$1 $2'
+        )
+        .replace(
+          /^./,
+          character =>
+            character.toUpperCase()
+        );
+    }
+
+    function placeFilterEventTypes() {
+      const types = new Map();
+
+      (
+        sampleData.events || []
+      )
+        .filter(event =>
+          event.projectId
+            === currentProjectId()
+          && event.placeId
+        )
+        .forEach(event => {
+          const type =
+            String(
+              event.type || ''
+            ).trim();
+
+          if (type) {
+            types.set(
+              type,
+              placeEventTypeLabel(type)
+            );
+          }
+        });
+
+      return [
+        ...types.entries()
+      ].sort((a, b) =>
+        a[1].localeCompare(b[1])
+      );
+    }
+
+    function placeFilterOption(
+      value,
+      label,
+      selectedValue
+    ) {
+      return `
+        <option
+          value="${escapeHtml(value)}"
+          ${
+            value === selectedValue
+              ? 'selected'
+              : ''
+          }>
+          ${escapeHtml(label)}
+        </option>
+      `;
+    }
+
+    function renderPlaceFilterFields(
+      filters = defaultPlaceFilters,
+      prefix = 'place-filter'
+    ) {
+      const normalized =
+        placeFiltersWithDefaults(filters);
+
+      const peopleOptions =
+        projectPeopleForPlaceFilters()
+          .map(person =>
+            placeFilterOption(
+              person.id,
+              placeFilterPersonName(person),
+              normalized.personId
+            )
+          )
+          .join('');
+
+      const surnameOptions =
+        placeFilterSurnames()
+          .map(surname =>
+            placeFilterOption(
+              surname,
+              surname,
+              normalized.surname
+            )
+          )
+          .join('');
+
+      const eventTypeOptions =
+        placeFilterEventTypes()
+          .map(([type, label]) =>
+            placeFilterOption(
+              type,
+              label,
+              normalized.eventType
+            )
+          )
+          .join('');
+
+      const countryOptions =
+        placeFilterCountries()
+          .map(country =>
+            placeFilterOption(
+              country,
+              country,
+              normalized.country
+            )
+          )
+          .join('');
+
+      return `
+        <div class="people-filter-field full">
+          <label for="${prefix}-person">
+            Person
+          </label>
+
+          <select
+            id="${prefix}-person"
+            data-place-filter-input="personId">
+            ${placeFilterOption(
+              '',
+              'Any person',
+              normalized.personId
+            )}
+            ${peopleOptions}
+          </select>
+        </div>
+
+        <div class="people-filter-field">
+          <label for="${prefix}-surname">
+            Surname
+          </label>
+
+          <select
+            id="${prefix}-surname"
+            data-place-filter-input="surname">
+            ${placeFilterOption(
+              '',
+              'Any surname',
+              normalized.surname
+            )}
+            ${surnameOptions}
+          </select>
+        </div>
+
+        <div class="people-filter-field">
+          <label for="${prefix}-event-type">
+            Event type
+          </label>
+
+          <select
+            id="${prefix}-event-type"
+            data-place-filter-input="eventType">
+            ${placeFilterOption(
+              '',
+              'Any event',
+              normalized.eventType
+            )}
+            ${eventTypeOptions}
+          </select>
+        </div>
+
+        <div class="people-filter-field">
+          <label for="${prefix}-year-from">
+            Linked events from
+          </label>
+
+          <input
+            id="${prefix}-year-from"
+            type="number"
+            min="1"
+            max="9999"
+            step="1"
+            placeholder="Any year"
+            value="${escapeHtml(
+              normalized.yearFrom
+            )}"
+            data-place-filter-input="yearFrom">
+        </div>
+
+        <div class="people-filter-field">
+          <label for="${prefix}-year-to">
+            Linked events to
+          </label>
+
+          <input
+            id="${prefix}-year-to"
+            type="number"
+            min="1"
+            max="9999"
+            step="1"
+            placeholder="Any year"
+            value="${escapeHtml(
+              normalized.yearTo
+            )}"
+            data-place-filter-input="yearTo">
+        </div>
+
+        <div class="people-filter-field">
+          <label for="${prefix}-country">
+            Country
+          </label>
+
+          <select
+            id="${prefix}-country"
+            data-place-filter-input="country">
+            ${placeFilterOption(
+              '',
+              'Any country',
+              normalized.country
+            )}
+            ${countryOptions}
+          </select>
+        </div>
+
+        <div class="people-filter-field">
+          <label for="${prefix}-mapped">
+            Map status
+          </label>
+
+          <select
+            id="${prefix}-mapped"
+            data-place-filter-input="mapped">
+
+            ${placeFilterOption(
+              'all',
+              'All places',
+              normalized.mapped
+            )}
+
+            ${placeFilterOption(
+              'mapped',
+              'On map',
+              normalized.mapped
+            )}
+
+            ${placeFilterOption(
+              'unmapped',
+              'Not on map',
+              normalized.mapped
+            )}
+          </select>
+        </div>
+
+        <div class="people-filter-field full">
+          <label class="places-filter-check">
+            <input
+              type="checkbox"
+              data-place-filter-input="needsReview"
+              ${
+                normalized.needsReview
+                  ? 'checked'
+                  : ''
+              }>
+
+            <span>
+              Needs review
+            </span>
+          </label>
+        </div>
+      `;
+    }
+
+    function readPlaceFilterFields(root) {
+      const readValue = key =>
+        root
+          .querySelector(
+            `[data-place-filter-input="${key}"]`
+          )
+          ?.value
+          ?.trim()
+        || '';
+
+      return placeFiltersWithDefaults({
+        personId:
+          readValue('personId'),
+
+        surname:
+          readValue('surname'),
+
+        yearFrom:
+          readValue('yearFrom'),
+
+        yearTo:
+          readValue('yearTo'),
+
+        eventType:
+          readValue('eventType'),
+
+        country:
+          readValue('country'),
+
+        mapped:
+          readValue('mapped')
+          || 'all',
+
+        needsReview:
+          Boolean(
+            root
+              .querySelector(
+                '[data-place-filter-input="needsReview"]'
+              )
+              ?.checked
+          )
+      });
+    }
+
+    function resetPlaceFilterFields(root) {
+      root
+        .querySelectorAll(
+          '[data-place-filter-input]'
+        )
+        .forEach(input => {
+          const key =
+            input.dataset
+              .placeFilterInput;
+
+          if (input.type === 'checkbox') {
+            input.checked =
+              Boolean(
+                defaultPlaceFilters[key]
+              );
+            return;
+          }
+
+          input.value =
+            defaultPlaceFilters[key]
+            ?? '';
+        });
+    }
+
+    function placeFilterYearError(filters) {
+      const normalized =
+        placeFiltersWithDefaults(filters);
+
+      const from =
+        normalized.yearFrom;
+
+      const to =
+        normalized.yearTo;
+
+      if (
+        from
+        && (
+          !/^\d{1,4}$/.test(from)
+          || Number(from) < 1
+          || Number(from) > 9999
+        )
+      ) {
+        return 'Enter a valid starting year.';
+      }
+
+      if (
+        to
+        && (
+          !/^\d{1,4}$/.test(to)
+          || Number(to) < 1
+          || Number(to) > 9999
+        )
+      ) {
+        return 'Enter a valid ending year.';
+      }
+
+      if (
+        from
+        && to
+        && Number(from) > Number(to)
+      ) {
+        return 'The starting year must not be later than the ending year.';
+      }
+
+      return '';
+    }
+
+    function activePlaceFilterEntries(
+      filters = state.placesFilters
+    ) {
+      const normalized =
+        placeFiltersWithDefaults(filters);
+
+      const entries = [];
+
+      if (normalized.personId) {
+        const person =
+          projectPeopleForPlaceFilters()
+            .find(item =>
+              item.id === normalized.personId
+            );
+
+        entries.push([
+          'personId',
+          'Person',
+          person
+            ? placeFilterPersonName(person)
+            : 'Unknown person'
+        ]);
+      }
+
+      if (normalized.surname) {
+        entries.push([
+          'surname',
+          'Surname',
+          normalized.surname
+        ]);
+      }
+
+      if (
+        normalized.yearFrom
+        || normalized.yearTo
+      ) {
+        let value = '';
+
+        if (
+          normalized.yearFrom
+          && normalized.yearTo
+        ) {
+          value =
+            `${normalized.yearFrom}–${normalized.yearTo}`;
+        } else if (normalized.yearFrom) {
+          value =
+            `From ${normalized.yearFrom}`;
+        } else {
+          value =
+            `Until ${normalized.yearTo}`;
+        }
+
+        entries.push([
+          'dateRange',
+          'Date',
+          value
+        ]);
+      }
+
+      if (normalized.eventType) {
+        entries.push([
+          'eventType',
+          'Event',
+          placeEventTypeLabel(
+            normalized.eventType
+          )
+        ]);
+      }
+
+      if (normalized.country) {
+        entries.push([
+          'country',
+          'Country',
+          normalized.country
+        ]);
+      }
+
+      if (normalized.mapped === 'mapped') {
+        entries.push([
+          'mapped',
+          'Map',
+          'On map'
+        ]);
+      }
+
+      if (
+        normalized.mapped
+          === 'unmapped'
+      ) {
+        entries.push([
+          'mapped',
+          'Map',
+          'Not on map'
+        ]);
+      }
+
+      if (normalized.needsReview) {
+        entries.push([
+          'needsReview',
+          'Review',
+          'Needs review'
+        ]);
+      }
+
+      return entries;
+    }
+
+    function hasActivePlaceFilters(
+      filters = state.placesFilters
+    ) {
+      return (
+        activePlaceFilterEntries(
+          filters
+        ).length > 0
+      );
+    }
+
+    function activePlaceFilterCount(
+      filters = state.placesFilters
+    ) {
+      return activePlaceFilterEntries(
+        filters
+      ).length;
+    }
+
+    function renderPlacesActiveFilters() {
+      if (!hasActivePlaceFilters()) {
+        return '';
+      }
+
+      const chips =
+        activePlaceFilterEntries()
+          .map(([key, label, value]) => `
+            <span
+              class="
+                filter-chip
+                active-filter-chip
+              ">
+
+              <span
+                class="
+                  active-filter-chip-copy
+                ">
+                <strong>
+                  ${escapeHtml(label)}:
+                </strong>
+
+                ${escapeHtml(value)}
+              </span>
+
+              <button
+                class="
+                  active-filter-chip-remove
+                "
+                type="button"
+                data-places-remove-filter="${
+                  escapeHtml(key)
+                }"
+                aria-label="Remove ${
+                  escapeHtml(label)
+                } filter"
+                title="Remove filter">
+                ${icon.close}
+              </button>
+            </span>
+          `)
+          .join('');
+
+      return `
+        <div
+          class="
+            people-filterbar
+            places-filterbar
+          "
+          aria-label="Active Places filters">
+
+          ${chips}
+
+          <span class="active-filter-actions">
+            <button
+              class="link"
+              type="button"
+              id="placesClearFilters">
+              Clear all
+            </button>
+
+            <button
+              class="people-save-view"
+              type="button"
+              id="placesSaveFilter">
+              Save filter
+            </button>
+          </span>
+        </div>
+      `;
+    }
+
+    function removePlaceFilter(key) {
+      const filters =
+        placeFiltersWithDefaults();
+
+      if (key === 'dateRange') {
+        filters.yearFrom = '';
+        filters.yearTo = '';
+      } else if (key === 'mapped') {
+        filters.mapped = 'all';
+      } else if (
+        key === 'needsReview'
+      ) {
+        filters.needsReview = false;
+      } else if (
+        Object.prototype
+          .hasOwnProperty
+          .call(filters, key)
+      ) {
+        filters[key] = '';
+      }
+
+      state.placesFilters = filters;
+      state.placesSavedFilterId =
+        '';
+
+      renderPlaces();
+    }
+
+    function clearPlaceFilters() {
+      state.placesFilters = {
+        ...defaultPlaceFilters
+      };
+
+      state.placesSavedFilterId = '';
+      renderPlaces();
+      showToast(
+        'Place filters cleared.'
+      );
     }
 
     function openPlaceIssueFor(placeId) {
@@ -45724,23 +46692,117 @@
     }
 
     function renderPlaces() {
-      if (!['all', 'review', 'collection'].includes(state.placesView)) state.placesView = 'all';
-      if (!['map', 'list'].includes(state.placesViewMode)) state.placesViewMode = 'map';
+      if (
+        ![
+          'all',
+          'review'
+        ].includes(state.placesView)
+      ) {
+        state.placesView = 'all';
+      }
+
+      if (
+        ![
+          'map',
+          'list'
+        ].includes(
+          state.placesViewMode
+        )
+      ) {
+        state.placesViewMode =
+          'map';
+      }
+
+      state.placesFilters =
+        placeFiltersWithDefaults();
+
       renderPlacesSidebar();
       renderPlacesMain();
     }
 
     function renderPlacesSidebar() {
       const issueCount =
-        (sampleData.placeIssues || [])
+        (
+          sampleData.placeIssues || []
+        )
           .filter(issue =>
-            issue.projectId === currentProjectId()
+            issue.projectId
+              === currentProjectId()
             && issue.status === 'open'
           )
           .length;
 
-      const collections =
-        placeCollectionsForProject();
+      const savedFilters =
+        placeSavedFiltersForProject();
+
+      const savedFilterMarkup =
+        savedFilters
+          .map(savedFilter => {
+            const active =
+              state.placesSavedFilterId
+                === savedFilter.id;
+
+            return `
+              <div
+                class="
+                  people-saved-filter-row
+                  ${active ? 'active' : ''}
+                ">
+
+                <button
+                  class="
+                    people-saved-filter-main
+                  "
+                  type="button"
+                  data-place-saved-filter="${
+                    escapeHtml(
+                      savedFilter.id
+                    )
+                  }"
+                  title="${
+                    escapeHtml(
+                      savedFilter.name
+                    )
+                  }">
+
+                  ${icon.folder}
+
+                  <span
+                    class="
+                      people-saved-filter-name
+                    ">
+                    ${
+                      escapeHtml(
+                        savedFilter.name
+                      )
+                    }
+                  </span>
+                </button>
+
+                <button
+                  class="
+                    more-button
+                    people-saved-filter-more
+                  "
+                  type="button"
+                  data-place-saved-filter-menu="${
+                    escapeHtml(
+                      savedFilter.id
+                    )
+                  }"
+                  aria-label="Actions for ${
+                    escapeHtml(
+                      savedFilter.name
+                    )
+                  }"
+                  aria-haspopup="menu">
+
+                  ${icon.more}
+                </button>
+              </div>
+            `;
+          })
+          .join('');
 
       sidebar.innerHTML = `
         <nav
@@ -45756,11 +46818,14 @@
               <button
                 class="side-link ${
                   state.placesView === 'all'
+                  && !state.placesSavedFilterId
+                  && !hasActivePlaceFilters()
                     ? 'active'
                     : ''
                 }"
                 type="button"
                 data-places-view="all">
+
                 ${icon.mapPin}
                 <span>All places</span>
               </button>
@@ -45773,6 +46838,7 @@
                 }"
                 type="button"
                 data-places-view="review">
+
                 ${icon.warning}
                 <span>Needs review</span>
 
@@ -45796,67 +46862,39 @@
           </div>
 
           <div class="places-sidebar-section">
-            <div class="side-section-title with-add">
-              <span>Collections</span>
+            <div
+              class="
+                side-section-title
+                with-add
+              ">
+
+              <span>Saved filters</span>
 
               <button
                 class="side-add-button"
                 type="button"
-                id="placesCollectionPlus"
-                aria-label="Create collection"
-                title="Create collection">
+                id="placesSavedFilterPlus"
+                aria-label="Create saved filter"
+                title="Create saved filter">
+
                 ${icon.plus}
               </button>
             </div>
 
-            <div class="places-collection-list">
+            <div
+              class="
+                side-nav
+                places-saved-filter-list
+              ">
+
               ${
-                collections
-                  .map(collection => {
-                    const active =
-                      state.placesView === 'collection'
-                      && state.placesActiveCollectionId
-                        === collection.id;
-
-                    return `
-                      <div
-                        class="
-                          places-collection-row
-                          ${active ? 'active' : ''}
-                        ">
-
-                        <button
-                          class="places-collection-link"
-                          type="button"
-                          data-place-collection="${
-                            escapeHtml(collection.id)
-                          }">
-                          ${icon.folder}
-
-                          <span>
-                            ${escapeHtml(collection.name)}
-                          </span>
-                        </button>
-
-                        <button
-                          class="places-row-more"
-                          type="button"
-                          data-place-collection-menu="${
-                            escapeHtml(collection.id)
-                          }"
-                          aria-label="Actions for ${
-                            escapeHtml(collection.name)
-                          }"
-                          aria-haspopup="menu">
-                          ${icon.more}
-                        </button>
-                      </div>
-                    `;
-                  })
-                  .join('')
+                savedFilterMarkup
                 || `
-                  <p class="places-sidebar-empty">
-                    No collections
+                  <p
+                    class="
+                      places-sidebar-empty
+                    ">
+                    No saved filters
                   </p>
                 `
               }
@@ -45870,7 +46908,7 @@
 
     function renderPlacesCountryTree() {
       const countries = new Map();
-      projectPlaces().forEach(place => {
+      filteredPlaces().forEach(place => {
         const country = placeCountry(place) || 'Unknown country';
         if (!countries.has(country)) countries.set(country, []);
         countries.get(country).push(place);
@@ -45885,77 +46923,1084 @@
     }
 
     function bindPlacesSidebarControls() {
-      sidebar.querySelectorAll('[data-places-view]').forEach(button => button.addEventListener('click', () => {
-        state.placesView = button.dataset.placesView;
-        state.placesActiveCollectionId = null;
-        renderPlaces();
-      }));
-      sidebar.querySelectorAll('[data-place-country-disclosure]').forEach(button => button.addEventListener('click', () => {
-        const country = button.dataset.placeCountryDisclosure;
-        const expanded = new Set(state.placesExpandedCountries || []);
-        expanded.has(country) ? expanded.delete(country) : expanded.add(country);
-        state.placesExpandedCountries = [...expanded];
-        renderPlacesSidebar();
-      }));
-      sidebar.querySelectorAll('[data-place-tree-select]').forEach(button => {
-        button.addEventListener('click', () => selectPlace(button.dataset.placeTreeSelect));
-        button.addEventListener('dblclick', () => showPlaceOnMap(button.dataset.placeTreeSelect));
+      sidebar
+        .querySelectorAll(
+          '[data-places-view]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              state.placesView =
+                button.dataset
+                  .placesView;
+
+              state.placesSavedFilterId =
+                '';
+
+              state.placesFilters = {
+                ...defaultPlaceFilters
+              };
+
+              renderPlaces();
+            }
+          );
+        });
+
+      sidebar
+        .querySelectorAll(
+          '[data-place-country-disclosure]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              const country =
+                button.dataset
+                  .placeCountryDisclosure;
+
+              const expanded =
+                new Set(
+                  state
+                    .placesExpandedCountries
+                  || []
+                );
+
+              if (expanded.has(country)) {
+                expanded.delete(country);
+              } else {
+                expanded.add(country);
+              }
+
+              state.placesExpandedCountries =
+                [...expanded];
+
+              renderPlacesSidebar();
+            }
+          );
+        });
+
+      sidebar
+        .querySelectorAll(
+          '[data-place-tree-select]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              selectPlace(
+                button.dataset
+                  .placeTreeSelect
+              );
+            }
+          );
+
+          button.addEventListener(
+            'dblclick',
+            () => {
+              showPlaceOnMap(
+                button.dataset
+                  .placeTreeSelect
+              );
+            }
+          );
+        });
+
+      sidebar
+        .querySelectorAll(
+          '[data-place-menu]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              event.stopPropagation();
+
+              openPlaceActionsMenu(
+                button.dataset
+                  .placeMenu,
+                button
+              );
+            }
+          );
+        });
+
+      sidebar
+        .querySelectorAll(
+          '[data-place-saved-filter]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              applyPlaceSavedFilter(
+                button.dataset
+                  .placeSavedFilter
+              );
+            }
+          );
+        });
+
+      sidebar
+        .querySelectorAll(
+          '[data-place-saved-filter-menu]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              event.stopPropagation();
+
+              openPlaceSavedFilterMenu(
+                button.dataset
+                  .placeSavedFilterMenu,
+                button
+              );
+            }
+          );
+        });
+
+      sidebar
+        .querySelector(
+          '#placesSavedFilterPlus'
+        )
+        ?.addEventListener(
+          'click',
+          openCreatePlaceSavedFilterModal
+        );
+    }
+
+    function applyPlaceSavedFilter(
+      savedFilterId
+    ) {
+      const savedFilter =
+        placeSavedFilterById(
+          savedFilterId
+        );
+
+      if (!savedFilter) {
+        showToast(
+          'Saved filter not found.'
+        );
+
+        return;
+      }
+
+      state.placesView =
+        'all';
+
+      state.placesSavedFilterId =
+        savedFilter.id;
+
+      state.placesFilters = {
+        ...defaultPlaceFilters,
+        ...savedFilter.filters
+      };
+
+      renderPlaces();
+    }
+
+    function generatePlaceSavedFilterName(
+      filters = state.placesFilters
+    ) {
+      const entries =
+        activePlaceFilterEntries(
+          filters
+        );
+
+      if (!entries.length) {
+        return 'Custom place filter';
+      }
+
+      return entries
+        .slice(0, 2)
+        .map(([, , value]) =>
+          value
+        )
+        .join(' - ');
+    }
+
+    function setPlaceSavedFilterModalError(
+      message = '',
+      focusSelector = ''
+    ) {
+      const error =
+        modalBackdrop
+          .querySelector(
+            '[data-place-saved-filter-error]'
+          );
+
+      if (error) {
+        error.textContent =
+          message;
+
+        error.hidden =
+          !message;
+      }
+
+      if (
+        message
+        && focusSelector
+      ) {
+        modalBackdrop
+          .querySelector(
+            focusSelector
+          )
+          ?.focus();
+      }
+    }
+
+    function openPlaceSavedFilterModal({
+      mode = 'create',
+      savedFilterId = '',
+      initialName = '',
+      initialDescription = '',
+      initialFilters =
+        defaultPlaceFilters
+    } = {}) {
+      const isEdit =
+        mode === 'edit';
+
+      const existing =
+        isEdit
+          ? placeSavedFilterById(
+              savedFilterId
+            )
+          : null;
+
+      if (
+        isEdit
+        && !existing
+      ) {
+        showToast(
+          'Saved filter not found.'
+        );
+
+        return;
+      }
+
+      const name =
+        existing?.name
+        || initialName;
+
+      const description =
+        existing?.description
+        || initialDescription;
+
+      const filters =
+        placeFiltersWithDefaults(
+          existing?.filters
+          || initialFilters
+        );
+
+      const title =
+        isEdit
+          ? 'Edit filter'
+          : 'Create filter';
+
+      const subtitle =
+        isEdit
+          ? 'Update the name, description, or filter conditions.'
+          : 'Create a reusable filter for Places.';
+
+      const submitLabel =
+        isEdit
+          ? 'Save changes'
+          : 'Create filter';
+
+      openModal(`
+        <div
+          class="
+            modal
+            people-saved-view-modal
+            places-saved-filter-modal
+          "
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="placeSavedFilterModalTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2
+                id="placeSavedFilterModalTitle">
+                ${escapeHtml(title)}
+              </h2>
+
+              <p>
+                ${escapeHtml(subtitle)}
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close>
+              ${icon.close}
+            </button>
+          </div>
+
+          <form id="placeSavedFilterForm">
+            <div
+              class="
+                modal-body
+                people-saved-view-body
+              ">
+
+              <div
+                class="
+                  people-saved-view-identity
+                ">
+
+                <div class="field">
+                  <label
+                    for="placeSavedFilterName">
+                    Name
+                  </label>
+
+                  <input
+                    id="placeSavedFilterName"
+                    required
+                    maxlength="80"
+                    value="${
+                      escapeHtml(name)
+                    }"
+                    placeholder="e.g. Whiskerfield places">
+                </div>
+
+                <div class="field">
+                  <label
+                    for="placeSavedFilterDescription">
+                    Description
+                  </label>
+
+                  <textarea
+                    id="placeSavedFilterDescription"
+                    placeholder="Optional description">${
+                      escapeHtml(
+                        description
+                      )
+                    }</textarea>
+                </div>
+              </div>
+
+              <section
+                class="
+                  people-saved-view-filters
+                "
+                aria-labelledby="placeSavedFilterFieldsTitle">
+
+                <div
+                  class="
+                    people-saved-view-section-header
+                  ">
+
+                  <div>
+                    <h3
+                      id="placeSavedFilterFieldsTitle">
+                      Filters
+                    </h3>
+
+                    <p>
+                      Choose at least one condition
+                      for this saved filter.
+                    </p>
+                  </div>
+
+                  <button
+                    class="
+                      link
+                      people-saved-view-clear
+                    "
+                    type="button"
+                    data-place-saved-filter-clear>
+                    Clear filters
+                  </button>
+                </div>
+
+                <div class="people-filter-grid">
+                  ${renderPlaceFilterFields(
+                    filters,
+                    'place-saved-filter'
+                  )}
+                </div>
+
+                <p
+                  class="
+                    people-saved-view-error
+                  "
+                  data-place-saved-filter-error
+                  role="alert"
+                  hidden>
+                </p>
+              </section>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                class="button secondary"
+                type="button"
+                data-close>
+                Cancel
+              </button>
+
+              <button
+                class="button primary"
+                type="submit">
+                ${escapeHtml(
+                  submitLabel
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      `);
+
+      const form =
+        modalBackdrop
+          .querySelector(
+            '#placeSavedFilterForm'
+          );
+
+      const nameInput =
+        modalBackdrop
+          .querySelector(
+            '#placeSavedFilterName'
+          );
+
+      nameInput?.focus();
+
+      modalBackdrop
+        .querySelector(
+          '[data-place-saved-filter-clear]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            resetPlaceFilterFields(
+              form
+            );
+
+            setPlaceSavedFilterModalError();
+          }
+        );
+
+      form?.addEventListener(
+        'input',
+        () => {
+          setPlaceSavedFilterModalError();
+        }
+      );
+
+      form?.addEventListener(
+        'change',
+        () => {
+          setPlaceSavedFilterModalError();
+        }
+      );
+
+      form?.addEventListener(
+        'submit',
+        event => {
+          event.preventDefault();
+
+          const submittedName =
+            nameInput
+              ?.value
+              .trim()
+            || '';
+
+          const submittedDescription =
+            modalBackdrop
+              .querySelector(
+                '#placeSavedFilterDescription'
+              )
+              ?.value
+              .trim()
+            || '';
+
+          const submittedFilters =
+            readPlaceFilterFields(
+              form
+            );
+
+          if (!submittedName) {
+            setPlaceSavedFilterModalError(
+              'Enter a filter name.',
+              '#placeSavedFilterName'
+            );
+
+            return;
+          }
+
+          const yearError =
+            placeFilterYearError(
+              submittedFilters
+            );
+
+          if (yearError) {
+            setPlaceSavedFilterModalError(
+              yearError,
+              '[data-place-filter-input="yearFrom"]'
+            );
+
+            return;
+          }
+
+          if (
+            !hasActivePlaceFilters(
+              submittedFilters
+            )
+          ) {
+            setPlaceSavedFilterModalError(
+              'Choose at least one filter option.',
+              '[data-place-filter-input]'
+            );
+
+            return;
+          }
+
+          const duplicate =
+            placeSavedFiltersForProject()
+              .find(savedFilter =>
+                savedFilter.id
+                  !== savedFilterId
+                && savedFilter.name
+                  .trim()
+                  .toLowerCase()
+                  === submittedName
+                    .toLowerCase()
+              );
+
+          if (duplicate) {
+            setPlaceSavedFilterModalError(
+              'A saved filter with this name already exists.',
+              '#placeSavedFilterName'
+            );
+
+            return;
+          }
+
+          if (isEdit) {
+            const wasActive =
+              state.placesSavedFilterId
+                === existing.id;
+
+            existing.name =
+              submittedName;
+
+            existing.description =
+              submittedDescription;
+
+            existing.filters = {
+              ...submittedFilters
+            };
+
+            existing.updatedAt =
+              new Date()
+                .toISOString();
+
+            if (wasActive) {
+              state.placesFilters = {
+                ...submittedFilters
+              };
+            }
+
+            closeModal();
+            renderPlaces();
+
+            showToast(
+              'Filter updated.'
+            );
+
+            return;
+          }
+
+          const savedFilter = {
+            id:
+              uniquePlaceSavedFilterId(),
+
+            projectId:
+              currentProjectId(),
+
+            name:
+              submittedName,
+
+            description:
+              submittedDescription,
+
+            filters: {
+              ...submittedFilters
+            },
+
+            createdAt:
+              new Date()
+                .toISOString(),
+
+            updatedAt:
+              new Date()
+                .toISOString()
+          };
+
+          sampleData
+            .placeSavedFilters
+            .push(savedFilter);
+
+          state.placesView =
+            'all';
+
+          state.placesSavedFilterId =
+            savedFilter.id;
+
+          state.placesFilters = {
+            ...submittedFilters
+          };
+
+          closeModal();
+          renderPlaces();
+
+          showToast(
+            'Filter created.'
+          );
+        }
+      );
+    }
+
+    function openCreatePlaceSavedFilterModal() {
+      openPlaceSavedFilterModal({
+        mode: 'create',
+        initialFilters: {
+          ...defaultPlaceFilters
+        }
       });
-      sidebar.querySelectorAll('[data-place-menu]').forEach(button => button.addEventListener('click', event => { event.stopPropagation(); openPlaceActionsMenu(button.dataset.placeMenu, button); }));
-      sidebar.querySelectorAll('[data-place-collection]').forEach(button => button.addEventListener('click', () => {
-        state.placesView = 'collection';
-        state.placesActiveCollectionId = button.dataset.placeCollection;
-        renderPlaces();
-      }));
-      sidebar.querySelectorAll('[data-place-collection-menu]').forEach(button => button.addEventListener('click', event => { event.stopPropagation(); openPlaceCollectionMenu(button.dataset.placeCollectionMenu, button); }));
-      sidebar.querySelector('#placesCollectionPlus')?.addEventListener('click', openNewPlaceCollectionModal);
+    }
+
+    function openSaveCurrentPlaceFilterModal() {
+      if (!hasActivePlaceFilters()) {
+        showToast(
+          'Add filters before saving a filter.'
+        );
+
+        return;
+      }
+
+      openPlaceSavedFilterModal({
+        mode: 'create',
+        initialName:
+          generatePlaceSavedFilterName(),
+
+        initialFilters:
+          placeFiltersWithDefaults()
+      });
+    }
+
+    function openEditPlaceSavedFilterModal(
+      savedFilterId
+    ) {
+      openPlaceSavedFilterModal({
+        mode: 'edit',
+        savedFilterId
+      });
+    }
+
+    function openPlaceSavedFilterMenu(
+      savedFilterId,
+      anchor
+    ) {
+      closeMenu();
+
+      const savedFilter =
+        placeSavedFilterById(
+          savedFilterId
+        );
+
+      if (
+        !savedFilter
+        || !anchor
+      ) {
+        return;
+      }
+
+      const rect =
+        anchor
+          .getBoundingClientRect();
+
+      const menu =
+        document.createElement(
+          'div'
+        );
+
+      menu.className =
+        'menu-popover';
+
+      menu.id =
+        'projectMenu';
+
+      menu.setAttribute(
+        'role',
+        'menu'
+      );
+
+      menu.setAttribute(
+        'aria-label',
+        `Actions for ${savedFilter.name}`
+      );
+
+      menu.style.top =
+        `${rect.bottom + 6}px`;
+
+      menu.style.left =
+        `${
+          Math.max(
+            12,
+            rect.right - 190
+          )
+        }px`;
+
+      menu.innerHTML = `
+        <button
+          type="button"
+          role="menuitem"
+          data-place-saved-filter-action="edit">
+          Edit filter
+        </button>
+
+        <button
+          class="danger"
+          type="button"
+          role="menuitem"
+          data-place-saved-filter-action="delete">
+          Delete filter
+        </button>
+      `;
+
+      document.body
+        .appendChild(menu);
+
+      menu.addEventListener(
+        'click',
+        event => {
+          const action =
+            event.target
+              .closest(
+                '[data-place-saved-filter-action]'
+              )
+              ?.dataset
+              .placeSavedFilterAction;
+
+          if (!action) {
+            return;
+          }
+
+          closeMenu();
+
+          if (action === 'edit') {
+            openEditPlaceSavedFilterModal(
+              savedFilter.id
+            );
+          } else if (
+            action === 'delete'
+          ) {
+            openDeletePlaceSavedFilterConfirm(
+              savedFilter.id
+            );
+          }
+        }
+      );
+
+      bindMenuLifecycle(anchor);
+    }
+
+    function openDeletePlaceSavedFilterConfirm(
+      savedFilterId
+    ) {
+      const savedFilter =
+        placeSavedFilterById(
+          savedFilterId
+        );
+
+      if (!savedFilter) {
+        showToast(
+          'Saved filter not found.'
+        );
+
+        return;
+      }
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="deletePlaceSavedFilterTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2
+                id="deletePlaceSavedFilterTitle">
+                Delete saved filter?
+              </h2>
+
+              <p>
+                Places and linked records
+                will not be deleted.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close>
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <div class="people-filter-delete-copy">
+              <strong>
+                ${escapeHtml(
+                  savedFilter.name
+                )}
+              </strong>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+              Cancel
+            </button>
+
+            <button
+              class="button danger"
+              type="button"
+              id="confirmDeletePlaceSavedFilter">
+              Delete filter
+            </button>
+          </div>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelector(
+          '#confirmDeletePlaceSavedFilter'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const wasActive =
+              state.placesSavedFilterId
+                === savedFilter.id;
+
+            sampleData
+              .placeSavedFilters =
+                (
+                  sampleData
+                    .placeSavedFilters
+                  || []
+                )
+                  .filter(item =>
+                    item.id
+                      !== savedFilter.id
+                  );
+
+            if (wasActive) {
+              state.placesSavedFilterId =
+                '';
+
+              state.placesFilters = {
+                ...defaultPlaceFilters
+              };
+
+              state.placesView =
+                'all';
+            }
+
+            closeModal();
+            renderPlaces();
+
+            showToast(
+              'Filter deleted.'
+            );
+          }
+        );
     }
 
     function filteredPlaces() {
-      let list = projectPlaces();
-      if (state.placesView === 'review') list = list.filter(placeNeedsReview);
-      if (state.placesView === 'collection') {
-        const ids = new Set(placeCollectionById(state.placesActiveCollectionId)?.placeIds || []);
-        list = list.filter(place => ids.has(place.id));
+      let list =
+        projectPlaces();
+
+      if (
+        state.placesView === 'review'
+      ) {
+        list =
+          list.filter(
+            placeNeedsReview
+          );
       }
-      const query = String(state.placesSearch || '').trim().toLowerCase();
-      if (query) list = list.filter(place => [place.name, placePrimaryName(place), placeSecondaryName(place), placeCountry(place), ...placeAlternativeNames(place)].join(' ').toLowerCase().includes(query));
-      const filters = state.placesFilters || {};
-      if (filters.mapped === 'mapped') list = list.filter(placeHasCoordinates);
-      if (filters.mapped === 'unmapped') list = list.filter(place => !placeHasCoordinates(place));
-      if (filters.needsReview) list = list.filter(placeNeedsReview);
-      if (state.placesSort === 'country') list.sort((a, b) => placeCountry(a).localeCompare(placeCountry(b)) || a.name.localeCompare(b.name));
-      else if (state.placesSort === 'updated') list.sort((a, b) => Date.parse(b.updatedAt || 0) - Date.parse(a.updatedAt || 0));
-      else list.sort((a, b) => a.name.localeCompare(b.name));
+
+      const filters =
+        placeFiltersWithDefaults();
+
+      const context =
+        createPlaceFilterContext(list);
+
+      list =
+        list.filter(place =>
+          placeMatchesFilters(
+            place,
+            filters,
+            context
+          )
+        );
+
+      const query =
+        String(
+          state.placesSearch || ''
+        )
+          .trim()
+          .toLowerCase();
+
+      if (query) {
+        list =
+          list.filter(place =>
+            [
+              place.name,
+              placePrimaryName(place),
+              placeSecondaryName(place),
+              placeCountry(place),
+              ...placeAlternativeNames(place)
+            ]
+              .join(' ')
+              .toLowerCase()
+              .includes(query)
+          );
+      }
+
+      if (
+        state.placesSort === 'country'
+      ) {
+        list.sort((a, b) =>
+          placeCountry(a)
+            .localeCompare(
+              placeCountry(b)
+            )
+          || a.name.localeCompare(
+            b.name
+          )
+        );
+      } else if (
+        state.placesSort === 'updated'
+      ) {
+        list.sort((a, b) =>
+          Date.parse(
+            b.updatedAt || 0
+          )
+          - Date.parse(
+            a.updatedAt || 0
+          )
+        );
+      } else {
+        list.sort((a, b) =>
+          a.name.localeCompare(
+            b.name
+          )
+        );
+      }
+
       return list;
     }
 
     function placesPageTitle() {
-      if (state.placesView === 'review') return 'Needs review';
-      if (state.placesView === 'collection') return placeCollectionById(state.placesActiveCollectionId)?.name || 'Collection';
+      if (
+        state.placesView === 'review'
+      ) {
+        return 'Needs review';
+      }
+
+      if (
+        state.placesSavedFilterId
+      ) {
+        return (
+          placeSavedFilterById(
+            state.placesSavedFilterId
+          )?.name
+          || 'Saved filter'
+        );
+      }
+
+      if (
+        hasActivePlaceFilters()
+      ) {
+        return 'Filtered places';
+      }
+
       return 'Places';
     }
 
     function placesPageSubtitle() {
-      if (state.placesView === 'review') {
+      if (
+        state.placesView === 'review'
+      ) {
         return 'Review place names and locations that need attention.';
       }
 
-      if (state.placesView === 'collection') {
-        return 'Explore the places saved in this collection.';
+      if (
+        state.placesSavedFilterId
+      ) {
+        const savedFilter =
+          placeSavedFilterById(
+            state.placesSavedFilterId
+          );
+
+        return (
+          savedFilter?.description
+          || 'Explore places matching this saved genealogy filter.'
+        );
+      }
+
+      if (
+        hasActivePlaceFilters()
+      ) {
+        return 'Explore places matching the active genealogy filters.';
       }
 
       return 'Map and organize the places connected to your family history.';
     }
-
     
 
     function renderPlacesMain() {
-      if (state.placesDetailOpen) { renderPlaceDetail(); return; }
-      const list = filteredPlaces();
-      const selected = selectedPlaceFromList(list) || getPlace(state.selectedPlaceId);
-      if (selected && !state.selectedPlaceId) state.selectedPlaceId = selected.id;
-      const isPlacesListView = state.placesViewMode === 'list';
+      if (
+        state.placesDetailOpen
+      ) {
+        renderPlaceDetail();
+        return;
+      }
+
+      const list =
+        filteredPlaces();
+
+      const selected =
+        selectedPlaceFromList(list);
+
+      const nextSelectedPlaceId =
+        selected?.id || null;
+
+      if (
+        state.selectedPlaceId
+          !== nextSelectedPlaceId
+      ) {
+        state.selectedPlaceId =
+          nextSelectedPlaceId;
+      }
+
+      const isPlacesListView =
+        state.placesViewMode === 'list';
+      const activeFilterCount =
+        activePlaceFilterCount();
+      const hasActiveFilters =
+        activeFilterCount > 0;
       const routeIsShown =
         !isPlacesListView
         && state.placesShowRoute
@@ -46026,25 +48071,67 @@
                       )}">
                   </label>
                 </div>
-
                 <div class="places-toolbar-right">
+                  <button
+                    class="
+                      people-filter-button
+                      places-filter-button
+                      ${
+                        hasActiveFilters
+                          ? 'active'
+                          : ''
+                      }
+                    "
+                    type="button"
+                    id="placesFilterButton"
+                    aria-haspopup="dialog"
+                    aria-controls="placesFilterPopover"
+                    aria-expanded="false"
+                    aria-label="${
+                      hasActiveFilters
+                        ? `Filters, ${activeFilterCount} active`
+                        : 'Open place filters'
+                    }">
+
+                    <span
+                      class="people-filter-icon"
+                      aria-hidden="true">
+
+                      ${
+                        hasActiveFilters
+                          ? icon.filterclear
+                          : icon.filter
+                      }
+                    </span>
+
+                    <span>Filters</span>
+
+                    ${
+                      hasActiveFilters
+                        ? `
+                          <span
+                            class="people-filter-count">
+                            ${activeFilterCount}
+                          </span>
+                        `
+                        : ''
+                    }
+                  </button>
+
                   ${
                     isPlacesListView
                       ? `
-                        <button
-                          class="button secondary"
-                          type="button"
-                          id="placesFilterButton"
-                          aria-expanded="false">
-                          ${icon.filter}
-                          Filters
-                        </button>
-
                         <label
-                          class="common-select-shell places-sort">
+                          class="
+                            common-select-shell
+                            places-sort
+                          ">
 
                           <select
-                            class="compact-select common-select"
+                            class="
+                              compact-select
+                              common-select
+                            "
                             id="placesSort"
                             aria-label="Sort places">
 
@@ -46088,9 +48175,7 @@
                       `
                       : ''
                   }
-                  ${
-                    !isPlacesListView
-                      ? `
+                  ${!isPlacesListView ? `
                         <button
                           class="
                             button
@@ -46165,7 +48250,7 @@
                 </div>
               </div>
 
-              ${renderPlacesFilterChips()}
+              ${renderPlacesActiveFilters()}
 
               ${
                 state.placesViewMode === 'list'
@@ -46205,13 +48290,364 @@
       if (state.placesViewMode === 'map') requestAnimationFrame(() => mountPlacesMap(list));
     }
 
-    function renderPlacesFilterChips() {
-      const filters = state.placesFilters || {};
-      const chips = [];
-      if (filters.mapped === 'mapped') chips.push('<button type="button" data-place-filter-clear="mapped">On map</button>');
-      if (filters.mapped === 'unmapped') chips.push('<button type="button" data-place-filter-clear="mapped">Not on map</button>');
-      if (filters.needsReview) chips.push('<button type="button" data-place-filter-clear="review">Needs review</button>');
-      return chips.length ? `<div class="places-filter-chips">${chips.join('')}</div>` : '';
+    function placeFilterRecordPlaceIds(record) {
+      return [
+        record?.placeId,
+        record?.birthPlaceId,
+        record?.deathPlaceId,
+        record?.burialPlaceId,
+        ...(
+          Array.isArray(record?.placeIds)
+            ? record.placeIds
+            : []
+        )
+      ].filter(Boolean);
+    }
+
+    function createPlaceFilterContext(
+      places = projectPlaces()
+    ) {
+      const projectId =
+        currentProjectId();
+
+      const placeIds =
+        new Set(
+          places.map(place =>
+            place.id
+          )
+        );
+
+      const eventsByPlaceId =
+        new Map();
+
+      const peopleByPlaceId =
+        new Map();
+
+      places.forEach(place => {
+        eventsByPlaceId.set(
+          place.id,
+          []
+        );
+
+        peopleByPlaceId.set(
+          place.id,
+          getPeopleForPlace(
+            place.id,
+            {
+              projectId
+            }
+          )
+        );
+      });
+
+      (
+        sampleData.events || []
+      )
+        .filter(event =>
+          event.projectId
+            === projectId
+        )
+        .forEach(event => {
+          placeFilterRecordPlaceIds(
+            event
+          ).forEach(placeId => {
+            if (!placeIds.has(placeId)) {
+              return;
+            }
+
+            eventsByPlaceId
+              .get(placeId)
+              ?.push(event);
+          });
+        });
+
+      return {
+        eventsByPlaceId,
+        peopleByPlaceId
+      };
+    }
+
+    function placeFilterDateText(value) {
+      if (
+        value === null
+        || value === undefined
+      ) {
+        return '';
+      }
+
+      if (
+        typeof value === 'string'
+        || typeof value === 'number'
+      ) {
+        return String(value);
+      }
+
+      return (
+        formatGenealogyDateLabel(value)
+        || ''
+      );
+    }
+
+    function placeEventYearRange(event) {
+      const values = [
+        event?.dateLabel,
+        event?.date,
+        event?.date2Label,
+        event?.date2,
+        event?.dateRangeLabel,
+        event?.fromDate,
+        event?.toDate,
+
+        typeof formatGenealogyDateStartLabel
+          === 'function'
+          ? formatGenealogyDateStartLabel(
+              event
+            )
+          : '',
+
+        typeof formatGenealogyDateEndLabel
+          === 'function'
+          ? formatGenealogyDateEndLabel(
+              event
+            )
+          : ''
+      ];
+
+      const years =
+        values
+          .map(placeFilterDateText)
+          .flatMap(value =>
+            String(value)
+              .match(
+                /\b[1-9]\d{2,3}\b/g
+              )
+            || []
+          )
+          .map(Number)
+          .filter(year =>
+            Number.isInteger(year)
+            && year >= 1
+            && year <= 9999
+          );
+
+      if (!years.length) {
+        return null;
+      }
+
+      return {
+        from: Math.min(...years),
+        to: Math.max(...years)
+      };
+    }
+
+    function placeEventMatchesDateRange(
+      event,
+      filters
+    ) {
+      const normalized =
+        placeFiltersWithDefaults(filters);
+
+      if (
+        !normalized.yearFrom
+        && !normalized.yearTo
+      ) {
+        return true;
+      }
+
+      const range =
+        placeEventYearRange(event);
+
+      if (!range) {
+        return false;
+      }
+
+      const filterFrom =
+        normalized.yearFrom
+          ? Number(normalized.yearFrom)
+          : Number.NEGATIVE_INFINITY;
+
+      const filterTo =
+        normalized.yearTo
+          ? Number(normalized.yearTo)
+          : Number.POSITIVE_INFINITY;
+
+      return (
+        range.from <= filterTo
+        && range.to >= filterFrom
+      );
+    }
+
+    function eventLinkedPersonIds(event) {
+      return new Set([
+        ...(
+          Array.isArray(event?.personIds)
+            ? event.personIds
+            : []
+        ),
+
+        ...(
+          Array.isArray(
+            event?.relatedPersonIds
+          )
+            ? event.relatedPersonIds
+            : []
+        )
+      ]);
+    }
+
+    function placeMatchesFilters(
+      place,
+      filters,
+      context
+    ) {
+      const normalized =
+        placeFiltersWithDefaults(filters);
+
+      if (
+        normalized.country
+        && placeCountry(place)
+          !== normalized.country
+      ) {
+        return false;
+      }
+
+      if (
+        normalized.mapped === 'mapped'
+        && !placeHasCoordinates(place)
+      ) {
+        return false;
+      }
+
+      if (
+        normalized.mapped === 'unmapped'
+        && placeHasCoordinates(place)
+      ) {
+        return false;
+      }
+
+      if (
+        normalized.needsReview
+        && !placeNeedsReview(place)
+      ) {
+        return false;
+      }
+
+      const linkedPeople =
+        context.peopleByPlaceId
+          .get(place.id)
+        || [];
+
+      const hasPersonCondition =
+        Boolean(
+          normalized.personId
+          || normalized.surname
+        );
+
+      const matchingPeople =
+        linkedPeople.filter(person => {
+          if (
+            normalized.personId
+            && person.id
+              !== normalized.personId
+          ) {
+            return false;
+          }
+
+          if (
+            normalized.surname
+            && placeFilterPersonSurname(
+              person
+            ).toLowerCase()
+              !== normalized.surname
+                .toLowerCase()
+          ) {
+            return false;
+          }
+
+          return true;
+        });
+
+      if (
+        hasPersonCondition
+        && !matchingPeople.length
+      ) {
+        return false;
+      }
+
+      const hasEventCondition =
+        Boolean(
+          normalized.eventType
+          || normalized.yearFrom
+          || normalized.yearTo
+        );
+
+      if (hasEventCondition) {
+        const linkedEvents =
+          context.eventsByPlaceId
+            .get(place.id)
+          || [];
+
+        const matchingPersonIds =
+          new Set(
+            matchingPeople.map(person =>
+              person.id
+            )
+          );
+
+        const eventMatches =
+          linkedEvents.some(event => {
+            if (
+              normalized.eventType
+              && event.type
+                !== normalized.eventType
+            ) {
+              return false;
+            }
+
+            if (
+              !placeEventMatchesDateRange(
+                event,
+                normalized
+              )
+            ) {
+              return false;
+            }
+
+            /*
+            * When person/surname and event/date
+            * filters are combined, require one
+            * event associated with the matching
+            * person rather than unrelated records
+            * at the same place.
+            */
+            if (
+              hasPersonCondition
+            ) {
+              const eventPeople =
+                eventLinkedPersonIds(
+                  event
+                );
+
+              if (
+                ![
+                  ...matchingPersonIds
+                ].some(personId =>
+                  eventPeople.has(personId)
+                )
+              ) {
+                return false;
+              }
+            }
+
+            return true;
+          });
+
+        if (!eventMatches) {
+          return false;
+        }
+      }
+
+      return true;
     }
 
     function renderPlacesListPanel(list) {
@@ -46715,12 +49151,49 @@
     }
 
     function bindPlacesControls(list) {
-      bindSearchInput(main, '#placesSearch', 'placesSearch', renderPlacesMain);
+      bindSearchInput(
+        main,
+        '#placesSearch',
+        'placesSearch',
+        renderPlaces
+      );
       main.querySelector('#placesAddPlace')?.addEventListener('click', () => openPlaceModal());
-      main.querySelector('#placesFilterButton')?.addEventListener('click', event => openPlacesFilterModal(event.currentTarget));
+      main.querySelector('#placesFilterButton')?.addEventListener('click', event => {openPlacesFilterPopover(event.currentTarget);});
       main.querySelector('#placesSort')?.addEventListener('change', event => { state.placesSort = event.target.value; renderPlacesMain(); });
+      main
+        .querySelector(
+          '#placesClearFilters'
+        )
+        ?.addEventListener(
+          'click',
+          clearPlaceFilters
+        );
+
+      main
+        .querySelector(
+          '#placesSaveFilter'
+        )
+        ?.addEventListener(
+          'click',
+          openSaveCurrentPlaceFilterModal
+        );
+
+      main
+        .querySelectorAll(
+          '[data-places-remove-filter]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              removePlaceFilter(
+                button.dataset
+                  .placesRemoveFilter
+              );
+            }
+          );
+        });
       main.querySelectorAll('[data-places-mode]').forEach(button => button.addEventListener('click', () => { state.placesViewMode = button.dataset.placesMode; if (state.placesViewMode === 'list') destroyPlacesMap(); renderPlacesMain(); }));
-      main.querySelectorAll('[data-place-filter-clear]').forEach(button => button.addEventListener('click', () => { const key = button.dataset.placeFilterClear; if (key === 'mapped') state.placesFilters.mapped = 'all'; if (key === 'review') state.placesFilters.needsReview = false; renderPlacesMain(); }));
       main.querySelectorAll('[data-place-id]').forEach(row => {
         row.addEventListener('click', event => { if (event.target.closest('button,input,select,a')) return; selectPlace(row.dataset.placeId); });
         row.addEventListener('keydown', event => { if (!['Enter', ' '].includes(event.key) || event.target.closest('button,input,select,a')) return; event.preventDefault(); selectPlace(row.dataset.placeId); });
@@ -46760,20 +49233,285 @@
       main.querySelector('[data-place-menu]')?.addEventListener('click', event => openPlaceActionsMenu(place.id, event.currentTarget));
     }
 
-    function openPlacesFilterModal(anchor) {
+    function closePlacesFilterPopover() {
+      document
+        .getElementById(
+          'placesFilterPopover'
+        )
+        ?.remove();
+
+      document
+        .getElementById(
+          'placesFilterButton'
+        )
+        ?.setAttribute(
+          'aria-expanded',
+          'false'
+        );
+
+      document.removeEventListener(
+        'click',
+        closePlacesFilterOnOutside
+      );
+
+      document.removeEventListener(
+        'keydown',
+        closePlacesFilterOnEscape
+      );
+    }
+
+    function closePlacesFilterOnOutside(
+      event
+    ) {
+      if (
+        !event.target.closest(
+          '#placesFilterPopover'
+        )
+        && !event.target.closest(
+          '#placesFilterButton'
+        )
+      ) {
+        closePlacesFilterPopover();
+      }
+    }
+
+    function closePlacesFilterOnEscape(
+      event
+    ) {
+      if (event.key === 'Escape') {
+        closePlacesFilterPopover();
+      }
+    }
+
+    function setPlacesFilterPopoverError(
+      popover,
+      message = ''
+    ) {
+      const error =
+        popover.querySelector(
+          '[data-place-filter-error]'
+        );
+
+      if (!error) {
+        return;
+      }
+
+      error.textContent =
+        message;
+
+      error.hidden =
+        !message;
+    }
+
+    function openPlacesFilterPopover(
+      anchor
+    ) {
+      closePlacesFilterPopover();
       closeMenu();
-      const rect = anchor.getBoundingClientRect();
-      const menu = document.createElement('div');
-      menu.className = 'menu-popover places-filter-menu';
-      menu.id = 'projectMenu';
-      menu.style.top = `${rect.bottom + 6}px`;
-      menu.style.left = `${Math.max(12, Math.min(window.innerWidth - 300, rect.left))}px`;
-      const filters = state.placesFilters || { mapped: 'all', needsReview: false };
-      menu.innerHTML = `<label>Map status<select data-place-filter-mapped><option value="all" ${filters.mapped === 'all' ? 'selected' : ''}>All places</option><option value="mapped" ${filters.mapped === 'mapped' ? 'selected' : ''}>On map</option><option value="unmapped" ${filters.mapped === 'unmapped' ? 'selected' : ''}>Not on map</option></select></label><label class="places-filter-check"><input type="checkbox" data-place-filter-review ${filters.needsReview ? 'checked' : ''}> Needs review</label><div><button class="button secondary" type="button" data-place-filter-reset>Clear</button><button class="button primary" type="button" data-place-filter-apply>Apply</button></div>`;
-      document.body.appendChild(menu);
-      menu.querySelector('[data-place-filter-reset]')?.addEventListener('click', () => { state.placesFilters = { mapped: 'all', needsReview: false }; closeMenu(); renderPlacesMain(); });
-      menu.querySelector('[data-place-filter-apply]')?.addEventListener('click', () => { state.placesFilters = { mapped: menu.querySelector('[data-place-filter-mapped]').value, needsReview: menu.querySelector('[data-place-filter-review]').checked }; closeMenu(); renderPlacesMain(); });
-      bindMenuLifecycle(anchor);
+      const filters =
+        placeFiltersWithDefaults();
+      const popover =
+        document.createElement(
+          'div'
+        );
+      popover.className = `
+        people-filter-popover
+        places-filter-popover
+      `;
+      popover.id =
+        'placesFilterPopover';
+      popover.setAttribute(
+        'role',
+        'dialog'
+      );
+      popover.setAttribute(
+        'aria-label',
+        'Filter places'
+      );
+      popover.innerHTML = `
+        <div
+          class="people-filter-popover-header">
+
+          <h3>Filter places</h3>
+
+          <p>
+            Refine places by people,
+            surnames, dates, event type,
+            country, map status, and review.
+          </p>
+        </div>
+
+        <div class="people-filter-grid">
+          ${renderPlaceFilterFields(
+            filters,
+            'places-popover-filter'
+          )}
+        </div>
+
+        <p
+          class="places-filter-error"
+          data-place-filter-error
+          role="alert"
+          hidden>
+        </p>
+
+        <div class="people-filter-footer">
+          <button
+            class="button secondary"
+            type="button"
+            data-place-filter-reset>
+            Reset
+          </button>
+
+          <button
+            class="button primary"
+            type="button"
+            data-place-filter-apply>
+            Apply filters
+          </button>
+        </div>
+      `;
+
+      document.body
+        .appendChild(popover);
+
+      const rect =
+        anchor
+          .getBoundingClientRect();
+
+      const margin = 12;
+
+      const left =
+        Math.min(
+          Math.max(
+            margin,
+            rect.right
+              - popover.offsetWidth
+          ),
+          Math.max(
+            margin,
+            window.innerWidth
+              - popover.offsetWidth
+              - margin
+          )
+        );
+
+      const below =
+        rect.bottom + 8;
+
+      const top =
+        below
+          + popover.offsetHeight
+          <= window.innerHeight
+            - margin
+          ? below
+          : Math.max(
+              margin,
+              rect.top
+                - popover.offsetHeight
+                - 8
+            );
+
+      popover.style.left =
+        `${left}px`;
+
+      popover.style.top =
+        `${top}px`;
+
+      anchor.setAttribute(
+        'aria-expanded',
+        'true'
+      );
+
+      popover
+        .querySelector(
+          '[data-place-filter-reset]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            resetPlaceFilterFields(
+              popover
+            );
+
+            setPlacesFilterPopoverError(
+              popover
+            );
+          }
+        );
+
+      popover
+        .querySelector(
+          '[data-place-filter-apply]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const submitted =
+              readPlaceFilterFields(
+                popover
+              );
+
+            const yearError =
+              placeFilterYearError(
+                submitted
+              );
+
+            if (yearError) {
+              setPlacesFilterPopoverError(
+                popover,
+                yearError
+              );
+
+              popover
+                .querySelector(
+                  '[data-place-filter-input="yearFrom"]'
+                )
+                ?.focus();
+
+              return;
+            }
+
+            state.placesFilters = {
+              ...submitted
+            };
+
+            state.placesSavedFilterId =
+              '';
+            closePlacesFilterPopover();
+            renderPlaces();
+          }
+        );
+
+      popover.addEventListener(
+        'input',
+        () => {
+          setPlacesFilterPopoverError(
+            popover
+          );
+        }
+      );
+
+      popover.addEventListener(
+        'change',
+        () => {
+          setPlacesFilterPopoverError(
+            popover
+          );
+        }
+      );
+
+      setTimeout(() => {
+        document.addEventListener(
+          'click',
+          closePlacesFilterOnOutside
+        );
+
+        document.addEventListener(
+          'keydown',
+          closePlacesFilterOnEscape
+        );
+      }, 0);
     }
 
     function openPlaceActionsMenu(placeId, anchor) {
@@ -46792,47 +49530,6 @@
       bindMenuLifecycle(anchor);
     }
 
-    function openPlaceCollectionMenu(collectionId, anchor) {
-      const collection = placeCollectionById(collectionId);
-      if (!collection) return;
-      closeMenu();
-      const rect = anchor.getBoundingClientRect();
-      const menu = document.createElement('div');
-      menu.className = 'menu-popover';
-      menu.id = 'projectMenu';
-      menu.style.top = `${rect.bottom + 6}px`;
-      menu.style.left = `${Math.max(12, Math.min(window.innerWidth - 220, rect.right - 200))}px`;
-      menu.innerHTML = '<button type="button" data-action="rename">Rename collection</button><button type="button" data-action="add">Add places</button><button type="button" class="danger" data-action="delete">Delete collection</button>';
-      document.body.appendChild(menu);
-      menu.addEventListener('click', event => { const action = event.target.closest('[data-action]')?.dataset.action; closeMenu(); if (action === 'rename') openRenamePlaceCollectionModal(collection.id); if (action === 'add') openAddPlacesToCollectionModal(collection.id); if (action === 'delete') openDeletePlaceCollectionModal(collection.id); });
-      bindMenuLifecycle(anchor);
-    }
-
-    function openNewPlaceCollectionModal() {
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="placeCollectionTitle"><div class="modal-header"><div><h2 id="placeCollectionTitle">Create collection</h2><p>Group related places without changing the place records.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="placeCollectionForm"><div class="modal-body form-grid"><div class="field"><label for="placeCollectionName">Name</label><input id="placeCollectionName" required></div><div class="field"><label for="placeCollectionDescription">Description</label><textarea id="placeCollectionDescription"></textarea></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create</button></div></form></div>`);
-      modalBackdrop.querySelector('#placeCollectionForm')?.addEventListener('submit', event => { event.preventDefault(); const id = `pc-${Date.now()}`; sampleData.placeCollections.push({ id, projectId: currentProjectId(), name: modalBackdrop.querySelector('#placeCollectionName').value.trim(), description: modalBackdrop.querySelector('#placeCollectionDescription').value.trim(), placeIds: [] }); state.placesView = 'collection'; state.placesActiveCollectionId = id; closeModal(); renderPlaces(); showToast('Collection created.'); });
-    }
-
-    function openRenamePlaceCollectionModal(collectionId) {
-      const collection = placeCollectionById(collectionId); if (!collection) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true"><div class="modal-header"><h2>Rename collection</h2><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="placeCollectionRenameForm"><div class="modal-body"><div class="field"><label for="placeCollectionRename">Name</label><input id="placeCollectionRename" required value="${escapeHtml(collection.name)}"></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Save</button></div></form></div>`);
-      modalBackdrop.querySelector('#placeCollectionRenameForm')?.addEventListener('submit', event => { event.preventDefault(); collection.name = modalBackdrop.querySelector('#placeCollectionRename').value.trim(); closeModal(); renderPlaces(); showToast('Collection renamed.'); });
-    }
-
-    function openAddPlacesToCollectionModal(collectionId) {
-      const collection = placeCollectionById(collectionId); if (!collection) return;
-      const selected = new Set(collection.placeIds || []);
-      const places = projectPlaces();
-      openModal(`<div class="modal" role="dialog" aria-modal="true"><div class="modal-header"><div><h2>Add places to ${escapeHtml(collection.name)}</h2><p>Collection membership is stored on the collection.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="addCollectionPlacesForm"><div class="modal-body notes-modal-list">${places.map(place => `<label class="notes-modal-choice"><input type="checkbox" value="${escapeHtml(place.id)}" ${selected.has(place.id) ? 'checked' : ''}><span>${escapeHtml(place.name)}</span></label>`).join('')}</div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Save places</button></div></form></div>`);
-      modalBackdrop.querySelector('#addCollectionPlacesForm')?.addEventListener('submit', event => { event.preventDefault(); collection.placeIds = [...modalBackdrop.querySelectorAll('#addCollectionPlacesForm input:checked')].map(input => input.value); closeModal(); renderPlaces(); showToast('Collection updated.'); });
-    }
-
-    function openDeletePlaceCollectionModal(collectionId) {
-      const collection = placeCollectionById(collectionId); if (!collection) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true"><div class="modal-header"><h2>Delete collection?</h2><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><p>Places remain available in All places.</p></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-delete-place-collection>Delete</button></div></div>`);
-      modalBackdrop.querySelector('[data-delete-place-collection]')?.addEventListener('click', () => { sampleData.placeCollections = sampleData.placeCollections.filter(item => item.id !== collection.id); (sampleData.placeRoutes || []).forEach(route => { if (route.collectionId === collection.id) route.collectionId = null; }); if (state.placesActiveCollectionId === collection.id) { state.placesView = 'all'; state.placesActiveCollectionId = null; } closeModal(); renderPlaces(); showToast('Collection deleted.'); });
-    }
-
     function placesProjectRoutes() {
       return (sampleData.placeRoutes || []).filter(route => route.projectId === currentProjectId() && !route.deleted);
     }
@@ -46845,42 +49542,279 @@
       return id;
     }
 
-    function openPlaceRouteModal(routeId = null) {
-      const existing = routeId ? placesProjectRoutes().find(route => route.id === routeId) : null;
-      if (routeId && !existing) return;
-      const projectPlaceIds = new Set(projectPlaces().map(place => place.id));
-      const existingIds = (existing?.placeIds || []).filter(id => projectPlaceIds.has(id));
-      const existingSet = new Set(existingIds);
+    function openPlaceRouteModal(
+      routeId = null
+    ) {
+      const existing =
+        routeId
+          ? placesProjectRoutes()
+              .find(route =>
+                route.id === routeId
+              )
+          : null;
+
+      if (
+        routeId
+        && !existing
+      ) {
+        return;
+      }
+
+      const projectPlaceIds =
+        new Set(
+          projectPlaces()
+            .map(place =>
+              place.id
+            )
+        );
+
+      const existingIds =
+        (
+          Array.isArray(
+            existing?.placeIds
+          )
+            ? existing.placeIds
+            : []
+        )
+          .filter(placeId =>
+            projectPlaceIds.has(
+              placeId
+            )
+          );
+
+      const existingSet =
+        new Set(existingIds);
+
       const orderedPlaces = [
-        ...existingIds.map(getPlace).filter(Boolean),
-        ...projectPlaces().filter(place => !existingSet.has(place.id))
+        ...existingIds
+          .map(getPlace)
+          .filter(Boolean),
+
+        ...projectPlaces()
+          .filter(place =>
+            !existingSet.has(
+              place.id
+            )
+          )
       ];
-      const collections = placeCollectionsForProject();
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="placeRouteModalTitle"><div class="modal-header"><div><h2 id="placeRouteModalTitle">${existing ? 'Edit route' : 'New route'}</h2><p>Choose at least two places. Their order here is the route order.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="placeRouteForm"><div class="modal-body form-grid"><div class="field full"><label for="placeRouteName">Route name</label><input id="placeRouteName" required value="${escapeHtml(existing?.name || '')}" placeholder="e.g. Family migration"></div><div class="field full"><label for="placeRouteCollection">Collection</label><select id="placeRouteCollection"><option value="">No collection</option>${collections.map(collection => `<option value="${escapeHtml(collection.id)}" ${collection.id === existing?.collectionId ? 'selected' : ''}>${escapeHtml(collection.name)}</option>`).join('')}</select></div><fieldset class="field full places-route-choices"><legend>Places in route order</legend><div class="notes-modal-list">${orderedPlaces.map(place => `<label class="notes-modal-choice"><input type="checkbox" value="${escapeHtml(place.id)}" ${existingSet.has(place.id) ? 'checked' : ''}><span>${escapeHtml(place.name)}</span></label>`).join('')}</div><span class="place-coordinate-error" data-place-route-error role="alert"></span></fieldset></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">${existing ? 'Save route' : 'Create route'}</button></div></form></div>`);
-      modalBackdrop.querySelector('#placeRouteForm')?.addEventListener('submit', event => {
-        event.preventDefault();
-        const placeIds = [...modalBackdrop.querySelectorAll('#placeRouteForm input[type="checkbox"]:checked')].map(input => input.value);
-        const error = modalBackdrop.querySelector('[data-place-route-error]');
-        if (placeIds.length < 2) {
-          error.textContent = 'Select at least two places.';
-          return;
-        }
-        const route = existing || {
-          id: uniquePlaceRouteId(),
-          projectId: currentProjectId(),
-          status: 'active',
-          deleted: false
-        };
-        route.name = modalBackdrop.querySelector('#placeRouteName').value.trim();
-        route.collectionId = modalBackdrop.querySelector('#placeRouteCollection').value || null;
-        route.placeIds = [...new Set(placeIds)];
-        if (!existing) sampleData.placeRoutes.push(route);
-        state.placesActiveRouteId = route.id;
-        state.placesShowRoute = true;
-        closeModal();
-        renderPlacesMain();
-        showToast(existing ? 'Route updated.' : 'Route created.');
-      });
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="placeRouteModalTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="placeRouteModalTitle">
+                ${
+                  existing
+                    ? 'Edit route'
+                    : 'New route'
+                }
+              </h2>
+
+              <p>
+                Choose at least two places.
+                Their order here is the
+                route order.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close>
+              ${icon.close}
+            </button>
+          </div>
+
+          <form id="placeRouteForm">
+            <div
+              class="
+                modal-body
+                form-grid
+              ">
+
+              <div class="field full">
+                <label for="placeRouteName">
+                  Route name
+                </label>
+
+                <input
+                  id="placeRouteName"
+                  required
+                  value="${
+                    escapeHtml(
+                      existing?.name || ''
+                    )
+                  }"
+                  placeholder="e.g. Family migration">
+              </div>
+
+              <fieldset
+                class="
+                  field
+                  full
+                  places-route-choices
+                ">
+
+                <legend>
+                  Places in route order
+                </legend>
+
+                <div class="notes-modal-list">
+                  ${
+                    orderedPlaces
+                      .map(place => `
+                        <label
+                          class="
+                            notes-modal-choice
+                          ">
+
+                          <input
+                            type="checkbox"
+                            value="${
+                              escapeHtml(
+                                place.id
+                              )
+                            }"
+                            ${
+                              existingSet.has(
+                                place.id
+                              )
+                                ? 'checked'
+                                : ''
+                            }>
+
+                          <span>
+                            ${
+                              escapeHtml(
+                                place.name
+                              )
+                            }
+                          </span>
+                        </label>
+                      `)
+                      .join('')
+                  }
+                </div>
+
+                <span
+                  class="
+                    place-coordinate-error
+                  "
+                  data-place-route-error
+                  role="alert">
+                </span>
+              </fieldset>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                class="button secondary"
+                type="button"
+                data-close>
+                Cancel
+              </button>
+
+              <button
+                class="button primary"
+                type="submit">
+                ${
+                  existing
+                    ? 'Save route'
+                    : 'Create route'
+                }
+              </button>
+            </div>
+          </form>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelector(
+          '#placeRouteForm'
+        )
+        ?.addEventListener(
+          'submit',
+          event => {
+            event.preventDefault();
+
+            const placeIds = [
+              ...modalBackdrop
+                .querySelectorAll(
+                  '#placeRouteForm input[type="checkbox"]:checked'
+                )
+            ].map(input =>
+              input.value
+            );
+
+            const error =
+              modalBackdrop
+                .querySelector(
+                  '[data-place-route-error]'
+                );
+
+            if (
+              placeIds.length < 2
+            ) {
+              error.textContent =
+                'Select at least two places.';
+
+              return;
+            }
+
+            const route =
+              existing || {
+                id:
+                  uniquePlaceRouteId(),
+
+                projectId:
+                  currentProjectId(),
+
+                status:
+                  'active',
+
+                deleted:
+                  false
+              };
+
+            route.name =
+              modalBackdrop
+                .querySelector(
+                  '#placeRouteName'
+                )
+                .value
+                .trim();
+
+            route.placeIds = [
+              ...new Set(placeIds)
+            ];
+
+            if (!existing) {
+              sampleData
+                .placeRoutes
+                .push(route);
+            }
+
+            state.placesActiveRouteId =
+              route.id;
+
+            state.placesShowRoute =
+              true;
+
+            closeModal();
+            renderPlacesMain();
+
+            showToast(
+              existing
+                ? 'Route updated.'
+                : 'Route created.'
+            );
+          }
+        );
     }
 
     function openPlacesRouteMenu(anchor) {
@@ -47133,7 +50067,11 @@
         );
         place.coordinates = valid ? { lat: Number(latText), lng: Number(lngText) } : null;
         place.updatedAt = new Date().toISOString();
-        if (!existing) { sampleData.places.unshift(place); const collection = placeCollectionById(state.placesActiveCollectionId); if (state.placesView === 'collection' && collection) collection.placeIds = [...new Set([...(collection.placeIds || []), place.id])]; }
+        if (!existing) {
+          sampleData.places.unshift(
+            place
+          );
+        }
         state.selectedPlaceId = place.id; closeModal(); renderPlaces(); showToast(existing ? 'Place updated.' : 'Place created.');
       });
     }
@@ -47143,7 +50081,6 @@
       openModal(`<div class="modal" role="dialog" aria-modal="true"><div class="modal-header"><div><h2>Delete place permanently?</h2><p>Connected records remain, but their place reference will be cleared.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><strong>${escapeHtml(place.name)}</strong></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-confirm-delete-place>Delete permanently</button></div></div>`);
       modalBackdrop.querySelector('[data-confirm-delete-place]')?.addEventListener('click', () => {
         sampleData.places = sampleData.places.filter(item => item.id !== place.id);
-        placeCollectionsForProject().forEach(collection => { collection.placeIds = (collection.placeIds || []).filter(id => id !== place.id); });
         (sampleData.placeRoutes || []).forEach(route => { route.placeIds = (route.placeIds || []).filter(id => id !== place.id); });
         sampleData.placeIssues = (sampleData.placeIssues || []).filter(issue => issue.placeId !== place.id);
         sampleData.people.forEach(person => [person.birth, person.death, ...(person.events || []), ...(person.attributes || [])].filter(Boolean).forEach(record => { if (record.placeId === place.id) record.placeId = null; if (record.burialPlaceId === place.id) record.burialPlaceId = null; }));
@@ -47982,13 +50919,69 @@
     function navigateToProjectModule(projectId, moduleName = 'Projects') {
       const project = sampleData.projects.find(item => item.id === projectId && !item.deleted && item.available !== false);
       const nextModule = moduleName === 'Projects' || modules.includes(moduleName) ? moduleName : 'Projects';
-      if (!project) return false;
+      if (!project) {
+        return false;
+      }
+      const previousProjectId = currentProjectId();
+      const projectChanged = previousProjectId !== project.id;
       closeMenu();
       clearPeopleSelection();
       state.projectOpen = true;
-      state.currentProjectId = project.id;
-      state.selectedProjectId = project.id;
-      state.activeModule = nextModule;
+      state.currentProjectId =
+        project.id;
+
+      state.selectedProjectId =
+        project.id;
+
+      if (projectChanged) {
+        state.placesView =
+          'all';
+
+        state.placesSavedFilterId =
+          '';
+
+        state.placesFilters = {
+          ...defaultPlaceFilters
+        };
+
+        state.placesSearch =
+          '';
+
+        state.placesDetailOpen =
+          false;
+
+        state.selectedPlaceId =
+          projectPlaces(
+            project.id
+          )[0]?.id
+          || null;
+
+        state.placesActiveRouteId =
+          (
+            sampleData.placeRoutes || []
+          )
+            .find(route =>
+              route.projectId === project.id
+              && !route.deleted
+            )
+            ?.id
+          || null;
+
+        state.placesShowRoute =
+          true;
+
+        state.placesMapView = {
+          center: null,
+          zoom:
+            PLACES_MAP_CONFIG
+              .defaultZoom,
+          userMoved: false,
+          lastFitKey: ''
+        };
+      }
+
+      state.activeModule =
+        nextModule;
       if (nextModule === 'Projects') state.openSide = 'overview';
       persistProjectContinuation({ projectId: project.id, module: nextModule, openedAt: new Date().toISOString() });
       render();
@@ -48509,7 +51502,7 @@
         'relationshipSeed',
         'educationSeed',
         'places',
-        'placeCollections',
+        'placeSavedFilters',
         'placeRoutes',
         'placeIssues',
         'events',
@@ -48549,8 +51542,48 @@
       state.selectedPhotoIds = [];
       state.activeAlbumId = null;
       state.albumsFilters.personId = '';
-      state.selectedPlaceId = nextPlace?.id || '';
-      sampleData.events = buildSampleEvents();
+      state.selectedPlaceId =
+        nextPlace?.id || null;
+
+      state.placesView =
+        'all';
+
+      state.placesSavedFilterId =
+        '';
+
+      state.placesFilters = {
+        ...defaultPlaceFilters
+      };
+
+      state.placesSearch =
+        '';
+
+      state.placesDetailOpen =
+        false;
+
+      state.placesActiveRouteId =
+        (
+          sampleData.placeRoutes || []
+        )
+          .find(route =>
+            route.projectId
+              === nextProjectId
+            && !route.deleted
+          )
+          ?.id
+        || null;
+
+      state.placesMapView = {
+        center: null,
+        zoom:
+          PLACES_MAP_CONFIG
+            .defaultZoom,
+        userMoved: false,
+        lastFitKey: ''
+      };
+
+      sampleData.events =
+        buildSampleEvents();
 
       closeModal({ force: true });
       render();
@@ -48606,8 +51639,18 @@
       document.getElementById('relativePopover')?.remove();
       document.getElementById('topbarPopover')?.remove();
       document.getElementById('peopleColumnsPopover')?.remove();
-      document.getElementById('peopleFilterPopover')?.remove();
+      document
+        .getElementById(
+          'peopleFilterPopover'
+        )
+        ?.remove();
 
+      if (
+        typeof closePlacesFilterPopover
+          === 'function'
+      ) {
+        closePlacesFilterPopover();
+      }
       state.topbarPopover = null;
 
       if (typeof closeProjectNameOverlay === 'function') {
@@ -48772,13 +51815,101 @@
     function escapeHtml(value) { return String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
     function capitalize(value) { return value.charAt(0).toUpperCase() + value.slice(1); }
 
+    function normalizePlaceSavedFilters() {
+      const source =
+        Array.isArray(
+          sampleData.placeSavedFilters
+        )
+          ? sampleData.placeSavedFilters
+          : [];
+
+      const usedIds =
+        new Set();
+
+      let nextId =
+        Date.now();
+
+      const now =
+        new Date().toISOString();
+
+      sampleData.placeSavedFilters =
+        source
+          .filter(savedFilter =>
+            savedFilter
+            && typeof savedFilter === 'object'
+            && !Array.isArray(savedFilter)
+          )
+          .map(savedFilter => {
+            let id =
+              String(
+                savedFilter.id || ''
+              ).trim();
+
+            while (
+              !id
+              || usedIds.has(id)
+            ) {
+              id =
+                `place-saved-filter-${nextId}`;
+
+              nextId += 1;
+            }
+
+            usedIds.add(id);
+
+            const createdAt =
+              Number.isFinite(
+                Date.parse(
+                  savedFilter.createdAt || ''
+                )
+              )
+                ? savedFilter.createdAt
+                : now;
+
+            const updatedAt =
+              Number.isFinite(
+                Date.parse(
+                  savedFilter.updatedAt || ''
+                )
+              )
+                ? savedFilter.updatedAt
+                : createdAt;
+
+            return {
+              ...savedFilter,
+
+              id,
+
+              projectId:
+                String(
+                  savedFilter.projectId
+                  || currentProjectId()
+                ),
+
+              name:
+                String(
+                  savedFilter.name || ''
+                ).trim()
+                || 'Unnamed filter',
+
+              description:
+                String(
+                  savedFilter.description
+                  || ''
+                ),
+
+              filters:
+                placeFiltersWithDefaults(
+                  savedFilter.filters
+                ),
+
+              createdAt,
+              updatedAt
+            };
+          });
+    }
+
     function normalizeCentralPlaceRecords() {
-      const collections = Array.isArray(sampleData.placeCollections) ? sampleData.placeCollections : [];
-      collections.forEach(collection => {
-        collection.projectId = collection.projectId || currentProjectId();
-        collection.description = String(collection.description || '');
-        collection.placeIds = [...new Set(Array.isArray(collection.placeIds) ? collection.placeIds : [])];
-      });
       sampleData.places.forEach(place => {
         place.projectId = place.projectId || currentProjectId();
         const legacyName = String(place.name || '').trim();
@@ -48796,10 +51927,6 @@
           ...(legacyName && legacyName !== place.name ? [legacyName] : [])
         ];
         place.alternativeNames = normalizePlaceAlternativeNames(candidates, place.name);
-        (Array.isArray(place.collections) ? place.collections : []).forEach(collectionId => {
-          const collection = collections.find(item => item.id === collectionId && item.projectId === place.projectId);
-          if (collection && !collection.placeIds.includes(place.id)) collection.placeIds.push(place.id);
-        });
         place.deleted = Boolean(place.deleted);
         place.coordinates = normalizePlaceCoordinates(place);
         place.updatedAt = Number.isFinite(Date.parse(place.updatedAt || '')) ? place.updatedAt : new Date().toISOString();
@@ -48829,12 +51956,6 @@
         delete place.photos;
         delete place.notes;
       });
-      collections.forEach(collection => {
-        collection.placeIds = [...new Set(collection.placeIds)].filter(placeId => {
-          const place = getPlace(placeId);
-          return place && place.projectId === collection.projectId;
-        });
-      });
     }
 
     function normalizeEventPlaceAddresses() {
@@ -48860,7 +51981,12 @@
       sampleData.projects = Array.isArray(sampleData.projects) ? sampleData.projects : [];
       sampleData.people = Array.isArray(sampleData.people) ? sampleData.people : [];
       sampleData.places = Array.isArray(sampleData.places) ? sampleData.places : [];
-      sampleData.placeCollections = Array.isArray(sampleData.placeCollections) ? sampleData.placeCollections : [];
+      sampleData.placeSavedFilters =
+        Array.isArray(
+          sampleData.placeSavedFilters
+        )
+          ? sampleData.placeSavedFilters
+          : [];
       sampleData.placeRoutes = Array.isArray(sampleData.placeRoutes) ? sampleData.placeRoutes : [];
       sampleData.placeIssues = Array.isArray(sampleData.placeIssues) ? sampleData.placeIssues : [];
       sampleData.sources = Array.isArray(sampleData.sources) ? sampleData.sources : [];
@@ -48873,6 +51999,7 @@
       sampleData.publishDrafts = Array.isArray(sampleData.publishDrafts) ? sampleData.publishDrafts : [];
       sampleData.notifications = Array.isArray(sampleData.notifications) ? sampleData.notifications : [];
       sampleData.activity = Array.isArray(sampleData.activity) ? sampleData.activity : [];
+      normalizePlaceSavedFilters();
       normalizeCentralPlaceRecords();
       normalizeEventPlaceAddresses();
       normalizeSampleGenealogyDates();
