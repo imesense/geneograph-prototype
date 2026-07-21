@@ -14699,14 +14699,145 @@
     .places-editor-disclosure { border: 1px solid var(--border-default); padding: 12px; border-radius: var(--radius-sm); }
     .places-editor-disclosure summary { cursor: pointer; font-weight: 600; }
     .places-editor-disclosure label { display: grid; gap: 6px; margin-top: 10px; color: var(--text-secondary); font-size: 12px; }
-    .place-coordinate-fields { margin-top: 10px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)) auto; align-items: end; gap: 10px; }
-    .place-coordinate-fields label { display: grid; gap: 6px; }
+    .place-coordinate-help {
+      margin:
+        10px
+        0
+        0;
+
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        12px;
+
+      line-height:
+        1.45;
+    }
+
+    .place-coordinate-fields {
+      margin-top:
+        10px;
+      display:
+        grid;
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(0, 1fr)
+        )
+        max-content;
+      align-items:
+        end;
+      gap:
+        10px;
+    }
+
+    .place-coordinate-fields label {
+      min-width: 0;
+      margin: 0;
+      display: grid;
+      gap: 6px;
+    }
+
+    .place-coordinate-fields input {
+      width:
+        100%;
+
+      min-width:
+        0;
+
+      height:
+        var(--control-height);
+
+      min-height:
+        var(--control-height);
+
+      max-height:
+        var(--control-height);
+
+      box-sizing:
+        border-box;
+
+      font-variant-numeric:
+        tabular-nums;
+
+      appearance:
+        textfield;
+
+      -moz-appearance:
+        textfield;
+    }
+
+    .place-coordinate-fields
+      input::-webkit-inner-spin-button,
+    .place-coordinate-fields
+      input::-webkit-outer-spin-button {
+      margin:
+        0;
+
+      appearance:
+        none;
+
+      -webkit-appearance:
+        none;
+    }
+
+    .place-coordinate-copy {
+      height:
+        var(--control-height);
+
+      min-height:
+        var(--control-height);
+
+      max-height:
+        var(--control-height);
+
+      padding-block:
+        0;
+
+      box-sizing:
+        border-box;
+
+      align-self:
+        end;
+
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      white-space:
+        nowrap;
+    }
+
+    .place-coordinate-error {
+      min-height:
+        18px;
+
+      margin-top:
+        8px;
+
+      display:
+        block;
+
+      color:
+        var(--red);
+
+      font-size:
+        12px;
+
+      line-height:
+        1.4;
+    }
     .place-geocoder { margin-top: 12px; display: grid; gap: 8px; }
     .place-geocoder-controls { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 10px; }
     .place-geocoder-results { display: grid; gap: 4px; }
     .place-geocoder-results button { min-height: 42px; padding: 8px 10px; display: grid; gap: 2px; color: var(--text-secondary); background: var(--surface-card); border: 1px solid var(--border-default); border-radius: var(--radius-sm); text-align: left; }
     .place-geocoder-results span { color: var(--text-tertiary); font-size: 11px; }
-    .place-coordinate-error { color: var(--red); font-size: 12px; }
     .places-route-choices { min-width: 0; margin: 0; padding: 0; border: 0; }
     .places-route-choices legend { margin-bottom: 8px; color: var(--text-secondary); font-size: 12px; font-weight: 600; }
     .places-route-choices .notes-modal-list { max-height: 290px; overflow: auto; }
@@ -14793,7 +14924,15 @@
       }
       .places-coordinate-bar { align-items: stretch; flex-wrap: wrap; }
       .places-coordinate-bar > div { flex-basis: 100%; }
-      .place-coordinate-fields { grid-template-columns: 1fr; }
+      .place-coordinate-fields {
+        grid-template-columns:
+          1fr;
+      }
+
+      .place-coordinate-copy {
+        width:
+          100%;
+      }
       .place-geocoder-controls { grid-template-columns: 1fr; }
       .places-map-navigation-wrap {
         left: 10px;
@@ -53642,27 +53781,859 @@
           if (!response.ok) throw new Error('Search unavailable');
           const data = await response.json(); const features = Array.isArray(data.features) ? data.features : [];
           results.innerHTML = features.map((feature, index) => `<button type="button" data-geocoder-result="${index}"><strong>${escapeHtml(feature.place_name || feature.text || value)}</strong><span>${escapeHtml((feature.center || []).join(', '))}</span></button>`).join('') || '<span class="muted">No matches found.</span>';
-          results.querySelectorAll('[data-geocoder-result]').forEach(item => item.addEventListener('click', () => { const feature = features[Number(item.dataset.geocoderResult)]; const [lng, lat] = feature?.center || []; if (!validLatitude(lat) || !validLongitude(lng)) return; modalBackdrop.querySelector('#placeLatitudeInput').value = lat; modalBackdrop.querySelector('#placeLongitudeInput').value = lng; status.textContent = 'Coordinates selected.'; }));
+          results.querySelectorAll('[data-geocoder-result]').forEach(item => item.addEventListener('click', () => { const feature = features[Number(item.dataset.geocoderResult)]; const [lng, lat] = feature?.center || []; if (!validLatitude(lat) || !validLongitude(lng)) return; 
+            const latitudeInput =
+              modalBackdrop.querySelector(
+                '#placeLatitudeInput'
+              );
+
+            const longitudeInput =
+              modalBackdrop.querySelector(
+                '#placeLongitudeInput'
+              );
+
+            latitudeInput.value =
+              Number(lat).toFixed(6);
+
+            longitudeInput.value =
+              Number(lng).toFixed(6);
+
+            latitudeInput.dispatchEvent(
+              new Event(
+                'input',
+                {
+                  bubbles: true
+                }
+              )
+            );
+
+            longitudeInput.dispatchEvent(
+              new Event(
+                'input',
+                {
+                  bubbles: true
+                }
+              )
+            );
+
+            status.textContent =
+              'Coordinates selected.';
+                    }));
           status.textContent = features.length ? 'Choose a result to use its coordinates.' : 'No matches found.';
         } catch (error) { if (error.name !== 'AbortError') status.textContent = 'Coordinate search could not be completed.'; }
       });
     }
 
-    function openPlaceModal(placeId = null, { initialCoordinates = null } = {}) {
-      const existing = placeId ? getPlace(placeId) : null;
-      const coordinates = initialCoordinates || normalizePlaceCoordinates(existing);
-      const alternatives = placeAlternativeNames(existing);
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="placeModalTitle"><div class="modal-header"><div><h2 id="placeModalTitle">${existing ? 'Edit place' : 'Add place'}</h2><p>Keep one full place name and optional map coordinates.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="placeForm"><div class="modal-body form-grid"><div class="field full"><label for="placeNameInput">Place name</label><input id="placeNameInput" required value="${escapeHtml(existing?.name || '')}" placeholder="e.g. Pawford, North Yorkshire, England"></div><div class="place-map-location full"><div><strong>Map location</strong><span data-place-map-summary>${coordinates ? `Point added: ${escapeHtml(formatPlaceCoordinates({ coordinates }))}` : 'Not on map'}</span></div><button class="button secondary" type="button" data-place-choose-map>${coordinates ? 'Edit position' : 'Choose on map'}</button><button class="button subtle" type="button" data-place-clear-coordinates ${coordinates ? '' : 'hidden'}>Clear</button></div><details class="field full places-editor-disclosure"><summary>Historical / alternative names</summary><label for="placeAlternativeNamesInput">One name per line</label><textarea id="placeAlternativeNamesInput">${escapeHtml(alternatives.join('\n'))}</textarea></details><details class="field full places-editor-disclosure"><summary>Map coordinates</summary><div class="place-coordinate-fields"><label>Latitude<input id="placeLatitudeInput" type="number" min="-90" max="90" step="any" value="${coordinates?.lat ?? ''}"></label><label>Longitude<input id="placeLongitudeInput" type="number" min="-180" max="180" step="any" value="${coordinates?.lng ?? ''}"></label><button class="button secondary" type="button" data-place-copy-coordinates>Copy coordinates</button></div></details><div class="place-geocoder full"><div class="place-geocoder-controls"><div class="field"><label for="placeGeocoderQuery">Find coordinates</label><input id="placeGeocoderQuery" value="${escapeHtml(existing?.name || '')}" placeholder="Search MapTiler"></div><button class="button secondary" type="button" id="placeFindCoordinates">${icon.search} Search</button></div><span class="muted" data-place-geocoder-status>Search only updates the coordinate fields.</span><div class="place-geocoder-results" data-place-geocoder-results></div></div><div class="place-coordinate-error full" id="placeCoordinateError" role="alert"></div></div><div class="modal-footer">${existing ? '<button class="button danger" type="button" data-delete-place>Delete permanently</button>' : ''}<button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">${existing ? 'Save changes' : 'Create place'}</button></div></form></div>`);
-      const coordinateDetails = modalBackdrop.querySelectorAll('.places-editor-disclosure')[1];
-      const geocoder = modalBackdrop.querySelector('.place-geocoder');
-      if (coordinateDetails && geocoder) coordinateDetails.appendChild(geocoder);
-      bindPlaceGeocoder();
-      modalBackdrop.querySelector('[data-place-clear-coordinates]')?.addEventListener('click', event => { modalBackdrop.querySelector('#placeLatitudeInput').value = ''; modalBackdrop.querySelector('#placeLongitudeInput').value = ''; modalBackdrop.querySelector('[data-place-map-summary]').textContent = 'Not on map'; event.currentTarget.hidden = true; });
-      modalBackdrop.querySelector('[data-place-copy-coordinates]')?.addEventListener('click', () => { const lat = modalBackdrop.querySelector('#placeLatitudeInput').value; const lng = modalBackdrop.querySelector('#placeLongitudeInput').value; if (lat && lng) navigator.clipboard?.writeText(`${lat}, ${lng}`); });
-      modalBackdrop
-        .querySelector(
+    function openPlaceModal(
+      placeId = null,
+      {
+        initialCoordinates = null
+      } = {}
+    ) {
+      const existing =
+        placeId
+          ? getPlace(placeId)
+          : null;
+
+      const coordinates =
+        initialCoordinates
+        || normalizePlaceCoordinates(
+          existing
+        );
+
+      const alternatives =
+        placeAlternativeNames(
+          existing
+        );
+
+      const initialLatitude =
+        coordinates
+          ? Number(
+              coordinates.lat
+            ).toFixed(6)
+          : '';
+
+      const initialLongitude =
+        coordinates
+          ? Number(
+              coordinates.lng
+            ).toFixed(6)
+          : '';
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="placeModalTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="placeModalTitle">
+                ${
+                  existing
+                    ? 'Edit place'
+                    : 'Add place'
+                }
+              </h2>
+
+              <p>
+                Keep one full place name and
+                optional map coordinates.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close>
+              ${icon.close}
+            </button>
+          </div>
+
+          <form id="placeForm">
+            <div
+              class="
+                modal-body
+                form-grid
+              ">
+
+              <div class="field full">
+                <label for="placeNameInput">
+                  Place name
+                </label>
+
+                <input
+                  id="placeNameInput"
+                  required
+                  value="${
+                    escapeHtml(
+                      existing?.name || ''
+                    )
+                  }"
+                  placeholder="e.g. Pawford, North Yorkshire, England">
+              </div>
+
+              <div
+                class="
+                  place-map-location
+                  full
+                ">
+
+                <div>
+                  <strong>
+                    Map location
+                  </strong>
+
+                  <span
+                    data-place-map-summary>
+                    ${
+                      coordinates
+                        ? `Point added: ${
+                            escapeHtml(
+                              formatPlaceCoordinates({
+                                coordinates
+                              })
+                            )
+                          }`
+                        : 'Not on map'
+                    }
+                  </span>
+                </div>
+
+                <button
+                  class="button secondary"
+                  type="button"
+                  data-place-choose-map>
+                  ${
+                    coordinates
+                      ? 'Edit position'
+                      : 'Choose on map'
+                  }
+                </button>
+
+                <button
+                  class="button ghost"
+                  type="button"
+                  data-place-clear-coordinates
+                  ${
+                    coordinates
+                      ? ''
+                      : 'hidden'
+                  }>
+                  Clear
+                </button>
+              </div>
+
+              <details
+                class="
+                  field
+                  full
+                  places-editor-disclosure
+                ">
+
+                <summary>
+                  Historical / alternative names
+                </summary>
+
+                <label
+                  for="placeAlternativeNamesInput">
+                  One name per line
+                </label>
+
+                <textarea
+                  id="placeAlternativeNamesInput">${
+                    escapeHtml(
+                      alternatives.join('\n')
+                    )
+                  }</textarea>
+              </details>
+
+              <details
+                class="
+                  field
+                  full
+                  places-editor-disclosure
+                "
+                data-place-coordinate-details>
+
+                <summary>
+                  Map coordinates
+                </summary>
+
+                <p
+                  class="place-coordinate-help"
+                  id="placeCoordinateHelp">
+                  Enter decimal degrees. Latitude must
+                  be between −90 and 90; longitude must
+                  be between −180 and 180.
+                </p>
+
+                <div
+                  class="
+                    place-coordinate-fields
+                  ">
+
+                  <label
+                    for="placeLatitudeInput">
+                    Latitude
+
+                    <input
+                      id="placeLatitudeInput"
+                      type="text"
+                      inputmode="decimal"
+                      autocomplete="off"
+                      spellcheck="false"
+                      maxlength="24"
+                      value="${
+                        escapeHtml(
+                          initialLatitude
+                        )
+                      }"
+                      placeholder="53.959400"
+                      aria-describedby="
+                        placeCoordinateHelp
+                        placeCoordinateError
+                      ">
+                  </label>
+
+                  <label
+                    for="placeLongitudeInput">
+                    Longitude
+
+                    <input
+                      id="placeLongitudeInput"
+                      type="text"
+                      inputmode="decimal"
+                      autocomplete="off"
+                      spellcheck="false"
+                      maxlength="24"
+                      value="${
+                        escapeHtml(
+                          initialLongitude
+                        )
+                      }"
+                      placeholder="-1.082000"
+                      aria-describedby="
+                        placeCoordinateHelp
+                        placeCoordinateError
+                      ">
+                  </label>
+
+                  <button
+                    class="
+                      button
+                      secondary
+                      place-coordinate-copy
+                    "
+                    type="button"
+                    data-place-copy-coordinates
+                    ${
+                      coordinates
+                        ? ''
+                        : 'disabled'
+                    }>
+                    Copy coordinates
+                  </button>
+                </div>
+
+                <span
+                  class="place-coordinate-error"
+                  id="placeCoordinateError"
+                  role="alert"
+                  aria-live="polite">
+                </span>
+              </details>
+
+              <div
+                class="
+                  place-geocoder
+                  full
+                ">
+
+                <div
+                  class="
+                    place-geocoder-controls
+                  ">
+
+                  <div class="field">
+                    <label
+                      for="placeGeocoderQuery">
+                      Find coordinates
+                    </label>
+
+                    <input
+                      id="placeGeocoderQuery"
+                      value="${
+                        escapeHtml(
+                          existing?.name || ''
+                        )
+                      }"
+                      placeholder="Search MapTiler">
+                  </div>
+
+                  <button
+                    class="button secondary"
+                    type="button"
+                    id="placeFindCoordinates">
+                    ${icon.search}
+                    Search
+                  </button>
+                </div>
+
+                <span
+                  class="muted"
+                  data-place-geocoder-status>
+                  Search only updates the
+                  coordinate fields.
+                </span>
+
+                <div
+                  class="
+                    place-geocoder-results
+                  "
+                  data-place-geocoder-results>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              ${
+                existing
+                  ? `
+                    <button
+                      class="button danger"
+                      type="button"
+                      data-delete-place>
+                      Delete permanently
+                    </button>
+                  `
+                  : ''
+              }
+
+              <button
+                class="button secondary"
+                type="button"
+                data-close>
+                Cancel
+              </button>
+
+              <button
+                class="button primary"
+                type="submit">
+                ${
+                  existing
+                    ? 'Save changes'
+                    : 'Create place'
+                }
+              </button>
+            </div>
+          </form>
+        </div>
+      `);
+
+      const coordinateDetails =
+        modalBackdrop.querySelector(
+          '[data-place-coordinate-details]'
+        );
+
+      const geocoder =
+        modalBackdrop.querySelector(
+          '.place-geocoder'
+        );
+
+      if (
+        coordinateDetails
+        && geocoder
+      ) {
+        coordinateDetails.appendChild(
+          geocoder
+        );
+      }
+
+      const latitudeInput =
+        modalBackdrop.querySelector(
+          '#placeLatitudeInput'
+        );
+
+      const longitudeInput =
+        modalBackdrop.querySelector(
+          '#placeLongitudeInput'
+        );
+
+      const coordinateError =
+        modalBackdrop.querySelector(
+          '#placeCoordinateError'
+        );
+
+      const copyButton =
+        modalBackdrop.querySelector(
+          '[data-place-copy-coordinates]'
+        );
+
+      const clearButton =
+        modalBackdrop.querySelector(
+          '[data-place-clear-coordinates]'
+        );
+
+      const chooseMapButton =
+        modalBackdrop.querySelector(
           '[data-place-choose-map]'
-        )
+        );
+
+      const mapSummary =
+        modalBackdrop.querySelector(
+          '[data-place-map-summary]'
+        );
+
+      const parseCoordinateInput = (
+        value,
+        {
+          label,
+          minimum,
+          maximum,
+          example
+        }
+      ) => {
+        const raw =
+          String(
+            value ?? ''
+          ).trim();
+
+        if (!raw) {
+          return {
+            empty: true,
+            valid: false,
+            value: null,
+            formatted: '',
+            message: ''
+          };
+        }
+
+        /*
+        * Support a copied Unicode minus and either
+        * decimal point or decimal comma. Output is
+        * always normalized to a decimal point.
+        */
+        const normalizedMinus =
+          raw.replace(
+            /\u2212/g,
+            '-'
+          );
+
+        const separatorCount =
+          (
+            normalizedMinus
+              .match(/[.,]/g)
+            || []
+          ).length;
+
+        const normalized =
+          separatorCount === 1
+          && normalizedMinus.includes(',')
+            ? normalizedMinus.replace(
+                ',',
+                '.'
+              )
+            : normalizedMinus;
+
+        const decimalPattern =
+          /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/;
+
+        if (
+          separatorCount > 1
+          || !decimalPattern.test(
+            normalized
+          )
+        ) {
+          return {
+            empty: false,
+            valid: false,
+            value: null,
+            formatted: '',
+            message:
+              `${label} must use decimal degrees, for example ${example}.`
+          };
+        }
+
+        const number =
+          Number(normalized);
+
+        if (!Number.isFinite(number)) {
+          return {
+            empty: false,
+            valid: false,
+            value: null,
+            formatted: '',
+            message:
+              `${label} must be a valid number.`
+          };
+        }
+
+        if (
+          number < minimum
+          || number > maximum
+        ) {
+          return {
+            empty: false,
+            valid: false,
+            value: null,
+            formatted: '',
+            message:
+              `${label} must be between ${minimum} and ${maximum}.`
+          };
+        }
+
+        return {
+          empty: false,
+          valid: true,
+          value: number,
+          formatted:
+            number.toFixed(6),
+          message: ''
+        };
+      };
+
+      const readCoordinateState = () => {
+        const latitude =
+          parseCoordinateInput(
+            latitudeInput.value,
+            {
+              label:
+                'Latitude',
+
+              minimum:
+                -90,
+
+              maximum:
+                90,
+
+              example:
+                '53.959400'
+            }
+          );
+
+        const longitude =
+          parseCoordinateInput(
+            longitudeInput.value,
+            {
+              label:
+                'Longitude',
+
+              minimum:
+                -180,
+
+              maximum:
+                180,
+
+              example:
+                '-1.082000'
+            }
+          );
+
+        const hasAnyValue =
+          Boolean(
+            latitudeInput.value.trim()
+            || longitudeInput.value.trim()
+          );
+
+        if (!hasAnyValue) {
+          return {
+            valid: true,
+            hasAnyValue: false,
+            hasCoordinates: false,
+            coordinates: null,
+            latitude,
+            longitude,
+            message: ''
+          };
+        }
+
+        if (
+          latitude.empty
+          || longitude.empty
+        ) {
+          return {
+            valid: false,
+            hasAnyValue: true,
+            hasCoordinates: false,
+            coordinates: null,
+            latitude,
+            longitude,
+            message:
+              'Enter both latitude and longitude.'
+          };
+        }
+
+        if (!latitude.valid) {
+          return {
+            valid: false,
+            hasAnyValue: true,
+            hasCoordinates: false,
+            coordinates: null,
+            latitude,
+            longitude,
+            message:
+              latitude.message
+          };
+        }
+
+        if (!longitude.valid) {
+          return {
+            valid: false,
+            hasAnyValue: true,
+            hasCoordinates: false,
+            coordinates: null,
+            latitude,
+            longitude,
+            message:
+              longitude.message
+          };
+        }
+
+        return {
+          valid: true,
+          hasAnyValue: true,
+          hasCoordinates: true,
+
+          coordinates: {
+            lat:
+              latitude.value,
+
+            lng:
+              longitude.value
+          },
+
+          latitude,
+          longitude,
+          message: ''
+        };
+      };
+
+      const updateCoordinateUi = ({
+        formatValues = false
+      } = {}) => {
+        const result =
+          readCoordinateState();
+
+        if (formatValues) {
+          if (result.latitude.valid) {
+            latitudeInput.value =
+              result.latitude.formatted;
+          }
+
+          if (result.longitude.valid) {
+            longitudeInput.value =
+              result.longitude.formatted;
+          }
+        }
+
+        const latitudeInvalid =
+          result.hasAnyValue
+          && (
+            result.latitude.empty
+            || !result.latitude.valid
+          );
+
+        const longitudeInvalid =
+          result.hasAnyValue
+          && (
+            result.longitude.empty
+            || !result.longitude.valid
+          );
+
+        latitudeInput.setAttribute(
+          'aria-invalid',
+          String(latitudeInvalid)
+        );
+
+        longitudeInput.setAttribute(
+          'aria-invalid',
+          String(longitudeInvalid)
+        );
+
+        coordinateError.textContent =
+          result.message;
+
+        copyButton.disabled =
+          !result.hasCoordinates;
+
+        clearButton.hidden =
+          !result.hasAnyValue;
+
+        chooseMapButton.textContent =
+          result.hasCoordinates
+            ? 'Edit position'
+            : 'Choose on map';
+
+        if (result.hasCoordinates) {
+          mapSummary.textContent =
+            `Point added: ${
+              formatPlaceCoordinates({
+                coordinates:
+                  result.coordinates
+              })
+            }`;
+        } else if (
+          result.hasAnyValue
+        ) {
+          mapSummary.textContent =
+            'Coordinates need attention';
+        } else {
+          mapSummary.textContent =
+            'Not on map';
+        }
+
+        return result;
+      };
+
+      latitudeInput.addEventListener(
+        'input',
+        () => {
+          updateCoordinateUi();
+        }
+      );
+
+      longitudeInput.addEventListener(
+        'input',
+        () => {
+          updateCoordinateUi();
+        }
+      );
+
+      latitudeInput.addEventListener(
+        'blur',
+        () => {
+          updateCoordinateUi({
+            formatValues: true
+          });
+        }
+      );
+
+      longitudeInput.addEventListener(
+        'blur',
+        () => {
+          updateCoordinateUi({
+            formatValues: true
+          });
+        }
+      );
+
+      clearButton
+        ?.addEventListener(
+          'click',
+          () => {
+            latitudeInput.value =
+              '';
+
+            longitudeInput.value =
+              '';
+
+            updateCoordinateUi();
+
+            latitudeInput.focus();
+          }
+        );
+
+      copyButton
+        ?.addEventListener(
+          'click',
+          async () => {
+            const result =
+              updateCoordinateUi({
+                formatValues: true
+              });
+
+            if (
+              !result.hasCoordinates
+            ) {
+              coordinateDetails.open =
+                true;
+
+              (
+                latitudeInput.getAttribute(
+                  'aria-invalid'
+                ) === 'true'
+                  ? latitudeInput
+                  : longitudeInput
+              ).focus();
+
+              return;
+            }
+
+            const text =
+              formatPlaceCoordinates({
+                coordinates:
+                  result.coordinates
+              });
+
+            try {
+              if (
+                !navigator
+                  .clipboard
+                  ?.writeText
+              ) {
+                throw new Error(
+                  'Clipboard unavailable'
+                );
+              }
+
+              await navigator
+                .clipboard
+                .writeText(text);
+
+              showToast(
+                'Coordinates copied.'
+              );
+            } catch {
+              showToast(text);
+            }
+          }
+        );
+
+      bindPlaceGeocoder();
+
+      chooseMapButton
         ?.addEventListener(
           'click',
           () => {
@@ -53673,10 +54644,6 @@
 
             renderPlacesMain();
 
-            /*
-            * First frame mounts Leaflet.
-            * Second frame starts coordinate editing.
-            */
             requestAnimationFrame(() => {
               requestAnimationFrame(() => {
                 if (existing) {
@@ -53690,26 +54657,113 @@
             });
           }
         );
-      modalBackdrop.querySelector('[data-delete-place]')?.addEventListener('click', () => openDeletePlaceModal(existing.id));
-      modalBackdrop.querySelector('#placeForm')?.addEventListener('submit', event => {
-        event.preventDefault();
-        const latText = modalBackdrop.querySelector('#placeLatitudeInput').value.trim(); const lngText = modalBackdrop.querySelector('#placeLongitudeInput').value.trim(); const hasCoordinates = Boolean(latText || lngText); const valid = validLatitude(latText) && validLongitude(lngText); const error = modalBackdrop.querySelector('#placeCoordinateError');
-        if (hasCoordinates && !valid) { error.textContent = 'Enter both latitude and longitude within the valid ranges.'; return; }
-        const place = existing || { id: `place-${Date.now()}`, projectId: currentProjectId(), deleted: false };
-        place.name = modalBackdrop.querySelector('#placeNameInput').value.trim();
-        place.alternativeNames = normalizePlaceAlternativeNames(
-          modalBackdrop.querySelector('#placeAlternativeNamesInput').value.split('\n'),
-          place.name
+
+      modalBackdrop
+        .querySelector(
+          '[data-delete-place]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            openDeletePlaceModal(
+              existing.id
+            );
+          }
         );
-        place.coordinates = valid ? { lat: Number(latText), lng: Number(lngText) } : null;
-        place.updatedAt = new Date().toISOString();
-        if (!existing) {
-          sampleData.places.unshift(
-            place
-          );
-        }
-        state.selectedPlaceId = place.id; closeModal(); renderPlaces(); showToast(existing ? 'Place updated.' : 'Place created.');
-      });
+
+      modalBackdrop
+        .querySelector(
+          '#placeForm'
+        )
+        ?.addEventListener(
+          'submit',
+          event => {
+            event.preventDefault();
+
+            const coordinateState =
+              updateCoordinateUi({
+                formatValues: true
+              });
+
+            if (
+              !coordinateState.valid
+            ) {
+              coordinateDetails.open =
+                true;
+
+              requestAnimationFrame(() => {
+                (
+                  latitudeInput.getAttribute(
+                    'aria-invalid'
+                  ) === 'true'
+                    ? latitudeInput
+                    : longitudeInput
+                ).focus();
+              });
+
+              return;
+            }
+
+            const place =
+              existing || {
+                id:
+                  `place-${Date.now()}`,
+
+                projectId:
+                  currentProjectId(),
+
+                deleted:
+                  false
+              };
+
+            place.name =
+              modalBackdrop
+                .querySelector(
+                  '#placeNameInput'
+                )
+                .value
+                .trim();
+
+            place.alternativeNames =
+              normalizePlaceAlternativeNames(
+                modalBackdrop
+                  .querySelector(
+                    '#placeAlternativeNamesInput'
+                  )
+                  .value
+                  .split('\n'),
+
+                place.name
+              );
+
+            place.coordinates =
+              coordinateState.coordinates;
+
+            place.updatedAt =
+              new Date()
+                .toISOString();
+
+            if (!existing) {
+              sampleData.places.unshift(
+                place
+              );
+            }
+
+            state.selectedPlaceId =
+              place.id;
+
+            closeModal();
+            renderPlaces();
+
+            showToast(
+              existing
+                ? 'Place updated.'
+                : 'Place created.'
+            );
+          }
+        );
+
+      updateCoordinateUi();
     }
 
     function openDeletePlaceModal(placeId) {
