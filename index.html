@@ -3600,24 +3600,18 @@
       width: 100%;
       min-height: 40px;
       padding: 0;
-
       border: 0;
       border-radius: var(--radius-sm);
-
       background: transparent;
-      color: var(--text-secondary);
-
+      color: var(--brand-green-300);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: var(--space-3);
-
       font-size: 13px;
       font-weight: 800;
       text-align: left;
-
       cursor: pointer;
-
       transition:
         background var(--ease),
         color var(--ease);
@@ -14853,56 +14847,6 @@
         var(--space-2);
     }
 
-    .places-inspector-section-action {
-      width:
-        max-content;
-
-      min-height:
-        32px;
-
-      padding:
-        4px
-        0;
-
-      border:
-        0;
-
-      background:
-        transparent;
-
-      color:
-        var(--brand-green-300);
-
-      font:
-        inherit;
-
-      font-size:
-        13px;
-
-      font-weight:
-        600;
-
-      cursor:
-        pointer;
-    }
-
-    .places-inspector-section-action:hover {
-      color:
-        var(--brand-green-400);
-
-      text-decoration:
-        underline;
-    }
-
-    .places-inspector-section-action:focus-visible {
-      outline:
-        2px solid
-        var(--brand-green-300);
-
-      outline-offset:
-        2px;
-    }
-
     .places-inspector-empty {
       padding:
         var(--space-5);
@@ -14989,8 +14933,15 @@
       bottom: 88px;
     }
     .places-editor-disclosure { border: 1px solid var(--border-default); padding: 12px; border-radius: var(--radius-sm); }
-    .places-editor-disclosure summary { cursor: pointer; display: flex; align-items: center; gap: 4px; color: var(--text-primary); font-weight: 700; }
-    .places-editor-disclosure summary::marker { color: var(--text-tertiary); }
+    .places-editor-disclosure summary { cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); color: var(--text-primary); font-weight: 700; }
+    .places-editor-disclosure summary::-webkit-details-marker { display: none; }
+    .places-editor-disclosure summary::marker { content: ''; }
+    .places-editor-disclosure-summary-label { min-width: 0; }
+    .places-editor-disclosure-chevron { width: 18px; height: 18px; flex: 0 0 18px; display: grid; place-items: center; color: var(--text-tertiary); transition: transform var(--ease), color var(--ease); transform: rotate(90deg);}
+    .places-editor-disclosure-chevron svg { width: 16px; height: 16px; display: block; }
+    .places-editor-disclosure[open] > summary .places-editor-disclosure-chevron { color: var(--text-secondary); transform: rotate(-90deg); }
+    .places-editor-disclosure summary:hover .places-editor-disclosure-chevron { color: var(--text-primary); }
+    .places-editor-disclosure summary:focus-visible { outline: 2px solid var(--brand-green-300); outline-offset: 3px; border-radius: var(--radius-sm); }
     .places-editor-disclosure label { display: grid; gap: 6px; margin-top: 10px; color: var(--text-secondary); font-size: 12px; }
     .places-editor-disclosure .place-editor-support { margin-top: 10px; }
     .place-coordinate-help {
@@ -15015,10 +14966,8 @@
       display:
         grid;
       grid-template-columns:
-        repeat(
-          2,
-          minmax(0, 1fr)
-        );
+        repeat(2, minmax(0, 1fr))
+        var(--control-icon-button-size);
       align-items:
         end;
       gap:
@@ -15075,9 +15024,42 @@
         none;
     }
 
-    .place-coordinate-actions { margin-top: var(--space-2); display: flex; justify-content: flex-end; }
-    .place-coordinate-actions .button { min-height: 32px; padding: 5px 8px; gap: 6px; font-size: 12px; }
-    .place-coordinate-actions svg { width: 14px; height: 14px; display: block; }
+    .place-coordinate-copy-button {
+      width: var(--control-icon-button-size);
+      min-width: var(--control-icon-button-size);
+      max-width: var(--control-icon-button-size);
+      height: var(--control-height);
+      min-height: var(--control-height);
+      max-height: var(--control-height);
+      padding: 0;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-card);
+      color: var(--text-secondary);
+      display: inline-grid;
+      place-items: center;
+      align-self: end;
+      line-height: 0;
+      cursor: pointer;
+    }
+
+    .place-coordinate-copy-button:hover:not(:disabled) {
+      border-color: var(--border-strong);
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
+    }
+
+    .place-coordinate-copy-button:focus-visible {
+      outline: 2px solid var(--brand-green-300);
+      outline-offset: 2px;
+    }
+
+    .place-coordinate-copy-button:disabled {
+      opacity: .42;
+      cursor: not-allowed;
+    }
+
+    .place-coordinate-copy-button svg { width: 16px; height: 16px; display: block; }
 
     .place-coordinate-error {
       min-height:
@@ -15183,10 +15165,6 @@
       }
       .places-coordinate-bar { align-items: stretch; flex-wrap: wrap; }
       .places-coordinate-bar > div { flex-basis: 100%; }
-      .place-coordinate-fields {
-        grid-template-columns:
-          1fr;
-      }
       .place-map-location { align-items: stretch; flex-direction: column; }
       .place-map-location-actions { justify-content: flex-start; }
       .place-editor-suggestion { grid-template-columns: minmax(0, 1fr); }
@@ -16573,6 +16551,7 @@
       check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.5"/></svg>',
       chevron: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>',
       close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+      copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>',
       collapse: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m8 8 4 4-4 4M16 8l-4 4 4 4"/></svg>',
       death: '<svg viewBox="0 0 24 24" data-name="Layer 1" id="Layer_1"  fill="currentColor"><title></title><path d="M19,20H5V9a7,7,0,0,1,7-7h0a7,7,0,0,1,7,7Z" style="fill:currentColor"></path><path d="M5,18H19a2,2,0,0,1,2,2v2a0,0,0,0,1,0,0H3a0,0,0,0,1,0,0V20A2,2,0,0,1,5,18Z" style="fill:currentColor"></path><rect height="2" style="fill:#151A1A" width="8" x="8" y="8"></rect><rect height="2" style="fill:#151A1A" width="8" x="8" y="12"></rect></g></svg>',
       doublechevronSidebar: '<svg width="14" height="12" viewBox="0 0 14 12" fill="none" ><path opacity="0.8" d="M8 11L13 6L8 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path opacity="0.8" d="M1 11L6 6L1 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -51936,16 +51915,13 @@
           ? `
             <button
               class="
-                places-inspector-section-action
+                panel-section-view-all
                 places-inspector-events-toggle
               "
               type="button"
               data-place-events-toggle>
-              ${
-                showAll
-                  ? 'Show less'
-                  : 'Show all events'
-              }
+              <span>${showAll ? 'Show less' : 'Show all events'}</span>
+              <span class="panel-section-view-all-icon" aria-hidden="true">${icon.chevron}</span>
             </button>
           `
           : '';
@@ -52140,11 +52116,12 @@
 
         <button
           class="
-            places-inspector-section-action
+            panel-section-view-all
           "
           type="button"
           data-place-view-all-photos>
-          View all photos
+          <span>View all photos</span>
+          <span class="panel-section-view-all-icon" aria-hidden="true">${icon.chevron}</span>
         </button>
       `;
     }
@@ -52236,11 +52213,12 @@
 
         <button
           class="
-            places-inspector-section-action
+            panel-section-view-all
           "
           type="button"
           data-place-view-all-files>
-          Open in Archive
+          <span>Open in Archive</span>
+          <span class="panel-section-view-all-icon" aria-hidden="true">${icon.chevron}</span>
         </button>
       `;
     }
@@ -52326,11 +52304,12 @@
 
         <button
           class="
-            places-inspector-section-action
+            panel-section-view-all
           "
           type="button"
           data-place-view-all-notes>
-          Open in Notes
+          <span>Open in Notes</span>
+          <span class="panel-section-view-all-icon" aria-hidden="true">${icon.chevron}</span>
         </button>
       `;
     }
@@ -54908,19 +54887,18 @@
             <p class="place-editor-selection-notice" data-place-selection-notice hidden></p>
             <section class="place-map-location full" aria-label="Map location"><div><strong>Map location</strong><span data-place-map-summary>${escapeHtml(mapSummary)}</span></div><div class="place-map-location-actions"><button class="button secondary" type="button" data-place-choose-map>${coordinateState.hasCoordinates ? 'Edit position' : 'Choose on map'}</button><button class="button ghost" type="button" data-place-remove-position ${coordinateState.hasAnyValue ? '' : 'hidden'}>Remove position</button></div></section>
             <details class="field full places-editor-disclosure" data-place-alternative-details ${draft.disclosures.alternativeNames ? 'open' : ''}>
-              <summary>Historical / alternative names<span data-place-alternative-count>${alternativeCount ? ` · ${alternativeCount}` : ''}</span></summary>
+              <summary><span class="places-editor-disclosure-summary-label">Historical / alternative names<span data-place-alternative-count>${alternativeCount ? ` · ${alternativeCount}` : ''}</span></span><span class="places-editor-disclosure-chevron" aria-hidden="true">${icon.chevron}</span></summary>
               <p class="place-editor-support">Enter one full historical or alternative place name per line.</p>
               <label for="placeAlternativeNamesInput">Alternative names</label>
               <textarea id="placeAlternativeNamesInput">${escapeHtml(draft.alternativeNames.join('\n'))}</textarea>
             </details>
             <details class="field full places-editor-disclosure" data-place-coordinate-details ${draft.disclosures.coordinates || !coordinateState.valid ? 'open' : ''}>
-              <summary>Advanced coordinates</summary>
+              <summary><span class="places-editor-disclosure-summary-label">Advanced coordinates</span><span class="places-editor-disclosure-chevron" aria-hidden="true">${icon.chevron}</span></summary>
               <p class="place-coordinate-help" id="placeCoordinateHelp">Enter decimal degrees. Latitude must be between -90 and 90; longitude must be between -180 and 180.</p>
-              <div class="place-coordinate-fields"><label for="placeLatitudeInput">Latitude<input id="placeLatitudeInput" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" maxlength="24" value="${escapeHtml(draft.coordinateText.latitude)}" placeholder="53.959400" aria-describedby="placeCoordinateHelp placeCoordinateError"></label><label for="placeLongitudeInput">Longitude<input id="placeLongitudeInput" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" maxlength="24" value="${escapeHtml(draft.coordinateText.longitude)}" placeholder="-1.082000" aria-describedby="placeCoordinateHelp placeCoordinateError"></label></div>
-              <div class="place-coordinate-actions"><button class="button ghost" type="button" data-place-copy-coordinates ${coordinateState.hasCoordinates ? '' : 'disabled'}>${icon.copy || icon.file} Copy coordinates</button></div>
+              <div class="place-coordinate-fields"><label for="placeLatitudeInput">Latitude<input id="placeLatitudeInput" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" maxlength="24" value="${escapeHtml(draft.coordinateText.latitude)}" placeholder="53.959400" aria-describedby="placeCoordinateHelp placeCoordinateError"></label><label for="placeLongitudeInput">Longitude<input id="placeLongitudeInput" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" maxlength="24" value="${escapeHtml(draft.coordinateText.longitude)}" placeholder="-1.082000" aria-describedby="placeCoordinateHelp placeCoordinateError"></label><button class="place-coordinate-copy-button" type="button" data-place-copy-coordinates aria-label="Copy coordinates" title="Copy coordinates" ${coordinateState.hasCoordinates ? '' : 'disabled'}>${icon.copy}</button></div>
               <span class="place-coordinate-error" id="placeCoordinateError" role="alert" aria-live="polite"></span>
             </details>
-            ${draft.mode === 'edit' ? `<details class="field full places-editor-disclosure place-editor-danger" data-place-danger-details ${draft.disclosures.danger ? 'open' : ''}><summary>Delete place</summary><p>Deleting this place clears its structured links but keeps connected research records.</p><button class="button danger" type="button" data-place-delete-from-editor>Delete place</button></details>` : ''}
+            ${draft.mode === 'edit' ? `<details class="field full places-editor-disclosure place-editor-danger" data-place-danger-details ${draft.disclosures.danger ? 'open' : ''}><summary><span class="places-editor-disclosure-summary-label">Delete place</span><span class="places-editor-disclosure-chevron" aria-hidden="true">${icon.chevron}</span></summary><p>Deleting this place clears its structured links but keeps connected research records.</p><button class="button danger" type="button" data-place-delete-from-editor>Delete place</button></details>` : ''}
           </div>
           <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">${draft.mode === 'edit' ? 'Save changes' : 'Create place'}</button></div>
         </form>
