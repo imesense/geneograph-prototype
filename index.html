@@ -13215,12 +13215,78 @@
       overflow: hidden;
     }
 
-    .places-list-panel { min-height: 0; margin: 0 var(--space-6) var(--space-6); overflow: auto; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--surface-card); }
+    .places-list-panel {
+      min-height: 0;
+      margin: 0
+        var(--space-6)
+        var(--space-6);
+      position: relative;
+      isolation: isolate;
+      overflow: auto;
+      border:
+        1px solid
+        var(--border-default);
+      border-radius:
+        var(--radius-md);
+      background:
+        var(--surface-card);
+    }
+
     .places-list-head,
-    .places-list-row { min-width: 900px; display: grid; grid-template-columns: minmax(260px, 1.8fr) minmax(130px, .8fr) 110px 90px 135px 54px; align-items: center; gap: 12px; }
-    .places-list-head { position: sticky; top: 0; z-index: 2; min-height: 42px; padding: 0 14px; color: var(--text-tertiary); background: var(--surface-elevated); border-bottom: 1px solid var(--border-default); font-size: 12px; font-weight: 600; }
-    .places-list-row { min-height: 66px; padding: 8px 14px; color: var(--text-secondary); border-bottom: 1px solid var(--border-default); }
-    .places-list-row:hover { background: var(--surface-hover); }
+    .places-list-row {
+      min-width: 900px;
+      display: grid;
+      grid-template-columns:
+        minmax(260px, 1.8fr)
+        minmax(130px, .8fr)
+        110px
+        110px
+        135px
+        54px;
+      align-items: center;
+
+      gap: 12px;
+    }
+
+    .places-list-head {
+      position:
+        sticky;
+      top: 0;
+      z-index: 5;
+      min-height: 42px;
+      padding: 0 14px;
+
+      color: var(--text-tertiary);
+      background:
+        var(--surface-sidebar);
+      border-bottom:
+        1px solid
+        var(--border-default);
+      box-shadow:
+        0 1px 0
+        rgba(0, 0, 0, .18);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .places-list-row {
+      min-height:
+        66px;
+      padding:
+        8px
+        14px;
+      color:
+        var(--text-secondary);
+
+      border-bottom:
+        1px solid
+        var(--border-default);
+    }
+
+    .places-list-row:hover {
+      background:
+        var(--surface-card-hover);
+    }
     .places-list-row.active { background: var(--surface-selected); box-shadow: inset 3px 0 0 var(--brand-green-500); }
     .places-list-row > div:first-child { min-width: 0; display: grid; gap: 3px; }
     .places-list-row strong,
@@ -48852,11 +48918,20 @@
           description: 'The saved coordinates are incomplete or outside the valid range.',
           actionLabel: 'Fix coordinates'
         });
-      } else if (coordinateState.missing && connectionCount > 0) {
+      } else if (coordinateState.missing) {
         issues.push({
           type: 'missing_coordinates',
           title: 'No map position',
-          description: `This place is connected to ${connectionCount} ${connectionCount === 1 ? 'record' : 'records'} but has no map position.`,
+
+          description:
+            connectionCount > 0
+              ? `This place is connected to ${connectionCount} ${
+                  connectionCount === 1
+                    ? 'record'
+                    : 'records'
+                } but has no map position.`
+              : 'This place has no map position.',
+
           actionLabel: 'Add position'
         });
       }
@@ -51079,14 +51154,30 @@
 
     function renderPlacesListPanel(list) {
       if (!list.length) return '<div class="places-empty"><strong>No places found</strong><span>Try clearing the search or filters.</span></div>';
-      return `<div class="places-list-panel"><div class="places-list-head"><span>Place</span><span>Country</span><span>Map</span><span>Linked</span><span>Updated</span><span>Actions</span></div>${list.map(place => {
-        const counts = getPlaceConnectionCounts(place.id);
-        const linked = Object.values(counts).reduce((total, count) => total + count, 0);
+      return `
+        <div class="places-list-panel">
+
+          <div class="places-list-head">
+            <span>Place</span>
+            <span>Country</span>
+            <span>Map</span>
+            <span>Linked people</span>
+            <span>Updated</span>
+            <span>Actions</span>
+          </div>
+
+          ${list.map(place => {
+            const counts =
+              getPlaceConnectionCounts(
+                place.id
+              );
+
+        const linkedPeople = counts.people;
         const issueCount = getActivePlaceReviewIssues(place).length;
         const reviewIndicator = issueCount
           ? `<button class="places-list-review" type="button" data-place-review-link="${escapeHtml(place.id)}">${issueCount > 1 ? `${issueCount} issues` : 'Needs review'}</button>`
           : '';
-        return `<div class="places-list-row ${place.id === state.selectedPlaceId ? 'active' : ''}" data-place-id="${escapeHtml(place.id)}" tabindex="0" role="row" aria-selected="${place.id === state.selectedPlaceId}"><div><strong>${escapeHtml(placePrimaryName(place))}</strong><span>${escapeHtml(placeSecondaryName(place) || 'No broader place recorded')}</span>${reviewIndicator}</div><span>${escapeHtml(placeCountry(place) || 'Unknown')}</span><span>${placeHasCoordinates(place) ? 'On map' : 'Not on map'}</span><span>${linked}</span><span>${escapeHtml(formatPlaceUpdatedAt(place.updatedAt))}</span><button class="places-row-more" type="button" data-place-menu="${escapeHtml(place.id)}" aria-label="More actions for ${escapeHtml(place.name)}" aria-haspopup="menu">${icon.more}</button></div>`;
+        return `<div class="places-list-row ${place.id === state.selectedPlaceId ? 'active' : ''}" data-place-id="${escapeHtml(place.id)}" tabindex="0" role="row" aria-selected="${place.id === state.selectedPlaceId}"><div><strong>${escapeHtml(placePrimaryName(place))}</strong><span>${escapeHtml(placeSecondaryName(place) || 'No broader place recorded')}</span>${reviewIndicator}</div><span>${escapeHtml(placeCountry(place) || 'Unknown')}</span><span>${placeHasCoordinates(place) ? 'On map' : 'Not on map'}</span><span>${linkedPeople}</span><span>${escapeHtml(formatPlaceUpdatedAt(place.updatedAt))}</span><button class="places-row-more" type="button" data-place-menu="${escapeHtml(place.id)}" aria-label="More actions for ${escapeHtml(place.name)}" aria-haspopup="menu">${icon.more}</button></div>`;
       }).join('')}</div>`;
     }
 
