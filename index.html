@@ -13668,75 +13668,1014 @@
     }
 
     .places-inspector-toolbar {
-      /*
-      * Core layout and action-button appearance come from
-      * .albums-detail-toolbar and .albums-detail-action.
-      */
-      width: 100%;
+      position:
+        sticky;
+
+      z-index:
+        20;
+
+      top:
+        0;
+
+      width:
+        100%;
+
+      border-bottom:
+        1px solid
+        var(--border-default);
+
+      background:
+        var(--surface-sidebar);
     }
 
-    .places-inspector-hero {
+    .places-inspector-content {
+      min-width:
+        0;
+    }
+
+    .places-inspector-summary {
       padding:
-        var(--space-4)
-        var(--space-5)
         var(--space-5);
 
       border-bottom:
         1px solid
         var(--border-default);
 
-      display: grid;
-      gap: 4px;
+      display:
+        grid;
+
+      gap:
+        var(--space-2);
+
+      background:
+        var(--surface-sidebar);
     }
 
-    .places-inspector-hero > span {
-      color:
-        var(--text-tertiary);
-
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .places-inspector-hero h2 {
-      margin: 0;
-
-      font-size: 21px;
-      line-height: 1.2;
-    }
-
-    .places-inspector-hero p {
-      margin: 0;
+    .places-inspector-summary h2 {
+      margin:
+        0;
 
       color:
-        var(--text-tertiary);
+        var(--text-primary);
 
-      font-size: 13px;
-      line-height: 1.45;
+      font-size:
+        21px;
+
+      line-height:
+        1.2;
     }
 
-    .places-inspector-body {
-      min-width: 0;
+    .places-inspector-summary p {
+      margin:
+        0;
+
+      color:
+        var(--text-secondary);
+
+      font-size:
+        15px;
+
+      line-height:
+        1.45;
+    }
+
+    .places-inspector-tags {
+      margin-top:
+        var(--space-2);
+
+      display:
+        flex;
+
+      flex-wrap:
+        wrap;
+
+      gap:
+        7px;
+    }
+
+    .places-inspector-tag {
+      min-height:
+        29px;
 
       padding:
+        5px
+        8px;
+
+      border:
+        1px solid
+        transparent;
+
+      border-radius:
+        5px;
+
+      font:
+        inherit;
+
+      font-size:
+        12px;
+
+      font-weight:
+        600;
+
+      line-height:
+        1;
+
+      white-space:
+        nowrap;
+
+      cursor:
+        pointer;
+
+      transition:
+        border-color
+          var(--ease),
+        filter
+          var(--ease),
+        transform
+          var(--ease);
+    }
+
+    .places-inspector-tag:hover {
+      filter:
+        brightness(1.12);
+    }
+
+    .places-inspector-tag:active {
+      transform:
+        translateY(1px);
+    }
+
+    .places-inspector-tag:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset:
+        2px;
+    }
+
+    .places-inspector-tag.tone-people {
+      border-color:
+        rgba(47, 174, 116, .25);
+
+      background:
+        rgba(47, 174, 116, .18);
+
+      color:
+        var(--brand-green-300);
+    }
+
+    .places-inspector-tag.tone-events {
+      border-color:
+        rgba(93, 173, 236, .25);
+
+      background:
+        rgba(93, 173, 236, .18);
+
+      color:
+        #8bc8f5;
+    }
+
+    .places-inspector-tag.tone-photos {
+      border-color:
+        rgba(212, 107, 107, .25);
+
+      background:
+        rgba(212, 107, 107, .18);
+
+      color:
+        #e99a9a;
+    }
+
+    .places-inspector-tag.tone-files {
+      border-color:
+        rgba(212, 170, 107, .25);
+
+      background:
+        rgba(212, 170, 107, .18);
+
+      color:
+        #e5bd7f;
+    }
+
+    .places-inspector-tag.tone-notes {
+      border-color:
+        rgba(141, 108, 232, .28);
+
+      background:
+        rgba(141, 108, 232, .18);
+
+      color:
+        #b9a1ff;
+    }
+
+    .places-attention {
+      width:
+        100%;
+
+      margin-top:
+        var(--space-2);
+
+      padding:
+        8px
+        10px;
+
+      border:
+        1px solid
+        rgba(242, 196, 100, .25);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        rgba(242, 196, 100, .08);
+
+      color:
+        var(--amber);
+
+      font-size:
+        12px;
+
+      font-weight:
+        600;
+
+      text-align:
+        left;
+
+      cursor:
+        pointer;
+    }
+
+    .places-inspector-coordinate-row {
+      min-height:
+        64px;
+
+      padding:
+        var(--space-3)
         var(--space-5);
 
-      display: grid;
-      align-content: start;
-      gap: var(--space-4);
+      border-bottom:
+        1px solid
+        var(--border-default);
 
-      /*
-      * The full inspector scrolls, as in Albums.
-      * Avoid a nested body scrollbar.
-      */
-      overflow: visible;
+      display:
+        grid;
+
+      grid-template-columns:
+        auto
+        minmax(0, 1fr)
+        auto;
+
+      align-items:
+        center;
+
+      gap:
+        var(--space-3);
+    }
+
+    .places-inspector-coordinate-label {
+      color:
+        var(--text-secondary);
+
+      font-size:
+        13px;
+    }
+
+    .places-inspector-coordinate-row strong {
+      min-width:
+        0;
+
+      overflow:
+        hidden;
+
+      color:
+        var(--text-secondary);
+
+      font-size:
+        13px;
+
+      text-align:
+        right;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
+    }
+
+    .places-inspector-coordinate-action {
+      min-height:
+        34px;
+
+      padding:
+        6px
+        8px;
+
+      border:
+        1px solid
+        transparent;
+
+      border-radius:
+        var(--radius-sm);
+
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      gap:
+        6px;
+
+      background:
+        transparent;
+
+      color:
+        var(--text-primary);
+
+      font:
+        inherit;
+
+      font-size:
+        12px;
+
+      cursor:
+        pointer;
+    }
+
+    .places-inspector-coordinate-action:hover {
+      border-color:
+        var(--border-default);
+
+      background:
+        var(--surface-card-hover);
+    }
+
+    .places-inspector-coordinate-action:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset:
+        2px;
+    }
+
+    .places-inspector-coordinate-action svg {
+      width:
+        15px;
+
+      height:
+        15px;
+    }
+
+    .places-inspector-section {
+      scroll-margin-top:
+        56px;
+
+      border-bottom:
+        1px solid
+        var(--border-default);
+    }
+
+    .places-inspector-section > summary {
+      min-height:
+        58px;
+
+      padding:
+        var(--space-3)
+        var(--space-4);
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        space-between;
+
+      gap:
+        var(--space-3);
+
+      color:
+        var(--text-primary);
+
+      font-size:
+        16px;
+
+      font-weight:
+        500;
+
+      cursor:
+        pointer;
+
+      list-style:
+        none;
+    }
+
+    .places-inspector-section > summary::-webkit-details-marker {
+      display:
+        none;
+    }
+
+    .places-inspector-section > summary:hover {
+      background:
+        rgba(255, 255, 255, .025);
+    }
+
+    .places-inspector-section > summary:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset:
+        -2px;
+    }
+
+    .places-inspector-section-summary-meta {
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      gap:
+        var(--space-3);
+    }
+
+    .places-inspector-section-count {
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        12px;
+
+      font-weight:
+        600;
+    }
+
+    .places-inspector-section-chevron {
+      width:
+        16px;
+
+      height:
+        16px;
+
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      color:
+        var(--text-tertiary);
+
+      transform:
+        rotate(90deg);
+
+      transition:
+        transform
+          var(--ease);
+    }
+
+    .places-inspector-section[open]
+      .places-inspector-section-chevron {
+      transform:
+        rotate(-90deg);
+    }
+
+    .places-inspector-section-chevron svg {
+      width:
+        14px;
+
+      height:
+        14px;
+    }
+
+    .places-inspector-section-body {
+      padding:
+        0
+        var(--space-4)
+        var(--space-4);
+
+      display:
+        grid;
+
+      gap:
+        var(--space-3);
+    }
+
+    .places-inspector-section-empty {
+      padding:
+        var(--space-2)
+        0;
+
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        13px;
+
+      line-height:
+        1.5;
+    }
+
+    .places-inspector-name-list {
+      display:
+        grid;
+
+      gap:
+        7px;
+    }
+
+    .places-inspector-name-list span {
+      color:
+        var(--text-secondary);
+
+      font-size:
+        14px;
+    }
+
+    .places-inspector-person-groups {
+      display:
+        grid;
+
+      gap:
+        var(--space-3);
+    }
+
+    .places-inspector-person-card {
+      width:
+        100%;
+
+      padding:
+        var(--space-3);
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-md);
+
+      display:
+        grid;
+
+      grid-template-columns:
+        56px
+        minmax(0, 1fr);
+
+      align-items:
+        start;
+
+      gap:
+        var(--space-3);
+
+      background:
+        rgba(255, 255, 255, .025);
+
+      color:
+        inherit;
+
+      font:
+        inherit;
+
+      text-align:
+        left;
+
+      cursor:
+        pointer;
+
+      transition:
+        border-color
+          var(--ease),
+        background
+          var(--ease),
+        transform
+          var(--ease);
+    }
+
+    .places-inspector-person-card:hover {
+      border-color:
+        var(--border-strong);
+
+      background:
+        var(--surface-card-hover);
+    }
+
+    .places-inspector-person-card:active {
+      transform:
+        translateY(1px);
+    }
+
+    .places-inspector-person-card:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset:
+        2px;
+    }
+
+    .places-inspector-person-avatar {
+      width:
+        56px;
+
+      height:
+        64px;
+
+      border-radius:
+        var(--radius-sm);
+
+      overflow:
+        hidden;
+    }
+
+    .places-inspector-person-card-body {
+      min-width:
+        0;
+
+      display:
+        grid;
+
+      gap:
+        var(--space-3);
+    }
+
+    .places-inspector-person-card-header {
+      min-width:
+        0;
+
+      display:
+        flex;
+
+      align-items:
+        flex-start;
+
+      justify-content:
+        space-between;
+
+      gap:
+        var(--space-3);
+    }
+
+    .places-inspector-person-identity {
+      min-width:
+        0;
+
+      display:
+        grid;
+
+      gap:
+        3px;
+    }
+
+    .places-inspector-person-identity
+      > strong {
+      overflow:
+        hidden;
+
+      color:
+        var(--text-primary);
+
+      font-size:
+        15px;
+
+      font-weight:
+        650;
+
+      line-height:
+        1.3;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
+    }
+
+    .places-inspector-person-identity
+      > span {
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        11px;
+
+      font-weight:
+        500;
+    }
+
+    .places-inspector-person-chevron {
+      width:
+        16px;
+
+      height:
+        16px;
+
+      flex:
+        0 0 16px;
+
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      color:
+        var(--text-tertiary);
+    }
+
+    .places-inspector-person-chevron svg {
+      width:
+        13px;
+
+      height:
+        13px;
+    }
+
+    .places-inspector-event-list {
+      display:
+        grid;
+
+      gap:
+        0;
+    }
+
+    .places-inspector-event-row {
+      padding:
+        8px
+        0;
+
+      display:
+        grid;
+
+      gap:
+        3px;
+    }
+
+    .places-inspector-event-row:first-child {
+      padding-top:
+        0;
+    }
+
+    .places-inspector-event-row:last-child {
+      padding-bottom:
+        0;
+    }
+
+    .places-inspector-event-row
+      + .places-inspector-event-row {
+      border-top:
+        1px solid
+        rgba(255, 255, 255, .055);
+    }
+
+    .places-inspector-event-title {
+      color:
+        var(--text-primary);
+
+      font-size:
+        13px;
+
+      font-weight:
+        600;
+
+      line-height:
+        1.35;
+    }
+
+    .places-inspector-event-meta {
+      display:
+        flex;
+
+      flex-wrap:
+        wrap;
+
+      align-items:
+        baseline;
+
+      gap:
+        5px;
+
+      font-size:
+        12px;
+
+      line-height:
+        1.45;
+    }
+
+    .places-inspector-event-date {
+      color:
+        var(--text-secondary);
+    }
+
+    .places-inspector-event-separator {
+      color:
+        var(--text-tertiary);
+    }
+
+    .places-inspector-event-relationship {
+      color:
+        var(--text-tertiary);
+    }
+
+    .places-inspector-person-empty,
+    .places-inspector-more-count {
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        12px;
+
+      line-height:
+        1.4;
+    }
+
+    .places-inspector-more-count {
+      margin-top:
+        7px;
+
+      display:
+        block;
+    }
+
+    .places-inspector-other-events {
+      padding:
+        var(--space-3);
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-md);
+
+      display:
+        grid;
+
+      gap:
+        var(--space-3);
+
+      background:
+        rgba(255, 255, 255, .025);
+    }
+
+    .places-inspector-other-events
+      > strong {
+      color:
+        var(--text-secondary);
+
+      font-size:
+        13px;
+
+      font-weight:
+        600;
+    }
+
+    .places-inspector-events-toggle {
+      justify-self:
+        start;
+    }
+
+    .places-inspector-photo-grid {
+      display:
+        grid;
+
+      grid-template-columns:
+        repeat(
+          3,
+          minmax(0, 1fr)
+        );
+
+      gap:
+        var(--space-2);
+    }
+
+    .places-inspector-photo {
+      min-width:
+        0;
+
+      padding:
+        0;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      overflow:
+        hidden;
+
+      background:
+        var(--surface-card);
+
+      cursor:
+        pointer;
+
+      aspect-ratio:
+        1;
+    }
+
+    .places-inspector-photo:hover {
+      border-color:
+        var(--border-strong);
+    }
+
+    .places-inspector-photo:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset:
+        2px;
+    }
+
+    .places-inspector-photo-thumbnail {
+      width:
+        100%;
+
+      height:
+        100%;
+    }
+
+    .places-inspector-file-list,
+    .places-inspector-note-list {
+      display:
+        grid;
+
+      gap:
+        var(--space-2);
+    }
+
+    .places-inspector-section-action {
+      width:
+        max-content;
+
+      min-height:
+        32px;
+
+      padding:
+        4px
+        0;
+
+      border:
+        0;
+
+      background:
+        transparent;
+
+      color:
+        var(--brand-green-300);
+
+      font:
+        inherit;
+
+      font-size:
+        13px;
+
+      font-weight:
+        600;
+
+      cursor:
+        pointer;
+    }
+
+    .places-inspector-section-action:hover {
+      color:
+        var(--brand-green-400);
+
+      text-decoration:
+        underline;
+    }
+
+    .places-inspector-section-action:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset:
+        2px;
     }
 
     .places-inspector-empty {
       padding:
         var(--space-5);
 
-      display: grid;
-      gap: var(--space-2);
+      display:
+        grid;
+
+      gap:
+        var(--space-2);
 
       color:
         var(--text-tertiary);
@@ -13746,34 +14685,10 @@
       color:
         var(--text-primary);
 
-      font-size: 16px;
+      font-size:
+        16px;
     }
-
-    .places-attention { width: 100%; padding: 8px 10px; color: var(--amber); background: rgba(242,196,100,.08); border: 1px solid rgba(242,196,100,.25); border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; text-align: left; }
-    .places-inspector-facts { display: grid; gap: 8px; }
-    .places-inspector-facts > div,
-    .places-kv { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; color: var(--text-secondary); font-size: 13px; }
-    .places-inspector-facts span,
-    .places-kv span { color: var(--text-tertiary); }
-    .places-inspector-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-    .places-inspector-actions .button { flex: 1 1 120px; }
-    .places-inspector-note { margin: 0; color: var(--text-tertiary); font-size: 12px; }
-    .places-event-preview { padding-top: var(--space-3); display: grid; gap: 8px; border-top: 1px solid var(--border-default); }
-    .places-event-preview > span { color: var(--text-tertiary); font-size: 12px; font-weight: 600; }
-    .places-event-preview > div { display: grid; gap: 2px; }
-    .places-event-preview strong { color: var(--text-secondary); font-size: 13px; }
-    .places-event-preview div span { color: var(--text-tertiary); font-size: 12px; }
-    .places-disclosure { border-top: 1px solid var(--border-default); padding-top: var(--space-3); }
-    .places-disclosure summary { cursor: pointer; display: flex; justify-content: space-between; gap: 12px; color: var(--text-secondary); font-weight: 600; }
-    .places-disclosure > div { padding-top: 10px; display: grid; gap: 6px; color: var(--text-tertiary); font-size: 13px; }
-
-    .places-detail { height: 100%; min-height: 0; padding: var(--space-6); overflow: auto; }
-    .places-detail-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: start; gap: var(--space-4); }
-    .places-detail-head h1 { margin: 0; }
-    .places-detail-head p { margin: 5px 0 0; color: var(--text-tertiary); }
-    .places-detail-grid { margin-top: var(--space-5); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
-    .places-card { padding: var(--space-5); display: grid; align-content: start; gap: var(--space-4); background: var(--surface-card); border: 1px solid var(--border-default); border-radius: var(--radius-md); }
-    .places-card h2 { margin: 0; font-size: 17px; }
+  
     .place-map-location { padding: 12px; display: flex; align-items: center; gap: 8px; background: var(--surface-card); border: 1px solid var(--border-default); border-radius: var(--radius-sm); }
     .place-map-location > div { min-width: 0; margin-right: auto; display: grid; gap: 3px; }
     .place-map-location span { color: var(--text-tertiary); font-size: 12px; }
@@ -16478,6 +17393,251 @@
       render();
     }
 
+    function openPlaceInspectorPerson(
+      personId
+    ) {
+      const person =
+        getPerson(personId);
+
+      if (!person) {
+        showToast(
+          'This person is not linked to a People profile.'
+        );
+
+        return;
+      }
+
+      state.activeModule =
+        'People';
+
+      state.selectedPeopleId =
+        person.id;
+
+      state.selectedPersonId =
+        person.id;
+
+      state.peopleView =
+        'profile';
+
+      state.peopleSide =
+        'profile';
+
+      render();
+    }
+
+    function openAlbumsForPlace(
+      placeId
+    ) {
+      const place =
+        getPlace(placeId);
+
+      if (!place) {
+        return;
+      }
+
+      const photos =
+        getPhotosForPlace(
+          place.id
+        );
+
+      state.activeModule =
+        'Albums';
+
+      state.albumsView =
+        'all';
+
+      state.activeAlbumId =
+        null;
+
+      resetAlbumsPage();
+
+      state.albumsFilters = {
+        ...defaultAlbumFilters,
+        placeId:
+          place.id
+      };
+
+      state.albumsSearch =
+        '';
+
+      state.selectedPhotoIds =
+        [];
+
+      state.selectedPhotoId =
+        photos[0]?.id
+        || null;
+
+      state.albumsDetailCollapsed =
+        false;
+
+      render();
+    }
+
+    function openPlaceInspectorArchiveFile(
+      fileId
+    ) {
+      if (!fileId) {
+        return;
+      }
+
+      state.archivePersonFilterId =
+        '';
+
+      state.archiveSearch =
+        '';
+
+      openFamilyArchiveItem(
+        fileId
+      );
+    }
+
+    function openArchiveForPlace(
+      placeId
+    ) {
+      const place =
+        getPlace(placeId);
+
+      if (!place) {
+        return;
+      }
+
+      const files =
+        getArchiveFilesForPlace(
+          place.id
+        );
+
+      state.activeModule =
+        'Archive';
+
+      state.archiveView =
+        'files';
+
+      state.archivePersonFilterId =
+        '';
+
+      state.archiveSearch =
+        placePrimaryName(place);
+
+      state.archiveSelectedFileId =
+        files[0]?.id
+        || null;
+
+      state.archiveSelectedFolderId =
+        files[0]?.folderId
+        || 'archive';
+
+      state.archiveSelectedFileIds =
+        [];
+
+      state.archiveInspectorCollapsed =
+        false;
+
+      render();
+    }
+
+    function openPlaceInspectorNote(
+      noteId
+    ) {
+      let note =
+        (
+          sampleData.notes || []
+        ).find(item =>
+          item.id === noteId
+        );
+
+      if (!note) {
+        return;
+      }
+
+      /*
+      * Case-scoped child notes are not shown as
+      * independent rows in the normal Notes browser.
+      * Open their parent research case instead.
+      */
+      if (note.caseId) {
+        note =
+          (
+            sampleData.notes || []
+          ).find(item =>
+            item.id === note.caseId
+          )
+          || note;
+      }
+
+      state.activeModule =
+        'Notes';
+
+      state.notesPersonFilterId =
+        '';
+
+      state.notesActiveCollectionId =
+        null;
+
+      state.notesActiveCaseId =
+        note.type === 'case'
+          ? note.id
+          : null;
+
+      state.notesView =
+        note.type === 'case'
+          ? 'cases'
+          : 'all';
+
+      state.selectedNoteId =
+        note.id;
+
+      state.notesSearch =
+        '';
+
+      state.notesTypeFilter =
+        'all';
+
+      state.notesRightCollapsed =
+        false;
+
+      render();
+    }
+
+    function openNotesForPlace(
+      placeId
+    ) {
+      const place =
+        getPlace(placeId);
+
+      if (!place) {
+        return;
+      }
+
+      state.activeModule =
+        'Notes';
+
+      state.notesView =
+        'all';
+
+      state.notesPersonFilterId =
+        '';
+
+      state.notesActiveCollectionId =
+        null;
+
+      state.notesActiveCaseId =
+        null;
+
+      state.selectedNoteId =
+        null;
+
+      state.notesSearch =
+        placePrimaryName(place);
+
+      state.notesTypeFilter =
+        'all';
+
+      state.notesRightCollapsed =
+        true;
+
+      render();
+    }
+
     function openArchiveForPerson(
       personId
     ) {
@@ -19035,6 +20195,14 @@
       placesSort: 'name',
       placesViewMode: 'map',
       placesInspectorCollapsed: false,
+      placesInspectorSections: {
+        names: true,
+        events: true,
+        photos: false,
+        files: false,
+        notes: false
+      },
+      placesInspectorShowAllEvents: false,
       placesMapView: {
         center: null,
         zoom: PLACES_MAP_CONFIG.defaultZoom,
@@ -19047,7 +20215,6 @@
         ...defaultPlaceFilters
       },
       placesActiveRouteId: 'route-family-migration',
-      placesDetailOpen: false,
       placesExpandedCountries: ['England'],
       publishView: 'home',
       publishSide: 'drafts',
@@ -32012,7 +33179,6 @@
       state.activeModule = 'Places';
       state.placesView = 'all';
       state.selectedPlaceId = placeId;
-      state.placesDetailOpen = false;
       render();
     }
 
@@ -32054,7 +33220,6 @@
       };
       state.selectedPlaceId = null;
       state.placesSearch = '';
-      state.placesDetailOpen = false;
       render();
     }
 
@@ -47295,49 +48460,158 @@
       return Boolean(place && openPlaceIssueFor(place.id));
     }
 
-    function selectPlace(placeId, { source = 'list', focusMap = true } = {}) {
-      const place = getPlace(placeId);
-      if (!place || place.deleted || place.projectId !== currentProjectId()) return;
-      state.selectedPlaceId = place.id;
-      main.querySelectorAll('[data-place-id]').forEach(row => {
-        const selected = row.dataset.placeId === place.id;
-        row.classList.toggle('active', selected);
-        row.setAttribute('aria-selected', String(selected));
-      });
-      sidebar.querySelectorAll('[data-place-tree-item]').forEach(row => row.classList.toggle('active', row.dataset.placeTreeItem === place.id));
-      const inspector = main.querySelector('[data-places-map-inspector]');
-      if (inspector) {
-        inspector.innerHTML = renderPlacesMapInspector(place);
-        bindPlacesInspectorControls(inspector);
+    function selectPlace(
+      placeId,
+      {
+        source = 'list',
+        focusMap = true
+      } = {}
+    ) {
+      const place =
+        getPlace(placeId);
+
+      if (
+        !place
+        || place.deleted
+        || place.projectId
+          !== currentProjectId()
+      ) {
+        return;
       }
-      updatePlacesMapSelection(place.id, { focusMap: focusMap && source !== 'map' });
+
+      const placeChanged =
+        state.selectedPlaceId
+          !== place.id;
+
+      state.selectedPlaceId =
+        place.id;
+
+      if (placeChanged) {
+        state
+          .placesInspectorShowAllEvents =
+            false;
+      }
+
+      main
+        .querySelectorAll(
+          '[data-place-id]'
+        )
+        .forEach(row => {
+          const selected =
+            row.dataset.placeId
+              === place.id;
+
+          row.classList.toggle(
+            'active',
+            selected
+          );
+
+          row.setAttribute(
+            'aria-selected',
+            String(selected)
+          );
+        });
+
+      sidebar
+        .querySelectorAll(
+          '[data-place-tree-item]'
+        )
+        .forEach(row => {
+          row.classList.toggle(
+            'active',
+            row.dataset
+              .placeTreeItem
+              === place.id
+          );
+        });
+
+      rerenderPlacesInspector({
+        preserveScroll:
+          false
+      });
+
+      updatePlacesMapSelection(
+        place.id,
+        {
+          focusMap:
+            focusMap
+            && source !== 'map'
+        }
+      );
+
       updatePlacesMapToolControls();
     }
 
-    function showPlaceOnMap(placeId, { openDetails = false, editPosition = false } = {}) {
-      const place = getPlace(placeId);
-      if (!place || place.deleted || place.projectId !== currentProjectId()) return;
+    function showPlaceOnMap(
+      placeId,
+      {
+        editPosition = false
+      } = {}
+    ) {
+      const place =
+        getPlace(placeId);
+
+      if (
+        !place
+        || place.deleted
+        || place.projectId
+          !== currentProjectId()
+      ) {
+        return;
+      }
+
       closeMenu();
-      state.selectedPlaceId = place.id;
-      state.placesViewMode = 'map';
-      state.placesDetailOpen = false;
-      if (state.activeModule !== 'Places' || !main.querySelector('#placesLeafletMap')) {
-        state.activeModule = 'Places';
+
+      state.selectedPlaceId =
+        place.id;
+
+      state.placesViewMode =
+        'map';
+
+      if (
+        state.activeModule !== 'Places'
+        || !main.querySelector(
+          '#placesLeafletMap'
+        )
+      ) {
+        state.activeModule =
+          'Places';
+
         render();
       } else {
-        selectPlace(place.id, { source: 'list', focusMap: true });
+        selectPlace(
+          place.id,
+          {
+            source: 'list',
+            focusMap: true
+          }
+        );
       }
+
       requestAnimationFrame(() => {
-        selectPlace(place.id, { source: 'list', focusMap: true });
-        if (!placeHasCoordinates(place)) {
-          setPlacesMapStatus('This place is not on the map', 'Choose Edit position to add a map point.');
+        selectPlace(
+          place.id,
+          {
+            source: 'list',
+            focusMap: true
+          }
+        );
+
+        if (
+          !placeHasCoordinates(place)
+        ) {
+          setPlacesMapStatus(
+            'This place is not on the map',
+            'Choose Edit position to add a map point.'
+          );
         } else {
           setPlacesMapStatus();
         }
-        if (editPosition) enterPlacesMapMoveMode(place.id);
-        if (openDetails) {
-          state.placesDetailOpen = true;
-          renderPlaceDetail();
+
+        if (editPosition) {
+          enterPlacesMapMoveMode(
+            place.id
+          );
         }
       });
     }
@@ -48622,13 +49896,6 @@
     
 
     function renderPlacesMain() {
-      if (
-        state.placesDetailOpen
-      ) {
-        renderPlaceDetail();
-        return;
-      }
-
       const list =
         filteredPlaces();
 
@@ -49471,8 +50738,1178 @@
       `;
     }
 
-    function renderPlacesMapInspector(place) {
-      if (state.placesInspectorCollapsed) {
+    const PLACE_INSPECTOR_LIMITS =
+      Object.freeze({
+        personGroups: 5,
+        eventsPerPerson: 3,
+        photos: 6,
+        files: 5,
+        notes: 4
+      });
+
+    function placesInspectorSectionState() {
+      const defaults = {
+        names: true,
+        events: true,
+        photos: false,
+        files: false,
+        notes: false
+      };
+
+      state.placesInspectorSections = {
+        ...defaults,
+        ...(
+          state.placesInspectorSections
+          || {}
+        )
+      };
+
+      return state
+        .placesInspectorSections;
+    }
+
+    function placesInspectorSectionIsOpen(
+      key
+    ) {
+      return Boolean(
+        placesInspectorSectionState()[
+          key
+        ]
+      );
+    }
+
+    function placeInspectorCountLabel(
+      count,
+      singular,
+      plural = `${singular}s`
+    ) {
+      return `${count} ${
+        count === 1
+          ? singular
+          : plural
+      }`;
+    }
+
+    function placeInspectorPersonName(
+      person
+    ) {
+      return (
+        person?.names?.display
+        || person?.name
+        || 'Unnamed person'
+      );
+    }
+
+    function placeInspectorEventLabel(
+      event
+    ) {
+      if (event?.title) {
+        return event.title;
+      }
+
+      if (event?.eventType) {
+        return event.eventType;
+      }
+
+      if (event?.typeLabel) {
+        return event.typeLabel;
+      }
+
+      if (
+        typeof placeEventTypeLabel
+          === 'function'
+      ) {
+        return placeEventTypeLabel(
+          event?.type
+        );
+      }
+
+      return event?.type
+        || 'Event';
+    }
+
+    function placeInspectorEventDateLabel(
+      event
+    ) {
+      const label =
+        formatGenealogyDateLabel(
+          event?.date || event
+        )
+        || event?.dateLabel
+        || event?.date?.dateLabel
+        || 'Date unknown';
+
+      /*
+      * Use natural day formatting in the compact
+      * inspector: "2 Jan" rather than "02 Jan".
+      */
+      return String(label)
+        .replace(
+          /^0(?=\d(?:\s|[./-]))/,
+          ''
+        );
+    }
+
+    function placeInspectorEventSortValue(
+      event
+    ) {
+      const rawSortDate =
+        String(
+          event?.date?.sortDate
+          || event?.sortDate
+          || ''
+        )
+          .replace(/\D/g, '');
+
+      if (rawSortDate) {
+        return Number(
+          rawSortDate
+            .slice(0, 8)
+            .padEnd(8, '0')
+        );
+      }
+
+      const dateLabel =
+        placeInspectorEventDateLabel(
+          event
+        );
+
+      const year =
+        dateLabel.match(
+          /\b[1-9]\d{3}\b/
+        );
+
+      return year
+        ? Number(year[0]) * 10000
+        : Number.MAX_SAFE_INTEGER;
+    }
+
+    function placeInspectorEventOwnerIds(
+      event
+    ) {
+      const personIds = [
+        ...new Set(
+          (
+            Array.isArray(
+              event?.personIds
+            )
+              ? event.personIds
+              : []
+          ).filter(Boolean)
+        )
+      ];
+
+      if (personIds.length) {
+        return personIds;
+      }
+
+      /*
+      * Fall back to related people only for records
+      * that do not define a primary event owner.
+      */
+      return [
+        ...new Set(
+          (
+            Array.isArray(
+              event?.relatedPersonIds
+            )
+              ? event.relatedPersonIds
+              : []
+          ).filter(Boolean)
+        )
+      ];
+    }
+
+    function placeInspectorEventRelatedPeople(
+      event,
+      personId
+    ) {
+      const relatedIds = [
+        ...new Set([
+          ...(
+            Array.isArray(
+              event?.personIds
+            )
+              ? event.personIds
+              : []
+          ),
+
+          ...(
+            Array.isArray(
+              event?.relatedPersonIds
+            )
+              ? event.relatedPersonIds
+              : []
+          )
+        ])
+      ]
+        .filter(id =>
+          id
+          && id !== personId
+        );
+
+      return relatedIds
+        .map(id =>
+          getPerson(id)
+        )
+        .filter(Boolean);
+    }
+
+    function placeInspectorChildRoleLabel(
+      person
+    ) {
+      if (
+        person?.gender === 'female'
+      ) {
+        return 'Daughter';
+      }
+
+      if (
+        person?.gender === 'male'
+      ) {
+        return 'Son';
+      }
+
+      return 'Child';
+    }
+
+    function placeInspectorEventPresentation(
+      event,
+      personId
+    ) {
+      const date =
+        placeInspectorEventDateLabel(
+          event
+        );
+
+      if (
+        event?.type === 'childBirth'
+      ) {
+        const child =
+          (
+            event.relatedPersonIds
+            || []
+          )
+            .map(id =>
+              getPerson(id)
+            )
+            .find(Boolean);
+
+        const relationship =
+          child
+            ? `${
+                placeInspectorChildRoleLabel(
+                  child
+                )
+              } ${
+                placeInspectorPersonName(
+                  child
+                )
+              }`
+            : String(
+                event.description || ''
+              ).trim();
+
+        return {
+          title:
+            event.title
+            || 'Birth of child',
+
+          date,
+
+          relationship
+        };
+      }
+
+      if (
+        event?.type === 'marriage'
+      ) {
+        const spouses =
+          placeInspectorEventRelatedPeople(
+            event,
+            personId
+          );
+
+        return {
+          title:
+            event.title
+            || 'Marriage',
+
+          date,
+
+          relationship:
+            spouses.length
+              ? `${
+                  spouses.length === 1
+                    ? 'Spouse'
+                    : 'Spouses'
+                } ${
+                  spouses
+                    .map(
+                      placeInspectorPersonName
+                    )
+                    .join(' and ')
+                }`
+              : ''
+        };
+      }
+
+      const relatedPeople =
+        placeInspectorEventRelatedPeople(
+          event,
+          personId
+        );
+
+      return {
+        title:
+          placeInspectorEventLabel(
+            event
+          ),
+
+        date,
+
+        relationship:
+          relatedPeople.length
+            ? `Related to ${
+                relatedPeople
+                  .map(
+                    placeInspectorPersonName
+                  )
+                  .join(', ')
+              }`
+            : ''
+      };
+    }
+
+    function placeInspectorEventGroups(
+      events
+    ) {
+      const groups =
+        new Map();
+
+      const otherEvents =
+        [];
+
+      (
+        Array.isArray(events)
+          ? events
+          : []
+      ).forEach(event => {
+        const ownerIds =
+          placeInspectorEventOwnerIds(
+            event
+          );
+
+        let addedToPerson =
+          false;
+
+        ownerIds.forEach(personId => {
+          const person =
+            getPerson(personId);
+
+          if (!person) {
+            return;
+          }
+
+          let group =
+            groups.get(person.id);
+
+          if (!group) {
+            group = {
+              person,
+              events: []
+            };
+
+            groups.set(
+              person.id,
+              group
+            );
+          }
+
+          group.events.push(
+            event
+          );
+
+          addedToPerson =
+            true;
+        });
+
+        if (!addedToPerson) {
+          otherEvents.push(
+            event
+          );
+        }
+      });
+
+      const sortedGroups =
+        [...groups.values()]
+          .map(group => ({
+            ...group,
+
+            events:
+              group.events
+                .slice()
+                .sort(
+                  (
+                    first,
+                    second
+                  ) =>
+                    placeInspectorEventSortValue(
+                      first
+                    )
+                    - placeInspectorEventSortValue(
+                      second
+                    )
+                )
+          }))
+          .sort(
+            (
+              first,
+              second
+            ) => {
+              const firstDate =
+                first.events.length
+                  ? placeInspectorEventSortValue(
+                      first.events[0]
+                    )
+                  : Number.MAX_SAFE_INTEGER;
+
+              const secondDate =
+                second.events.length
+                  ? placeInspectorEventSortValue(
+                      second.events[0]
+                    )
+                  : Number.MAX_SAFE_INTEGER;
+
+              return (
+                firstDate
+                - secondDate
+                || placeInspectorPersonName(
+                  first.person
+                ).localeCompare(
+                  placeInspectorPersonName(
+                    second.person
+                  )
+                )
+              );
+            }
+          );
+
+      otherEvents.sort(
+        (
+          first,
+          second
+        ) =>
+          placeInspectorEventSortValue(
+            first
+          )
+          - placeInspectorEventSortValue(
+            second
+          )
+      );
+
+      return {
+        groups:
+          sortedGroups,
+
+        otherEvents
+      };
+    }
+
+    function renderPlaceInspectorEventRows(
+      events,
+      personId = '',
+      showAll = false
+    ) {
+      const source =
+        Array.isArray(events)
+          ? events
+          : [];
+
+      if (!source.length) {
+        return `
+          <span
+            class="
+              places-inspector-person-empty
+            ">
+            No dated events recorded.
+          </span>
+        `;
+      }
+
+      const visibleEvents =
+        showAll
+          ? source
+          : source.slice(
+              0,
+              PLACE_INSPECTOR_LIMITS
+                .eventsPerPerson
+            );
+
+      return `
+        <span
+          class="
+            places-inspector-event-list
+          ">
+
+          ${visibleEvents
+            .map(event => {
+              const presentation =
+                placeInspectorEventPresentation(
+                  event,
+                  personId
+                );
+
+              return `
+                <span
+                  class="
+                    places-inspector-event-row
+                  ">
+
+                  <strong
+                    class="
+                      places-inspector-event-title
+                    ">
+                    ${escapeHtml(
+                      presentation.title
+                    )}
+                  </strong>
+
+                  <span
+                    class="
+                      places-inspector-event-meta
+                    ">
+
+                    <span
+                      class="
+                        places-inspector-event-date
+                      ">
+                      ${escapeHtml(
+                        presentation.date
+                      )}
+                    </span>
+
+                    ${
+                      presentation.relationship
+                        ? `
+                          <span
+                            class="
+                              places-inspector-event-separator
+                            "
+                            aria-hidden="true">
+                            ·
+                          </span>
+
+                          <span
+                            class="
+                              places-inspector-event-relationship
+                            ">
+                            ${escapeHtml(
+                              presentation.relationship
+                            )}
+                          </span>
+                        `
+                        : ''
+                    }
+                  </span>
+                </span>
+              `;
+            })
+            .join('')}
+
+          ${
+            !showAll
+            && source.length
+              > visibleEvents.length
+              ? `
+                <span
+                  class="
+                    places-inspector-more-count
+                  ">
+                  +${
+                    source.length
+                    - visibleEvents.length
+                  } more events
+                </span>
+              `
+              : ''
+          }
+        </span>
+      `;
+    }
+
+    function renderPlaceInspectorEvents(
+      events
+    ) {
+      if (!events.length) {
+        return `
+          <div
+            class="
+              places-inspector-section-empty
+            ">
+            No connected events.
+          </div>
+        `;
+      }
+
+      const {
+        groups,
+        otherEvents
+      } =
+        placeInspectorEventGroups(
+          events
+        );
+
+      const showAll =
+        Boolean(
+          state
+            .placesInspectorShowAllEvents
+        );
+
+      const visibleGroups =
+        showAll
+          ? groups
+          : groups.slice(
+              0,
+              PLACE_INSPECTOR_LIMITS
+                .personGroups
+            );
+
+      const visibleOtherEvents =
+        showAll
+          ? otherEvents
+          : otherEvents.slice(
+              0,
+              PLACE_INSPECTOR_LIMITS
+                .eventsPerPerson
+            );
+
+      const canToggle =
+        groups.length
+          > PLACE_INSPECTOR_LIMITS
+            .personGroups
+        || groups.some(group =>
+          group.events.length
+            > PLACE_INSPECTOR_LIMITS
+              .eventsPerPerson
+        )
+        || otherEvents.length
+          > PLACE_INSPECTOR_LIMITS
+            .eventsPerPerson;
+
+      const toggleMarkup =
+        canToggle
+          ? `
+            <button
+              class="
+                places-inspector-section-action
+                places-inspector-events-toggle
+              "
+              type="button"
+              data-place-events-toggle>
+              ${
+                showAll
+                  ? 'Show less'
+                  : 'Show all events'
+              }
+            </button>
+          `
+          : '';
+
+      return `
+        <div
+          class="
+            places-inspector-person-groups
+          ">
+
+          ${
+            showAll
+              ? toggleMarkup
+              : ''
+          }
+
+          ${visibleGroups
+            .map(group => {
+              const eventCountLabel =
+                placeInspectorCountLabel(
+                  group.events.length,
+                  'connected event'
+                );
+
+              return `
+                <button
+                  class="
+                    places-inspector-person-card
+                  "
+                  type="button"
+                  data-place-connected-person="${
+                    escapeHtml(
+                      group.person.id
+                    )
+                  }"
+                  aria-label="Open ${
+                    escapeHtml(
+                      placeInspectorPersonName(
+                        group.person
+                      )
+                    )
+                  } profile">
+
+                  ${renderPersonAvatar(
+                    group.person,
+                    'places-inspector-person-avatar',
+                    {
+                      element:
+                        'span'
+                    }
+                  )}
+
+                  <span
+                    class="
+                      places-inspector-person-card-body
+                    ">
+
+                    <span
+                      class="
+                        places-inspector-person-card-header
+                      ">
+
+                      <span
+                        class="
+                          places-inspector-person-identity
+                        ">
+
+                        <strong>
+                          ${escapeHtml(
+                            placeInspectorPersonName(
+                              group.person
+                            )
+                          )}
+                        </strong>
+
+                        <span>
+                          ${escapeHtml(
+                            eventCountLabel
+                          )}
+                        </span>
+                      </span>
+
+                      <span
+                        class="
+                          places-inspector-person-chevron
+                        "
+                        aria-hidden="true">
+                        ${icon.chevron}
+                      </span>
+                    </span>
+
+                    ${renderPlaceInspectorEventRows(
+                      group.events,
+                      group.person.id,
+                      showAll
+                    )}
+                  </span>
+                </button>
+              `;
+            })
+            .join('')}
+
+          ${
+            visibleOtherEvents.length
+              ? `
+                <div
+                  class="
+                    places-inspector-other-events
+                  ">
+
+                  <strong>
+                    Other events
+                  </strong>
+
+                  ${renderPlaceInspectorEventRows(
+                    visibleOtherEvents,
+                    '',
+                    true
+                  )}
+                </div>
+              `
+              : ''
+          }
+
+          ${toggleMarkup}
+        </div>
+      `;
+    }
+
+    function renderPlaceInspectorPhotos(
+      photos
+    ) {
+      if (!photos.length) {
+        return `
+          <div
+            class="
+              places-inspector-section-empty
+            ">
+            No connected photos.
+          </div>
+        `;
+      }
+
+      const visible =
+        photos.slice(
+          0,
+          PLACE_INSPECTOR_LIMITS.photos
+        );
+
+      return `
+        <div
+          class="
+            places-inspector-photo-grid
+          ">
+
+          ${visible
+            .map(photo => {
+              const label =
+                photo.title
+                || photo.filename
+                || 'Photo';
+
+              return `
+                <button
+                  class="
+                    places-inspector-photo
+                  "
+                  type="button"
+                  data-place-connected-photo="${
+                    escapeHtml(photo.id)
+                  }"
+                  title="${
+                    escapeHtml(label)
+                  }"
+                  aria-label="Open ${
+                    escapeHtml(label)
+                  }">
+
+                  ${renderPhotoThumbnail(
+                    photo,
+                    {
+                      className:
+                        'places-inspector-photo-thumbnail',
+                      label
+                    }
+                  )}
+                </button>
+              `;
+            })
+            .join('')}
+        </div>
+
+        <button
+          class="
+            places-inspector-section-action
+          "
+          type="button"
+          data-place-view-all-photos>
+          View all photos
+        </button>
+      `;
+    }
+
+    function renderPlaceInspectorFiles(
+      files
+    ) {
+      if (!files.length) {
+        return `
+          <div
+            class="
+              places-inspector-section-empty
+            ">
+            No connected files.
+          </div>
+        `;
+      }
+
+      const visible =
+        files.slice(
+          0,
+          PLACE_INSPECTOR_LIMITS.files
+        );
+
+      return `
+        <div
+          class="
+            archive-list
+            family-archive-list
+            places-inspector-file-list
+          ">
+
+          ${visible
+            .map(file => `
+              <button
+                class="
+                  family-archive-row
+                "
+                type="button"
+                data-place-connected-file="${
+                  escapeHtml(file.id)
+                }">
+
+                <span class="file-badge">
+                  ${escapeHtml(
+                    file.type
+                    || file.kind
+                    || 'FILE'
+                  )}
+                </span>
+
+                <span
+                  class="
+                    family-archive-copy
+                  ">
+
+                  <strong>
+                    ${escapeHtml(
+                      file.name
+                      || 'Untitled file'
+                    )}
+                  </strong>
+
+                  <span>
+                    ${escapeHtml(
+                      file.datePlace
+                      || (
+                        file.updated
+                          ? `Updated ${
+                              file.updated
+                            }`
+                          : 'Linked file'
+                      )
+                    )}
+                  </span>
+                </span>
+
+                <span
+                  class="
+                    family-item-arrow
+                  "
+                  aria-hidden="true">
+                  ${icon.chevron}
+                </span>
+              </button>
+            `)
+            .join('')}
+        </div>
+
+        <button
+          class="
+            places-inspector-section-action
+          "
+          type="button"
+          data-place-view-all-files>
+          Open in Archive
+        </button>
+      `;
+    }
+
+    function renderPlaceInspectorNotes(
+      notes
+    ) {
+      if (!notes.length) {
+        return `
+          <div
+            class="
+              places-inspector-section-empty
+            ">
+            No connected notes.
+          </div>
+        `;
+      }
+
+      const visible =
+        notes.slice(
+          0,
+          PLACE_INSPECTOR_LIMITS.notes
+        );
+
+      return `
+        <div
+          class="
+            note-list
+            family-note-list
+            places-inspector-note-list
+          ">
+
+          ${visible
+            .map(note => {
+              const updated =
+                String(
+                  note.updated
+                  || 'recently'
+                );
+
+              const updatedLabel =
+                /^updated\b/i.test(
+                  updated
+                )
+                  ? updated
+                  : `Updated ${updated}`;
+
+              return `
+                <button
+                  class="
+                    family-note-card
+                  "
+                  type="button"
+                  data-place-connected-note="${
+                    escapeHtml(note.id)
+                  }">
+
+                  <strong>
+                    ${escapeHtml(
+                      note.title
+                      || 'Untitled note'
+                    )}
+                  </strong>
+
+                  <span>
+                    ${escapeHtml(
+                      note.excerpt
+                      || note.body
+                      || 'No note preview'
+                    )}
+                  </span>
+
+                  <em class="status-dot">
+                    ${escapeHtml(
+                      updatedLabel
+                    )}
+                  </em>
+                </button>
+              `;
+            })
+            .join('')}
+        </div>
+
+        <button
+          class="
+            places-inspector-section-action
+          "
+          type="button"
+          data-place-view-all-notes>
+          Open in Notes
+        </button>
+      `;
+    }
+
+    function renderPlaceInspectorSection({
+      key,
+      title,
+      countLabel = '',
+      content
+    }) {
+      const open =
+        placesInspectorSectionIsOpen(
+          key
+        );
+
+      return `
+        <details
+          class="
+            places-inspector-section
+          "
+          id="placeInspectorSection-${
+            escapeHtml(key)
+          }"
+          data-place-inspector-section="${
+            escapeHtml(key)
+          }"
+          ${open ? 'open' : ''}>
+
+          <summary>
+            <span>
+              ${escapeHtml(title)}
+            </span>
+
+            <span
+              class="
+                places-inspector-section-summary-meta
+              ">
+
+              ${
+                countLabel
+                  ? `
+                    <span
+                      class="
+                        places-inspector-section-count
+                      ">
+                      ${escapeHtml(
+                        countLabel
+                      )}
+                    </span>
+                  `
+                  : ''
+              }
+
+              <span
+                class="
+                  places-inspector-section-chevron
+                "
+                aria-hidden="true">
+                ${icon.chevron}
+              </span>
+            </span>
+          </summary>
+
+          <div
+            class="
+              places-inspector-section-body
+            ">
+            ${content}
+          </div>
+        </details>
+      `;
+    }
+
+    function rerenderPlacesInspector({
+      preserveScroll = true
+    } = {}) {
+      const inspector =
+        main.querySelector(
+          '[data-places-map-inspector]'
+        );
+
+      if (!inspector) {
+        return;
+      }
+
+      const previousScrollTop =
+        inspector.scrollTop;
+
+      inspector.innerHTML =
+        renderPlacesMapInspector(
+          getPlace(
+            state.selectedPlaceId
+          )
+        );
+
+      bindPlacesInspectorControls(
+        inspector
+      );
+
+      if (preserveScroll) {
+        requestAnimationFrame(() => {
+          inspector.scrollTop =
+            previousScrollTop;
+        });
+      }
+    }
+
+    function renderPlacesMapInspector(
+      place
+    ) {
+      if (
+        state.placesInspectorCollapsed
+      ) {
         return `
           <button
             class="
@@ -49484,9 +51921,9 @@
             "
             type="button"
             data-places-inspector-toggle
-            aria-label="Expand place details"
+            aria-label="Expand place inspector"
             aria-expanded="false"
-            title="Expand place details">
+            title="Expand place inspector">
             ${icon.doublechevronSidebar}
           </button>
         `;
@@ -49501,24 +51938,35 @@
           "
           type="button"
           data-places-inspector-toggle
-          aria-label="Collapse place details"
+          aria-label="Collapse place inspector"
           aria-expanded="true"
-          title="Collapse place details">
+          title="Collapse place inspector">
           ${icon.doublechevronSidebar}
         </button>
       `;
 
       const toolbar = `
-        <div class="albums-detail-toolbar places-inspector-toolbar">
+        <div
+          class="
+            albums-detail-toolbar
+            places-inspector-toolbar
+          ">
+
           ${collapseButton}
 
-          <span class="albums-detail-toolbar-spacer"></span>
+          <span
+            class="
+              albums-detail-toolbar-spacer
+            ">
+          </span>
 
           ${
             place
               ? `
                 <button
-                  class="albums-detail-action"
+                  class="
+                    albums-detail-action
+                  "
                   type="button"
                   data-places-inspector-edit="${
                     escapeHtml(place.id)
@@ -49529,7 +51977,9 @@
                 </button>
 
                 <button
-                  class="albums-detail-action"
+                  class="
+                    albums-detail-action
+                  "
                   type="button"
                   data-place-menu="${
                     escapeHtml(place.id)
@@ -49553,196 +52003,618 @@
         return `
           ${toolbar}
 
-          <div class="places-inspector-empty">
-            <strong>Place details</strong>
+          <div
+            class="
+              places-inspector-empty
+            ">
+
+            <strong>
+              No place selected
+            </strong>
 
             <span>
-              Select a place on the map to view its details.
+              Select a place on the map
+              to view its information.
             </span>
           </div>
         `;
       }
 
       const people =
-        getPeopleForPlace(place.id);
+        getPeopleForPlace(
+          place.id
+        );
 
       const events =
-        getEventsForPlace(place.id);
+        getEventsForPlace(
+          place.id
+        );
+
+      const photos =
+        getPhotosForPlace(
+          place.id
+        );
+
+      const files =
+        getArchiveFilesForPlace(
+          place.id
+        );
+
+      const notes =
+        getNotesForPlace(
+          place.id
+        );
 
       const alternatives =
-        placeAlternativeNames(place);
+        placeAlternativeNames(
+          place
+        );
 
       const issue =
-        openPlaceIssueFor(place.id);
+        openPlaceIssueFor(
+          place.id
+        );
 
-      const eventPreview =
-        events
-          .slice(0, 3)
-          .map(event => `
-            <div>
-              <strong>
-                ${escapeHtml(
-                  event.title
-                  || event.eventType
-                  || event.type
-                  || 'Event'
-                )}
-              </strong>
+      const hasCoordinates =
+        placeHasCoordinates(
+          place
+        );
 
-              <span>
-                ${escapeHtml(
-                  formatGenealogyDateLabel(
-                    event.date || event
-                  )
-                  || event.dateLabel
-                  || ''
-                )}
-              </span>
+      const tags = [
+        {
+          key: 'people',
+          target: 'events',
+          label:
+            placeInspectorCountLabel(
+              people.length,
+              'person',
+              'people'
+            )
+        },
+        {
+          key: 'events',
+          target: 'events',
+          label:
+            placeInspectorCountLabel(
+              events.length,
+              'event'
+            )
+        },
+        {
+          key: 'photos',
+          target: 'photos',
+          label:
+            placeInspectorCountLabel(
+              photos.length,
+              'photo'
+            )
+        },
+        {
+          key: 'files',
+          target: 'files',
+          label:
+            placeInspectorCountLabel(
+              files.length,
+              'file'
+            )
+        },
+        {
+          key: 'notes',
+          target: 'notes',
+          label:
+            placeInspectorCountLabel(
+              notes.length,
+              'note'
+            )
+        }
+      ];
+
+      const namesContent =
+        alternatives.length
+          ? `
+            <div
+              class="
+                places-inspector-name-list
+              ">
+              ${alternatives
+                .map(name => `
+                  <span>
+                    ${escapeHtml(name)}
+                  </span>
+                `)
+                .join('')}
             </div>
-          `)
-          .join('');
+          `
+          : `
+            <div
+              class="
+                places-inspector-section-empty
+              ">
+              No historical or
+              alternative names recorded.
+            </div>
+          `;
 
       return `
         ${toolbar}
 
-        <div class="places-inspector-hero">
-          <span>Selected place</span>
+        <div
+          class="
+            places-inspector-content
+          ">
 
-          <h2>
-            ${escapeHtml(
-              placePrimaryName(place)
-            )}
-          </h2>
+          <section
+            class="
+              places-inspector-summary
+            ">
 
-          <p>
-            ${escapeHtml(
-              placeSecondaryName(place)
-              || 'No broader place recorded'
-            )}
-          </p>
-        </div>
+            <h2>
+              ${escapeHtml(
+                placePrimaryName(place)
+              )}
+            </h2>
 
-        <div class="places-inspector-body">
-          ${
-            !placeHasCoordinates(place)
-              ? `
-                <p class="places-inspector-note">
-                  Not on map
-                </p>
-              `
-              : ''
-          }
+            <p>
+              ${escapeHtml(
+                placeSecondaryName(place)
+                || 'No broader place recorded'
+              )}
+            </p>
 
-          ${
-            issue
-              ? `
-                <button
-                  class="places-attention"
-                  type="button"
-                  data-place-review-issue="${
-                    escapeHtml(issue.id)
-                  }">
-                  Needs review
-                </button>
-              `
-              : ''
-          }
+            <div
+              class="
+                places-inspector-tags
+              "
+              aria-label="Connected records">
 
-          <div class="places-inspector-facts">
-            ${
-              placeHasCoordinates(place)
-                ? `
-                  <div>
-                    <span>Coordinates</span>
-
-                    <strong>
-                      ${escapeHtml(
-                        formatPlaceCoordinates(place)
+              ${tags
+                .map(tag => `
+                  <button
+                    class="
+                      places-inspector-tag
+                      tone-${escapeHtml(
+                        tag.key
                       )}
-                    </strong>
-                  </div>
+                    "
+                    type="button"
+                    data-place-inspector-jump="${
+                      escapeHtml(
+                        tag.target
+                      )
+                    }"
+                    aria-controls="placeInspectorSection-${
+                      escapeHtml(
+                        tag.target
+                      )
+                    }">
+                    ${escapeHtml(
+                      tag.label
+                    )}
+                  </button>
+                `)
+                .join('')}
+            </div>
+
+            ${
+              issue
+                ? `
+                  <button
+                    class="
+                      places-attention
+                    "
+                    type="button"
+                    data-place-review-issue="${
+                      escapeHtml(issue.id)
+                    }">
+                    Needs review
+                  </button>
                 `
                 : ''
             }
+          </section>
 
-            <div>
-              <span>Linked people</span>
-              <strong>${people.length}</strong>
-            </div>
+          <div
+            class="
+              places-inspector-coordinate-row
+            ">
 
-            <div>
-              <span>Linked events</span>
-              <strong>${events.length}</strong>
-            </div>
-          </div>
+            <span
+              class="
+                places-inspector-coordinate-label
+              ">
+              Coordinates
+            </span>
 
-          ${
-            alternatives.length
-              ? `
-                <details class="places-disclosure">
-                  <summary>
-                    Historical / alternative names
-
-                    <span>
-                      ${alternatives.length}
-                    </span>
-                  </summary>
-
-                  <div>
-                    ${alternatives
-                      .map(name => `
-                        <span>
-                          ${escapeHtml(name)}
-                        </span>
-                      `)
-                      .join('')}
-                  </div>
-                </details>
-              `
-              : ''
-          }
-
-          ${
-            eventPreview
-              ? `
-                <div class="places-event-preview">
-                  <span>Connected events</span>
-                  ${eventPreview}
-                </div>
-              `
-              : ''
-          }
-
-          <div class="places-inspector-actions">
-            <button
-              class="button secondary"
-              type="button"
-              data-places-open-detail="${
-                escapeHtml(place.id)
-              }">
-              Place details
-            </button>
+            <strong>
+              ${escapeHtml(
+                hasCoordinates
+                  ? formatPlaceCoordinates(
+                      place
+                    )
+                  : 'Not on map'
+              )}
+            </strong>
 
             <button
-              class="button primary"
+              class="
+                places-inspector-coordinate-action
+              "
               type="button"
               data-places-edit-position="${
                 escapeHtml(place.id)
+              }"
+              aria-label="${
+                hasCoordinates
+                  ? 'Edit position'
+                  : 'Add position'
+              }"
+              title="${
+                hasCoordinates
+                  ? 'Edit position'
+                  : 'Add position'
               }">
-              Edit position
+
+              ${icon.edit}
+
+              <span>
+                ${
+                  hasCoordinates
+                    ? 'Edit'
+                    : 'Add'
+                }
+              </span>
             </button>
           </div>
+
+          ${renderPlaceInspectorSection({
+            key:
+              'names',
+
+            title:
+              'Historical / alternative names',
+
+            countLabel:
+              placeInspectorCountLabel(
+                alternatives.length,
+                'name'
+              ),
+
+            content:
+              namesContent
+          })}
+
+          ${renderPlaceInspectorSection({
+            key:
+              'events',
+            title:
+              'Connected events',
+            countLabel:
+              placeInspectorCountLabel(
+                events.length,
+                'event'
+              ),
+            content:
+              renderPlaceInspectorEvents(
+                events
+              )
+          })}
+
+          ${renderPlaceInspectorSection({
+            key:
+              'photos',
+
+            title:
+              'Connected photos',
+
+            countLabel:
+              placeInspectorCountLabel(
+                photos.length,
+                'photo'
+              ),
+
+            content:
+              renderPlaceInspectorPhotos(
+                photos
+              )
+          })}
+
+          ${renderPlaceInspectorSection({
+            key:
+              'files',
+
+            title:
+              'Connected files',
+
+            countLabel:
+              placeInspectorCountLabel(
+                files.length,
+                'file'
+              ),
+
+            content:
+              renderPlaceInspectorFiles(
+                files
+              )
+          })}
+
+          ${renderPlaceInspectorSection({
+            key:
+              'notes',
+
+            title:
+              'Connected notes',
+
+            countLabel:
+              placeInspectorCountLabel(
+                notes.length,
+                'note'
+              ),
+
+            content:
+              renderPlaceInspectorNotes(
+                notes
+              )
+          })}
         </div>
       `;
     }
 
-    function bindPlacesInspectorControls(root) {
-      root.querySelector('[data-places-inspector-toggle]')?.addEventListener('click', togglePlacesInspector);
-      root.querySelector('[data-places-inspector-edit]')?.addEventListener('click', event => { openPlaceModal(event.currentTarget.dataset.placesInspectorEdit);});
-      root.querySelector('[data-place-menu]')?.addEventListener('click', event => { event.stopPropagation(); openPlaceActionsMenu(event.currentTarget.dataset.placeMenu, event.currentTarget); });
-      root.querySelector('[data-places-open-detail]')?.addEventListener('click', event => { state.selectedPlaceId = event.currentTarget.dataset.placesOpenDetail; state.placesDetailOpen = true; renderPlaceDetail(); });
-      root.querySelector('[data-places-edit-position]')?.addEventListener('click', event => enterPlacesMapMoveMode(event.currentTarget.dataset.placesEditPosition));
-      root.querySelector('[data-place-review-issue]')?.addEventListener('click', event => openPlaceIssueReviewModal(event.currentTarget.dataset.placeReviewIssue));
+    function bindPlacesInspectorControls(
+      root
+    ) {
+      root
+        .querySelector(
+          '[data-places-inspector-toggle]'
+        )
+        ?.addEventListener(
+          'click',
+          togglePlacesInspector
+        );
+
+      root
+        .querySelector(
+          '[data-places-inspector-edit]'
+        )
+        ?.addEventListener(
+          'click',
+          event => {
+            openPlaceModal(
+              event.currentTarget
+                .dataset
+                .placesInspectorEdit
+            );
+          }
+        );
+
+      root
+        .querySelector(
+          '[data-place-menu]'
+        )
+        ?.addEventListener(
+          'click',
+          event => {
+            event.stopPropagation();
+
+            openPlaceActionsMenu(
+              event.currentTarget
+                .dataset
+                .placeMenu,
+
+              event.currentTarget
+            );
+          }
+        );
+
+      root
+        .querySelector(
+          '[data-places-edit-position]'
+        )
+        ?.addEventListener(
+          'click',
+          event => {
+            enterPlacesMapMoveMode(
+              event.currentTarget
+                .dataset
+                .placesEditPosition
+            );
+          }
+        );
+
+      root
+        .querySelector(
+          '[data-place-review-issue]'
+        )
+        ?.addEventListener(
+          'click',
+          event => {
+            openPlaceIssueReviewModal(
+              event.currentTarget
+                .dataset
+                .placeReviewIssue
+            );
+          }
+        );
+
+      root
+        .querySelectorAll(
+          '[data-place-inspector-section]'
+        )
+        .forEach(details => {
+          details.addEventListener(
+            'toggle',
+            () => {
+              const key =
+                details.dataset
+                  .placeInspectorSection;
+
+              if (!key) {
+                return;
+              }
+
+              placesInspectorSectionState()[
+                key
+              ] = details.open;
+            }
+          );
+        });
+
+      root
+        .querySelectorAll(
+          '[data-place-inspector-jump]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              const key =
+                button.dataset
+                  .placeInspectorJump;
+
+              if (!key) {
+                return;
+              }
+
+              placesInspectorSectionState()[
+                key
+              ] = true;
+
+              rerenderPlacesInspector();
+
+              requestAnimationFrame(() => {
+                main
+                  .querySelector(
+                    `#placeInspectorSection-${key}`
+                  )
+                  ?.scrollIntoView({
+                    behavior:
+                      'smooth',
+
+                    block:
+                      'start'
+                  });
+              });
+            }
+          );
+        });
+
+      root
+        .querySelectorAll(
+          '[data-place-connected-person]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              openPlaceInspectorPerson(
+                button.dataset
+                  .placeConnectedPerson
+              );
+            }
+          );
+        });
+
+      root
+        .querySelectorAll(
+          '[data-place-connected-photo]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              openAlbumsForPhoto(
+                button.dataset
+                  .placeConnectedPhoto
+              );
+            }
+          );
+        });
+
+      root
+        .querySelectorAll(
+          '[data-place-connected-file]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              openPlaceInspectorArchiveFile(
+                button.dataset
+                  .placeConnectedFile
+              );
+            }
+          );
+        });
+
+      root
+        .querySelectorAll(
+          '[data-place-connected-note]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              openPlaceInspectorNote(
+                button.dataset
+                  .placeConnectedNote
+              );
+            }
+          );
+        });
+
+      root
+        .querySelector(
+          '[data-place-view-all-photos]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            openAlbumsForPlace(
+              state.selectedPlaceId
+            );
+          }
+        );
+
+      root
+        .querySelector(
+          '[data-place-view-all-files]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            openArchiveForPlace(
+              state.selectedPlaceId
+            );
+          }
+        );
+
+      root
+        .querySelector(
+          '[data-place-view-all-notes]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            openNotesForPlace(
+              state.selectedPlaceId
+            );
+          }
+        );
+
+      root
+        .querySelector(
+          '[data-place-events-toggle]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            state
+              .placesInspectorShowAllEvents =
+                !state
+                  .placesInspectorShowAllEvents;
+
+            rerenderPlacesInspector();
+          }
+        );
     }
 
     function togglePlacesInspector() {
@@ -49773,22 +52645,14 @@
           state.placesInspectorCollapsed
         );
 
-      if (inspector) {
-        inspector.innerHTML =
-          renderPlacesMapInspector(
-            getPlace(
-              state.selectedPlaceId
-            )
-          );
-
-        bindPlacesInspectorControls(
-          inspector
-        );
-      }
+      rerenderPlacesInspector({
+        preserveScroll:
+          false
+      });
 
       /*
-      * First frame applies the grid-column change.
-      * The second lets Leaflet measure the resulting map width.
+      * First frame applies the inspector-width change.
+      * The second lets Leaflet measure the final map.
       */
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -49871,17 +52735,6 @@
         main.querySelector('[data-map-fit]')?.addEventListener('click', () => fitPlacesMap(list));
       }
       bindToasts(main);
-    }
-
-    function renderPlaceDetail() {
-      const place = getPlace(state.selectedPlaceId);
-      if (!place) { state.placesDetailOpen = false; renderPlacesMain(); return; }
-      const alternatives = placeAlternativeNames(place);
-      const people = getPeopleForPlace(place.id);
-      const events = getEventsForPlace(place.id);
-      main.innerHTML = `<div class="places-detail"><header class="places-detail-head"><button class="button secondary" type="button" id="placesDetailBack">${icon.chevron} Back</button><div><h1>${escapeHtml(placePrimaryName(place))}</h1><p>${escapeHtml(placeSecondaryName(place) || 'No broader place recorded')}</p></div><button class="places-row-more" type="button" data-place-menu="${escapeHtml(place.id)}" aria-label="Actions for ${escapeHtml(placePrimaryName(place))}">${icon.more}</button></header><div class="places-detail-grid"><section class="places-card"><h2>Place</h2><div class="places-kv"><span>Full name</span><strong>${escapeHtml(place.name)}</strong></div><div class="places-kv"><span>Country</span><strong>${escapeHtml(placeCountry(place) || 'Unknown')}</strong></div><div class="places-kv"><span>Coordinates</span><strong>${escapeHtml(formatPlaceCoordinates(place))}</strong></div><div class="places-kv"><span>Updated</span><strong>${escapeHtml(formatPlaceUpdatedAt(place.updatedAt))}</strong></div>${alternatives.length ? `<details class="places-disclosure"><summary>Historical / alternative names <span>${alternatives.length}</span></summary><div>${alternatives.map(name => `<span>${escapeHtml(name)}</span>`).join('')}</div></details>` : ''}</section><section class="places-card"><h2>Connected records</h2><div class="places-kv"><span>People</span><strong>${people.length}</strong></div><div class="places-kv"><span>Events</span><strong>${events.length}</strong></div><div class="places-kv"><span>Photos</span><strong>${getPhotosForPlace(place.id).length}</strong></div></section></div></div>`;
-      main.querySelector('#placesDetailBack')?.addEventListener('click', () => { state.placesDetailOpen = false; renderPlacesMain(); });
-      main.querySelector('[data-place-menu]')?.addEventListener('click', event => openPlaceActionsMenu(place.id, event.currentTarget));
     }
 
     function closePlacesFilterPopover() {
@@ -50165,19 +53018,154 @@
       }, 0);
     }
 
-    function openPlaceActionsMenu(placeId, anchor) {
-      const place = getPlace(placeId);
-      if (!place) return;
+    function openPlaceActionsMenu(
+      placeId,
+      anchor
+    ) {
+      const place =
+        getPlace(placeId);
+
+      if (
+        !place
+        || !anchor
+      ) {
+        return;
+      }
+
       closeMenu();
-      const rect = anchor.getBoundingClientRect();
-      const menu = document.createElement('div');
-      menu.className = 'menu-popover';
-      menu.id = 'projectMenu';
-      menu.style.top = `${rect.bottom + 6}px`;
-      menu.style.left = `${Math.max(12, Math.min(window.innerWidth - 220, rect.right - 200))}px`;
-      menu.innerHTML = '<button type="button" data-action="map">Show on map</button><button type="button" data-action="details">Place details</button><button type="button" data-action="position">Edit position</button>';
-      document.body.appendChild(menu);
-      menu.addEventListener('click', event => { const action = event.target.closest('[data-action]')?.dataset.action; if (action === 'map') showPlaceOnMap(place.id); if (action === 'details') showPlaceOnMap(place.id, { openDetails: true }); if (action === 'position') showPlaceOnMap(place.id, { editPosition: true }); });
+
+      const rect =
+        anchor.getBoundingClientRect();
+
+      const menu =
+        document.createElement(
+          'div'
+        );
+
+      menu.className =
+        'menu-popover';
+
+      menu.id =
+        'projectMenu';
+
+      menu.style.top =
+        `${rect.bottom + 6}px`;
+
+      menu.style.left =
+        `${
+          Math.max(
+            12,
+            Math.min(
+              window.innerWidth - 220,
+              rect.right - 200
+            )
+          )
+        }px`;
+
+      const hasCoordinates =
+        placeHasCoordinates(
+          place
+        );
+
+      menu.innerHTML = `
+        <button
+          type="button"
+          data-action="map">
+          Show on map
+        </button>
+
+        <button
+          type="button"
+          data-action="position">
+          ${
+            hasCoordinates
+              ? 'Edit position'
+              : 'Add position'
+          }
+        </button>
+
+        ${
+          hasCoordinates
+            ? `
+              <button
+                type="button"
+                data-action="copy-coordinates">
+                Copy coordinates
+              </button>
+            `
+            : ''
+        }
+      `;
+
+      document.body.appendChild(
+        menu
+      );
+
+      menu.addEventListener(
+        'click',
+        async event => {
+          const action =
+            event.target
+              .closest(
+                '[data-action]'
+              )
+              ?.dataset
+              .action;
+
+          if (!action) {
+            return;
+          }
+
+          if (action === 'map') {
+            showPlaceOnMap(
+              place.id
+            );
+
+            return;
+          }
+
+          if (action === 'position') {
+            showPlaceOnMap(
+              place.id,
+              {
+                editPosition:
+                  true
+              }
+            );
+
+            return;
+          }
+
+          if (
+            action
+              === 'copy-coordinates'
+          ) {
+            const coordinates =
+              formatPlaceCoordinates(
+                place
+              );
+
+            closeMenu();
+
+            try {
+              await navigator
+                .clipboard
+                .writeText(
+                  coordinates
+                );
+
+              showToast(
+                'Coordinates copied.'
+              );
+            } catch {
+              showToast(
+                coordinates
+              );
+            }
+          }
+        }
+      );
+
       bindMenuLifecycle(anchor);
     }
 
@@ -50683,9 +53671,6 @@
             state.placesViewMode =
               'map';
 
-            state.placesDetailOpen =
-              false;
-
             renderPlacesMain();
 
             /*
@@ -50738,7 +53723,23 @@
         centralFamilyRecords().forEach(family => (family.events || []).forEach(event => { if (event.placeId === place.id) event.placeId = null; }));
         sampleData.media.forEach(photo => { if (photo.placeId === place.id) photo.placeId = null; });
         sampleData.links = sampleData.links.filter(link => !placeLinkMatches(link, place.id));
-        sampleData.events = buildSampleEvents(); state.selectedPlaceId = projectPlaces().find(item => !item.deleted)?.id || null; state.placesDetailOpen = false; closeModal(); renderPlaces(); showToast('Place deleted permanently.');
+        sampleData.events =
+          buildSampleEvents();
+
+        state.selectedPlaceId =
+          projectPlaces()
+            .find(item =>
+              !item.deleted
+            )
+            ?.id
+          || null;
+
+        closeModal();
+        renderPlaces();
+
+        showToast(
+          'Place deleted permanently.'
+        );
       });
     }
 
@@ -51599,9 +54600,6 @@
         state.placesSearch =
           '';
 
-        state.placesDetailOpen =
-          false;
-
         state.selectedPlaceId =
           projectPlaces(
             project.id
@@ -52209,9 +55207,6 @@
 
       state.placesSearch =
         '';
-
-      state.placesDetailOpen =
-        false;
 
       state.placesActiveRouteId =
         (
