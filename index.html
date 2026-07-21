@@ -6876,24 +6876,32 @@
       max-height: 34px;
 
       flex: 0 0 82px;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        var(--surface-input);
+
+      transition:
+        border-color var(--ease),
+        background var(--ease),
+        box-shadow var(--ease);
     }
 
-    .people-rows-select {
-      padding:
-        0 34px
-        0 12px;
-      text-align: left;
-    }
-
-    .people-rows-select:hover {
+    .people-rows-select-shell:hover {
       border-color:
         var(--border-strong);
+
       background:
-        rgba(255, 255, 255, 0.025);
+        var(--surface-card-hover);
     }
 
-    .people-rows-select:focus {
-      outline: 0;
+    .people-rows-select-shell:focus-within {
       border-color:
         rgba(
           98,
@@ -6912,33 +6920,69 @@
         );
     }
 
+    .people-rows-select {
+      padding:
+        0 34px
+        0 12px;
+
+      border: 0;
+
+      outline: 0;
+
+      background:
+        transparent;
+
+      color:
+        var(--text-primary);
+
+      text-align:
+        left;
+
+      box-shadow:
+        none;
+    }
+
+    .people-rows-select:hover,
+    .people-rows-select:focus {
+      border: 0;
+
+      outline: 0;
+
+      background:
+        transparent;
+
+      color:
+        var(--text-primary);
+
+      box-shadow:
+        none;
+    }
+
+    .people-rows-select option {
+      background-color:
+        var(--surface-card);
+
+      color:
+        var(--text-primary);
+    }
+
     .people-rows-select-chevron {
       right: 10px;
+
       width: 14px;
+
       color:
-        var(--text-tertiary);
+        var(--text-secondary);
     }
 
     .people-rows-select-chevron svg {
       width: 13px;
       height: 13px;
+
       display: block;
-      transform: rotate(90deg);
-    }
 
-    .people-rows-select-shell:hover
-    .people-rows-select-chevron,
-    .people-rows-select-shell:focus-within
-    .people-rows-select-chevron {
-      color:
-        var(--text-primary);
-    }
-
-    .people-rows-select-shell
-    .people-rows-select {
-      border: 0px;
-      background-color:
-        transparent;
+      transform:
+        rotate(90deg);
     }
 
     .people-table-footer {
@@ -16411,6 +16455,7 @@
       state.activeModule = 'Albums';
       state.albumsView = photoIsDeleted(photo) ? 'deleted' : 'all';
       state.activeAlbumId = null;
+      resetAlbumsPage();
       state.albumsFilters = { ...defaultAlbumFilters };
       state.selectedPhotoId = photo.id;
       state.selectedPhotoIds = [];
@@ -16424,6 +16469,7 @@
       state.activeModule = 'Albums';
       state.albumsView = 'all';
       state.activeAlbumId = null;
+      resetAlbumsPage();
       state.albumsFilters = { ...defaultAlbumFilters, personId };
       state.albumsSearch = '';
       state.selectedPhotoIds = [];
@@ -18916,6 +18962,8 @@
       albumsSort: 'modified',
       albumsFilters: { personId: '', placeId: '', dateRange: '', favouriteOnly: false },
       albumsViewMode: 'grid',
+      albumsPage: 1,
+      albumsRowsPerPage: 25,
       albumsGridWidth: 0,
       selectedPhotoId: 'photo-silver-portrait',
       selectedPhotoIds: [],
@@ -36615,6 +36663,379 @@
       return [...photos].sort(sorters[state.albumsSort] || sorters.modified);
     }
 
+    const ALBUMS_ROWS_PER_PAGE_OPTIONS =
+      Object.freeze([
+        10,
+        25,
+        50,
+        100
+      ]);
+
+    function normalizeAlbumsRowsPerPage(
+      value = state.albumsRowsPerPage
+    ) {
+      const parsedValue =
+        Number(value);
+
+      return ALBUMS_ROWS_PER_PAGE_OPTIONS
+        .includes(parsedValue)
+          ? parsedValue
+          : 25;
+    }
+
+    function resetAlbumsPage() {
+      state.albumsPage = 1;
+    }
+
+    function getAlbumsPagination(
+      totalCount
+    ) {
+      const total =
+        Math.max(
+          0,
+          Number(totalCount) || 0
+        );
+
+      const rowsPerPage =
+        normalizeAlbumsRowsPerPage();
+
+      state.albumsRowsPerPage =
+        rowsPerPage;
+
+      const totalPages =
+        Math.max(
+          1,
+          Math.ceil(
+            total / rowsPerPage
+          )
+        );
+
+      const currentPage =
+        Math.min(
+          totalPages,
+          Math.max(
+            1,
+            Math.trunc(
+              Number(state.albumsPage)
+              || 1
+            )
+          )
+        );
+
+      /*
+      * Clamp the stored page when deletions or filters
+      * reduce the number of available pages.
+      */
+      state.albumsPage =
+        currentPage;
+
+      const startIndex =
+        total
+          ? (
+              currentPage - 1
+            ) * rowsPerPage
+          : 0;
+
+      const endIndex =
+        Math.min(
+          startIndex + rowsPerPage,
+          total
+        );
+
+      return {
+        totalCount:
+          total,
+
+        rowsPerPage,
+
+        totalPages,
+
+        currentPage,
+
+        startIndex,
+
+        endIndex,
+
+        firstVisible:
+          total
+            ? startIndex + 1
+            : 0,
+
+        lastVisible:
+          total
+            ? endIndex
+            : 0
+      };
+    }
+
+    function getAlbumsListPage(
+      photos = filteredAlbumPhotos()
+    ) {
+      const source =
+        Array.isArray(photos)
+          ? photos
+          : [];
+
+      const pagination =
+        getAlbumsPagination(
+          source.length
+        );
+
+      return {
+        pagination,
+
+        photos:
+          source.slice(
+            pagination.startIndex,
+            pagination.endIndex
+          )
+      };
+    }
+
+    function currentAlbumsPagePhotos() {
+      const photos =
+        filteredAlbumPhotos();
+
+      /*
+      * Grid view remains unpaginated.
+      */
+      if (
+        state.albumsViewMode !== 'list'
+      ) {
+        return photos;
+      }
+
+      return getAlbumsListPage(
+        photos
+      ).photos;
+    }
+
+    function ensureSelectedAlbumPhotoOnListPage() {
+      if (
+        state.albumsViewMode !== 'list'
+      ) {
+        return;
+      }
+
+      const pagePhotos =
+        currentAlbumsPagePhotos();
+
+      const selectedIsOnPage =
+        pagePhotos.some(photo =>
+          photo.id === state.selectedPhotoId
+        );
+
+      if (selectedIsOnPage) {
+        return;
+      }
+
+      const nextPhotoId =
+        pagePhotos[0]?.id
+        || null;
+
+      if (
+        nextPhotoId
+          !== state.selectedPhotoId
+      ) {
+        resetAlbumsPhotoEditState();
+      }
+
+      state.selectedPhotoId =
+        nextPhotoId;
+    }
+
+    function renderAlbumsPagination(
+      pagination
+    ) {
+      if (
+        pagination.totalPages <= 1
+      ) {
+        return '';
+      }
+
+      /*
+      * Reuse the existing pure page-token helper.
+      * Do not rename or modify the People implementation.
+      */
+      const tokens =
+        peoplePaginationTokens(
+          pagination.currentPage,
+          pagination.totalPages
+        );
+
+      return `
+        <nav
+          class="pagination"
+          aria-label="Photo pages">
+
+          <button
+            class="
+              page-button
+              icon-rotate-left
+            "
+            type="button"
+            data-albums-page="${
+              pagination.currentPage - 1
+            }"
+            aria-label="Previous page"
+            ${
+              pagination.currentPage === 1
+                ? 'disabled'
+                : ''
+            }>
+            ${icon.chevron}
+          </button>
+
+          ${tokens.map(
+            (token, index) => {
+              if (
+                token === 'ellipsis'
+              ) {
+                return `
+                  <span
+                    class="pagination-ellipsis"
+                    aria-hidden="true"
+                    data-pagination-gap="${
+                      index
+                    }">
+                    …
+                  </span>
+                `;
+              }
+
+              const active =
+                token
+                  === pagination.currentPage;
+
+              return `
+                <button
+                  class="
+                    page-button
+                    ${active ? 'active' : ''}
+                  "
+                  type="button"
+                  data-albums-page="${token}"
+                  aria-label="Go to page ${token}"
+                  ${
+                    active
+                      ? 'aria-current="page"'
+                      : ''
+                  }>
+                  ${token}
+                </button>
+              `;
+            }
+          ).join('')}
+
+          <button
+            class="page-button"
+            type="button"
+            data-albums-page="${
+              pagination.currentPage + 1
+            }"
+            aria-label="Next page"
+            ${
+              pagination.currentPage
+                === pagination.totalPages
+                  ? 'disabled'
+                  : ''
+            }>
+            ${icon.chevron}
+          </button>
+        </nav>
+      `;
+    }
+
+    function renderAlbumsListFooter(
+      pagination
+    ) {
+      const rangeLabel =
+        pagination.totalCount
+          ? `${
+              pagination.firstVisible
+            }–${
+              pagination.lastVisible
+            }`
+          : '0';
+
+      const noun =
+        pagination.totalCount === 1
+          ? 'photo'
+          : 'photos';
+
+      return `
+        <div
+          class="
+            table-footer
+            people-table-footer
+            albums-list-footer
+          ">
+
+          <span
+            class="people-table-footer-summary"
+            aria-live="polite">
+            Showing ${rangeLabel}
+            of ${pagination.totalCount}
+            ${noun}
+          </span>
+
+          ${renderAlbumsPagination(
+            pagination
+          )}
+
+          <label
+            class="people-rows-per-page"
+            for="albumsRowsPerPage">
+
+            <span
+              class="people-rows-per-page-label">
+              Rows per page
+            </span>
+
+            <span
+              class="
+                common-select-shell
+                people-rows-select-shell
+              ">
+
+              <select
+                class="
+                  common-select
+                  people-rows-select
+                "
+                id="albumsRowsPerPage"
+                aria-label="Rows per page">
+
+                ${ALBUMS_ROWS_PER_PAGE_OPTIONS
+                  .map(option => `
+                    <option
+                      value="${option}"
+                      ${
+                        pagination.rowsPerPage
+                          === option
+                            ? 'selected'
+                            : ''
+                      }>
+                      ${option}
+                    </option>
+                  `)
+                  .join('')}
+              </select>
+
+              <span
+                class="
+                  common-select-chevron
+                  people-rows-select-chevron
+                "
+                aria-hidden="true">
+                ${icon.chevron}
+              </span>
+            </span>
+          </label>
+        </div>
+      `;
+    }
+
     function ensureSelectedAlbumPhoto() {
       const visible =
         filteredAlbumPhotos();
@@ -36791,7 +37212,9 @@
 
     function renderAlbums() {
       disconnectAlbumsGridResizeObserver();
+
       ensureSelectedAlbumPhoto();
+      ensureSelectedAlbumPhotoOnListPage();
 
       const selectedPhoto =
         getPhoto(
@@ -36998,6 +37421,14 @@
       const context = albumContext();
       const activeFilterCount = albumFilterCount();
       const activeFilters = renderAlbumsActiveFilterbar();
+      const listPage =
+        state.albumsViewMode === 'list'
+          ? getAlbumsListPage(photos)
+          : null;
+      const visiblePhotos =
+        listPage
+          ? listPage.photos
+          : photos;
       return `<header class="albums-header">
         <div class="albums-title"><h1>${escapeHtml(context.title)}</h1><p>${escapeHtml(context.subtitle)}</p></div>
         ${state.albumsView === 'deleted' ? '' : `<div class="albums-header-actions"><button class="button primary" type="button" id="albumsAddPhotos">${icon.plus} Add photos</button></div>`}
@@ -37135,9 +37566,36 @@
         </div>
       </div>
       ${activeFilters}
-      ${state.selectedPhotoIds.length ? renderAlbumsSelectionBar() : ''}
-      <div class="albums-content">${photos.length ? (state.albumsViewMode === 'list' ? renderAlbumsList(photos) : renderAlbumsGrid(photos)) : renderAlbumsEmpty(context)}</div>`;
-    }
+      ${
+        state.selectedPhotoIds.length
+          ? renderAlbumsSelectionBar()
+          : ''
+      }
+      <div class="albums-content">
+        ${
+          photos.length
+            ? state.albumsViewMode === 'list'
+              ? renderAlbumsList(
+                  visiblePhotos
+                )
+              : renderAlbumsGrid(
+                  photos
+                )
+            : renderAlbumsEmpty(
+                context
+              )
+        }
+
+        ${
+          listPage
+          && photos.length
+            ? renderAlbumsListFooter(
+                listPage.pagination
+              )
+            : ''
+        }
+      </div>`;
+      }
 
     function renderAlbumsSelectionBar() {
       const count = state.selectedPhotoIds.length;
@@ -38702,11 +39160,13 @@
           dateRange: menu.querySelector('[data-albums-filter="dateRange"]')?.value || '',
           favouriteOnly: Boolean(menu.querySelector('[data-albums-filter-favorite]')?.checked)
         };
+        resetAlbumsPage();
         closeMenu();
         renderAlbums();
       });
       menu.querySelector('[data-albums-filter-clear]')?.addEventListener('click', () => {
         state.albumsFilters = { ...defaultAlbumFilters };
+        resetAlbumsPage();
         closeMenu();
         renderAlbums();
       });
@@ -38715,13 +39175,28 @@
     }
 
     function removeAlbumFilter(key) {
-      if (key === 'favouriteOnly') state.albumsFilters.favouriteOnly = false;
-      else state.albumsFilters[key] = '';
+      if (
+        key === 'favouriteOnly'
+      ) {
+        state
+          .albumsFilters
+          .favouriteOnly =
+            false;
+      } else {
+        state.albumsFilters[key] =
+          '';
+      }
+
+      resetAlbumsPage();
       renderAlbums();
     }
 
     function clearAlbumFilters() {
-      state.albumsFilters = { ...defaultAlbumFilters };
+      state.albumsFilters = {
+        ...defaultAlbumFilters
+      };
+
+      resetAlbumsPage();
       renderAlbums();
     }
 
@@ -40281,7 +40756,7 @@
       });
     }
 
-    function albumsVisibleSelectionState(photos = filteredAlbumPhotos()) {
+    function albumsVisibleSelectionState(photos = currentAlbumsPagePhotos()) {
       const visibleIds = (Array.isArray(photos) ? photos : [])
         .map(photo => photo?.id)
         .filter(Boolean);
@@ -40297,7 +40772,7 @@
       };
     }
 
-    function toggleAllVisibleAlbumPhotos(photos = filteredAlbumPhotos()) {
+    function toggleAllVisibleAlbumPhotos(photos = currentAlbumsPagePhotos()) {
       const selection = albumsVisibleSelectionState(photos);
       const selectedIds = new Set(state.selectedPhotoIds || []);
 
@@ -42226,7 +42701,7 @@
 
                   state.activeAlbumId = null;
                   state.selectedPhotoIds = [];
-
+                  resetAlbumsPage();
                   renderAlbums();
                 }
               );
@@ -42252,6 +42727,7 @@
 
                   state.selectedPhotoIds = [];
 
+                  resetAlbumsPage();
                   renderAlbums();
                 }
               );
@@ -42393,6 +42869,60 @@
         });
     }
 
+    function bindAlbumsPaginationControls() {
+      main
+        .querySelectorAll(
+          '[data-albums-page]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              if (button.disabled) {
+                return;
+              }
+
+              const nextPage =
+                Number(
+                  button.dataset
+                    .albumsPage
+                );
+
+              if (
+                !Number.isInteger(
+                  nextPage
+                )
+                || nextPage < 1
+              ) {
+                return;
+              }
+
+              state.albumsPage =
+                nextPage;
+
+              renderAlbums();
+            }
+          );
+        });
+
+      main
+        .querySelector(
+          '#albumsRowsPerPage'
+        )
+        ?.addEventListener(
+          'change',
+          event => {
+            state.albumsRowsPerPage =
+              normalizeAlbumsRowsPerPage(
+                event.currentTarget.value
+              );
+
+            resetAlbumsPage();
+            renderAlbums();
+          }
+        );
+    }
+
     function bindAlbumsControls() {
       bindToasts(main);
       bindGenealogyDateFields(main);
@@ -42409,9 +42939,11 @@
           [data-albums-mode],
           #albumsAddPhotos,
           #albumsClearFilters,
-          [data-albums-remove-filter]
+          [data-albums-remove-filter],
+          [data-albums-page],
+          #albumsRowsPerPage
         `);
-
+        
       if (browsingLocked) {
         lockableControls.forEach(
           control => {
@@ -42432,7 +42964,10 @@
           main,
           '#albumsSearch',
           'albumsSearch',
-          renderAlbums
+          () => {
+            resetAlbumsPage();
+            renderAlbums();
+          }
         );
 
         main
@@ -42442,7 +42977,7 @@
             event => {
               state.albumsSort =
                 event.target.value;
-
+              resetAlbumsPage();
               renderAlbums();
             }
           );
@@ -42500,7 +43035,7 @@
               }
             );
           });
-
+        bindAlbumsPaginationControls();
         main
           .querySelector('#albumsAddPhotos')
           ?.addEventListener(
@@ -42526,7 +43061,7 @@
             state.albumsFilters = {
               ...defaultAlbumFilters
             };
-
+            resetAlbumsPage();
             renderAlbums();
           }
         );
@@ -42614,6 +43149,7 @@
 
               state.selectedPhotoIds = [];
 
+              resetAlbumsPage();
               renderAlbums();
             }
           );
@@ -51049,6 +51585,7 @@
         project.id;
 
       if (projectChanged) {
+        resetAlbumsPage();
         state.placesView =
           'all';
 
