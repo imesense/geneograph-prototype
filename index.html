@@ -12865,11 +12865,7 @@
       min-width: 34px;
       flex: 0 0 34px;
 
-      margin:
-        0
-        var(--space-2)
-        0
-        0;
+      margin: 0;
 
       padding: 0;
 
@@ -12887,7 +12883,7 @@
       color: var(--text-tertiary);
 
       line-height: 0;
-      opacity: 0;
+      opacity: 1;
       cursor: pointer;
 
       transition:
@@ -12921,6 +12917,15 @@
       width: 17px;
       height: 17px;
       display: block;
+    }
+
+    .places-country-place .places-row-more {
+      margin-right: var(--space-2);
+      opacity: 0;
+    }
+
+    .places-list-row .places-row-more {
+      justify-self: center;
     }
 
     .places-country-place:hover
@@ -13018,57 +13023,6 @@
       > .people-filter-grid {
       padding:
         var(--space-4);
-    }
-
-    .places-filter-check {
-      min-height:
-        38px;
-
-      padding:
-        0
-        var(--space-2);
-
-      border:
-        1px solid
-        var(--border-default);
-
-      border-radius:
-        var(--radius-sm);
-
-      display:
-        flex !important;
-
-      align-items:
-        center;
-
-      gap:
-        var(--space-2);
-
-      background:
-        var(--surface-input);
-
-      color:
-        var(--text-secondary);
-
-      cursor:
-        pointer;
-    }
-
-    .places-filter-check input {
-      width:
-        18px;
-
-      height:
-        18px;
-
-      padding:
-        0;
-
-      accent-color:
-        var(--brand-green-500);
-
-      appearance:
-        auto;
     }
 
     .places-filter-error {
@@ -13230,11 +13184,6 @@
         var(--inspector-collapsed-width);
     }
 
-    .places-shell.no-inspector {
-      grid-template-columns:
-        minmax(0, 1fr);
-    }
-
     .places-main {
       min-width: 0;
       min-height: 0;
@@ -13282,9 +13231,155 @@
     .places-list-row > div:first-child { min-width: 0; display: grid; gap: 3px; }
     .places-list-row strong,
     .places-list-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .places-list-row em { width: fit-content; color: var(--amber); font-size: 11px; font-style: normal; }
+    .places-list-review {
+      width: fit-content;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--amber);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .places-list-review:hover { text-decoration: underline; }
+    .places-list-review:focus-visible { outline: 2px solid var(--brand-green-300); outline-offset: 2px; }
     .places-empty { flex: 1 1 auto; min-height: 240px; display: grid; place-content: center; gap: 7px; text-align: center; color: var(--text-tertiary); }
     .places-empty strong { color: var(--text-primary); font-size: 18px; }
+
+    .places-review-shell {
+      height: 100%;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      background: var(--surface-base);
+    }
+
+    .places-review-head {
+      flex: 0 0 auto;
+    }
+
+    .places-review-total {
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .places-review-controls {
+      min-height: 64px;
+      padding: 10px var(--space-6);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: var(--space-4);
+    }
+
+    .places-review-search {
+      width: min(360px, 100%);
+    }
+
+    .places-review-content {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .places-review-list-panel {
+      height: calc(100% - var(--space-6));
+    }
+
+.places-review-list-head,
+.places-review-list-row {
+      min-width: 980px;
+      grid-template-columns:
+        minmax(230px, 1.2fr)
+        minmax(300px, 1.5fr)
+        100px
+        125px
+    minmax(200px, auto);
+}
+
+.places-review-list-head > span:last-child {
+  text-align: right;
+}
+
+    .places-review-list-row {
+      min-height: 82px;
+    }
+
+    .places-review-list-row > div:first-child,
+    .places-review-issue-summary {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+    }
+
+    .places-review-issue-summary strong {
+      color: var(--text-primary);
+      font-size: 13px;
+    }
+
+    .places-review-issue-summary > span {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+    }
+
+    .places-review-issue-summary span {
+      color: var(--text-tertiary);
+      font-size: 12px;
+    }
+
+    .places-review-row-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-2);
+    }
+
+    .places-review-row-actions .button {
+      min-height: 34px;
+      white-space: nowrap;
+    }
+
+    .places-review-row-actions .places-review-dismiss-button {
+      border-color: rgba(255, 255, 255, .14);
+      background: rgba(255, 255, 255, .045);
+      color: var(--text-primary);
+    }
+
+    .places-review-row-actions .places-review-dismiss-button:hover {
+      border-color: var(--border-strong);
+      background: rgba(255, 255, 255, .09);
+      color: var(--text-primary);
+    }
+
+    .places-review-list-row.active .places-review-dismiss-button {
+      border-color: rgba(255, 255, 255, .3);
+      background: rgba(6, 17, 13, .34);
+      color: #fff;
+    }
+
+    .places-review-list-row.active .places-review-dismiss-button:hover {
+      border-color: rgba(255, 255, 255, .48);
+      background: rgba(6, 17, 13, .5);
+    }
+
+    .places-review-row-actions .places-review-dismiss-button:focus-visible {
+      outline: 2px solid var(--brand-green-300);
+      outline-offset: 2px;
+    }
+
+    .places-review-empty {
+      min-height: 280px;
+      display: grid;
+      place-content: center;
+      gap: var(--space-2);
+      text-align: center;
+      color: var(--text-tertiary);
+    }
+
+    .places-review-empty strong { color: var(--text-primary); font-size: 18px; }
+    .places-review-empty span { line-height: 1.55; }
 
     .places-map-panel { position: relative; min-width: 0; min-height: 0; overflow: hidden; background: #111715; isolation: isolate; }
     .places-leaflet-map { position: absolute; inset: 0; z-index: 0; }
@@ -13638,7 +13733,7 @@
     }
     .places-leaflet-route { pointer-events: none; }
 
-    .places-map-inspector {
+    .places-inspector {
       position: relative;
       min-width: 0;
       min-height: 0;
@@ -13655,7 +13750,7 @@
         stable;
     }
 
-    .places-map-inspector.collapsed {
+    .places-inspector.collapsed {
       overflow: hidden;
 
       display: flex;
@@ -13896,14 +13991,155 @@
       font-size:
         12px;
 
-      font-weight:
-        600;
-
       text-align:
         left;
+    }
 
-      cursor:
-        pointer;
+    .places-attention-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-2);
+    }
+
+    .places-attention-copy {
+      min-width: 0;
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+    }
+
+    .places-attention-copy > svg {
+      width: 16px;
+      height: 16px;
+      margin-top: 1px;
+      flex: 0 0 auto;
+    }
+
+    .places-attention-copy span {
+      min-width: 0;
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-2);
+    }
+
+    .places-attention-copy small {
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
+
+    .places-attention-open {
+      min-height: 28px;
+      padding: 3px 5px;
+      border: 0;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      flex: 0 0 auto;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .places-attention-open svg {
+      width: 14px;
+      height: 14px;
+      display: block;
+    }
+
+    .places-attention-open:hover {
+      background: rgba(255, 255, 255, .06);
+      color: var(--text-primary);
+    }
+
+    .places-attention-description {
+      margin: var(--space-2) 0 0;
+      padding-inline: 4px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .places-attention-actions {
+      margin-top: var(--space-2);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    .places-attention-actions button {
+      min-height: 32px;
+      padding: 5px 9px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .places-attention-actions button svg {
+      width: 15px;
+      height: 15px;
+      display: block;
+      flex: 0 0 auto;
+    }
+
+    .places-attention-actions .places-attention-fix {
+      border-color: rgba(242, 196, 100, .45);
+      background: var(--amber);
+      color: #171b19;
+    }
+
+    .places-attention-actions .places-attention-fix:hover {
+      border-color: var(--amber);
+      filter: brightness(1.06);
+    }
+
+    .places-attention-actions .places-attention-dismiss {
+      border-color: rgba(255, 255, 255, .08);
+      background: rgba(255, 255, 255, .035);
+      color: var(--text-secondary);
+    }
+
+    .places-attention-actions .places-attention-dismiss:hover {
+      border-color: var(--border-default);
+      background: rgba(255, 255, 255, .07);
+      color: var(--text-primary);
+    }
+
+    .places-attention button:focus-visible {
+      outline: 2px solid var(--brand-green-300);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 520px) {
+      .places-attention-header {
+        align-items: flex-start;
+      }
+
+      .places-attention-open {
+        padding-inline: 3px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .places-review-controls {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .places-review-search { width: 100%; }
+      .places-review-row-actions { flex-wrap: wrap; }
     }
 
     .places-inspector-coordinate-row {
@@ -14889,12 +15125,7 @@
           auto;
       }
 
-      .places-shell.no-inspector {
-        grid-template-rows:
-          minmax(0, 1fr);
-      }
-
-      .places-map-inspector {
+      .places-inspector {
         max-height:
           min(46vh, 420px);
 
@@ -14905,7 +15136,7 @@
           var(--border-default);
       }
 
-      .places-map-inspector.collapsed {
+      .places-inspector.collapsed {
         max-height: 54px;
       }
 
@@ -16784,9 +17015,9 @@
       ],
       places: [
         { id: 'place-pawford', projectId: 'p1', name: 'Pawford, North Yorkshire, England', alternativeNames: ['Pawford town'], coordinates: { lat: 53.9594, lng: -1.082 }, updatedAt: '2026-05-10T00:00:00Z', deleted: false },
-        { id: 'place-meowbridge', projectId: 'p1', name: 'Meowbridge, North Yorkshire, England', alternativeNames: ['Meow Bridge'], coordinates: { lat: 53.9945, lng: -1.529 }, updatedAt: '2026-05-08T00:00:00Z', deleted: false },
-        { id: 'place-fishmarket-row', projectId: 'p1', name: 'Fishmarket Row, North Yorkshire, England', alternativeNames: ['Fish Market Row'], coordinates: { lat: 54.4863, lng: -0.6133 }, updatedAt: '2026-05-06T00:00:00Z', deleted: false },
-        { id: 'place-old-cattery', projectId: 'p1', name: 'Old Cattery, North Yorkshire, England', alternativeNames: ['The Old Cattery'], coordinates: { lat: 54.1979, lng: -1.4345 }, updatedAt: '2026-05-04T00:00:00Z', deleted: false },
+        { id: 'place-meowbridge', projectId: 'p1', name: 'Meowbridge, North Yorkshire, England', alternativeNames: ['Meow Bridge'], coordinates: null, updatedAt: '2026-05-08T00:00:00Z', deleted: false },
+        { id: 'place-fishmarket-row', projectId: 'p1', name: 'Fishmarket Row, North Yorkshire, England', alternativeNames: ['Fish Market Row'], coordinates: null, updatedAt: '2026-05-06T00:00:00Z', deleted: false },
+        { id: 'place-old-cattery', projectId: 'p1', name: 'Old Cattery, North Yorkshire, England', alternativeNames: ['The Old Cattery'], coordinates: null, updatedAt: '2026-05-04T00:00:00Z', deleted: false },
         { id: 'place-unknown', projectId: 'p1', name: 'Unidentified village near Pawford, North Yorkshire, England', alternativeNames: ['Village near Pawford'], coordinates: null, updatedAt: '2026-04-25T00:00:00Z', deleted: false },
         { id: 'place-archive', projectId: 'p1', name: 'Pawford County Archive, North Yorkshire, England', alternativeNames: ['Pawford archive'], coordinates: { lat: 54.3393, lng: -1.4322 }, updatedAt: '2026-05-01T00:00:00Z', deleted: false },
         { id: 'place-residence', projectId: 'p1', name: 'Whiskerfield residence near Pawford, North Yorkshire, England', alternativeNames: ['Whiskerfield family house'], coordinates: { lat: 53.985, lng: -1.105 }, updatedAt: '2026-04-28T00:00:00Z', deleted: false },
@@ -16836,12 +17067,11 @@
         {
           id: 'place-filter-unmapped-review',
           projectId: 'p1',
-          name: 'Unmapped places to review',
+          name: 'Unmapped places',
           description:
-            'Places requiring review that do not yet have coordinates.',
+            'Places that do not yet have coordinates.',
           filters: {
-            mapped: 'unmapped',
-            needsReview: true
+            mapped: 'unmapped'
           },
           createdAt: '2026-05-01T00:00:00Z',
           updatedAt: '2026-05-01T00:00:00Z'
@@ -16850,12 +17080,7 @@
       placeRoutes: [
         { id: 'route-family-migration', projectId: 'p1', name: 'Family migration', placeIds: ['place-pawford', 'place-old-cattery', 'place-meowbridge', 'place-fishmarket-row'], status: 'active', deleted: false }
       ],
-      placeIssues: [
-        { id: 'pi1', projectId: 'p1', placeId: 'place-unknown', type: 'missing_coordinates', status: 'open', raw: 'Village near Pawford', suggestion: 'Keep under review until the source identifies a locality', confidence: 'medium', resolution: null, createdAt: '2026-04-25T00:00:00Z', closedAt: null },
-        { id: 'pi2', projectId: 'p1', placeId: 'place-cemetery', type: 'ambiguous_identity', status: 'open', raw: 'Pawford burial ground', suggestion: 'Confirm Pawford Cemetery against the burial register', confidence: 'low', resolution: null, createdAt: '2026-04-20T00:00:00Z', closedAt: null },
-        { id: 'pi3', projectId: 'p1', placeId: 'place-old-cattery', type: 'historical_name', status: 'open', raw: 'The Old Cattery', suggestion: 'Retain as an alias for Old Cattery', confidence: 'high', resolution: null, createdAt: '2026-04-18T00:00:00Z', closedAt: null },
-        { id: 'pi4', projectId: 'p1', placeId: 'place-fishmarket-row', type: 'historical_jurisdiction', status: 'open', raw: 'Fishmarket Row, Yorkshire', suggestion: 'Keep North Yorkshire as the modern county hierarchy', confidence: 'medium', resolution: null, createdAt: '2026-04-16T00:00:00Z', closedAt: null }
-      ],
+      placeIssues: [],
       events: [],
       educationSeed: [
         {
@@ -17921,8 +18146,8 @@
     function placeHasCoordinates(place) {
       return Boolean(
         place?.coordinates
-        && Number.isFinite(Number(place.coordinates.lat))
-        && Number.isFinite(Number(place.coordinates.lng))
+        && validLatitude(place.coordinates.lat)
+        && validLongitude(place.coordinates.lng)
       );
     }
 
@@ -20126,7 +20351,9 @@
         if (!projectIds.has(issue.projectId)) warn(`Place issue ${issue.id} points to missing project ${issue.projectId}`);
         if (!place) warn(`Place issue ${issue.id} points to missing place ${issue.placeId}`);
         else if (place.projectId !== issue.projectId) warn(`Place issue ${issue.id} and place ${issue.placeId} are in different projects`);
-        if (!['open', 'closed', 'dismissed'].includes(issue.status)) warn(`Place issue ${issue.id} has invalid status ${issue.status}`);
+        if (issue.status !== 'dismissed') warn(`Place issue ${issue.id} must be a dismissal record`);
+        if (!PLACE_REVIEW_COORDINATE_ISSUE_TYPES.includes(issue.type)) warn(`Place issue ${issue.id} has invalid type ${issue.type}`);
+        if (!Number.isFinite(Date.parse(issue.dismissedAt || ''))) warn(`Place issue ${issue.id} has an invalid dismissedAt timestamp`);
       });
 
       (sampleData.placeRoutes || []).forEach(route => {
@@ -20246,8 +20473,7 @@
       yearTo: '',
       eventType: '',
       country: '',
-      mapped: 'all',
-      needsReview: false
+      mapped: 'all'
     });
 
     const state = {
@@ -20375,6 +20601,7 @@
       placesSavedFilterId: '',
       selectedPlaceId: 'place-pawford',
       placesSearch: '',
+      placesReviewFocusId: '',
       placesSort: 'name',
       placesViewMode: 'map',
       placesInspectorCollapsed: false,
@@ -20684,9 +20911,10 @@
         id: 'needs-review-places',
         tone: 'blue',
         icon: icon.mapPin,
-        title: '3 imported place names need resolution',
+        title: 'Places may need review',
         meta: 'Places - Review',
-        module: 'Places'
+        module: 'Places',
+        placesView: 'review'
       },
       {
         id: 'backup-reminder',
@@ -20956,6 +21184,10 @@
         return;
       }
       if (item.module && state.projectOpen) {
+        if (item.module === 'Places' && item.placesView === 'review') {
+          state.placesView = 'review';
+          state.placesSearch = '';
+        }
         navigateToProjectModule(currentProjectId(), item.module);
         return;
       }
@@ -47939,10 +48171,7 @@
             'unmapped'
           ].includes(source.mapped)
             ? source.mapped
-            : 'all',
-
-        needsReview:
-          Boolean(source.needsReview)
+            : 'all'
       };
     }
 
@@ -48274,22 +48503,6 @@
           </select>
         </div>
 
-        <div class="people-filter-field full">
-          <label class="places-filter-check">
-            <input
-              type="checkbox"
-              data-place-filter-input="needsReview"
-              ${
-                normalized.needsReview
-                  ? 'checked'
-                  : ''
-              }>
-
-            <span>
-              Needs review
-            </span>
-          </label>
-        </div>
       `;
     }
 
@@ -48324,16 +48537,7 @@
 
         mapped:
           readValue('mapped')
-          || 'all',
-
-        needsReview:
-          Boolean(
-            root
-              .querySelector(
-                '[data-place-filter-input="needsReview"]'
-              )
-              ?.checked
-          )
+          || 'all'
       });
     }
 
@@ -48500,14 +48704,6 @@
         ]);
       }
 
-      if (normalized.needsReview) {
-        entries.push([
-          'needsReview',
-          'Review',
-          'Needs review'
-        ]);
-      }
-
       return entries;
     }
 
@@ -48611,10 +48807,6 @@
       } else if (key === 'mapped') {
         filters.mapped = 'all';
       } else if (
-        key === 'needsReview'
-      ) {
-        filters.needsReview = false;
-      } else if (
         Object.prototype
           .hasOwnProperty
           .call(filters, key)
@@ -48641,16 +48833,112 @@
       );
     }
 
-    function openPlaceIssueFor(placeId) {
-      return getOpenIssuesForPlace(placeId)[0] || null;
+    const PLACE_REVIEW_COORDINATE_ISSUE_TYPES = Object.freeze([
+      'missing_coordinates',
+      'invalid_coordinates'
+    ]);
+
+    function placeCoordinateReviewState(place) {
+      const coordinates = place?.coordinates;
+      const latitude = coordinates?.lat;
+      const longitude = coordinates?.lng;
+      const hasLatitude = latitude !== null && latitude !== undefined && String(latitude).trim() !== '';
+      const hasLongitude = longitude !== null && longitude !== undefined && String(longitude).trim() !== '';
+
+      if (!hasLatitude && !hasLongitude) {
+        return { missing: true, invalid: false };
+      }
+
+      return {
+        missing: false,
+        invalid: !hasLatitude || !hasLongitude || !validLatitude(latitude) || !validLongitude(longitude)
+      };
     }
 
-    function getOpenIssuesForPlace(placeId) {
-      return (sampleData.placeIssues || []).filter(issue => issue.projectId === currentProjectId() && issue.placeId === placeId && issue.status === 'open');
+    function placeReviewConnectionCount(placeId) {
+      return Object.values(getPlaceConnectionCounts(placeId))
+        .reduce((total, count) => total + Number(count || 0), 0);
+    }
+
+    function getPlaceReviewIssues(place) {
+      if (!place || place.deleted || place.projectId !== currentProjectId()) return [];
+      const coordinateState = placeCoordinateReviewState(place);
+      const connectionCount = placeReviewConnectionCount(place.id);
+      const issues = [];
+
+      if (coordinateState.invalid) {
+        issues.push({
+          type: 'invalid_coordinates',
+          title: 'Coordinates need attention',
+          description: 'The saved coordinates are incomplete or outside the valid range.',
+          actionLabel: 'Fix coordinates'
+        });
+      } else if (coordinateState.missing && connectionCount > 0) {
+        issues.push({
+          type: 'missing_coordinates',
+          title: 'No map position',
+          description: `This place is connected to ${connectionCount} ${connectionCount === 1 ? 'record' : 'records'} but has no map position.`,
+          actionLabel: 'Add position'
+        });
+      }
+
+      return issues;
+    }
+
+    function isPlaceReviewIssueDismissed(placeId, issueType) {
+      return (sampleData.placeIssues || []).some(issue =>
+        issue.projectId === currentProjectId()
+        && issue.placeId === placeId
+        && issue.type === issueType
+        && issue.status === 'dismissed'
+      );
+    }
+
+    function getActivePlaceReviewIssues(place) {
+      return getPlaceReviewIssues(place).filter(issue =>
+        !isPlaceReviewIssueDismissed(place.id, issue.type)
+      );
     }
 
     function placeNeedsReview(place) {
-      return Boolean(place && openPlaceIssueFor(place.id));
+      return getActivePlaceReviewIssues(place).length > 0;
+    }
+
+    function getPlacesNeedingReview() {
+      return projectPlaces().filter(placeNeedsReview);
+    }
+
+    function dismissPlaceReviewIssue(placeId, issueType) {
+      const place = getPlace(placeId);
+      if (!place || place.deleted || place.projectId !== currentProjectId()) return false;
+      if (!getPlaceReviewIssues(place).some(issue => issue.type === issueType)) return false;
+      const existing = (sampleData.placeIssues || []).find(issue =>
+        issue.projectId === currentProjectId()
+        && issue.placeId === placeId
+        && issue.type === issueType
+      );
+      const dismissedAt = new Date().toISOString();
+      if (existing) {
+        existing.status = 'dismissed';
+        existing.dismissedAt = dismissedAt;
+      } else {
+        sampleData.placeIssues.push({
+          id: `place-issue-dismissal-${Date.now()}`,
+          projectId: currentProjectId(),
+          placeId,
+          type: issueType,
+          status: 'dismissed',
+          dismissedAt
+        });
+      }
+      return true;
+    }
+
+    function clearPlaceReviewDismissals(placeId, issueTypes = []) {
+      const types = new Set(issueTypes);
+      sampleData.placeIssues = (sampleData.placeIssues || []).filter(issue =>
+        !(issue.projectId === currentProjectId() && issue.placeId === placeId && types.has(issue.type))
+      );
     }
 
     function selectPlace(
@@ -48834,21 +49122,17 @@
       state.placesFilters =
         placeFiltersWithDefaults();
 
+      if (state.placesView === 'review') {
+        destroyPlacesMap();
+      }
+
       renderPlacesSidebar();
       renderPlacesMain();
     }
 
     function renderPlacesSidebar() {
       const issueCount =
-        (
-          sampleData.placeIssues || []
-        )
-          .filter(issue =>
-            issue.projectId
-              === currentProjectId()
-            && issue.status === 'open'
-          )
-          .length;
+        getPlacesNeedingReview().length;
 
       const savedFilters =
         placeSavedFiltersForProject();
@@ -48967,7 +49251,7 @@
             </div>
           </div>
 
-          <div class="places-sidebar-section">
+          ${state.placesView === 'review' ? '' : `<div class="places-sidebar-section">
             <div class="side-section-title">
               Countries
             </div>
@@ -49017,7 +49301,7 @@
                 `
               }
             </div>
-          </div>
+          </div>`}
         </nav>
       `;
 
@@ -49059,6 +49343,8 @@
               state.placesFilters = {
                 ...defaultPlaceFilters
               };
+
+              state.placesSearch = '';
 
               renderPlaces();
             }
@@ -49949,15 +50235,6 @@
       let list =
         projectPlaces();
 
-      if (
-        state.placesView === 'review'
-      ) {
-        list =
-          list.filter(
-            placeNeedsReview
-          );
-      }
-
       const filters =
         placeFiltersWithDefaults();
 
@@ -50032,12 +50309,6 @@
 
     function placesPageTitle() {
       if (
-        state.placesView === 'review'
-      ) {
-        return 'Needs review';
-      }
-
-      if (
         state.placesSavedFilterId
       ) {
         return (
@@ -50058,12 +50329,6 @@
     }
 
     function placesPageSubtitle() {
-      if (
-        state.placesView === 'review'
-      ) {
-        return 'Review place names and locations that need attention.';
-      }
-
       if (
         state.placesSavedFilterId
       ) {
@@ -50086,25 +50351,135 @@
 
       return 'Map and organize the places connected to your family history.';
     }
+
+    function openPlacesNeedsReview(placeId = '') {
+      state.placesView = 'review';
+      state.placesSavedFilterId = '';
+      state.placesFilters = { ...defaultPlaceFilters };
+      if (placeId) state.selectedPlaceId = placeId;
+      state.placesReviewFocusId = placeId;
+      renderPlaces();
+    }
+
+    function selectedPlaceFromVisibleList(list) {
+      const selected = selectedPlaceFromList(list);
+      state.selectedPlaceId = selected?.id || null;
+      return selected;
+    }
+
+    function placesInspectorShellClasses() {
+      return [
+        'places-shell',
+        state.placesInspectorCollapsed ? 'inspector-collapsed' : ''
+      ].filter(Boolean).join(' ');
+    }
+
+    function renderPlacesInspectorAside(place) {
+      return `<aside class="places-inspector ${state.placesInspectorCollapsed ? 'collapsed' : ''}" data-places-inspector aria-label="Selected place inspector">${renderPlacesInspector(place)}</aside>`;
+    }
+
+    function placesReviewSearchResults() {
+      const query = String(state.placesSearch || '').trim().toLowerCase();
+      return getPlacesNeedingReview()
+        .filter(place => {
+          if (!query) return true;
+          const issueTitles = getActivePlaceReviewIssues(place).map(issue => issue.title);
+          return [place.name, ...placeAlternativeNames(place), ...issueTitles]
+            .join(' ')
+            .toLowerCase()
+            .includes(query);
+        })
+        .sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    function placeReviewConnectionTotal(place) {
+      return Object.values(getPlaceConnectionCounts(place.id))
+        .reduce((total, count) => total + Number(count || 0), 0);
+    }
+
+    function renderPlaceReviewListRow(place) {
+      const issues = getActivePlaceReviewIssues(place);
+      const linked = placeReviewConnectionTotal(place);
+      const issueSummary = issues.map(issue => `<span><strong>${escapeHtml(issue.title)}</strong><span>${escapeHtml(issue.description)}</span></span>`).join('');
+      const quickActions = issues.map(issue => `<button class="button secondary" type="button" data-place-review-fix="${escapeHtml(place.id)}" data-place-review-type="${escapeHtml(issue.type)}">${escapeHtml(issue.actionLabel)}</button><button class="button ghost places-review-dismiss-button" type="button" data-place-review-dismiss="${escapeHtml(place.id)}" data-place-review-type="${escapeHtml(issue.type)}">Dismiss</button>`).join('');
+      return `<div class="places-list-row places-review-list-row ${place.id === state.selectedPlaceId ? 'active' : ''}" data-place-id="${escapeHtml(place.id)}" tabindex="0" role="row" aria-selected="${place.id === state.selectedPlaceId}">
+        <div><strong>${escapeHtml(placePrimaryName(place))}</strong><span>${escapeHtml(placeSecondaryName(place) || 'No broader place recorded')}</span></div>
+        <div class="places-review-issue-summary">${issueSummary}</div>
+        <span>${linked} ${linked === 1 ? 'record' : 'records'}</span>
+        <span>${escapeHtml(formatPlaceUpdatedAt(place.updatedAt))}</span>
+        <div class="places-review-row-actions">${quickActions}</div>
+      </div>`;
+    }
+
+    function renderPlacesNeedsReviewPage() {
+      const allReviewPlaces = getPlacesNeedingReview();
+      const reviewPlaces = placesReviewSearchResults();
+      const selected = selectedPlaceFromVisibleList(reviewPlaces);
+      const query = String(state.placesSearch || '').trim();
+      let content = '';
+
+      if (!reviewPlaces.length) {
+        content = query
+          ? `<div class="places-review-empty"><strong>No matching review items</strong><span>Try a different search.</span></div>`
+          : `<div class="places-review-empty"><strong>All clear</strong><span>No places currently need review.<br>New flags will appear here when a place has an obvious issue.</span></div>`;
+      } else {
+        content = `<div class="places-list-panel places-review-list-panel" role="table" aria-label="Places needing review"><div class="places-list-head places-review-list-head" role="row"><span>Place</span><span>Issue</span><span>Connected</span><span>Updated</span><span>Quick actions</span></div>${reviewPlaces.map(renderPlaceReviewListRow).join('')}</div>`;
+      }
+
+      main.innerHTML = `<div class="${placesInspectorShellClasses()}">
+        <section class="places-main"><div class="places-review-shell">
+          <header class="places-page-head places-review-head">
+            <div class="places-title"><h1>Needs review</h1><p>Places with details that may need your attention.</p></div>
+            <strong class="places-review-total">${allReviewPlaces.length} ${allReviewPlaces.length === 1 ? 'place' : 'places'}</strong>
+          </header>
+          <div class="places-review-controls">
+            <label class="search-input places-review-search" aria-label="Search places needing review">${icon.search}<input id="placesReviewSearch" type="search" placeholder="Search review items..." value="${escapeHtml(state.placesSearch || '')}"></label>
+          </div>
+          <div class="places-review-content">${content}</div>
+        </div></section>
+        ${renderPlacesInspectorAside(selected)}
+      </div>`;
+
+      bindPlacesNeedsReviewControls();
+      const focusId = state.placesReviewFocusId;
+      state.placesReviewFocusId = '';
+      if (focusId) requestAnimationFrame(() => {
+        const row = main.querySelector(`.places-review-list-panel [data-place-id="${CSS.escape(focusId)}"]`);
+        row?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        row?.focus({ preventScroll: true });
+      });
+    }
+
+    function bindPlacesNeedsReviewControls() {
+      bindSearchInput(main, '#placesReviewSearch', 'placesSearch', renderPlaces);
+      bindPlaceListRows(main);
+      main.querySelectorAll('[data-place-review-fix]').forEach(button => button.addEventListener('click', () => {
+        const placeId = button.dataset.placeReviewFix;
+        selectPlace(placeId, { focusMap: false });
+        if (button.dataset.placeReviewType === 'invalid_coordinates') openPlaceModalForCoordinateReview(placeId);
+        else openPlaceModal(placeId);
+      }));
+      main.querySelectorAll('[data-place-review-dismiss]').forEach(button => button.addEventListener('click', () => {
+        if (!dismissPlaceReviewIssue(button.dataset.placeReviewDismiss, button.dataset.placeReviewType)) return;
+        renderPlaces();
+        showToast('Review item dismissed.');
+      }));
+      bindPlacesInspectorControls(main.querySelector('[data-places-inspector]') || main);
+      bindToasts(main);
+    }
     
 
     function renderPlacesMain() {
+      if (state.placesView === 'review') {
+        renderPlacesNeedsReviewPage();
+        return;
+      }
+
       const list =
         filteredPlaces();
 
       const selected =
-        selectedPlaceFromList(list);
-
-      const nextSelectedPlaceId =
-        selected?.id || null;
-
-      if (
-        state.selectedPlaceId
-          !== nextSelectedPlaceId
-      ) {
-        state.selectedPlaceId =
-          nextSelectedPlaceId;
-      }
+        selectedPlaceFromVisibleList(list);
 
       const isPlacesListView =
         state.placesViewMode === 'list';
@@ -50116,20 +50491,8 @@
         !isPlacesListView
         && state.placesShowRoute
         && placesRouteLatLngs(list).length >= 2;
-      const showInspector =
-        state.placesViewMode === 'map';
-      const shellClasses = [
-        'places-shell',
-        showInspector
-        && state.placesInspectorCollapsed
-          ? 'inspector-collapsed'
-          : '',
-        !showInspector
-          ? 'no-inspector'
-          : ''
-      ]
-        .filter(Boolean)
-        .join(' ');
+      const shellClasses =
+        placesInspectorShellClasses();
 
       main.innerHTML = `
         <div class="${shellClasses}">
@@ -50375,26 +50738,7 @@
             </div>
           </section>
 
-          ${
-            showInspector
-              ? `
-                <aside
-                  class="
-                    places-map-inspector
-                    ${
-                      state.placesInspectorCollapsed
-                        ? 'collapsed'
-                        : ''
-                    }
-                  "
-                  data-places-map-inspector
-                  aria-label="Selected place inspector">
-
-                  ${renderPlacesMapInspector(selected)}
-                </aside>
-              `
-              : ''
-          }
+          ${renderPlacesInspectorAside(selected)}
         </div>
       `;
       bindPlacesControls(list);
@@ -50636,13 +50980,6 @@
         return false;
       }
 
-      if (
-        normalized.needsReview
-        && !placeNeedsReview(place)
-      ) {
-        return false;
-      }
-
       const linkedPeople =
         context.peopleByPlaceId
           .get(place.id)
@@ -50765,8 +51102,12 @@
       if (!list.length) return '<div class="places-empty"><strong>No places found</strong><span>Try clearing the search or filters.</span></div>';
       return `<div class="places-list-panel"><div class="places-list-head"><span>Place</span><span>Country</span><span>Map</span><span>Linked</span><span>Updated</span><span>Actions</span></div>${list.map(place => {
         const counts = getPlaceConnectionCounts(place.id);
-        const linked = counts.people + counts.events + counts.photos;
-        return `<div class="places-list-row ${place.id === state.selectedPlaceId ? 'active' : ''}" data-place-id="${escapeHtml(place.id)}" tabindex="0" role="row" aria-selected="${place.id === state.selectedPlaceId}"><div><strong>${escapeHtml(placePrimaryName(place))}</strong><span>${escapeHtml(placeSecondaryName(place) || 'No broader place recorded')}</span>${placeNeedsReview(place) ? '<em>Needs review</em>' : ''}</div><span>${escapeHtml(placeCountry(place) || 'Unknown')}</span><span>${placeHasCoordinates(place) ? 'On map' : 'Not on map'}</span><span>${linked}</span><span>${escapeHtml(formatPlaceUpdatedAt(place.updatedAt))}</span><button class="places-row-more" type="button" data-place-menu="${escapeHtml(place.id)}" aria-label="More actions for ${escapeHtml(place.name)}">${icon.more}</button></div>`;
+        const linked = Object.values(counts).reduce((total, count) => total + count, 0);
+        const issueCount = getActivePlaceReviewIssues(place).length;
+        const reviewIndicator = issueCount
+          ? `<button class="places-list-review" type="button" data-place-review-link="${escapeHtml(place.id)}">${issueCount > 1 ? `${issueCount} issues` : 'Needs review'}</button>`
+          : '';
+        return `<div class="places-list-row ${place.id === state.selectedPlaceId ? 'active' : ''}" data-place-id="${escapeHtml(place.id)}" tabindex="0" role="row" aria-selected="${place.id === state.selectedPlaceId}"><div><strong>${escapeHtml(placePrimaryName(place))}</strong><span>${escapeHtml(placeSecondaryName(place) || 'No broader place recorded')}</span>${reviewIndicator}</div><span>${escapeHtml(placeCountry(place) || 'Unknown')}</span><span>${placeHasCoordinates(place) ? 'On map' : 'Not on map'}</span><span>${linked}</span><span>${escapeHtml(formatPlaceUpdatedAt(place.updatedAt))}</span><button class="places-row-more" type="button" data-place-menu="${escapeHtml(place.id)}" aria-label="More actions for ${escapeHtml(place.name)}" aria-haspopup="menu">${icon.more}</button></div>`;
       }).join('')}</div>`;
     }
 
@@ -52068,7 +52409,7 @@
     } = {}) {
       const inspector =
         main.querySelector(
-          '[data-places-map-inspector]'
+          '[data-places-inspector]'
         );
 
       if (!inspector) {
@@ -52079,7 +52420,7 @@
         inspector.scrollTop;
 
       inspector.innerHTML =
-        renderPlacesMapInspector(
+        renderPlacesInspector(
           getPlace(
             state.selectedPlaceId
           )
@@ -52097,7 +52438,7 @@
       }
     }
 
-    function renderPlacesMapInspector(
+    function renderPlacesInspector(
       place
     ) {
       if (
@@ -52206,8 +52547,8 @@
             </strong>
 
             <span>
-              Select a place on the map
-              to view its information.
+              Select a place to view
+              its information.
             </span>
           </div>
         `;
@@ -52243,9 +52584,18 @@
           place
         );
 
-      const issue =
-        openPlaceIssueFor(
-          place.id
+      const reviewIssues =
+        getActivePlaceReviewIssues(place);
+
+      const firstReviewIssue =
+        reviewIssues[0] || null;
+
+      const bannerOwnsCoordinateAction =
+        Boolean(
+          firstReviewIssue
+          && PLACE_REVIEW_COORDINATE_ISSUE_TYPES.includes(
+            firstReviewIssue.type
+          )
         );
 
       const hasCoordinates =
@@ -52389,18 +52739,33 @@
             </div>
 
             ${
-              issue
+              firstReviewIssue
                 ? `
-                  <button
-                    class="
-                      places-attention
-                    "
-                    type="button"
-                    data-place-review-issue="${
-                      escapeHtml(issue.id)
-                    }">
-                    Needs review
-                  </button>
+                  <div class="places-attention" role="group" aria-label="Needs review: ${escapeHtml(firstReviewIssue.title)}">
+                    <div class="places-attention-header">
+                      <div class="places-attention-copy">
+                        ${icon.warning}
+                        <span><strong>${escapeHtml(firstReviewIssue.title)}</strong>${reviewIssues.length > 1 ? `<small>${reviewIssues.length} issues</small>` : ''}</span>
+                      </div>
+                      ${state.placesView === 'review' ? '' : `
+                        <button class="places-attention-open" type="button" data-place-review-view="${escapeHtml(place.id)}" aria-label="Open review for ${escapeHtml(placePrimaryName(place))}">
+                          ${icon.openlink}
+                          <span>Open review</span>
+                        </button>
+                      `}
+                    </div>
+                    <p class="places-attention-description">${escapeHtml(firstReviewIssue.description)}</p>
+                    <div class="places-attention-actions">
+                      <button class="places-attention-fix" type="button" data-place-review-fix="${escapeHtml(place.id)}" data-place-review-type="${escapeHtml(firstReviewIssue.type)}">
+                        ${icon.mapPin}
+                        <span>${escapeHtml(firstReviewIssue.actionLabel)}</span>
+                      </button>
+                      <button class="places-attention-dismiss" type="button" data-place-review-dismiss="${escapeHtml(place.id)}" data-place-review-type="${escapeHtml(firstReviewIssue.type)}">
+                        ${icon.close}
+                        <span>Dismiss</span>
+                      </button>
+                    </div>
+                  </div>
                 `
                 : ''
             }
@@ -52428,35 +52793,37 @@
               )}
             </strong>
 
-            <button
-              class="
-                places-inspector-coordinate-action
-              "
-              type="button"
-              data-places-edit-position="${
-                escapeHtml(place.id)
-              }"
-              aria-label="${
-                hasCoordinates
-                  ? 'Edit position'
-                  : 'Add position'
-              }"
-              title="${
-                hasCoordinates
-                  ? 'Edit position'
-                  : 'Add position'
-              }">
-
-              ${icon.edit}
-
-              <span>
-                ${
+            ${bannerOwnsCoordinateAction ? '' : `
+              <button
+                class="
+                  places-inspector-coordinate-action
+                "
+                type="button"
+                data-places-edit-position="${
+                  escapeHtml(place.id)
+                }"
+                aria-label="${
                   hasCoordinates
-                    ? 'Edit'
-                    : 'Add'
-                }
-              </span>
-            </button>
+                    ? 'Edit position'
+                    : 'Add position'
+                }"
+                title="${
+                  hasCoordinates
+                    ? 'Edit position'
+                    : 'Add position'
+                }">
+
+                ${icon.edit}
+
+                <span>
+                  ${
+                    hasCoordinates
+                      ? 'Edit'
+                      : 'Add'
+                  }
+                </span>
+              </button>
+            `}
           </div>
 
           ${renderPlaceInspectorSection({
@@ -52613,20 +52980,22 @@
           }
         );
 
-      root
-        .querySelector(
-          '[data-place-review-issue]'
-        )
-        ?.addEventListener(
-          'click',
-          event => {
-            openPlaceIssueReviewModal(
-              event.currentTarget
-                .dataset
-                .placeReviewIssue
-            );
-          }
-        );
+      root.querySelector('[data-place-review-fix]')?.addEventListener('click', event => {
+        const button = event.currentTarget;
+        if (button.dataset.placeReviewType === 'invalid_coordinates') openPlaceModalForCoordinateReview(button.dataset.placeReviewFix);
+        else openPlaceModal(button.dataset.placeReviewFix);
+      });
+
+      root.querySelector('[data-place-review-view]')?.addEventListener('click', event => {
+        openPlacesNeedsReview(event.currentTarget.dataset.placeReviewView);
+      });
+
+      root.querySelector('[data-place-review-dismiss]')?.addEventListener('click', event => {
+        const button = event.currentTarget;
+        if (!dismissPlaceReviewIssue(button.dataset.placeReviewDismiss, button.dataset.placeReviewType)) return;
+        renderPlaces();
+        showToast('Review item dismissed.');
+      });
 
       root
         .querySelectorAll(
@@ -52821,7 +53190,7 @@
 
       const inspector =
         main.querySelector(
-          '[data-places-map-inspector]'
+          '[data-places-inspector]'
         );
 
       shell
@@ -52854,6 +53223,35 @@
             ?.invalidateSize({
               pan: false
             });
+        });
+      });
+    }
+
+    function bindPlaceListRows(root, { showOnMapOnDoubleClick = false } = {}) {
+      root.querySelectorAll('.places-list-panel [data-place-id]').forEach(row => {
+        row.addEventListener('click', event => {
+          if (event.target.closest('button,input,select,a')) return;
+          selectPlace(row.dataset.placeId, { focusMap: false });
+        });
+        row.addEventListener('keydown', event => {
+          if (!['Enter', ' '].includes(event.key) || event.target.closest('button,input,select,a')) return;
+          event.preventDefault();
+          selectPlace(row.dataset.placeId, { focusMap: false });
+        });
+        if (showOnMapOnDoubleClick) {
+          row.addEventListener('dblclick', event => {
+            if (event.target.closest('button,input,select,a')) return;
+            showPlaceOnMap(row.dataset.placeId);
+          });
+        }
+      });
+    }
+
+    function bindPlaceListMenus(root) {
+      root.querySelectorAll('.places-list-panel [data-place-menu]').forEach(button => {
+        button.addEventListener('click', event => {
+          event.stopPropagation();
+          openPlaceActionsMenu(button.dataset.placeMenu, button);
         });
       });
     }
@@ -52907,12 +53305,12 @@
         if (state.placesViewMode === 'list') destroyPlacesMap();
         renderPlacesMain();
       }));
-      main.querySelectorAll('[data-place-id]').forEach(row => {
-        row.addEventListener('click', event => { if (event.target.closest('button,input,select,a')) return; selectPlace(row.dataset.placeId); });
-        row.addEventListener('keydown', event => { if (!['Enter', ' '].includes(event.key) || event.target.closest('button,input,select,a')) return; event.preventDefault(); selectPlace(row.dataset.placeId); });
-        row.addEventListener('dblclick', event => { if (event.target.closest('button,input,select,a')) return; showPlaceOnMap(row.dataset.placeId); });
-      });
-      main.querySelectorAll('.places-list-panel [data-place-menu]').forEach(button => button.addEventListener('click', event => { event.stopPropagation(); openPlaceActionsMenu(button.dataset.placeMenu, button); }));
+      bindPlaceListRows(main, { showOnMapOnDoubleClick: state.placesViewMode === 'list' });
+      bindPlaceListMenus(main);
+      main.querySelectorAll('[data-place-review-link]').forEach(button => button.addEventListener('click', event => {
+        event.stopPropagation();
+        openPlacesNeedsReview(button.dataset.placeReviewLink);
+      }));
       main
         .querySelector(
           '#placesRouteMenu'
@@ -52925,9 +53323,9 @@
             );
           }
         );
+      bindPlacesInspectorControls(main.querySelector('[data-places-inspector]') || main);
       if (state.placesViewMode === 'map') {
         bindPlacesMapEditingControls();
-        bindPlacesInspectorControls(main.querySelector('[data-places-map-inspector]') || main);
         main.querySelector('[data-map-zoom-in]')?.addEventListener('click', () => placesMapRuntime.map?.zoomIn());
         main.querySelector('[data-map-zoom-out]')?.addEventListener('click', () => placesMapRuntime.map?.zoomOut());
         main.querySelector('[data-map-fit]')?.addEventListener('click', () => fitPlacesMap(list));
@@ -53826,16 +54224,6 @@
       return Number.isFinite(timestamp) ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(new Date(timestamp)) : 'Unknown';
     }
 
-    function openPlaceIssueReviewModal(issueId) {
-      const issue = (sampleData.placeIssues || []).find(item => item.id === issueId && item.projectId === currentProjectId());
-      if (!issue) return;
-      const place = getPlace(issue.placeId);
-      openModal(`<div class="modal" role="dialog" aria-modal="true"><div class="modal-header"><div><h2>Review place</h2><p>${escapeHtml(place?.name || issue.raw || 'Place issue')}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><p>${escapeHtml(issue.suggestion || issue.raw || '')}</p></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button secondary" type="button" data-place-issue-dismiss>Dismiss</button><button class="button primary" type="button" data-place-issue-resolve>Mark resolved</button></div></div>`);
-      const finish = status => { issue.status = status; issue.closedAt = new Date().toISOString(); issue.resolution = status; closeModal(); renderPlaces(); showToast(status === 'closed' ? 'Issue resolved.' : 'Issue dismissed.'); };
-      modalBackdrop.querySelector('[data-place-issue-dismiss]')?.addEventListener('click', () => finish('dismissed'));
-      modalBackdrop.querySelector('[data-place-issue-resolve]')?.addEventListener('click', () => finish('closed'));
-    }
-
     function clonePlaceEditorCoordinates(value) {
       if (!value || !validLatitude(value.lat) || !validLongitude(value.lng)) return null;
       return { lat: Number(value.lat), lng: Number(value.lng) };
@@ -53847,6 +54235,22 @@
         latitude: value ? value.lat.toFixed(6) : '',
         longitude: value ? value.lng.toFixed(6) : ''
       };
+    }
+
+    function placeEditorCoordinateTextFromStored(coordinates) {
+      const normalized = clonePlaceEditorCoordinates(coordinates);
+      if (normalized) return placeEditorCoordinateText(normalized);
+      if (!coordinates || typeof coordinates !== 'object') {
+        return { latitude: '', longitude: '' };
+      }
+      return {
+        latitude: coordinates.lat === null || coordinates.lat === undefined ? '' : String(coordinates.lat),
+        longitude: coordinates.lng === null || coordinates.lng === undefined ? '' : String(coordinates.lng)
+      };
+    }
+
+    function storedPlaceCoordinateKey(coordinates) {
+      return JSON.stringify(placeEditorCoordinateTextFromStored(coordinates));
     }
 
     function parsePlaceEditorCoordinate(value, { label, minimum, maximum, example }) {
@@ -53902,12 +54306,14 @@
       const existing = placeId ? getPlace(placeId) : null;
       const coordinates = clonePlaceEditorCoordinates(initialCoordinates || existing?.coordinates);
       const alternativeNames = placeAlternativeNames(existing).slice();
-      const coordinateText = placeEditorCoordinateText(coordinates);
+      const coordinateText = initialCoordinates
+        ? placeEditorCoordinateText(coordinates)
+        : placeEditorCoordinateTextFromStored(existing?.coordinates);
       const original = {
         name: existing?.name || '',
         alternativeNames: alternativeNames.slice(),
         coordinates: clonePlaceEditorCoordinates(existing?.coordinates),
-        coordinateText: placeEditorCoordinateText(existing?.coordinates)
+        coordinateText: placeEditorCoordinateTextFromStored(existing?.coordinates)
       };
       return {
         mode: existing ? 'edit' : 'add',
@@ -54246,7 +54652,62 @@
         duplicate.close ? 'The map positions are very close.' : ''
       ].filter(Boolean);
       host.hidden = false;
-      host.innerHTML = `<div><strong>Possible duplicate</strong><span>${escapeHtml(duplicate.place.name)}</span><small>Place ID: ${escapeHtml(duplicate.place.id)}</small><p>${escapeHtml(reasons.join(' '))}</p></div><div><button class="button secondary" type="button" data-place-use-existing="${escapeHtml(duplicate.place.id)}">Use existing place</button>${draft.mode === 'add' ? '<button class="button primary" type="button" data-place-create-another>Create another place</button>' : ''}<button class="button ghost" type="button" data-place-continue-editing="${escapeHtml(duplicate.place.id)}">Continue editing</button></div>`;
+      host.innerHTML = `
+        <div>
+          <strong>
+            Possible duplicate
+          </strong>
+
+          <span>
+            ${escapeHtml(
+              duplicate.place.name
+            )}
+          </span>
+
+          <p>
+            ${escapeHtml(
+              reasons.join(' ')
+            )}
+          </p>
+        </div>
+
+        <div>
+          <button
+            class="button secondary"
+            type="button"
+            data-place-use-existing="${
+              escapeHtml(
+                duplicate.place.id
+              )
+            }">
+            Use existing place
+          </button>
+
+          ${
+            draft.mode === 'add'
+              ? `
+                <button
+                  class="button primary"
+                  type="button"
+                  data-place-create-another>
+                  Create another place
+                </button>
+              `
+              : ''
+          }
+
+          <button
+            class="button ghost"
+            type="button"
+            data-place-continue-editing="${
+              escapeHtml(
+                duplicate.place.id
+              )
+            }">
+            Continue editing
+          </button>
+        </div>
+      `;
       return duplicate;
     }
 
@@ -54405,10 +54866,17 @@
         projectId: currentProjectId(),
         deleted: false
       };
+      const coordinatesChanged = Boolean(
+        existing
+        && storedPlaceCoordinateKey(existing.coordinates) !== storedPlaceCoordinateKey(draft.coordinates)
+      );
       place.name = draft.name;
       place.alternativeNames = draft.alternativeNames.slice();
       place.coordinates = clonePlaceEditorCoordinates(draft.coordinates);
       place.updatedAt = new Date().toISOString();
+      if (coordinatesChanged) {
+        clearPlaceReviewDismissals(place.id, PLACE_REVIEW_COORDINATE_ISSUE_TYPES);
+      }
       if (!existing) sampleData.places.unshift(place);
       state.selectedPlaceId = place.id;
       resetPlaceEditorDraft();
@@ -54681,6 +55149,18 @@
       placeEditorDraft.mapSession = null;
       openModal(renderPlaceEditorModal(placeEditorDraft));
       bindPlaceEditor();
+    }
+
+    function openPlaceModalForCoordinateReview(placeId) {
+      resetPlaceEditorDraft();
+      const draft = createPlaceEditorDraft(placeId);
+      if (!draft) return;
+      draft.disclosures.coordinates = true;
+      openPlaceModal(placeId, { draft });
+      requestAnimationFrame(() => {
+        const invalidInput = modalBackdrop.querySelector('[data-place-coordinate-details] [aria-invalid="true"]');
+        (invalidInput || modalBackdrop.querySelector('#placeLatitudeInput'))?.focus({ preventScroll: true });
+      });
     }
     function openDeletePlaceModal(placeId, { returnToEditor = false } = {}) {
       const place = getPlace(placeId); if (!place) return;
@@ -56542,6 +57022,24 @@
           });
     }
 
+    function normalizePlaceIssueDismissals() {
+      const seen = new Set();
+      sampleData.placeIssues = (sampleData.placeIssues || []).filter(issue => {
+        if (!issue || issue.status !== 'dismissed') return false;
+        if (!PLACE_REVIEW_COORDINATE_ISSUE_TYPES.includes(issue.type)) return false;
+        const place = getPlace(issue.placeId);
+        if (!place || place.deleted || place.projectId !== issue.projectId) return false;
+        const key = `${issue.projectId}:${issue.placeId}:${issue.type}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        issue.id = String(issue.id || `place-issue-dismissal-${Date.now()}-${seen.size}`);
+        issue.dismissedAt = Number.isFinite(Date.parse(issue.dismissedAt || ''))
+          ? issue.dismissedAt
+          : new Date().toISOString();
+        return true;
+      });
+    }
+
     function normalizeCentralPlaceRecords() {
       sampleData.places.forEach(place => {
         place.projectId = place.projectId || currentProjectId();
@@ -56561,7 +57059,17 @@
         ];
         place.alternativeNames = normalizePlaceAlternativeNames(candidates, place.name);
         place.deleted = Boolean(place.deleted);
-        place.coordinates = normalizePlaceCoordinates(place);
+        const normalizedCoordinates = normalizePlaceCoordinates(place);
+        if (normalizedCoordinates) {
+          place.coordinates = normalizedCoordinates;
+        } else if (place.coordinates && typeof place.coordinates === 'object') {
+          place.coordinates = {
+            lat: place.coordinates.lat ?? '',
+            lng: place.coordinates.lng ?? ''
+          };
+        } else {
+          place.coordinates = null;
+        }
         place.updatedAt = Number.isFinite(Date.parse(place.updatedAt || '')) ? place.updatedAt : new Date().toISOString();
         delete place.display;
         delete place.type;
@@ -56634,6 +57142,7 @@
       sampleData.activity = Array.isArray(sampleData.activity) ? sampleData.activity : [];
       normalizePlaceSavedFilters();
       normalizeCentralPlaceRecords();
+      normalizePlaceIssueDismissals();
       normalizeEventPlaceAddresses();
       normalizeSampleGenealogyDates();
       sampleData.events = buildSampleEvents();
