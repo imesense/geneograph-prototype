@@ -40897,18 +40897,133 @@
     }
 
     function openNewAlbumModal() {
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="newAlbumTitle"><div class="modal-header"><div><h2 id="newAlbumTitle">New album</h2><p>Create a named group of photos.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="newAlbumForm"><div class="modal-body form-grid"><div class="field"><label for="albumName">Album name</label><input id="albumName" required></div><div class="field"><label for="albumDescription">Description</label><textarea id="albumDescription"></textarea></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create album</button></div></form></div>`);
-      modalBackdrop.querySelector('#newAlbumForm')?.addEventListener('submit', event => {
-        event.preventDefault();
-        const album = { id: `album-${Date.now()}`, projectId: currentProjectId(), name: modalBackdrop.querySelector('#albumName').value.trim(), description: modalBackdrop.querySelector('#albumDescription').value.trim(), createdAt: new Date().toISOString() };
-        if (!album.name) return;
-        sampleData.albums.push(album);
-        state.albumsView = 'album';
-        state.activeAlbumId = album.id;
-        closeModal();
-        renderAlbums();
-        showToast('Album created.');
-      });
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="newAlbumTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="newAlbumTitle">
+                New album
+              </h2>
+
+              <p>
+                Create a named group of photos.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close>
+              ${icon.close}
+            </button>
+          </div>
+
+          <form id="newAlbumForm">
+            <div class="modal-body form-grid">
+              <div class="field">
+                <label for="albumName">
+                  Album name
+                </label>
+
+                <input
+                  id="albumName"
+                  required
+                  placeholder="e.g. Whiskerfield family photos">
+              </div>
+
+              <div class="field">
+                <label for="albumDescription">
+                  Description
+                </label>
+
+                <textarea
+                  id="albumDescription"
+                  placeholder="e.g. Portraits, documents, and family photos connected to the Whiskerfield family."></textarea>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                class="button secondary"
+                type="button"
+                data-close>
+                Cancel
+              </button>
+
+              <button
+                class="button primary"
+                type="submit">
+                Create album
+              </button>
+            </div>
+          </form>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelector(
+          '#newAlbumForm'
+        )
+        ?.addEventListener(
+          'submit',
+          event => {
+            event.preventDefault();
+
+            const album = {
+              id:
+                `album-${Date.now()}`,
+
+              projectId:
+                currentProjectId(),
+
+              name:
+                modalBackdrop
+                  .querySelector(
+                    '#albumName'
+                  )
+                  .value
+                  .trim(),
+
+              description:
+                modalBackdrop
+                  .querySelector(
+                    '#albumDescription'
+                  )
+                  .value
+                  .trim(),
+
+              createdAt:
+                new Date()
+                  .toISOString()
+            };
+
+            if (!album.name) {
+              return;
+            }
+
+            sampleData.albums.push(
+              album
+            );
+
+            state.albumsView =
+              'album';
+
+            state.activeAlbumId =
+              album.id;
+
+            closeModal();
+            renderAlbums();
+
+            showToast(
+              'Album created.'
+            );
+          }
+        );
     }
 
     function openEditAlbumModal() {
