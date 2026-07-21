@@ -48140,15 +48140,16 @@
 
         <div class="people-filter-field">
           <label for="${prefix}-year-from">
-            Linked events from
+            Year from
           </label>
 
           <input
             id="${prefix}-year-from"
-            type="number"
-            min="1"
-            max="9999"
-            step="1"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            maxlength="4"
+            pattern="[0-9]{1,4}"
             placeholder="Any year"
             value="${escapeHtml(
               normalized.yearFrom
@@ -48158,15 +48159,16 @@
 
         <div class="people-filter-field">
           <label for="${prefix}-year-to">
-            Linked events to
+            Year to
           </label>
 
           <input
             id="${prefix}-year-to"
-            type="number"
-            min="1"
-            max="9999"
-            step="1"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            maxlength="4"
+            pattern="[0-9]{1,4}"
             placeholder="Any year"
             value="${escapeHtml(
               normalized.yearTo
@@ -53215,12 +53217,8 @@
 
         <button
           type="button"
-          data-action="position">
-          ${
-            hasCoordinates
-              ? 'Edit position'
-              : 'Add position'
-          }
+          data-action="edit">
+          Edit place
         </button>
 
         ${
@@ -53234,6 +53232,13 @@
             `
             : ''
         }
+
+        <button
+          class="danger"
+          type="button"
+          data-action="delete">
+          Delete place
+        </button>
       `;
 
       document.body.appendChild(
@@ -53263,13 +53268,21 @@
             return;
           }
 
-          if (action === 'position') {
-            showPlaceOnMap(
-              place.id,
-              {
-                editPosition:
-                  true
-              }
+          if (action === 'edit') {
+            closeMenu();
+
+            openPlaceModal(
+              place.id
+            );
+
+            return;
+          }
+
+          if (action === 'delete') {
+            closeMenu();
+
+            openDeletePlaceModal(
+              place.id
             );
 
             return;
