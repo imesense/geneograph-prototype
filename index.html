@@ -47,6 +47,7 @@
       --right-w: 320px;
       --control-height: 42px;
       --control-icon-button-size: var(--control-height);
+      --search-field-max-width: 460px;
       --inspector-width: 450px;
       --inspector-collapsed-width: 54px;
       --space-1: 4px;
@@ -558,27 +559,78 @@
       margin-bottom: var(--space-7, 28px);
     }
     .toolbar-left, .toolbar-right { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
-    .search {
+
+    .app-search-field {
+      width: var(--search-field-max-width);
+      max-width: 100%;
+      flex: 0 1 var(--search-field-max-width);
       height: 44px;
-      width: min(100%, 300px);
-      border-radius: var(--radius-sm);
+      min-width: 0;
+      box-sizing: border-box;
       border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
       background: var(--surface-card);
       display: flex;
       align-items: center;
       gap: var(--space-3);
       padding: 0 var(--space-3);
-      color: var(--text-tertiary);
+      color:
+        var(--text-tertiary);
+      transition:
+        border-color
+          var(--ease),
+        background
+          var(--ease);
     }
-    .search svg { width: 21px; height: 21px; flex: 0 0 auto; }
-    .search input {
-      width: 100%;
-      border: 0;
-      outline: 0;
-      background: transparent;
-      color: var(--text-primary);
+
+    .app-search-field:hover {
+      border-color:
+        var(--border-strong);
     }
-    .search input::placeholder { color: var(--text-tertiary); }
+
+    .app-search-field:focus-within {
+      border-color:
+        var(--border-strong);
+    }
+
+    .app-search-field > svg {
+      width:
+        21px;
+      height:
+        21px;
+      flex:
+        0 0 21px;
+    }
+
+    .app-search-field input {
+      width:
+        100%;
+      min-width:
+        0;
+      padding:
+        0;
+      border:
+        0;
+      outline:
+        0;
+      background:
+        transparent;
+      color:
+        var(--text-primary);
+      font:
+        inherit;
+    }
+
+    .app-search-field input::placeholder {
+      color:
+        var(--text-tertiary);
+    }
+
+    .app-search-field input::-webkit-search-cancel-button {
+      cursor:
+        pointer;
+    }
+
     .select {
       height: 44px;
       min-width: 215px;
@@ -3173,20 +3225,6 @@
       display: block;
       flex: 0 0 22px;
     }
-    .tree-search {
-      width: 240px;
-      height: 38px;
-      border: 1px solid var(--border-default);
-      background: var(--surface-card);
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: 0 var(--space-3);
-      color: var(--text-tertiary);
-    }
-    .tree-search svg { width: 18px; height: 18px; }
-    .tree-search input { min-width: 0; width: 100%; border: 0; outline: 0; background: transparent; color: var(--text-primary); }
     .tree-workspace {
       min-height: 0;
       min-width: 0;
@@ -5696,9 +5734,8 @@
     }
     .tree-toolbar-left, .tree-toolbar-right { flex-wrap: nowrap; }
     .tree-control { min-width: 270px; height: 44px; }
-    .tree-icon-button, .tree-action, .tree-search { height: 44px; }
+    .tree-icon-button, .tree-action { height: 44px; }
     .view-modes { height: 44px; grid-template-columns: repeat(3, 94px); }
-    .tree-search { width: 330px; }
     .tree-workspace { grid-template-columns: minmax(0, 1fr) 450px; }
     .tree-workspace.inspector-collapsed { grid-template-columns: minmax(0, 1fr) 0; }
     .tree-workspace.inspector-collapsed .tree-inspector { display: none; }
@@ -5887,7 +5924,6 @@
       .project-hero-layout { grid-template-columns: 1fr; }
       .project-hero-actions { grid-template-columns: 1fr; }
       .toolbar-left, .toolbar-right { width: 100%; flex-wrap: wrap; }
-      .search { width: 100%; }
       .select { width: 100%; }
       .project-grid { grid-template-columns: 1fr; }
       .startup-continue { grid-template-columns: 38px minmax(0, 1fr); }
@@ -5918,7 +5954,7 @@
       .tree-inspector { width: 360px; min-width: 360px; }
       .tree-person-hero-main { grid-template-columns: 88px minmax(0, 1fr); }
       .tree-toolbar { overflow-x: auto; }
-      .tree-search { width: 190px; }}
+      }
     @media (max-width: 900px) {.tree-shell { height: calc(100vh - var(--topbar-h)); }
       .tree-workspace { grid-template-columns: 1fr; }
       .tree-inspector { display: none; }
@@ -5967,13 +6003,19 @@
       display: grid;
       align-items: stretch;
     }
-
+    
     .people-toolbar {
       display: grid;
       grid-template-columns: minmax(220px, 1fr) max-content max-content minmax(190px, 220px) max-content;
       gap: var(--space-3);
       align-items: center;
       min-width: 0;
+    }
+
+    .people-search-field {
+      width: 100%;
+      max-width: none;
+      flex: none;
     }
 
     .people-bulk-toolbar {
@@ -8319,7 +8361,6 @@
       gap: var(--space-4);
       margin-bottom: var(--space-7, 28px);
     }
-    .geneo-board-toolbar .search { width: min(100%, 430px); }
     .geneo-board-toolbar-left,
     .geneo-board-toolbar-right { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
     .geneo-board-section { margin-bottom: var(--space-8); }
@@ -9076,58 +9117,6 @@
       justify-content: flex-end;
       gap: var(--space-2);
       flex-wrap: nowrap;
-    }
-
-    /* Compact search remains isolated on the left. */
-    .albums-search {
-      width: 260px;
-      min-width: 200px;
-      height: 44px;
-      padding: 0 var(--space-3);
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-sm);
-      background: var(--surface-card);
-      color: var(--text-tertiary);
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      transition:
-        background var(--ease),
-        border-color var(--ease),
-        color var(--ease),
-        box-shadow var(--ease);
-    }
-
-    .albums-search:hover {
-      border-color: var(--border-strong);
-      background: var(--surface-card-hover);
-    }
-
-    .albums-search:focus-within {
-      border-color: rgba(98, 217, 154, .55);
-      background: var(--surface-card);
-      box-shadow: 0 0 0 3px rgba(98, 217, 154, .1);
-    }
-
-    .albums-search svg {
-      width: 18px;
-      height: 18px;
-      flex: 0 0 18px;
-    }
-
-    .albums-search input {
-      width: 100%;
-      min-width: 0;
-      height: 100%;
-      padding: 0;
-      border: 0;
-      outline: 0;
-      background: transparent;
-      color: var(--text-primary);
-    }
-
-    .albums-search input::placeholder {
-      color: var(--text-tertiary);
     }
 
     .albums-filter-button {
@@ -11931,11 +11920,6 @@
         flex-wrap: wrap;
       }
 
-      .albums-search {
-        width: 100%;
-        min-width: 0;
-      }
-
       .albums-sort-field {
         width: min(100%, 190px);
         min-width: 0;
@@ -12035,23 +12019,7 @@
     .archive-toolbar-right { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
     .archive-toolbar-left { flex: 1 1 auto; flex-wrap: nowrap; }
     .archive-toolbar-right { flex: 0 0 auto; flex-wrap: nowrap; justify-content: flex-end; }
-    .archive-search {
-      height: 40px;
-      min-width: 220px;
-      width: auto;
-      flex: 1 1 360px;
-      border: 1px solid var(--border-default);
-      background: var(--surface-input);
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: 0 var(--space-3);
-      color: var(--text-tertiary);
-    }
-    .archive-search svg { width: 18px; height: 18px; flex: 0 0 auto; }
-    .archive-search input { width: 100%; border: 0; background: transparent; color: var(--text-primary); outline: 0; }
-    .archive-search input::placeholder { color: var(--text-tertiary); }
+
     .archive-select {
       height: 40px;
       min-width: 154px;
@@ -12420,14 +12388,13 @@
 
 
     @media (max-width: 1380px) {.archive-shell { grid-template-columns: minmax(0, 1fr) 318px; }
-      
-      .archive-search { min-width: 220px; }}
+      }
     @media (max-width: 1080px) {.archive-shell { grid-template-columns: 1fr; }
       .archive-inspector, .archive-inspector-collapsed { display: none; }
       
       .archive-toolbar { align-items: stretch; flex-direction: column; }
       .archive-toolbar-left, .archive-toolbar-right, .archive-header { align-items: stretch; flex-direction: column; flex-wrap: wrap; }
-      .archive-search { width: 100%; flex-basis: auto; }}
+      }
 
     /* Notes module */
     /* Notes module: refined browser + collapsible editor layout */
@@ -12449,9 +12416,6 @@
     .notes-browser-title p { margin: 5px 0 0; color: var(--text-tertiary); font-weight: 800; }
     .notes-browser-actions { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; justify-content: flex-end; }
     .notes-toolbar-line { display: flex; align-items: center; gap: var(--space-2); min-width: 0; flex-wrap: wrap; }
-    .notes-search { height: 40px; flex: 1 1 280px; min-width: 220px; border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--surface-card); color: var(--text-tertiary); display: flex; align-items: center; gap: var(--space-2); padding: 0 var(--space-3); }
-    .notes-search svg { width: 17px; height: 17px; flex: 0 0 auto; }
-    .notes-search input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--text-primary); }
 
     .notes-select {
       height: 40px;
@@ -12484,7 +12448,6 @@
     .notes-shell.editor-open .notes-browser-actions .button { min-height: 36px; padding-inline: 12px; }
     .notes-shell.editor-open .notes-toolbar-line { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--space-2); }
     .notes-shell.editor-open .notes-toolbar-line .notes-select { display: none; }
-    .notes-shell.editor-open .notes-search { min-width: 0; flex: 1 1 auto; }
     .notes-shell.editor-open .notes-browser-scroll { padding: var(--space-3); }
 
     .notes-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: var(--space-4); align-content: start; }
@@ -13138,11 +13101,6 @@
         var(--text-primary);
     }
 
-    .places-search {
-      flex: 1 1 280px;
-      max-width: 460px;
-    }
-
     .places-sort {
       flex: 0 0 180px;
     }
@@ -13331,10 +13289,6 @@
       align-items: center;
       justify-content: flex-start;
       gap: var(--space-4);
-    }
-
-    .places-review-search {
-      width: min(360px, 100%);
     }
 
     .places-review-content {
@@ -14198,7 +14152,6 @@
         flex-direction: column;
       }
 
-      .places-review-search { width: 100%; }
       .places-review-row-actions { flex-wrap: wrap; }
     }
 
@@ -15217,12 +15170,6 @@
         flex-wrap: wrap;
       }
 
-      .places-search {
-        width: 100%;
-        max-width: none;
-        flex-basis: auto;
-      }
-
       .places-sort {
         flex:
           1
@@ -15304,30 +15251,6 @@
       min-width: 0;
       flex-wrap: wrap;
     }
-
-    .publish-search {
-      width: min(360px, 100%);
-      height: 42px;
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: 0 var(--space-3);
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border-default);
-      background: var(--surface-input);
-      color: var(--text-tertiary);
-    }
-
-    .publish-search svg { width: 18px; height: 18px; flex: 0 0 auto; }
-    .publish-search input {
-      width: 100%;
-      min-width: 0;
-      border: 0;
-      outline: 0;
-      background: transparent;
-      color: var(--text-primary);
-    }
-    .publish-search input::placeholder { color: var(--text-tertiary); }
 
     .publish-create-grid {
       display: grid;
@@ -21341,7 +21264,7 @@
             </div>
             <div class="toolbar">
               <div class="toolbar-left">
-                <label class="search" aria-label="Search projects">${icon.search}<input id="projectSearch" type="search" placeholder="Search projects..." value="${escapeHtml(state.search)}"></label>
+                <label class="app-search-field" aria-label="Search projects">${icon.search}<input id="projectSearch" type="search" placeholder="Search projects..." value="${escapeHtml(state.search)}"></label>
               </div>
               <div class="toolbar-right">
                   <span class="sort-field">
@@ -22741,7 +22664,7 @@
             </span>
             </div>
             <div class="tree-toolbar-right">
-              <label class="tree-search">${icon.search}<input type="search" placeholder="Search people..." id="treeSearch"></label>
+              <label class="app-search-field">${icon.search}<input type="search" placeholder="Search people..." id="treeSearch"></label>
               <button class="tree-action" type="button" data-toast="Export is planned for the Publish iteration.">${icon.export} Export</button>
               <button class="tree-action" type="button" data-toast="Print preview will be added later.">${icon.print} Print</button>
               <button class="tree-action" type="button" data-toast="Tree settings are not part of this build yet.">${icon.settings} Tree Settings</button>
@@ -30593,7 +30516,7 @@
 
       return `
         <div class="people-toolbar people-normal-toolbar">
-          <label class="search-input">
+          <label class="app-search-field people-search-field">
             ${icon.search}
 
             <input
@@ -39065,7 +38988,7 @@
 
         <div class="albums-toolbar-left">
           <label
-            class="albums-search"
+            class="app-search-field"
             aria-label="Search photos">
             ${icon.search}
 
@@ -45135,7 +45058,7 @@
           </div>
           <div class="geneo-board-toolbar">
             <div class="geneo-board-toolbar-left">
-              <label class="search" aria-label="Search boards">${icon.search}<input id="geneoBoardSearch" type="search" placeholder="Search boards..." value="${escapeHtml(state.geneoBoardSearch)}"></label>
+              <label class="app-search-field" aria-label="Search boards">${icon.search}<input id="geneoBoardSearch" type="search" placeholder="Search boards..." value="${escapeHtml(state.geneoBoardSearch)}"></label>
             </div>
             <div class="geneo-board-toolbar-right">
               <select class="select" id="geneoBoardSort" aria-label="Sort boards"><option>Sort: Date modified</option><option>Sort: Name</option><option>Sort: Board type</option></select>
@@ -46175,7 +46098,7 @@
               archive-toolbar-left
             ">
             <label
-              class="archive-search"
+              class="app-search-field"
               aria-label="
                 Search archive contents
               ">
@@ -46393,7 +46316,7 @@
       const sources = filteredArchiveSources();
       return `
         ${renderArchiveHeader('Sources', 'Manage source records attached to files, folders, import batches, and evidence links.', `<button class="button primary" type="button" id="archiveCreateSourceInline">${icon.plus} Create source</button>`)}
-        <div class="archive-toolbar"><div class="archive-toolbar-left"><label class="archive-search">${icon.search}<input id="archiveSearch" type="search" placeholder="Search sources..." value="${escapeHtml(state.archiveSearch)}"></label><button class="button secondary compact" type="button" data-toast="Source type filters are planned for a later iteration.">Filter by type</button></div><div class="archive-toolbar-right"><select class="archive-select" id="archiveSort"><option value="updated" ${state.archiveSort === 'updated' ? 'selected' : ''}>Sort: Updated</option><option value="name" ${state.archiveSort === 'name' ? 'selected' : ''}>Sort: Title</option></select></div></div>
+        <div class="archive-toolbar"><div class="archive-toolbar-left"><label class="app-search-field">${icon.search}<input id="archiveSearch" type="search" placeholder="Search sources..." value="${escapeHtml(state.archiveSearch)}"></label><button class="button secondary compact" type="button" data-toast="Source type filters are planned for a later iteration.">Filter by type</button></div><div class="archive-toolbar-right"><select class="archive-select" id="archiveSort"><option value="updated" ${state.archiveSort === 'updated' ? 'selected' : ''}>Sort: Updated</option><option value="name" ${state.archiveSort === 'name' ? 'selected' : ''}>Sort: Title</option></select></div></div>
         ${sources.length ? `<div class="archive-table-wrap"><table class="archive-table"><thead><tr><th>Source title</th><th>Origin type</th><th>Repository / holder</th><th>Reference</th><th>Coverage</th><th>Attached</th><th>Used as evidence</th><th>Citation</th><th>Updated</th><th></th></tr></thead><tbody>${sources.map(source => `<tr class="${state.archiveSelectedSourceId === source.id ? 'selected' : ''}" data-archive-source="${source.id}"><td><div class="archive-name-cell"><div class="archive-file-icon doc">SRC</div><div><strong>${escapeHtml(source.title)}</strong><span>${escapeHtml(source.type)}</span></div></div></td><td>${escapeHtml(source.type)}</td><td>${escapeHtml(source.holder)}</td><td>${escapeHtml(source.reference)}</td><td>${escapeHtml(source.coverage)}</td><td>${source.attached} items</td><td>${source.used} links</td><td><span class="archive-status-chip ${source.citation === 'Complete' ? 'good' : source.citation === 'Incomplete' ? 'warn' : ''}">${escapeHtml(source.citation)}</span></td><td>${escapeHtml(source.updated)}</td><td><button class="archive-row-action" type="button" data-toast="Source menu is a placeholder.">${icon.more}</button></td></tr>`).join('')}</tbody></table></div>` : renderArchiveEmpty('No sources found', 'Try a different source search.', '')}`;
     }
 
@@ -46863,7 +46786,7 @@
       const isCases = state.notesView === 'cases';
       const typeOptions = [['all','All types'],['note','Notes'],['question','Questions'],['hypothesis','Hypotheses'],['source','Source analysis'],['interview','Interviews'],['story','Stories']].map(([id,label]) => `<option value="${id}" ${state.notesTypeFilter === id ? 'selected' : ''}>${label}</option>`).join('');
       const headerAction = isCases ? `<div class="notes-browser-actions"><button class="button primary" type="button" id="notesNewCaseButton">${icon.plus} New case</button></div>` : '';
-      return `<section class="notes-browser-pane" aria-label="Notes browser"><header class="notes-browser-header"><div class="notes-browser-top"><div class="notes-browser-title"><h1>${escapeHtml(notesTitle())}</h1><p>${notesBrowserSubtitle(list)}</p></div>${headerAction}</div>${renderNotesPersonFilterBar()}<div class="notes-toolbar-line"><label class="notes-search" aria-label="Search notes">${icon.search}<input id="notesSearch" type="search" placeholder="Search ${isCases ? 'cases' : 'notes'}..." value="${escapeHtml(state.notesSearch)}"></label>${isCases ? '' : `<select class="notes-select" id="notesTypeFilter" aria-label="Filter by type">${typeOptions}</select>`}<select class="notes-select" id="notesSort" aria-label="Sort notes"><option value="updated" ${state.notesSort === 'updated' ? 'selected' : ''}>Sort: Updated</option><option value="title" ${state.notesSort === 'title' ? 'selected' : ''}>Sort: Title</option><option value="created" ${state.notesSort === 'created' ? 'selected' : ''}>Sort: Created</option></select><div class="notes-view-toggle" role="group" aria-label="Notes view mode"><button class="${state.notesViewMode === 'cards' ? 'active' : ''}" type="button" data-notes-view-mode="cards" aria-label="Cards view" aria-pressed="${state.notesViewMode === 'cards'}">${icon.grid}</button><button class="${state.notesViewMode === 'list' ? 'active' : ''}" type="button" data-notes-view-mode="list" aria-label="List view" aria-pressed="${state.notesViewMode === 'list'}">${icon.list}</button></div></div></header><div class="notes-browser-scroll">${list.length ? (state.notesViewMode === 'list' ? renderNotesListView(list) : renderNotesCardsView(list)) : renderNotesBrowserEmpty()}</div></section>`;
+      return `<section class="notes-browser-pane" aria-label="Notes browser"><header class="notes-browser-header"><div class="notes-browser-top"><div class="notes-browser-title"><h1>${escapeHtml(notesTitle())}</h1><p>${notesBrowserSubtitle(list)}</p></div>${headerAction}</div>${renderNotesPersonFilterBar()}<div class="notes-toolbar-line"><label class="app-search-field" aria-label="Search notes">${icon.search}<input id="notesSearch" type="search" placeholder="Search ${isCases ? 'cases' : 'notes'}..." value="${escapeHtml(state.notesSearch)}"></label>${isCases ? '' : `<select class="notes-select" id="notesTypeFilter" aria-label="Filter by type">${typeOptions}</select>`}<select class="notes-select" id="notesSort" aria-label="Sort notes"><option value="updated" ${state.notesSort === 'updated' ? 'selected' : ''}>Sort: Updated</option><option value="title" ${state.notesSort === 'title' ? 'selected' : ''}>Sort: Title</option><option value="created" ${state.notesSort === 'created' ? 'selected' : ''}>Sort: Created</option></select><div class="notes-view-toggle" role="group" aria-label="Notes view mode"><button class="${state.notesViewMode === 'cards' ? 'active' : ''}" type="button" data-notes-view-mode="cards" aria-label="Cards view" aria-pressed="${state.notesViewMode === 'cards'}">${icon.grid}</button><button class="${state.notesViewMode === 'list' ? 'active' : ''}" type="button" data-notes-view-mode="list" aria-label="List view" aria-pressed="${state.notesViewMode === 'list'}">${icon.list}</button></div></div></header><div class="notes-browser-scroll">${list.length ? (state.notesViewMode === 'list' ? renderNotesListView(list) : renderNotesCardsView(list)) : renderNotesBrowserEmpty()}</div></section>`;
     }
 
     function notesBrowserSubtitle(list) {
@@ -50487,7 +50410,7 @@
             <strong class="places-review-total">${allReviewPlaces.length} ${allReviewPlaces.length === 1 ? 'place' : 'places'}</strong>
           </header>
           <div class="places-review-controls">
-            <label class="search-input places-review-search" aria-label="Search places needing review">${icon.search}<input id="placesReviewSearch" type="search" placeholder="Search review items..." value="${escapeHtml(state.placesSearch || '')}"></label>
+            <label class="app-search-field" aria-label="Search places needing review">${icon.search}<input id="placesReviewSearch" type="search" placeholder="Search review items..." value="${escapeHtml(state.placesSearch || '')}"></label>
           </div>
           <div class="places-review-content">${content}</div>
         </div></section>
@@ -50585,7 +50508,7 @@
 
                 <div class="places-toolbar-left">
                   <label
-                    class="search-input places-search"
+                    class="app-search-field"
                     aria-label="Search places">
 
                     ${icon.search}
@@ -55324,7 +55247,7 @@
           </div>
           <div class="publish-toolbar">
             <div class="publish-toolbar-left">
-              <label class="publish-search" aria-label="Search publish drafts">${icon.search}<input id="publishSearch" type="search" placeholder="Search drafts and exports..." value="${escapeHtml(state.publishSearch)}"></label>
+              <label class="app-search-field" aria-label="Search publish drafts">${icon.search}<input id="publishSearch" type="search" placeholder="Search drafts and exports..." value="${escapeHtml(state.publishSearch)}"></label>
             </div>
             <div class="publish-toolbar-right">
               <button class="button secondary" type="button" data-toast="Template library is planned for a later Publish iteration.">Templates</button>
