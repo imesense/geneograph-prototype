@@ -6025,27 +6025,27 @@
       justify-content: center;
     }
 
-    .people-sort-field {
+    .app-sort-field {
       position: relative;
       display: inline-flex;
-      width: 100%;
       min-width: 0;
     }
 
-    .people-sort-select {
+    .app-sort-select {
       appearance: none;
       width: 100%;
       height: 44px;
       border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
       background: var(--surface-card);
       color: var(--text-secondary);
-      border-radius: var(--radius-sm);
       padding: 0 40px 0 14px;
       font-weight: 700;
       letter-spacing: .01em;
+      cursor: pointer;
     }
 
-    .people-sort-chevron {
+    .app-sort-chevron {
       position: absolute;
       right: 14px;
       top: 50%;
@@ -6058,22 +6058,38 @@
       transform: translateY(-50%);
     }
 
-    .people-sort-chevron svg {
+    .app-sort-chevron svg {
       width: 16px;
       height: 16px;
       display: block;
       transform: rotate(90deg);
     }
 
-    .people-sort-field:hover .people-sort-select {
+    .app-sort-field:hover
+    .app-sort-select {
       background-color: var(--surface-card-hover);
       border-color: var(--border-strong);
       color: var(--text-primary);
     }
 
-    .people-sort-field:hover .people-sort-chevron {
+    .app-sort-field:hover
+    .app-sort-chevron,
+    .app-sort-field:focus-within
+    .app-sort-chevron {
       color: var(--text-primary);
     }
+
+    .app-sort-select:focus {
+      outline: 0;
+      border-color: var(--brand-green-500);
+      color: var(--text-primary);
+    }
+
+    .people-toolbar
+    .app-sort-field {
+      width: 100%;
+    }
+
     .search-input {
       height: 42px;
       min-width: 0;
@@ -13675,8 +13691,9 @@
     .places-route-summary-warning { color: #edbd76; }
     .places-route-summary-excluded { color: var(--text-tertiary); font-size: 11px; }
 
-    .places-sort {
+    .places-sort-field {
       flex: 0 0 180px;
+      width: 180px;
     }
 
     /*
@@ -15711,7 +15728,8 @@
         flex-wrap: wrap;
       }
 
-      .places-sort {
+      .places-sort-field {
+        width: auto;
         flex:
           1
           1
@@ -31155,11 +31173,12 @@
             }
           </button>
 
-          <span class="people-sort-field">
+          <span class="app-sort-field">
             <select
-              class="people-sort-select"
+              class="app-sort-select"
               id="peopleSort"
               aria-label="Sort people">
+
               <option
                 value="modified"
                 ${
@@ -31192,7 +31211,7 @@
             </select>
 
             <span
-              class="people-sort-chevron"
+              class="app-sort-chevron"
               aria-hidden="true">
               ${icon.chevron}
             </span>
@@ -51276,17 +51295,14 @@
                   ${
                     isPlacesListView
                       ? `
-                        <label
+                        <span
                           class="
-                            common-select-shell
-                            places-sort
+                            app-sort-field
+                            places-sort-field
                           ">
 
                           <select
-                            class="
-                              compact-select
-                              common-select
-                            "
+                            class="app-sort-select"
                             id="placesSort"
                             aria-label="Sort places">
 
@@ -51297,7 +51313,7 @@
                                   ? 'selected'
                                   : ''
                               }>
-                              Name
+                              Sort: Name
                             </option>
 
                             <option
@@ -51307,7 +51323,7 @@
                                   ? 'selected'
                                   : ''
                               }>
-                              Country
+                              Sort: Country
                             </option>
 
                             <option
@@ -51317,16 +51333,16 @@
                                   ? 'selected'
                                   : ''
                               }>
-                              Recently updated
+                              Sort: Recently updated
                             </option>
                           </select>
 
                           <span
-                            class="common-select-chevron"
+                            class="app-sort-chevron"
                             aria-hidden="true">
                             ${icon.chevron}
                           </span>
-                        </label>
+                        </span>
                       `
                       : ''
                   }
