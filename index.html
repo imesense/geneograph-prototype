@@ -8077,40 +8077,43 @@
       gap: 3px;
     }
 
-    .profile-place-preview-row strong {
-      white-space: nowrap;
+    .profile-place-preview-title {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .profile-place-preview-title strong {
+      min-width: 0;
+      flex: 1 1 auto;
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .profile-place-coordinate-warning {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 16px;
+      display: inline-grid;
+      place-items: center;
+      color: var(--amber);
+    }
+
+    .profile-place-coordinate-warning svg {
+      width: 14px;
+      height: 14px;
+      display: block;
     }
 
     .profile-place-preview-meta {
       min-width: 0;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
+      display: block;
       overflow: hidden;
+      color: var(--text-tertiary);
       text-overflow: ellipsis;
-    }
-
-    .profile-place-status-dot {
-      width: 7px;
-      height: 7px;
-      flex: 0 0 7px;
-      border-radius: 50%;
-      background: var(--text-tertiary);
-    }
-
-    .profile-place-status-dot.exact {
-      background: var(--brand-green-500);
-    }
-
-    .profile-place-status-dot.approximate {
-      background: var(--amber);
-    }
-
-    .profile-place-status-dot.needs-review {
-      background: var(--red);
+      white-space: nowrap;
     }
 
     /* Timeline */
@@ -31688,20 +31691,9 @@
           { title: 'Meowbridge record analysis', noteId: 'n3', type: 'Source analysis', updated: 'Jun 24, 2026', body: 'Transcription and interpretation of a Meowbridge record.' }
         ]
       };
-      const placeMap = {
-        silver: [
-          { id: 'pl-pawford', title: 'Pawford, England', meta: 'Birth - household', status: 'Resolved' },
-          { id: 'pl-meowbridge', title: 'Meowbridge, England', meta: 'Marriage event', status: 'Resolved' }
-        ],
-        luna: [{ id: 'pl-meowbridge', title: 'Meowbridge, England', meta: 'Birth place', status: 'Resolved' }],
-        barnaby: [{ id: 'pl-pawford', title: 'Pawford, England', meta: 'Birth - death', status: 'Resolved' }],
-        rupert: [{ id: 'pl-fishmarket', title: 'Fishmarket Row, England', meta: 'Birth record', status: 'Approximate' }],
-        pearl: [{ id: 'pl-old-cattery', title: 'Old Cattery, England', meta: 'Birth - death', status: 'Resolved' }]
-      };
       return {
         archive: archiveMap[person.id] || [{ type: 'PDF', name: 'Linked archive file.pdf', meta: 'Added recently - Source assigned', fileId: null }],
         notes: noteMap[person.id] || [{ title: 'Profile note', noteId: null, type: 'Research note', updated: person.updated, body: 'Placeholder note linked to this person.' }],
-        places: placeMap[person.id] || [{ id: 'pl-pawford', title: person.birthPlace || 'Unknown place', meta: 'Linked place', status: 'Approximate' }]
       };
     }
 
@@ -32717,22 +32709,156 @@
         || 'Added recently';
     }
 
-    function profilePlaceStatusClass(status) {
-      const value = String(status || '')
-        .trim()
-        .toLowerCase();
+    function profileConnectedPlaceEventLabel(
+      event
+    ) {
+      return (
+        cleanEditFieldValue(
+          event?.title
+        )
+        || cleanEditFieldValue(
+          event?.type
+        )
+        || t('Event')
+      );
+    }
 
-      if (value === 'exact') return 'exact';
+    function profileConnectedPlaceMeta(
+      events
+    ) {
+      const labels = [
+        ...new Set(
+          events
+            .map(
+              profileConnectedPlaceEventLabel
+            )
+            .filter(Boolean)
+        )
+      ];
 
-      if (
-        value.includes('needs review')
-        || value.includes('missing')
-        || value.includes('ambiguous')
-      ) {
-        return 'needs-review';
+      const visibleLabels =
+        labels.slice(0, 2);
+
+      const remainingCount =
+        labels.length
+        - visibleLabels.length;
+
+      return [
+        visibleLabels.join(' · '),
+
+        remainingCount > 0
+          ? `+${remainingCount} ${t('more')}`
+          : ''
+      ]
+        .filter(Boolean)
+        .join(' · ')
+        || t('Linked event');
+    }
+
+    function getProfileConnectedPlaces(
+      personId
+    ) {
+      const person =
+        getPerson(personId);
+
+      if (!person) {
+        return [];
       }
 
-      return 'approximate';
+      const groupedPlaces =
+        new Map();
+
+      (sampleData.events || [])
+        .forEach(event => {
+          if (
+            event?.projectId
+              !== person.projectId
+          ) {
+            return;
+          }
+
+          if (
+            !Array.isArray(
+              event.personIds
+            )
+            || !event.personIds.includes(
+              person.id
+            )
+          ) {
+            return;
+          }
+
+          const place =
+            getPlace(event.placeId);
+
+          if (
+            !place
+            || place.deleted
+            || place.projectId
+              !== person.projectId
+          ) {
+            return;
+          }
+
+          const existing =
+            groupedPlaces.get(place.id)
+            || {
+              id: place.id,
+              place,
+              events: [],
+              sortValue:
+                Number.POSITIVE_INFINITY
+            };
+
+          existing.events.push(event);
+
+          existing.sortValue =
+            Math.min(
+              existing.sortValue,
+              parseTimelineSortValue(
+                event
+              )
+            );
+
+          groupedPlaces.set(
+            place.id,
+            existing
+          );
+        });
+
+      return [
+        ...groupedPlaces.values()
+      ]
+        .map(group => ({
+          id: group.place.id,
+
+          title:
+            placeDisplayText(
+              group.place
+            )
+            || t('Unnamed place'),
+
+          meta:
+            profileConnectedPlaceMeta(
+              group.events
+            ),
+
+          hasCoordinates:
+            placeHasCoordinates(
+              group.place
+            ),
+
+          sortValue:
+            group.sortValue
+        }))
+        .sort(
+          (first, second) =>
+            first.sortValue
+              - second.sortValue
+            || first.title.localeCompare(
+              second.title
+            )
+        );
     }
 
     function renderProfileConnectedCube(person) {
@@ -32987,49 +33113,99 @@
       });
     }
 
-    function renderProfileConnectedPlaces(person) {
-      const places = peopleProfileAssets(person).places;
-      const preview = places.slice(0, 3);
+    function renderProfileConnectedPlaces(
+      person
+    ) {
+      const places =
+        getProfileConnectedPlaces(
+          person.id
+        );
+
+      const preview =
+        places.slice(0, 3);
+
+      const coordinateWarning =
+        t(
+          'Location has no coordinates'
+        );
 
       const body = preview.length
         ? `
-          <div class="profile-resource-list">
-            ${preview.map(place => {
-              const status =
-                place.status || 'Approximate';
+          <div
+            class="
+              profile-resource-list
+            ">
 
-              return `
-                <button
-                  class="
-                    profile-resource-row
-                    profile-place-preview-row
-                  "
-                  type="button"
-                  data-profile-place="${escapeHtml(place.id)}"
-                  aria-label="Open ${escapeHtml(place.title)}">
+            ${preview
+              .map(place => {
+                const accessibleLabel = [
+                  `Open ${place.title}`,
 
-                  <strong>${escapeHtml(place.title)}</strong>
+                  !place.hasCoordinates
+                    ? coordinateWarning
+                    : ''
+                ]
+                  .filter(Boolean)
+                  .join('. ');
 
-                  <small class="profile-place-preview-meta">
+                return `
+                  <button
+                    class="
+                      profile-resource-row
+                      profile-place-preview-row
+                    "
+                    type="button"
+                    data-profile-place="${escapeHtml(
+                      place.id
+                    )}"
+                    aria-label="${escapeHtml(
+                      accessibleLabel
+                    )}">
+
                     <span
                       class="
-                        profile-place-status-dot
-                        ${profilePlaceStatusClass(status)}
-                      "
-                      aria-hidden="true">
+                        profile-place-preview-title
+                      ">
+
+                      <strong>
+                        ${escapeHtml(
+                          place.title
+                        )}
+                      </strong>
+
+                      ${
+                        !place.hasCoordinates
+                          ? `
+                            <span
+                              class="
+                                profile-place-coordinate-warning
+                              "
+                              role="img"
+                              aria-label="${escapeHtml(
+                                coordinateWarning
+                              )}"
+                              title="${escapeHtml(
+                                coordinateWarning
+                              )}">
+                              ${icon.warning}
+                            </span>
+                          `
+                          : ''
+                      }
                     </span>
 
-                    <span>
+                    <small
+                      class="
+                        profile-place-preview-meta
+                      ">
                       ${escapeHtml(
-                        place.meta || 'Linked place'
+                        place.meta
                       )}
-                      ·
-                      ${escapeHtml(status)}
-                    </span>
-                  </small>
-                </button>
-              `;
-            }).join('')}
+                    </small>
+                  </button>
+                `;
+              })
+              .join('')}
           </div>
         `
         : renderProfileResourceEmpty(
@@ -33044,7 +33220,8 @@
         singular: 'place',
         plural: 'places',
         addLabel: 'Add place',
-        addToast: 'Add place link simulated.',
+        addToast:
+          'Add place link simulated.',
         body
       });
     }
@@ -34123,8 +34300,18 @@
       const profileViewAllActions = {
         archive: openProfileAllArchive,
         notes: openProfileAllNotes,
-        photos: () => openProfileAllPhotos(person.id),
-        places: openProfileAllPlaces
+
+        photos:
+          () =>
+            openProfileAllPhotos(
+              person.id
+            ),
+
+        places:
+          () =>
+            openProfileAllPlaces(
+              person.id
+            )
       };
 
       main
@@ -34191,17 +34378,29 @@
       openAlbumsForPerson(personId);
     }
 
-    function openProfileAllPlaces() {
+    function openProfileAllPlaces(
+      personId =
+        state.selectedPeopleId
+    ) {
+      const person =
+        getPerson(personId);
+
       state.activeModule = 'Places';
       state.placesView = 'all';
+
       state.placesSavedFilterId =
         '';
 
       state.placesFilters = {
-        ...defaultPlaceFilters
+        ...defaultPlaceFilters,
+
+        personId:
+          person?.id || ''
       };
+
       state.selectedPlaceId = null;
       state.placesSearch = '';
+
       render();
     }
 
