@@ -1887,6 +1887,36 @@
       box-sizing: border-box;
       resize: vertical;
     }
+
+    .notes-collection-form
+    .field input,
+    .notes-collection-form
+    .field textarea {
+      font: inherit;
+      text-align: left;
+      text-indent: 0;
+    }
+
+    .notes-collection-form
+    .field input {
+      padding-inline: var(--space-3);
+      line-height: normal;
+    }
+
+    .notes-collection-form
+    .field textarea {
+      padding: var(--space-3);
+      line-height: 1.5;
+      vertical-align: top;
+    }
+
+    .notes-collection-form
+    .field input::placeholder,
+    .notes-collection-form
+    .field textarea::placeholder {
+      color: var(--text-tertiary);
+      opacity: 1;
+    }
     .place-combobox-field {
       position: relative;
     }
@@ -10975,7 +11005,8 @@
       cursor: not-allowed;
     }
 
-    .albums-sidebar {
+    .albums-sidebar,
+    .notes-sidebar {
       height: 100%;
       min-height: 0;
       padding-bottom: var(--space-4);
@@ -10989,7 +11020,7 @@
       flex: 0 0 auto;
     }
 
-    .albums-side-album-row {
+    .sidebar-entity-row {
       width: 100%;
       min-height: 44px;
       display: flex;
@@ -11003,16 +11034,16 @@
         color var(--ease);
     }
 
-    .albums-side-album-row:hover {
+    .sidebar-entity-row:hover {
       background: rgba(255, 255, 255, .035);
     }
 
-    .albums-side-album-row.active {
+    .sidebar-entity-row.active {
       background: var(--surface-selected);
       border-color: rgba(98, 217, 154, .12);
     }
 
-    .albums-album-main {
+    .sidebar-entity-main {
       min-width: 0;
       min-height: 42px;
       flex: 1 1 auto;
@@ -11029,43 +11060,44 @@
       cursor: pointer;
     }
 
-    .albums-album-main svg {
+    .sidebar-entity-main svg {
       width: 19px;
       height: 19px;
       flex: 0 0 auto;
       color: var(--text-tertiary);
     }
 
-    .albums-album-name {
+    .sidebar-entity-name {
       min-width: 0;
+      flex: 1 1 auto;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    .albums-side-album-row.active
-    .albums-album-main {
+    .sidebar-entity-row.active
+    .sidebar-entity-main {
       color: var(--text-primary);
     }
 
-    .albums-side-album-row.active
-    .albums-album-main svg {
+    .sidebar-entity-row.active
+    .sidebar-entity-main svg {
       color: var(--brand-green-300);
     }
 
-    .albums-album-more {
+    .sidebar-entity-more {
       flex: 0 0 34px;
       margin: 0 var(--space-2) 0 0;
       opacity: 0;
       transition: opacity var(--ease);
     }
 
-    .albums-side-album-row:hover
-    .albums-album-more,
-    .albums-side-album-row:focus-within
-    .albums-album-more,
-    .albums-side-album-row.active
-    .albums-album-more {
+    .sidebar-entity-row:hover
+    .sidebar-entity-more,
+    .sidebar-entity-row:focus-within
+    .sidebar-entity-more,
+    .sidebar-entity-row.active
+    .sidebar-entity-more {
       opacity: 1;
     }
 
@@ -12504,9 +12536,18 @@
     .notes-shell.editor-open .notes-card-footer { font-size: 11px; }
 
     .notes-meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-    .notes-row-menu, .notes-card-menu, .notes-collection-menu { width: 32px; height: 32px; flex: 0 0 32px; border-radius: 9px; border: 1px solid transparent; background: transparent; color: var(--text-tertiary); display: grid; place-items: center; opacity: 0; transition: opacity var(--ease), background var(--ease), color var(--ease), border-color var(--ease); }
-    .notes-card:hover .notes-card-menu, .notes-card:focus-within .notes-card-menu, .notes-row:hover .notes-row-menu, .notes-row:focus-within .notes-row-menu, .notes-collection-row:hover .notes-collection-menu, .notes-collection-row:focus-within .notes-collection-menu { opacity: 1; }
-    .notes-row-menu:hover, .notes-card-menu:hover, .notes-collection-menu:hover { background: var(--surface-card-hover); border-color: var(--border-default); color: var(--text-primary); }
+    .notes-row-menu, .notes-card-menu { width: 32px; height: 32px; flex: 0 0 32px; border-radius: 9px; border: 1px solid transparent; background: transparent; color: var(--text-tertiary); display: grid; place-items: center; opacity: 0; transition: opacity var(--ease), background var(--ease), color var(--ease), border-color var(--ease); }
+    .notes-card:hover
+    .notes-card-menu,
+    .notes-card:focus-within
+    .notes-card-menu,
+    .notes-row:hover
+    .notes-row-menu,
+    .notes-row:focus-within
+    .notes-row-menu {
+      opacity: 1;
+    }
+    .notes-row-menu:hover, .notes-card-menu:hover { background: var(--surface-card-hover); border-color: var(--border-default); color: var(--text-primary); }
     .notes-chip { min-height: 24px; display: inline-flex; align-items: center; border-radius: 999px; padding: 0 8px; border: 1px solid rgba(255,255,255,.07); background: rgba(255,255,255,.035); color: var(--text-tertiary); font-size: 11px; font-weight: 900; white-space: nowrap; }
     .notes-chip.question, .notes-chip.open { color: var(--amber); background: rgba(212,170,107,.1); border-color: rgba(212,170,107,.24); }
     .notes-chip.hypothesis, .notes-chip.progress { color: var(--purple); background: rgba(141,108,232,.1); border-color: rgba(141,108,232,.24); }
@@ -12543,35 +12584,7 @@
       display: block;
     }
     .notes-row-excerpt { color: var(--text-tertiary); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .notes-collection-row { display: flex; align-items: center; gap: 4px; border-radius: var(--radius-sm); }
-    .notes-collection-link { flex: 1 1 auto; min-width: 0; border: 1px solid transparent; background: transparent; color: var(--text-secondary); border-radius: var(--radius-sm); padding: 10px 8px 10px 11px; display: grid; grid-template-columns: 18px minmax(0,1fr) auto; align-items: center; gap: var(--space-2); text-align: left; }
-    .notes-collection-link svg { width: 16px; height: 16px; color: var(--text-tertiary); }
-    .notes-collection-row:hover .notes-collection-link, .notes-collection-link:hover { background: rgba(255,255,255,.035); color: var(--text-primary); }
-    .notes-collection-row.active .notes-collection-link { background: var(--surface-selected); border-color: rgba(98,217,154,.18); color: var(--text-primary); }
-    .notes-collection-count { min-width: 24px; height: 20px; padding: 0 7px; border-radius: 999px; background: rgba(255,255,255,.05); color: var(--text-tertiary); font-size: 12px; display: inline-flex; align-items: center; justify-content: center; font-weight: 900; }
-    .notes-collection-row .notes-collection-count {
-      margin-left: auto;
-      width: 26px;
-      height: 26px;
-      min-width: 26px;
-      padding: 0;
-      border-radius: 999px;
-      display: inline-grid;
-      place-items: center;
-      background: rgba(212,170,107,.18);
-      color: var(--amber);
-      font-size: 12px;
-      font-weight: 900;
-    }
-    .notes-collection-row:hover .notes-collection-count,
-    .notes-collection-row:focus-within .notes-collection-count {
-      background: rgba(212,170,107,.24);
-      color: var(--amber);
-    }
-    .notes-collection-row.active .notes-collection-count {
-      background: rgba(212,170,107,.22);
-      color: var(--amber);
-    }
+
     .notes-resizer { min-width: 10px; width: 10px; cursor: col-resize; background: linear-gradient(90deg, transparent 0 3px, var(--border-default) 3px 4px, transparent 4px 6px, var(--border-default) 6px 7px, transparent 7px); position: relative; touch-action: none; }
     .notes-resizer::after { content: ""; position: absolute; inset: 0 -3px; }
     .notes-resizer:hover, .notes-resizer.dragging { background: linear-gradient(90deg, transparent 0 3px, rgba(98,217,154,.68) 3px 4px, transparent 4px 6px, rgba(98,217,154,.68) 6px 7px, transparent 7px); }
@@ -17091,6 +17104,7 @@
     const icon = {
       addperson: '<svg width="503" height="505" viewBox="0 0 503 505" fill="none" ><path d="M188.374 305C284.303 305 363.628 379.835 376.536 477.069C378.571 492.399 365.762 505 350.299 505H26.5604C11.0966 505 -1.82302 492.399 0.211725 477.069C13.1197 379.835 92.4446 305 188.374 305Z" fill="currentColor"/><path d="M316.374 128C316.374 198.692 259.066 256 188.374 256C117.681 256 60.3738 198.692 60.3738 128C60.3738 57.3075 117.681 0 188.374 0C259.066 0 316.374 57.3075 316.374 128Z" fill="currentColor"/><path d="M397 192C397 180.402 406.402 171 418 171C429.598 171 439 180.402 439 192V320C439 331.598 429.598 341 418 341C406.402 341 397 331.598 397 320V192Z" fill="currentColor"/><path d="M482 235C493.598 235 503 244.402 503 256C503 267.598 493.598 277 482 277H354C342.402 277 333 267.598 333 256C333 244.402 342.402 235 354 235H482Z" fill="currentColor"/></svg>',
       arrow: '<svg viewBox="0 0 24 24" fill="none" ><path d="M6 12H18M6 12L11 7M6 12L11 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>',
+      archive: '<svg viewBox="0 0 24 24" fill="none"><g id="SVGRepo_iconCarrier"> <path d="M9 12C9 11.5341 9 11.3011 9.07612 11.1173C9.17761 10.8723 9.37229 10.6776 9.61732 10.5761C9.80109 10.5 10.0341 10.5 10.5 10.5H13.5C13.9659 10.5 14.1989 10.5 14.3827 10.5761C14.6277 10.6776 14.8224 10.8723 14.9239 11.1173C15 11.3011 15 11.5341 15 12C15 12.4659 15 12.6989 14.9239 12.8827C14.8224 13.1277 14.6277 13.3224 14.3827 13.4239C14.1989 13.5 13.9659 13.5 13.5 13.5H10.5C10.0341 13.5 9.80109 13.5 9.61732 13.4239C9.37229 13.3224 9.17761 13.1277 9.07612 12.8827C9 12.6989 9 12.4659 9 12Z" stroke="currentColor" stroke-width="1.5"></path> <path d="M20.5 7V13C20.5 16.7712 20.5 18.6569 19.3284 19.8284C18.1569 21 16.2712 21 12.5 21H11.5C7.72876 21 5.84315 21 4.67157 19.8284C3.5 18.6569 3.5 16.7712 3.5 13V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path> <path d="M2 5C2 4.05719 2 3.58579 2.29289 3.29289C2.58579 3 3.05719 3 4 3H20C20.9428 3 21.4142 3 21.7071 3.29289C22 3.58579 22 4.05719 22 5C22 5.94281 22 6.41421 21.7071 6.70711C21.4142 7 20.9428 7 20 7H4C3.05719 7 2.58579 7 2.29289 6.70711C2 6.41421 2 5.94281 2 5Z" stroke="currentColor" stroke-width="1.5"></path> </g></svg>',
       baptism: '<svg fill="currentColor" viewBox="0 0 468.453 468.453" xml:space="preserve"><path d="M290.517,0h-30h-52.581h-30v30v69.021H77.139h-30v30v52.583v30h30h100.797v226.849v30h30h52.581h30v-30V211.604h100.798h30 v-30v-52.583v-30h-30H290.517V30V0L290.517,0z"></path> </g> </g></svg>',
       bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
       birth: `<svg viewBox="0 0 512 512" fill="none"  aria-hidden="true"><path d="M453 15L427 4L405 0L363 4L335 16L322 25L295 56L282 87L278 121L271 147L255 177L234 202L237 216L294 273L300 276L309 275L330 257L359 241L388 233L419 230L441 223L470 205L496 174L507 148L511 126L507 84L488 46L469 26Z" fill="currentColor"/><path d="M114 90L101 105L95 122L94 147L99 172L113 208L129 237L180 304L216 339L250 366L314 403L339 412L365 417L389 416L413 405L424 392L430 377L431 346L420 306L399 264L386 264L365 271L317 304L298 306L279 299L214 235L204 214L206 191L235 153L246 127L248 113L215 95L172 81L138 80Z" fill="currentColor"/><path d="M54 225L30 252L13 282L3 314L0 336L2 375L12 410L25 435L39 454L70 482L94 496L130 508L152 511L192 509L224 500L250 487L284 459L303 434L303 430L254 405L234 426L211 440L182 448L154 448L128 441L111 432L98 422L79 400L64 363L64 322L79 285L106 255L80 206Z" fill="currentColor"/></svg>`,
@@ -18849,21 +18863,82 @@
       );
     }
 
-    function getNotesForPlace(placeId, { projectId = currentProjectId(), includeDeleted = false } = {}) {
-      const linkedNoteIds = new Set((sampleData.links || []).filter(link =>
-        link.projectId === projectId
-        && placeLinkMatches(link, placeId)
-      ).flatMap(link => {
-        if (link.sourceType === 'note') return [link.sourceId];
-        if (link.targetType === 'note') return [link.targetId];
-        if (link.fromType === 'note') return [link.fromId];
-        if (link.toType === 'note') return [link.toId];
-        return [];
-      }));
-      return (sampleData.notes || []).filter(note =>
-        (!note.projectId || note.projectId === projectId)
-        && (includeDeleted || !note.deleted)
-        && (recordHasPlaceReference(note, placeId) || linkedNoteIds.has(note.id))
+    function getNotesForPlace(
+      placeId,
+      {
+        projectId =
+          currentProjectId()
+      } = {}
+    ) {
+      const linkedNoteIds =
+        new Set(
+          (sampleData.links || [])
+            .filter(link =>
+              link.projectId
+                === projectId
+              && placeLinkMatches(
+                link,
+                placeId
+              )
+            )
+            .flatMap(link => {
+              if (
+                link.sourceType
+                  === 'note'
+              ) {
+                return [
+                  link.sourceId
+                ];
+              }
+
+              if (
+                link.targetType
+                  === 'note'
+              ) {
+                return [
+                  link.targetId
+                ];
+              }
+
+              if (
+                link.fromType
+                  === 'note'
+              ) {
+                return [
+                  link.fromId
+                ];
+              }
+
+              if (
+                link.toType
+                  === 'note'
+              ) {
+                return [
+                  link.toId
+                ];
+              }
+
+              return [];
+            })
+        );
+
+      return (
+        sampleData.notes || []
+      ).filter(note =>
+        (
+          !note.projectId
+          || note.projectId
+            === projectId
+        )
+        && (
+          recordHasPlaceReference(
+            note,
+            placeId
+          )
+          || linkedNoteIds.has(
+            note.id
+          )
+        )
       );
     }
 
@@ -23822,14 +23897,15 @@
     function getNotesForPerson(
       personId,
       {
-        includeArchived = false,
-        includeDeleted = false
+        includeArchived = false
       } = {}
     ) {
       const person =
         getPerson(personId);
 
-      if (!person) return [];
+      if (!person) {
+        return [];
+      }
 
       const inspectorNoteIds =
         new Set(
@@ -23840,17 +23916,16 @@
 
       return sampleData.notes
         .filter(note =>
-          includeDeleted
-          || !note.deleted
-        )
-        .filter(note =>
           includeArchived
           || !note.archived
         )
         .filter(note =>
-          inspectorNoteIds.has(note.id)
+          inspectorNoteIds.has(
+            note.id
+          )
           || (
-            note.linkedPersonIds || []
+            note.linkedPersonIds
+            || []
           ).includes(person.id)
           || resourceLabelsIncludePerson(
             note.linkedPeople,
@@ -23858,9 +23933,13 @@
           )
         )
         .sort(
-          (a, b) =>
-            Number(b.sortRank || 0)
-            - Number(a.sortRank || 0)
+          (first, second) =>
+            Number(
+              second.sortRank || 0
+            )
+            - Number(
+                first.sortRank || 0
+              )
         );
     }
 
@@ -39708,28 +39787,49 @@
                     class="albums-side-album-row ${
                       isActive ? 'active' : ''
                     }">
+            <div
+              class="
+                sidebar-entity-row
+                ${isActive ? 'active' : ''}
+              ">
 
-                    <button
-                      class="albums-album-main"
-                      type="button"
-                      data-album-open="${escapeHtml(album.id)}"
-                      title="${escapeHtml(album.name)}">
-                      ${icon.folder}
+              <button
+                class="sidebar-entity-main"
+                type="button"
+                data-album-open="${escapeHtml(
+                  album.id
+                )}"
+                title="${escapeHtml(
+                  album.name
+                )}">
 
-                      <span class="albums-album-name">
-                        ${escapeHtml(album.name)}
-                      </span>
-                    </button>
+                ${icon.folder}
 
-                    <button
-                      class="more-button albums-album-more"
-                      type="button"
-                      data-album-menu="${escapeHtml(album.id)}"
-                      aria-label="Actions for ${escapeHtml(album.name)}"
-                      aria-haspopup="menu">
-                      ${icon.more}
-                    </button>
-                  </div>`;
+                <span class="sidebar-entity-name">
+                  ${escapeHtml(
+                    album.name
+                  )}
+                </span>
+              </button>
+
+              <button
+                class="
+                  more-button
+                  sidebar-entity-more
+                "
+                type="button"
+                data-album-menu="${escapeHtml(
+                  album.id
+                )}"
+                aria-label="Actions for ${escapeHtml(
+                  album.name
+                )}"
+                aria-haspopup="menu">
+
+                ${icon.more}
+              </button>
+            </div>
+                  `;
               }).join('')}
                 </div>
               </div>
@@ -47495,12 +47595,29 @@
       { id:'n6', type:'note', title:'Surname origin notes', excerpt:'Short notes about possible origin and spelling variants of the Whiskerfield surname.', body:'Whiskerfield spelling variants may appear differently in English records. Need to search for Whiskerfield, Whiskerfield, Whiskerfield, and place-name variants.', status:'Draft', collectionId:'nc-pawford', caseId:null, pinned:false, archived:false, deleted:false, updated:'Jun 15, 2026', created:'Jun 15, 2026', sortRank:4, tags:['surname','variants'], linkedPeople:['Barnaby Whiskerfield'], linkedSources:['online_extract_pawford_records.pdf'], linkedPlaces:['Pawford, England'], relatedNotes:[], evidence:[], tasks:[{text:'Add spelling variants to search plan',done:false}] },
       { id:'n7', type:'case', title:'Case: Unknown father of Daisy Milkpaw', excerpt:'Research case tracking evidence, questions, and tasks around Daisy unknown father.', body:'Working conclusion\nThere is not enough evidence yet to identify Daisy father. The strongest current lead is the Whiskerfield household in Pawford.', status:'In progress', collectionId:'nc-pawford', caseId:null, pinned:true, archived:false, deleted:false, updated:'Today', created:'Jun 22, 2026', sortRank:10, tags:['case','unknown-father'], linkedPeople:['Daisy Milkpaw','Barnaby Whiskerfield'], linkedSources:['pawford_household_register_1946.pdf','pawford_household_1940_scan.jpg'], linkedPlaces:['Pawford, England'], relatedNotes:['n1','n2','n3'], question:'Who was the father of Daisy Milkpaw?', confidence:'Low', conclusion:'Current evidence suggests a possible Pawford Whiskerfield connection, but no relationship should be treated as proven yet.', evidence:[{title:'Birth record extract',meta:'Supports Daisy birth fact',confidence:'High'},{title:'Household record 1940',meta:'Possible context evidence',confidence:'Low'}], tasks:[{text:'Review father line in birth record',done:false},{text:'Search Pawford register continuation for same household',done:false},{text:'Write a short evidence summary',done:true}] },
       { id:'n8', type:'note', title:'Unsorted capture: old portrait clue', excerpt:'Quick capture note waiting for collection assignment.', body:'Old portrait may show someone from the Whiskerfield line. Need to compare with family album captions and ask Luna.', status:'Draft', collectionId:null, caseId:null, pinned:false, archived:false, deleted:false, updated:'Jun 10, 2026', created:'Jun 10, 2026', sortRank:3, tags:['inbox','photo'], linkedPeople:[], linkedSources:[], linkedPlaces:[], relatedNotes:[], evidence:[], tasks:[{text:'Move to a collection after review',done:false}] },
-      { id:'n9', type:'note', title:'Archived GEDCOM cleanup notes', excerpt:'Older cleanup notes kept for reference.', body:'Archived notes from a previous GEDCOM cleanup pass.', status:'Archived', collectionId:'nc-archive', caseId:null, pinned:false, archived:true, deleted:false, updated:'May 14, 2026', created:'May 10, 2026', sortRank:2, tags:['gedcom'], linkedPeople:[], linkedSources:[], linkedPlaces:[], relatedNotes:[], evidence:[], tasks:[] },
-      { id:'n10', type:'question', title:'Deleted placeholder question', excerpt:'This deleted item demonstrates Recently deleted behavior.', body:'This note is in Recently deleted.', status:'Deleted', collectionId:null, caseId:null, pinned:false, archived:false, deleted:true, updated:'Apr 28, 2026', created:'Apr 28, 2026', sortRank:1, tags:[], linkedPeople:[], linkedSources:[], linkedPlaces:[], relatedNotes:[], evidence:[], tasks:[] }
+      { id:'n9', type:'note', title:'Archived GEDCOM cleanup notes', excerpt:'Older cleanup notes kept for reference.', body:'Archived notes from a previous GEDCOM cleanup pass.', status:'Archived', collectionId:'nc-archive', caseId:null, pinned:false, archived:true, deleted:false, updated:'May 14, 2026', created:'May 10, 2026', sortRank:2, tags:['gedcom'], linkedPeople:[], linkedSources:[], linkedPlaces:[], relatedNotes:[], evidence:[], tasks:[] }
     ];
 
     function renderNotes() {
-      if (state.notesView === 'inbox' || state.notesView === 'questions') state.notesView = 'all';
+      const validNotesViews =
+        new Set([
+          'all',
+          'pinned',
+          'cases',
+          'archived',
+          'collection'
+        ]);
+
+      if (
+        !validNotesViews.has(
+          state.notesView
+        )
+      ) {
+        state.notesView = 'all';
+
+        state.notesActiveCollectionId =
+          null;
+      }
       workspace.classList.remove('no-sidebar');
       renderNotesSidebar();
       const list = filteredNotes();
@@ -47514,14 +47631,149 @@
     }
 
     function renderNotesSidebar() {
-      const item = (view,label,svg) => `<button class="side-link ${state.notesView === view ? 'active' : ''}" type="button" data-notes-view="${view}">${svg}<span>${label}</span></button>`;
-      const collectionRows = sampleData.noteCollections.map(c => {
-        const active = state.notesView === 'collection' && state.notesActiveCollectionId === c.id;
-        const count = sampleData.notes.filter(n => isRegularNote(n) && !n.deleted && !n.archived && n.collectionId === c.id).length;
-        return `<div class="notes-collection-row ${active ? 'active' : ''}"><button class="notes-collection-link" type="button" data-notes-collection="${c.id}">${icon.folder}<span>${escapeHtml(c.name)}</span><span class="notes-collection-count">${count}</span></button><button class="notes-collection-menu" type="button" data-notes-collection-menu="${c.id}" aria-haspopup="menu" aria-label="Collection actions">${icon.more}</button></div>`;
-      }).join('');
-      sidebar.innerHTML = `<div class="button-stack"><button class="button primary full" type="button" id="notesNewNote">${icon.plus} New note</button><button class="button secondary full" type="button" id="notesNewCollection">${icon.folder} New collection</button></div><div><div class="side-section-title">Notes</div><div class="side-nav">${item('all','All notes',icon.note)}${item('recent','Recent',icon.clock)}${item('pinned','Favourites',icon.star)}${item('cases','Cases',icon.file)}</div></div><div><div class="side-section-title with-add"><span>Collections</span><button class="side-add-button" type="button" id="notesAddCollection" aria-label="Create collection">${icon.plus}</button></div><div class="side-nav">${collectionRows}</div></div><div class="sidebar-spacer"></div><div class="side-nav">${item('archived','Archived',icon.file)}${item('deleted','Recently deleted',icon.trash)}</div>`;
-      bindNotesSidebarControls(sidebar);
+      const item = (
+        view,
+        label,
+        svg
+      ) => `
+        <button
+          class="side-link ${
+            state.notesView === view
+              ? 'active'
+              : ''
+          }"
+          type="button"
+          data-notes-view="${view}">
+          ${svg}
+          <span>${label}</span>
+        </button>
+      `;
+
+      const collectionRows =
+        sampleData.noteCollections
+          .map(collection => {
+            const active =
+              state.notesView
+                === 'collection'
+              && state
+                .notesActiveCollectionId
+                === collection.id;
+
+            return `
+              <div
+                class="
+                  sidebar-entity-row
+                  ${active ? 'active' : ''}
+                ">
+
+                <button
+                  class="sidebar-entity-main"
+                  type="button"
+                  data-notes-collection="${escapeHtml(
+                    collection.id
+                  )}"
+                  title="${escapeHtml(
+                    collection.name
+                  )}">
+
+                  ${icon.folder}
+
+                  <span
+                    class="
+                      sidebar-entity-name
+                    ">
+                    ${escapeHtml(
+                      collection.name
+                    )}
+                  </span>
+                </button>
+
+                <button
+                  class="
+                    more-button
+                    sidebar-entity-more
+                  "
+                  type="button"
+                  data-notes-collection-menu="${escapeHtml(
+                    collection.id
+                  )}"
+                  aria-label="Actions for ${escapeHtml(
+                    collection.name
+                  )}"
+                  aria-haspopup="menu">
+
+                  ${icon.more}
+                </button>
+              </div>
+            `;
+          })
+          .join('');
+
+      sidebar.innerHTML = `
+        <nav
+          class="notes-sidebar"
+          aria-label="Notes navigation">
+
+          <div>
+            <div class="side-section-title">
+              Notes
+            </div>
+
+            <div class="side-nav">
+              ${item(
+                'all',
+                'All notes',
+                icon.note
+              )}
+
+              ${item(
+                'pinned',
+                'Favourites',
+                icon.star
+              )}
+
+              ${item(
+                'cases',
+                'Cases',
+                icon.file
+              )}
+
+              ${item(
+                'archived',
+                'Archived',
+                icon.archive
+              )}
+            </div>
+          </div>
+
+          <div>
+            <div
+              class="
+                side-section-title
+                with-add
+              ">
+              <span>Collections</span>
+
+              <button
+                class="side-add-button"
+                type="button"
+                id="notesAddCollection"
+                aria-label="Create collection"
+                title="Create collection">
+                ${icon.plus}
+              </button>
+            </div>
+
+            <div class="side-nav">
+              ${collectionRows}
+            </div>
+          </div>
+        </nav>
+      `;
+
+      bindNotesSidebarControls(
+        sidebar
+      );
     }
 
     function renderNotesPersonFilterBar() {
@@ -47579,11 +47831,223 @@
       `;
     }
 
-    function renderNotesBrowserPane(list) {
-      const isCases = state.notesView === 'cases';
-      const typeOptions = [['all','All types'],['note','Notes'],['question','Questions'],['hypothesis','Hypotheses'],['source','Source analysis'],['interview','Interviews'],['story','Stories']].map(([id,label]) => `<option value="${id}" ${state.notesTypeFilter === id ? 'selected' : ''}>${label}</option>`).join('');
-      const headerAction = isCases ? `<div class="notes-browser-actions"><button class="button primary" type="button" id="notesNewCaseButton">${icon.plus} New case</button></div>` : '';
-      return `<section class="notes-browser-pane" aria-label="Notes browser"><header class="notes-browser-header"><div class="notes-browser-top"><div class="notes-browser-title"><h1>${escapeHtml(notesTitle())}</h1><p>${notesBrowserSubtitle(list)}</p></div>${headerAction}</div>${renderNotesPersonFilterBar()}<div class="notes-toolbar-line"><label class="app-search-field" aria-label="Search notes">${icon.search}<input id="notesSearch" type="search" placeholder="Search ${isCases ? 'cases' : 'notes'}..." value="${escapeHtml(state.notesSearch)}"></label>${isCases ? '' : `<select class="notes-select" id="notesTypeFilter" aria-label="Filter by type">${typeOptions}</select>`}<select class="notes-select" id="notesSort" aria-label="Sort notes"><option value="updated" ${state.notesSort === 'updated' ? 'selected' : ''}>Sort: Updated</option><option value="title" ${state.notesSort === 'title' ? 'selected' : ''}>Sort: Title</option><option value="created" ${state.notesSort === 'created' ? 'selected' : ''}>Sort: Created</option></select><div class="notes-view-toggle" role="group" aria-label="Notes view mode"><button class="${state.notesViewMode === 'cards' ? 'active' : ''}" type="button" data-notes-view-mode="cards" aria-label="Cards view" aria-pressed="${state.notesViewMode === 'cards'}">${icon.grid}</button><button class="${state.notesViewMode === 'list' ? 'active' : ''}" type="button" data-notes-view-mode="list" aria-label="List view" aria-pressed="${state.notesViewMode === 'list'}">${icon.list}</button></div></div></header><div class="notes-browser-scroll">${list.length ? (state.notesViewMode === 'list' ? renderNotesListView(list) : renderNotesCardsView(list)) : renderNotesBrowserEmpty()}</div></section>`;
+    function renderNotesBrowserPane(
+      list
+    ) {
+      const isCases =
+        state.notesView === 'cases';
+
+      const typeOptions = [
+        ['all', 'All types'],
+        ['note', 'Notes'],
+        ['question', 'Questions'],
+        ['hypothesis', 'Hypotheses'],
+        ['source', 'Source analysis'],
+        ['interview', 'Interviews'],
+        ['story', 'Stories']
+      ]
+        .map(
+          ([id, label]) => `
+            <option
+              value="${id}"
+              ${
+                state.notesTypeFilter
+                  === id
+                  ? 'selected'
+                  : ''
+              }>
+              ${label}
+            </option>
+          `
+        )
+        .join('');
+
+      const createAction = `
+        <div class="notes-browser-actions">
+          <button
+            class="button primary"
+            type="button"
+            id="${
+              isCases
+                ? 'notesNewCaseButton'
+                : 'notesNewNoteButton'
+            }">
+            ${icon.plus}
+            ${
+              isCases
+                ? 'New case'
+                : 'New note'
+            }
+          </button>
+        </div>
+      `;
+
+      return `
+        <section
+          class="notes-browser-pane"
+          aria-label="Notes browser">
+
+          <header
+            class="notes-browser-header">
+
+            <div
+              class="notes-browser-top">
+
+              <div
+                class="notes-browser-title">
+                <h1>
+                  ${escapeHtml(
+                    notesTitle()
+                  )}
+                </h1>
+
+                <p>
+                  ${escapeHtml(
+                    notesBrowserSubtitle(
+                      list
+                    )
+                  )}
+                </p>
+              </div>
+
+              ${createAction}
+            </div>
+
+            ${renderNotesPersonFilterBar()}
+
+            <div
+              class="notes-toolbar-line">
+
+              <label
+                class="app-search-field"
+                aria-label="Search notes">
+                ${icon.search}
+
+                <input
+                  id="notesSearch"
+                  type="search"
+                  placeholder="Search ${
+                    isCases
+                      ? 'cases'
+                      : 'notes'
+                  }..."
+                  value="${escapeHtml(
+                    state.notesSearch
+                  )}">
+              </label>
+
+              ${
+                isCases
+                  ? ''
+                  : `
+                    <select
+                      class="notes-select"
+                      id="notesTypeFilter"
+                      aria-label="Filter by type">
+                      ${typeOptions}
+                    </select>
+                  `
+              }
+
+              <select
+                class="notes-select"
+                id="notesSort"
+                aria-label="Sort notes">
+
+                <option
+                  value="updated"
+                  ${
+                    state.notesSort
+                      === 'updated'
+                      ? 'selected'
+                      : ''
+                  }>
+                  Sort: Updated
+                </option>
+
+                <option
+                  value="title"
+                  ${
+                    state.notesSort
+                      === 'title'
+                      ? 'selected'
+                      : ''
+                  }>
+                  Sort: Title
+                </option>
+
+                <option
+                  value="created"
+                  ${
+                    state.notesSort
+                      === 'created'
+                      ? 'selected'
+                      : ''
+                  }>
+                  Sort: Created
+                </option>
+              </select>
+
+              <div
+                class="notes-view-toggle"
+                role="group"
+                aria-label="Notes view mode">
+
+                <button
+                  class="${
+                    state.notesViewMode
+                      === 'cards'
+                      ? 'active'
+                      : ''
+                  }"
+                  type="button"
+                  data-notes-view-mode="cards"
+                  aria-label="Cards view"
+                  aria-pressed="${
+                    state.notesViewMode
+                      === 'cards'
+                  }">
+                  ${icon.grid}
+                </button>
+
+                <button
+                  class="${
+                    state.notesViewMode
+                      === 'list'
+                      ? 'active'
+                      : ''
+                  }"
+                  type="button"
+                  data-notes-view-mode="list"
+                  aria-label="List view"
+                  aria-pressed="${
+                    state.notesViewMode
+                      === 'list'
+                  }">
+                  ${icon.list}
+                </button>
+              </div>
+            </div>
+          </header>
+
+          <div class="notes-browser-scroll">
+            ${
+              list.length
+                ? (
+                    state.notesViewMode
+                      === 'list'
+                      ? renderNotesListView(
+                          list
+                        )
+                      : renderNotesCardsView(
+                          list
+                        )
+                  )
+                : renderNotesBrowserEmpty()
+            }
+          </div>
+        </section>
+      `;
     }
 
     function notesBrowserSubtitle(list) {
@@ -47623,7 +48087,11 @@
 
     function renderCaseBrowserCard(note) {
       const selected = note.id === state.selectedNoteId;
-      const relatedCount = sampleData.notes.filter(item => item.caseId === note.id && !item.deleted).length;
+      const relatedCount =
+        sampleData.notes.filter(
+          item =>
+            item.caseId === note.id
+        ).length;
       const openTasks = (note.tasks || []).filter(t => !t.done).length;
       return `<article class="notes-card ${selected ? 'active' : ''}" role="button" tabindex="0" aria-selected="${selected}" data-note-row="${note.id}"><div class="notes-card-header"><div class="notes-card-title">${note.pinned ? `<span class="pin">${icon.star}</span>` : ''}${escapeHtml(note.title.replace('Case: ', ''))}</div><button class="notes-card-menu" type="button" aria-haspopup="menu" data-note-menu="${note.id}" aria-label="More actions">${icon.more}</button></div><div class="notes-card-excerpt">${escapeHtml(note.question || note.excerpt || 'Research case')}</div><div class="notes-meta-row"><span class="notes-chip hypothesis">Research case</span><span class="notes-chip ${noteStatusClass(note.status)}">${escapeHtml(note.status)}</span><span class="notes-chip">Confidence: ${escapeHtml(note.confidence || 'Low')}</span></div><div class="notes-card-footer"><span>${relatedCount} related notes</span><span>${openTasks} open tasks - ${escapeHtml(note.updated)}</span></div></article>`;
     }
@@ -47639,14 +48107,75 @@
 
     function renderCaseListRow(note) {
       const selected = note.id === state.selectedNoteId;
-      return `<article class="notes-row ${selected ? 'active' : ''}" role="button" tabindex="0" aria-selected="${selected}" data-note-row="${note.id}"><div class="notes-row-main"><div class="notes-row-title">${note.pinned ? `<span class="pin">${icon.star}</span>` : ''}${escapeHtml(note.title.replace('Case: ', ''))}</div><div class="notes-row-excerpt">${escapeHtml(note.question || note.excerpt || '')}</div></div><span class="notes-chip hypothesis">Case</span><span class="notes-chip">${sampleData.notes.filter(item => item.caseId === note.id && !item.deleted).length} related</span><span class="notes-chip ${noteStatusClass(note.status)}">${escapeHtml(note.updated)}</span><button class="notes-row-menu" type="button" aria-haspopup="menu" data-note-menu="${note.id}" aria-label="More actions">${icon.more}</button></article>`;
+      return `<article class="notes-row ${selected ? 'active' : ''}" role="button" tabindex="0" aria-selected="${selected}" data-note-row="${note.id}"><div class="notes-row-main"><div class="notes-row-title">${note.pinned ? `<span class="pin">${icon.star}</span>` : ''}${escapeHtml(note.title.replace('Case: ', ''))}</div><div class="notes-row-excerpt">${escapeHtml(note.question || note.excerpt || '')}</div></div><span class="notes-chip hypothesis">Case</span><span class="notes-chip">${
+        sampleData.notes.filter(item => item.caseId === note.id).length
+        } related</span><span class="notes-chip ${noteStatusClass(note.status)}">${escapeHtml(note.updated)}</span><button class="notes-row-menu" type="button" aria-haspopup="menu" data-note-menu="${note.id}" aria-label="More actions">${icon.more}</button></article>`;
     }
 
     function renderNotesBrowserEmpty() {
-      if (state.notesSearch.trim()) return `<div class="notes-empty"><div class="notes-empty-card"><h2>No results</h2><p>Try a different search term or clear the search.</p><button class="button secondary" type="button" id="notesClearSearch">Clear search</button></div></div>`;
-      const copy = { cases:['No research cases','Create a case to track a professional research question.'], archived:['No archived notes','Archived notes will appear here.'], deleted:['No deleted notes','Deleted notes will appear here before permanent removal.'] }[state.notesView] || ['No notes here','Create a note to start collecting research thoughts.'];
-      const action = state.notesView === 'cases' ? `<button class="button primary" type="button" id="notesEmptyNewCase">${icon.plus} Create case</button>` : '';
-      return `<div class="notes-empty"><div class="notes-empty-card"><h2>${copy[0]}</h2><p>${copy[1]}</p>${action}</div></div>`;
+      if (
+        state.notesSearch.trim()
+      ) {
+        return `
+          <div class="notes-empty">
+            <div
+              class="notes-empty-card">
+              <h2>No results</h2>
+
+              <p>
+                Try a different search
+                term or clear the search.
+              </p>
+
+              <button
+                class="button secondary"
+                type="button"
+                id="notesClearSearch">
+                Clear search
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      const copy = {
+        cases: [
+          'No research cases',
+          'Create a case to track a professional research question.'
+        ],
+
+        archived: [
+          'No archived notes',
+          'Archived notes will appear here.'
+        ]
+      }[state.notesView]
+      || [
+        'No notes here',
+        'Create a note to start collecting research thoughts.'
+      ];
+
+      const action =
+        state.notesView === 'cases'
+          ? `
+            <button
+              class="button primary"
+              type="button"
+              id="notesEmptyNewCase">
+              ${icon.plus}
+              Create case
+            </button>
+          `
+          : '';
+
+      return `
+        <div class="notes-empty">
+          <div class="notes-empty-card">
+            <h2>${copy[0]}</h2>
+            <p>${copy[1]}</p>
+            ${action}
+          </div>
+        </div>
+      `;
     }
 
     function renderNotesRightPanel(note) {
@@ -47659,7 +48188,26 @@
 
 
     function renderNoteEditorContent(note) {
-      return `<article class="notes-editor-card"><header class="notes-editor-header"><div class="notes-editor-topline"><span class="notes-save-state" id="notesSaveState">${escapeHtml(state.notesSavedStatus || 'Saved')}</span><div class="notes-editor-actions"><button class="notes-icon-button" type="button" id="notesToggleRight" aria-expanded="true" aria-controls="notesRightPane" aria-label="Collapse editor">${icon.collapse}</button><button class="notes-icon-button ${note.pinned ? 'active' : ''}" type="button" id="notesPinButton" aria-label="Toggle favourite">${icon.star}</button>${note.deleted ? `<button class="button secondary" type="button" id="notesRestoreButton">Restore</button>` : `<button class="button secondary" type="button" id="notesArchiveButton">${note.archived ? 'Unarchive' : 'Archive'}</button><button class="button danger" type="button" id="notesDeleteButton">${icon.trash} Delete</button>`}</div></div><input class="notes-title-input" id="notesTitleInput" value="${escapeHtml(note.title)}" placeholder="Untitled note" aria-label="Note title">${renderNotesMetaStrip(note)}</header>${renderNotesToolbar()}<div class="notes-editor-body"><textarea class="notes-body-input" id="notesBodyInput" aria-label="Note body">${escapeHtml(note.body)}</textarea>${renderEvidence(note)}<div class="notes-block-list">${renderContextBlocks(note)}</div></div></article>`;
+      return `<article class="notes-editor-card"><header class="notes-editor-header"><div class="notes-editor-topline"><span class="notes-save-state" id="notesSaveState">${escapeHtml(state.notesSavedStatus || 'Saved')}</span><div class="notes-editor-actions"><button class="notes-icon-button" type="button" id="notesToggleRight" aria-expanded="true" aria-controls="notesRightPane" aria-label="Collapse editor">${icon.collapse}</button><button class="notes-icon-button ${note.pinned ? 'active' : ''}" type="button" id="notesPinButton" aria-label="Toggle favourite">${icon.star}</button>
+        <button
+          class="button secondary"
+          type="button"
+          id="notesArchiveButton">
+          ${
+            note.archived
+              ? 'Unarchive'
+              : 'Archive'
+          }
+        </button>
+
+        <button
+          class="button danger"
+          type="button"
+          id="notesDeleteButton">
+          ${icon.trash}
+          Delete
+        </button>
+        </div></div><input class="notes-title-input" id="notesTitleInput" value="${escapeHtml(note.title)}" placeholder="Untitled note" aria-label="Note title">${renderNotesMetaStrip(note)}</header>${renderNotesToolbar()}<div class="notes-editor-body"><textarea class="notes-body-input" id="notesBodyInput" aria-label="Note body">${escapeHtml(note.body)}</textarea>${renderEvidence(note)}<div class="notes-block-list">${renderContextBlocks(note)}</div></div></article>`;
     }
 
     function renderNotesMetaStrip(note) {
@@ -47678,18 +48226,106 @@
     function renderContextBlocks(note) { return [renderBlock('people','Linked people',`${note.linkedPeople?.length || 0} people`,renderLinkedRows(note.linkedPeople || [],'person'),`<button class="button secondary" type="button" id="notesLinkPersonBlock">${icon.plus} Link person</button>`),renderBlock('sources','Sources & files',`${note.linkedSources?.length || 0} items`,renderLinkedRows(note.linkedSources || [],'source'),`<button class="button secondary" type="button" id="notesLinkSourceBlock">${icon.plus} Link source/file</button>`),renderBlock('places','Places',`${note.linkedPlaces?.length || 0} places`,renderLinkedRows(note.linkedPlaces || [],'place'),`<button class="button secondary" type="button" data-toast="Place linking will be implemented with the Places tab.">${icon.plus} Link place</button>`),renderBlock('related','Related notes',`${note.relatedNotes?.length || 0} notes`,renderRelatedNotes(note),`<button class="button secondary" type="button" data-toast="Related note search is simulated.">${icon.plus} Link note</button>`),renderBlock('tasks','Tasks',`${(note.tasks || []).filter(t => !t.done).length} open`,renderTasks(note),`<button class="button secondary" type="button" id="notesAddTask">${icon.plus} Add task</button>`),renderBlock('info','Note info',note.updated,renderNoteInfo(note),'')].join(''); }
     function renderBlock(id,title,meta,content,action='') { const open = state.notesOpenBlocks[id] !== false; return `<section class="notes-block"><button class="notes-block-toggle" type="button" aria-expanded="${open}" aria-controls="notes-block-${id}" data-notes-block="${id}"><span class="left"><span class="${open ? 'icon-rotate-down' : ''}">${icon.chevron}</span><span>${escapeHtml(title)}</span></span><span class="meta">${escapeHtml(meta)}</span></button>${open ? `<div class="notes-block-body" id="notes-block-${id}">${content || '<span class="muted">Nothing linked yet.</span>'}${action ? `<div>${action}</div>` : ''}</div>` : ''}</section>`; }
     function renderLinkedRows(items,type) { return items.length ? items.map(item => `<div class="notes-linked-row"><div><strong>${escapeHtml(item)}</strong><span>${type === 'person' ? 'Person record link' : type === 'source' ? 'Archive / source link' : 'Place link'}</span></div><button class="notes-tool-button" type="button" data-toast="Open linked item is simulated.">Open</button></div>`).join('') : '<span class="muted">Nothing linked yet.</span>'; }
-    function renderRelatedNotes(note) { const rows = (note.type === 'case' ? sampleData.notes.filter(n => n.caseId === note.id && !n.deleted) : (note.relatedNotes || []).map(id => sampleData.notes.find(n => n.id === id)).filter(Boolean)); return rows.length ? rows.map(n => `<div class="notes-linked-row"><div><strong>${escapeHtml(n.title)}</strong><span>${noteTypeLabel(n.type)} - ${escapeHtml(n.updated)}</span></div><button class="notes-tool-button" type="button" data-select-note="${n.id}">Open</button></div>`).join('') : '<span class="muted">No related notes linked.</span>'; }
+    function renderRelatedNotes(
+      note
+    ) {
+      const rows =
+        note.type === 'case'
+          ? sampleData.notes.filter(
+              item =>
+                item.caseId === note.id
+            )
+          : (
+              note.relatedNotes || []
+            )
+              .map(id =>
+                sampleData.notes.find(
+                  item =>
+                    item.id === id
+                )
+              )
+              .filter(Boolean);
+
+      return rows.length
+        ? rows
+            .map(item => `
+              <div
+                class="notes-linked-row">
+
+                <div>
+                  <strong>
+                    ${escapeHtml(
+                      item.title
+                    )}
+                  </strong>
+
+                  <span>
+                    ${noteTypeLabel(
+                      item.type
+                    )}
+                    -
+                    ${escapeHtml(
+                      item.updated
+                    )}
+                  </span>
+                </div>
+
+                <button
+                  class="
+                    notes-tool-button
+                  "
+                  type="button"
+                  data-select-note="${
+                    escapeHtml(
+                      item.id
+                    )
+                  }">
+                  Open
+                </button>
+              </div>
+            `)
+            .join('')
+        : `
+          <span class="muted">
+            No related notes linked.
+          </span>
+        `;
+    }
     function renderTasks(note) { return (note.tasks || []).length ? note.tasks.map((task,i) => `<label class="notes-task-row ${task.done ? 'done' : ''}"><input type="checkbox" data-notes-task="${i}" ${task.done ? 'checked' : ''}><span>${escapeHtml(task.text)}</span></label>`).join('') : '<span class="muted">No tasks yet.</span>'; }
     function renderNoteInfo(note) { return `<div class="archive-kv"><span>Created</span><span>${escapeHtml(note.created)}</span></div><div class="archive-kv"><span>Updated</span><span>${escapeHtml(note.updated)}</span></div><div class="archive-kv"><span>Collection</span><span>${escapeHtml(note.collectionId ? collectionName(note.collectionId) : 'No collection')}</span></div><div class="archive-kv"><span>Type</span><span>${escapeHtml(noteTypeLabel(note.type))}</span></div>`; }
 
     function renderCaseEditorContent(note) {
-      return `<article class="notes-editor-card"><header class="notes-editor-header"><div class="notes-editor-topline"><span class="notes-save-state" id="notesSaveState">${escapeHtml(state.notesSavedStatus || 'Saved')}</span><div class="notes-editor-actions"><button class="notes-icon-button" type="button" id="notesToggleRight" aria-expanded="true" aria-controls="notesRightPane" aria-label="Collapse case detail">${icon.collapse}</button><button class="notes-icon-button ${note.pinned ? 'active' : ''}" type="button" id="notesPinButton" aria-label="Toggle favourite">${icon.star}</button>${note.deleted ? `<button class="button secondary" type="button" id="notesRestoreButton">Restore</button>` : `<button class="button secondary" type="button" id="notesArchiveButton">${note.archived ? 'Unarchive' : 'Archive'}</button><button class="button danger" type="button" id="notesDeleteButton">${icon.trash} Delete</button>`}</div></div><input class="notes-title-input" id="notesTitleInput" value="${escapeHtml(note.title.replace('Case: ', ''))}"><div class="notes-meta-strip"><span class="notes-meta-pill notes-tag">Research case</span><select class="notes-select" id="notesStatusSelect"><option ${note.status === 'Open' ? 'selected' : ''}>Open</option><option ${note.status === 'In progress' ? 'selected' : ''}>In progress</option><option ${note.status === 'Probably solved' ? 'selected' : ''}>Probably solved</option><option ${note.status === 'Solved' ? 'selected' : ''}>Solved</option><option ${note.status === 'Archived' ? 'selected' : ''}>Archived</option></select><select class="notes-select" id="notesCaseConfidence"><option ${note.confidence === 'Low' ? 'selected' : ''}>Low</option><option ${note.confidence === 'Medium' ? 'selected' : ''}>Medium</option><option ${note.confidence === 'High' ? 'selected' : ''}>High</option></select>${(note.tags||[]).map(t => `<span class="notes-meta-pill notes-tag">#${escapeHtml(t)}</span>`).join('')}</div></header>${renderNotesToolbar()}<div class="notes-editor-body"><div class="notes-case-card"><h3>Research question</h3><textarea class="notes-case-textarea" id="notesCaseQuestion">${escapeHtml(note.question || note.excerpt || '')}</textarea><h3>Working conclusion</h3><textarea class="notes-case-textarea" id="notesCaseConclusion">${escapeHtml(note.conclusion || note.body || '')}</textarea></div><div class="notes-case-grid"><article class="notes-case-card"><h3>Evidence summary</h3>${renderEvidence(note) || '<span class="muted">No evidence blocks yet.</span>'}<button class="button secondary" type="button" id="notesAddEvidence">${icon.plus} Add evidence block</button></article><article class="notes-case-card"><h3>Open tasks</h3>${renderTasks(note)}<button class="button secondary" type="button" id="notesAddTask">${icon.plus} Add task</button></article><article class="notes-case-card"><h3>Related case notes</h3>${renderRelatedNotes(note)}</article><article class="notes-case-card"><h3>Linked context</h3>${renderLinkedRows(note.linkedPeople || [], 'person')}${renderLinkedRows(note.linkedSources || [], 'source')}</article></div><div class="notes-block-list">${renderContextBlocks(note)}</div></div></article>`;
+      return `<article class="notes-editor-card"><header class="notes-editor-header"><div class="notes-editor-topline"><span class="notes-save-state" id="notesSaveState">${escapeHtml(state.notesSavedStatus || 'Saved')}</span><div class="notes-editor-actions"><button class="notes-icon-button" type="button" id="notesToggleRight" aria-expanded="true" aria-controls="notesRightPane" aria-label="Collapse case detail">${icon.collapse}</button><button class="notes-icon-button ${note.pinned ? 'active' : ''}" type="button" id="notesPinButton" aria-label="Toggle favourite">${icon.star}</button>
+        <button
+          class="button secondary"
+          type="button"
+          id="notesArchiveButton">
+          ${
+            note.archived
+              ? 'Unarchive'
+              : 'Archive'
+          }
+        </button>
+
+        <button
+          class="button danger"
+          type="button"
+          id="notesDeleteButton">
+          ${icon.trash}
+          Delete
+        </button>
+        </div></div><input class="notes-title-input" id="notesTitleInput" value="${escapeHtml(note.title.replace('Case: ', ''))}"><div class="notes-meta-strip"><span class="notes-meta-pill notes-tag">Research case</span><select class="notes-select" id="notesStatusSelect"><option ${note.status === 'Open' ? 'selected' : ''}>Open</option><option ${note.status === 'In progress' ? 'selected' : ''}>In progress</option><option ${note.status === 'Probably solved' ? 'selected' : ''}>Probably solved</option><option ${note.status === 'Solved' ? 'selected' : ''}>Solved</option><option ${note.status === 'Archived' ? 'selected' : ''}>Archived</option></select><select class="notes-select" id="notesCaseConfidence"><option ${note.confidence === 'Low' ? 'selected' : ''}>Low</option><option ${note.confidence === 'Medium' ? 'selected' : ''}>Medium</option><option ${note.confidence === 'High' ? 'selected' : ''}>High</option></select>${(note.tags||[]).map(t => `<span class="notes-meta-pill notes-tag">#${escapeHtml(t)}</span>`).join('')}</div></header>${renderNotesToolbar()}<div class="notes-editor-body"><div class="notes-case-card"><h3>Research question</h3><textarea class="notes-case-textarea" id="notesCaseQuestion">${escapeHtml(note.question || note.excerpt || '')}</textarea><h3>Working conclusion</h3><textarea class="notes-case-textarea" id="notesCaseConclusion">${escapeHtml(note.conclusion || note.body || '')}</textarea></div><div class="notes-case-grid"><article class="notes-case-card"><h3>Evidence summary</h3>${renderEvidence(note) || '<span class="muted">No evidence blocks yet.</span>'}<button class="button secondary" type="button" id="notesAddEvidence">${icon.plus} Add evidence block</button></article><article class="notes-case-card"><h3>Open tasks</h3>${renderTasks(note)}<button class="button secondary" type="button" id="notesAddTask">${icon.plus} Add task</button></article><article class="notes-case-card"><h3>Related case notes</h3>${renderRelatedNotes(note)}</article><article class="notes-case-card"><h3>Linked context</h3>${renderLinkedRows(note.linkedPeople || [], 'person')}${renderLinkedRows(note.linkedSources || [], 'source')}</article></div><div class="notes-block-list">${renderContextBlocks(note)}</div></div></article>`;
     }
 
     function bindNotesSidebarControls(root) {
-      root.querySelector('#notesNewNote')?.addEventListener('click', openNewNoteModal);
-      root.querySelector('#notesNewCollection')?.addEventListener('click', openNewCollectionModal);
-      root.querySelector('#notesAddCollection')?.addEventListener('click', openNewCollectionModal);
+      root
+        .querySelector(
+          '#notesAddCollection'
+        )
+        ?.addEventListener(
+          'click',
+          openNewCollectionModal
+        );
       root
         .querySelectorAll(
           '[data-notes-view]'
@@ -47763,6 +48399,14 @@
       main.querySelector('#notesTypeFilter')?.addEventListener('change', e => { state.notesTypeFilter = e.target.value; renderNotes(); });
       main.querySelector('#notesClearSearch')?.addEventListener('click', () => { state.notesSearch = ''; renderNotes(); });
       main.querySelector('#notesEmptyNewCase')?.addEventListener('click', openNewCaseModal);
+      main
+        .querySelector(
+          '#notesNewNoteButton'
+        )
+        ?.addEventListener(
+          'click',
+          openNewNoteModal
+        );
       main.querySelector('#notesNewCaseButton')?.addEventListener('click', openNewCaseModal);
       main.querySelectorAll('[data-notes-view-mode]').forEach(btn => btn.addEventListener('click', () => { state.notesViewMode = btn.dataset.notesViewMode; renderNotes(); }));
       main.querySelectorAll('[data-note-row]').forEach(row => { row.addEventListener('click', e => { if (!e.target.closest('button')) { state.selectedNoteId = row.dataset.noteRow; state.notesRightCollapsed = false; renderNotes(); }}); row.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); state.selectedNoteId = row.dataset.noteRow; state.notesRightCollapsed = false; renderNotes(); }}); });
@@ -47822,8 +48466,17 @@
       main.querySelector('#notesCaseConfidence')?.addEventListener('change', e => { note.confidence = e.target.value; renderNotes(); });
       main.querySelector('#notesPinButton')?.addEventListener('click', () => { note.pinned = !note.pinned; renderNotes(); showToast(note.pinned ? 'Added to favourites.' : 'Removed from favourites.'); });
       main.querySelector('#notesArchiveButton')?.addEventListener('click', () => { note.archived = !note.archived; note.status = note.archived ? 'Archived' : 'Draft'; state.notesView = note.archived ? 'archived' : (note.type === 'case' ? 'cases' : 'all'); renderNotes(); showToast(note.archived ? 'Archived.' : 'Restored.'); });
-      main.querySelector('#notesDeleteButton')?.addEventListener('click', () => { note.deleted = true; note.archived = false; note.status = 'Deleted'; state.notesView = 'deleted'; renderNotes(); showToast('Moved to Recently deleted.'); });
-      main.querySelector('#notesRestoreButton')?.addEventListener('click', () => { note.deleted = false; note.status = 'Draft'; state.notesView = note.type === 'case' ? 'cases' : 'all'; renderNotes(); showToast('Restored.'); });
+      main
+        .querySelector(
+          '#notesDeleteButton'
+        )
+        ?.addEventListener(
+          'click',
+          () =>
+            openDeleteNoteModal(
+              note.id
+            )
+        );
       main.querySelector('#notesAddTag')?.addEventListener('click', () => { note.tags = note.tags || []; if (!note.tags.includes('follow-up')) note.tags.push('follow-up'); renderNotes(); });
       main.querySelector('#notesAddChecklist')?.addEventListener('click', () => { note.tasks = note.tasks || []; note.tasks.push({ text:'New checklist item', done:false }); renderNotes(); });
       main.querySelector('#notesAddTask')?.addEventListener('click', () => { note.tasks = note.tasks || []; note.tasks.push({ text:'New research task', done:false }); renderNotes(); });
@@ -47836,19 +48489,56 @@
     function isCaseScoped(note) { return note.type === 'case' || Boolean(note.caseId); }
     function isRegularNote(note) { return !isCaseScoped(note); }
     function filteredNotes() {
-      let list = sampleData.notes.filter(note => {
-        if (state.notesView === 'deleted') return note.deleted;
-        if (state.notesView === 'archived') return note.archived && !note.deleted;
-        if (note.deleted || note.archived) return false;
-        if (state.notesView === 'cases') return note.type === 'case';
-        if (isCaseScoped(note)) return false;
-        if (state.notesView === 'inbox') return !note.collectionId;
-        if (state.notesView === 'recent') return note.sortRank >= 5;
-        if (state.notesView === 'pinned') return note.pinned;
-        if (state.notesView === 'questions') return note.type === 'question' && !['Answered','Solved'].includes(note.status);
-        if (state.notesView === 'collection') return note.collectionId === state.notesActiveCollectionId;
-        return true;
-      });
+      let list =
+        sampleData.notes
+          .filter(note => {
+            if (
+              state.notesView
+                === 'archived'
+            ) {
+              return note.archived;
+            }
+
+            if (note.archived) {
+              return false;
+            }
+
+            if (
+              state.notesView
+                === 'cases'
+            ) {
+              return (
+                note.type === 'case'
+              );
+            }
+
+            if (
+              isCaseScoped(note)
+            ) {
+              return false;
+            }
+
+            if (
+              state.notesView
+                === 'pinned'
+            ) {
+              return note.pinned;
+            }
+
+            if (
+              state.notesView
+                === 'collection'
+            ) {
+              return (
+                note.collectionId
+                === state
+                  .notesActiveCollectionId
+              );
+            }
+
+            return true;
+          });
+
       if (
         state.notesPersonFilterId
       ) {
@@ -47866,12 +48556,65 @@
             )
           );
       }
-      if (state.notesView !== 'cases' && state.notesTypeFilter !== 'all') list = list.filter(note => note.type === state.notesTypeFilter);
-      const q = state.notesSearch.trim().toLowerCase();
-      if (q) list = list.filter(note => `${note.title} ${note.body} ${note.excerpt} ${(note.tags||[]).join(' ')} ${(note.linkedPeople||[]).join(' ')}`.toLowerCase().includes(q));
-      if (state.notesSort === 'title') list.sort((a,b) => a.title.localeCompare(b.title)); else list.sort((a,b) => b.sortRank - a.sortRank);
+
+      if (
+        state.notesView
+          !== 'cases'
+        && state.notesTypeFilter
+          !== 'all'
+      ) {
+        list =
+          list.filter(
+            note =>
+              note.type
+              === state.notesTypeFilter
+          );
+      }
+
+      const query =
+        state.notesSearch
+          .trim()
+          .toLowerCase();
+
+      if (query) {
+        list =
+          list.filter(note =>
+            `
+              ${note.title}
+              ${note.body}
+              ${note.excerpt}
+              ${(note.tags || []).join(' ')}
+              ${(note.linkedPeople || []).join(' ')}
+            `
+              .toLowerCase()
+              .includes(query)
+          );
+      }
+
+      if (
+        state.notesSort === 'title'
+      ) {
+        list.sort(
+          (first, second) =>
+            first.title.localeCompare(
+              second.title
+            )
+        );
+      } else {
+        list.sort(
+          (first, second) =>
+            Number(
+              second.sortRank || 0
+            )
+            - Number(
+                first.sortRank || 0
+              )
+        );
+      }
+
       return list;
     }
+
     function ensureNotesSelection(list) {
       if (!list.some(n => n.id === state.selectedNoteId)) {
         state.selectedNoteId = null;
@@ -47879,25 +48622,724 @@
       }
     }
     function selectedNote() { return sampleData.notes.find(n => n.id === state.selectedNoteId) || null; }
-    function notesTitle() { if (state.notesView === 'collection') return collectionName(state.notesActiveCollectionId); return { all:'All notes', recent:'Recent notes', pinned:'Favourites', cases:'Cases', archived:'Archived notes', deleted:'Recently deleted' }[state.notesView] || 'Notes'; }
+    function notesTitle() {
+      if (
+        state.notesView
+          === 'collection'
+      ) {
+        return collectionName(
+          state.notesActiveCollectionId
+        );
+      }
+
+      return {
+        all:
+          'All notes',
+
+        pinned:
+          'Favourites',
+
+        cases:
+          'Cases',
+
+        archived:
+          'Archived notes'
+      }[state.notesView]
+      || 'Notes';
+    }
     function collectionName(id) { return sampleData.noteCollections.find(c => c.id === id)?.name || 'No collection'; }
     function noteTypeLabel(type) { return ({ note:'Note', question:'Question', hypothesis:'Hypothesis', source:'Source analysis', interview:'Interview', story:'Story', case:'Case' })[type] || 'Note'; }
     function noteTypeClass(type) { return ({ question:'question', hypothesis:'hypothesis', source:'source', interview:'source', story:'story', case:'hypothesis' })[type] || ''; }
     function noteStatusClass(status) { if (status === 'Open') return 'open'; if (['In progress','Probably solved'].includes(status)) return 'progress'; if (['Solved','Answered'].includes(status)) return 'solved'; return ''; }
     function markNotesDirty() { state.notesSavedStatus = 'Unsaved changes'; const label = main.querySelector('#notesSaveState'); if (label) label.textContent = 'Unsaved changes'; clearTimeout(markNotesDirty.timer); markNotesDirty.timer = setTimeout(() => { state.notesSavedStatus = 'Saved'; const save = main.querySelector('#notesSaveState'); if (save) save.textContent = 'Saved'; }, 900); }
 
-    function openNotesMenu(noteId, anchor) {
-      closeMenu(); const note = sampleData.notes.find(n => n.id === noteId); if (!note) return; const rect = anchor.getBoundingClientRect(); const menu = document.createElement('div'); menu.className = 'menu-popover'; menu.id = 'projectMenu'; menu.style.top = `${rect.bottom + 6}px`; menu.style.left = `${Math.max(12, rect.right - 200)}px`; menu.innerHTML = `<button type="button" data-action="pin">${note.pinned ? 'Remove from favourites' : 'Add to favourites'}</button><button type="button" data-action="duplicate">Duplicate</button><button type="button" data-action="archive">${note.archived ? 'Unarchive' : 'Archive'}</button><button type="button" class="danger" data-action="delete">Delete</button>`; document.body.appendChild(menu); menu.addEventListener('click', e => { const action = e.target.closest('[data-action]')?.dataset.action; if (!action) return; if (action === 'pin') note.pinned = !note.pinned; if (action === 'archive') { note.archived = !note.archived; note.status = note.archived ? 'Archived' : 'Draft'; } if (action === 'delete') { note.deleted = true; note.status = 'Deleted'; } if (action === 'duplicate') { const copy = { ...note, id:`n${Date.now()}`, title:`${note.title} copy`, pinned:false, updated:'Just now', sortRank:11 }; sampleData.notes.unshift(copy); state.selectedNoteId = copy.id; } closeMenu(); renderNotes(); showToast(action === 'pin' ? (note.pinned ? 'Added to favourites.' : 'Removed from favourites.') : `${capitalize(action)} action completed.`); }); bindMenuLifecycle(anchor);
+    function deleteNotePermanently(
+      noteId
+    ) {
+      const index =
+        sampleData.notes.findIndex(
+          note =>
+            note.id === noteId
+        );
+
+      if (index < 0) {
+        return;
+      }
+
+      const [deletedNote] =
+        sampleData.notes.splice(
+          index,
+          1
+        );
+
+      sampleData.notes.forEach(
+        note => {
+          note.relatedNotes =
+            (
+              note.relatedNotes
+              || []
+            ).filter(
+              relatedId =>
+                relatedId !== noteId
+            );
+
+          if (
+            note.caseId === noteId
+          ) {
+            note.caseId = null;
+          }
+        }
+      );
+
+      sampleData.links =
+        (
+          sampleData.links || []
+        ).filter(link => {
+          const noteIsSource =
+            (
+              link.sourceType
+                === 'note'
+              && link.sourceId
+                === noteId
+            )
+            || (
+              link.fromType
+                === 'note'
+              && link.fromId
+                === noteId
+            );
+
+          const noteIsTarget =
+            (
+              link.targetType
+                === 'note'
+              && link.targetId
+                === noteId
+            )
+            || (
+              link.toType
+                === 'note'
+              && link.toId
+                === noteId
+            );
+
+          return (
+            !noteIsSource
+            && !noteIsTarget
+          );
+        });
+
+      if (
+        state.selectedNoteId
+          === noteId
+      ) {
+        state.selectedNoteId =
+          null;
+
+        state.notesRightCollapsed =
+          true;
+      }
+
+      if (
+        state.notesActiveCaseId
+          === noteId
+      ) {
+        state.notesActiveCaseId =
+          null;
+      }
+
+      closeModal();
+      renderNotes();
+
+      showToast(
+        deletedNote.type === 'case'
+          ? 'Case deleted.'
+          : 'Note deleted.'
+      );
     }
 
-    function openNotesCollectionMenu(collectionId, anchor) {
-      closeMenu(); const collection = sampleData.noteCollections.find(c => c.id === collectionId); if (!collection) return; const rect = anchor.getBoundingClientRect(); const menu = document.createElement('div'); menu.className = 'menu-popover'; menu.id = 'projectMenu'; menu.style.top = `${rect.bottom + 6}px`; menu.style.left = `${Math.max(12, rect.right - 200)}px`; menu.innerHTML = `<button type="button" data-action="rename">Rename collection</button><button type="button" data-action="delete" class="danger">Delete collection</button>`; document.body.appendChild(menu); menu.addEventListener('click', e => { const action = e.target.closest('[data-action]')?.dataset.action; if (action === 'rename') openRenameCollectionModal(collectionId); if (action === 'delete') openDeleteCollectionModal(collectionId); closeMenu(); }); bindMenuLifecycle(anchor);
+    function openDeleteNoteModal(
+      noteId
+    ) {
+      const note =
+        sampleData.notes.find(
+          item =>
+            item.id === noteId
+        );
+
+      if (!note) {
+        return;
+      }
+
+      const isCase =
+        note.type === 'case';
+
+      const itemLabel =
+        isCase
+          ? 'case'
+          : 'note';
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="
+            deleteNoteTitle
+          ">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="deleteNoteTitle">
+                Delete ${itemLabel}?
+              </h2>
+
+              <p>
+                This permanently removes
+                the ${itemLabel} and cannot
+                be undone.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close">
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <div
+              class="notes-evidence-card">
+              <strong>
+                ${escapeHtml(
+                  note.title.replace(
+                    'Case: ',
+                    ''
+                  )
+                )}
+              </strong>
+
+              <span>
+                ${
+                  isCase
+                    ? 'Related notes will remain, but they will no longer belong to this case.'
+                    : 'Links to this note will also be removed.'
+                }
+              </span>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+              Cancel
+            </button>
+
+            <button
+              class="button danger"
+              type="button"
+              id="notesConfirmDelete">
+              Delete permanently
+            </button>
+          </div>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelector(
+          '#notesConfirmDelete'
+        )
+        ?.addEventListener(
+          'click',
+          () =>
+            deleteNotePermanently(
+              noteId
+            )
+        );
     }
 
-    function openRenameCollectionModal(collectionId) {
-      const collection = sampleData.noteCollections.find(c => c.id === collectionId); if (!collection) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="renameCollectionTitle"><div class="modal-header"><div><h2 id="renameCollectionTitle">Rename collection</h2><p>Update the collection name. Notes inside stay in this collection.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="notesRenameCollectionForm"><div class="modal-body form-grid"><div class="field"><label>Collection name</label><input id="notesRenameCollectionName" required value="${escapeHtml(collection.name)}"></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Save changes</button></div></form></div>`);
-      modalBackdrop.querySelector('#notesRenameCollectionForm')?.addEventListener('submit', e => { e.preventDefault(); collection.name = modalBackdrop.querySelector('#notesRenameCollectionName').value.trim(); closeModal(); renderNotes(); showToast('Collection renamed.'); });
+    function openNotesMenu(
+      noteId,
+      anchor
+    ) {
+      closeMenu();
+
+      const note =
+        sampleData.notes.find(
+          item =>
+            item.id === noteId
+        );
+
+      if (!note) {
+        return;
+      }
+
+      const rect =
+        anchor.getBoundingClientRect();
+
+      const menu =
+        document.createElement(
+          'div'
+        );
+
+      menu.className =
+        'menu-popover';
+
+      menu.id =
+        'projectMenu';
+
+      menu.style.top =
+        `${rect.bottom + 6}px`;
+
+      menu.style.left =
+        `${
+          Math.max(
+            12,
+            rect.right - 200
+          )
+        }px`;
+
+      menu.innerHTML = `
+        <button
+          type="button"
+          data-action="pin">
+          ${
+            note.pinned
+              ? 'Remove from favourites'
+              : 'Add to favourites'
+          }
+        </button>
+
+        <button
+          type="button"
+          data-action="duplicate">
+          Duplicate
+        </button>
+
+        <button
+          type="button"
+          data-action="archive">
+          ${
+            note.archived
+              ? 'Unarchive'
+              : 'Archive'
+          }
+        </button>
+
+        <button
+          type="button"
+          class="danger"
+          data-action="delete">
+          Delete
+        </button>
+      `;
+
+      document.body.appendChild(
+        menu
+      );
+
+      menu.addEventListener(
+        'click',
+        event => {
+          const action =
+            event.target
+              .closest(
+                '[data-action]'
+              )
+              ?.dataset.action;
+
+          if (!action) {
+            return;
+          }
+
+          if (action === 'delete') {
+            closeMenu();
+
+            openDeleteNoteModal(
+              note.id
+            );
+
+            return;
+          }
+
+          if (action === 'pin') {
+            note.pinned =
+              !note.pinned;
+
+            showToast(
+              note.pinned
+                ? 'Added to favourites.'
+                : 'Removed from favourites.'
+            );
+          }
+
+          if (action === 'archive') {
+            note.archived =
+              !note.archived;
+
+            note.status =
+              note.archived
+                ? 'Archived'
+                : (
+                    note.type === 'case'
+                      ? 'Open'
+                      : 'Draft'
+                  );
+
+            showToast(
+              note.archived
+                ? 'Archived.'
+                : 'Restored.'
+            );
+          }
+
+          if (
+            action === 'duplicate'
+          ) {
+            const copy = {
+              ...note,
+
+              id:
+                `n${Date.now()}`,
+
+              title:
+                `${note.title} copy`,
+
+              pinned:
+                false,
+
+              archived:
+                false,
+
+              status:
+                note.type === 'case'
+                  ? 'Open'
+                  : 'Draft',
+
+              updated:
+                'Just now',
+
+              created:
+                'Just now',
+
+              sortRank:
+                11
+            };
+
+            sampleData.notes.unshift(
+              copy
+            );
+
+            state.selectedNoteId =
+              copy.id;
+
+            state.notesRightCollapsed =
+              false;
+
+            showToast(
+              'Note duplicated.'
+            );
+          }
+
+          closeMenu();
+          renderNotes();
+        }
+      );
+
+      bindMenuLifecycle(
+        anchor
+      );
+    }
+
+    function openNotesCollectionMenu(
+      collectionId,
+      anchor
+    ) {
+      closeMenu();
+
+      const collection =
+        sampleData.noteCollections.find(
+          item =>
+            item.id === collectionId
+        );
+
+      if (!collection) {
+        return;
+      }
+
+      const rect =
+        anchor.getBoundingClientRect();
+
+      const menu =
+        document.createElement('div');
+
+      menu.className =
+        'menu-popover';
+
+      menu.id =
+        'projectMenu';
+
+      menu.style.top =
+        `${rect.bottom + 6}px`;
+
+      menu.style.left =
+        `${
+          Math.max(
+            12,
+            rect.right - 200
+          )
+        }px`;
+
+      menu.innerHTML = `
+        <button
+          type="button"
+          data-action="edit">
+          Edit collection
+        </button>
+
+        <button
+          type="button"
+          data-action="delete"
+          class="danger">
+          Delete collection
+        </button>
+      `;
+
+      document.body.appendChild(
+        menu
+      );
+
+      menu.addEventListener(
+        'click',
+        event => {
+          const action =
+            event.target
+              .closest(
+                '[data-action]'
+              )
+              ?.dataset.action;
+
+          if (!action) {
+            return;
+          }
+
+          closeMenu();
+
+          if (action === 'edit') {
+            openEditCollectionModal(
+              collectionId
+            );
+
+            return;
+          }
+
+          if (action === 'delete') {
+            openDeleteCollectionModal(
+              collectionId
+            );
+          }
+        }
+      );
+
+      bindMenuLifecycle(anchor);
+    }
+
+    function renderNotesCollectionModal({
+      titleId,
+      title,
+      intro,
+      formId,
+      nameId,
+      descriptionId,
+      name = '',
+      description = '',
+      submitLabel
+    }) {
+      return `
+        <div
+          class="modal notes-collection-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="${titleId}">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="${titleId}">
+                ${title}
+              </h2>
+
+              <p>
+                ${intro}
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close">
+              ${icon.close}
+            </button>
+          </div>
+
+          <form
+            class="notes-collection-form"
+            id="${formId}">
+
+            <div class="modal-body form-grid">
+              <div class="field">
+                <label for="${nameId}">
+                  Collection name
+                </label>
+
+                <input
+                  id="${nameId}"
+                  type="text"
+                  required
+                  maxlength="120"
+                  autocomplete="off"
+                  value="${escapeHtml(name)}"
+                  placeholder="e.g. Pawford archive questions">
+              </div>
+
+              <div class="field">
+                <label for="${descriptionId}">
+                  Description
+                </label>
+
+                <textarea
+                  id="${descriptionId}"
+                  rows="4"
+                  maxlength="500"
+                  placeholder="Optional description">${escapeHtml(
+                    description
+                  )}</textarea>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                class="button secondary"
+                type="button"
+                data-close>
+                Cancel
+              </button>
+
+              <button
+                class="button primary"
+                type="submit">
+                ${submitLabel}
+              </button>
+            </div>
+          </form>
+        </div>
+      `;
+    }
+
+    function openEditCollectionModal(
+      collectionId
+    ) {
+      const collection =
+        sampleData.noteCollections.find(
+          item =>
+            item.id === collectionId
+        );
+
+      if (!collection) {
+        return;
+      }
+
+      openModal(
+        renderNotesCollectionModal({
+          titleId:
+            'editCollectionTitle',
+
+          title:
+            'Edit collection',
+
+          intro:
+            'Update the collection name and description. Notes inside stay in this collection.',
+
+          formId:
+            'notesEditCollectionForm',
+
+          nameId:
+            'notesEditCollectionName',
+
+          descriptionId:
+            'notesEditCollectionDescription',
+
+          name:
+            collection.name || '',
+
+          description:
+            collection.description || '',
+
+          submitLabel:
+            'Save changes'
+        })
+      );
+
+      const form =
+        modalBackdrop.querySelector(
+          '#notesEditCollectionForm'
+        );
+
+      const nameInput =
+        modalBackdrop.querySelector(
+          '#notesEditCollectionName'
+        );
+
+      const descriptionInput =
+        modalBackdrop.querySelector(
+          '#notesEditCollectionDescription'
+        );
+
+      form?.addEventListener(
+        'submit',
+        event => {
+          event.preventDefault();
+
+          const name =
+            nameInput?.value.trim()
+            || '';
+
+          const description =
+            descriptionInput?.value.trim()
+            || '';
+
+          if (!name) {
+            nameInput?.focus();
+
+            showToast(
+              'Enter a collection name.'
+            );
+
+            return;
+          }
+
+          collection.name = name;
+          collection.description =
+            description;
+
+          closeModal();
+          renderNotes();
+
+          showToast(
+            'Collection updated.'
+          );
+        }
+      );
+
+      requestAnimationFrame(() => {
+        nameInput?.focus();
+        nameInput?.select();
+      });
     }
 
     function openDeleteCollectionModal(collectionId) {
@@ -47906,8 +49348,100 @@
       modalBackdrop.querySelector('#notesConfirmDeleteCollection')?.addEventListener('click', () => { sampleData.notes.forEach(note => { if (note.collectionId === collectionId) note.collectionId = null; }); const index = sampleData.noteCollections.findIndex(c => c.id === collectionId); if (index >= 0) sampleData.noteCollections.splice(index, 1); if (state.notesActiveCollectionId === collectionId) { state.notesView = 'all'; state.notesActiveCollectionId = null; } closeModal(); renderNotes(); showToast('Collection deleted. Notes kept in All notes.'); });
     }
 
-    function openNewNoteModal() { const options = Object.entries(noteTemplates).filter(([key]) => key !== 'case').map(([key,t]) => `<label class="notes-template-choice"><input type="radio" name="noteTemplate" value="${key}" ${key === 'note' ? 'checked' : ''}><strong>${escapeHtml(t.label)}</strong><span>${escapeHtml(templateDescription(key))}</span></label>`).join(''); const collectionOptions = `<option value="">No collection</option>` + sampleData.noteCollections.map(c => `<option value="${c.id}" ${state.notesActiveCollectionId === c.id ? 'selected' : ''}>${escapeHtml(c.name)}</option>`).join(''); openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="newNoteTitle"><div class="modal-header"><div><h2 id="newNoteTitle">Create note</h2><p>Choose a lightweight research note template.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="notesNewNoteForm"><div class="modal-body form-grid"><div class="field"><label>Note title</label><input id="notesNewTitle" placeholder="Untitled research note"></div><div class="field"><label>Collection</label><select class="compact-select" id="notesNewCollectionSelect">${collectionOptions}</select></div><fieldset class="field" style="border:0;padding:0;margin:0"><legend>Template</legend><div class="notes-template-grid">${options}</div></fieldset></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create note</button></div></form></div>`); modalBackdrop.querySelector('#notesNewNoteForm')?.addEventListener('submit', e => { e.preventDefault(); const type = modalBackdrop.querySelector('input[name="noteTemplate"]:checked')?.value || 'note'; const template = noteTemplates[type]; const id = `n${Date.now()}`; const title = modalBackdrop.querySelector('#notesNewTitle').value.trim() || template.label; sampleData.notes.unshift({ id,type,title,excerpt:template.body.slice(0,115),body:template.body,status:template.status,collectionId:modalBackdrop.querySelector('#notesNewCollectionSelect').value || null,caseId:null,pinned:false,archived:false,deleted:false,updated:'Just now',created:'Just now',sortRank:12,tags:[],linkedPeople:[],linkedSources:[],linkedPlaces:[],relatedNotes:[],evidence:[],tasks:[] }); state.selectedNoteId = id; state.notesView = 'all'; state.notesRightCollapsed = false; closeModal(); renderNotes(); showToast('Note created.'); }); }
-    function openNewCollectionModal() { openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="newCollectionTitle"><div class="modal-header"><div><h2 id="newCollectionTitle">Create collection</h2><p>Collections keep related notes together.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="notesCollectionForm"><div class="modal-body form-grid"><div class="field"><label>Collection name</label><input id="notesCollectionName" required placeholder="e.g. Pawford archive questions"></div><div class="field"><label>Description</label><textarea id="notesCollectionDesc" placeholder="Optional description"></textarea></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create collection</button></div></form></div>`); modalBackdrop.querySelector('#notesCollectionForm')?.addEventListener('submit', e => { e.preventDefault(); const id = `nc-${Date.now()}`; sampleData.noteCollections.push({ id, name: modalBackdrop.querySelector('#notesCollectionName').value.trim() }); state.notesView = 'collection'; state.notesActiveCollectionId = id; closeModal(); renderNotes(); showToast('Collection created.'); }); }
+    function openNewNoteModal() { const options = Object.entries(noteTemplates).filter(([key]) => key !== 'case').map(([key,t]) => `<label class="notes-template-choice"><input type="radio" name="noteTemplate" value="${key}" ${key === 'note' ? 'checked' : ''}><strong>${escapeHtml(t.label)}</strong><span>${escapeHtml(templateDescription(key))}</span></label>`).join(''); const collectionOptions = `<option value="">No collection</option>` + sampleData.noteCollections.map(c => `<option value="${c.id}" ${state.notesActiveCollectionId === c.id ? 'selected' : ''}>${escapeHtml(c.name)}</option>`).join(''); openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="newNoteTitle"><div class="modal-header"><div><h2 id="newNoteTitle">Create note</h2><p>Choose a lightweight research note template.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="notesNewNoteForm"><div class="modal-body form-grid"><div class="field"><label>Note title</label><input id="notesNewTitle" placeholder="Untitled research note"></div><div class="field"><label>Collection</label><select class="compact-select" id="notesNewCollectionSelect">${collectionOptions}</select></div><fieldset class="field" style="border:0;padding:0;margin:0"><legend>Template</legend><div class="notes-template-grid">${options}</div></fieldset></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create note</button></div></form></div>`); modalBackdrop.querySelector('#notesNewNoteForm')?.addEventListener('submit', e => { e.preventDefault(); const type = modalBackdrop.querySelector('input[name="noteTemplate"]:checked')?.value || 'note'; const template = noteTemplates[type]; const id = `n${Date.now()}`; const title = modalBackdrop.querySelector('#notesNewTitle').value.trim() || template.label; sampleData.notes.unshift({ id,type,title,excerpt:template.body.slice(0,115),body:template.body,status:template.status,collectionId:modalBackdrop.querySelector('#notesNewCollectionSelect').value || null,caseId:null,pinned:false,archived:false,updated:'Just now',created:'Just now',sortRank:12,tags:[],linkedPeople:[],linkedSources:[],linkedPlaces:[],relatedNotes:[],evidence:[],tasks:[] }); state.selectedNoteId = id; state.notesView = 'all'; state.notesRightCollapsed = false; closeModal(); renderNotes(); showToast('Note created.'); }); }
+    function openNewCollectionModal() {
+      openModal(
+        renderNotesCollectionModal({
+          titleId:
+            'newCollectionTitle',
+
+          title:
+            'Create collection',
+
+          intro:
+            'Collections keep related notes together.',
+
+          formId:
+            'notesCollectionForm',
+
+          nameId:
+            'notesCollectionName',
+
+          descriptionId:
+            'notesCollectionDescription',
+
+          submitLabel:
+            'Create collection'
+        })
+      );
+
+      const form =
+        modalBackdrop.querySelector(
+          '#notesCollectionForm'
+        );
+
+      const nameInput =
+        modalBackdrop.querySelector(
+          '#notesCollectionName'
+        );
+
+      const descriptionInput =
+        modalBackdrop.querySelector(
+          '#notesCollectionDescription'
+        );
+
+      form?.addEventListener(
+        'submit',
+        event => {
+          event.preventDefault();
+
+          const name =
+            nameInput?.value.trim()
+            || '';
+
+          const description =
+            descriptionInput?.value.trim()
+            || '';
+
+          if (!name) {
+            nameInput?.focus();
+
+            showToast(
+              'Enter a collection name.'
+            );
+
+            return;
+          }
+
+          const id =
+            `nc-${Date.now()}`;
+
+          sampleData.noteCollections.push({
+            id,
+            name,
+            description
+          });
+
+          state.notesView =
+            'collection';
+
+          state.notesActiveCollectionId =
+            id;
+
+          closeModal();
+          renderNotes();
+
+          showToast(
+            'Collection created.'
+          );
+        }
+      );
+
+      requestAnimationFrame(() => {
+        nameInput?.focus();
+      });
+    }
+
     function openNewCaseModal() { openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="newCaseTitle"><div class="modal-header"><div><h2 id="newCaseTitle">Create research case</h2><p>Cases track a question, linked evidence, tasks, and a working conclusion.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="notesCaseForm"><div class="modal-body form-grid"><div class="field"><label>Case title</label><input id="notesCaseTitle" required placeholder="e.g. Verify Daisy Milkpaw's father"></div><div class="field"><label>Research question</label><textarea id="notesCaseQuestionNew" placeholder="What are you trying to prove?"></textarea></div><div class="field"><label>Status</label><select class="compact-select" id="notesCaseStatus"><option>Open</option><option selected>In progress</option><option>Probably solved</option><option>Solved</option></select></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create case</button></div></form></div>`); modalBackdrop.querySelector('#notesCaseForm')?.addEventListener('submit', e => { e.preventDefault(); const id = `n${Date.now()}`; const title = modalBackdrop.querySelector('#notesCaseTitle').value.trim(); sampleData.notes.unshift({ id,type:'case',title:`Case: ${title}`,excerpt:modalBackdrop.querySelector('#notesCaseQuestionNew').value.trim(),body:noteTemplates.case.body,status:modalBackdrop.querySelector('#notesCaseStatus').value,collectionId:null,caseId:null,pinned:false,archived:false,deleted:false,updated:'Just now',created:'Just now',sortRank:12,tags:['case'],linkedPeople:[],linkedSources:[],linkedPlaces:[],relatedNotes:[],question:modalBackdrop.querySelector('#notesCaseQuestionNew').value.trim(),confidence:'Low',conclusion:'',evidence:[],tasks:[] }); state.notesView = 'cases'; state.selectedNoteId = id; state.notesRightCollapsed = false; closeModal(); renderNotes(); showToast('Research case created.'); }); }
     function openNotesLinkPersonModal() { const note = selectedNote(); if (!note) return; const choices = currentPeopleRecords().map(p => `<label class="notes-modal-choice"><input type="checkbox" value="${escapeHtml(p.name)}" ${note.linkedPeople?.includes(p.name) ? 'checked' : ''}><span>${escapeHtml(p.name)}</span></label>`).join(''); openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="notesLinkPersonTitle"><div class="modal-header"><div><h2 id="notesLinkPersonTitle">Link people</h2><p>Connect this item to people records.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="notes-modal-list">${choices}</div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" id="notesConfirmPeople">Link selected</button></div></div>`); modalBackdrop.querySelector('#notesConfirmPeople')?.addEventListener('click', () => { note.linkedPeople = [...modalBackdrop.querySelectorAll('.notes-modal-choice input:checked')].map(input => input.value); closeModal(); renderNotes(); showToast('People links updated.'); }); }
     function openNotesLinkSourceModal() { const note = selectedNote(); if (!note) return; const choices = sampleData.archiveFiles.filter(f => !f.deleted).map(f => `<label class="notes-modal-choice"><input type="checkbox" value="${escapeHtml(f.name)}" ${note.linkedSources?.includes(f.name) ? 'checked' : ''}><span>${escapeHtml(f.name)}</span></label>`).join(''); openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="notesLinkSourceTitle"><div class="modal-header"><div><h2 id="notesLinkSourceTitle">Link source or file</h2><p>Attach Archive files or source references.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="notes-modal-list">${choices}</div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" id="notesConfirmSources">Link selected</button></div></div>`); modalBackdrop.querySelector('#notesConfirmSources')?.addEventListener('click', () => { note.linkedSources = [...modalBackdrop.querySelectorAll('.notes-modal-choice input:checked')].map(input => input.value); closeModal(); renderNotes(); showToast('Source links updated.'); }); }
@@ -59186,6 +60720,15 @@
       sampleData.archiveFiles = Array.isArray(sampleData.archiveFiles) ? sampleData.archiveFiles : [];
       sampleData.notes = Array.isArray(sampleData.notes) ? sampleData.notes : [];
       sampleData.noteCollections = Array.isArray(sampleData.noteCollections) ? sampleData.noteCollections : [];
+      sampleData.noteCollections.forEach(
+        collection => {
+          collection.description =
+            typeof collection.description
+              === 'string'
+              ? collection.description
+              : '';
+        }
+      );
       sampleData.boards = Array.isArray(sampleData.boards) ? sampleData.boards : [];
       sampleData.boardObjects = Array.isArray(sampleData.boardObjects) ? sampleData.boardObjects : [];
       sampleData.boardConnectors = Array.isArray(sampleData.boardConnectors) ? sampleData.boardConnectors : [];
