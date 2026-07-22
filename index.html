@@ -4015,34 +4015,6 @@
     .note-card { border: 1px solid var(--border-default); background: var(--surface-card); border-radius: var(--radius-sm); padding: var(--space-3); color: var(--text-secondary); }
     .note-card strong { color: var(--text-primary); display: block; }
 
-    .family-photo-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: var(--space-2);
-    }
-    .family-photo-thumb {
-      position: relative;
-      isolation: isolate;
-      width: 100%;
-      min-width: 0;
-      height: 74px;
-      border: 1px solid var(--border-default);
-      border-radius: 9px;
-      background: linear-gradient(145deg, #c7b09a, #3f4d46);
-      color: var(--text-primary);
-      display: grid;
-      place-items: center;
-      padding: 0;
-      font-weight: 900;
-      overflow: hidden;
-      transition: background var(--ease), border-color var(--ease), transform var(--ease), box-shadow var(--ease);
-    }
-    .family-photo-thumb:hover,
-    .family-photo-thumb:focus-visible {
-      transform: translateY(-1px);
-      border-color: rgba(98,217,154,.42);
-      box-shadow: 0 0 0 1px rgba(47,174,116,.12);
-    }
     .family-archive-list,
     .family-note-list { display: grid; gap: var(--space-2); }
     .family-archive-row,
@@ -9320,9 +9292,50 @@
       object-fit: cover;
     }
 
+    /* Shared connected-photo preview */
+    .connected-photo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-2);
+    }
+
+    .connected-photo-button {
+      position: relative;
+      isolation: isolate;
+
+      width: 100%;
+      min-width: 0;
+      aspect-ratio: 1;
+      padding: 0;
+
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+
+      background: var(--surface-card);
+      cursor: pointer;
+
+      transition:
+        border-color var(--ease),
+        background var(--ease);
+    }
+
+    .connected-photo-button:hover {
+      border-color: var(--border-strong);
+      background: var(--surface-card-hover);
+    }
+
+    .connected-photo-button:focus-visible {
+      outline: 2px solid var(--brand-green-300);
+      outline-offset: 2px;
+    }
+
+    .connected-photo-button > .photo-thumbnail {
+      position: absolute;
+      inset: 0;
+    }
+
     /* Shared photo-preview containers */
-    .family-photo-thumb
-    > .photo-thumbnail,
     .profile-photo-thumb
     > .photo-thumbnail {
       position: absolute;
@@ -11050,7 +11063,12 @@
       accent-color:
         var(--brand-green-500);
     }
-    .albums-filter-popover-footer { border-top: 1px solid var(--border-default); display: flex; justify-content: flex-end; gap: var(--space-2); }
+    .albums-filter-popover-footer {
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-2);
+    }
     
     /* Albums: Add to album picker */
     .album-picker-body {
@@ -13101,6 +13119,562 @@
         var(--text-primary);
     }
 
+    .places-route-popover {
+      width: min(400px, calc(100vw - 24px));
+      min-width: 0;
+      padding: var(--space-4);
+      display: grid;
+      gap: var(--space-4);
+      overflow: visible;
+      box-sizing: border-box;
+    }
+
+    .places-route-popover-head {
+      min-width: 0;
+      display: grid;
+      gap: var(--space-1);
+    }
+
+    .places-route-popover-head strong {
+      color: var(--text-primary);
+      font-size: 16px;
+      line-height: 1.25;
+    }
+
+    .places-route-popover-head span {
+      color: var(--text-tertiary);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .places-route-mode {
+      min-height: 42px;
+      padding: 3px;
+      display: grid;
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+      gap: 3px;
+      border:
+        1px solid
+        var(--border-default);
+      border-radius:
+        var(--radius-sm);
+      background:
+        var(--surface-input);
+    }
+
+    .places-route-mode button {
+      width: 100%;
+      min-width: 0;
+      min-height: 34px;
+      padding:
+        0 var(--space-3);
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color:
+        var(--text-secondary);
+      text-align: center;
+      font-weight: 700;
+      transition:
+        background var(--ease),
+        color var(--ease),
+        box-shadow var(--ease);
+    }
+
+    .places-route-mode button:hover {
+      background:
+        rgba(255, 255, 255, .035);
+      color:
+        var(--text-primary);
+    }
+
+    .places-route-mode button.active {
+      background:
+        var(--surface-selected);
+      color:
+        var(--text-primary);
+      box-shadow:
+        inset 0 0 0 1px
+        rgba(98, 217, 154, .3);
+    }
+
+    .places-route-mode button:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+      outline-offset: 2px;
+    }
+
+    .places-route-popup-body {
+      min-width: 0;
+      min-height: 176px;
+      display: grid;
+      align-content: start;
+      gap: var(--space-3);
+    }
+
+    .places-route-popup-field {
+      min-width: 0;
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .places-route-popup-label {
+      color:
+        var(--text-secondary);
+      font-size: 12px;
+      line-height: 1.3;
+      font-weight: 700;
+    }
+
+    .places-route-popup-picker {
+      position: relative;
+      min-width: 0;
+    }
+
+    .places-route-popup-search {
+      width: 100%;
+      max-width: none;
+      flex: none;
+    }
+
+    .places-route-popup-search
+    input::-webkit-search-cancel-button {
+      display: none;
+    }
+
+    .places-route-popup-subject {
+      width: 100%;
+      min-width: 0;
+      min-height: 56px;
+      padding: 8px 10px;
+      display: grid;
+      grid-template-columns:
+        36px
+        minmax(0, 1fr)
+        auto;
+      align-items: center;
+      gap: var(--space-3);
+      border:
+        1px solid
+        var(--border-default);
+      border-radius:
+        var(--radius-sm);
+      background:
+        var(--surface-input);
+      color:
+        var(--text-primary);
+      text-align: left;
+      transition:
+        background var(--ease),
+        border-color var(--ease);
+    }
+
+    .places-route-popup-subject.is-surname {
+      grid-template-columns:
+        minmax(0, 1fr)
+        auto;
+    }
+
+    .places-route-popup-subject:hover {
+      border-color:
+        var(--border-strong);
+      background:
+        var(--surface-card-hover);
+    }
+
+    .places-route-popup-subject:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+      outline-offset: 2px;
+    }
+
+    .places-route-popup-avatar {
+      width: 36px;
+      height: 36px;
+      flex: 0 0 36px;
+      font-size: 11px;
+    }
+
+    .places-route-popup-subject-copy,
+    .places-route-popup-option-copy {
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+    }
+
+    .places-route-popup-subject-copy strong,
+    .places-route-popup-subject-copy small,
+    .places-route-popup-option-copy strong,
+    .places-route-popup-option-copy small {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .places-route-popup-subject-copy strong,
+    .places-route-popup-option-copy strong {
+      color:
+        var(--text-primary);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .places-route-popup-subject-copy small,
+    .places-route-popup-option-copy small {
+      color:
+        var(--text-tertiary);
+      font-size: 11px;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    .places-route-popup-change {
+      color:
+        var(--brand-green-300);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .places-route-popup-options {
+      position: absolute;
+      z-index: 4;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      max-height: 240px;
+      padding: 4px;
+      display: grid;
+      gap: 2px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      border:
+        1px solid
+        var(--border-strong);
+      border-radius:
+        var(--radius-sm);
+      background:
+        var(--surface-sidebar);
+      box-shadow:
+        var(--shadow-soft);
+    }
+
+    .places-route-popup-picker.opens-up
+    .places-route-popup-options {
+      top: auto;
+      bottom: calc(100% + 6px);
+    }
+
+    .places-route-popup-options[hidden] {
+      display: none;
+    }
+
+    .places-route-popup-option {
+      width: 100%;
+      min-width: 0;
+      min-height: 54px;
+      padding: 8px 10px;
+      display: grid;
+      grid-template-columns:
+        36px
+        minmax(0, 1fr)
+        24px;
+      align-items: center;
+      gap: var(--space-3);
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color:
+        var(--text-secondary);
+      text-align: left;
+    }
+
+    .places-route-popup-option.is-surname {
+      grid-template-columns:
+        minmax(0, 1fr)
+        24px;
+    }
+
+    .places-route-popup-option:hover,
+    .places-route-popup-option:focus-visible,
+    .places-route-popup-option.highlighted {
+      background:
+        var(--surface-card-hover);
+      color:
+        var(--text-primary);
+    }
+
+    .places-route-popup-option.selected {
+      background:
+        var(--surface-selected);
+      color:
+        var(--text-primary);
+    }
+
+    .places-route-popup-option:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+      outline-offset: -2px;
+    }
+
+    .places-route-popup-option-check {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background:
+        rgba(98, 217, 154, .1);
+      color:
+        var(--brand-green-300);
+    }
+
+    .places-route-popup-option-check svg {
+      width: 15px;
+      height: 15px;
+      display: block;
+    }
+
+    .places-route-popup-empty {
+      padding: var(--space-3);
+      color:
+        var(--text-tertiary);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .places-route-popup-hint {
+      margin: 0;
+      color:
+        var(--text-tertiary);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .places-route-popup-preview {
+      min-width: 0;
+      padding: var(--space-3);
+      display: grid;
+      grid-template-columns:
+        24px
+        minmax(0, 1fr);
+      gap: 10px;
+      border:
+        1px solid
+        var(--border-default);
+      border-radius:
+        var(--radius-sm);
+      background:
+        rgba(255, 255, 255, .025);
+    }
+
+    .places-route-popup-preview.is-unavailable {
+      border-color:
+        rgba(212, 170, 107, .34);
+    }
+
+    .places-route-popup-preview-icon {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      color:
+        var(--brand-green-300);
+    }
+
+    .places-route-popup-preview.is-unavailable
+    .places-route-popup-preview-icon {
+      color: var(--amber);
+    }
+
+    .places-route-popup-preview-icon svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
+
+    .places-route-popup-preview-copy {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .places-route-popup-preview-copy
+    > strong {
+      color:
+        var(--text-primary);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .places-route-popup-preview-copy
+    > span,
+    .places-route-popup-preview-copy small {
+      color:
+        var(--text-tertiary);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .places-route-popup-preview-copy small {
+      display: grid;
+      gap: 1px;
+    }
+
+    .places-route-popup-preview-copy
+    small strong {
+      color:
+        var(--text-secondary);
+      font-size: inherit;
+    }
+
+    .places-route-popup-review {
+      width: fit-content;
+      padding: 2px 0;
+      border: 0;
+      background: transparent;
+      color:
+        var(--brand-green-300);
+      font-size: 12px;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    .places-route-popup-review:hover {
+      background: transparent;
+      color:
+        var(--text-primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .places-route-popup-review:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+      outline-offset: 3px;
+    }
+
+    .places-route-popover-actions {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    .places-route-popover-actions
+    .button {
+      width: auto;
+      min-width: 128px;
+      min-height: 42px;
+      padding-inline:
+        var(--space-4);
+    }
+
+    .places-route-popover-actions
+    .button.primary {
+      margin-left: auto;
+    }
+
+    .places-route-popover-actions
+    .button.ghost {
+      min-width: 0;
+      padding-inline: 4px;
+      border-color: transparent;
+    }
+
+    @media (max-width: 480px) {
+      .places-route-popover {
+        width:
+          calc(100vw - 24px);
+        max-height:
+          calc(100vh - 24px);
+        padding: var(--space-3);
+        overflow-y: auto;
+      }
+
+      .places-route-popup-body {
+        min-height: 164px;
+      }
+
+      .places-route-popover-actions {
+        flex-direction:
+          column-reverse;
+        align-items: stretch;
+      }
+
+      .places-route-popover-actions
+      .button {
+        width: 100%;
+        margin-left: 0;
+      }
+
+      .places-route-popup-options {
+        max-height:
+          min(
+            220px,
+            calc(100vh - 180px)
+          );
+      }
+    }
+    
+    .places-route-summary {
+      position: absolute;
+      z-index: 515;
+      top: 14px;
+      left: 14px;
+      width: min(420px, calc(100% - 28px));
+      min-width: 0;
+      padding: 11px 12px;
+      display: grid;
+      gap: 7px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: rgba(18, 24, 22, .94);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(8px);
+    }
+
+    .places-route-summary.is-unavailable { border-color: rgba(226, 170, 86, .38); }
+    .places-route-summary-head { min-width: 0; display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; align-items: center; gap: 9px; }
+
+    .places-route-summary-icon {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 6px;
+      background: rgba(98, 217, 154, .1);
+      color: var(--brand-green-300);
+    }
+
+    .places-route-summary-icon svg { width: 16px; height: 16px; display: block; }
+    .places-route-summary.is-unavailable .places-route-summary-icon { background: rgba(226, 170, 86, .1); color: #e2aa56; }
+    .places-route-summary-title { min-width: 0; display: grid; gap: 1px; }
+    .places-route-summary-title strong,
+    .places-route-summary-title span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .places-route-summary-title strong { color: var(--text-primary); font-size: 13px; }
+    .places-route-summary-title span { color: var(--text-tertiary); font-size: 11px; }
+    .places-route-summary-actions { display: flex; align-items: center; gap: 4px; }
+    .places-route-change,
+    .places-route-clear { border: 1px solid transparent; border-radius: 6px; background: transparent; color: var(--text-secondary); }
+    .places-route-change { min-height: 30px; padding: 0 8px; font-size: 12px; font-weight: 700; }
+    .places-route-clear { width: 30px; height: 30px; padding: 0; display: inline-grid; place-items: center; line-height: 0; }
+    .places-route-clear svg { width: 15px; height: 15px; display: block; }
+    .places-route-change:hover,
+    .places-route-clear:hover { border-color: var(--border-default); background: var(--surface-card-hover); color: var(--text-primary); }
+    .places-route-change:focus-visible,
+    .places-route-clear:focus-visible { outline: 2px solid var(--brand-green-400); outline-offset: 1px; }
+    .places-route-summary-metrics,
+    .places-route-summary-warning,
+    .places-route-summary-excluded { padding-left: 37px; color: var(--text-secondary); font-size: 12px; line-height: 1.4; }
+    .places-route-summary-warning { color: #edbd76; }
+    .places-route-summary-excluded { color: var(--text-tertiary); font-size: 11px; }
+
     .places-sort {
       flex: 0 0 180px;
     }
@@ -13746,6 +14320,26 @@
         rgba(8, 28, 59, .78);
     }
     .places-leaflet-route { pointer-events: none; }
+    .places-route-marker-icon { background: transparent; border: 0; }
+    .places-route-marker {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border: 2px solid rgba(232, 255, 243, .96);
+      border-radius: 50%;
+      background: #247a55;
+      color: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,.42), 0 5px 14px rgba(0,0,0,.5);
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1;
+    }
+
+    .places-route-marker.is-start { border-style: double; border-width: 4px; }
+    .places-route-marker.is-end { border-radius: 7px; background: #b58a35; color: #171107; }
+    .places-route-marker-icon:focus-visible .places-route-marker,
+    .places-route-marker-icon:hover .places-route-marker { outline: 3px solid rgba(98,217,154,.28); outline-offset: 2px; }
 
     .places-inspector {
       position: relative;
@@ -14793,70 +15387,6 @@
       justify-self:
         start;
     }
-
-    .places-inspector-photo-grid {
-      display:
-        grid;
-
-      grid-template-columns:
-        repeat(
-          3,
-          minmax(0, 1fr)
-        );
-
-      gap:
-        var(--space-2);
-    }
-
-    .places-inspector-photo {
-      min-width:
-        0;
-
-      padding:
-        0;
-
-      border:
-        1px solid
-        var(--border-default);
-
-      border-radius:
-        var(--radius-sm);
-
-      overflow:
-        hidden;
-
-      background:
-        var(--surface-card);
-
-      cursor:
-        pointer;
-
-      aspect-ratio:
-        1;
-    }
-
-    .places-inspector-photo:hover {
-      border-color:
-        var(--border-strong);
-    }
-
-    .places-inspector-photo:focus-visible {
-      outline:
-        2px solid
-        var(--brand-green-300);
-
-      outline-offset:
-        2px;
-    }
-
-    .places-inspector-photo-thumbnail {
-      width:
-        100%;
-
-      height:
-        100%;
-    }
-
     .places-inspector-file-list,
     .places-inspector-note-list {
       display:
@@ -15103,12 +15633,6 @@
     .place-editor-danger p { margin: 10px 0; color: var(--text-tertiary); font-size: 12px; line-height: 1.45; }
     .place-delete-confirm { display: grid; gap: var(--space-3); }
     .place-delete-confirm ul { margin: 0; padding-left: 20px; color: var(--text-secondary); display: grid; gap: 7px; line-height: 1.45; }
-    .places-route-choices { min-width: 0; margin: 0; padding: 0; border: 0; }
-    .places-route-choices legend { margin-bottom: 8px; color: var(--text-secondary); font-size: 12px; font-weight: 600; }
-    .places-route-choices .notes-modal-list { max-height: 290px; overflow: auto; }
-    .places-route-choices .place-coordinate-error { display: block; min-height: 18px; margin-top: 6px; }
-
-
     @media (max-width: 900px) {
       .places-content.map {
         padding-inline:
@@ -15149,6 +15673,23 @@
     }
 
     @media (max-width: 720px) {
+      .places-route-summary {
+        top: 10px;
+        left: 10px;
+        width: calc(100% - 20px);
+      }
+
+      .places-route-summary-title strong,
+      .places-route-summary-title span {
+        white-space: normal;
+      }
+
+      .places-route-summary-head { grid-template-columns: 28px minmax(0, 1fr); }
+      .places-route-summary-actions { grid-column: 1 / -1; justify-content: flex-end; }
+      .places-route-summary-metrics,
+      .places-route-summary-warning,
+      .places-route-summary-excluded { padding-left: 0; }
+
       .places-page-head { align-items: stretch; flex-direction: column; }
       .places-header-actions {
           justify-content: flex-start;
@@ -16706,6 +17247,10 @@
       questions: { one: '------', few: '-------', many: '--------', other: '-------' },
       projects: { one: '------', few: '-------', many: '--------', other: '-------' },
       project: { one: '------', few: '-------', many: '--------', other: '-------' },
+      places: { one: 'место', few: 'места', many: 'мест', other: 'места' },
+      place: { one: 'место', few: 'места', many: 'мест', other: 'места' },
+      stops: { one: 'остановка', few: 'остановки', many: 'остановок', other: 'остановки' },
+      stop: { one: 'остановка', few: 'остановки', many: 'остановок', other: 'остановки' },
       Objects: { one: '------', few: '-------', many: '--------', other: '-------' }
     };
 
@@ -16779,6 +17324,46 @@
 
       // Places
       'All places': '--- -----', 'Needs review': '-------------', 'Countries': '------', 'Search places': '----- ----', 'Sort: Most linked': '----------: ------ ------', 'Map view': '-----', 'List view': '------', 'Legend': '-------', 'Approximate': '--------------', 'Archive / repository': '----- / -----------', 'Residence / story place': '----- ---------- / -------', 'Open place': '------- -----', 'Related people': '--------- ----', 'No events linked yet.': '--------- ------- ---- ---.', 'Events here': '------- -----', 'Historical names': '------------ --------', 'Connected to this place': '------- - ---- ------', 'No aliases recorded.': '---------- -- --------.', 'Place name': '-------- -----', 'Place type': '--- -----', 'Country': '------', 'City': '-----', 'Village': '-------', 'Region': '------', 'Residence': '----- ----------', 'Cemetery': '--------', 'Church': '-------', 'Repository': '-----------', 'Coordinate status': '------ ---------', 'Delete place permanently?': '------- ----- --------?',
+      'Routes': 'Маршруты',
+      'Route settings': 'Настройки маршрута',
+      'Calculate route': 'Рассчитать маршрут',
+      'Choose a person or surname. Routes use dated events with mapped places.': 'Выберите персону или фамилию. Маршруты строятся по датированным событиям с местами на карте.',
+      'Route mode': 'Режим маршрута',
+      'Person': 'Персона',
+      'Surname': 'Фамилия',
+      'Search surnames...': 'Поиск фамилий...',
+      'No matching people.': 'Люди не найдены.',
+      'No matching surnames.': 'Фамилии не найдены.',
+      'Select a person to preview their route.': 'Выберите персону, чтобы просмотреть маршрут.',
+      'Select a surname to preview its route.': 'Выберите фамилию, чтобы просмотреть маршрут.',
+      'Show route': 'Показать маршрут',
+      'Route shown': 'Маршрут показан',
+      'Clear route': 'Очистить маршрут',
+      'Clear shown route': 'Очистить показанный маршрут',
+      'Person route': 'Маршрут персоны',
+      'Surname route': 'Маршрут фамилии',
+      'Not enough dated, mapped places to calculate this route.': 'Недостаточно датированных мест на карте для расчета маршрута.',
+      'event excluded': 'событие исключено',
+      'events excluded': 'событий исключено',
+      'Shown': 'Показан',
+      'Hidden': 'Скрыт',
+      'Date unknown': 'Дата неизвестна',
+
+      'Route available': 'Маршрут доступен',
+      'Not enough mapped history': 'Недостаточно мест на карте',
+      'At least two dated, mapped places are needed.': 'Нужны как минимум два датированных места на карте.',
+      'Route needs at least two dated, mapped places.': 'Для маршрута нужны как минимум два датированных места на карте.',
+      'Review unmapped places': 'Проверить места без координат',
+      'Active route': 'Активный маршрут',
+      'Change': 'Изменить',
+      'Died': 'Умер',
+      'Dates unknown': 'Даты неизвестны',
+      'Active': 'Активен',
+      'Needs attention': 'Требует внимания',
+      'undated': 'без даты',
+      'without place': 'без места',
+      'unmapped': 'без координат',
+      'across': 'в',
 
       // Publish
       'Create output': '------- ----------', 'Start a new publication': '------ ----- ----------', 'Data export': '------- ------', 'Data exports': '------- ------', 'Recently exported': '------- --------------', 'Family report': '-------- -----', 'Family chart': '-------- ---------', 'Type': '---', 'Scope': '-------', 'Settings': '---------', 'Choose output type': '-------- --- ----------', 'Choose scope': '-------- -------', 'Content and privacy settings': '------- - ------------------', 'Preview and export': '------------ - -------', 'Save draft': '--------- --------', 'Export PDF': '------- PDF', 'Export PNG': '------- PNG', 'Export GEDCOM': '------- GEDCOM', 'Living people hidden': '------- ---- ------', 'Sources can be included': '--------- ----- --------', 'No outputs here yet': '---------- ---- ---', 'Create a report, chart, or export package to get started.': '-------- -----, --------- --- ---------- -----, ----- ------.', 'Ready to export': '------ - --------', 'Needs update': '------- ----------', 'Published': '------------'
@@ -16798,7 +17383,7 @@
 
     function translateCountPhrase(text) {
       if (state.language !== 'ru') return text;
-      return String(text).replace(/(\d[\d\s.,]*)\s+(people|person|photos|photo|files|file|notes|note|events|event|sources|questions|projects|project|Objects)\b/gi, (match, rawNumber, noun) => {
+      return String(text).replace(/(\d[\d\s.,]*)\s+(people|person|places|place|stops|stop|photos|photo|files|file|notes|note|events|event|sources|questions|projects|project|Objects)\b/gi, (match, rawNumber, noun) => {
         const n = Number(String(rawNumber).replace(/[\s,]/g, ''));
         if (!Number.isFinite(n)) return match;
         const forms = RU_PLURALS[noun] || RU_PLURALS[noun.toLowerCase()];
@@ -16983,10 +17568,12 @@
       ],
       places: [
         { id: 'place-pawford', projectId: 'p1', name: 'Pawford, North Yorkshire, England', alternativeNames: ['Pawford town'], coordinates: { lat: 53.9594, lng: -1.082 }, updatedAt: '2026-05-10T00:00:00Z', deleted: false },
-        { id: 'place-meowbridge', projectId: 'p1', name: 'Meowbridge, North Yorkshire, England', alternativeNames: ['Meow Bridge'], coordinates: null, updatedAt: '2026-05-08T00:00:00Z', deleted: false },
-        { id: 'place-fishmarket-row', projectId: 'p1', name: 'Fishmarket Row, North Yorkshire, England', alternativeNames: ['Fish Market Row'], coordinates: null, updatedAt: '2026-05-06T00:00:00Z', deleted: false },
-        { id: 'place-old-cattery', projectId: 'p1', name: 'Old Cattery, North Yorkshire, England', alternativeNames: ['The Old Cattery'], coordinates: null, updatedAt: '2026-05-04T00:00:00Z', deleted: false },
+        { id: 'place-meowbridge', projectId: 'p1', name: 'Meowbridge, North Yorkshire, England', alternativeNames: ['Meow Bridge'], coordinates: { lat: 53.9948, lng: -1.1347 }, updatedAt: '2026-05-08T00:00:00Z', deleted: false },
+        { id: 'place-fishmarket-row', projectId: 'p1', name: 'Fishmarket Row, North Yorkshire, England', alternativeNames: ['Fish Market Row'], coordinates: { lat: 53.9369, lng: -1.1118 }, updatedAt: '2026-05-06T00:00:00Z', deleted: false },
+        { id: 'place-old-cattery', projectId: 'p1', name: 'Old Cattery, North Yorkshire, England', alternativeNames: ['The Old Cattery'], coordinates: { lat: 54.0182, lng: -1.0376 }, updatedAt: '2026-05-04T00:00:00Z', deleted: false },
         { id: 'place-unknown', projectId: 'p1', name: 'Unidentified village near Pawford, North Yorkshire, England', alternativeNames: ['Village near Pawford'], coordinates: null, updatedAt: '2026-04-25T00:00:00Z', deleted: false },
+        { id: 'place-pawford-garden', projectId: 'p1', name: 'Whiskerfield family garden, Pawford, North Yorkshire, England', alternativeNames: ['Pawford family garden'], coordinates: null, updatedAt: '2026-05-04T00:00:00Z', deleted: false },
+        { id: 'place-meowbridge-school', projectId: 'p1', name: 'Meowbridge School, North Yorkshire, England', alternativeNames: ['Meowbridge school'], coordinates: null, updatedAt: '2026-05-05T00:00:00Z', deleted: false },
         { id: 'place-archive', projectId: 'p1', name: 'Pawford County Archive, North Yorkshire, England', alternativeNames: ['Pawford archive'], coordinates: { lat: 54.3393, lng: -1.4322 }, updatedAt: '2026-05-01T00:00:00Z', deleted: false },
         { id: 'place-residence', projectId: 'p1', name: 'Whiskerfield residence near Pawford, North Yorkshire, England', alternativeNames: ['Whiskerfield family house'], coordinates: { lat: 53.985, lng: -1.105 }, updatedAt: '2026-04-28T00:00:00Z', deleted: false },
         { id: 'place-cemetery', projectId: 'p1', name: 'Pawford Cemetery, North Yorkshire, England', alternativeNames: ['Pawford burial ground'], coordinates: { lat: 53.94978, lng: -1.07004 }, updatedAt: '2026-04-20T00:00:00Z', deleted: false },
@@ -17045,9 +17632,6 @@
           updatedAt: '2026-05-01T00:00:00Z'
         }
       ],
-      placeRoutes: [
-        { id: 'route-family-migration', projectId: 'p1', name: 'Family migration', placeIds: ['place-pawford', 'place-old-cattery', 'place-meowbridge', 'place-fishmarket-row'], status: 'active', deleted: false }
-      ],
       placeIssues: [],
       events: [],
       educationSeed: [
@@ -17085,14 +17669,14 @@
         { id: 'photo-family-table', projectId: 'p1', kind: 'photo', title: 'Family table', filename: 'family-table-2025.jpg', src: '', mimeType: 'image/jpeg', width: 2400, height: 1350, sizeBytes: 3984588, placeholder: { pattern: 'bands', palette: 'moss', seed: 2 }, personIds: ['silver', 'luna', 'oliver'], albumIds: ['al-family', 'al-personal'], date: { date: '2025', dateLabel: '2025', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Family table after a celebration.', origin: { type: 'scan', label: 'Personal album scan' }, favorite: true, createdAt: '2026-04-18T09:30:00Z', updatedAt: '2026-05-02T11:10:00Z', deletedAt: null },
         { id: 'photo-barnaby-portrait', projectId: 'p1', kind: 'photo', title: 'Barnaby portrait', filename: 'barnaby-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1200, height: 1600, sizeBytes: 1228800, placeholder: { pattern: 'window', palette: 'mono', seed: 3 }, personIds: ['barnaby'], albumIds: ['al-grandma', 'al-portraits'], date: { date: '1975', dateLabel: '1975', dateType: 'About / Circa', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Barnaby Whiskerfield in Pawford.', origin: { type: 'scan', label: 'Family album scan' }, favorite: false, createdAt: '2026-05-03T08:00:00Z', updatedAt: '2026-05-03T08:00:00Z', deletedAt: null },
         { id: 'photo-luna-portrait', projectId: 'p1', kind: 'photo', title: 'Luna portrait', filename: 'luna-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1300, height: 1700, sizeBytes: 1480000, placeholder: { pattern: 'halo', palette: 'plum', seed: 4 }, personIds: ['luna'], albumIds: ['al-personal'], date: { date: '2018', dateLabel: '2018', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Portrait of Luna Purrington.', origin: { type: 'upload', label: 'Luna upload' }, favorite: false, createdAt: '2026-04-30T12:00:00Z', updatedAt: '2026-04-30T12:00:00Z', deletedAt: null },
-        { id: 'photo-grandparents-garden', projectId: 'p1', kind: 'photo', title: 'Grandparents in the garden', filename: 'grandparents-garden.jpg', src: '', mimeType: 'image/jpeg', width: 2100, height: 1400, sizeBytes: 2200000, placeholder: { pattern: 'fold', palette: 'amber', seed: 5 }, personIds: ['barnaby', 'daisy'], albumIds: ['al-family', 'al-grandma'], date: { date: '', dateLabel: '', dateType: 'Between', fromDate: '1970', toDate: '1975' }, placeId: null, placeText: 'Pawford garden', caption: 'Barnaby and Daisy in the family garden.', origin: { type: 'scan', label: 'Family album scan' }, favorite: true, createdAt: '2026-05-04T14:00:00Z', updatedAt: '2026-05-04T14:00:00Z', deletedAt: null },
-        { id: 'photo-daisy-school', projectId: 'p1', kind: 'photo', title: 'Daisy school portrait', filename: 'daisy-school-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1100, height: 1500, sizeBytes: 980000, placeholder: { pattern: 'archive', palette: 'rose', seed: 6 }, personIds: ['daisy'], albumIds: ['al-grandma', 'al-portraits'], date: { date: '1960', dateLabel: '1960', dateType: 'Before', fromDate: '', toDate: '' }, placeId: null, placeText: 'Meowbridge school', caption: 'Early portrait of Daisy Milkpaw.', origin: { type: 'scan', label: 'Inherited print' }, favorite: false, createdAt: '2026-05-05T10:15:00Z', updatedAt: '2026-05-05T10:15:00Z', deletedAt: null },
+        { id: 'photo-grandparents-garden', projectId: 'p1', kind: 'photo', title: 'Grandparents in the garden', filename: 'grandparents-garden.jpg', src: '', mimeType: 'image/jpeg', width: 2100, height: 1400, sizeBytes: 2200000, placeholder: { pattern: 'fold', palette: 'amber', seed: 5 }, personIds: ['barnaby', 'daisy'], albumIds: ['al-family', 'al-grandma'], date: { date: '', dateLabel: '', dateType: 'Between', fromDate: '1970', toDate: '1975' }, placeId: 'place-pawford-garden', placeText: 'Pawford garden', caption: 'Barnaby and Daisy in the family garden.', origin: { type: 'scan', label: 'Family album scan' }, favorite: true, createdAt: '2026-05-04T14:00:00Z', updatedAt: '2026-05-04T14:00:00Z', deletedAt: null },
+        { id: 'photo-daisy-school', projectId: 'p1', kind: 'photo', title: 'Daisy school portrait', filename: 'daisy-school-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1100, height: 1500, sizeBytes: 980000, placeholder: { pattern: 'archive', palette: 'rose', seed: 6 }, personIds: ['daisy'], albumIds: ['al-grandma', 'al-portraits'], date: { date: '1960', dateLabel: '1960', dateType: 'Before', fromDate: '', toDate: '' }, placeId: 'place-meowbridge-school', placeText: 'Meowbridge school', caption: 'Early portrait of Daisy Milkpaw.', origin: { type: 'scan', label: 'Inherited print' }, favorite: false, createdAt: '2026-05-05T10:15:00Z', updatedAt: '2026-05-05T10:15:00Z', deletedAt: null },
         { id: 'photo-silver-luna-wedding', projectId: 'p1', kind: 'photo', title: 'Silver and Luna', filename: 'silver-luna-wedding.jpg', src: '', mimeType: 'image/jpeg', width: 2000, height: 1333, sizeBytes: 2450000, placeholder: { pattern: 'orbit', palette: 'plum', seed: 7 }, personIds: ['silver', 'luna'], albumIds: ['al-family', 'al-personal'], date: { date: '18.08.2023', dateLabel: '18 Aug 2023', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Silver and Luna at their wedding celebration.', origin: { type: 'upload', label: 'Family upload' }, favorite: true, createdAt: '2026-05-06T16:45:00Z', updatedAt: '2026-05-06T16:45:00Z', deletedAt: null },
         { id: 'photo-purrington-family', projectId: 'p1', kind: 'photo', title: 'Purrington family visit', filename: 'purrington-family-visit.jpg', src: '', mimeType: 'image/jpeg', width: 2300, height: 1500, sizeBytes: 3100000, placeholder: { pattern: 'bands', palette: 'amber', seed: 8 }, personIds: ['luna', 'rupert', 'mabel'], albumIds: ['al-family'], date: { date: '1980', dateLabel: '1980', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-fishmarket-row', placeText: 'Fishmarket Row', caption: 'A Purrington family visit.', origin: { type: 'scan', label: 'Rupert collection' }, favorite: false, createdAt: '2026-05-07T09:00:00Z', updatedAt: '2026-05-07T09:00:00Z', deletedAt: null },
         { id: 'photo-oliver-portrait', projectId: 'p1', kind: 'photo', title: 'Oliver portrait', filename: 'oliver-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1250, height: 1600, sizeBytes: 1170000, placeholder: { pattern: 'window', palette: 'sea', seed: 9 }, personIds: ['oliver'], albumIds: ['al-personal'], date: { date: '18.05.2024', dateLabel: '18 May 2024', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Oliver Whiskerfield portrait.', origin: { type: 'upload', label: 'Family upload' }, favorite: false, createdAt: '2026-05-08T13:00:00Z', updatedAt: '2026-05-08T13:00:00Z', deletedAt: null },
         { id: 'photo-pearl-portrait', projectId: 'p1', kind: 'photo', title: 'Pearl portrait', filename: 'pearl-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1000, height: 1450, sizeBytes: 910000, placeholder: { pattern: 'halo', palette: 'mono', seed: 10 }, personIds: ['pearl'], albumIds: ['al-portraits'], date: { date: '1950', dateLabel: '1950', dateType: 'About / Circa', fromDate: '', toDate: '' }, placeId: 'place-old-cattery', placeText: 'Old Cattery', caption: 'Portrait identified as Pearl Velvetpaw.', origin: { type: 'scan', label: 'Old Cattery collection' }, favorite: false, createdAt: '2026-05-09T10:00:00Z', updatedAt: '2026-05-09T10:00:00Z', deletedAt: null },
         { id: 'photo-young-family', projectId: 'p1', kind: 'photo', title: 'Young Whiskerfield family', filename: 'young-whiskerfield-family.jpg', src: '', mimeType: 'image/jpeg', width: 2600, height: 1700, sizeBytes: 4300000, placeholder: { pattern: 'fold', palette: 'moss', seed: 11 }, personIds: ['silver', 'luna', 'oliver', 'mochi', 'cleo'], albumIds: ['al-family', 'al-personal'], date: { date: '2026', dateLabel: '2026', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'The young Whiskerfield household.', origin: { type: 'upload', label: 'Household upload' }, favorite: false, createdAt: '2026-05-10T15:30:00Z', updatedAt: '2026-05-10T15:30:00Z', deletedAt: null },
-        { id: 'photo-unidentified-studio', projectId: 'p1', kind: 'photo', title: 'Unidentified studio portrait', filename: 'unidentified-studio-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 900, height: 1300, sizeBytes: 740000, placeholder: { pattern: 'archive', palette: 'mono', seed: 12 }, personIds: [], albumIds: ['al-portraits'], date: { date: '', dateLabel: '', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: null, placeText: 'North quay studio', caption: 'Unidentified portrait awaiting research.', origin: { type: 'scan', label: 'Unsorted envelope' }, favorite: false, createdAt: '2026-05-11T11:00:00Z', updatedAt: '2026-05-11T11:00:00Z', deletedAt: null },
+        { id: 'photo-unidentified-studio', projectId: 'p1', kind: 'photo', title: 'Unidentified studio portrait', filename: 'unidentified-studio-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 900, height: 1300, sizeBytes: 740000, placeholder: { pattern: 'archive', palette: 'mono', seed: 12 }, personIds: [], albumIds: ['al-portraits'], date: { date: '', dateLabel: '', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-unknown', placeText: 'North quay studio', caption: 'Unidentified portrait awaiting research.', origin: { type: 'scan', label: 'Unsorted envelope' }, favorite: false, createdAt: '2026-05-11T11:00:00Z', updatedAt: '2026-05-11T11:00:00Z', deletedAt: null },
         { id: 'photo-archive-yard', projectId: 'p1', kind: 'photo', title: 'Archive yard', filename: 'archive-yard.jpg', src: '', mimeType: 'image/jpeg', width: 1900, height: 1200, sizeBytes: 2050000, placeholder: { pattern: 'orbit', palette: 'sea', seed: 13 }, personIds: [], albumIds: [], date: { date: '1948', dateLabel: '1948', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'View of the Pawford archive yard.', origin: { type: 'archive', label: 'Pawford archive copy' }, favorite: false, createdAt: '2026-05-12T09:20:00Z', updatedAt: '2026-05-12T09:20:00Z', deletedAt: null },
         { id: 'photo-archibald-workshop', projectId: 'p1', kind: 'photo', title: 'Archibald at the workshop', filename: 'archibald-workshop.jpg', src: '', mimeType: 'image/jpeg', width: 1800, height: 1200, sizeBytes: 1760000, placeholder: { pattern: 'bands', palette: 'rose', seed: 14 }, personIds: ['archibald'], albumIds: [], date: { date: '1940', dateLabel: '1940', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Archibald Whiskerfield outside the workshop.', origin: { type: 'scan', label: 'Workshop collection' }, favorite: false, createdAt: '2026-05-13T12:40:00Z', updatedAt: '2026-05-13T12:40:00Z', deletedAt: null },
         { id: 'photo-deleted-contact-sheet', projectId: 'p1', kind: 'photo', title: 'Damaged contact sheet', filename: 'damaged-contact-sheet.jpg', src: '', mimeType: 'image/jpeg', width: 1600, height: 1600, sizeBytes: 1320000, placeholder: { pattern: 'window', palette: 'amber', seed: 15 }, personIds: [], albumIds: ['al-scans'], date: { date: '', dateLabel: '', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: null, placeText: '', caption: 'Damaged contact sheet retained for possible restoration.', origin: { type: 'scan', label: 'Unsorted scans' }, favorite: false, createdAt: '2026-05-14T08:10:00Z', updatedAt: '2026-05-15T08:10:00Z', deletedAt: '2026-05-15T08:10:00Z' }
@@ -20268,7 +20852,7 @@
         });
       };
 
-      ['projects','people','families','places','placeSavedFilters','placeRoutes','placeIssues','sources','media','albums','notes','boards','boardObjects','boardConnectors','publishDrafts','notifications','activity'].forEach(seen);
+      ['projects','people','families','places','placeSavedFilters','placeIssues','sources','media','albums','notes','boards','boardObjects','boardConnectors','publishDrafts','notifications','activity'].forEach(seen);
 
       (sampleData.places || []).forEach(place => {
         if (!projectIds.has(place.projectId)) warn(`Place ${place.id} points to missing project ${place.projectId}`);
@@ -20322,15 +20906,6 @@
         if (issue.status !== 'dismissed') warn(`Place issue ${issue.id} must be a dismissal record`);
         if (!PLACE_REVIEW_COORDINATE_ISSUE_TYPES.includes(issue.type)) warn(`Place issue ${issue.id} has invalid type ${issue.type}`);
         if (!Number.isFinite(Date.parse(issue.dismissedAt || ''))) warn(`Place issue ${issue.id} has an invalid dismissedAt timestamp`);
-      });
-
-      (sampleData.placeRoutes || []).forEach(route => {
-        if (!projectIds.has(route.projectId)) warn(`Place route ${route.id} points to missing project ${route.projectId}`);
-        (route.placeIds || []).forEach(placeId => {
-          const place = getPlace(placeId);
-          if (!place) warn(`Place route ${route.id} points to missing place ${placeId}`);
-          else if (place.projectId !== route.projectId) warn(`Place route ${route.id} and place ${placeId} are in different projects`);
-        });
       });
 
       if (sampleData.media.length !== 15) warn(`Expected exactly 15 seeded media records; found ${sampleData.media.length}`);
@@ -20587,12 +21162,14 @@
         userMoved: false,
         lastFitKey: ''
       },
-      placesShowRoute: true,
+      placesRouteMode: 'none',
+      placesRoutePersonId: '',
+      placesRouteSurname: '',
+      placesShowRoute: false,
       placesMapInfoExpanded: false,
       placesFilters: {
         ...defaultPlaceFilters
       },
-      placesActiveRouteId: 'route-family-migration',
       placesExpandedCountries: ['England'],
       publishView: 'home',
       publishSide: 'drafts',
@@ -23284,33 +23861,35 @@
       }
 
       return `
-        <div class="family-photo-grid">
+        <div class="connected-photo-grid">
           ${photos
-            .map(photo => `
-              <button
-                class="family-photo-thumb"
-                type="button"
-                data-family-photo="${
-                  escapeHtml(photo.id)
-                }"
-                title="${
-                  escapeHtml(
-                    photo.title
-                    || photo.filename
-                    || 'Photo'
-                  )
-                }">
-                ${renderPhotoThumbnail(
-                  photo,
-                  {
-                    label:
-                      photo.title
-                      || photo.filename
-                      || 'Photo'
-                  }
-                )}
-              </button>
-            `)
+            .map(photo => {
+              const label =
+                photo.title
+                || photo.filename
+                || 'Photo';
+
+              return `
+                <button
+                  class="connected-photo-button"
+                  type="button"
+                  data-family-photo="${
+                    escapeHtml(photo.id)
+                  }"
+                  title="${
+                    escapeHtml(label)
+                  }"
+                  aria-label="Open ${
+                    escapeHtml(label)
+                  }">
+
+                  ${renderPhotoThumbnail(
+                    photo,
+                    { label }
+                  )}
+                </button>
+              `;
+            })
             .join('')}
         </div>
       `;
@@ -40689,7 +41268,7 @@
       menu.className = 'albums-filter-popover';
       menu.id = 'projectMenu';
       const filters = state.albumsFilters || defaultAlbumFilters;
-      menu.innerHTML = `<div class="albums-filter-popover-head"><strong>Filter photos</strong><span>Filters use central people and places.</span></div><div class="albums-filter-popover-body"><label class="albums-filter-field">Person<select data-albums-filter="personId"><option value="">All people</option><option value="none" ${filters.personId === 'none' ? 'selected' : ''}>No people tagged</option>${people.map(person => `<option value="${escapeHtml(person.id)}" ${filters.personId === person.id ? 'selected' : ''}>${escapeHtml(person.names?.display || 'Unnamed person')}</option>`).join('')}</select></label><label class="albums-filter-field">Place<select data-albums-filter="placeId"><option value="">All places</option><option value="none" ${filters.placeId === 'none' ? 'selected' : ''}>No known place</option>${[...placeIds].map(id => `<option value="${escapeHtml(id)}" ${filters.placeId === id ? 'selected' : ''}>${escapeHtml(getPlaceDisplay(id))}</option>`).join('')}</select></label><label class="albums-filter-field">Date<select data-albums-filter="dateRange"><option value="">Any date</option><option value="dated" ${filters.dateRange === 'dated' ? 'selected' : ''}>Known date</option><option value="unknown" ${filters.dateRange === 'unknown' ? 'selected' : ''}>Unknown date</option></select></label><label class="albums-filter-check"><input type="checkbox" data-albums-filter-favorite ${filters.favouriteOnly ? 'checked' : ''}> Favorites only</label></div><div class="albums-filter-popover-footer"><button class="button secondary" type="button" data-albums-filter-clear>Clear</button><button class="button primary" type="button" data-albums-filter-apply>Apply</button></div>`;
+      menu.innerHTML = `<div class="albums-filter-popover-head"><strong>Filter photos</strong><span>Use filters to narrow down the view.</span></div><div class="albums-filter-popover-body"><label class="albums-filter-field">Person<select data-albums-filter="personId"><option value="">All people</option><option value="none" ${filters.personId === 'none' ? 'selected' : ''}>No people tagged</option>${people.map(person => `<option value="${escapeHtml(person.id)}" ${filters.personId === person.id ? 'selected' : ''}>${escapeHtml(person.names?.display || 'Unnamed person')}</option>`).join('')}</select></label><label class="albums-filter-field">Place<select data-albums-filter="placeId"><option value="">All places</option><option value="none" ${filters.placeId === 'none' ? 'selected' : ''}>No known place</option>${[...placeIds].map(id => `<option value="${escapeHtml(id)}" ${filters.placeId === id ? 'selected' : ''}>${escapeHtml(getPlaceDisplay(id))}</option>`).join('')}</select></label><label class="albums-filter-field">Date<select data-albums-filter="dateRange"><option value="">Any date</option><option value="dated" ${filters.dateRange === 'dated' ? 'selected' : ''}>Known date</option><option value="unknown" ${filters.dateRange === 'unknown' ? 'selected' : ''}>Unknown date</option></select></label><label class="albums-filter-check"><input type="checkbox" data-albums-filter-favorite ${filters.favouriteOnly ? 'checked' : ''}> Favorites only</label></div><div class="albums-filter-popover-footer"><button class="button secondary" type="button" data-albums-filter-clear>Reset</button><button class="button primary" type="button" data-albums-filter-apply>Apply filters</button></div>`;
       document.body.appendChild(menu);
       const margin = 12;
       const left = Math.min(
@@ -47717,7 +48296,7 @@
       placesMapRuntime.currentPlaces = [...list];
       if (!force && key === placesMapRuntime.mountedListKey) {
         updatePlacesMapSelection(state.selectedPlaceId);
-        renderPlacesRouteLayer(list);
+        renderPlacesRouteLayer();
         return;
       }
       markerLayer.clearLayers();
@@ -47731,8 +48310,8 @@
       });
       placesMapRuntime.mountedListKey = key;
       updatePlacesMapSelection(state.selectedPlaceId);
-      renderPlacesRouteLayer(list);
-      updatePlacesRouteControl(list);
+      renderPlacesRouteLayer();
+      updatePlacesRouteControl();
       updatePlacesMapToolControls();
     }
 
@@ -47760,159 +48339,282 @@
       };
     }
 
-    function activePlacesRoute(places = []) {
-      const visiblePlaces =
-        Array.isArray(places)
-          ? places
-          : [];
+    function getProjectRouteSurnames(projectId = currentProjectId()) {
+      const counts = new Map();
+      getPeople(projectId)
+        .filter(person => person && !person.deleted)
+        .forEach(person => {
+          const surname = String(person?.names?.last || '').trim();
+          if (surname) counts.set(surname, (counts.get(surname) || 0) + 1);
+        });
+      return [...counts.entries()]
+        .map(([surname, count]) => ({ surname, count }))
+        .sort((a, b) => a.surname.localeCompare(b.surname, undefined, { sensitivity: 'base' }));
+    }
 
-      const visibleIds = new Set(
-        visiblePlaces
-          .map(place => place?.id)
-          .filter(Boolean)
-      );
-
-      const routes =
-        placesProjectRoutes()
-          .filter(route => {
-            const routePlaceIds =
-              Array.isArray(route?.placeIds)
-                ? route.placeIds
-                : [];
-
-            return routePlaceIds.some(placeId =>
-              visibleIds.has(placeId)
-            );
-          });
-
-      return (
-        routes.find(route =>
-          route.id === state.placesActiveRouteId
-        )
-        || routes.find(route =>
-          route.status === 'active'
-        )
-        || routes[0]
-        || null
+    function getPersonRouteEvents(personId) {
+      const person = getPerson(personId);
+      if (!person || person.deleted || person.projectId !== currentProjectId()) return [];
+      return (sampleData.events || []).filter(event =>
+        event?.projectId === person.projectId
+        && Array.isArray(event.personIds)
+        && event.personIds.includes(person.id)
       );
     }
 
-    function placesRouteLatLngs(places = []) {
-      const visiblePlaces =
-        Array.isArray(places)
-          ? places
-          : [];
+    function getSurnameRoutePeople(surname) {
+      const expected = String(surname || '').trim();
+      if (!expected) return [];
+      return getPeople(currentProjectId()).filter(person =>
+        person && !person.deleted && String(person?.names?.last || '').trim() === expected
+      );
+    }
 
-      const route =
-        activePlacesRoute(visiblePlaces);
+    function getSurnameRouteEvents(surname) {
+      const personIds = new Set(getSurnameRoutePeople(surname).map(person => person.id));
+      const events = new Map();
+      (sampleData.events || []).forEach(event => {
+        if (event?.projectId !== currentProjectId()) return;
+        if (!(event.personIds || []).some(personId => personIds.has(personId))) return;
+        if (event.id && !events.has(event.id)) events.set(event.id, event);
+      });
+      return [...events.values()];
+    }
 
-      if (!route) {
-        return [];
+    function normalizeRouteEvent(event) {
+      const date = normalizeGenealogyDateInput(event || {});
+      const rawSortDate = String(date.sortDate || event?.sortDate || '').replace(/\D/g, '');
+      const sortValue = rawSortDate
+        ? Number(rawSortDate.slice(0, 8).padEnd(8, '0'))
+        : Number.POSITIVE_INFINITY;
+      const place = getPlace(event?.placeId);
+      const placeIsValid = Boolean(place && !place.deleted && place.projectId === currentProjectId());
+      const coordinates = placeIsValid ? placeLatLng(place) : null;
+      const hasSortableDate = Number.isFinite(sortValue);
+      const hasCoordinates = Boolean(
+        coordinates && validLatitude(coordinates[0]) && validLongitude(coordinates[1])
+      );
+      const exclusionReason = !hasSortableDate
+        ? 'missingDate'
+        : !placeIsValid
+          ? 'missingPlace'
+          : !hasCoordinates
+            ? 'missingCoordinates'
+            : '';
+      return {
+        event,
+        eventId: String(event?.id || ''),
+        personIds: [...new Set((event?.personIds || []).filter(Boolean))],
+        place,
+        placeId: place?.id || '',
+        coordinates,
+        date,
+        dateLabel: formatGenealogyDateLabel(date),
+        sortValue,
+        hasSortableDate,
+        exclusionReason,
+        eligible: Boolean(hasSortableDate && placeIsValid && hasCoordinates)
+      };
+    }
+
+    function sortRouteEvents(events) {
+      return (events || [])
+        .map((event, index) => ({ ...event, originalIndex: index }))
+        .sort((a, b) => a.sortValue - b.sortValue || a.originalIndex - b.originalIndex);
+    }
+
+    function routeStopDateLabel(stop) {
+      const first = stop?.events?.[0]?.dateLabel || '';
+      const last = stop?.events?.[stop.events.length - 1]?.dateLabel || '';
+      if (first && last && first !== last) return `${first} - ${last}`;
+      return first || last || t('Date unknown');
+    }
+
+    function collapseConsecutiveRouteStops(events) {
+      const stops = [];
+      (events || []).forEach(item => {
+        const previous = stops[stops.length - 1];
+        if (previous && !item.breakBefore && previous.placeId === item.placeId) {
+          previous.events.push(item);
+          previous.eventIds = [...new Set([...previous.eventIds, item.eventId].filter(Boolean))];
+          previous.personIds = [...new Set([...previous.personIds, ...item.personIds])];
+          previous.lastSortValue = item.sortValue;
+          previous.dateLabel = routeStopDateLabel(previous);
+          return;
+        }
+        stops.push({
+          place: item.place,
+          placeId: item.placeId,
+          coordinates: item.coordinates,
+          events: [item],
+          eventIds: item.eventId ? [item.eventId] : [],
+          personIds: [...item.personIds],
+          firstSortValue: item.sortValue,
+          lastSortValue: item.sortValue,
+          breakBefore: Boolean(item.breakBefore),
+          dateLabel: item.dateLabel || t('Date unknown')
+        });
+      });
+      return stops.map((stop, index) => ({ ...stop, sequence: index + 1 }));
+    }
+
+    function derivePlacesRoute(selection = {}) {
+      const mode = ['person', 'surname'].includes(selection.mode) ? selection.mode : 'none';
+      const person = mode === 'person' ? getPerson(selection.personId) : null;
+      const surname = mode === 'surname' ? String(selection.surname || '').trim() : '';
+      const people = mode === 'surname' ? getSurnameRoutePeople(surname) : (person ? [person] : []);
+      const validSubject = mode === 'person'
+        ? Boolean(person && !person.deleted && person.projectId === currentProjectId())
+        : Boolean(surname && people.length);
+      const sourceEvents = validSubject
+        ? (mode === 'person' ? getPersonRouteEvents(person.id) : getSurnameRouteEvents(surname))
+        : [];
+      const normalized = sortRouteEvents(sourceEvents.map(normalizeRouteEvent));
+      let breakBefore = false;
+      const eligible = [];
+      normalized.forEach(item => {
+        if (!item.eligible) {
+          if (item.hasSortableDate) breakBefore = true;
+          return;
+        }
+        eligible.push({ ...item, breakBefore });
+        breakBefore = false;
+      });
+      const stops = collapseConsecutiveRouteStops(eligible);
+      const distinctPositions = new Set(stops.map(stop =>
+        `${Number(stop.coordinates[0]).toFixed(6)},${Number(stop.coordinates[1]).toFixed(6)}`
+      ));
+      const excludedByReason = normalized.reduce((counts, item) => {
+        if (item.eligible || !item.exclusionReason) return counts;
+        counts[item.exclusionReason] += 1;
+        return counts;
+      }, { missingDate: 0, missingPlace: 0, missingCoordinates: 0 });
+      const available = stops.length >= 2 && distinctPositions.size >= 2;
+      const firstDate = stops[0]?.events?.[0]?.dateLabel || '';
+      const finalStop = stops[stops.length - 1];
+      const lastDate = finalStop?.events?.[finalStop.events.length - 1]?.dateLabel || '';
+      return {
+        mode,
+        configured: validSubject,
+        subject: mode === 'person' ? (person?.names?.display || person?.name || '') : surname,
+        personId: person?.id || '',
+        surname,
+        people,
+        peopleCount: people.length,
+        sourceEventCount: sourceEvents.length,
+        excludedCount: normalized.filter(item => !item.eligible).length,
+        excludedByReason,
+        stops,
+        distinctPlaceCount: distinctPositions.size,
+        available,
+        dateSpan: firstDate && lastDate && firstDate !== lastDate
+          ? `${firstDate} - ${lastDate}`
+          : firstDate || lastDate || ''
+      };
+    }
+
+    function derivePlacesRouteSegments(route) {
+      const segments = [];
+      (route?.stops || []).forEach(stop => {
+        if (!segments.length || stop.breakBefore) segments.push([]);
+        segments[segments.length - 1].push(stop);
+      });
+      return segments;
+    }
+
+    function currentPlacesRouteSelection() {
+      return {
+        mode: state.placesRouteMode,
+        personId: state.placesRoutePersonId,
+        surname: state.placesRouteSurname
+      };
+    }
+
+    function currentPlacesRoute() {
+      return derivePlacesRoute(currentPlacesRouteSelection());
+    }
+
+    function normalizePlacesRouteSelection() {
+      const route = currentPlacesRoute();
+      if (state.placesRouteMode !== 'none' && !route.configured) {
+        clearPlacesRoute();
+        return derivePlacesRoute({ mode: 'none' });
       }
-
-      const visibleIds = new Set(
-        visiblePlaces
-          .map(place => place?.id)
-          .filter(Boolean)
-      );
-
-      const routePlaceIds =
-        Array.isArray(route.placeIds)
-          ? route.placeIds
-          : [];
-
-      return routePlaceIds
-        .filter(placeId =>
-          visibleIds.has(placeId)
-        )
-        .map(placeId =>
-          getPlace(placeId)
-        )
-        .filter(Boolean)
-        .filter(place =>
-          placeHasCoordinates(place)
-        )
-        .map(place =>
-          placeLatLng(place)
-        )
-        .filter(Boolean);
+      return route;
     }
 
-    function renderPlacesRouteLayer(places) {
+    function clearPlacesRoute() {
+      state.placesRouteMode = 'none';
+      state.placesRoutePersonId = '';
+      state.placesRouteSurname = '';
+      state.placesShowRoute = false;
+    }
+
+    function createPlacesRouteStopIcon(stop, totalStops) {
+      const isStart = stop.sequence === 1;
+      const isEnd = stop.sequence === totalStops;
+      return L.divIcon({
+        className: 'places-route-marker-icon',
+        html: `<span class="places-route-marker ${isStart ? 'is-start' : ''} ${isEnd ? 'is-end' : ''}" aria-hidden="true"><span>${stop.sequence}</span></span>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+      });
+    }
+
+    function renderPlacesRouteLayer() {
       const map = placesMapRuntime.map;
       if (!map || !window.L) return;
       if (placesMapRuntime.routeLayer) {
         placesMapRuntime.routeLayer.remove();
         placesMapRuntime.routeLayer = null;
       }
-      const latLngs = placesRouteLatLngs(places);
-      if (!state.placesShowRoute || latLngs.length < 2) return;
-      placesMapRuntime.routeLayer = L.polyline(latLngs, {
-        className: 'places-leaflet-route',
-        color: '#62D99A',
-        weight: 3,
-        opacity: 0.78,
-        dashArray: '9 8'
-      }).addTo(map);
+      const route = normalizePlacesRouteSelection();
+      if (!state.placesShowRoute || !route.available) return;
+      const layer = L.layerGroup().addTo(map);
+      derivePlacesRouteSegments(route).forEach(segment => {
+        if (segment.length < 2) return;
+        L.polyline(segment.map(stop => stop.coordinates), {
+          className: 'places-leaflet-route',
+          color: '#62D99A',
+          weight: 3,
+          opacity: 0.78,
+          dashArray: '9 8'
+        }).addTo(layer);
+      });
+      route.stops.forEach(stop => {
+        const eventContext = stop.events
+          .map(item => item.event?.title || item.event?.type || t('Event'))
+          .join(', ');
+        const accessibleName = `${stop.sequence} of ${route.stops.length}: ${stop.place.name}; ${stop.dateLabel}; ${route.subject}; ${eventContext}`;
+        const marker = L.marker(stop.coordinates, {
+          icon: createPlacesRouteStopIcon(stop, route.stops.length),
+          keyboard: true,
+          title: accessibleName,
+          alt: accessibleName,
+          riseOnHover: true,
+          zIndexOffset: 600
+        }).addTo(layer);
+        marker.bindTooltip(`
+          <strong>${stop.sequence}. ${escapeHtml(stop.place.name)}</strong><br>
+          ${escapeHtml(stop.dateLabel)}${eventContext ? `<br>${escapeHtml(eventContext)}` : ''}
+        `, { direction: 'top', offset: [0, -14], opacity: 0.96 });
+        marker.on('click', () => selectPlace(stop.placeId, { focusMap: false }));
+      });
+      placesMapRuntime.routeLayer = layer;
     }
 
-    function updatePlacesRouteControl(
-      places =
-        placesMapRuntime.currentPlaces
-        || []
-    ) {
-      const button =
-        document.getElementById(
-          'placesRouteMenu'
-        );
-
-      if (!button) {
-        return;
-      }
-
-      const visiblePlaces =
-        Array.isArray(places)
-          ? places
-          : [];
-
-      const route =
-        activePlacesRoute(
-          visiblePlaces
-        );
-
-      const shown =
-        Boolean(
-          route
-          && state.placesShowRoute
-          && placesRouteLatLngs(
-            visiblePlaces
-          ).length >= 2
-        );
-
-      button.classList.toggle(
-        'active',
-        shown
-      );
-
-      button.setAttribute(
-        'aria-label',
-        route
-          ? `${route.name || 'Route'} settings; route ${
-              shown
-                ? 'shown'
-                : 'hidden'
-            }`
-          : 'Route settings'
-      );
-
-      button.title =
-        route
-          ? `${route.name || 'Route'} · ${
-              shown
-                ? 'Shown'
-                : 'Hidden'
-            }`
-          : 'Route settings';
+    function updatePlacesRouteControl() {
+      const button = document.getElementById('placesRouteMenu');
+      if (!button) return;
+      const route = normalizePlacesRouteSelection();
+      const active = Boolean(state.placesShowRoute && route.configured);
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-label', route.configured
+        ? `${t('Route settings')}: ${route.subject}; ${t(route.available ? 'Active' : 'Needs attention')}`
+        : t('Route settings'));
+      button.title = route.configured
+        ? `${route.subject} - ${t(route.available ? 'Active' : 'Needs attention')}`
+        : t('Route settings');
     }
 
     function fitPlacesMap(places = placesMapRuntime.currentPlaces || [], { markUserMoved = true } = {}) {
@@ -50464,10 +51166,12 @@
         activePlaceFilterCount();
       const hasActiveFilters =
         activeFilterCount > 0;
+      const route =
+        normalizePlacesRouteSelection();
       const routeIsShown =
         !isPlacesListView
         && state.placesShowRoute
-        && placesRouteLatLngs(list).length >= 2;
+        && route.configured;
       const shellClasses =
         placesInspectorShellClasses();
 
@@ -50637,7 +51341,7 @@
                           type="button"
                           id="placesRouteMenu"
                           aria-label="Route settings"
-                          aria-haspopup="menu"
+                          aria-haspopup="dialog"
                           aria-expanded="false"
                           title="Route settings">
 
@@ -51104,7 +51808,52 @@
       }).join('')}</div>`;
     }
 
+    function routeExcludedReasonSummary(route) {
+      const counts = route?.excludedByReason || {};
+      return [
+        counts.missingDate ? `${counts.missingDate} ${t('undated')}` : '',
+        counts.missingPlace ? `${counts.missingPlace} ${t('without place')}` : '',
+        counts.missingCoordinates ? `${counts.missingCoordinates} ${t('unmapped')}` : ''
+      ].filter(Boolean).join(' - ');
+    }
+
+    function renderPlacesRouteSummary() {
+      if (!state.placesShowRoute) return '';
+      const route = normalizePlacesRouteSelection();
+      if (!route.configured) return '';
+      const metrics = [
+        `${route.stops.length} ${t(route.stops.length === 1 ? 'stop' : 'stops')}`,
+        `${route.distinctPlaceCount} ${t(route.distinctPlaceCount === 1 ? 'place' : 'places')}`,
+        route.mode === 'surname'
+          ? `${route.peopleCount} ${t(route.peopleCount === 1 ? 'person' : 'people')}`
+          : '',
+        route.dateSpan
+      ].filter(Boolean).join(' - ');
+      const excludedSummary = routeExcludedReasonSummary(route);
+      return `
+        <section class="places-route-summary ${route.available ? '' : 'is-unavailable'}" aria-live="polite" aria-label="${escapeHtml(t('Active route'))}">
+          <div class="places-route-summary-head">
+            <div class="places-route-summary-icon" aria-hidden="true">${route.available ? icon.link : icon.warning}</div>
+            <div class="places-route-summary-title">
+              <strong>${escapeHtml(route.subject)}</strong>
+              <span>${escapeHtml(t(route.mode === 'surname' ? 'Surname route' : 'Person route'))}</span>
+            </div>
+            <div class="places-route-summary-actions">
+              <button class="places-route-change" type="button" data-route-change>${escapeHtml(t('Change'))}</button>
+              <button class="places-route-clear" type="button" data-route-panel-clear aria-label="${escapeHtml(t('Clear route'))}" title="${escapeHtml(t('Clear route'))}">${icon.close}</button>
+            </div>
+          </div>
+          ${route.available
+            ? `<div class="places-route-summary-metrics">${escapeHtml(metrics)}</div>`
+            : `<div class="places-route-summary-warning">${escapeHtml(t('Route needs at least two dated, mapped places.'))}</div>`}
+          ${route.excludedCount > 0
+            ? `<div class="places-route-summary-excluded">${route.excludedCount} ${escapeHtml(t(route.excludedCount === 1 ? 'event excluded' : 'events excluded'))}${excludedSummary ? ` - ${escapeHtml(excludedSummary)}` : ''}</div>`
+            : ''}
+        </section>`;
+    }
+
     function renderPlacesMapShell(list) {
+      const route = normalizePlacesRouteSelection();
       return `
         <section
           class="places-map-panel"
@@ -51114,6 +51863,8 @@
             id="placesLeafletMap"
             class="places-leaflet-map">
           </div>
+
+          ${renderPlacesRouteSummary()}
 
           <div class="places-map-navigation-wrap">
             <div
@@ -51152,14 +51903,11 @@
                 <span>Selected place</span>
               </div>
 
-              <div class="places-map-legend-item">
-                <span
-                  class="places-map-legend-route"
-                  aria-hidden="true">
-                </span>
-
-                <span>Migration route</span>
-              </div>
+              ${state.placesShowRoute && route.available ? `
+                <div class="places-map-legend-item">
+                  <span class="places-map-legend-route" aria-hidden="true"></span>
+                  <span>${escapeHtml(t(route.mode === 'surname' ? 'Surname route' : 'Person route'))}</span>
+                </div>` : ''}
             </div>
 
             <div
@@ -52086,11 +52834,7 @@
         );
 
       return `
-        <div
-          class="
-            places-inspector-photo-grid
-          ">
-
+        <div class="connected-photo-grid">
           ${visible
             .map(photo => {
               const label =
@@ -52100,9 +52844,7 @@
 
               return `
                 <button
-                  class="
-                    places-inspector-photo
-                  "
+                  class="connected-photo-button"
                   type="button"
                   data-place-connected-photo="${
                     escapeHtml(photo.id)
@@ -52116,11 +52858,7 @@
 
                   ${renderPhotoThumbnail(
                     photo,
-                    {
-                      className:
-                        'places-inspector-photo-thumbnail',
-                      label
-                    }
+                    { label }
                   )}
                 </button>
               `;
@@ -52129,13 +52867,15 @@
         </div>
 
         <button
-          class="
-            panel-section-view-all
-          "
+          class="panel-section-view-all"
           type="button"
           data-place-view-all-photos>
           <span>View all photos</span>
-          <span class="panel-section-view-all-icon" aria-hidden="true">${icon.chevron}</span>
+          <span
+            class="panel-section-view-all-icon"
+            aria-hidden="true">
+            ${icon.chevron}
+          </span>
         </button>
       `;
     }
@@ -53316,6 +54056,13 @@
             );
           }
         );
+      main.querySelector('[data-route-change]')?.addEventListener('click', event => {
+        openPlacesRouteMenu(event.currentTarget);
+      });
+      main.querySelector('[data-route-panel-clear]')?.addEventListener('click', () => {
+        clearPlacesRoute();
+        renderPlacesMain();
+      });
       bindPlacesInspectorControls(main.querySelector('[data-places-inspector]') || main);
       if (state.placesViewMode === 'map') {
         bindPlacesMapEditingControls();
@@ -53769,449 +54516,1484 @@
       bindMenuLifecycle(anchor);
     }
 
-    function placesProjectRoutes() {
-      return (sampleData.placeRoutes || []).filter(route => route.projectId === currentProjectId() && !route.deleted);
-    }
-
-    function uniquePlaceRouteId() {
-      const used = new Set((sampleData.placeRoutes || []).map(route => route.id));
-      let index = Date.now();
-      let id = `place-route-${index}`;
-      while (used.has(id)) id = `place-route-${++index}`;
-      return id;
-    }
-
-    function openPlaceRouteModal(
-      routeId = null
-    ) {
-      const existing =
-        routeId
-          ? placesProjectRoutes()
-              .find(route =>
-                route.id === routeId
-              )
-          : null;
-
-      if (
-        routeId
-        && !existing
-      ) {
-        return;
-      }
-
-      const projectPlaceIds =
-        new Set(
-          projectPlaces()
-            .map(place =>
-              place.id
-            )
-        );
-
-      const existingIds =
-        (
-          Array.isArray(
-            existing?.placeIds
-          )
-            ? existing.placeIds
-            : []
-        )
-          .filter(placeId =>
-            projectPlaceIds.has(
-              placeId
-            )
-          );
-
-      const existingSet =
-        new Set(existingIds);
-
-      const orderedPlaces = [
-        ...existingIds
-          .map(getPlace)
-          .filter(Boolean),
-
-        ...projectPlaces()
-          .filter(place =>
-            !existingSet.has(
-              place.id
-            )
-          )
+    function currentPlacesRouteInitialPersonId() {
+      const candidates = [
+        state.placesRoutePersonId,
+        state.selectedPersonId,
+        state.selectedPeopleId
       ];
 
-      openModal(`
+      return candidates.find(personId => {
+        const person =
+          getPerson(personId);
+
+        return Boolean(
+          person
+          && !person.deleted
+          && person.projectId
+            === currentProjectId()
+        );
+      }) || '';
+    }
+
+    function placesRoutePopupCount(
+      count,
+      singular,
+      plural
+    ) {
+      return `${
+        count
+      } ${
+        t(
+          count === 1
+            ? singular
+            : plural
+        )
+      }`;
+    }
+
+    function placesRoutePopupStopSummary(
+      route
+    ) {
+      return `${
+        placesRoutePopupCount(
+          route.stops.length,
+          'stop',
+          'stops'
+        )
+      } ${
+        t('across')
+      } ${
+        placesRoutePopupCount(
+          route.distinctPlaceCount,
+          'place',
+          'places'
+        )
+      }`;
+    }
+
+    function placesRoutePopupPersonLifeLine(
+      person
+    ) {
+      const birth =
+        formatGenealogyDateLabel(
+          person?.birth
+        );
+
+      const death =
+        formatGenealogyDateLabel(
+          person?.death
+        );
+
+      if (birth && death) {
+        return `${birth} - ${death}`;
+      }
+
+      if (birth) {
+        return birth;
+      }
+
+      if (death) {
+        return `${t('Died')} ${death}`;
+      }
+
+      return t('Dates unknown');
+    }
+
+    function placesRoutePopupSelectionMatches(
+      route
+    ) {
+      if (
+        !route?.configured
+        || !state.placesShowRoute
+      ) {
+        return false;
+      }
+
+      if (
+        route.mode
+          !== state.placesRouteMode
+      ) {
+        return false;
+      }
+
+      return route.mode === 'person'
+        ? route.personId
+            === state.placesRoutePersonId
+        : route.surname
+            === state.placesRouteSurname;
+    }
+
+    function placesRoutePopupOptions(
+      mode,
+      people,
+      surnames
+    ) {
+      if (mode === 'surname') {
+        return surnames.map(item => {
+          const route =
+            derivePlacesRoute({
+              mode: 'surname',
+              surname: item.surname
+            });
+
+          return {
+            value: item.surname,
+            label: item.surname,
+
+            selectedMeta:
+              placesRoutePopupCount(
+                item.count,
+                'person',
+                'people'
+              ),
+
+            resultMeta:
+              route.available
+                ? `${
+                    placesRoutePopupCount(
+                      item.count,
+                      'person',
+                      'people'
+                    )
+                  } · ${
+                    placesRoutePopupCount(
+                      route
+                        .distinctPlaceCount,
+                      'place',
+                      'places'
+                    )
+                  }`
+                : `${
+                    placesRoutePopupCount(
+                      item.count,
+                      'person',
+                      'people'
+                    )
+                  } · ${
+                    t(
+                      'Not enough mapped history'
+                    )
+                  }`,
+
+            person: null
+          };
+        });
+      }
+
+      return people.map(person => {
+        const route =
+          derivePlacesRoute({
+            mode: 'person',
+            personId: person.id
+          });
+
+        return {
+          value: person.id,
+
+          label:
+            person.names?.display
+            || person.name
+            || t('Unnamed person'),
+
+          selectedMeta:
+            placesRoutePopupPersonLifeLine(
+              person
+            ),
+
+          resultMeta:
+            route.available
+              ? placesRoutePopupStopSummary(
+                  route
+                )
+              : t(
+                  'Not enough mapped history'
+                ),
+
+          person
+        };
+      });
+    }
+
+    function renderPlacesRoutePopupPicker({
+      draft,
+      options,
+      matches,
+      open,
+      activeIndex
+    }) {
+      const selectedValue =
+        draft.mode === 'person'
+          ? draft.personId
+          : draft.surname;
+
+      const selected =
+        options.find(
+          option =>
+            option.value
+              === selectedValue
+        );
+
+      const isSurname =
+        draft.mode === 'surname';
+
+      const label =
+        t(
+          isSurname
+            ? 'Surname'
+            : 'Person'
+        );
+
+      const placeholder =
+        t(
+          isSurname
+            ? 'Search surnames...'
+            : 'Search people...'
+        );
+
+      const emptyLabel =
+        t(
+          isSurname
+            ? 'No matching surnames.'
+            : 'No matching people.'
+        );
+
+      return `
         <div
-          class="modal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="placeRouteModalTitle">
+          class="
+            places-route-popup-field
+          ">
 
-          <div class="modal-header">
-            <div>
-              <h2 id="placeRouteModalTitle">
-                ${
-                  existing
-                    ? 'Edit route'
-                    : 'New route'
-                }
-              </h2>
+          <span
+            class="
+              places-route-popup-label
+            ">
+            ${escapeHtml(label)}
+          </span>
 
-              <p>
-                Choose at least two places.
-                Their order here is the
-                route order.
-              </p>
+          <div
+            class="
+              places-route-popup-picker
+              ${open ? 'is-open' : ''}
+            ">
+
+            ${
+              selected && !open
+                ? `
+                  <button
+                    class="
+                      places-route-popup-subject
+                      ${
+                        isSurname
+                          ? 'is-surname'
+                          : ''
+                      }
+                    "
+                    type="button"
+                    data-route-subject-open
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                    aria-controls="
+                      placesRouteSubjectResults
+                    ">
+
+                    ${
+                      selected.person
+                        ? renderPersonAvatar(
+                            selected.person,
+                            'places-route-popup-avatar',
+                            {
+                              element: 'span',
+                              attrs:
+                                'aria-hidden="true"'
+                            }
+                          )
+                        : ''
+                    }
+
+                    <span
+                      class="
+                        places-route-popup-subject-copy
+                      ">
+                      <strong>
+                        ${escapeHtml(
+                          selected.label
+                        )}
+                      </strong>
+
+                      <small>
+                        ${escapeHtml(
+                          selected
+                            .selectedMeta
+                        )}
+                      </small>
+                    </span>
+
+                    <span
+                      class="
+                        places-route-popup-change
+                      ">
+                      ${escapeHtml(
+                        t('Change')
+                      )}
+                    </span>
+                  </button>
+                `
+                : `
+                  <label
+                    class="
+                      app-search-field
+                      places-route-popup-search
+                    "
+                    aria-label="${
+                      escapeHtml(
+                        placeholder
+                      )
+                    }">
+
+                    ${icon.search}
+
+                    <input
+                      id="
+                        placesRouteSubjectSearch
+                      "
+                      type="search"
+                      role="combobox"
+                      autocomplete="off"
+                      aria-autocomplete="list"
+                      aria-expanded="${open}"
+                      aria-controls="
+                        placesRouteSubjectResults
+                      "
+                      aria-activedescendant="${
+                        activeIndex >= 0
+                          ? `placesRouteSubjectOption${activeIndex}`
+                          : ''
+                      }"
+                      value="${escapeHtml(
+                        draft.query
+                      )}"
+                      placeholder="${escapeHtml(
+                        placeholder
+                      )}">
+                  </label>
+                `
+            }
+
+            <div
+              id="placesRouteSubjectResults"
+              class="
+                places-route-popup-options
+              "
+              role="listbox"
+              ${open ? '' : 'hidden'}>
+
+              ${
+                matches.length
+                  ? matches
+                      .map(
+                        (
+                          option,
+                          index
+                        ) => {
+                          const
+                            optionSelected =
+                              option.value
+                              === selectedValue;
+
+                          return `
+                            <button
+                              id="
+                                placesRouteSubjectOption${index}
+                              "
+                              class="
+                                places-route-popup-option
+                                ${
+                                  isSurname
+                                    ? 'is-surname'
+                                    : ''
+                                }
+                                ${
+                                  optionSelected
+                                    ? 'selected'
+                                    : ''
+                                }
+                                ${
+                                  index
+                                    === activeIndex
+                                    ? 'highlighted'
+                                    : ''
+                                }
+                              "
+                              type="button"
+                              role="option"
+                              aria-selected="${
+                                optionSelected
+                              }"
+                              data-route-subject-value="${
+                                escapeHtml(
+                                  option.value
+                                )
+                              }">
+
+                              ${
+                                option.person
+                                  ? renderPersonAvatar(
+                                      option.person,
+                                      'places-route-popup-avatar',
+                                      {
+                                        element:
+                                          'span',
+                                        attrs:
+                                          'aria-hidden="true"'
+                                      }
+                                    )
+                                  : ''
+                              }
+
+                              <span
+                                class="
+                                  places-route-popup-option-copy
+                                ">
+                                <strong>
+                                  ${escapeHtml(
+                                    option.label
+                                  )}
+                                </strong>
+
+                                <small>
+                                  ${escapeHtml(
+                                    option
+                                      .resultMeta
+                                  )}
+                                </small>
+                              </span>
+
+                              ${
+                                optionSelected
+                                  ? `
+                                    <span
+                                      class="
+                                        places-route-popup-option-check
+                                      "
+                                      aria-hidden="true">
+                                      ${icon.check}
+                                    </span>
+                                  `
+                                  : '<span></span>'
+                              }
+                            </button>
+                          `;
+                        }
+                      )
+                      .join('')
+                  : `
+                    <span
+                      class="
+                        places-route-popup-empty
+                      ">
+                      ${escapeHtml(
+                        emptyLabel
+                      )}
+                    </span>
+                  `
+              }
             </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPlacesRoutePopupPreview(
+      route
+    ) {
+      if (!route.configured) {
+        return `
+          <p
+            class="
+              places-route-popup-hint
+            ">
+            ${escapeHtml(
+              t(
+                route.mode === 'surname'
+                  ? 'Select a surname to preview its route.'
+                  : 'Select a person to preview their route.'
+              )
+            )}
+          </p>
+        `;
+      }
+
+      const excludedSummary =
+        routeExcludedReasonSummary(
+          route
+        )
+          .split(' - ')
+          .join(' · ');
+
+      const metrics = [
+        route.mode === 'surname'
+          ? placesRoutePopupCount(
+              route.peopleCount,
+              'person',
+              'people'
+            )
+          : '',
+
+        placesRoutePopupStopSummary(
+          route
+        ),
+
+        route.dateSpan
+      ].filter(Boolean);
+
+      return `
+        <div
+          class="
+            places-route-popup-preview
+            ${
+              route.available
+                ? ''
+                : 'is-unavailable'
+            }
+          "
+          role="status"
+          aria-live="polite">
+
+          <span
+            class="
+              places-route-popup-preview-icon
+            "
+            aria-hidden="true">
+            ${
+              route.available
+                ? icon.check
+                : icon.warning
+            }
+          </span>
+
+          <div
+            class="
+              places-route-popup-preview-copy
+            ">
+
+            <strong>
+              ${escapeHtml(
+                t(
+                  route.available
+                    ? 'Route available'
+                    : 'Not enough mapped history'
+                )
+              )}
+            </strong>
+
+            ${
+              route.available
+                ? metrics
+                    .map(
+                      metric => `
+                        <span>
+                          ${escapeHtml(
+                            metric
+                          )}
+                        </span>
+                      `
+                    )
+                    .join('')
+                : `
+                  <span>
+                    ${escapeHtml(
+                      t(
+                        'At least two dated, mapped places are needed.'
+                      )
+                    )}
+                  </span>
+                `
+            }
+
+            ${
+              route.excludedCount > 0
+                ? `
+                  <small>
+                    <strong>
+                      ${
+                        route.excludedCount
+                      } ${
+                        escapeHtml(
+                          t(
+                            route
+                              .excludedCount
+                              === 1
+                              ? 'event excluded'
+                              : 'events excluded'
+                          )
+                        )
+                      }
+                    </strong>
+
+                    ${
+                      excludedSummary
+                        ? `
+                          <span>
+                            ${escapeHtml(
+                              excludedSummary
+                            )}
+                          </span>
+                        `
+                        : ''
+                    }
+                  </small>
+                `
+                : ''
+            }
+
+            ${
+              !route.available
+              && route
+                .excludedByReason
+                .missingCoordinates > 0
+                ? `
+                  <button
+                    class="
+                      places-route-popup-review
+                    "
+                    type="button"
+                    data-route-review-unmapped>
+                    ${escapeHtml(
+                      t(
+                        'Review unmapped places'
+                      )
+                    )}
+                  </button>
+                `
+                : ''
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    function openPlacesRouteMenu(
+      anchor
+    ) {
+      closeMenu();
+
+      const people =
+        getPeople(
+          currentProjectId()
+        )
+          .filter(
+            person =>
+              person
+              && !person.deleted
+          )
+          .sort(
+            (
+              first,
+              second
+            ) =>
+              (
+                first.names?.display
+                || first.name
+                || ''
+              )
+                .localeCompare(
+                  second.names
+                    ?.display
+                  || second.name
+                  || ''
+                )
+          );
+
+      const surnames =
+        getProjectRouteSurnames();
+
+      const draft = {
+        mode:
+          [
+            'person',
+            'surname'
+          ].includes(
+            state.placesRouteMode
+          )
+            ? state.placesRouteMode
+            : 'person',
+
+        personId:
+          state
+            .placesRoutePersonId
+          || currentPlacesRouteInitialPersonId(),
+
+        surname:
+          state
+            .placesRouteSurname
+          || '',
+
+        query: ''
+      };
+
+      let resultsOpen = false;
+      let activeIndex = -1;
+
+      const popover =
+        document.createElement(
+          'div'
+        );
+
+      popover.className =
+        'menu-popover places-route-popover';
+
+      popover.id =
+        'projectMenu';
+
+      popover.setAttribute(
+        'role',
+        'dialog'
+      );
+
+      popover.setAttribute(
+        'aria-modal',
+        'false'
+      );
+
+      popover.setAttribute(
+        'aria-labelledby',
+        'placesRoutePopoverTitle'
+      );
+
+      popover.setAttribute(
+        'aria-describedby',
+        'placesRoutePopoverDescription'
+      );
+
+      popover.addEventListener(
+        'click',
+        event =>
+          event.stopPropagation()
+      );
+
+      const allOptions = () =>
+        placesRoutePopupOptions(
+          draft.mode,
+          people,
+          surnames
+        );
+
+      const visibleOptions = () => {
+        const query =
+          draft.query
+            .trim()
+            .toLowerCase();
+
+        return allOptions()
+          .filter(
+            option =>
+              !query
+              || option.label
+                .toLowerCase()
+                .includes(query)
+          )
+          .slice(
+            0,
+            draft.mode === 'person'
+              ? 12
+              : 16
+          );
+      };
+
+      const selectedValue = () =>
+        draft.mode === 'person'
+          ? draft.personId
+          : draft.surname;
+
+      const setSelectedValue =
+        value => {
+          if (
+            draft.mode === 'person'
+          ) {
+            draft.personId = value;
+          } else {
+            draft.surname = value;
+          }
+        };
+
+      const positionPopover = () => {
+        const rect =
+          anchor
+            .getBoundingClientRect();
+
+        const width =
+          Math.min(
+            400,
+            window.innerWidth - 24
+          );
+
+        const below =
+          rect.bottom + 8;
+
+        const above =
+          rect.top
+          - popover.offsetHeight
+          - 8;
+
+        const top =
+          below
+          + popover.offsetHeight
+          <= window.innerHeight - 12
+            ? below
+            : Math.max(
+                12,
+                above
+              );
+
+        popover.style.width =
+          `${width}px`;
+
+        popover.style.left =
+          `${
+            Math.max(
+              12,
+              Math.min(
+                rect.right - width,
+                window.innerWidth
+                  - width
+                  - 12
+              )
+            )
+          }px`;
+
+        popover.style.top =
+          `${top}px`;
+      };
+
+      const positionOptions = () => {
+        const picker =
+          popover.querySelector(
+            '.places-route-popup-picker.is-open'
+          );
+
+        const options =
+          picker?.querySelector(
+            '.places-route-popup-options:not([hidden])'
+          );
+
+        if (
+          !picker
+          || !options
+        ) {
+          return;
+        }
+
+        const rect =
+          picker.getBoundingClientRect();
+
+        const availableBelow =
+          window.innerHeight
+          - rect.bottom
+          - 12;
+
+        const availableAbove =
+          rect.top - 12;
+
+        const expectedHeight =
+          Math.min(
+            options.scrollHeight,
+            240
+          );
+
+        picker.classList.toggle(
+          'opens-up',
+          availableBelow
+            < expectedHeight
+          && availableAbove
+            > availableBelow
+        );
+      };
+
+      const focusControl =
+        controlName => {
+          const selectors = {
+            search:
+              '#placesRouteSubjectSearch',
+
+            subject:
+              '[data-route-subject-open]',
+
+            personMode:
+              '[data-route-mode="person"]',
+
+            surnameMode:
+              '[data-route-mode="surname"]'
+          };
+
+          requestAnimationFrame(
+            () => {
+              positionOptions();
+
+              const control =
+                popover
+                  .querySelector(
+                    selectors[
+                      controlName
+                    ]
+                  );
+
+              control?.focus({
+                preventScroll: true
+              });
+
+              if (
+                control
+                instanceof
+                  HTMLInputElement
+              ) {
+                control
+                  .setSelectionRange(
+                    control.value.length,
+                    control.value.length
+                  );
+              }
+
+              if (
+                activeIndex >= 0
+              ) {
+                popover
+                  .querySelector(
+                    `#placesRouteSubjectOption${activeIndex}`
+                  )
+                  ?.scrollIntoView({
+                    block: 'nearest'
+                  });
+              }
+            }
+          );
+        };
+
+      const selectOption =
+        value => {
+          setSelectedValue(value);
+
+          draft.query = '';
+          resultsOpen = false;
+          activeIndex = -1;
+
+          renderPopover({
+            focus: 'subject'
+          });
+        };
+
+      const renderPopover = ({
+        focus = ''
+      } = {}) => {
+        const options =
+          allOptions();
+
+        const matches =
+          visibleOptions();
+
+        const draftRoute =
+          derivePlacesRoute({
+            mode: draft.mode,
+
+            personId:
+              draft.mode === 'person'
+                ? draft.personId
+                : '',
+
+            surname:
+              draft.mode === 'surname'
+                ? draft.surname
+                : ''
+          });
+
+        const currentRoute =
+          currentPlacesRoute();
+
+        const routeShown =
+          placesRoutePopupSelectionMatches(
+            draftRoute
+          );
+
+        const hasShownRoute =
+          Boolean(
+            state.placesShowRoute
+            && currentRoute.configured
+          );
+
+        popover.innerHTML = `
+          <div
+            class="
+              places-route-popover-head
+            ">
+
+            <strong
+              id="
+                placesRoutePopoverTitle
+              ">
+              ${escapeHtml(
+                t('Calculate route')
+              )}
+            </strong>
+
+            <span
+              id="
+                placesRoutePopoverDescription
+              ">
+              ${escapeHtml(
+                t(
+                  'Choose a person or surname. Routes use dated events with mapped places.'
+                )
+              )}
+            </span>
+          </div>
+
+          <div
+            class="
+              places-route-mode
+            "
+            role="group"
+            aria-label="${escapeHtml(
+              t('Route mode')
+            )}">
 
             <button
-              class="close-button"
               type="button"
-              data-close>
-              ${icon.close}
+              data-route-mode="person"
+              class="${
+                draft.mode === 'person'
+                  ? 'active'
+                  : ''
+              }"
+              aria-pressed="${
+                draft.mode === 'person'
+              }">
+              ${escapeHtml(
+                t('Person')
+              )}
+            </button>
+
+            <button
+              type="button"
+              data-route-mode="surname"
+              class="${
+                draft.mode === 'surname'
+                  ? 'active'
+                  : ''
+              }"
+              aria-pressed="${
+                draft.mode === 'surname'
+              }">
+              ${escapeHtml(
+                t('Surname')
+              )}
             </button>
           </div>
 
-          <form id="placeRouteForm">
-            <div
+          <div
+            class="
+              places-route-popup-body
+            ">
+
+            ${renderPlacesRoutePopupPicker({
+              draft,
+              options,
+              matches,
+              open: resultsOpen,
+              activeIndex
+            })}
+
+            ${renderPlacesRoutePopupPreview(
+              draftRoute
+            )}
+          </div>
+
+          <div
+            class="
+              places-route-popover-actions
+            ">
+
+            ${
+              hasShownRoute
+                ? `
+                  <button
+                    class="
+                      button
+                      ghost
+                    "
+                    type="button"
+                    data-route-clear>
+                    ${escapeHtml(
+                      t(
+                        'Clear shown route'
+                      )
+                    )}
+                  </button>
+                `
+                : '<span></span>'
+            }
+
+            <button
               class="
-                modal-body
-                form-grid
-              ">
-
-              <div class="field full">
-                <label for="placeRouteName">
-                  Route name
-                </label>
-
-                <input
-                  id="placeRouteName"
-                  required
-                  value="${
-                    escapeHtml(
-                      existing?.name || ''
-                    )
-                  }"
-                  placeholder="e.g. Family migration">
-              </div>
-
-              <fieldset
-                class="
-                  field
-                  full
-                  places-route-choices
-                ">
-
-                <legend>
-                  Places in route order
-                </legend>
-
-                <div class="notes-modal-list">
-                  ${
-                    orderedPlaces
-                      .map(place => `
-                        <label
-                          class="
-                            notes-modal-choice
-                          ">
-
-                          <input
-                            type="checkbox"
-                            value="${
-                              escapeHtml(
-                                place.id
-                              )
-                            }"
-                            ${
-                              existingSet.has(
-                                place.id
-                              )
-                                ? 'checked'
-                                : ''
-                            }>
-
-                          <span>
-                            ${
-                              escapeHtml(
-                                place.name
-                              )
-                            }
-                          </span>
-                        </label>
-                      `)
-                      .join('')
-                  }
-                </div>
-
-                <span
-                  class="
-                    place-coordinate-error
-                  "
-                  data-place-route-error
-                  role="alert">
-                </span>
-              </fieldset>
-            </div>
-
-            <div class="modal-footer">
-              <button
-                class="button secondary"
-                type="button"
-                data-close>
-                Cancel
-              </button>
-
-              <button
-                class="button primary"
-                type="submit">
-                ${
-                  existing
-                    ? 'Save route'
-                    : 'Create route'
-                }
-              </button>
-            </div>
-          </form>
-        </div>
-      `);
-
-      modalBackdrop
-        .querySelector(
-          '#placeRouteForm'
-        )
-        ?.addEventListener(
-          'submit',
-          event => {
-            event.preventDefault();
-
-            const placeIds = [
-              ...modalBackdrop
-                .querySelectorAll(
-                  '#placeRouteForm input[type="checkbox"]:checked'
+                button
+                primary
+              "
+              type="button"
+              data-route-show
+              ${
+                !draftRoute.available
+                || routeShown
+                  ? 'disabled'
+                  : ''
+              }>
+              ${escapeHtml(
+                t(
+                  routeShown
+                    ? 'Route shown'
+                    : 'Show route'
                 )
-            ].map(input =>
-              input.value
-            );
+              )}
+            </button>
+          </div>
+        `;
 
-            const error =
-              modalBackdrop
-                .querySelector(
-                  '[data-place-route-error]'
-                );
+        popover
+          .querySelectorAll(
+            '[data-route-mode]'
+          )
+          .forEach(button => {
+            button.addEventListener(
+              'click',
+              () => {
+                const mode =
+                  button.dataset
+                    .routeMode;
+
+                if (
+                  mode === draft.mode
+                ) {
+                  return;
+                }
+
+                draft.mode = mode;
+                draft.query = '';
+                resultsOpen = false;
+                activeIndex = -1;
+
+                renderPopover({
+                  focus:
+                    mode === 'person'
+                      ? 'personMode'
+                      : 'surnameMode'
+                });
+              }
+            );
+          });
+
+        popover
+          .querySelector(
+            '[data-route-subject-open]'
+          )
+          ?.addEventListener(
+            'click',
+            () => {
+              draft.query = '';
+              resultsOpen = true;
+              activeIndex = -1;
+
+              renderPopover({
+                focus: 'search'
+              });
+            }
+          );
+
+        const search =
+          popover.querySelector(
+            '#placesRouteSubjectSearch'
+          );
+
+        const openResults = () => {
+          if (resultsOpen) {
+            return;
+          }
+
+          resultsOpen = true;
+          activeIndex = -1;
+
+          renderPopover({
+            focus: 'search'
+          });
+        };
+
+        search?.addEventListener(
+          'focus',
+          openResults
+        );
+
+        search?.addEventListener(
+          'click',
+          openResults
+        );
+
+        search?.addEventListener(
+          'input',
+          event => {
+            draft.query =
+              event.target.value;
+
+            resultsOpen = true;
+            activeIndex = -1;
+
+            renderPopover({
+              focus: 'search'
+            });
+          }
+        );
+
+        search?.addEventListener(
+          'keydown',
+          event => {
+            const matchesNow =
+              visibleOptions();
 
             if (
-              placeIds.length < 2
+              event.key
+                === 'ArrowDown'
+              || event.key
+                === 'ArrowUp'
             ) {
-              error.textContent =
-                'Select at least two places.';
+              event.preventDefault();
+
+              const direction =
+                event.key
+                  === 'ArrowDown'
+                  ? 1
+                  : -1;
+
+              if (!resultsOpen) {
+                resultsOpen = true;
+
+                activeIndex =
+                  direction > 0
+                    ? 0
+                    : Math.max(
+                        0,
+                        matchesNow
+                          .length - 1
+                      );
+              } else if (
+                matchesNow.length
+              ) {
+                activeIndex =
+                  activeIndex < 0
+                    ? (
+                        direction > 0
+                          ? 0
+                          : matchesNow
+                              .length - 1
+                      )
+                    : (
+                        activeIndex
+                        + direction
+                        + matchesNow
+                            .length
+                      )
+                      % matchesNow
+                          .length;
+              }
+
+              renderPopover({
+                focus: 'search'
+              });
 
               return;
             }
 
-            const route =
-              existing || {
-                id:
-                  uniquePlaceRouteId(),
+            if (
+              event.key === 'Enter'
+              && activeIndex >= 0
+            ) {
+              event.preventDefault();
 
-                projectId:
-                  currentProjectId(),
+              const option =
+                matchesNow[
+                  activeIndex
+                ];
 
-                status:
-                  'active',
+              if (option) {
+                selectOption(
+                  option.value
+                );
+              }
 
-                deleted:
-                  false
-              };
-
-            route.name =
-              modalBackdrop
-                .querySelector(
-                  '#placeRouteName'
-                )
-                .value
-                .trim();
-
-            route.placeIds = [
-              ...new Set(placeIds)
-            ];
-
-            if (!existing) {
-              sampleData
-                .placeRoutes
-                .push(route);
+              return;
             }
 
-            state.placesActiveRouteId =
-              route.id;
+            if (
+              event.key === 'Escape'
+              && resultsOpen
+            ) {
+              event.preventDefault();
+              event.stopPropagation();
 
-            state.placesShowRoute =
-              true;
+              resultsOpen = false;
+              activeIndex = -1;
 
-            closeModal();
-            renderPlacesMain();
-
-            showToast(
-              existing
-                ? 'Route updated.'
-                : 'Route created.'
-            );
+              renderPopover({
+                focus:
+                  selectedValue()
+                    ? 'subject'
+                    : (
+                        draft.mode
+                          === 'person'
+                          ? 'personMode'
+                          : 'surnameMode'
+                      )
+              });
+            }
           }
         );
-    }
 
-    function openPlacesRouteMenu(anchor) {
-      closeMenu();
-
-      const routes =
-        placesProjectRoutes();
-
-      const visiblePlaces =
-        filteredPlaces();
-
-      const activeRoute =
-        activePlacesRoute(
-          visiblePlaces
-        );
-
-      const canToggleRoute =
-        Boolean(
-          activeRoute
-          && placesRouteLatLngs(
-            visiblePlaces
-          ).length >= 2
-        );
-
-      const rect =
-        anchor.getBoundingClientRect();
-
-      const menu =
-        document.createElement('div');
-
-      menu.className =
-        'menu-popover';
-
-      menu.id =
-        'projectMenu';
-
-      menu.style.top =
-        `${rect.bottom + 6}px`;
-
-      menu.style.left =
-        `${
-          Math.max(
-            12,
-            rect.right - 240
+        popover
+          .querySelectorAll(
+            '[data-route-subject-value]'
           )
-        }px`;
+          .forEach(button => {
+            button.addEventListener(
+              'click',
+              () => {
+                selectOption(
+                  button.dataset
+                    .routeSubjectValue
+                );
+              }
+            );
+          });
 
-      menu.innerHTML = `
-        <button
-          type="button"
-          data-route-toggle
-          ${canToggleRoute ? '' : 'disabled'}>
+        popover
+          .querySelector(
+            '[data-route-review-unmapped]'
+          )
+          ?.addEventListener(
+            'click',
+            () => {
+              closeMenu();
+              openPlacesNeedsReview();
+            }
+          );
 
-          ${
-            state.placesShowRoute
-              ? 'Hide route'
-              : 'Show route'
-          }
-        </button>
+        popover
+          .querySelector(
+            '[data-route-show]'
+          )
+          ?.addEventListener(
+            'click',
+            () => {
+              const route =
+                derivePlacesRoute({
+                  mode: draft.mode,
 
-        <button
-          type="button"
-          data-route-new>
-          ${icon.plus}
-          New route
-        </button>
+                  personId:
+                    draft.mode
+                      === 'person'
+                      ? draft.personId
+                      : '',
 
-        ${
-          routes
-            .map(route => `
-              <button
-                type="button"
-                data-route-edit="${
-                  escapeHtml(route.id)
-                }">
+                  surname:
+                    draft.mode
+                      === 'surname'
+                      ? draft.surname
+                      : ''
+                });
 
-                ${icon.edit}
+              if (!route.available) {
+                return;
+              }
 
-                ${
-                  route.id
-                    === activeRoute?.id
-                      ? 'Edit current route: '
-                      : 'Edit '
-                }
+              state.placesRouteMode =
+                draft.mode;
 
-                ${escapeHtml(
-                  route.name
-                  || 'Unnamed route'
-                )}
-              </button>
-            `)
-            .join('')
+              state
+                .placesRoutePersonId =
+                  draft.mode
+                    === 'person'
+                    ? draft.personId
+                    : '';
+
+              state
+                .placesRouteSurname =
+                  draft.mode
+                    === 'surname'
+                    ? draft.surname
+                    : '';
+
+              state.placesShowRoute =
+                true;
+
+              closeMenu();
+              renderPlacesMain();
+
+              requestAnimationFrame(
+                () =>
+                  requestAnimationFrame(
+                    () => {
+                      const activeRoute =
+                        currentPlacesRoute();
+
+                      if (
+                        activeRoute.available
+                      ) {
+                        fitPlacesMap(
+                          activeRoute
+                            .stops
+                            .map(
+                              stop =>
+                                stop.place
+                            )
+                        );
+                      }
+                    }
+                  )
+              );
+            }
+          );
+
+        popover
+          .querySelector(
+            '[data-route-clear]'
+          )
+          ?.addEventListener(
+            'click',
+            () => {
+              clearPlacesRoute();
+              closeMenu();
+              renderPlacesMain();
+            }
+          );
+
+        positionPopover();
+
+        if (focus) {
+          focusControl(focus);
+        } else {
+          requestAnimationFrame(
+            positionOptions
+          );
         }
-      `;
+      };
 
-      document.body.appendChild(menu);
+      document.body.appendChild(
+        popover
+      );
 
       anchor.setAttribute(
         'aria-expanded',
         'true'
       );
 
-      menu.addEventListener(
-        'click',
-        event => {
-          const toggleButton =
-            event.target.closest(
-              '[data-route-toggle]'
-            );
-
-          if (
-            toggleButton
-            && canToggleRoute
-          ) {
-            state.placesShowRoute =
-              !state.placesShowRoute;
-
-            closeMenu();
-
-            renderPlacesRouteLayer(
-              visiblePlaces
-            );
-
-            updatePlacesRouteControl(
-              visiblePlaces
-            );
-
-            return;
-          }
-
-          const editId =
-            event.target
-              .closest(
-                '[data-route-edit]'
-              )
-              ?.dataset
-              .routeEdit;
-
-          const addNew =
-            event.target.closest(
-              '[data-route-new]'
-            );
-
-          closeMenu();
-
-          if (editId) {
-            openPlaceRouteModal(
-              editId
-            );
-          } else if (addNew) {
-            openPlaceRouteModal();
-          }
-        }
-      );
-
+      renderPopover();
       bindMenuLifecycle(anchor);
     }
-
+ 
     function formatPlaceUpdatedAt(value) {
       const timestamp = Date.parse(value || '');
       return Number.isFinite(timestamp) ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(new Date(timestamp)) : 'Unknown';
@@ -55157,11 +56939,10 @@
     function openDeletePlaceModal(placeId, { returnToEditor = false } = {}) {
       const place = getPlace(placeId); if (!place) return;
       const returnAttribute = returnToEditor && placeEditorDraft ? ' data-return-to-place-editor' : '';
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deletePlaceTitle" data-place-delete-confirm${returnAttribute}><div class="modal-header"><div><h2 id="deletePlaceTitle">Delete place permanently?</h2><p>This action cannot be undone.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body place-delete-confirm"><strong>${escapeHtml(place.name)}</strong><ul><li>The place will be removed from Places routes.</li><li>Structured links from connected records will be cleared.</li><li>Connected people, events, files, photos, and notes will remain.</li><li>Textual mentions may remain in free-text content.</li></ul></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-confirm-delete-place>Delete permanently</button></div></div>`);
+      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deletePlaceTitle" data-place-delete-confirm${returnAttribute}><div class="modal-header"><div><h2 id="deletePlaceTitle">Delete place permanently?</h2><p>This action cannot be undone.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body place-delete-confirm"><strong>${escapeHtml(place.name)}</strong><ul><li>The place will no longer appear in calculated routes.</li><li>Structured links from connected records will be cleared.</li><li>Connected people, events, files, photos, and notes will remain.</li><li>Textual mentions may remain in free-text content.</li></ul></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-confirm-delete-place>Delete permanently</button></div></div>`);
       modalBackdrop.querySelector('[data-confirm-delete-place]')?.addEventListener('click', () => {
         resetPlaceEditorDraft();
         sampleData.places = sampleData.places.filter(item => item.id !== place.id);
-        (sampleData.placeRoutes || []).forEach(route => { route.placeIds = (route.placeIds || []).filter(id => id !== place.id); });
         sampleData.placeIssues = (sampleData.placeIssues || []).filter(issue => issue.placeId !== place.id);
         sampleData.people.forEach(person => [person, person.birth, person.death, ...(person.events || []), ...(person.attributes || [])].filter(Boolean).forEach(record => clearStructuredPlaceReferences(record, place.id)));
         centralFamilyRecords().forEach(family => [family, ...(family.events || [])].forEach(record => clearStructuredPlaceReferences(record, place.id)));
@@ -56050,19 +57831,7 @@
           )[0]?.id
           || null;
 
-        state.placesActiveRouteId =
-          (
-            sampleData.placeRoutes || []
-          )
-            .find(route =>
-              route.projectId === project.id
-              && !route.deleted
-            )
-            ?.id
-          || null;
-
-        state.placesShowRoute =
-          true;
+        clearPlacesRoute();
 
         state.placesMapView = {
           center: null,
@@ -56597,7 +58366,6 @@
         'educationSeed',
         'places',
         'placeSavedFilters',
-        'placeRoutes',
         'placeIssues',
         'events',
         'media',
@@ -56652,17 +58420,7 @@
       state.placesSearch =
         '';
 
-      state.placesActiveRouteId =
-        (
-          sampleData.placeRoutes || []
-        )
-          .find(route =>
-            route.projectId
-              === nextProjectId
-            && !route.deleted
-          )
-          ?.id
-        || null;
+      clearPlacesRoute();
 
       state.placesMapView = {
         center: null,
@@ -56707,25 +58465,113 @@
 
     function bindMenuLifecycle(anchor = null) {
       menuLifecycleController?.abort();
-      const controller = new AbortController();
-      menuLifecycleController = controller;
+
+      const controller =
+        new AbortController();
+
+      menuLifecycleController =
+        controller;
+
+      const eventIsInsideMenu = event => {
+        const target = event.target;
+
+        return Boolean(
+          target instanceof Element
+          && target.closest(
+            '.menu-popover'
+          )
+        );
+      };
+
       const closeOutside = event => {
-        if (event.target.closest?.('.menu-popover') || anchor?.contains?.(event.target)) return;
+        if (
+          eventIsInsideMenu(event)
+          || anchor?.contains?.(
+            event.target
+          )
+        ) {
+          return;
+        }
+
         closeMenu();
       };
+
+      const closeOnDocumentScroll =
+        event => {
+          if (
+            eventIsInsideMenu(event)
+          ) {
+            return;
+          }
+
+          closeMenu();
+        };
+
       setTimeout(() => {
-        if (controller.signal.aborted) return;
-        document.addEventListener('click', closeOutside, { signal: controller.signal });
+        if (
+          controller.signal.aborted
+        ) {
+          return;
+        }
+
+        document.addEventListener(
+          'click',
+          closeOutside,
+          {
+            signal:
+              controller.signal
+          }
+        );
       }, 0);
-      document.addEventListener('scroll', closeMenu, { capture: true, signal: controller.signal });
-      document.addEventListener('keydown', event => { if (event.key === 'Escape') closeMenu(); }, { signal: controller.signal });
-      window.addEventListener('scroll', closeMenu, { signal: controller.signal });
-      window.addEventListener('resize', closeMenu, { signal: controller.signal });
+
+      document.addEventListener(
+        'scroll',
+        closeOnDocumentScroll,
+        {
+          capture: true,
+          signal:
+            controller.signal
+        }
+      );
+
+      document.addEventListener(
+        'keydown',
+        event => {
+          if (
+            event.key === 'Escape'
+          ) {
+            closeMenu();
+          }
+        },
+        {
+          signal:
+            controller.signal
+        }
+      );
+
+      window.addEventListener(
+        'scroll',
+        closeMenu,
+        {
+          signal:
+            controller.signal
+        }
+      );
+
+      window.addEventListener(
+        'resize',
+        closeMenu,
+        {
+          signal:
+            controller.signal
+        }
+      );
     }
 
     function closeMenu() {
       menuLifecycleController?.abort();
       menuLifecycleController = null;
+      document.getElementById('placesRouteMenu')?.setAttribute('aria-expanded', 'false');
       document.getElementById('projectMenu')?.remove();
       document.getElementById('relativePopover')?.remove();
       document.getElementById('topbarPopover')?.remove();
@@ -57120,7 +58966,6 @@
         )
           ? sampleData.placeSavedFilters
           : [];
-      sampleData.placeRoutes = Array.isArray(sampleData.placeRoutes) ? sampleData.placeRoutes : [];
       sampleData.placeIssues = Array.isArray(sampleData.placeIssues) ? sampleData.placeIssues : [];
       sampleData.sources = Array.isArray(sampleData.sources) ? sampleData.sources : [];
       sampleData.archiveFiles = Array.isArray(sampleData.archiveFiles) ? sampleData.archiveFiles : [];
