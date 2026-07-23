@@ -943,6 +943,7 @@
       display: -webkit-box;
       font-size: 15px;
       line-height: 1.28;
+      line-clamp: 2;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
     }
@@ -4045,41 +4046,71 @@
     .note-card { border: 1px solid var(--border-default); background: var(--surface-card); border-radius: var(--radius-sm); padding: var(--space-3); color: var(--text-secondary); }
     .note-card strong { color: var(--text-primary); display: block; }
 
-    .family-archive-list,
-    .family-note-list { display: grid; gap: var(--space-2); }
-    .family-archive-row,
-    .family-note-card {
-      width: 100%;
-      border: 1px solid var(--border-default);
-      background: var(--surface-card);
-      color: var(--text-secondary);
-      border-radius: var(--radius-sm);
-      text-align: left;
-      transition: background var(--ease), border-color var(--ease), transform var(--ease);
-    }
-    .family-archive-row {
+    .family-archive-list {
       display: grid;
-      grid-template-columns: 34px minmax(0, 1fr) auto;
-      align-items: center;
-      gap: var(--space-3);
+      gap: var(--space-2);
+    }
+
+    .family-archive-row {
+      width: 100%;
       min-height: 62px;
       padding: 10px;
+
+      display: grid;
+      grid-template-columns:
+        34px
+        minmax(0, 1fr)
+        auto;
+
+      align-items: center;
+      gap: var(--space-3);
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        var(--surface-card);
+
+      color:
+        var(--text-secondary);
+
+      text-align: left;
+
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        transform var(--ease);
     }
+
     .family-archive-row:hover,
-    .family-archive-row:focus-visible,
-    .family-note-card:hover,
-    .family-note-card:focus-visible {
-      background: var(--surface-card-hover);
-      border-color: var(--border-strong);
-      transform: translateY(-1px);
+    .family-archive-row:focus-visible {
+      border-color:
+        var(--border-strong);
+
+      background:
+        var(--surface-card-hover);
+
+      transform:
+        translateY(-1px);
     }
-    .family-archive-copy { min-width: 0; }
-    .family-note-card { padding: var(--space-3); display: grid; gap: 5px; }
+
+    .family-archive-copy {
+      min-width: 0;
+    }
+
     .family-archive-copy strong,
     .family-archive-copy span {
       overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
     }
 
     .family-item-arrow {
@@ -4093,33 +4124,155 @@
       opacity: 1;
     }
 
-    .family-note-card strong {
-      margin-bottom: 0;
-
-      display: -webkit-box;
-      overflow: hidden;
-
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-
-      line-height: 1.35;
-    }
-
-    .family-note-card > span {
-      display: -webkit-box;
-      overflow: hidden;
-
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-
-      line-height: 1.45;
-    }
-
-    .family-note-card em {
+    .connected-note-list {
       min-width: 0;
-      margin-top: var(--space-1);
+
+      display: grid;
+      gap: var(--space-2);
     }
 
+    .connected-note-card {
+      width: 100%;
+      min-width: 0;
+      padding: var(--space-3);
+
+      display: grid;
+      gap: 4px;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        var(--surface-card);
+
+      color:
+        var(--text-secondary);
+
+      text-align: left;
+
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        transform var(--ease);
+    }
+
+    .connected-note-card:hover,
+    .connected-note-card:focus-visible {
+      border-color:
+        var(--border-strong);
+
+      background:
+        var(--surface-card-hover);
+
+      transform:
+        translateY(-1px);
+    }
+
+    .connected-note-card:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset:
+        2px;
+    }
+
+    .connected-note-title {
+      min-width: 0;
+      overflow: hidden;
+
+      color:
+        var(--text-primary);
+
+      font-size:
+        13px;
+
+      font-weight:
+        900;
+
+      line-height:
+        1.35;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
+    }
+
+    .connected-note-excerpt {
+      min-width: 0;
+      overflow: hidden;
+
+      display: -webkit-box;
+
+      color:
+        var(--text-secondary);
+
+      font-size:
+        12px;
+
+      line-height:
+        1.45;
+
+      -webkit-box-orient:
+        vertical;
+
+      -webkit-line-clamp:
+        2;
+
+      line-clamp:
+        2;
+    }
+
+    .connected-note-meta {
+      min-width: 0;
+      overflow: hidden;
+
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        11px;
+
+      font-weight:
+        700;
+
+      line-height:
+        1.35;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
+    }
+
+    .connected-note-empty {
+      padding:
+        var(--space-3);
+
+      border:
+        1px dashed
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        12px;
+
+      line-height:
+        1.45;
+    }
+        
     .resource-person-filterbar {
       padding:
         0
@@ -8052,47 +8205,6 @@
 
     .profile-file-row-copy strong,
     .profile-file-row-copy small {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* Notes */
-
-    .profile-note-preview-list {
-      grid-template-rows:
-        repeat(2, minmax(0, 1fr));
-      gap: var(--space-2);
-    }
-
-    .profile-note-preview-row {
-      min-height: 0;
-      padding: 8px 10px;
-      display: grid;
-      align-content: start;
-      gap: 4px;
-    }
-
-    .profile-note-preview-row strong {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .profile-note-excerpt {
-      min-width: 0;
-      overflow: hidden;
-      color: var(--text-secondary);
-      font-size: 12px;
-      line-height: 1.35;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      line-clamp: 2;
-      -webkit-box-orient: vertical;
-    }
-
-    .profile-note-updated {
-      margin-top: auto;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -12613,6 +12725,7 @@
 
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
     }
 
     .notes-browser-count {
@@ -16409,13 +16522,9 @@
       justify-self:
         start;
     }
-    .places-inspector-file-list,
-    .places-inspector-note-list {
-      display:
-        grid;
-
-      gap:
-        var(--space-2);
+    .places-inspector-file-list {
+      display: grid;
+      gap: var(--space-2);
     }
 
     .places-inspector-empty {
@@ -19508,25 +19617,6 @@
       render();
     }
 
-    function openPlaceInspectorNote(
-      noteId,
-      placeId =
-        state.selectedPlaceId
-    ) {
-      openCentralNoteFromContext(
-        noteId,
-        {
-          type:
-            placeId
-              ? 'place'
-              : '',
-
-          id:
-            placeId
-        }
-      );
-    }
-
     function openNotesForPlace(
       placeId
     ) {
@@ -19749,34 +19839,12 @@
 
     function getNotesForPlace(
       placeId,
-      {
-        projectId =
-          currentProjectId(),
-        includeArchived = false
-      } = {}
+      options = {}
     ) {
-      const place =
-        (
-          sampleData.places || []
-        ).find(
-          item =>
-            item.id === placeId
-            && item.projectId
-              === projectId
-            && !item.deleted
-        );
-
-      if (!place) {
-        return [];
-      }
-
-      return getNotesLinkedById(
-        'linkedPlaceIds',
-        place.id,
-        {
-          projectId,
-          includeArchived
-        }
+      return getNotesForEntity(
+        'place',
+        placeId,
+        options
       );
     }
 
@@ -22795,11 +22863,7 @@
       selectedNoteId: null,
       notesSearch: '',
       notesSort: 'updated',
-      notesPersonFilterId: '',
-      notesPlaceFilterId: '',
-      notesEventFilterId: '',
-      notesSourceFilterId: '',
-      notesArchiveFileFilterId: '',
+      notesContext: null,
 
       notesRightCollapsed: true,
       notesBrowserWidth: 360,
@@ -25452,33 +25516,12 @@
 
     function getNotesForPerson(
       personId,
-      {
-        projectId =
-          currentProjectId(),
-        includeArchived = false
-      } = {}
+      options = {}
     ) {
-      const person =
-        (
-          sampleData.people || []
-        ).find(
-          item =>
-            item.id === personId
-            && item.projectId
-              === projectId
-        );
-
-      if (!person) {
-        return [];
-      }
-
-      return getNotesLinkedById(
-        'linkedPersonIds',
-        person.id,
-        {
-          projectId,
-          includeArchived
-        }
+      return getNotesForEntity(
+        'person',
+        personId,
+        options
       );
     }
 
@@ -25617,79 +25660,24 @@
       const notes =
         getNotesForPerson(
           person?.id
-        ).slice(
-          0,
-          PERSON_PANEL_PREVIEW_LIMITS
-            .notes
         );
 
-      if (!notes.length) {
-        return `
-          <div class="panel-muted">
-            No notes linked to this person.
-          </div>
-        `;
-      }
+      return renderConnectedNoteList({
+        notes,
 
-      return `
-        <div
-          class="
-            note-list
-            family-note-list
-          ">
+        contextType:
+          'person',
 
-          ${notes
-            .map(note => {
-              const metadata = [
-                notesBrowserCollectionSummary(
-                  note
-                ),
+        contextId:
+          person?.id || '',
 
-                formatNoteBrowserUpdatedAt(
-                  note
-                )
-              ]
-                .filter(Boolean)
-                .join(' · ');
+        limit:
+          PERSON_PANEL_PREVIEW_LIMITS
+            .notes,
 
-              return `
-                <button
-                  class="family-note-card"
-                  type="button"
-                  data-family-note="${escapeHtml(
-                    note.id
-                  )}"
-                  data-family-note-person="${escapeHtml(
-                    person.id
-                  )}">
-
-                  <strong>
-                    ${escapeHtml(
-                      note.title
-                    )}
-                  </strong>
-
-                  <span>
-                    ${escapeHtml(
-                      noteExcerpt(
-                        note,
-                        120
-                      )
-                      || 'No note content'
-                    )}
-                  </span>
-
-                  <em class="status-dot">
-                    ${escapeHtml(
-                      metadata
-                    )}
-                  </em>
-                </button>
-              `;
-            })
-            .join('')}
-        </div>
-      `;
+        emptyText:
+          'No notes linked to this person.'
+      });
     }
 
     function openFamilyPhoto(photoId) {
@@ -25708,23 +25696,7 @@
       render();
     }
 
-    function openFamilyNote(
-      noteId,
-      personId = ''
-    ) {
-      openCentralNoteFromContext(
-        noteId,
-        {
-          type:
-            personId
-              ? 'person'
-              : '',
 
-          id:
-            personId
-        }
-      );
-    }
 
     function cleanFamilyTreeHeroDate(value) {
       const clean = cleanGenealogyDateText(value);
@@ -28437,15 +28409,27 @@
         },
         death: {
           ...deathDate,
-          placeId: deathPlace.placeId,
-          placeText: deathPlace.placeText,
-          address: person.death?.address || '',
-          address: deathPlace.address,
-          placeText: deathPlace.placeText,
-          reason: '',
-          cause: '',
-          burialPlaceId: null,
-          burialPlaceText: ''
+
+          placeId:
+            deathPlace.placeId,
+
+          placeText:
+            deathPlace.placeText,
+
+          address:
+            deathPlace.address,
+
+          reason:
+            '',
+
+          cause:
+            '',
+
+          burialPlaceId:
+            null,
+
+          burialPlaceText:
+            ''
         },
         profile: { alternativeNames: null },
         attributes: [],
@@ -34681,89 +34665,6 @@
           person.id
         );
 
-      const preview =
-        notes.slice(0, 2);
-
-      const body =
-        preview.length
-          ? `
-            <div
-              class="
-                profile-resource-list
-                profile-note-preview-list
-              ">
-
-              ${preview
-                .map(note => {
-                  const metadata = [
-                    notesBrowserCollectionSummary(
-                      note
-                    ),
-
-                    formatNoteBrowserUpdatedAt(
-                      note
-                    )
-                  ]
-                    .filter(Boolean)
-                    .join(' · ');
-
-                  return `
-                    <button
-                      class="
-                        profile-resource-row
-                        profile-note-preview-row
-                      "
-                      type="button"
-                      data-profile-note="${escapeHtml(
-                        note.id
-                      )}"
-                      data-profile-note-person="${escapeHtml(
-                        person.id
-                      )}"
-                      title="${escapeHtml(
-                        note.title
-                      )}"
-                      aria-label="Open ${escapeHtml(
-                        note.title
-                      )}">
-
-                      <strong>
-                        ${escapeHtml(
-                          note.title
-                        )}
-                      </strong>
-
-                      <span
-                        class="
-                          profile-note-excerpt
-                        ">
-                        ${escapeHtml(
-                          noteExcerpt(
-                            note,
-                            120
-                          )
-                          || 'No note content'
-                        )}
-                      </span>
-
-                      <small
-                        class="
-                          profile-note-updated
-                        ">
-                        ${escapeHtml(
-                          metadata
-                        )}
-                      </small>
-                    </button>
-                  `;
-                })
-                .join('')}
-            </div>
-          `
-          : renderProfileResourceEmpty(
-              'No notes yet'
-            );
-
       return renderProfileResourceCard({
         type:
           'notes',
@@ -34789,7 +34690,22 @@
         addAction:
           'add-note',
 
-        body
+        body:
+          renderConnectedNoteList({
+            notes,
+
+            contextType:
+              'person',
+
+            contextId:
+              person.id,
+
+            limit:
+              2,
+
+            emptyText:
+              'No notes yet'
+          })
       });
     }
 
@@ -35836,6 +35752,9 @@
 
       bindRelationshipList(main, 'profile');
       bindProfilePhotoCarousels(main);
+      bindConnectedNoteLinks(
+        main
+      );
       const profileCard = main.querySelector(
         '[data-profile-card-root]'
       );
@@ -35969,21 +35888,6 @@
         });
       main.querySelector('[data-profile-add-fact]')?.addEventListener('click', () => openAddFactOverlay(person));
       main.querySelectorAll('[data-profile-archive]').forEach(button => button.addEventListener('click', () => openProfileArchiveFile(button.dataset.profileArchive)));
-      main
-        .querySelectorAll(
-          '[data-profile-note]'
-        )
-        .forEach(button =>
-          button.addEventListener(
-            'click',
-            () =>
-              openProfileNote(
-                button.dataset.profileNote,
-                button.dataset
-                  .profileNotePerson
-              )
-          )
-        );
       main.querySelectorAll('[data-profile-partner-id]').forEach(button => {
         button.addEventListener('click', () => openProfileFamilyMember(button.dataset.profilePartnerId));
         button.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openProfileFamilyMember(button.dataset.profilePartnerId); } });
@@ -36040,26 +35944,7 @@
       openFamilyArchiveItem(fileId);
     }
 
-    function openProfileNote(
-      noteId,
-      personId =
-        state.selectedPeopleId
-    ) {
-      openCentralNoteFromContext(
-        noteId,
-        {
-          type:
-            personId
-              ? 'person'
-              : '',
-
-          id:
-            personId
-        }
-      );
-    }
-
-    function openProfilePhoto(photoId) {
+     function openProfilePhoto(photoId) {
       openAlbumsForPhoto(photoId);
     }
 
@@ -37512,21 +37397,9 @@
           );
         });
       root.querySelectorAll('[data-family-archive]').forEach(button => button.addEventListener('click', () => openFamilyArchiveItem(button.dataset.familyArchive)));
-      root
-        .querySelectorAll(
-          '[data-family-note]'
-        )
-        .forEach(button =>
-          button.addEventListener(
-            'click',
-            () =>
-              openFamilyNote(
-                button.dataset.familyNote,
-                button.dataset
-                  .familyNotePerson
-              )
-          )
-        );
+      bindConnectedNoteLinks(
+        root
+      );
       root
         .querySelectorAll(
           '[data-person-resource-view]'
@@ -47683,7 +47556,7 @@
         );
 
       if (note) {
-        return notesBrowserCollectionSummary(
+        return formatNoteCollectionSummary(
           note
         );
       }
@@ -47706,7 +47579,7 @@
           );
 
         return [
-          formatNoteBrowserUpdatedAt(
+          formatNoteRelativeUpdatedAt(
             note
           ),
 
@@ -48529,7 +48402,7 @@
                   class="geneo-input"
                   value="${escapeHtml(
                     linkedNote
-                      ? notesBrowserCollectionSummary(
+                      ? formatNoteCollectionSummary(
                           linkedNote
                         )
                       : ''
@@ -49871,83 +49744,17 @@
         contextId
       }
     ) {
-      const visible =
-        notes.slice(0, 3);
-
-      const list =
-        visible.length
-          ? `
-            <div
-              class="
-                note-list
-                family-note-list
-              ">
-
-              ${visible
-                .map(note => {
-                  const metadata = [
-                    notesBrowserCollectionSummary(
-                      note
-                    ),
-
-                    formatNoteBrowserUpdatedAt(
-                      note
-                    )
-                  ]
-                    .filter(Boolean)
-                    .join(' · ');
-
-                  return `
-                    <button
-                      class="family-note-card"
-                      type="button"
-                      data-archive-open-note="${escapeHtml(
-                        note.id
-                      )}"
-                      data-note-context-type="${escapeHtml(
-                        contextType
-                      )}"
-                      data-note-context-id="${escapeHtml(
-                        contextId
-                      )}">
-
-                      <strong>
-                        ${escapeHtml(
-                          note.title
-                        )}
-                      </strong>
-
-                      <span>
-                        ${escapeHtml(
-                          noteExcerpt(
-                            note,
-                            110
-                          )
-                          || 'No note content'
-                        )}
-                      </span>
-
-                      <em class="status-dot">
-                        ${escapeHtml(
-                          metadata
-                        )}
-                      </em>
-                    </button>
-                  `;
-                })
-                .join('')}
-            </div>
-          `
-          : `
-            <p
-              class="muted"
-              style="margin:0">
-              No connected notes.
-            </p>
-          `;
-
       return `
-        ${list}
+        ${renderConnectedNoteList({
+          notes,
+          contextType,
+          contextId,
+          limit:
+            3,
+
+          emptyText:
+            'No connected notes.'
+        })}
 
         <div
           class="archive-action-grid"
@@ -50391,6 +50198,9 @@
     }
 
     function bindArchiveControls() {
+      bindConnectedNoteLinks(
+        main
+      );
       main.querySelector('[data-clear-archive-person-filter]') ?.addEventListener('click', () => {state.archivePersonFilterId = ''; state.archiveSelectedFileId = null; state.archiveSelectedFileIds = [];
             ensureArchiveSelection();
             renderArchiveMain();
@@ -50425,32 +50235,6 @@
       main.querySelector('#archiveInspectorLinkPerson')?.addEventListener('click', () => openArchiveLinkPersonModal());
       main.querySelector('#archiveInspectorAddFiles')?.addEventListener('click', openArchiveAddFilesModal);
       main.querySelector('#archiveInspectorCreateSourceFromFolder')?.addEventListener('click', () => openArchiveCreateSourceModal(archiveFolderById(state.archiveSelectedFolderId).name));
-      main
-        .querySelectorAll(
-          '[data-archive-open-note]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              openCentralNoteFromContext(
-                button.dataset
-                  .archiveOpenNote,
-
-                {
-                  type:
-                    button.dataset
-                      .noteContextType,
-
-                  id:
-                    button.dataset
-                      .noteContextId
-                }
-              );
-            }
-          );
-        });
-
       main
         .querySelectorAll(
           '[data-archive-view-notes]'
@@ -52041,231 +51825,453 @@
       );
     }
 
-    function getNotesForEvent(
-      eventId,
-      options = {}
-    ) {
-      return getNotesLinkedById(
-        'linkedEventIds',
-        eventId,
-        options
-      );
-    }
-
-    function getNotesForSource(
-      sourceId,
-      options = {}
-    ) {
-      return getNotesLinkedById(
-        'linkedSourceIds',
-        sourceId,
-        options
-      );
-    }
-
-    function getNotesForArchiveFile(
-      fileId,
-      options = {}
-    ) {
-      return getNotesLinkedById(
-        'linkedArchiveFileIds',
-        fileId,
-        options
-      );
-    }
-
-    const NOTES_CONTEXT_CONFIG =
+    const NOTE_ENTITY_TYPES =
       Object.freeze({
-        person: {
-          stateKey:
-            'notesPersonFilterId',
-
+        person: Object.freeze({
           field:
             'linkedPersonIds',
 
-          label:
+          openKey:
+            'people',
+
+          contextLabel:
             'Person',
 
-          selector:
-            getNotesForPerson
-        },
+          title:
+            'People',
 
-        place: {
-          stateKey:
-            'notesPlaceFilterId',
+          singular:
+            'person',
 
+          plural:
+            'people',
+
+          records:
+            projectId =>
+              (
+                sampleData.people || []
+              ).filter(
+                person =>
+                  person.projectId
+                    === projectId
+                  && !person.deleted
+              ),
+
+          label:
+            record =>
+              personResourceDisplayName(
+                record
+              )
+              || 'Unnamed person',
+
+          meta:
+            record => {
+              const dates = [
+                formatGenealogyDateLabel(
+                  record.birth
+                ),
+
+                formatGenealogyDateLabel(
+                  record.death
+                )
+              ]
+                .filter(Boolean)
+                .join(' – ');
+
+              return (
+                dates
+                || 'Person record'
+              );
+            },
+
+          open:
+            record => {
+              openPlaceInspectorPerson(
+                record.id
+              );
+            }
+        }),
+
+        place: Object.freeze({
           field:
             'linkedPlaceIds',
 
-          label:
+          openKey:
+            'places',
+
+          contextLabel:
             'Place',
 
-          selector:
-            getNotesForPlace
-        },
+          title:
+            'Places',
 
-        event: {
-          stateKey:
-            'notesEventFilterId',
+          singular:
+            'place',
 
+          plural:
+            'places',
+
+          records:
+            projectId =>
+              (
+                sampleData.places || []
+              ).filter(
+                place =>
+                  place.projectId
+                    === projectId
+                  && !place.deleted
+              ),
+
+          label:
+            record =>
+              placeDisplayText(
+                record
+              )
+              || 'Unnamed place',
+
+          meta:
+            () =>
+              'Place record',
+
+          open:
+            record => {
+              state.activeModule =
+                'Places';
+
+              state.placesView =
+                'all';
+
+              state.selectedPlaceId =
+                record.id;
+
+              state.placesInspectorCollapsed =
+                false;
+
+              render();
+            }
+        }),
+
+        event: Object.freeze({
           field:
             'linkedEventIds',
 
-          label:
+          openKey:
+            'events',
+
+          contextLabel:
             'Event',
 
-          selector:
-            getNotesForEvent
-        },
+          title:
+            'Events',
 
-        source: {
-          stateKey:
-            'notesSourceFilterId',
+          singular:
+            'event',
 
+          plural:
+            'events',
+
+          records:
+            projectId =>
+              (
+                sampleData.events || []
+              ).filter(
+                event =>
+                  event.projectId
+                    === projectId
+              ),
+
+          label:
+            record =>
+              record.title
+              || record.typeLabel
+              || record.type
+              || 'Event',
+
+          meta:
+            record =>
+              [
+                timelineDateLabel(
+                  record
+                ),
+
+                record.placeId
+                  ? getPlaceDisplay(
+                      record.placeId
+                    )
+                  : record.placeText
+              ]
+                .filter(Boolean)
+                .join(' · ')
+              || 'Event record',
+
+          open:
+            record => {
+              const personId =
+                record.personIds?.[0]
+                || record
+                  .relatedPersonIds
+                  ?.[0];
+
+              if (personId) {
+                openPlaceInspectorPerson(
+                  personId
+                );
+
+                return;
+              }
+
+              if (record.placeId) {
+                state.activeModule =
+                  'Places';
+
+                state.placesView =
+                  'all';
+
+                state.selectedPlaceId =
+                  record.placeId;
+
+                state.placesInspectorCollapsed =
+                  false;
+
+                render();
+
+                return;
+              }
+
+              showToast(
+                'This event has no navigable person or place.'
+              );
+            }
+        }),
+
+        source: Object.freeze({
           field:
             'linkedSourceIds',
 
-          label:
+          openKey:
+            'sources',
+
+          contextLabel:
             'Source',
 
-          selector:
-            getNotesForSource
-        },
+          title:
+            'Sources',
 
-        archiveFile: {
-          stateKey:
-            'notesArchiveFileFilterId',
+          singular:
+            'source',
 
+          plural:
+            'sources',
+
+          records:
+            projectId =>
+              (
+                sampleData.sources || []
+              ).filter(
+                source =>
+                  !source.projectId
+                  || source.projectId
+                    === projectId
+              ),
+
+          label:
+            record =>
+              record.title
+              || record.name
+              || record.citation
+              || record.id,
+
+          meta:
+            record =>
+              [
+                record.holder,
+                record.reference
+              ]
+                .filter(Boolean)
+                .join(' · ')
+              || 'Source record',
+
+          open:
+            record => {
+              state.activeModule =
+                'Archive';
+
+              state.archiveView =
+                'sources';
+
+              state.archiveSelectedSourceId =
+                record.id;
+
+              state.archiveInspectorCollapsed =
+                false;
+
+              render();
+            }
+        }),
+
+        archiveFile: Object.freeze({
           field:
             'linkedArchiveFileIds',
 
-          label:
+          openKey:
+            'files',
+
+          contextLabel:
             'File',
 
-          selector:
-            getNotesForArchiveFile
-        }
+          title:
+            'Files',
+
+          singular:
+            'file',
+
+          plural:
+            'files',
+
+          records:
+            projectId =>
+              (
+                sampleData.archiveFiles
+                || []
+              ).filter(
+                file =>
+                  !file.deleted
+                  && (
+                    !file.projectId
+                    || file.projectId
+                      === projectId
+                  )
+              ),
+
+          label:
+            record =>
+              record.name
+              || record.title
+              || record.id,
+
+          meta:
+            record =>
+              record.type
+              || record.kind
+              || 'Archive file',
+
+          open:
+            record => {
+              openPlaceInspectorArchiveFile(
+                record.id
+              );
+            }
+        })
       });
 
-    function clearNotesContextFilters() {
-      Object.values(
-        NOTES_CONTEXT_CONFIG
-      ).forEach(config => {
-        state[config.stateKey] =
-          '';
-      });
+    function getNoteEntityConfig(
+      type
+    ) {
+      return (
+        NOTE_ENTITY_TYPES[type]
+        || null
+      );
     }
 
-    function setNotesContextFilter(
+    function noteEntityRecords(
       type,
-      id
+      projectId =
+        currentProjectId()
     ) {
-      clearNotesContextFilters();
+      const config =
+        getNoteEntityConfig(type);
+
+      if (!config) {
+        return [];
+      }
+
+      return config
+        .records(projectId)
+        .slice()
+        .sort(
+          (
+            first,
+            second
+          ) =>
+            config
+              .label(first)
+              .localeCompare(
+                config.label(second)
+              )
+        );
+    }
+
+    function noteEntityById(
+      type,
+      id,
+      projectId =
+        currentProjectId()
+    ) {
+      if (!id) {
+        return null;
+      }
 
       const config =
-        NOTES_CONTEXT_CONFIG[type];
+        getNoteEntityConfig(type);
 
-      if (!config || !id) {
-        return;
+      if (!config) {
+        return null;
       }
 
-      state[config.stateKey] =
-        id;
+      return (
+        config
+          .records(projectId)
+          .find(
+            record =>
+              record.id === id
+          )
+        || null
+      );
     }
 
-    function noteContextRecord(
-      type,
-      id
-    ) {
-      if (type === 'person') {
-        return getPerson(id);
-      }
-
-      if (type === 'place') {
-        return getPlace(id);
-      }
-
-      if (type === 'event') {
-        return (
-          sampleData.events || []
-        ).find(
-          event =>
-            event.id === id
-        ) || null;
-      }
-
-      if (type === 'source') {
-        return (
-          sampleData.sources || []
-        ).find(
-          source =>
-            source.id === id
-        ) || null;
-      }
-
-      if (type === 'archiveFile') {
-        return (
-          sampleData.archiveFiles || []
-        ).find(
-          file =>
-            file.id === id
-            && !file.deleted
-        ) || null;
-      }
-
-      return null;
-    }
-
-    function noteContextRecordLabel(
+    function noteEntityLabel(
       type,
       record
     ) {
-      if (type === 'person') {
-        return (
-          personResourceDisplayName(
-            record
-          )
-          || 'Unnamed person'
-        );
-      }
+      const config =
+        getNoteEntityConfig(type);
 
-      if (type === 'place') {
-        return (
-          placeDisplayText(
-            record
-          )
-          || 'Unnamed place'
-        );
-      }
-
-      if (type === 'event') {
-        return (
-          record.title
-          || record.type
-          || 'Event'
-        );
-      }
-
-      if (type === 'source') {
-        return (
-          record.title
-          || record.name
-          || record.id
-        );
-      }
-
-      if (type === 'archiveFile') {
-        return (
-          record.name
-          || record.title
-          || record.id
-        );
-      }
-
-      return '';
+      return (
+        config && record
+          ? config.label(record)
+          : ''
+      );
     }
 
-    function getNotesForContext(
+    function noteEntityMeta(
+      type,
+      record
+    ) {
+      const config =
+        getNoteEntityConfig(type);
+
+      return (
+        config && record
+          ? config.meta(record)
+          : ''
+      );
+    }
+
+    function openNoteEntity(
+      type,
+      record
+    ) {
+      const config =
+        getNoteEntityConfig(type);
+
+      if (!config || !record) {
+        return;
+      }
+
+      config.open(record);
+    }
+
+    function getNotesForEntity(
       type,
       id,
       {
@@ -52277,14 +52283,26 @@
       } = {}
     ) {
       const config =
-        NOTES_CONTEXT_CONFIG[type];
+        getNoteEntityConfig(type);
 
       if (!config || !id) {
         return [];
       }
 
-      return config.selector(
-        id,
+      const record =
+        noteEntityById(
+          type,
+          id,
+          projectId
+        );
+
+      if (!record) {
+        return [];
+      }
+
+      return getNotesLinkedById(
+        config.field,
+        record.id,
         {
           projectId,
           includeArchived
@@ -52292,53 +52310,137 @@
       );
     }
 
-    function activeNotesContext() {
-      for (
-        const [
-          type,
-          config
-        ]
-        of Object.entries(
-          NOTES_CONTEXT_CONFIG
-        )
-      ) {
-        const id =
-          state[config.stateKey];
+    function getNotesForEvent(
+      eventId,
+      options = {}
+    ) {
+      return getNotesForEntity(
+        'event',
+        eventId,
+        options
+      );
+    }
 
-        if (!id) {
-          continue;
-        }
+    function getNotesForSource(
+      sourceId,
+      options = {}
+    ) {
+      return getNotesForEntity(
+        'source',
+        sourceId,
+        options
+      );
+    }
 
-        const record =
-          noteContextRecord(
-            type,
-            id
-          );
+    function getNotesForArchiveFile(
+      fileId,
+      options = {}
+    ) {
+      return getNotesForEntity(
+        'archiveFile',
+        fileId,
+        options
+      );
+    }
 
-        if (!record) {
-          continue;
-        }
+    function clearNotesContext() {
+      state.notesContext =
+        null;
+    }
 
-        return {
+    function setNotesContext(
+      type,
+      id,
+      {
+        projectId =
+          currentProjectId()
+      } = {}
+    ) {
+      const record =
+        noteEntityById(
           type,
           id,
-          field:
-            config.field,
+          projectId
+        );
 
-          label:
-            config.label,
+      if (!record) {
+        clearNotesContext();
 
-          name:
-            noteContextRecordLabel(
-              type,
-              record
-            ),
-
-          record
-        };
+        return null;
       }
 
-      return null;
+      state.notesContext = {
+        type,
+        id:
+          record.id,
+
+        projectId
+      };
+
+      return record;
+    }
+
+    function activeNotesContext() {
+      const context =
+        state.notesContext;
+
+      if (!context) {
+        return null;
+      }
+
+      if (
+        context.projectId
+          !== currentProjectId()
+      ) {
+        clearNotesContext();
+
+        return null;
+      }
+
+      const config =
+        getNoteEntityConfig(
+          context.type
+        );
+
+      const record =
+        noteEntityById(
+          context.type,
+          context.id,
+          context.projectId
+        );
+
+      if (!config || !record) {
+        clearNotesContext();
+
+        return null;
+      }
+
+      return {
+        ...context,
+
+        field:
+          config.field,
+
+        label:
+          config.contextLabel,
+
+        name:
+          config.label(record),
+
+        record
+      };
+    }
+
+    function getNotesForContext(
+      type,
+      id,
+      options = {}
+    ) {
+      return getNotesForEntity(
+        type,
+        id,
+        options
+      );
     }
 
     function openNotesForContext(
@@ -52346,7 +52448,7 @@
       id
     ) {
       const record =
-        noteContextRecord(
+        setNotesContext(
           type,
           id
         );
@@ -52372,11 +52474,6 @@
 
       state.notesRightCollapsed =
         true;
-
-      setNotesContextFilter(
-        type,
-        id
-      );
 
       render();
     }
@@ -52404,7 +52501,95 @@
       state.activeModule =
         'Notes';
 
-      clearNotesContextFilters();
+      clearNotesContext();
+
+      const config =
+        getNoteEntityConfig(type);
+
+      if (
+        config
+        && id
+        && (
+          note[config.field] || []
+        ).includes(id)
+      ) {
+        setNotesContext(
+          type,
+          id,
+          {
+            projectId:
+              note.projectId
+          }
+        );
+      }
+
+      state.notesView =
+        note.archived
+          ? 'archived'
+          : 'all';
+
+      state.notesActiveCollectionId =
+        null;
+
+      state.selectedNoteId =
+        note.id;
+
+      state.notesSearch =
+        '';
+
+      state.notesRightCollapsed =
+        false;
+
+      render();
+    }
+
+    function openNewNoteForContext(
+      type,
+      id
+    ) {
+      const record =
+        noteEntityById(
+          type,
+          id
+        );
+
+      if (!record) {
+        return;
+      }
+
+      openNewNoteModal({
+        contextType:
+          type,
+
+        contextId:
+          record.id
+      });
+    }
+
+    function openCentralNoteFromContext(
+      noteId,
+      {
+        type = '',
+        id = ''
+      } = {}
+    ) {
+      const note =
+        getNote(
+          noteId,
+          {
+            includeArchived:
+              true
+          }
+        );
+
+      if (!note) {
+        return;
+      }
+
+      state.activeModule =
+        'Notes';
+
+      clearNotesContext();
 
       const contextConfig =
         NOTES_CONTEXT_CONFIG[type];
@@ -52418,7 +52603,7 @@
           ] || []
         ).includes(id)
       ) {
-        setNotesContextFilter(
+        setNotesContext(
           type,
           id
         );
@@ -52530,28 +52715,40 @@
       return `${clipped.trim()}…`;
     }
 
+    function noteExternalEntityCount(
+      note
+    ) {
+      return Object
+        .values(
+          NOTE_ENTITY_TYPES
+        )
+        .reduce(
+          (
+            total,
+            config
+          ) =>
+            total
+            + new Set(
+                note?.[
+                  config.field
+                ] || []
+              ).size,
+
+          0
+        );
+    }
+
     function noteLinkedEntityCount(
       note
     ) {
-      const fields = [
-        'linkedPersonIds',
-        'linkedPlaceIds',
-        'linkedEventIds',
-        'linkedSourceIds',
-        'linkedArchiveFileIds',
-        'relatedNoteIds'
-      ];
-
-      return fields.reduce(
-        (
-          total,
-          field
-        ) =>
-          total
-          + new Set(
-              note?.[field] || []
-            ).size,
-        0
+      return (
+        noteExternalEntityCount(
+          note
+        )
+        + new Set(
+            note?.relatedNoteIds
+            || []
+          ).size
       );
     }
 
@@ -53191,7 +53388,7 @@
       );
     }
 
-    function notesBrowserCollectionSummary(
+    function formatNoteCollectionSummary(
       note
     ) {
       const collections =
@@ -53230,7 +53427,7 @@
         .join(' · ');
     }
 
-    function formatNoteBrowserUpdatedAt(
+    function formatNoteRelativeUpdatedAt(
       note
     ) {
       const timestamp =
@@ -53290,6 +53487,153 @@
       }`;
     }
 
+    function formatConnectedNoteMetadata(
+      note
+    ) {
+      return [
+        formatNoteCollectionSummary(
+          note
+        ),
+
+        formatNoteRelativeUpdatedAt(
+          note
+        )
+      ]
+        .filter(Boolean)
+        .join(' · ');
+    }
+
+    function renderConnectedNoteList({
+      notes = [],
+      contextType = '',
+      contextId = '',
+      limit =
+        notes.length,
+      emptyText =
+        'No connected notes.'
+    }) {
+      const visible =
+        notes.slice(
+          0,
+          limit
+        );
+
+      if (!visible.length) {
+        return `
+          <div class="connected-note-empty">
+            ${escapeHtml(
+              emptyText
+            )}
+          </div>
+        `;
+      }
+
+      return `
+        <div class="connected-note-list">
+
+          ${visible
+            .map(note => {
+              const metadata =
+                formatConnectedNoteMetadata(
+                  note
+                );
+
+              return `
+                <button
+                  class="connected-note-card"
+                  type="button"
+                  data-connected-note-id="${escapeHtml(
+                    note.id
+                  )}"
+                  data-connected-note-context-type="${escapeHtml(
+                    contextType
+                  )}"
+                  data-connected-note-context-id="${escapeHtml(
+                    contextId
+                  )}"
+                  aria-label="Open ${escapeHtml(
+                    note.title
+                  )}">
+
+                  <strong
+                    class="
+                      connected-note-title
+                    "
+                    title="${escapeHtml(
+                      note.title
+                    )}">
+
+                    ${escapeHtml(
+                      note.title
+                    )}
+                  </strong>
+
+                  <span
+                    class="
+                      connected-note-excerpt
+                    ">
+
+                    ${escapeHtml(
+                      noteExcerpt(
+                        note,
+                        120
+                      )
+                      || 'No note content'
+                    )}
+                  </span>
+
+                  <span
+                    class="
+                      connected-note-meta
+                    "
+                    title="${escapeHtml(
+                      metadata
+                    )}">
+
+                    ${escapeHtml(
+                      metadata
+                    )}
+                  </span>
+                </button>
+              `;
+            })
+            .join('')}
+        </div>
+      `;
+    }
+
+    function bindConnectedNoteLinks(
+      root
+    ) {
+      root
+        .querySelectorAll(
+          '[data-connected-note-id]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              openCentralNoteFromContext(
+                button.dataset
+                  .connectedNoteId,
+
+                {
+                  type:
+                    button.dataset
+                      .connectedNoteContextType
+                    || '',
+
+                  id:
+                    button.dataset
+                      .connectedNoteContextId
+                    || ''
+                }
+              );
+            }
+          );
+        });
+    }
+
     function renderNotesListView(
       list
     ) {
@@ -53315,7 +53659,7 @@
           === state.selectedNoteId;
 
       const collectionSummary =
-        notesBrowserCollectionSummary(
+        formatNoteCollectionSummary(
           note
         );
 
@@ -53332,7 +53676,7 @@
         }`;
 
       const updatedSummary =
-        formatNoteBrowserUpdatedAt(
+        formatNoteRelativeUpdatedAt(
           note
         );
 
@@ -53982,318 +54326,16 @@
       });
     }
 
-    function noteLinkedEntityConfig(
-      type
-    ) {
-      return {
-        person: {
-          field:
-            'linkedPersonIds',
-
-          stateKey:
-            'people',
-
-          title:
-            'People',
-
-          singular:
-            'person',
-
-          plural:
-            'people'
-        },
-
-        place: {
-          field:
-            'linkedPlaceIds',
-
-          stateKey:
-            'places',
-
-          title:
-            'Places',
-
-          singular:
-            'place',
-
-          plural:
-            'places'
-        },
-
-        event: {
-          field:
-            'linkedEventIds',
-
-          stateKey:
-            'events',
-
-          title:
-            'Events',
-
-          singular:
-            'event',
-
-          plural:
-            'events'
-        },
-
-        source: {
-          field:
-            'linkedSourceIds',
-
-          stateKey:
-            'sources',
-
-          title:
-            'Sources',
-
-          singular:
-            'source',
-
-          plural:
-            'sources'
-        },
-
-        file: {
-          field:
-            'linkedArchiveFileIds',
-
-          stateKey:
-            'files',
-
-          title:
-            'Files',
-
-          singular:
-            'file',
-
-          plural:
-            'files'
-        }
-      }[type] || null;
-    }
-
-    function noteLinkedEntityRecords(
-      type,
-      projectId
-    ) {
-      let records = [];
-
-      if (type === 'person') {
-        records =
-          (
-            sampleData.people || []
-          ).filter(
-            person =>
-              person.projectId
-                === projectId
-              && !person.deleted
-          );
-      }
-
-      if (type === 'place') {
-        records =
-          (
-            sampleData.places || []
-          ).filter(
-            place =>
-              place.projectId
-                === projectId
-              && !place.deleted
-          );
-      }
-
-      if (type === 'event') {
-        records =
-          (
-            sampleData.events || []
-          ).filter(
-            event =>
-              event.projectId
-                === projectId
-          );
-      }
-
-      if (type === 'source') {
-        records =
-          (
-            sampleData.sources || []
-          ).filter(
-            source =>
-              !source.projectId
-              || source.projectId
-                === projectId
-          );
-      }
-
-      if (type === 'file') {
-        records =
-          (
-            sampleData.archiveFiles || []
-          ).filter(
-            file =>
-              !file.deleted
-              && (
-                !file.projectId
-                || file.projectId
-                  === projectId
-              )
-          );
-      }
-
-      return records
-        .slice()
-        .sort(
-          (first, second) =>
-            noteLinkedEntityLabel(
-              type,
-              first
-            ).localeCompare(
-              noteLinkedEntityLabel(
-                type,
-                second
-              )
-            )
-        );
-    }
-
-    function noteLinkedEntityById(
-      type,
-      id,
-      projectId
-    ) {
-      return (
-        noteLinkedEntityRecords(
-          type,
-          projectId
-        ).find(
-          record =>
-            record.id === id
-        )
-        || null
-      );
-    }
-
-    function noteLinkedEntityLabel(
-      type,
-      record
-    ) {
-      if (type === 'person') {
-        return (
-          personResourceDisplayName(
-            record
-          )
-          || 'Unnamed person'
-        );
-      }
-
-      if (type === 'place') {
-        return (
-          placeDisplayText(
-            record
-          )
-          || 'Unnamed place'
-        );
-      }
-
-      if (type === 'event') {
-        return (
-          record.title
-          || record.type
-          || 'Event'
-        );
-      }
-
-      if (type === 'source') {
-        return (
-          record.title
-          || record.name
-          || record.citation
-          || record.id
-        );
-      }
-
-      if (type === 'file') {
-        return (
-          record.name
-          || record.title
-          || record.id
-        );
-      }
-
-      return '';
-    }
-
-    function noteLinkedEntityMeta(
-      type,
-      record
-    ) {
-      if (type === 'person') {
-        const dates = [
-          formatGenealogyDateLabel(
-            record.birth
-          ),
-
-          formatGenealogyDateLabel(
-            record.death
-          )
-        ]
-          .filter(Boolean)
-          .join(' – ');
-
-        return dates || 'Person record';
-      }
-
-      if (type === 'place') {
-        return 'Place record';
-      }
-
-      if (type === 'event') {
-        return [
-          timelineDateLabel(
-            record
-          ),
-
-          record.placeId
-            ? getPlaceDisplay(
-                record.placeId
-              )
-            : record.placeText
-        ]
-          .filter(Boolean)
-          .join(' · ')
-          || 'Event record';
-      }
-
-      if (type === 'source') {
-        return [
-          record.holder,
-          record.reference
-        ]
-          .filter(Boolean)
-          .join(' · ')
-          || 'Source record';
-      }
-
-      if (type === 'file') {
-        return (
-          record.type
-          || record.kind
-          || 'Archive file'
-        );
-      }
-
-      return '';
-    }
-
     function renderNoteLinkedContextGroup(
       note,
       type
     ) {
       const config =
-        noteLinkedEntityConfig(
-          type
-        );
+        getNoteEntityConfig(type);
+
+      if (!config) {
+        return '';
+      }
 
       const ids =
         note[config.field] || [];
@@ -54301,7 +54343,7 @@
       const records =
         ids
           .map(id =>
-            noteLinkedEntityById(
+            noteEntityById(
               type,
               id,
               note.projectId
@@ -54311,7 +54353,7 @@
 
       const open =
         state.notesOpenBlocks[
-          config.stateKey
+          config.openKey
         ] !== false;
 
       const countLabel =
@@ -54328,7 +54370,7 @@
             class="notes-context-toggle"
             type="button"
             data-note-context-toggle="${escapeHtml(
-              config.stateKey
+              config.openKey
             )}"
             aria-expanded="${open}">
 
@@ -54367,6 +54409,7 @@
                     records.length
                       ? `
                         <div class="notes-linked-list">
+
                           ${records
                             .map(record => `
                               <div class="notes-linked-row">
@@ -54384,7 +54427,7 @@
 
                                   <strong>
                                     ${escapeHtml(
-                                      noteLinkedEntityLabel(
+                                      noteEntityLabel(
                                         type,
                                         record
                                       )
@@ -54393,7 +54436,7 @@
 
                                   <span>
                                     ${escapeHtml(
-                                      noteLinkedEntityMeta(
+                                      noteEntityMeta(
                                         type,
                                         record
                                       )
@@ -54449,8 +54492,11 @@
                       )}">
 
                       ${icon.plus}
-                      Manage ${escapeHtml(
-                        config.title.toLowerCase()
+
+                      Manage
+                      ${escapeHtml(
+                        config.title
+                          .toLowerCase()
                       )}
                     </button>
                   </div>
@@ -54465,42 +54511,33 @@
     function renderNoteLinkedContextSection(
       note
     ) {
+      const types = [
+        'person',
+        'place',
+        'event',
+        'source',
+        'archiveFile'
+      ];
+
       return renderNoteEditorSection({
         title:
           'Linked context',
 
         meta:
-          `${noteLinkedEntityCount(
+          `${noteExternalEntityCount(
             note
           )} links`,
 
         body: `
           <div class="notes-context-list">
-
-            ${renderNoteLinkedContextGroup(
-              note,
-              'person'
-            )}
-
-            ${renderNoteLinkedContextGroup(
-              note,
-              'place'
-            )}
-
-            ${renderNoteLinkedContextGroup(
-              note,
-              'event'
-            )}
-
-            ${renderNoteLinkedContextGroup(
-              note,
-              'source'
-            )}
-
-            ${renderNoteLinkedContextGroup(
-              note,
-              'file'
-            )}
+            ${types
+              .map(type =>
+                renderNoteLinkedContextGroup(
+                  note,
+                  type
+                )
+              )
+              .join('')}
           </div>
         `
       });
@@ -55219,7 +55256,7 @@
         selectedNote();
 
       const config =
-        noteLinkedEntityConfig(
+        getNoteEntityConfig(
           type
         );
 
@@ -55233,7 +55270,7 @@
         );
 
       const records =
-        noteLinkedEntityRecords(
+        noteEntityRecords(
           type,
           note.projectId
         );
@@ -55243,13 +55280,13 @@
           ? records
               .map(record => {
                 const label =
-                  noteLinkedEntityLabel(
+                  noteEntityLabel(
                     type,
                     record
                   );
 
                 const meta =
-                  noteLinkedEntityMeta(
+                  noteEntityMeta(
                     type,
                     record
                   );
@@ -55621,106 +55658,25 @@
       const note =
         selectedNote();
 
+      if (!note) {
+        return;
+      }
+
       const record =
-        note
-          ? noteLinkedEntityById(
-              type,
-              id,
-              note.projectId
-            )
-          : null;
+        noteEntityById(
+          type,
+          id,
+          note.projectId
+        );
 
       if (!record) {
         return;
       }
 
-      if (type === 'person') {
-        openPlaceInspectorPerson(
-          record.id
-        );
-
-        return;
-      }
-
-      if (type === 'place') {
-        state.activeModule =
-          'Places';
-
-        state.placesView =
-          'all';
-
-        state.selectedPlaceId =
-          record.id;
-
-        state.placesInspectorCollapsed =
-          false;
-
-        render();
-
-        return;
-      }
-
-      if (type === 'event') {
-        const personId =
-          record.personIds?.[0]
-          || record.relatedPersonIds?.[0];
-
-        if (personId) {
-          openPlaceInspectorPerson(
-            personId
-          );
-
-          return;
-        }
-
-        if (record.placeId) {
-          state.activeModule =
-            'Places';
-
-          state.placesView =
-            'all';
-
-          state.selectedPlaceId =
-            record.placeId;
-
-          state.placesInspectorCollapsed =
-            false;
-
-          render();
-
-          return;
-        }
-
-        showToast(
-          'This event has no navigable person or place.'
-        );
-
-        return;
-      }
-
-      if (type === 'source') {
-        state.activeModule =
-          'Archive';
-
-        state.archiveView =
-          'sources';
-
-        state.archiveSelectedSourceId =
-          record.id;
-
-        state.archiveInspectorCollapsed =
-          false;
-
-        render();
-
-        return;
-      }
-
-      if (type === 'file') {
-        openPlaceInspectorArchiveFile(
-          record.id
-        );
-      }
+      openNoteEntity(
+        type,
+        record
+      );
     }
 
     function bindNotesSidebarControls(
@@ -55743,7 +55699,7 @@
           button.addEventListener(
             'click',
             () => {
-              clearNotesContextFilters();
+              clearNotesContext();
 
               state.notesView =
                 button.dataset.notesView;
@@ -55770,7 +55726,7 @@
           button.addEventListener(
             'click',
             () => {
-              clearNotesContextFilters();
+              clearNotesContext();
 
               state.notesView =
                 'collection';
@@ -55836,7 +55792,7 @@
       ?.addEventListener(
         'click',
         () => {
-          clearNotesContextFilters();
+          clearNotesContext();
 
           state.selectedNoteId =
             null;
@@ -56590,7 +56546,7 @@
                   .noteLinkedId;
 
               const config =
-                noteLinkedEntityConfig(
+                getNoteEntityConfig(
                   type
                 );
 
@@ -56858,6 +56814,70 @@
       );
     }
 
+    function removeBoardObjectsForEntity(
+      entityType,
+      entityId
+    ) {
+      const removedObjectIds =
+        new Set(
+          (
+            sampleData.boardObjects
+            || []
+          )
+            .filter(
+              object =>
+                object.entityType
+                  === entityType
+                && object.entityId
+                  === entityId
+            )
+            .map(
+              object =>
+                object.id
+            )
+        );
+
+      if (!removedObjectIds.size) {
+        return removedObjectIds;
+      }
+
+      sampleData.boardObjects =
+        (
+          sampleData.boardObjects
+          || []
+        ).filter(
+          object =>
+            !removedObjectIds.has(
+              object.id
+            )
+        );
+
+      sampleData.boardConnectors =
+        (
+          sampleData.boardConnectors
+          || []
+        ).filter(
+          connector =>
+            !removedObjectIds.has(
+              connector.from
+            )
+            && !removedObjectIds.has(
+              connector.to
+            )
+        );
+
+      if (
+        removedObjectIds.has(
+          state.selectedGeneoObjectId
+        )
+      ) {
+        state.selectedGeneoObjectId =
+          null;
+      }
+
+      return removedObjectIds;
+    }
+
     function deleteNotePermanently(
       noteId
     ) {
@@ -56927,6 +56947,11 @@
         state.notesRightCollapsed =
           true;
       }
+
+      removeBoardObjectsForEntity(
+        'note',
+        noteId
+      );
 
       closeModal();
       renderNotes();
@@ -57724,12 +57749,33 @@
             }
           : null;
 
-      const creationContext =
+      const requestedContext =
         explicitContext
         || activeNotesContext();
-      const activeCollectionId =
-        state.notesView
+
+      const creationContext =
+        requestedContext
+        && noteEntityById(
+          requestedContext.type,
+          requestedContext.id,
+          currentProjectId()
+        )
+          ? requestedContext
+          : null;
+      const inheritActiveCollection =
+        !explicitContext
+        && state.activeModule
+          === 'Notes'
+        && state.notesView
           === 'collection'
+        && Boolean(
+          getNoteCollection(
+            state.notesActiveCollectionId
+          )
+        );
+
+      const activeCollectionId =
+        inheritActiveCollection
           ? state
               .notesActiveCollectionId
           : '';
@@ -58019,12 +58065,16 @@
           state.activeModule =
             'Notes';
 
-          clearNotesContextFilters();
+          clearNotesContext();
 
           if (creationContext) {
-            setNotesContextFilter(
+            setNotesContext(
               creationContext.type,
-              creationContext.id
+              creationContext.id,
+              {
+                projectId:
+                  newNote.projectId
+              }
             );
           }
 
@@ -63438,83 +63488,34 @@
     function renderPlaceInspectorNotes(
       notes
     ) {
+      const placeId =
+        state.selectedPlaceId
+        || '';
+
+      const list =
+        renderConnectedNoteList({
+          notes,
+
+          contextType:
+            'place',
+
+          contextId:
+            placeId,
+
+          limit:
+            PLACE_INSPECTOR_LIMITS
+              .notes,
+
+          emptyText:
+            'No connected notes.'
+        });
+
       if (!notes.length) {
-        return `
-          <div
-            class="
-              places-inspector-section-empty
-            ">
-            No connected notes.
-          </div>
-        `;
+        return list;
       }
 
-      const visible =
-        notes.slice(
-          0,
-          PLACE_INSPECTOR_LIMITS.notes
-        );
-
       return `
-        <div
-          class="
-            note-list
-            family-note-list
-            places-inspector-note-list
-          ">
-
-          ${visible
-            .map(note => {
-              const metadata = [
-                notesBrowserCollectionSummary(
-                  note
-                ),
-
-                formatNoteBrowserUpdatedAt(
-                  note
-                )
-              ]
-                .filter(Boolean)
-                .join(' · ');
-
-              return `
-                <button
-                  class="family-note-card"
-                  type="button"
-                  data-place-connected-note="${escapeHtml(
-                    note.id
-                  )}"
-                  data-place-connected-note-place="${escapeHtml(
-                    state.selectedPlaceId
-                    || ''
-                  )}">
-
-                  <strong>
-                    ${escapeHtml(
-                      note.title
-                    )}
-                  </strong>
-
-                  <span>
-                    ${escapeHtml(
-                      noteExcerpt(
-                        note,
-                        120
-                      )
-                      || 'No note content'
-                    )}
-                  </span>
-
-                  <em class="status-dot">
-                    ${escapeHtml(
-                      metadata
-                    )}
-                  </em>
-                </button>
-              `;
-            })
-            .join('')}
-        </div>
+        ${list}
 
         <button
           class="
@@ -63530,6 +63531,7 @@
               panel-section-view-all-icon
             "
             aria-hidden="true">
+
             ${icon.chevron}
           </span>
         </button>
@@ -64123,6 +64125,9 @@
     function bindPlacesInspectorControls(
       root
     ) {
+      bindConnectedNoteLinks(
+        root
+      );
       root
         .querySelector(
           '[data-places-inspector-toggle]'
@@ -64307,26 +64312,6 @@
             }
           );
         });
-
-      root
-        .querySelectorAll(
-          '[data-place-connected-note]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              openPlaceInspectorNote(
-                button.dataset
-                  .placeConnectedNote,
-
-                button.dataset
-                  .placeConnectedNotePlace
-              );
-            }
-          );
-        });
-
       root
         .querySelector(
           '[data-place-view-all-photos]'
@@ -68282,6 +68267,22 @@
         project.id;
 
       if (projectChanged) {
+        clearNotesContext();
+
+        state.notesView =
+          'all';
+
+        state.notesActiveCollectionId =
+          null;
+
+        state.selectedNoteId =
+          null;
+
+        state.notesSearch =
+          '';
+
+        state.notesRightCollapsed =
+          true;
         resetAlbumsPage();
         state.placesView =
           'all';
@@ -68303,7 +68304,6 @@
           || null;
 
         clearPlacesRoute();
-
         state.placesMapView = {
           center: null,
           zoom:
@@ -69154,15 +69154,189 @@
       modalBackdrop.querySelector('[data-simulate-import]').addEventListener('click', () => showToast('File picker would open here.'));
     }
 
-    function openModal(html) {
+    const SEMANTIC_SINGLE_ID_ATTRIBUTES =
+      [
+        'id',
+        'for'
+      ];
+
+    const SEMANTIC_ID_REFERENCE_ATTRIBUTES =
+      [
+        'aria-labelledby',
+        'aria-describedby',
+        'aria-controls',
+        'aria-owns'
+      ];
+
+    function normalizeRenderedSemanticAttributes(
+      root
+    ) {
+      root
+        .querySelectorAll(
+          `
+            [id],
+            [for],
+            [aria-labelledby],
+            [aria-describedby],
+            [aria-controls],
+            [aria-owns]
+          `
+        )
+        .forEach(element => {
+          SEMANTIC_SINGLE_ID_ATTRIBUTES
+            .forEach(attribute => {
+              const value =
+                element.getAttribute(
+                  attribute
+                );
+
+              if (value === null) {
+                return;
+              }
+
+              const normalized =
+                value.replace(
+                  /\s+/g,
+                  ''
+                );
+
+              element.setAttribute(
+                attribute,
+                normalized
+              );
+            });
+
+          SEMANTIC_ID_REFERENCE_ATTRIBUTES
+            .forEach(attribute => {
+              const value =
+                element.getAttribute(
+                  attribute
+                );
+
+              if (value === null) {
+                return;
+              }
+
+              const normalized =
+                value
+                  .trim()
+                  .split(/\s+/)
+                  .filter(Boolean)
+                  .join(' ');
+
+              element.setAttribute(
+                attribute,
+                normalized
+              );
+            });
+        });
+    }
+
+    function validateRenderedSemanticReferences(
+      root
+    ) {
+      SEMANTIC_ID_REFERENCE_ATTRIBUTES
+        .forEach(attribute => {
+          root
+            .querySelectorAll(
+              `[${attribute}]`
+            )
+            .forEach(element => {
+              const references =
+                (
+                  element.getAttribute(
+                    attribute
+                  ) || ''
+                )
+                  .split(/\s+/)
+                  .filter(Boolean);
+
+              references.forEach(id => {
+                if (
+                  !document
+                    .getElementById(id)
+                ) {
+                  console.warn(
+                    `Missing ${attribute} target: ${id}`,
+                    element
+                  );
+                }
+              });
+            });
+        });
+
+      root
+        .querySelectorAll(
+          '[for]'
+        )
+        .forEach(label => {
+          const id =
+            label.getAttribute(
+              'for'
+            );
+
+          if (
+            id
+            && !document
+              .getElementById(id)
+          ) {
+            console.warn(
+              `Missing label target: ${id}`,
+              label
+            );
+          }
+        });
+    }
+
+    function openModal(
+      html
+    ) {
       closeMenu();
-      modalBackdrop.removeEventListener('click', backdropClose);
-      modalBackdrop.innerHTML = html;
-      modalBackdrop.classList.add('open');
-      modalBackdrop.removeAttribute('aria-hidden');
-      modalBackdrop.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', closeModal));
-      modalBackdrop.addEventListener('click', backdropClose);
-      localizeUI(modalBackdrop);
+
+      modalBackdrop
+        .removeEventListener(
+          'click',
+          backdropClose
+        );
+
+      modalBackdrop.innerHTML =
+        html;
+
+      normalizeRenderedSemanticAttributes(
+        modalBackdrop
+      );
+
+      modalBackdrop.classList.add(
+        'open'
+      );
+
+      modalBackdrop.removeAttribute(
+        'aria-hidden'
+      );
+
+      modalBackdrop
+        .querySelectorAll(
+          '[data-close]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            closeModal
+          );
+        });
+
+      modalBackdrop.addEventListener(
+        'click',
+        backdropClose
+      );
+
+      localizeUI(
+        modalBackdrop
+      );
+
+      validateRenderedSemanticReferences(
+        modalBackdrop
+      );
     }
 
     function openPersonPhotoDiscardConfirm() {
