@@ -12629,23 +12629,34 @@
       }
 
     /* Notes module */
-    /* Notes module: refined browser + collapsible editor layout */
-    .notes-shell { height: 100%; min-width: 0; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); background: var(--surface-main); overflow: hidden; }
-    .notes-shell.editor-open { grid-template-columns: minmax(320px, var(--notes-browser-width, 360px)) 10px minmax(460px, 1fr); }
-    .notes-shell.right-collapsed { grid-template-columns: minmax(0, 1fr) 58px; }
-    .notes-shell.editor-open.right-collapsed { grid-template-columns: minmax(0, 1fr) 58px; }
-    
+    .notes-shell {
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      background: var(--surface-main);
+      overflow: hidden;
+    }
+
+    .notes-shell.editor-open {
+      grid-template-columns:
+        minmax(320px, var(--notes-browser-width, 360px))
+        10px
+        minmax(460px, 1fr);
+    }
+
+    .notes-shell.right-collapsed,
+    .notes-shell.editor-open.right-collapsed {
+      grid-template-columns: minmax(0, 1fr) 58px;
+    }
+
     .notes-browser-pane {
       min-width: 0;
       min-height: 0;
-
       display: grid;
-      grid-template-rows:
-        auto
-        minmax(0, 1fr);
-
+      grid-template-rows: auto minmax(0, 1fr);
       overflow: hidden;
-
       background:
         radial-gradient(
           circle at 92% -5%,
@@ -12653,41 +12664,26 @@
           transparent 28%
         ),
         var(--surface-main);
-
       container-type: inline-size;
       container-name: notes-browser;
     }
 
     .notes-browser-header {
-      padding:
-        var(--space-5)
-        var(--space-6)
-        var(--space-4);
-
+      padding: var(--space-5) var(--space-6) var(--space-4);
       display: grid;
       gap: var(--space-4);
-
-      border-bottom:
-        1px solid
-        var(--border-default);
-
-      background:
-        rgba(15, 20, 19, .82);
+      border-bottom: 1px solid var(--border-default);
+      background: rgba(15, 20, 19, .82);
     }
 
-    .notes-browser-header
-    .resource-person-filterbar {
+    .notes-browser-header .resource-person-filterbar {
       padding: 0;
     }
 
     .notes-browser-top {
       min-width: 0;
-
       display: grid;
-      grid-template-columns:
-        minmax(0, 1fr)
-        auto;
-
+      grid-template-columns: minmax(0, 1fr) auto;
       align-items: start;
       gap: var(--space-4);
     }
@@ -12699,14 +12695,11 @@
     .notes-browser-title h1 {
       min-width: 0;
       margin: 0;
-
       overflow: hidden;
-
       color: var(--text-primary);
       font-size: 26px;
       line-height: 1.08;
       letter-spacing: -.03em;
-
       text-overflow: ellipsis;
       white-space: nowrap;
     }
@@ -12714,15 +12707,12 @@
     .notes-browser-description {
       max-width: 720px;
       margin: 6px 0 0;
-
       display: -webkit-box;
       overflow: hidden;
-
       color: var(--text-secondary);
       font-size: 13px;
       font-weight: 600;
       line-height: 1.45;
-
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
       line-clamp: 2;
@@ -12730,39 +12720,55 @@
 
     .notes-browser-count {
       margin: 5px 0 0;
-
       color: var(--text-tertiary);
       font-size: 13px;
       font-weight: 800;
       line-height: 1.4;
     }
 
-    .notes-browser-actions {
+    .notes-browser-actions,
+    .notes-new-note-group {
       display: flex;
-      align-items: center;
+      align-items: stretch;
       justify-content: flex-end;
     }
 
-    .notes-browser-actions
-    .button {
+    .notes-new-note-group .button {
       min-height: 44px;
       white-space: nowrap;
     }
 
+    .notes-new-note-group .button:first-child {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .notes-new-note-menu-button {
+      width: 42px;
+      min-width: 42px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border-left-color: rgba(0, 0, 0, .18);
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+
+    .notes-new-note-menu-button svg {
+      width: 16px !important;
+      height: 16px !important;
+      transform: rotate(90deg);
+    }
+
     .notes-toolbar-line {
       min-width: 0;
-
       display: grid;
-      grid-template-columns:
-        minmax(0, 1fr)
-        176px;
-
+      grid-template-columns: minmax(0, 1fr) 176px;
       align-items: center;
       gap: var(--space-3);
     }
 
-    .notes-toolbar-line
-    .app-search-field {
+    .notes-toolbar-line .app-search-field {
       width: 100%;
       max-width: none;
       flex: none;
@@ -12774,69 +12780,37 @@
 
     .notes-browser-scroll {
       min-height: 0;
-      padding:
-        var(--space-5)
-        var(--space-6)
-        var(--space-6);
-
+      padding: var(--space-5) var(--space-6) var(--space-6);
       overflow: auto;
     }
 
     .notes-list-table {
       overflow: hidden;
-
-      border:
-        1px solid
-        var(--border-default);
-
-      border-radius:
-        var(--radius-lg);
-
-      background:
-        rgba(26, 32, 31, .72);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      background: rgba(26, 32, 31, .72);
     }
 
     .notes-row {
       width: 100%;
       min-width: 0;
       min-height: 76px;
-      padding:
-        9px
-        var(--space-3);
-
+      padding: 9px var(--space-3);
       display: grid;
-      grid-template-columns:
-        34px
-        minmax(0, 1fr)
-        34px;
-
+      grid-template-columns: 34px minmax(0, 1fr) 34px;
       align-items: center;
       gap: var(--space-2);
-
-      border-bottom:
-        1px solid
-        var(--border-default);
-
+      border-bottom: 1px solid var(--border-default);
       background: transparent;
       color: var(--text-secondary);
-
-      transition:
-        background var(--ease),
-        color var(--ease);
+      transition: background var(--ease), color var(--ease), box-shadow var(--ease);
     }
 
-    .notes-row:last-child {
-      border-bottom: 0;
-    }
-
-    .notes-row:hover {
-      background:
-        rgba(255, 255, 255, .035);
-    }
-
+    .notes-row:last-child { border-bottom: 0; }
+    .notes-row:hover { background: rgba(255, 255, 255, .035); }
     .notes-row.active {
-      background:
-        var(--surface-selected);
+      background: var(--surface-selected);
+      box-shadow: inset 3px 0 0 var(--brand-green-400);
     }
 
     .notes-row-favorite,
@@ -12844,24 +12818,13 @@
       width: 32px;
       height: 32px;
       padding: 0;
-
       display: grid;
       place-items: center;
-
-      border:
-        1px solid
-        transparent;
-
+      border: 1px solid transparent;
       border-radius: 9px;
-
       background: transparent;
       color: var(--text-tertiary);
-
-      transition:
-        background var(--ease),
-        border-color var(--ease),
-        color var(--ease),
-        opacity var(--ease);
+      transition: background var(--ease), border-color var(--ease), color var(--ease), opacity var(--ease);
     }
 
     .notes-row-favorite svg,
@@ -12873,166 +12836,136 @@
 
     .notes-row-favorite:hover,
     .notes-row-menu:hover {
-      border-color:
-        var(--border-default);
-
-      background:
-        var(--surface-card-hover);
-
-      color:
-        var(--text-primary);
+      border-color: var(--border-default);
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
     }
 
-    .notes-row-favorite.active {
-      color: var(--amber);
-    }
+    .notes-row-favorite.active { color: var(--amber); }
 
     .notes-row-favorite:focus-visible,
     .notes-row-menu:focus-visible,
-    .notes-row-open:focus-visible {
-      outline:
-        2px solid
-        var(--brand-green-300);
-
+    .notes-row-open:focus-visible,
+    .notes-editor-back:focus-visible {
+      outline: 2px solid var(--brand-green-300);
       outline-offset: 2px;
     }
 
-    .notes-row-menu {
-      opacity: .68;
-    }
-
-    .notes-row:hover
-    .notes-row-menu,
-    .notes-row:focus-within
-    .notes-row-menu {
-      opacity: 1;
-    }
+    .notes-row-menu { opacity: .68; }
+    .notes-row:hover .notes-row-menu,
+    .notes-row:focus-within .notes-row-menu { opacity: 1; }
 
     .notes-row-open {
       min-width: 0;
       padding: 0;
-
       display: grid;
       gap: 3px;
-
       border: 0;
       background: transparent;
       color: inherit;
-
       text-align: left;
     }
 
-    .notes-row-title {
+    .notes-row-title,
+    .notes-row-excerpt,
+    .notes-row-metadata {
       min-width: 0;
       overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
+    .notes-row-title {
       color: var(--text-primary);
       font-size: 14px;
       font-weight: 900;
       line-height: 1.3;
-
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
     .notes-row-excerpt {
-      min-width: 0;
-      overflow: hidden;
-
       color: var(--text-secondary);
       font-size: 12px;
       font-weight: 600;
       line-height: 1.35;
-
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
     .notes-row-metadata {
-      min-width: 0;
-      overflow: hidden;
-
-      color: var(--text-tertiary);
+      color: #929d99;
       font-size: 11px;
       font-weight: 700;
       line-height: 1.35;
+    }
 
+    .notes-resizer {
+      min-width: 10px;
+      width: 10px;
+      cursor: col-resize;
+      position: relative;
+      z-index: 3;
+      touch-action: none;
+      background: linear-gradient(90deg, transparent 0 3px, var(--border-default) 3px 4px, transparent 4px 6px, var(--border-default) 6px 7px, transparent 7px);
+    }
+
+    .notes-resizer::after {
+      content: "";
+      position: absolute;
+      inset: 0 -8px;
+    }
+
+    .notes-resizer:hover,
+    .notes-resizer.dragging {
+      background: linear-gradient(90deg, transparent 0 3px, rgba(98,217,154,.68) 3px 4px, transparent 4px 6px, rgba(98,217,154,.68) 6px 7px, transparent 7px);
+    }
+
+    .notes-right-pane {
+      min-width: 0;
+      min-height: 0;
+      border-left: 1px solid var(--border-default);
+      background: #111615;
+      overflow: auto;
+      overscroll-behavior: contain;
+    }
+
+    .notes-right-rail {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4) 10px;
+      border-left: 1px solid var(--border-default);
+      background: var(--surface-sidebar);
+      color: var(--text-tertiary);
+    }
+
+    .notes-rail-title {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      max-height: 280px;
+      overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      font-weight: 900;
+      color: var(--text-secondary);
     }
 
-    @container notes-browser
-      (max-width: 460px) {
-
-      .notes-browser-header {
-        padding: var(--space-4);
-        gap: var(--space-3);
-      }
-
-      .notes-browser-title h1 {
-        font-size: 22px;
-      }
-
-      .notes-browser-actions
-      .button {
-        min-height: 40px;
-        padding-inline: 12px;
-      }
-
-      .notes-toolbar-line {
-        grid-template-columns:
-          minmax(0, 1fr);
-      }
-
-      .notes-sort-field {
-        width: 100%;
-      }
-
-      .notes-browser-scroll {
-        padding: var(--space-3);
-      }
-    }
-
-    @container notes-browser
-      (max-width: 340px) {
-
-      .notes-browser-top {
-        grid-template-columns:
-          minmax(0, 1fr);
-      }
-
-      .notes-browser-actions {
-        justify-content: stretch;
-      }
-
-      .notes-browser-actions
-      .button {
-        width: 100%;
-      }
-    }
-    
-    .notes-resizer { min-width: 10px; width: 10px; cursor: col-resize; background: linear-gradient(90deg, transparent 0 3px, var(--border-default) 3px 4px, transparent 4px 6px, var(--border-default) 6px 7px, transparent 7px); position: relative; touch-action: none; }
-    .notes-resizer::after { content: ""; position: absolute; inset: 0 -3px; }
-    .notes-resizer:hover, .notes-resizer.dragging { background: linear-gradient(90deg, transparent 0 3px, rgba(98,217,154,.68) 3px 4px, transparent 4px 6px, rgba(98,217,154,.68) 6px 7px, transparent 7px); }
-    .notes-right-pane { min-width: 0; min-height: 0; border-left: 1px solid var(--border-default); background: #111615; overflow: auto; }
-    .notes-right-rail { height: 100%; display: flex; flex-direction: column; align-items: center; gap: var(--space-3); padding: var(--space-4) 10px; border-left: 1px solid var(--border-default); background: var(--surface-sidebar); color: var(--text-tertiary); }
-    .notes-rail-title { writing-mode: vertical-rl; transform: rotate(180deg); max-height: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 900; color: var(--text-secondary); }
     .notes-editor-card {
       min-height: 100%;
       display: grid;
       align-content: start;
-      border: 0;
-      border-radius: 0;
       background: transparent;
-      box-shadow: none;
     }
 
     .notes-editor-header {
-      padding: var(--space-5);
+      position: sticky;
+      top: 0;
+      z-index: 4;
+      padding: var(--space-4) var(--space-5);
       display: grid;
-      gap: var(--space-4);
+      gap: var(--space-3);
       border-bottom: 1px solid var(--border-default);
-      background: rgba(15, 20, 19, .82);
+      background: rgba(15, 20, 19, .96);
+      backdrop-filter: blur(12px);
     }
 
     .notes-editor-topline {
@@ -13043,20 +12976,41 @@
       gap: var(--space-3);
     }
 
+    .notes-editor-navigation,
+    .notes-editor-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
     .notes-editor-kicker {
       color: var(--text-tertiary);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 900;
       letter-spacing: .08em;
       text-transform: uppercase;
     }
 
-    .notes-editor-actions {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-      gap: var(--space-2);
+    .notes-save-status {
+      min-width: 54px;
+      color: var(--text-tertiary);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .notes-save-status.saving { color: var(--amber); }
+    .notes-save-status.error { color: var(--red); }
+
+    .notes-editor-back {
+      display: none;
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      place-items: center;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-card);
+      color: var(--text-secondary);
     }
 
     .notes-icon-button {
@@ -13071,13 +13025,15 @@
       color: var(--text-secondary);
     }
 
-    .notes-icon-button svg {
+    .notes-icon-button svg,
+    .notes-editor-back svg {
       width: 17px;
       height: 17px;
       display: block;
     }
 
-    .notes-icon-button:hover {
+    .notes-icon-button:hover,
+    .notes-editor-back:hover {
       border-color: var(--border-strong);
       background: var(--surface-card-hover);
       color: var(--text-primary);
@@ -13089,11 +13045,6 @@
       color: var(--amber);
     }
 
-    .notes-icon-button:focus-visible {
-      outline: 2px solid var(--brand-green-300);
-      outline-offset: 2px;
-    }
-
     .notes-title-input {
       width: 100%;
       min-width: 0;
@@ -13102,20 +13053,34 @@
       outline: 0;
       background: transparent;
       color: var(--text-primary);
-      font-size: 26px;
+      font-size: clamp(24px, 2.2vw, 32px);
       font-weight: 900;
       line-height: 1.12;
-      letter-spacing: -.03em;
+      letter-spacing: -.035em;
     }
 
-    .notes-title-input::placeholder {
+    .notes-title-input::placeholder { color: var(--text-tertiary); }
+
+    .notes-editor-meta {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .notes-editor-meta-label {
       color: var(--text-tertiary);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .06em;
     }
 
     .notes-editor-body {
       padding: var(--space-5);
       display: grid;
-      gap: var(--space-4);
+      gap: var(--space-5);
     }
 
     .notes-editor-writing {
@@ -13131,9 +13096,10 @@
 
     .notes-body-input {
       width: 100%;
-      min-height: 320px;
+      min-height: 420px;
       padding: var(--space-4);
-      resize: vertical;
+      resize: none;
+      overflow: hidden;
       box-sizing: border-box;
       border: 1px solid var(--border-default);
       border-radius: var(--radius-sm);
@@ -13141,32 +13107,28 @@
       background: #121817;
       color: var(--text-secondary);
       font: inherit;
-      line-height: 1.7;
+      line-height: 1.72;
     }
 
     .notes-body-input:focus {
       border-color: rgba(98, 217, 154, .45);
-      box-shadow:
-        0 0 0 1px
-        rgba(47, 174, 116, .12);
+      box-shadow: 0 0 0 1px rgba(47, 174, 116, .12);
     }
 
     .notes-editor-section {
       min-width: 0;
-      overflow: hidden;
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-sm);
-      background: rgba(15, 20, 19, .72);
+      padding-top: var(--space-4);
+      display: grid;
+      gap: var(--space-3);
+      border-top: 1px solid var(--border-default);
     }
 
     .notes-editor-section-head {
-      min-height: 52px;
-      padding: 10px var(--space-4);
+      min-height: 42px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: var(--space-3);
-      border-bottom: 1px solid var(--border-default);
     }
 
     .notes-editor-section-title {
@@ -13178,7 +13140,7 @@
     .notes-editor-section-title h3 {
       margin: 0;
       color: var(--text-primary);
-      font-size: 14px;
+      font-size: 15px;
       line-height: 1.3;
     }
 
@@ -13190,7 +13152,6 @@
 
     .notes-editor-section-body {
       min-width: 0;
-      padding: var(--space-4);
       display: grid;
       gap: var(--space-3);
     }
@@ -13204,7 +13165,7 @@
 
     .notes-chip {
       min-width: 0;
-      min-height: 32px;
+      min-height: 30px;
       padding: 0 6px 0 11px;
       display: inline-flex;
       align-items: center;
@@ -13217,15 +13178,9 @@
       font-weight: 800;
     }
 
-    .notes-chip.is-tag {
-      border-color: rgba(98, 217, 154, .22);
-      background: rgba(47, 174, 116, .1);
-      color: var(--brand-green-300);
-    }
-
     .notes-chip-label {
       min-width: 0;
-      max-width: 200px;
+      max-width: 220px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -13248,42 +13203,30 @@
       color: var(--text-primary);
     }
 
-    .notes-chip-remove svg {
-      width: 13px;
-      height: 13px;
-    }
+    .notes-chip-remove svg { width: 13px; height: 13px; }
 
-    .notes-section-empty {
+    .notes-section-empty,
+    .notes-optional-copy {
       color: var(--text-tertiary);
       font-size: 12px;
       line-height: 1.5;
     }
 
-    .notes-inline-add {
-      min-width: 0;
-      display: grid;
-      grid-template-columns:
-        minmax(0, 1fr)
-        auto;
-      gap: var(--space-2);
-    }
-
-    .notes-inline-add input {
-      min-width: 0;
-      height: 38px;
-      padding: 0 var(--space-3);
-      border: 1px solid var(--border-default);
+    .notes-optional-row {
+      min-height: 54px;
+      padding: var(--space-3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      border: 1px dashed var(--border-default);
       border-radius: var(--radius-sm);
-      outline: 0;
-      background: var(--surface-input);
-      color: var(--text-primary);
+      background: rgba(255, 255, 255, .018);
     }
 
-    .notes-inline-add input:focus {
-      border-color: var(--brand-green-500);
-    }
-
-    .notes-checklist-list {
+    .notes-checklist-list,
+    .notes-context-list,
+    .notes-linked-list {
       display: grid;
       gap: var(--space-2);
     }
@@ -13293,10 +13236,7 @@
       min-height: 44px;
       padding: 6px 7px 6px 10px;
       display: grid;
-      grid-template-columns:
-        22px
-        minmax(0, 1fr)
-        32px;
+      grid-template-columns: 22px minmax(0, 1fr) 32px;
       align-items: center;
       gap: var(--space-2);
       border: 1px solid rgba(255, 255, 255, .055);
@@ -13304,8 +13244,9 @@
       background: rgba(255, 255, 255, .025);
     }
 
-    .notes-checklist-row
-    input[type="checkbox"] {
+    .notes-checklist-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
       accent-color: var(--brand-green-500);
     }
 
@@ -13322,8 +13263,7 @@
       font-size: 13px;
     }
 
-    .notes-checklist-row.done
-    .notes-checklist-text {
+    .notes-checklist-row.done .notes-checklist-text {
       color: var(--text-tertiary);
       text-decoration: line-through;
     }
@@ -13335,7 +13275,8 @@
       color: var(--text-primary);
     }
 
-    .notes-checklist-delete {
+    .notes-checklist-delete,
+    .notes-linked-action {
       width: 30px;
       height: 30px;
       padding: 0;
@@ -13347,21 +13288,15 @@
       color: var(--text-tertiary);
     }
 
-    .notes-checklist-delete:hover {
+    .notes-checklist-delete:hover,
+    .notes-linked-action.danger:hover {
       border-color: rgba(212, 107, 107, .25);
       background: rgba(212, 107, 107, .08);
       color: var(--red);
     }
 
-    .notes-checklist-delete svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    .notes-context-list {
-      display: grid;
-      gap: var(--space-2);
-    }
+    .notes-checklist-delete svg,
+    .notes-linked-action svg { width: 14px; height: 14px; }
 
     .notes-context-group {
       overflow: hidden;
@@ -13375,10 +13310,7 @@
       min-height: 44px;
       padding: 0 var(--space-3);
       display: grid;
-      grid-template-columns:
-        minmax(0, 1fr)
-        auto
-        18px;
+      grid-template-columns: minmax(0, 1fr) auto 18px;
       align-items: center;
       gap: var(--space-2);
       border: 0;
@@ -13407,14 +13339,8 @@
       transition: transform var(--ease);
     }
 
-    .notes-context-toggle-icon.open {
-      transform: rotate(90deg);
-    }
-
-    .notes-context-toggle-icon svg {
-      width: 15px;
-      height: 15px;
-    }
+    .notes-context-toggle-icon.open { transform: rotate(90deg); }
+    .notes-context-toggle-icon svg { width: 15px; height: 15px; }
 
     .notes-context-body {
       padding: var(--space-3);
@@ -13423,18 +13349,11 @@
       border-top: 1px solid var(--border-default);
     }
 
-    .notes-linked-list {
-      display: grid;
-      gap: var(--space-2);
-    }
-
     .notes-linked-row {
       min-width: 0;
       min-height: 48px;
       display: grid;
-      grid-template-columns:
-        minmax(0, 1fr)
-        auto;
+      grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
       gap: var(--space-2);
       border: 1px solid rgba(255, 255, 255, .055);
@@ -13455,9 +13374,7 @@
       text-align: left;
     }
 
-    .notes-linked-main:hover {
-      color: var(--text-primary);
-    }
+    .notes-linked-main:hover { color: var(--text-primary); }
 
     .notes-linked-main strong,
     .notes-linked-main span {
@@ -13466,32 +13383,13 @@
       white-space: nowrap;
     }
 
-    .notes-linked-main strong {
-      color: var(--text-primary);
-      font-size: 13px;
-    }
-
-    .notes-linked-main span {
-      color: var(--text-tertiary);
-      font-size: 11px;
-    }
+    .notes-linked-main strong { color: var(--text-primary); font-size: 13px; }
+    .notes-linked-main span { color: var(--text-tertiary); font-size: 11px; }
 
     .notes-linked-actions {
       padding-right: 7px;
       display: flex;
       gap: 4px;
-    }
-
-    .notes-linked-action {
-      width: 30px;
-      height: 30px;
-      padding: 0;
-      display: grid;
-      place-items: center;
-      border: 1px solid transparent;
-      border-radius: 7px;
-      background: transparent;
-      color: var(--text-tertiary);
     }
 
     .notes-linked-action:hover {
@@ -13500,87 +13398,26 @@
       color: var(--text-primary);
     }
 
-    .notes-linked-action.danger:hover {
-      border-color: rgba(212, 107, 107, .25);
-      background: rgba(212, 107, 107, .08);
-      color: var(--red);
+    .notes-empty {
+      height: 100%;
+      min-height: 360px;
+      display: grid;
+      place-items: center;
+      padding: var(--space-8);
+      color: var(--text-tertiary);
+      text-align: center;
     }
 
-    .notes-linked-action svg {
-      width: 14px;
-      height: 14px;
+    .notes-empty-card {
+      max-width: 460px;
+      padding: var(--space-8);
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius-lg);
+      background: rgba(26,32,31,.55);
     }
 
-    @media (max-width: 1180px) {
-      .notes-editor-topline {
-        align-items: flex-start;
-      }
-
-      .notes-editor-actions {
-        max-width: 260px;
-      }
-    }
-
-    @media (max-width: 980px) {
-      .notes-inline-add {
-        grid-template-columns:
-          minmax(0, 1fr);
-      }
-    }
-    .notes-empty { height: 100%; min-height: 360px; display: grid; place-items: center; padding: var(--space-8); color: var(--text-tertiary); text-align: center; }
-    .notes-empty-card { max-width: 460px; border: 1px dashed var(--border-strong); background: rgba(26,32,31,.55); border-radius: var(--radius-lg); padding: var(--space-8); }
     .notes-empty h2 { margin: 0 0 var(--space-2); color: var(--text-primary); }
     .notes-empty p { margin: 0 0 var(--space-4); }
-    .notes-template-grid {
-      display: grid;
-      grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-      gap: var(--space-3);
-    }
-
-    .notes-template-choice {
-      position: relative;
-      min-height: 112px;
-      padding: var(--space-4);
-      display: grid;
-      align-content: start;
-      gap: 5px;
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-sm);
-      background: rgba(255, 255, 255, .025);
-      color: var(--text-secondary);
-      cursor: pointer;
-    }
-
-    .notes-template-choice:hover {
-      border-color: var(--border-strong);
-      background: var(--surface-card-hover);
-      color: var(--text-primary);
-    }
-
-    .notes-template-choice input {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .notes-template-choice:has(
-      input:checked
-    ) {
-      border-color: rgba(98, 217, 154, .32);
-      background: var(--surface-selected);
-      color: var(--text-primary);
-    }
-
-    .notes-template-choice strong {
-      color: var(--text-primary);
-    }
-
-    .notes-template-choice span {
-      color: var(--text-tertiary);
-      font-size: 12px;
-      line-height: 1.45;
-    }
 
     .notes-collection-picker {
       min-width: 0;
@@ -13588,14 +13425,13 @@
       gap: var(--space-3);
     }
 
-    .notes-collection-picker
-    .app-search-field {
+    .notes-collection-picker .app-search-field {
       width: 100%;
       max-width: none;
     }
 
     .notes-collection-choice-list {
-      max-height: 220px;
+      max-height: 260px;
       padding: 4px;
       display: grid;
       gap: 2px;
@@ -13605,18 +13441,18 @@
       background: var(--surface-input);
     }
 
+    .field .notes-collection-choice,
     .notes-collection-choice {
       min-height: 44px;
       padding: 7px 10px;
       display: grid;
-      grid-template-columns:
-        20px
-        minmax(0, 1fr);
+      grid-template-columns: 20px minmax(0, 1fr);
       align-items: center;
       gap: var(--space-2);
       border-radius: 6px;
       color: var(--text-secondary);
       cursor: pointer;
+      margin: 0;
     }
 
     .notes-collection-choice:hover {
@@ -13624,29 +13460,43 @@
       color: var(--text-primary);
     }
 
-    .notes-collection-choice input {
+    .field .notes-collection-choice input[type="checkbox"],
+    .notes-collection-choice input[type="checkbox"],
+    .notes-modal-choice input[type="checkbox"],
+    .notes-modal-choice input[type="radio"] {
+      width: 16px;
+      height: 16px;
+      min-height: 16px;
+      max-height: 16px;
+      padding: 0;
+      margin: 0;
       accent-color: var(--brand-green-500);
     }
 
-    .notes-collection-choice-copy {
+    .notes-collection-choice-copy,
+    .notes-modal-choice-copy {
       min-width: 0;
       display: grid;
-      gap: 1px;
+      gap: 2px;
     }
 
     .notes-collection-choice-copy strong,
-    .notes-collection-choice-copy span {
+    .notes-collection-choice-copy span,
+    .notes-modal-choice-copy strong,
+    .notes-modal-choice-copy span {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    .notes-collection-choice-copy strong {
+    .notes-collection-choice-copy strong,
+    .notes-modal-choice-copy strong {
       color: var(--text-primary);
       font-size: 13px;
     }
 
-    .notes-collection-choice-copy span {
+    .notes-collection-choice-copy span,
+    .notes-modal-choice-copy span {
       color: var(--text-tertiary);
       font-size: 11px;
     }
@@ -13666,9 +13516,7 @@
       background: rgba(255, 255, 255, .025);
     }
 
-    .notes-inline-collection-create[hidden] {
-      display: none;
-    }
+    .notes-inline-collection-create[hidden] { display: none; }
 
     .notes-inline-collection-actions {
       display: flex;
@@ -13683,13 +13531,12 @@
       overflow-y: auto;
     }
 
+    .field .notes-modal-choice,
     .notes-modal-choice {
       min-height: 48px;
       padding: 7px var(--space-3);
       display: grid;
-      grid-template-columns:
-        20px
-        minmax(0, 1fr);
+      grid-template-columns: 20px minmax(0, 1fr);
       align-items: center;
       gap: var(--space-3);
       border: 1px solid var(--border-default);
@@ -13697,6 +13544,7 @@
       background: rgba(255, 255, 255, .025);
       color: var(--text-secondary);
       cursor: pointer;
+      margin: 0;
     }
 
     .notes-modal-choice:hover {
@@ -13705,48 +13553,80 @@
       color: var(--text-primary);
     }
 
-    .notes-modal-choice input {
-      accent-color: var(--brand-green-500);
-    }
-
-    .notes-modal-choice-copy {
-      min-width: 0;
+    .notes-confirmation-card {
+      padding: var(--space-3);
       display: grid;
-      gap: 2px;
+      gap: 5px;
+      border: 1px solid rgba(98, 217, 154, .18);
+      border-radius: var(--radius-sm);
+      background: rgba(22, 58, 42, .28);
+      color: var(--text-secondary);
     }
 
-    .notes-modal-choice-copy strong,
-    .notes-modal-choice-copy span {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    .notes-confirmation-card strong { color: var(--text-primary); }
+
+    @container notes-browser (max-width: 460px) {
+      .notes-browser-header { padding: var(--space-4); gap: var(--space-3); }
+      .notes-browser-title h1 { font-size: 22px; }
+      .notes-toolbar-line { grid-template-columns: minmax(0, 1fr); }
+      .notes-browser-scroll { padding: var(--space-3); }
+      .notes-row { min-height: 64px; }
+      .notes-row-excerpt { display: none; }
     }
 
-    .notes-modal-choice-copy strong {
-      color: var(--text-primary);
-      font-size: 13px;
+    @container notes-browser (max-width: 340px) {
+      .notes-browser-top { grid-template-columns: minmax(0, 1fr); }
+      .notes-browser-actions { justify-content: stretch; }
+      .notes-new-note-group { width: 100%; }
+      .notes-new-note-group .button:first-child { flex: 1; }
     }
 
-    .notes-modal-choice-copy span {
-      color: var(--text-tertiary);
-      font-size: 11px;
+    @media (max-width: 1180px) {
+      .notes-editor-topline { align-items: flex-start; }
+      .notes-editor-actions { flex-wrap: wrap; justify-content: flex-end; }
+    }
+
+    @media (max-width: 1100px) {
+      .notes-shell.editor-open,
+      .notes-shell.right-collapsed,
+      .notes-shell.editor-open.right-collapsed {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .notes-shell.editor-open.notes-mobile-browser .notes-resizer,
+      .notes-shell.editor-open.notes-mobile-browser .notes-right-pane,
+      .notes-shell.editor-open.notes-mobile-browser .notes-right-rail {
+        display: none;
+      }
+
+      .notes-shell.editor-open.notes-mobile-editor .notes-browser-pane,
+      .notes-shell.editor-open.notes-mobile-editor .notes-resizer,
+      .notes-shell.editor-open.notes-mobile-editor .notes-right-rail {
+        display: none;
+      }
+
+      .notes-shell.editor-open.notes-mobile-editor .notes-right-pane {
+        display: block;
+        border-left: 0;
+      }
+
+      .notes-editor-back { display: grid; }
+      .notes-editor-collapse { display: none; }
+      .notes-browser-header,
+      .notes-browser-scroll { padding-inline: var(--space-4); }
     }
 
     @media (max-width: 720px) {
-      .notes-template-grid {
-        grid-template-columns:
-          minmax(0, 1fr);
-      }
-    }    
-    .notes-template-choice:has(input:checked) { background: var(--surface-selected); border-color: rgba(98,217,154,.32); color: var(--text-primary); }
-    .notes-template-choice strong { display: block; margin-bottom: 4px; }
-    .notes-template-choice span { color: var(--text-tertiary); font-size: 12px; }
-    .notes-modal-list { display: grid; gap: var(--space-2); }
-    .notes-modal-choice { min-height: 46px; display: flex; align-items: center; gap: var(--space-3); border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: rgba(255,255,255,.025); padding: 0 var(--space-3); color: var(--text-secondary); font-weight: 800; }
-    .notes-modal-choice:hover { background: var(--surface-card-hover); border-color: var(--border-strong); color: var(--text-primary); }
-    .notes-modal-choice input { accent-color: var(--brand-green-500); }
-    @media (max-width: 1320px) {.notes-shell { grid-template-columns: minmax(500px, 1fr) 390px; }}
-    @media (max-width: 980px) {.notes-shell, .notes-shell.right-collapsed { grid-template-columns: 1fr; } .notes-right-pane, .notes-right-rail { display: none; } .notes-browser-header { padding: var(--space-4); } .notes-browser-scroll { padding: var(--space-4); } .notes-template-grid { grid-template-columns: 1fr; }}
+      .notes-browser-top { grid-template-columns: minmax(0, 1fr); }
+      .notes-browser-actions { justify-content: stretch; }
+      .notes-new-note-group { width: 100%; }
+      .notes-new-note-group .button:first-child { flex: 1; }
+      .notes-toolbar-line { grid-template-columns: minmax(0, 1fr); }
+      .notes-editor-header,
+      .notes-editor-body { padding: var(--space-4); }
+      .notes-title-input { font-size: 24px; }
+      .notes-optional-row { align-items: stretch; flex-direction: column; }
+    }
 
     .places-nav .badge {
       margin-left: auto;
@@ -21842,6 +21722,41 @@
     normalizeSampleGenealogyDates();
     sampleData.events = buildSampleEvents();
 
+
+    function validateSampleNotesFixture(
+      warn = message =>
+        console.warn(
+          '[sampleData]',
+          message
+        )
+    ) {
+      if (
+        sampleData.notes.length
+          !== EXPECTED_CANONICAL_NOTE_COUNT
+      ) {
+        warn(
+          `Expected exactly ${
+            EXPECTED_CANONICAL_NOTE_COUNT
+          } seeded notes; found ${
+            sampleData.notes.length
+          }`
+        );
+      }
+
+      if (
+        sampleData.noteCollections.length
+          !== EXPECTED_CANONICAL_NOTE_COLLECTION_COUNT
+      ) {
+        warn(
+          `Expected exactly ${
+            EXPECTED_CANONICAL_NOTE_COLLECTION_COUNT
+          } seeded note collections; found ${
+            sampleData.noteCollections.length
+          }`
+        );
+      }
+    }
+
     function validateSampleData() {
       const warn = message => console.warn('[sampleData]', message);
       const personIds = new Set(sampleData.people.map(person => person.id));
@@ -21965,31 +21880,7 @@
         });
       };
 
-      if (
-        sampleData.notes.length
-          !== EXPECTED_CANONICAL_NOTE_COUNT
-      ) {
-        warn(
-          `Expected exactly ${
-            EXPECTED_CANONICAL_NOTE_COUNT
-          } seeded notes; found ${
-            sampleData.notes.length
-          }`
-        );
-      }
-
-      if (
-        sampleData.noteCollections.length
-          !== EXPECTED_CANONICAL_NOTE_COLLECTION_COUNT
-      ) {
-        warn(
-          `Expected exactly ${
-            EXPECTED_CANONICAL_NOTE_COLLECTION_COUNT
-          } seeded note collections; found ${
-            sampleData.noteCollections.length
-          }`
-        );
-      }
+      validateSampleNotesFixture(warn);
 
       sampleData.noteCollections.forEach(
         collection => {
@@ -22070,7 +21961,6 @@
 
       const canonicalNoteArrayFields = [
         'collectionIds',
-        'tags',
         'checklist',
         'linkedPersonIds',
         'linkedPlaceIds',
@@ -22100,7 +21990,8 @@
         'excerpt',
         'pinned',
         'personIds',
-        'relatedNotes'
+        'relatedNotes',
+        'tags'
       ];
 
       const validateNoteReferences = (
@@ -22523,6 +22414,21 @@
               } are in different projects`
             );
           }
+
+          if (
+            !(
+              relatedNote.relatedNoteIds
+              || []
+            ).includes(note.id)
+          ) {
+            warn(
+              `Note ${
+                note.id
+              } and related note ${
+                relatedNoteId
+              } are not reciprocal`
+            );
+          }
         });
 
         [
@@ -22864,15 +22770,17 @@
       notesSearch: '',
       notesSort: 'updated',
       notesContext: null,
+      notesMobilePane: 'browser',
+      notesSaveStatus: 'Saved',
 
       notesRightCollapsed: true,
       notesBrowserWidth: 360,
 
       notesOpenBlocks: {
-        people: true,
+        people: false,
         places: false,
         events: false,
-        sources: true,
+        sources: false,
         files: false
       },
       placesView: 'all',
@@ -50734,7 +50642,6 @@
         collectionIds: [],
         favorite: false,
         archived: false,
-        tags: [],
         checklist: [],
         linkedPersonIds: [],
         linkedPlaceIds: [],
@@ -50777,11 +50684,6 @@
           ],
 
           favorite: true,
-
-          tags: [
-            'parentage',
-            'unresolved'
-          ],
 
           checklist: [
             {
@@ -50871,11 +50773,6 @@
           archived:
             true,
 
-          tags: [
-            'burial',
-            'index'
-          ],
-
           linkedPersonIds: [
             'daisy',
             'pearl'
@@ -50915,11 +50812,6 @@
 
           collectionIds: [
             'note-col-sources'
-          ],
-
-          tags: [
-            'transcription',
-            'meowbridge'
           ],
 
           linkedPersonIds: [
@@ -50969,11 +50861,6 @@
 
           favorite:
             true,
-
-          tags: [
-            'household',
-            'register'
-          ],
 
           checklist: [
             {
@@ -51061,11 +50948,6 @@
           favorite:
             true,
 
-          tags: [
-            'photographs',
-            'family-story'
-          ],
-
           linkedPersonIds: [
             'silver',
             'luna',
@@ -51115,11 +50997,6 @@
             'note-col-pawford'
           ],
 
-          tags: [
-            'surname',
-            'spelling'
-          ],
-
           linkedPersonIds: [
             'silver',
             'barnaby',
@@ -51165,11 +51042,6 @@
 
           collectionIds: [
             'note-col-sources'
-          ],
-
-          tags: [
-            'death',
-            'verification'
           ],
 
           checklist: [
@@ -51233,17 +51105,10 @@
             'No variant should replace the central surname without supporting evidence.'
           ),
 
-          collectionIds: [
-            'note-col-pawford'
-          ],
+          collectionIds: [],
 
           archived:
             true,
-
-          tags: [
-            'surname',
-            'spelling'
-          ],
 
           linkedPersonIds: [
             'rupert',
@@ -51277,11 +51142,6 @@
             'note-col-sources'
           ],
 
-          tags: [
-            'marriage',
-            'certificate'
-          ],
-
           linkedPersonIds: [
             'silver',
             'luna'
@@ -51289,6 +51149,10 @@
 
           linkedPlaceIds: [
             'place-meowbridge'
+          ],
+
+          linkedEventIds: [
+            'event-rel-silver-luna-partner-rel-silver-luna-partner-marriage'
           ],
 
           linkedSourceIds: [
@@ -51317,19 +51181,10 @@
           title:
             'Silver profile research checklist',
 
-          body: body(
-            'Review Silver Whiskerfield’s profile for unsupported or incomplete information.',
-            '',
-            'Priority areas are residence history, photograph context, and verification of events currently shown without detailed citations.'
-          ),
+          body: '',
 
           collectionIds: [
             'note-col-whiskerfield'
-          ],
-
-          tags: [
-            'profile',
-            'checklist'
           ],
 
           checklist: [
@@ -51412,11 +51267,6 @@
             'note-col-whiskerfield'
           ],
 
-          tags: [
-            'interview',
-            'recollections'
-          ],
-
           checklist: [
             {
               id:
@@ -51488,11 +51338,6 @@
             'note-col-sources'
           ],
 
-          tags: [
-            'archive',
-            'checklist'
-          ],
-
           checklist: [
             {
               id:
@@ -51561,6 +51406,32 @@
         })
       ];
     })();
+
+
+    let runtimeIdSequence = 0;
+
+    function createRuntimeId(
+      prefix
+    ) {
+      runtimeIdSequence += 1;
+
+      const randomPart =
+        typeof crypto !== 'undefined'
+        && typeof crypto.randomUUID
+          === 'function'
+          ? crypto.randomUUID()
+              .replaceAll('-', '')
+              .slice(0, 10)
+          : Math.random()
+              .toString(36)
+              .slice(2, 12);
+
+      return `${prefix}-${
+        Date.now().toString(36)
+      }-${runtimeIdSequence.toString(36)}-${
+        randomPart
+      }`;
+    }
 
     function noteTimestamp(
       note,
@@ -52540,6 +52411,9 @@
       state.notesRightCollapsed =
         false;
 
+      state.notesMobilePane =
+        'editor';
+
       render();
     }
 
@@ -52554,10 +52428,10 @@
         );
 
       if (!record) {
-        return;
+        return null;
       }
 
-      openNewNoteModal({
+      return createCentralNote({
         contextType:
           type,
 
@@ -52566,81 +52440,9 @@
       });
     }
 
-    function openCentralNoteFromContext(
-      noteId,
-      {
-        type = '',
-        id = ''
-      } = {}
-    ) {
-      const note =
-        getNote(
-          noteId,
-          {
-            includeArchived:
-              true
-          }
-        );
+    
 
-      if (!note) {
-        return;
-      }
-
-      state.activeModule =
-        'Notes';
-
-      clearNotesContext();
-
-      const contextConfig =
-        NOTES_CONTEXT_CONFIG[type];
-
-      if (
-        contextConfig
-        && id
-        && (
-          note[
-            contextConfig.field
-          ] || []
-        ).includes(id)
-      ) {
-        setNotesContext(
-          type,
-          id
-        );
-      }
-
-      state.notesView =
-        note.archived
-          ? 'archived'
-          : 'all';
-
-      state.notesActiveCollectionId =
-        null;
-
-      state.selectedNoteId =
-        note.id;
-
-      state.notesSearch =
-        '';
-
-      state.notesRightCollapsed =
-        false;
-
-      render();
-    }
-
-    function openNewNoteForContext(
-      type,
-      id
-    ) {
-      openNewNoteModal({
-        contextType:
-          type,
-
-        contextId:
-          id
-      });
-    }
+    
 
     function getRelatedNotes(
       noteId,
@@ -52972,7 +52774,14 @@
         state.notesRightCollapsed
         && selected
           ? 'right-collapsed'
-          : ''
+          : '',
+
+        `notes-mobile-${
+          state.notesMobilePane
+            === 'editor'
+            ? 'editor'
+            : 'browser'
+        }`
       ]
         .filter(Boolean)
         .join(' ');
@@ -53007,6 +52816,11 @@
       `;
 
       bindNotesControls();
+      autoSizeNoteBody(
+        main.querySelector(
+          '#notesBodyInput'
+        )
+      );
     }
 
     function renderNotesSidebar() {
@@ -53219,15 +53033,9 @@
           class="notes-browser-pane"
           aria-label="Notes browser">
 
-          <header
-            class="notes-browser-header">
-
-            <div
-              class="notes-browser-top">
-
-              <div
-                class="notes-browser-title">
-
+          <header class="notes-browser-header">
+            <div class="notes-browser-top">
+              <div class="notes-browser-title">
                 <h1>
                   ${escapeHtml(
                     notesTitle()
@@ -53237,10 +53045,7 @@
                 ${
                   collectionDescription
                     ? `
-                      <p
-                        class="
-                          notes-browser-description
-                        ">
+                      <p class="notes-browser-description">
                         ${escapeHtml(
                           collectionDescription
                         )}
@@ -53249,10 +53054,7 @@
                     : ''
                 }
 
-                <p
-                  class="
-                    notes-browser-count
-                  ">
+                <p class="notes-browser-count">
                   ${escapeHtml(
                     notesBrowserSubtitle(
                       list
@@ -53261,51 +53063,50 @@
                 </p>
               </div>
 
-              <div
-                class="notes-browser-actions">
+              <div class="notes-browser-actions">
+                <div class="notes-new-note-group">
+                  <button
+                    class="button primary"
+                    type="button"
+                    id="notesNewNoteButton">
+                    ${icon.plus}
+                    New note
+                  </button>
 
-                <button
-                  class="button primary"
-                  type="button"
-                  id="notesNewNoteButton">
-
-                  ${icon.plus}
-                  New note
-                </button>
+                  <button
+                    class="button primary notes-new-note-menu-button"
+                    type="button"
+                    id="notesNewNoteMenuButton"
+                    aria-label="More note starting options"
+                    aria-haspopup="menu"
+                    title="More note starting options">
+                    ${icon.chevron}
+                  </button>
+                </div>
               </div>
             </div>
 
             ${renderNotesContextFilterBar()}
 
-            <div
-              class="notes-toolbar-line">
-
+            <div class="notes-toolbar-line">
               <label
                 class="app-search-field"
                 aria-label="Search notes">
-
                 ${icon.search}
-
                 <input
                   id="notesSearch"
                   type="search"
-                  placeholder="Search notes..."
+                  placeholder="Search notes, checklists, and linked records..."
                   value="${escapeHtml(
                     state.notesSearch
                   )}">
               </label>
 
-              <span
-                class="
-                  app-sort-field
-                  notes-sort-field
-                ">
-
+              <span class="app-sort-field notes-sort-field">
                 <select
                   class="app-sort-select"
                   id="notesSort"
                   aria-label="Sort notes">
-
                   <option
                     value="updated"
                     ${
@@ -53316,7 +53117,6 @@
                     }>
                     Sort: Updated
                   </option>
-
                   <option
                     value="title"
                     ${
@@ -53327,7 +53127,6 @@
                     }>
                     Sort: Title
                   </option>
-
                   <option
                     value="created"
                     ${
@@ -53339,7 +53138,6 @@
                     Sort: Created
                   </option>
                 </select>
-
                 <span
                   class="app-sort-chevron"
                   aria-hidden="true">
@@ -53485,6 +53283,58 @@
           note
         )
       }`;
+    }
+
+
+    function noteChecklistProgress(
+      note
+    ) {
+      const items =
+        note?.checklist || [];
+
+      if (!items.length) {
+        return '';
+      }
+
+      const completed =
+        items.filter(
+          item => item.done
+        ).length;
+
+      return `${completed} of ${
+        items.length
+      } complete`;
+    }
+
+    function noteBrowserMetadata(
+      note
+    ) {
+      const linkedCount =
+        noteLinkedEntityCount(
+          note
+        );
+
+      return [
+        formatNoteCollectionSummary(
+          note
+        ),
+
+        noteChecklistProgress(
+          note
+        ),
+
+        `${linkedCount} ${
+          linkedCount === 1
+            ? 'link'
+            : 'links'
+        }`,
+
+        formatNoteRelativeUpdatedAt(
+          note
+        )
+      ]
+        .filter(Boolean)
+        .join(' · ');
     }
 
     function formatConnectedNoteMetadata(
@@ -53658,49 +53508,25 @@
         note.id
           === state.selectedNoteId;
 
-      const collectionSummary =
-        formatNoteCollectionSummary(
+      const metadata =
+        noteBrowserMetadata(
           note
         );
-
-      const linkedCount =
-        noteLinkedEntityCount(
-          note
-        );
-
-      const linkedSummary =
-        `${linkedCount} ${
-          linkedCount === 1
-            ? 'link'
-            : 'links'
-        }`;
-
-      const updatedSummary =
-        formatNoteRelativeUpdatedAt(
-          note
-        );
-
-      const metadata = [
-        collectionSummary,
-        linkedSummary,
-        updatedSummary
-      ]
-        .filter(Boolean)
-        .join(' · ');
 
       return `
         <article
-          class="
-            notes-row
-            ${selected ? 'active' : ''}
-          "
-          role="listitem">
+          class="notes-row ${
+            selected ? 'active' : ''
+          }"
+          role="listitem"
+          data-note-id="${escapeHtml(
+            note.id
+          )}">
 
           <button
-            class="
-              notes-row-favorite
-              ${note.favorite ? 'active' : ''}
-            "
+            class="notes-row-favorite ${
+              note.favorite ? 'active' : ''
+            }"
             type="button"
             data-note-favorite="${escapeHtml(
               note.id
@@ -53716,7 +53542,6 @@
                 ? 'Remove from favourites'
                 : 'Add to favourites'
             }">
-
             ${icon.star}
           </button>
 
@@ -53731,7 +53556,6 @@
                 ? 'aria-current="true"'
                 : ''
             }>
-
             <span
               class="notes-row-title"
               title="${escapeHtml(
@@ -53742,8 +53566,7 @@
               )}
             </span>
 
-            <span
-              class="notes-row-excerpt">
+            <span class="notes-row-excerpt">
               ${escapeHtml(
                 noteExcerpt(
                   note,
@@ -53774,7 +53597,6 @@
             aria-label="${escapeHtml(
               `More actions for ${note.title}`
             )}">
-
             ${icon.more}
           </button>
         </article>
@@ -53841,7 +53663,6 @@
           <aside
             class="notes-right-rail"
             aria-label="Collapsed note editor">
-
             <button
               class="notes-icon-button"
               type="button"
@@ -53849,7 +53670,6 @@
               aria-expanded="false"
               aria-controls="notesRightPane"
               aria-label="Show editor">
-
               ${icon.collapse}
             </button>
 
@@ -53882,7 +53702,6 @@
           class="notes-right-pane"
           id="notesRightPane"
           aria-label="Note editor">
-
           ${renderNoteEditorContent(
             note
           )}
@@ -53942,23 +53761,42 @@
       return `
         <article class="notes-editor-card">
           <header class="notes-editor-header">
-
             <div class="notes-editor-topline">
-              <span class="notes-editor-kicker">
-                Note
-              </span>
+              <div class="notes-editor-navigation">
+                <button
+                  class="notes-editor-back"
+                  type="button"
+                  id="notesBackToBrowser"
+                  aria-label="Back to notes"
+                  title="Back to notes">
+                  ${icon.arrow}
+                </button>
+
+                <span class="notes-editor-kicker">
+                  Note
+                </span>
+
+                <span
+                  class="notes-save-status ${
+                    state.notesSaveStatus
+                      .toLowerCase()
+                  }"
+                  id="notesSaveStatus"
+                  role="status"
+                  aria-live="polite">
+                  ${escapeHtml(
+                    state.notesSaveStatus
+                  )}
+                </span>
+              </div>
 
               <div class="notes-editor-actions">
-
                 <button
-                  class="
-                    notes-icon-button
-                    ${
-                      note.favorite
-                        ? 'active'
-                        : ''
-                    }
-                  "
+                  class="notes-icon-button ${
+                    note.favorite
+                      ? 'active'
+                      : ''
+                  }"
                   type="button"
                   id="notesFavoriteButton"
                   aria-pressed="${note.favorite}"
@@ -53972,40 +53810,27 @@
                       ? 'Remove from favourites'
                       : 'Add to favourites'
                   }">
-
                   ${icon.star}
                 </button>
 
                 <button
-                  class="button secondary"
-                  type="button"
-                  id="notesArchiveButton">
-
-                  ${
-                    note.archived
-                      ? 'Unarchive'
-                      : 'Archive'
-                  }
-                </button>
-
-                <button
-                  class="button danger"
-                  type="button"
-                  id="notesDeleteButton">
-
-                  ${icon.trash}
-                  Delete
-                </button>
-
-                <button
                   class="notes-icon-button"
+                  type="button"
+                  id="notesEditorMenuButton"
+                  aria-haspopup="menu"
+                  aria-label="More note actions"
+                  title="More note actions">
+                  ${icon.more}
+                </button>
+
+                <button
+                  class="notes-icon-button notes-editor-collapse"
                   type="button"
                   id="notesToggleRight"
                   aria-expanded="true"
                   aria-controls="notesRightPane"
                   aria-label="Collapse editor"
                   title="Collapse editor">
-
                   ${icon.collapse}
                 </button>
               </div>
@@ -54019,10 +53844,13 @@
               )}"
               placeholder="Untitled note"
               aria-label="Note title">
+
+            ${renderNoteCollectionsSection(
+              note
+            )}
           </header>
 
           <div class="notes-editor-body">
-
             <div class="notes-editor-writing">
               <label
                 class="notes-editor-field-label"
@@ -54037,14 +53865,6 @@
                   note.body
                 )}</textarea>
             </div>
-
-            ${renderNoteCollectionsSection(
-              note
-            )}
-
-            ${renderNoteTagsSection(
-              note
-            )}
 
             ${renderNoteChecklistSection(
               note
@@ -54076,156 +53896,61 @@
 
       const chips =
         collections.length
-          ? `
-            <div class="notes-chip-list">
-              ${collections
-                .map(collection => `
-                  <span class="notes-chip">
-                    <span
-                      class="notes-chip-label"
-                      title="${escapeHtml(
-                        collection.name
-                      )}">
-                      ${escapeHtml(
-                        collection.name
-                      )}
-                    </span>
-
-                    <button
-                      class="notes-chip-remove"
-                      type="button"
-                      data-note-remove-collection="${escapeHtml(
-                        collection.id
-                      )}"
-                      aria-label="Remove ${escapeHtml(
-                        collection.name
-                      )} from note"
-                      title="Remove from collection">
-
-                      ${icon.close}
-                    </button>
+          ? collections
+              .map(collection => `
+                <span class="notes-chip">
+                  <span
+                    class="notes-chip-label"
+                    title="${escapeHtml(
+                      collection.name
+                    )}">
+                    ${escapeHtml(
+                      collection.name
+                    )}
                   </span>
-                `)
-                .join('')}
-            </div>
-          `
+
+                  <button
+                    class="notes-chip-remove"
+                    type="button"
+                    data-note-remove-collection="${escapeHtml(
+                      collection.id
+                    )}"
+                    aria-label="Remove ${escapeHtml(
+                      collection.name
+                    )} from note"
+                    title="Remove from collection">
+                    ${icon.close}
+                  </button>
+                </span>
+              `)
+              .join('')
           : `
             <span class="notes-section-empty">
               No collections
             </span>
           `;
 
-      return renderNoteEditorSection({
-        title:
-          'Collections',
+      return `
+        <div class="notes-editor-meta">
+          <span class="notes-editor-meta-label">
+            Collections
+          </span>
 
-        meta:
-          `${collections.length} ${
-            collections.length === 1
-              ? 'collection'
-              : 'collections'
-          }`,
+          <div class="notes-chip-list">
+            ${chips}
+          </div>
 
-        action: `
           <button
-            class="button secondary"
+            class="button ghost"
             type="button"
             id="notesManageCollections">
-
-            Manage collections
+            Manage
           </button>
-        `,
-
-        body:
-          chips
-      });
+        </div>
+      `;
     }
 
-    function renderNoteTagsSection(
-      note
-    ) {
-      const tags =
-        note.tags || [];
-
-      const chips =
-        tags.length
-          ? `
-            <div class="notes-chip-list">
-              ${tags
-                .map(tag => `
-                  <span
-                    class="
-                      notes-chip
-                      is-tag
-                    ">
-
-                    <span
-                      class="notes-chip-label"
-                      title="#${escapeHtml(
-                        tag
-                      )}">
-                      #${escapeHtml(tag)}
-                    </span>
-
-                    <button
-                      class="notes-chip-remove"
-                      type="button"
-                      data-note-remove-tag="${escapeHtml(
-                        tag
-                      )}"
-                      aria-label="Remove tag ${escapeHtml(
-                        tag
-                      )}"
-                      title="Remove tag">
-
-                      ${icon.close}
-                    </button>
-                  </span>
-                `)
-                .join('')}
-            </div>
-          `
-          : `
-            <span class="notes-section-empty">
-              No tags
-            </span>
-          `;
-
-      return renderNoteEditorSection({
-        title:
-          'Tags',
-
-        meta:
-          `${tags.length} ${
-            tags.length === 1
-              ? 'tag'
-              : 'tags'
-          }`,
-
-        body: `
-          ${chips}
-
-          <div class="notes-inline-add">
-            <input
-              id="notesTagInput"
-              type="text"
-              maxlength="60"
-              autocomplete="off"
-              placeholder="Add a tag"
-              aria-label="New tag">
-
-            <button
-              class="button secondary"
-              type="button"
-              id="notesAddTagButton">
-
-              ${icon.plus}
-              Add tag
-            </button>
-          </div>
-        `
-      });
-    }
+    
 
     function renderNoteChecklistSection(
       note
@@ -54233,89 +53958,100 @@
       const items =
         note.checklist || [];
 
-      const openCount =
+      if (!items.length) {
+        return `
+          <section class="notes-editor-section">
+            <div class="notes-optional-row">
+              <div>
+                <strong>Checklist</strong>
+                <div class="notes-optional-copy">
+                  Add lightweight research steps when this note needs them.
+                </div>
+              </div>
+
+              <button
+                class="button secondary"
+                type="button"
+                id="notesAddChecklistItem">
+                ${icon.plus}
+                Add checklist
+              </button>
+            </div>
+          </section>
+        `;
+      }
+
+      const completed =
         items.filter(
-          item =>
-            !item.done
+          item => item.done
         ).length;
 
-      const rows =
-        items.length
-          ? `
-            <div class="notes-checklist-list">
-              ${items
-                .map(item => `
-                  <div
-                    class="
-                      notes-checklist-row
-                      ${
-                        item.done
-                          ? 'done'
-                          : ''
-                      }
-                    ">
+      const rows = `
+        <div class="notes-checklist-list">
+          ${items
+            .map(item => `
+              <div
+                class="notes-checklist-row ${
+                  item.done
+                    ? 'done'
+                    : ''
+                }">
+                <input
+                  type="checkbox"
+                  data-note-checklist-toggle="${escapeHtml(
+                    item.id
+                  )}"
+                  aria-label="Complete ${escapeHtml(
+                    item.text
+                  )}"
+                  ${
+                    item.done
+                      ? 'checked'
+                      : ''
+                  }>
 
-                    <input
-                      type="checkbox"
-                      data-note-checklist-toggle="${escapeHtml(
-                        item.id
-                      )}"
-                      aria-label="Complete ${escapeHtml(
-                        item.text
-                      )}"
-                      ${
-                        item.done
-                          ? 'checked'
-                          : ''
-                      }>
+                <input
+                  class="notes-checklist-text"
+                  type="text"
+                  maxlength="240"
+                  data-note-checklist-text="${escapeHtml(
+                    item.id
+                  )}"
+                  value="${escapeHtml(
+                    item.text
+                  )}"
+                  aria-label="Checklist item">
 
-                    <input
-                      class="notes-checklist-text"
-                      type="text"
-                      maxlength="240"
-                      data-note-checklist-text="${escapeHtml(
-                        item.id
-                      )}"
-                      value="${escapeHtml(
-                        item.text
-                      )}"
-                      aria-label="Checklist item">
-
-                    <button
-                      class="notes-checklist-delete"
-                      type="button"
-                      data-note-checklist-delete="${escapeHtml(
-                        item.id
-                      )}"
-                      aria-label="Delete checklist item"
-                      title="Delete checklist item">
-
-                      ${icon.trash}
-                    </button>
-                  </div>
-                `)
-                .join('')}
-            </div>
-          `
-          : `
-            <span class="notes-section-empty">
-              No checklist items
-            </span>
-          `;
+                <button
+                  class="notes-checklist-delete"
+                  type="button"
+                  data-note-checklist-delete="${escapeHtml(
+                    item.id
+                  )}"
+                  aria-label="Delete checklist item"
+                  title="Delete checklist item">
+                  ${icon.trash}
+                </button>
+              </div>
+            `)
+            .join('')}
+        </div>
+      `;
 
       return renderNoteEditorSection({
         title:
           'Checklist',
 
         meta:
-          `${openCount} open`,
+          `${completed} of ${
+            items.length
+          } complete`,
 
         action: `
           <button
             class="button secondary"
             type="button"
             id="notesAddChecklistItem">
-
             ${icon.plus}
             Add item
           </button>
@@ -54363,57 +54099,72 @@
             : config.plural
         }`;
 
+      const buttonId =
+        `noteContext-${
+          note.id
+        }-${config.openKey}-button`;
+
+      const panelId =
+        `noteContext-${
+          note.id
+        }-${config.openKey}-panel`;
+
       return `
         <section class="notes-context-group">
+          <h4 style="margin:0">
+            <button
+              class="notes-context-toggle"
+              type="button"
+              id="${escapeHtml(
+                buttonId
+              )}"
+              data-note-context-toggle="${escapeHtml(
+                config.openKey
+              )}"
+              aria-expanded="${open}"
+              aria-controls="${escapeHtml(
+                panelId
+              )}">
+              <span>
+                ${escapeHtml(
+                  config.title
+                )}
+              </span>
 
-          <button
-            class="notes-context-toggle"
-            type="button"
-            data-note-context-toggle="${escapeHtml(
-              config.openKey
-            )}"
-            aria-expanded="${open}">
+              <span class="notes-context-toggle-count">
+                ${escapeHtml(
+                  countLabel
+                )}
+              </span>
 
-            <span>
-              ${escapeHtml(
-                config.title
-              )}
-            </span>
-
-            <span
-              class="
-                notes-context-toggle-count
-              ">
-              ${escapeHtml(
-                countLabel
-              )}
-            </span>
-
-            <span
-              class="
-                notes-context-toggle-icon
-                ${open ? 'open' : ''}
-              "
-              aria-hidden="true">
-
-              ${icon.chevron}
-            </span>
-          </button>
+              <span
+                class="notes-context-toggle-icon ${
+                  open ? 'open' : ''
+                }"
+                aria-hidden="true">
+                ${icon.chevron}
+              </span>
+            </button>
+          </h4>
 
           ${
             open
               ? `
-                <div class="notes-context-body">
-
+                <div
+                  class="notes-context-body"
+                  id="${escapeHtml(
+                    panelId
+                  )}"
+                  aria-labelledby="${escapeHtml(
+                    buttonId
+                  )}">
                   ${
                     records.length
                       ? `
                         <div class="notes-linked-list">
-
                           ${records
                             .map(record => `
                               <div class="notes-linked-row">
-
                                 <button
                                   class="notes-linked-main"
                                   type="button"
@@ -54424,7 +54175,6 @@
                                   data-note-linked-id="${escapeHtml(
                                     record.id
                                   )}">
-
                                   <strong>
                                     ${escapeHtml(
                                       noteEntityLabel(
@@ -54433,7 +54183,6 @@
                                       )
                                     )}
                                   </strong>
-
                                   <span>
                                     ${escapeHtml(
                                       noteEntityMeta(
@@ -54444,16 +54193,9 @@
                                   </span>
                                 </button>
 
-                                <div
-                                  class="
-                                    notes-linked-actions
-                                  ">
-
+                                <div class="notes-linked-actions">
                                   <button
-                                    class="
-                                      notes-linked-action
-                                      danger
-                                    "
+                                    class="notes-linked-action danger"
                                     type="button"
                                     data-note-linked-remove
                                     data-note-linked-type="${escapeHtml(
@@ -54464,7 +54206,6 @@
                                     )}"
                                     aria-label="Remove link"
                                     title="Remove link">
-
                                     ${icon.close}
                                   </button>
                                 </div>
@@ -54474,10 +54215,7 @@
                         </div>
                       `
                       : `
-                        <span
-                          class="
-                            notes-section-empty
-                          ">
+                        <span class="notes-section-empty">
                           Nothing linked yet
                         </span>
                       `
@@ -54490,11 +54228,8 @@
                       data-note-manage-links="${escapeHtml(
                         type
                       )}">
-
                       ${icon.plus}
-
-                      Manage
-                      ${escapeHtml(
+                      Manage ${escapeHtml(
                         config.title
                           .toLowerCase()
                       )}
@@ -54521,7 +54256,7 @@
 
       return renderNoteEditorSection({
         title:
-          'Linked context',
+          'Research context',
 
         meta:
           `${noteExternalEntityCount(
@@ -54565,47 +54300,39 @@
               ${related
                 .map(item => `
                   <div class="notes-linked-row">
-
                     <button
                       class="notes-linked-main"
                       type="button"
                       data-note-related-open="${escapeHtml(
                         item.id
                       )}">
-
                       <strong>
                         ${escapeHtml(
                           item.title
                         )}
                       </strong>
-
                       <span>
-                        Updated
-                        ${escapeHtml(
-                          formatNoteUpdatedAt(
+                        ${
+                          item.archived
+                            ? 'Archived · '
+                            : ''
+                        }${escapeHtml(
+                          formatNoteRelativeUpdatedAt(
                             item
                           )
                         )}
                       </span>
                     </button>
 
-                    <div
-                      class="
-                        notes-linked-actions
-                      ">
-
+                    <div class="notes-linked-actions">
                       <button
-                        class="
-                          notes-linked-action
-                          danger
-                        "
+                        class="notes-linked-action danger"
                         type="button"
                         data-note-related-remove="${escapeHtml(
                           item.id
                         )}"
                         aria-label="Remove related note"
                         title="Remove related note">
-
                         ${icon.close}
                       </button>
                     </div>
@@ -54636,7 +54363,6 @@
             class="button secondary"
             type="button"
             id="notesManageRelated">
-
             Manage related notes
           </button>
         `,
@@ -55014,7 +54740,7 @@
 
         const collection = {
           id:
-            `note-col-${Date.now()}`,
+            createRuntimeId('note-col'),
 
           projectId,
           name,
@@ -55614,27 +55340,20 @@
         ?.addEventListener(
           'click',
           () => {
-            note.relatedNoteIds =
-              normalizeCentralNoteIdArray(
-                [
-                  ...modalBackdrop
-                    .querySelectorAll(
-                      '[data-note-related-choice] input:checked'
-                    )
-                ]
-                  .map(
-                    input =>
-                      input.value
+            updateRelatedNoteLinks(
+              note.id,
+              [
+                ...modalBackdrop
+                  .querySelectorAll(
+                    '[data-note-related-choice] input:checked'
                   )
-                  .filter(
-                    id =>
-                      id !== note.id
-                  )
-              );
+              ].map(
+                input => input.value
+              )
+            );
 
-            touchNote(note);
             closeModal();
-            renderNotes();
+            renderNotesPreservingInteraction();
 
             showToast(
               'Related notes updated.'
@@ -55713,6 +55432,9 @@
               state.notesRightCollapsed =
                 true;
 
+              state.notesMobilePane =
+                'browser';
+
               renderNotes();
             }
           );
@@ -55741,6 +55463,9 @@
               state.notesRightCollapsed =
                 true;
 
+              state.notesMobilePane =
+                'browser';
+
               renderNotes();
             }
           );
@@ -55767,17 +55492,577 @@
     }
 
     function touchNote(
-      note
+      note,
+      {
+        refreshPreview = true
+      } = {}
     ) {
+      if (!note) {
+        return null;
+      }
+
       note.updatedAt =
         new Date().toISOString();
+
+      setNotesSaveStatus(
+        'Saving'
+      );
+
+      if (refreshPreview) {
+        refreshNoteBrowserRow(
+          note
+        );
+      }
+
+      clearTimeout(
+        touchNote.savedTimer
+      );
+
+      touchNote.savedTimer =
+        setTimeout(
+          () =>
+            setNotesSaveStatus(
+              'Saved'
+            ),
+          450
+        );
 
       return note;
     }
 
-    function bindNotesControls() {
-      bindToasts(main);
 
+    function setNotesSaveStatus(
+      status
+    ) {
+      state.notesSaveStatus =
+        status;
+
+      const element =
+        main.querySelector(
+          '#notesSaveStatus'
+        );
+
+      if (!element) {
+        return;
+      }
+
+      element.textContent =
+        status;
+
+      element.classList.toggle(
+        'saving',
+        status === 'Saving'
+      );
+
+      element.classList.toggle(
+        'error',
+        status === 'Error'
+      );
+    }
+
+    function autoSizeNoteBody(
+      textarea
+    ) {
+      if (!textarea) {
+        return;
+      }
+
+      textarea.style.height =
+        'auto';
+
+      textarea.style.height =
+        `${Math.max(
+          420,
+          textarea.scrollHeight
+        )}px`;
+    }
+
+    function refreshNoteBrowserRow(
+      note
+    ) {
+      const row =
+        main.querySelector(
+          `[data-note-id="${
+            CSS.escape(note.id)
+          }"]`
+        );
+
+      if (!row) {
+        return;
+      }
+
+      const title =
+        row.querySelector(
+          '.notes-row-title'
+        );
+
+      const excerpt =
+        row.querySelector(
+          '.notes-row-excerpt'
+        );
+
+      const metadata =
+        row.querySelector(
+          '.notes-row-metadata'
+        );
+
+      const favorite =
+        row.querySelector(
+          '[data-note-favorite]'
+        );
+
+      const menu =
+        row.querySelector(
+          '[data-note-menu]'
+        );
+
+      if (title) {
+        title.textContent =
+          note.title;
+
+        title.title =
+          note.title;
+      }
+
+      if (excerpt) {
+        excerpt.textContent =
+          noteExcerpt(
+            note,
+            150
+          )
+          || 'No note content';
+      }
+
+      if (metadata) {
+        const value =
+          noteBrowserMetadata(
+            note
+          );
+
+        metadata.textContent =
+          value;
+
+        metadata.title =
+          value;
+      }
+
+      if (favorite) {
+        favorite.classList.toggle(
+          'active',
+          note.favorite
+        );
+
+        favorite.setAttribute(
+          'aria-pressed',
+          String(note.favorite)
+        );
+
+        favorite.setAttribute(
+          'aria-label',
+          note.favorite
+            ? `Remove ${note.title} from favourites`
+            : `Add ${note.title} to favourites`
+        );
+      }
+
+      if (menu) {
+        menu.setAttribute(
+          'aria-label',
+          `More actions for ${note.title}`
+        );
+      }
+    }
+
+    function captureNotesInteractionState() {
+      const editor =
+        main.querySelector(
+          '.notes-right-pane'
+        );
+
+      const browser =
+        main.querySelector(
+          '.notes-browser-scroll'
+        );
+
+      const active =
+        document.activeElement;
+
+      const focus =
+        active
+        && main.contains(active)
+          ? {
+              id:
+                active.id || '',
+
+              checklistText:
+                active.dataset
+                  ?.noteChecklistText
+                || '',
+
+              selectionStart:
+                typeof active.selectionStart
+                  === 'number'
+                  ? active.selectionStart
+                  : null,
+
+              selectionEnd:
+                typeof active.selectionEnd
+                  === 'number'
+                  ? active.selectionEnd
+                  : null
+            }
+          : null;
+
+      return {
+        editorScrollTop:
+          editor?.scrollTop || 0,
+
+        browserScrollTop:
+          browser?.scrollTop || 0,
+
+        focus
+      };
+    }
+
+    function restoreNotesInteractionState(
+      snapshot,
+      {
+        focusSelector = '',
+        select = false
+      } = {}
+    ) {
+      const editor =
+        main.querySelector(
+          '.notes-right-pane'
+        );
+
+      const browser =
+        main.querySelector(
+          '.notes-browser-scroll'
+        );
+
+      if (editor) {
+        editor.scrollTop =
+          snapshot?.editorScrollTop
+          || 0;
+      }
+
+      if (browser) {
+        browser.scrollTop =
+          snapshot?.browserScrollTop
+          || 0;
+      }
+
+      let target =
+        focusSelector
+          ? main.querySelector(
+              focusSelector
+            )
+          : null;
+
+      if (!target && snapshot?.focus) {
+        if (snapshot.focus.id) {
+          target =
+            main.querySelector(
+              `#${CSS.escape(
+                snapshot.focus.id
+              )}`
+            );
+        } else if (
+          snapshot.focus
+            .checklistText
+        ) {
+          target =
+            main.querySelector(
+              `[data-note-checklist-text="${
+                CSS.escape(
+                  snapshot.focus
+                    .checklistText
+                )
+              }"]`
+            );
+        }
+      }
+
+      if (!target) {
+        return;
+      }
+
+      target.focus({
+        preventScroll: true
+      });
+
+      if (
+        select
+        && typeof target.select
+          === 'function'
+      ) {
+        target.select();
+      } else if (
+        snapshot?.focus
+        && typeof target.setSelectionRange
+          === 'function'
+        && snapshot.focus
+          .selectionStart !== null
+      ) {
+        target.setSelectionRange(
+          snapshot.focus.selectionStart,
+          snapshot.focus.selectionEnd
+        );
+      }
+    }
+
+    function renderNotesPreservingInteraction(
+      options = {}
+    ) {
+      const snapshot =
+        captureNotesInteractionState();
+
+      renderNotes();
+
+      requestAnimationFrame(
+        () =>
+          restoreNotesInteractionState(
+            snapshot,
+            options
+          )
+      );
+    }
+
+    function updateRelatedNoteLinks(
+      noteId,
+      relatedIds
+    ) {
+      const note =
+        getNote(
+          noteId,
+          {
+            includeArchived:
+              true
+          }
+        );
+
+      if (!note) {
+        return null;
+      }
+
+      const validIds =
+        normalizeCentralNoteIdArray(
+          relatedIds
+        ).filter(id => {
+          const related =
+            getNote(
+              id,
+              {
+                projectId:
+                  note.projectId,
+
+                includeArchived:
+                  true
+              }
+            );
+
+          return Boolean(
+            related
+            && related.id !== note.id
+          );
+        });
+
+      const previous =
+        new Set(
+          note.relatedNoteIds || []
+        );
+
+      const next =
+        new Set(validIds);
+
+      previous.forEach(id => {
+        if (next.has(id)) {
+          return;
+        }
+
+        const related =
+          getNote(
+            id,
+            {
+              projectId:
+                note.projectId,
+
+              includeArchived:
+                true
+            }
+          );
+
+        if (related) {
+          related.relatedNoteIds =
+            related.relatedNoteIds
+              .filter(
+                itemId =>
+                  itemId !== note.id
+              );
+
+          touchNote(
+            related,
+            {
+              refreshPreview: false
+            }
+          );
+        }
+      });
+
+      next.forEach(id => {
+        const related =
+          getNote(
+            id,
+            {
+              projectId:
+                note.projectId,
+
+              includeArchived:
+                true
+            }
+          );
+
+        if (
+          related
+          && !related.relatedNoteIds
+            .includes(note.id)
+        ) {
+          related.relatedNoteIds.push(
+            note.id
+          );
+
+          related.relatedNoteIds =
+            normalizeCentralNoteIdArray(
+              related.relatedNoteIds
+            );
+
+          touchNote(
+            related,
+            {
+              refreshPreview: false
+            }
+          );
+        }
+      });
+
+      note.relatedNoteIds =
+        validIds;
+
+      touchNote(note);
+
+      return note;
+    }
+
+    function duplicateCentralNote(
+      noteId
+    ) {
+      const note =
+        getNote(
+          noteId,
+          {
+            includeArchived:
+              true
+          }
+        );
+
+      if (!note) {
+        return null;
+      }
+
+      const now =
+        new Date().toISOString();
+
+      const copy =
+        normalizeCentralNoteRecord({
+          ...note,
+
+          id:
+            createRuntimeId(
+              'note'
+            ),
+
+          title:
+            `${note.title} copy`,
+
+          collectionIds: [
+            ...note.collectionIds
+          ],
+
+          favorite:
+            false,
+
+          archived:
+            false,
+
+          checklist:
+            note.checklist.map(
+              item => ({
+                ...item,
+
+                id:
+                  createRuntimeId(
+                    'note-check'
+                  )
+              })
+            ),
+
+          linkedPersonIds: [
+            ...note.linkedPersonIds
+          ],
+
+          linkedPlaceIds: [
+            ...note.linkedPlaceIds
+          ],
+
+          linkedEventIds: [
+            ...note.linkedEventIds
+          ],
+
+          linkedSourceIds: [
+            ...note.linkedSourceIds
+          ],
+
+          linkedArchiveFileIds: [
+            ...note.linkedArchiveFileIds
+          ],
+
+          relatedNoteIds:
+            [],
+
+          createdAt:
+            now,
+
+          updatedAt:
+            now
+        });
+
+      sampleData.notes.unshift(
+        copy
+      );
+
+      state.notesView =
+        'all';
+
+      state.notesActiveCollectionId =
+        null;
+
+      state.selectedNoteId =
+        copy.id;
+
+      state.notesRightCollapsed =
+        false;
+
+      state.notesMobilePane =
+        'editor';
+
+      state.notesSaveStatus =
+        'Saved';
+
+      return copy;
+    }
+
+    function bindNotesBrowserControls() {
       bindSearchInput(
         main,
         '#notesSearch',
@@ -55785,24 +56070,23 @@
         renderNotes
       );
 
-    main
-      .querySelector(
-        '[data-clear-notes-context-filter]'
-      )
-      ?.addEventListener(
-        'click',
-        () => {
-          clearNotesContext();
-
-          state.selectedNoteId =
-            null;
-
-          state.notesRightCollapsed =
-            true;
-
-          renderNotes();
-        }
-      );
+      main
+        .querySelector(
+          '[data-clear-notes-context-filter]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            clearNotesContext();
+            state.selectedNoteId =
+              null;
+            state.notesRightCollapsed =
+              true;
+            state.notesMobilePane =
+              'browser';
+            renderNotes();
+          }
+        );
 
       main
         .querySelector(
@@ -55813,7 +56097,6 @@
           event => {
             state.notesSort =
               event.target.value;
-
             renderNotes();
           }
         );
@@ -55827,7 +56110,6 @@
           () => {
             state.notesSearch =
               '';
-
             renderNotes();
           }
         );
@@ -55836,10 +56118,24 @@
         .querySelector(
           '#notesNewNoteButton'
         )
-        .addEventListener(
+        ?.addEventListener(
           'click',
           () =>
-            openNewNoteModal()
+            createCentralNote()
+        );
+
+      main
+        .querySelector(
+          '#notesNewNoteMenuButton'
+        )
+        ?.addEventListener(
+          'click',
+          event => {
+            event.stopPropagation();
+            openNewNoteTemplateMenu(
+              event.currentTarget
+            );
+          }
         );
 
       main
@@ -55852,10 +56148,12 @@
             () => {
               state.selectedNoteId =
                 button.dataset.noteRow;
-
               state.notesRightCollapsed =
                 false;
-
+              state.notesMobilePane =
+                'editor';
+              state.notesSaveStatus =
+                'Saved';
               renderNotes();
             }
           );
@@ -55887,9 +56185,8 @@
 
               note.favorite =
                 !note.favorite;
-
               touchNote(note);
-              renderNotes();
+              renderNotesPreservingInteraction();
 
               showToast(
                 note.favorite
@@ -55909,7 +56206,6 @@
             'click',
             event => {
               event.stopPropagation();
-
               openNotesMenu(
                 button.dataset.noteMenu,
                 button
@@ -55917,8 +56213,23 @@
             }
           );
         });
+    }
 
-       main
+    function bindNotesSplitPaneControls() {
+      main
+        .querySelector(
+          '#notesBackToBrowser'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            state.notesMobilePane =
+              'browser';
+            renderNotes();
+          }
+        );
+
+      main
         .querySelector(
           '#notesToggleRight'
         )
@@ -55927,6 +56238,13 @@
           () => {
             state.notesRightCollapsed =
               !state.notesRightCollapsed;
+
+            if (
+              !state.notesRightCollapsed
+            ) {
+              state.notesMobilePane =
+                'editor';
+            }
 
             renderNotes();
           }
@@ -55937,160 +56255,145 @@
           '#notesResizer'
         );
 
-      if (resizer) {
-        let startX = 0;
-        let startWidth = 0;
+      if (!resizer) {
+        return;
+      }
 
-        const setBrowserWidth =
-          value => {
-            const next =
-              Math.max(
-                320,
-                Math.min(
-                  520,
-                  value
-                )
-              );
+      let startX = 0;
+      let startWidth = 0;
 
-            state.notesBrowserWidth =
-              next;
-
-            main
-              .querySelector(
-                '.notes-shell'
-              )
-              ?.style.setProperty(
-                '--notes-browser-width',
-                `${next}px`
-              );
-
-            resizer.setAttribute(
-              'aria-valuenow',
-              String(
-                Math.round(next)
+      const setBrowserWidth =
+        value => {
+          const next =
+            Math.max(
+              320,
+              Math.min(
+                520,
+                value
               )
             );
-          };
 
-        const move = event => {
-          setBrowserWidth(
-            startWidth
-            + event.clientX
-            - startX
+          state.notesBrowserWidth =
+            next;
+
+          main
+            .querySelector(
+              '.notes-shell'
+            )
+            ?.style.setProperty(
+              '--notes-browser-width',
+              `${next}px`
+            );
+
+          resizer.setAttribute(
+            'aria-valuenow',
+            String(
+              Math.round(next)
+            )
           );
         };
 
-        const stop = event => {
-          resizer.classList.remove(
-            'dragging'
-          );
-
-          resizer
-            .releasePointerCapture
-            ?.(
-              event.pointerId
-            );
-
-          resizer.removeEventListener(
-            'pointermove',
-            move
-          );
-
-          resizer.removeEventListener(
-            'pointerup',
-            stop
-          );
-
-          resizer.removeEventListener(
-            'pointercancel',
-            stop
-          );
-        };
-
-        resizer.addEventListener(
-          'pointerdown',
-          event => {
-            event.preventDefault();
-
-            startX =
-              event.clientX;
-
-            startWidth =
-              Math.max(
-                320,
-                Math.min(
-                  520,
-                  Number(
-                    state.notesBrowserWidth
-                  )
-                  || resizer
-                    .previousElementSibling
-                    ?.getBoundingClientRect()
-                    .width
-                  || 360
-                )
-              );
-
-            resizer.classList.add(
-              'dragging'
-            );
-
-            resizer
-              .setPointerCapture
-              ?.(
-                event.pointerId
-              );
-
-            resizer.addEventListener(
-              'pointermove',
-              move
-            );
-
-            resizer.addEventListener(
-              'pointerup',
-              stop
-            );
-
-            resizer.addEventListener(
-              'pointercancel',
-              stop
-            );
-          }
+      const move = event => {
+        setBrowserWidth(
+          startWidth
+          + event.clientX
+          - startX
         );
+      };
 
-        resizer.addEventListener(
-          'keydown',
-          event => {
-            if (
-              ![
-                'ArrowLeft',
-                'ArrowRight'
-              ].includes(
-                event.key
-              )
-            ) {
-              return;
-            }
+      const stop = event => {
+        resizer.classList.remove(
+          'dragging'
+        );
+        resizer
+          .releasePointerCapture
+          ?.(
+            event.pointerId
+          );
+        resizer.removeEventListener(
+          'pointermove',
+          move
+        );
+        resizer.removeEventListener(
+          'pointerup',
+          stop
+        );
+        resizer.removeEventListener(
+          'pointercancel',
+          stop
+        );
+      };
 
-            event.preventDefault();
-
-            const delta =
-              event.key === 'ArrowRight'
-                ? 24
-                : -24;
-
-            setBrowserWidth(
-              (
+      resizer.addEventListener(
+        'pointerdown',
+        event => {
+          event.preventDefault();
+          startX = event.clientX;
+          startWidth =
+            Math.max(
+              320,
+              Math.min(
+                520,
                 Number(
                   state.notesBrowserWidth
                 ) || 360
               )
-              + delta
             );
-          }
-        );
-      }
+          resizer.classList.add(
+            'dragging'
+          );
+          resizer
+            .setPointerCapture
+            ?.(
+              event.pointerId
+            );
+          resizer.addEventListener(
+            'pointermove',
+            move
+          );
+          resizer.addEventListener(
+            'pointerup',
+            stop
+          );
+          resizer.addEventListener(
+            'pointercancel',
+            stop
+          );
+        }
+      );
 
+      resizer.addEventListener(
+        'keydown',
+        event => {
+          if (
+            ![
+              'ArrowLeft',
+              'ArrowRight'
+            ].includes(event.key)
+          ) {
+            return;
+          }
+
+          event.preventDefault();
+
+          setBrowserWidth(
+            (
+              Number(
+                state.notesBrowserWidth
+              ) || 360
+            )
+            + (
+                event.key
+                  === 'ArrowRight'
+                  ? 24
+                  : -24
+              )
+          );
+        }
+      );
+    }
+
+    function bindNoteEditorControls() {
       const note =
         selectedNote();
 
@@ -56098,24 +56401,27 @@
         return;
       }
 
-      main
-        .querySelector(
+      const titleInput =
+        main.querySelector(
           '#notesTitleInput'
-        )
+        );
+
+      const bodyInput =
+        main.querySelector(
+          '#notesBodyInput'
+        );
+
+      titleInput
         ?.addEventListener(
           'input',
           event => {
             note.title =
               event.target.value;
-
             touchNote(note);
           }
         );
 
-      main
-        .querySelector(
-          '#notesTitleInput'
-        )
+      titleInput
         ?.addEventListener(
           'blur',
           event => {
@@ -56123,26 +56429,21 @@
               event.target.value.trim()
               || 'Untitled note';
 
-            note.title =
-              title;
-
-            event.target.value =
-              title;
-
+            note.title = title;
+            event.target.value = title;
             touchNote(note);
           }
         );
 
-      main
-        .querySelector(
-          '#notesBodyInput'
-        )
+      bodyInput
         ?.addEventListener(
           'input',
           event => {
             note.body =
               event.target.value;
-
+            autoSizeNoteBody(
+              event.target
+            );
             touchNote(note);
           }
         );
@@ -56156,10 +56457,8 @@
           () => {
             note.favorite =
               !note.favorite;
-
             touchNote(note);
-            renderNotes();
-
+            renderNotesPreservingInteraction();
             showToast(
               note.favorite
                 ? 'Added to favourites.'
@@ -56170,44 +56469,17 @@
 
       main
         .querySelector(
-          '#notesArchiveButton'
+          '#notesEditorMenuButton'
         )
         ?.addEventListener(
           'click',
-          () => {
-            note.archived =
-              !note.archived;
-
-            touchNote(note);
-
-            state.notesView =
-              note.archived
-                ? 'archived'
-                : 'all';
-
-            state.notesActiveCollectionId =
-              null;
-
-            renderNotes();
-
-            showToast(
-              note.archived
-                ? 'Archived.'
-                : 'Unarchived.'
+          event => {
+            event.stopPropagation();
+            openNotesMenu(
+              note.id,
+              event.currentTarget
             );
           }
-        );
-
-      main
-        .querySelector(
-          '#notesDeleteButton'
-        )
-        ?.addEventListener(
-          'click',
-          () =>
-            openDeleteNoteModal(
-              note.id
-            )
         );
 
       main
@@ -56232,93 +56504,17 @@
             () => {
               removeNoteFromCollection(
                 note.id,
-
                 button.dataset
                   .noteRemoveCollection,
-
                 {
                   projectId:
                     note.projectId
                 }
               );
-
-              renderNotes();
-
+              renderNotesPreservingInteraction();
               showToast(
                 'Removed from collection.'
               );
-            }
-          );
-        });
-
-      const addTag = () => {
-        const input =
-          main.querySelector(
-            '#notesTagInput'
-          );
-
-        const value =
-          input?.value.trim()
-          || '';
-
-        if (!value) {
-          input?.focus();
-          return;
-        }
-
-        note.tags =
-          normalizeCentralNoteStringArray([
-            ...note.tags,
-            value
-          ]);
-
-        touchNote(note);
-        renderNotes();
-      };
-
-      main
-        .querySelector(
-          '#notesAddTagButton'
-        )
-        ?.addEventListener(
-          'click',
-          addTag
-        );
-
-      main
-        .querySelector(
-          '#notesTagInput'
-        )
-        ?.addEventListener(
-          'keydown',
-          event => {
-            if (event.key === 'Enter') {
-              event.preventDefault();
-              addTag();
-            }
-          }
-        );
-
-      main
-        .querySelectorAll(
-          '[data-note-remove-tag]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              const tag =
-                button.dataset
-                  .noteRemoveTag;
-
-              note.tags =
-                note.tags.filter(
-                  item =>
-                    item !== tag
-                );
-
-              touchNote(note);
-              renderNotes();
             }
           );
         });
@@ -56331,32 +56527,27 @@
           'click',
           () => {
             const itemId =
-              `${note.id}-check-${Date.now()}`;
+              createRuntimeId(
+                'note-check'
+              );
 
             note.checklist.push({
               id:
                 itemId,
-
               text:
                 'New checklist item',
-
               done:
                 false
             });
 
             touchNote(note);
-            renderNotes();
-
-            requestAnimationFrame(() => {
-              const input =
-                main.querySelector(
-                  `[data-note-checklist-text="${
-                    CSS.escape(itemId)
-                  }"]`
-                );
-
-              input?.focus();
-              input?.select();
+            renderNotesPreservingInteraction({
+              focusSelector:
+                `[data-note-checklist-text="${
+                  CSS.escape(itemId)
+                }"]`,
+              select:
+                true
             });
           }
         );
@@ -56383,9 +56574,8 @@
 
               item.done =
                 input.checked;
-
               touchNote(note);
-              renderNotes();
+              renderNotesPreservingInteraction();
             }
           );
         });
@@ -56395,6 +56585,9 @@
           '[data-note-checklist-text]'
         )
         .forEach(input => {
+          const originalText =
+            input.value;
+
           input.addEventListener(
             'change',
             () => {
@@ -56414,25 +56607,14 @@
                 input.value.trim();
 
               if (!text) {
-                note.checklist =
-                  note.checklist.filter(
-                    checklistItem =>
-                      checklistItem.id
-                      !== item.id
-                  );
-
-                touchNote(note);
-                renderNotes();
-
+                input.value =
+                  item.text
+                  || originalText;
                 return;
               }
 
-              item.text =
-                text;
-
-              input.value =
-                text;
-
+              item.text = text;
+              input.value = text;
               touchNote(note);
             }
           );
@@ -56442,6 +56624,12 @@
             event => {
               if (event.key === 'Enter') {
                 event.preventDefault();
+                input.blur();
+              }
+
+              if (event.key === 'Escape') {
+                input.value =
+                  originalText;
                 input.blur();
               }
             }
@@ -56463,9 +56651,8 @@
                     !== button.dataset
                       .noteChecklistDelete
                 );
-
               touchNote(note);
-              renderNotes();
+              renderNotesPreservingInteraction();
             }
           );
         });
@@ -56491,7 +56678,7 @@
                   ] !== false
                 );
 
-              renderNotes();
+              renderNotesPreservingInteraction();
             }
           );
         });
@@ -56522,7 +56709,6 @@
               openNoteLinkedEntity(
                 button.dataset
                   .noteLinkedType,
-
                 button.dataset
                   .noteLinkedId
               )
@@ -56540,15 +56726,11 @@
               const type =
                 button.dataset
                   .noteLinkedType;
-
               const id =
                 button.dataset
                   .noteLinkedId;
-
               const config =
-                getNoteEntityConfig(
-                  type
-                );
+                getNoteEntityConfig(type);
 
               if (!config) {
                 return;
@@ -56562,8 +56744,7 @@
                   );
 
               touchNote(note);
-              renderNotes();
-
+              renderNotesPreservingInteraction();
               showToast(
                 'Link removed.'
               );
@@ -56603,21 +56784,104 @@
           button.addEventListener(
             'click',
             () => {
-              note.relatedNoteIds =
+              updateRelatedNoteLinks(
+                note.id,
                 note.relatedNoteIds
                   .filter(
                     relatedId =>
                       relatedId
                       !== button.dataset
                         .noteRelatedRemove
-                  );
-
-              touchNote(note);
-              renderNotes();
+                  )
+              );
+              renderNotesPreservingInteraction();
             }
           );
         });
-      }
+    }
+
+    function bindNotesControls() {
+      bindToasts(main);
+      bindNotesBrowserControls();
+      bindNotesSplitPaneControls();
+      bindNoteEditorControls();
+    }
+
+
+    function noteSearchText(
+      note
+    ) {
+      const collectionText =
+        getCollectionsForNote(
+          note.id,
+          {
+            projectId:
+              note.projectId
+          }
+        )
+          .map(
+            collection =>
+              collection.name
+          )
+          .join(' ');
+
+      const checklistText =
+        (note.checklist || [])
+          .map(item => item.text)
+          .join(' ');
+
+      const linkedText =
+        Object.entries(
+          NOTE_ENTITY_TYPES
+        )
+          .flatMap(([
+            type,
+            config
+          ]) =>
+            (note[config.field] || [])
+              .map(id =>
+                noteEntityById(
+                  type,
+                  id,
+                  note.projectId
+                )
+              )
+              .filter(Boolean)
+              .flatMap(record => [
+                config.label(record),
+                config.meta(record)
+              ])
+          )
+          .join(' ');
+
+      const relatedText =
+        getRelatedNotes(
+          note.id,
+          {
+            projectId:
+              note.projectId,
+
+            includeArchived:
+              true
+          }
+        )
+          .map(related =>
+            related.title
+          )
+          .join(' ');
+
+      return [
+        note.title,
+        note.body,
+        collectionText,
+        checklistText,
+        linkedText,
+        relatedText
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+    }
 
     function filteredNotes() {
       const projectId =
@@ -56635,8 +56899,7 @@
               includeArchived: true
             }
           ).filter(
-            note =>
-              note.archived
+            note => note.archived
           );
       } else if (
         state.notesView === 'collection'
@@ -56660,8 +56923,7 @@
         ) {
           list =
             list.filter(
-              note =>
-                note.favorite
+              note => note.favorite
             );
         }
       }
@@ -56683,8 +56945,7 @@
                     === 'archived'
               }
             ).map(
-              note =>
-                note.id
+              note => note.id
             )
           );
 
@@ -56705,30 +56966,10 @@
 
       if (query) {
         list =
-          list.filter(note => {
-            const collectionText =
-              getCollectionsForNote(
-                note.id,
-                {
-                  projectId:
-                    note.projectId
-                }
-              )
-                .map(
-                  collection =>
-                    collection.name
-                )
-                .join(' ');
-
-            return `
-              ${note.title}
-              ${note.body}
-              ${(note.tags || []).join(' ')}
-              ${collectionText}
-            `
-              .toLowerCase()
-              .includes(query);
-          });
+          list.filter(note =>
+            noteSearchText(note)
+              .includes(query)
+          );
       }
 
       if (
@@ -56946,6 +57187,9 @@
 
         state.notesRightCollapsed =
           true;
+
+        state.notesMobilePane =
+          'browser';
       }
 
       removeBoardObjectsForEntity(
@@ -57026,7 +57270,8 @@
             <button
               class="button secondary"
               type="button"
-              data-close>
+              data-close
+              data-modal-initial-focus>
               Cancel
             </button>
 
@@ -57063,7 +57308,8 @@
         getNote(
           noteId,
           {
-            includeArchived: true
+            includeArchived:
+              true
           }
         );
 
@@ -57089,18 +57335,15 @@
         `${rect.bottom + 6}px`;
 
       menu.style.left =
-        `${
-          Math.max(
-            12,
-            rect.right - 200
-          )
-        }px`;
+        `${Math.max(
+          12,
+          rect.right - 200
+        )}px`;
 
       menu.innerHTML = `
         <button
           type="button"
           data-action="favorite">
-
           ${
             note.favorite
               ? 'Remove from favourites'
@@ -57117,7 +57360,6 @@
         <button
           type="button"
           data-action="archive">
-
           ${
             note.archived
               ? 'Unarchive'
@@ -57151,21 +57393,14 @@
             return;
           }
 
-          if (
-            action === 'delete'
-          ) {
-            closeMenu();
-
+          if (action === 'delete') {
             openDeleteNoteModal(
               note.id
             );
-
             return;
           }
 
-          if (
-            action === 'favorite'
-          ) {
+          if (action === 'favorite') {
             note.favorite =
               !note.favorite;
 
@@ -57178,9 +57413,7 @@
             );
           }
 
-          if (
-            action === 'archive'
-          ) {
+          if (action === 'archive') {
             note.archived =
               !note.archived;
 
@@ -57201,95 +57434,10 @@
             );
           }
 
-          if (
-            action === 'duplicate'
-          ) {
-            const now =
-              new Date().toISOString();
-
-            const copy =
-              normalizeCentralNoteRecord({
-                ...note,
-
-                id:
-                  `note-${Date.now()}`,
-
-                title:
-                  `${note.title} copy`,
-
-                collectionIds: [
-                  ...note.collectionIds
-                ],
-
-                favorite:
-                  false,
-
-                archived:
-                  false,
-
-                tags: [
-                  ...note.tags
-                ],
-
-                checklist:
-                  note.checklist.map(
-                    (
-                      item,
-                      index
-                    ) => ({
-                      ...item,
-
-                      id:
-                        `note-copy-${Date.now()}-check-${index + 1}`
-                    })
-                  ),
-
-                linkedPersonIds: [
-                  ...note.linkedPersonIds
-                ],
-
-                linkedPlaceIds: [
-                  ...note.linkedPlaceIds
-                ],
-
-                linkedEventIds: [
-                  ...note.linkedEventIds
-                ],
-
-                linkedSourceIds: [
-                  ...note.linkedSourceIds
-                ],
-
-                linkedArchiveFileIds: [
-                  ...note.linkedArchiveFileIds
-                ],
-
-                relatedNoteIds: [
-                  ...note.relatedNoteIds
-                ],
-
-                createdAt:
-                  now,
-
-                updatedAt:
-                  now
-              });
-
-            sampleData.notes.unshift(
-              copy
+          if (action === 'duplicate') {
+            duplicateCentralNote(
+              note.id
             );
-
-            state.notesView =
-              'all';
-
-            state.notesActiveCollectionId =
-              null;
-
-            state.selectedNoteId =
-              copy.id;
-
-            state.notesRightCollapsed =
-              false;
 
             showToast(
               'Note duplicated.'
@@ -57297,7 +57445,7 @@
           }
 
           closeMenu();
-          renderNotes();
+          renderNotesPreservingInteraction();
         }
       );
 
@@ -57376,8 +57524,6 @@
           if (!action) {
             return;
           }
-
-          closeMenu();
 
           if (action === 'edit') {
             openEditCollectionModal(
@@ -57695,7 +57841,10 @@
                 collection.id,
                 {
                   projectId:
-                    collection.projectId
+                    collection.projectId,
+
+                  touchUpdatedAt:
+                    false
                 }
               );
             });
@@ -57734,36 +57883,66 @@
         );
     }
 
-      function openNewNoteModal(
-        options = {}
-      ) {
-      const explicitContext =
-        options?.contextType
-        && options?.contextId
+      function resolveNoteCreationContext(
+      {
+        contextType = '',
+        contextId = ''
+      } = {}
+    ) {
+      const explicit =
+        contextType
+        && contextId
           ? {
               type:
-                options.contextType,
+                contextType,
 
               id:
-                options.contextId
+                contextId
             }
           : null;
 
-      const requestedContext =
-        explicitContext
+      const requested =
+        explicit
         || activeNotesContext();
 
-      const creationContext =
-        requestedContext
-        && noteEntityById(
-          requestedContext.type,
-          requestedContext.id,
+      if (!requested) {
+        return null;
+      }
+
+      const record =
+        noteEntityById(
+          requested.type,
+          requested.id,
           currentProjectId()
-        )
-          ? requestedContext
-          : null;
+        );
+
+      return record
+        ? {
+            type:
+              requested.type,
+
+            id:
+              record.id
+          }
+        : null;
+    }
+
+    function createCentralNote(
+      {
+        templateKey = 'blank',
+        contextType = '',
+        contextId = '',
+        collectionIds = null
+      } = {}
+    ) {
+      const creationContext =
+        resolveNoteCreationContext({
+          contextType,
+          contextId
+        });
+
       const inheritActiveCollection =
-        !explicitContext
+        !contextType
         && state.activeModule
           === 'Notes'
         && state.notesView
@@ -57774,338 +57953,231 @@
           )
         );
 
-      const activeCollectionId =
+      const initialCollectionIds =
+        Array.isArray(collectionIds)
+          ? collectionIds
+          : (
+              inheritActiveCollection
+                ? [
+                    state
+                      .notesActiveCollectionId
+                  ]
+                : []
+            );
+
+      const template =
+        noteCreationTemplates[
+          templateKey
+        ]
+        || noteCreationTemplates.blank;
+
+      const now =
+        new Date().toISOString();
+
+      const record = {
+        id:
+          createRuntimeId(
+            'note'
+          ),
+
+        projectId:
+          currentProjectId(),
+
+        title:
+          'Untitled note',
+
+        body:
+          template.body,
+
+        collectionIds:
+          initialCollectionIds,
+
+        favorite:
+          false,
+
+        archived:
+          false,
+
+        checklist:
+          [],
+
+        linkedPersonIds:
+          [],
+
+        linkedPlaceIds:
+          [],
+
+        linkedEventIds:
+          [],
+
+        linkedSourceIds:
+          [],
+
+        linkedArchiveFileIds:
+          [],
+
+        relatedNoteIds:
+          [],
+
+        createdAt:
+          now,
+
+        updatedAt:
+          now
+      };
+
+      if (creationContext) {
+        const config =
+          getNoteEntityConfig(
+            creationContext.type
+          );
+
+        if (config) {
+          record[config.field] = [
+            creationContext.id
+          ];
+        }
+      }
+
+      const newNote =
+        normalizeCentralNoteRecord(
+          record
+        );
+
+      sampleData.notes.unshift(
+        newNote
+      );
+
+      state.activeModule =
+        'Notes';
+
+      clearNotesContext();
+
+      if (creationContext) {
+        setNotesContext(
+          creationContext.type,
+          creationContext.id,
+          {
+            projectId:
+              newNote.projectId
+          }
+        );
+      }
+
+      state.notesView =
+        inheritActiveCollection
+          ? 'collection'
+          : 'all';
+
+      state.notesActiveCollectionId =
         inheritActiveCollection
           ? state
               .notesActiveCollectionId
-          : '';
+          : null;
 
-      const initialCollectionIds =
-        activeCollectionId
-          ? [activeCollectionId]
-          : [];
+      state.selectedNoteId =
+        newNote.id;
 
-      const templateOptions =
-        Object.entries(
-          noteCreationTemplates
-        )
-          .map(
-            (
-              [key, template]
-            ) => `
-              <label
-                class="notes-template-choice">
+      state.notesRightCollapsed =
+        false;
 
-                <input
-                  type="radio"
-                  name="noteTemplate"
-                  value="${escapeHtml(
-                    key
-                  )}"
-                  ${
-                    key === 'blank'
-                      ? 'checked'
-                      : ''
-                  }>
+      state.notesMobilePane =
+        'editor';
 
-                <strong>
-                  ${escapeHtml(
-                    template.label
-                  )}
-                </strong>
+      state.notesSaveStatus =
+        'Saved';
 
-                <span>
-                  ${escapeHtml(
-                    template.description
-                  )}
-                </span>
-              </label>
-            `
-          )
-          .join('');
+      renderNotes();
 
-      openModal(`
-        <div
-          class="modal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="newNoteTitle">
-
-          <div class="modal-header">
-            <div>
-              <h2 id="newNoteTitle">
-                Create note
-              </h2>
-
-              <p>
-                Add the note to one or more
-                collections and choose an
-                optional starting structure.
-              </p>
-            </div>
-
-            <button
-              class="close-button"
-              type="button"
-              data-close
-              aria-label="Close">
-              ${icon.close}
-            </button>
-          </div>
-
-          <form id="notesNewNoteForm">
-            <div class="modal-body form-grid">
-
-              <div class="field">
-                <label for="notesNewTitle">
-                  Title
-                </label>
-
-                <input
-                  id="notesNewTitle"
-                  type="text"
-                  maxlength="240"
-                  autocomplete="off"
-                  placeholder="Untitled note">
-              </div>
-
-              <div class="field">
-                <label>
-                  Collections
-                </label>
-
-                ${renderNotesCollectionPicker({
-                  prefix:
-                    'notesCreate',
-
-                  selectedIds:
-                    initialCollectionIds,
-
-                  projectId:
-                    currentProjectId()
-                })}
-              </div>
-
-              <fieldset
-                class="field"
-                style="
-                  border: 0;
-                  padding: 0;
-                  margin: 0;
-                ">
-
-                <legend>
-                  Starting template
-                </legend>
-
-                <div class="notes-template-grid">
-                  ${templateOptions}
-                </div>
-              </fieldset>
-            </div>
-
-            <div class="modal-footer">
-              <button
-                class="button secondary"
-                type="button"
-                data-close>
-                Cancel
-              </button>
-
-              <button
-                class="button primary"
-                type="submit">
-                Create note
-              </button>
-            </div>
-          </form>
-        </div>
-      `);
-
-      bindNotesCollectionPicker(
-        modalBackdrop,
-        'notesCreate',
-        {
-          projectId:
-            currentProjectId()
-        }
-      );
-
-      const form =
-        modalBackdrop.querySelector(
-          '#notesNewNoteForm'
-        );
-
-      const titleInput =
-        modalBackdrop.querySelector(
-          '#notesNewTitle'
-        );
-
-      form?.addEventListener(
-        'submit',
-        event => {
-          event.preventDefault();
-
-          const templateKey =
-            modalBackdrop
-              .querySelector(
-                'input[name="noteTemplate"]:checked'
-              )
-              ?.value
-            || 'blank';
-
-          const template =
-            noteCreationTemplates[
-              templateKey
-            ]
-            || noteCreationTemplates
-              .blank;
-
-          const collectionIds =
-            readNotesCollectionPicker(
-              modalBackdrop,
-              'notesCreate'
-            );
-
-          const now =
-            new Date().toISOString();
-
-          const newNote =
-            normalizeCentralNoteRecord({
-              id:
-                `note-${Date.now()}`,
-
-              projectId:
-                currentProjectId(),
-
-              title:
-                titleInput
-                  ?.value.trim()
-                || 'Untitled note',
-
-              body:
-                template.body,
-
-              collectionIds,
-
-              favorite:
-                false,
-
-              archived:
-                false,
-
-              tags:
-                [],
-
-              checklist:
-                [],
-
-              linkedPersonIds:
-                creationContext?.type
-                  === 'person'
-                    ? [
-                        creationContext.id
-                      ]
-                    : [],
-
-              linkedPlaceIds:
-                creationContext?.type
-                  === 'place'
-                    ? [
-                        creationContext.id
-                      ]
-                    : [],
-
-              linkedEventIds:
-                creationContext?.type
-                  === 'event'
-                    ? [
-                        creationContext.id
-                      ]
-                    : [],
-
-              linkedSourceIds:
-                creationContext?.type
-                  === 'source'
-                    ? [
-                        creationContext.id
-                      ]
-                    : [],
-
-              linkedArchiveFileIds:
-                creationContext?.type
-                  === 'archiveFile'
-                    ? [
-                        creationContext.id
-                      ]
-                    : [],
-
-              relatedNoteIds:
-                [],
-
-              createdAt:
-                now,
-
-              updatedAt:
-                now
-            });
-
-          sampleData.notes.unshift(
-            newNote
+      requestAnimationFrame(() => {
+        const title =
+          main.querySelector(
+            '#notesTitleInput'
           );
 
-          const remainInCollection =
-            Boolean(
-              activeCollectionId
-              && collectionIds.includes(
-                activeCollectionId
+        title?.focus();
+        title?.select();
+      });
+
+      showToast(
+        templateKey === 'blank'
+          ? 'Note created.'
+          : `${template.label} created.`
+      );
+
+      return newNote;
+    }
+
+    function openNewNoteTemplateMenu(
+      anchor
+    ) {
+      closeMenu();
+
+      const rect =
+        anchor.getBoundingClientRect();
+
+      const menu =
+        document.createElement(
+          'div'
+        );
+
+      menu.className =
+        'menu-popover';
+
+      menu.id =
+        'projectMenu';
+
+      menu.style.top =
+        `${rect.bottom + 6}px`;
+
+      menu.style.left =
+        `${Math.max(
+          12,
+          rect.right - 230
+        )}px`;
+
+      menu.innerHTML = `
+        <button
+          type="button"
+          data-note-template="question">
+          Research question
+        </button>
+
+        <button
+          type="button"
+          data-note-template="source">
+          Source extract
+        </button>
+      `;
+
+      document.body.appendChild(
+        menu
+      );
+
+      menu.addEventListener(
+        'click',
+        event => {
+          const templateKey =
+            event.target
+              .closest(
+                '[data-note-template]'
               )
-            );
+              ?.dataset.noteTemplate;
 
-          state.activeModule =
-            'Notes';
-
-          clearNotesContext();
-
-          if (creationContext) {
-            setNotesContext(
-              creationContext.type,
-              creationContext.id,
-              {
-                projectId:
-                  newNote.projectId
-              }
-            );
+          if (!templateKey) {
+            return;
           }
 
-          state.notesView =
-            remainInCollection
-              ? 'collection'
-              : 'all';
+          closeMenu();
 
-          state.notesActiveCollectionId =
-            remainInCollection
-              ? activeCollectionId
-              : null;
-
-          state.selectedNoteId =
-            newNote.id;
-
-          state.notesRightCollapsed =
-            false;
-
-          closeModal();
-          renderNotes();
-
-          showToast(
-            'Note created.'
-          );
+          createCentralNote({
+            templateKey
+          });
         }
       );
 
-      requestAnimationFrame(
-        () =>
-          titleInput?.focus()
+      bindMenuLifecycle(
+        anchor
       );
     }
 
@@ -58174,7 +58246,7 @@
           }
 
           const id =
-            `note-col-${Date.now()}`;
+            createRuntimeId('note-col');
 
           sampleData.noteCollections.push({
             id,
@@ -68283,6 +68355,13 @@
 
         state.notesRightCollapsed =
           true;
+
+        state.notesMobilePane =
+          'browser';
+
+        state.notesSaveStatus =
+          'Saved';
+
         resetAlbumsPage();
         state.placesView =
           'all';
@@ -68933,6 +69012,7 @@
       bindMenuLifecycle(anchor);
     }
     let menuLifecycleController = null;
+    let menuLifecycleAnchor = null;
 
     function bindMenuLifecycle(anchor = null) {
       menuLifecycleController?.abort();
@@ -68942,6 +69022,11 @@
 
       menuLifecycleController =
         controller;
+
+      menuLifecycleAnchor =
+        anchor instanceof HTMLElement
+          ? anchor
+          : null;
 
       const eventIsInsideMenu = event => {
         const target = event.target;
@@ -69042,6 +69127,7 @@
     function closeMenu() {
       menuLifecycleController?.abort();
       menuLifecycleController = null;
+      menuLifecycleAnchor = null;
       document.getElementById('placesRouteMenu')?.setAttribute('aria-expanded', 'false');
       document.getElementById('projectMenu')?.remove();
       document.getElementById('relativePopover')?.remove();
@@ -69152,6 +69238,99 @@
           <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-simulate-import>Choose file</button></div>
         </div>`);
       modalBackdrop.querySelector('[data-simulate-import]').addEventListener('click', () => showToast('File picker would open here.'));
+    }
+
+
+    let modalReturnFocus = null;
+
+    const MODAL_FOCUSABLE_SELECTOR = [
+      'a[href]',
+      'button:not([disabled])',
+      'input:not([disabled]):not([type="hidden"])',
+      'select:not([disabled])',
+      'textarea:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])'
+    ].join(',');
+
+    function modalFocusableElements() {
+      return [
+        ...modalBackdrop.querySelectorAll(
+          MODAL_FOCUSABLE_SELECTOR
+        )
+      ].filter(element =>
+        !element.hidden
+        && element.offsetParent !== null
+      );
+    }
+
+    function setApplicationInert(
+      inert
+    ) {
+      const app =
+        document.querySelector(
+          '.app'
+        );
+
+      if (!app) {
+        return;
+      }
+
+      app.inert =
+        inert;
+    }
+
+    function handleModalKeydown(
+      event
+    ) {
+      if (
+        !modalBackdrop.classList
+          .contains('open')
+      ) {
+        return;
+      }
+
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeModal();
+        return;
+      }
+
+      if (event.key !== 'Tab') {
+        return;
+      }
+
+      const focusable =
+        modalFocusableElements();
+
+      if (!focusable.length) {
+        event.preventDefault();
+        modalBackdrop.focus();
+        return;
+      }
+
+      const first =
+        focusable[0];
+
+      const last =
+        focusable[
+          focusable.length - 1
+        ];
+
+      if (
+        event.shiftKey
+        && document.activeElement
+          === first
+      ) {
+        event.preventDefault();
+        last.focus();
+      } else if (
+        !event.shiftKey
+        && document.activeElement
+          === last
+      ) {
+        event.preventDefault();
+        first.focus();
+      }
     }
 
     const SEMANTIC_SINGLE_ID_ATTRIBUTES =
@@ -69291,13 +69470,45 @@
     function openModal(
       html
     ) {
+      const activeBeforeMenuClose =
+        document.activeElement;
+
+      const preferredReturnFocus =
+        activeBeforeMenuClose
+          instanceof Element
+        && activeBeforeMenuClose.closest(
+          '.menu-popover'
+        )
+        && menuLifecycleAnchor
+          ? menuLifecycleAnchor
+          : (
+              activeBeforeMenuClose
+              instanceof HTMLElement
+                ? activeBeforeMenuClose
+                : null
+            );
+
       closeMenu();
+
+      if (
+        !modalBackdrop.classList
+          .contains('open')
+      ) {
+        modalReturnFocus =
+          preferredReturnFocus;
+      }
 
       modalBackdrop
         .removeEventListener(
           'click',
           backdropClose
         );
+
+      document.removeEventListener(
+        'keydown',
+        handleModalKeydown,
+        true
+      );
 
       modalBackdrop.innerHTML =
         html;
@@ -69314,6 +69525,15 @@
         'aria-hidden'
       );
 
+      modalBackdrop.setAttribute(
+        'tabindex',
+        '-1'
+      );
+
+      setApplicationInert(
+        true
+      );
+
       modalBackdrop
         .querySelectorAll(
           '[data-close]'
@@ -69325,9 +69545,22 @@
           );
         });
 
-      modalBackdrop.addEventListener(
-        'click',
-        backdropClose
+      setTimeout(() => {
+        if (
+          modalBackdrop.classList
+            .contains('open')
+        ) {
+          modalBackdrop.addEventListener(
+            'click',
+            backdropClose
+          );
+        }
+      }, 0);
+
+      document.addEventListener(
+        'keydown',
+        handleModalKeydown,
+        true
       );
 
       localizeUI(
@@ -69337,6 +69570,17 @@
       validateRenderedSemanticReferences(
         modalBackdrop
       );
+
+      requestAnimationFrame(() => {
+        const initial =
+          modalBackdrop.querySelector(
+            '[data-modal-initial-focus], [autofocus]'
+          )
+          || modalFocusableElements()[0]
+          || modalBackdrop;
+
+        initial.focus();
+      });
     }
 
     function openPersonPhotoDiscardConfirm() {
@@ -69363,7 +69607,12 @@
       overlay.querySelector('[data-person-photo-continue-editing]')?.focus();
     }
 
-    function closeModal({ force = false, preservePlaceEditor = false } = {}) {
+    function closeModal(options = {}) {
+      const {
+        force = false,
+        preservePlaceEditor = false
+      } = options || {};
+
       const returnToPlaceEditor = Boolean(
         !force
         && placeEditorDraft
@@ -69401,8 +69650,20 @@
       document.getElementById('addPersonMiniOverlay')?.remove();
       modalBackdrop.classList.remove('open');
       modalBackdrop.setAttribute('aria-hidden', 'true');
+      modalBackdrop.removeAttribute('tabindex');
       modalBackdrop.innerHTML = '';
       modalBackdrop.removeEventListener('click', backdropClose);
+      document.removeEventListener('keydown', handleModalKeydown, true);
+      setApplicationInert(false);
+
+      const returnTarget = modalReturnFocus;
+      modalReturnFocus = null;
+
+      requestAnimationFrame(() => {
+        if (returnTarget?.isConnected) {
+          returnTarget.focus({ preventScroll: true });
+        }
+      });
     }
     function backdropClose(e) { if (e.target === modalBackdrop) closeModal(); }
 
@@ -69621,39 +69882,7 @@
       ];
     }
 
-    function normalizeCentralNoteStringArray(
-      value
-    ) {
-      if (!Array.isArray(value)) {
-        return [];
-      }
-
-      const seen =
-        new Set();
-
-      return value
-        .map(item =>
-          String(
-            item || ''
-          ).trim()
-        )
-        .filter(item => {
-          if (!item) {
-            return false;
-          }
-
-          const key =
-            item.toLowerCase();
-
-          if (seen.has(key)) {
-            return false;
-          }
-
-          seen.add(key);
-
-          return true;
-        });
-    }
+    
 
     function normalizeCentralNoteTimestamp(
       value,
@@ -69766,11 +69995,6 @@
           note.archived
         );
 
-      note.tags =
-        normalizeCentralNoteStringArray(
-          note.tags
-        );
-
       note.checklist =
         normalizeCentralNoteChecklist(
           note
@@ -69866,12 +70090,66 @@
         'excerpt',
         'pinned',
         'personIds',
-        'relatedNotes'
+        'relatedNotes',
+        'tags'
       ].forEach(field => {
         delete note[field];
       });
 
       return note;
+    }
+
+
+    function normalizeCentralNoteRelationships() {
+      const notesById =
+        new Map(
+          sampleData.notes.map(
+            note => [note.id, note]
+          )
+        );
+
+      sampleData.notes.forEach(note => {
+        note.relatedNoteIds =
+          normalizeCentralNoteIdArray(
+            note.relatedNoteIds
+          ).filter(relatedId => {
+            const related =
+              notesById.get(relatedId);
+
+            return Boolean(
+              related
+              && related.id !== note.id
+              && related.projectId
+                === note.projectId
+            );
+          });
+      });
+
+      sampleData.notes.forEach(note => {
+        note.relatedNoteIds.forEach(
+          relatedId => {
+            const related =
+              notesById.get(relatedId);
+
+            if (
+              related
+              && !related.relatedNoteIds
+                .includes(note.id)
+            ) {
+              related.relatedNoteIds.push(
+                note.id
+              );
+            }
+          }
+        );
+      });
+
+      sampleData.notes.forEach(note => {
+        note.relatedNoteIds =
+          normalizeCentralNoteIdArray(
+            note.relatedNoteIds
+          );
+      });
     }
 
     function normalizeCentralNotes() {
@@ -70000,6 +70278,8 @@
         openPersonPhotoPicker(personPhotoEdit.dataset.personPhotoEdit);
         return;
       }
+
+      normalizeCentralNoteRelationships();
     });
 
     render();
