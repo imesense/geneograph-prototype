@@ -645,59 +645,7 @@
       background-size: 12px 7px;
       background-repeat: no-repeat;
     }
-    .sort-field {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      min-width: 215px;
-    }
 
-    .sort-select {
-      width: 100%;
-      min-width: 0;
-      padding-right: 42px;
-      background-image: none;
-    }
-
-    .sort-chevron {
-      position: absolute;
-      top: 50%;
-      right: 14px;
-      width: 18px;
-      height: 18px;
-      display: grid;
-      place-items: center;
-      color: var(--text-tertiary);
-      pointer-events: none;
-      transform: translateY(-50%);
-    }
-
-    .sort-chevron svg {
-      width: 16px;
-      height: 16px;
-      display: block;
-      transform: rotate(90deg);
-    }
-
-    .sort-field:hover .sort-select {
-      background-color: var(--surface-card-hover);
-      border-color: var(--border-strong);
-      color: var(--text-primary);
-    }
-
-    .sort-field:hover .sort-chevron {
-      color: var(--text-primary);
-    }
-
-    .sort-field:focus-within .sort-select {
-      border-color: rgba(98, 217, 154, .55);
-      outline: 0;
-      box-shadow: 0 0 0 3px rgba(98, 217, 154, .1);
-    }
-
-    .sort-field:focus-within .sort-chevron {
-      color: var(--text-primary);
-    }
     .toolbar-button {
       width: 52px;
       height: 44px;
@@ -6013,7 +5961,7 @@
       }
       .startup-page .toolbar-left { grid-column: 1; grid-row: 1; }
       .startup-page .toolbar-right { display: contents; }
-      .startup-page .sort-field { grid-column: 1 / -1; grid-row: 2; width: 215px; }
+      .startup-page .projects-sort-field { grid-column: 1 / -1; grid-row: 2; width: 215px; }
       .startup-page [data-view="grid"] { grid-column: 2; grid-row: 1; }
       .startup-page [data-view="list"] { grid-column: 3; grid-row: 1; }
     }
@@ -6208,36 +6156,123 @@
       justify-content: center;
     }
 
+    /* Shared project-wide Sort control */
+
     .app-sort-field {
       position: relative;
-      display: inline-flex;
+
       min-width: 0;
+      height: 44px;
+
+      display: inline-flex;
+      align-items: center;
+
+      color: var(--text-secondary);
+    }
+
+    .app-sort-icon {
+      position: absolute;
+      z-index: 1;
+      top: 50%;
+      left: 14px;
+
+      width: 18px;
+      height: 18px;
+
+      display: grid;
+      place-items: center;
+
+      color: var(--text-tertiary);
+      pointer-events: none;
+
+      transform: translateY(-50%);
+    }
+
+    .app-sort-icon svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+
+    .app-sort-select,
+    .app-sort-button {
+      width: 100%;
+      min-width: 0;
+      height: 44px;
+
+      padding:
+        0
+        42px
+        0
+        42px;
+
+      border:
+        1px solid
+        var(--border-default);
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        var(--surface-card);
+      color:
+        var(--text-secondary);
+
+      font:
+        inherit;
+      font-size:
+        14px;
+      font-weight:
+        700;
+      line-height:
+        1;
+
+      cursor: pointer;
+
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease),
+        box-shadow var(--ease);
     }
 
     .app-sort-select {
       appearance: none;
-      width: 100%;
-      height: 44px;
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-sm);
-      background: var(--surface-card);
-      color: var(--text-secondary);
-      padding: 0 40px 0 14px;
-      font-weight: 700;
-      letter-spacing: .01em;
-      cursor: pointer;
+      background-image: none;
+    }
+
+    .app-sort-button {
+      appearance: none;
+
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+
+      text-align: left;
+    }
+
+    .app-sort-value {
+      min-width: 0;
+      overflow: hidden;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .app-sort-chevron {
       position: absolute;
-      right: 14px;
+      z-index: 1;
       top: 50%;
+      right: 14px;
+
       width: 18px;
       height: 18px;
+
       display: grid;
       place-items: center;
+
       color: var(--text-tertiary);
       pointer-events: none;
+
       transform: translateY(-50%);
     }
 
@@ -6245,27 +6280,89 @@
       width: 16px;
       height: 16px;
       display: block;
+
       transform: rotate(90deg);
     }
 
     .app-sort-field:hover
-    .app-sort-select {
-      background-color: var(--surface-card-hover);
-      border-color: var(--border-strong);
-      color: var(--text-primary);
+    .app-sort-select,
+    .app-sort-field:hover
+    .app-sort-button {
+      border-color:
+        var(--border-strong);
+
+      background:
+        var(--surface-card-hover);
+
+      color:
+        var(--text-primary);
     }
 
     .app-sort-field:hover
+    .app-sort-icon,
+    .app-sort-field:hover
     .app-sort-chevron,
     .app-sort-field:focus-within
+    .app-sort-icon,
+    .app-sort-field:focus-within
     .app-sort-chevron {
-      color: var(--text-primary);
+      color:
+        var(--text-primary);
     }
 
-    .app-sort-select:focus {
+    .app-sort-select:focus,
+    .app-sort-button:focus-visible {
       outline: 0;
-      border-color: var(--brand-green-500);
-      color: var(--text-primary);
+    }
+
+    .app-sort-field:focus-within
+    .app-sort-select,
+    .app-sort-field:focus-within
+    .app-sort-button {
+      border-color:
+        rgba(98, 217, 154, .55);
+
+      color:
+        var(--text-primary);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(98, 217, 154, .1);
+    }
+
+    .projects-sort-field {
+      width: 215px;
+      min-width: 215px;
+    }
+
+    .people-toolbar
+    .app-sort-field {
+      width: 100%;
+    }
+
+    .albums-sort-field {
+      width: 190px;
+      min-width: 190px;
+    }
+
+    .geneo-sort-field {
+      width: 215px;
+      min-width: 215px;
+    }
+
+    .archive-sort-field {
+      width: 180px;
+      min-width: 154px;
+    }
+
+    .places-sort-field {
+      width: 180px;
+      flex: 0 0 180px;
+    }
+
+    .notes-sort-field {
+      width: 178px;
+      min-width: 178px;
     }
 
     .people-toolbar
@@ -9208,9 +9305,32 @@
       display: flex; flex-direction: column; gap: var(--space-4); overflow: hidden;
     }
     .albums-header { flex: 0 0 auto; display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-5); }
-    .albums-title { min-width: 0; }
-    .albums-title h1 { margin: 0 0 3px; font-size: 30px; line-height: 1.12; letter-spacing: 0; }
-    .albums-title p { margin: 0; color: var(--text-tertiary); font-size: 15px; font-weight: 700; }
+    .albums-title,
+    .notes-browser-title {
+      min-width: 0;
+    }
+
+    .albums-title h1,
+    .notes-browser-title h1 {
+      min-width: 0;
+      margin: 0 0 3px;
+      overflow: hidden;
+      color: var(--text-primary);
+      font-size: 30px;
+      line-height: 1.12;
+      letter-spacing: 0;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .albums-title p,
+    .notes-browser-subtitle {
+      margin: 0;
+      color: var(--text-tertiary);
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
     .albums-header-actions,
     .albums-selection-actions,
     .albums-active-filterbar {
@@ -9252,24 +9372,30 @@
       flex-wrap: nowrap;
     }
 
-    .albums-filter-button {
+    .albums-filter-button,
+    .module-filter-button {
       height: 44px;
       min-height: 44px;
       padding: 0 14px;
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-sm);
-      background: var(--surface-card);
-      color: var(--text-secondary);
+
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: var(--space-2);
+
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-card);
+      color: var(--text-secondary);
+
       font: inherit;
       font-size: 14px;
       font-weight: 800;
       line-height: 1;
       white-space: nowrap;
+
       cursor: pointer;
+
       transition:
         background var(--ease),
         border-color var(--ease),
@@ -9277,60 +9403,69 @@
         box-shadow var(--ease);
     }
 
-    .albums-filter-button:hover {
+    .albums-filter-button:hover,
+    .module-filter-button:hover {
       border-color: var(--border-strong);
       background: var(--surface-card-hover);
       color: var(--text-primary);
     }
 
-    .albums-filter-button:focus-visible {
+    .albums-filter-button:focus-visible,
+    .module-filter-button:focus-visible {
       border-color: rgba(98, 217, 154, .55);
       outline: 0;
-      box-shadow: 0 0 0 3px rgba(98, 217, 154, .1);
+      box-shadow:
+        0 0 0 3px
+        rgba(98, 217, 154, .1);
     }
 
-    .albums-filter-button.active {
+    .albums-filter-button.active,
+    .module-filter-button.active {
       border-color: rgba(98, 217, 154, .38);
       background: var(--surface-selected);
       color: var(--brand-green-300);
     }
 
-    .albums-filter-icon {
+    .albums-filter-icon,
+    .module-filter-icon {
       width: 18px;
       height: 18px;
       flex: 0 0 18px;
+
       display: grid;
       place-items: center;
     }
 
-    .albums-filter-icon svg {
+    .albums-filter-icon svg,
+    .module-filter-icon svg {
       width: 18px;
       height: 18px;
       display: block;
     }
 
-    .albums-filter-count {
+    .albums-filter-count,
+    .module-filter-count {
       min-width: 18px;
       height: 18px;
       padding: 0 5px;
-      border-radius: 999px;
-      background: var(--brand-green-500);
-      color: #10251a;
+
       display: inline-flex;
       align-items: center;
       justify-content: center;
+
+      border-radius: 999px;
+      background: var(--brand-green-500);
+      color: #10251a;
+
       font-size: 10px;
       font-weight: 900;
+      line-height: 1;
     }
 
     /* Albums-specific width only; shared Sort controls own the styling. */
     .albums-sort-field {
       width: 190px;
       min-width: 190px;
-    }
-
-    .albums-select {
-      height: 44px;
     }
 
     /* Shared toolbar buttons own size, border, hover, and active styling. */
@@ -12243,22 +12378,6 @@
     .archive-toolbar-left { flex: 1 1 auto; flex-wrap: nowrap; }
     .archive-toolbar-right { flex: 0 0 auto; flex-wrap: nowrap; justify-content: flex-end; }
 
-    .archive-select {
-      height: 40px;
-      min-width: 154px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-default);
-      background-color: var(--surface-card);
-      color: var(--text-secondary);
-      padding: 0 36px 0 var(--space-3);
-      appearance: none;
-      background-image: var(--select-chevron);
-      background-position: calc(100% - 18px) center;
-      background-size: 12px 7px;
-      background-repeat: no-repeat;
-      font-weight: 800;
-    }
-    .archive-select:hover { background-color: var(--surface-card-hover); border-color: var(--border-strong); color: var(--text-primary); }
     .archive-icon-button,
     .archive-view-button,
     .archive-row-action {
@@ -12663,12 +12782,19 @@
       position: sticky;
       top: 0;
       z-index: 3;
-      padding: var(--space-5) var(--space-5) var(--space-4);
+      padding:
+        var(--space-6)
+        var(--space-6)
+        var(--space-4);
       display: grid;
       gap: var(--space-4);
-      border-bottom: 1px solid var(--border-default);
-      background: rgba(15,20,19,.96);
-      backdrop-filter: blur(12px);
+      border-bottom:
+        1px solid
+        var(--border-default);
+      background:
+        rgba(15, 20, 19, .96);
+      backdrop-filter:
+        blur(12px);
     }
     .notes-browser-header .resource-person-filterbar { padding: 0; }
     .notes-browser-top {
@@ -12677,38 +12803,6 @@
       grid-template-columns: minmax(0, 1fr) auto;
       align-items: start;
       gap: var(--space-4);
-    }
-    .notes-browser-title { min-width: 0; }
-    .notes-browser-title h1 {
-      min-width: 0;
-      margin: 0;
-      overflow: hidden;
-      color: var(--text-primary);
-      font-size: 25px;
-      line-height: 1.08;
-      letter-spacing: -.03em;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .notes-browser-description {
-      max-width: 720px;
-      margin: 6px 0 0;
-      display: -webkit-box;
-      overflow: hidden;
-      color: var(--text-secondary);
-      font-size: 13px;
-      font-weight: 600;
-      line-height: 1.45;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      line-clamp: 2;
-    }
-    .notes-browser-count {
-      margin: 5px 0 0;
-      color: var(--text-tertiary);
-      font-size: 13px;
-      font-weight: 800;
-      line-height: 1.4;
     }
     .notes-browser-actions {
       display: flex;
@@ -12720,18 +12814,35 @@
       min-height: 44px;
       white-space: nowrap;
     }
-
     .notes-toolbar-line {
+      grid-column: 1 / -1;
+      width: 100%;
       min-width: 0;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto auto;
+
+      display: flex;
       align-items: center;
       gap: var(--space-2);
     }
-    .notes-toolbar-line .app-search-field {
+
+    .notes-toolbar-search {
+      min-width: 0;
+      flex: 1 1 0;
+    }
+
+    .notes-toolbar-search .app-search-field {
       width: 100%;
       max-width: none;
-      flex: none;
+      min-width: 0;
+      flex: 1 1 0;
+    }
+
+    .notes-toolbar-actions {
+      flex: 0 0 auto;
+      margin-left: auto;
+
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
     }
     .notes-control-button {
       min-width: var(--control-height);
@@ -12766,24 +12877,6 @@
       flex: 0 0 17px;
       display: block;
     }
-    .notes-control-caret svg {
-      width: 13px;
-      height: 13px;
-      transform: rotate(90deg);
-    }
-    .notes-filter-count {
-      min-width: 18px;
-      height: 18px;
-      padding: 0 5px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 999px;
-      background: rgba(47,174,116,.2);
-      color: var(--brand-green-300);
-      font-size: 10px;
-      line-height: 1;
-    }
     .notes-active-filters {
       display: flex;
       flex-wrap: wrap;
@@ -12806,24 +12899,44 @@
 
     .notes-browser-scroll {
       min-height: 0;
-      padding: var(--space-5);
+      padding: var(--space-6);
       overflow: auto;
     }
     .notes-list { display: grid; gap: 11px; }
     .notes-row {
       width: 100%;
       min-width: 0;
-      min-height: 104px;
-      padding: 12px 12px 12px 10px;
+      min-height: 120px;
+
+      padding:
+        14px
+        14px
+        14px
+        12px;
+
       display: grid;
-      grid-template-columns: 32px minmax(0, 1fr) 32px;
+      grid-template-columns:
+        32px
+        minmax(0, 1fr)
+        32px;
       align-items: start;
-      gap: 9px;
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-sm);
-      background: var(--notes-card-default);
-      color: var(--text-secondary);
-      box-shadow: inset 0 0 0 0 transparent;
+      gap: 10px;
+
+      border:
+        1px solid
+        var(--border-default);
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        var(--notes-card-default);
+      color:
+        var(--text-secondary);
+
+      box-shadow:
+        inset 0 0 0 0
+        transparent;
+
       transition:
         background var(--ease),
         border-color var(--ease),
@@ -12870,9 +12983,12 @@
     .notes-row-open:focus-visible,
     .notes-editor-back:focus-visible,
     .notes-editor-collapse:focus-visible,
-    .notes-editor-restore:focus-visible,
-    .notes-summary-chip:focus-visible {
+    .notes-editor-restore:focus-visible {
       outline: 2px solid var(--brand-green-300);
+      outline-offset: 2px;
+    }
+    .notes-summary-chip:focus-visible {
+      outline: 2px solid currentColor;
       outline-offset: 2px;
     }
     .notes-row-menu { opacity: .62; }
@@ -12881,79 +12997,112 @@
     .notes-row-open {
       min-width: 0;
       padding: 0;
+
       display: grid;
-      gap: 5px;
+      align-content: start;
+      gap: 7px;
+
       border: 0;
       background: transparent;
       color: inherit;
+
       text-align: left;
     }
     .notes-row-title {
       min-width: 0;
       overflow: hidden;
-      color: var(--text-primary);
-      font-size: 14px;
+
+      color:
+        var(--text-primary);
+
+      font-size: 15px;
       font-weight: 900;
       line-height: 1.35;
+
       text-overflow: ellipsis;
       white-space: nowrap;
     }
     .notes-row-excerpt {
       min-width: 0;
+      max-width: 88ch;
       overflow: hidden;
       display: -webkit-box;
-      color: var(--text-secondary);
-      font-size: 12px;
+      color:
+        var(--text-secondary);
+      font-size: 13px;
       font-weight: 600;
-      line-height: 1.42;
+      line-height: 1.5;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
       line-clamp: 2;
     }
     .notes-row-footer {
       min-width: 0;
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 5px 8px;
+      margin-top: 1px;
+      display: grid;
+      grid-template-columns:
+        minmax(0, 1fr);
+      align-items: start;
+      gap: 6px;
     }
     .notes-row-collections {
       min-width: 0;
-      display: inline-flex;
+      display: flex;
+      align-items: center;
       flex-wrap: wrap;
-      gap: 5px;
+      gap: 6px;
     }
     .notes-row-collection-chip {
-      max-width: 150px;
-      min-height: 23px;
-      padding: 0 7px;
+      max-width: 175px;
+      min-height: 26px;
+      padding: 0 8px;
       display: inline-flex;
       align-items: center;
       overflow: hidden;
       border-radius: 5px;
-      background: rgba(255,255,255,.055);
-      color: var(--text-tertiary);
-      font-size: 10px;
-      font-weight: 800;
+      background:
+        rgba(255, 255, 255, .055);
+      color:
+        var(--text-secondary);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
       text-overflow: ellipsis;
       white-space: nowrap;
-    }
-    .notes-row.active .notes-row-collection-chip {
-      background: rgba(255,255,255,.07);
-      color: #A9BDB4;
     }
     .notes-row-metadata {
       min-width: 0;
       overflow: hidden;
-      color: #929D99;
-      font-size: 10.5px;
+
+      display: block;
+
+      color:
+        #A7B1AD;
+
+      font-size: 12px;
       font-weight: 700;
-      line-height: 1.35;
+      line-height: 1.45;
+
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .notes-row.active .notes-row-excerpt { color: #C1CAC6; }
-    .notes-row.active .notes-row-metadata { color: #A9BDB4; }
+    .notes-row.active
+    .notes-row-excerpt {
+      color: #D0D7D3;
+    }
+
+    .notes-row.active
+    .notes-row-metadata {
+      color: #BECAC4;
+    }
+
+    .notes-row.active
+    .notes-row-collection-chip {
+      background:
+        rgba(255, 255, 255, .075);
+      color:
+        #C4CEC9;
+    }
 
     .notes-resizer {
       min-width: 10px;
@@ -13083,33 +13232,50 @@
     .notes-editor-collapse svg,
     .notes-editor-back svg { width: 18px; height: 18px; display: block; }
     .notes-save-status {
-      min-width: 62px;
+      min-width: 72px;
+
       display: inline-flex;
       align-items: center;
-      gap: 7px;
+      justify-content: flex-start;
+      gap: 8px;
+
       color: var(--text-secondary);
-      font-size: 11px;
+
+      font-size: 13px;
       font-weight: 800;
+      line-height: 1.2;
+
       white-space: nowrap;
     }
     .notes-save-status::before {
       content: "";
-      width: 7px;
-      height: 7px;
-      flex: 0 0 7px;
+
+      width: 8px;
+      height: 8px;
+      flex: 0 0 8px;
+
       border-radius: 50%;
-      background: var(--brand-green-400);
-      box-shadow: 0 0 0 3px rgba(54,201,133,.08);
+
+      background:
+        var(--brand-green-400);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(54, 201, 133, .1);
     }
     .notes-save-status.saving { color: var(--amber); }
     .notes-save-status.saving::before {
       background: var(--amber);
-      box-shadow: 0 0 0 3px rgba(212,170,107,.08);
+      box-shadow:
+        0 0 0 3px
+        rgba(212, 170, 107, .1);
     }
     .notes-save-status.error { color: var(--red); }
     .notes-save-status.error::before {
       background: var(--red);
-      box-shadow: 0 0 0 3px rgba(212,107,107,.08);
+      box-shadow:
+        0 0 0 3px
+        rgba(212, 107, 107, .1);
     }
     .notes-icon-button {
       width: 38px;
@@ -13136,46 +13302,118 @@
     .notes-title-input {
       width: 100%;
       min-width: 0;
-      padding: 0;
+      min-height: 1.45em;
+
+      padding:
+        2px
+        0
+        5px;
+
+      display: block;
+
       border: 0;
       outline: 0;
+
       background: transparent;
       color: var(--text-primary);
-      font-size: clamp(26px,2.25vw,34px);
+
+      font-size:
+        clamp(
+          26px,
+          2.25vw,
+          34px
+        );
+
       font-weight: 900;
-      line-height: 1.12;
+      line-height: 1.2;
       letter-spacing: -.035em;
     }
     .notes-title-input::placeholder { color: var(--text-tertiary); }
     .notes-summary-chips {
       min-width: 0;
+
       display: flex;
       align-items: center;
       flex-wrap: wrap;
       gap: var(--space-2);
     }
+
+    /*
+      Uses the same geometry and weight
+      as the chips in Projects.
+    */
     .notes-summary-chip {
       min-height: 28px;
-      padding: 0 9px;
+      padding: 0 var(--space-2);
+
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      border: 1px solid transparent;
+      justify-content: center;
+
+      border: 0;
       border-radius: 6px;
-      background: rgba(255,255,255,.045);
-      color: var(--text-secondary);
-      font-size: 11px;
+
+      background: #1A201F;
+      color: var(--brand-green-300);
+
+      font: inherit;
+      font-size: 13px;
       font-weight: 800;
+      line-height: 1;
       white-space: nowrap;
+
+      cursor: pointer;
+
+      transition:
+        background var(--ease),
+        color var(--ease),
+        filter var(--ease),
+        transform var(--ease);
     }
-    .notes-summary-chip svg { width: 14px; height: 14px; display: block; }
-    .notes-summary-chip:hover { border-color: currentColor; filter: brightness(1.12); }
-    .notes-summary-chip.people { background: rgba(47,174,116,.16); color: var(--brand-green-300); }
-    .notes-summary-chip.places { background: rgba(93,173,236,.14); color: #89C7F5; }
-    .notes-summary-chip.events { background: rgba(93,173,236,.1); color: #7DB7EA; }
-    .notes-summary-chip.sources { background: rgba(98,217,154,.1); color: #89DAB0; }
-    .notes-summary-chip.files { background: rgba(212,170,107,.15); color: var(--amber); }
-    .notes-summary-chip.related { background: rgba(141,108,232,.16); color: #B39BFF; }
+
+    .notes-summary-chip:hover {
+      filter: brightness(1.14);
+    }
+
+    .notes-summary-chip:active {
+      transform: translateY(1px);
+    }
+
+    /* People */
+    .notes-summary-chip.people {
+      background: #1A201F;
+      color: var(--brand-green-300);
+    }
+
+    /* Places */
+    .notes-summary-chip.places {
+      background: #173131;
+      color: #4CB7B7;
+    }
+
+    /* Events */
+    .notes-summary-chip.events {
+      background: #1B2C3A;
+      color: #7DB7EA;
+    }
+
+    /* Sources */
+    .notes-summary-chip.sources {
+      background: #332A20;
+      color: #B89463;
+    }
+
+    /* Files */
+    .notes-summary-chip.files {
+      background: #3A2B16;
+      color: var(--amber);
+    }
+
+    /* Related notes */
+    .notes-summary-chip.related {
+      background: #252538;
+      color: #BCA6FF;
+    }
 
     .notes-editor-body {
       padding: 0 var(--space-5) var(--space-6);
@@ -13183,15 +13421,23 @@
       gap: 0;
     }
     .notes-editor-writing {
-      width: min(100%, 920px);
-      padding: var(--space-6) 0 var(--space-8);
+      width: 100%;
+      min-width: 0;
+
+      padding:
+        var(--space-6)
+        0
+        var(--space-8);
+
       display: grid;
-      margin: 0 auto;
+      margin: 0;
     }
     .notes-body-input {
       width: 100%;
-      min-height: 420px;
-      padding: var(--space-2) 0;
+      min-height: 160px;
+      padding:
+        12px
+        14px;
       resize: none;
       overflow: hidden;
       box-sizing: border-box;
@@ -13209,21 +13455,32 @@
       border-color: rgba(98,217,154,.34);
       box-shadow: 0 0 0 1px rgba(47,174,116,.08);
     }
-
+    .notes-body-input::placeholder {
+      color: var(--text-tertiary);
+      opacity: 1;
+    }
+    .notes-body-input:focus::placeholder {
+      color: var(--text-secondary);
+    }
     .notes-editor-sections {
       min-width: 0;
       border-top: 1px solid var(--border-default);
     }
     .notes-panel-section { min-width: 0; }
     .notes-panel-section .panel-section { border-bottom: 1px solid var(--border-default); }
-    .notes-panel-section .panel-section-header,
-    .notes-panel-section .panel-section-header-row .panel-section-header {
+    .notes-panel-section
+    .panel-section-header,
+    .notes-panel-section
+    .panel-section-header-row
+    .panel-section-header {
       min-height: 58px;
-      padding-left: 0;
-      padding-right: 0;
     }
-    .notes-panel-section .panel-section-header-row .panel-section-extra { padding-right: 0; }
-    .notes-panel-section .panel-section-body { padding: 0 0 var(--space-5); }
+    .notes-panel-section .panel-section-body {
+      padding:
+        var(--space-3)
+        var(--space-4)
+        var(--space-5);
+    }
     .notes-panel-section .panel-section-heading h3 {
       font-size: 15px;
       letter-spacing: .02em;
@@ -13610,15 +13867,65 @@
     .notes-confirmation-card strong { color: var(--text-primary); }
 
     @container notes-browser (max-width: 520px) {
-      .notes-control-label,
-      .notes-control-caret { display: none; }
+      .notes-control-label { display: none; }
       .notes-control-button { width: var(--control-height); padding: 0; }
       .notes-browser-header { padding: var(--space-4); gap: var(--space-3); }
-      .notes-browser-title h1 { font-size: 22px; }
       .notes-browser-scroll { padding: var(--space-4); }
-      .notes-row { min-height: 88px; }
-      .notes-row-excerpt { -webkit-line-clamp: 1; line-clamp: 1; }
+      .notes-row {
+        min-height: 108px;
+        padding:
+          12px
+          12px
+          12px
+          10px;
+      }
+
+      .notes-row-excerpt {
+        max-width: none;
+
+        -webkit-line-clamp: 1;
+        line-clamp: 1;
+      }
       .notes-row-collection-chip:nth-child(n+2) { display: none; }
+      .notes-filter-button {
+        min-width: var(--control-height);
+        width: var(--control-height);
+        padding: 0;
+      }
+
+      .notes-filter-button.active {
+        width: auto;
+        padding: 0 10px;
+      }
+      .notes-sort-field {
+        width:
+          var(--control-height);
+        min-width:
+          var(--control-height);
+      }
+
+      .notes-sort-field
+      .app-sort-button {
+        padding: 0;
+      }
+
+      .notes-sort-field
+      .app-sort-icon {
+        left: 50%;
+
+        transform:
+          translate(
+            -50%,
+            -50%
+          );
+      }
+
+      .notes-sort-field
+      .app-sort-value,
+      .notes-sort-field
+      .app-sort-chevron {
+        display: none;
+      }
     }
 
     @container notes-browser (max-width: 390px) {
@@ -13631,9 +13938,27 @@
       .notes-browser-actions > .button {
         width: 100%;
       }
-      .notes-toolbar-line { grid-template-columns: minmax(0,1fr) auto auto; }
-      .notes-row-excerpt,
-      .notes-row-metadata { display: none; }
+      .notes-row-excerpt {
+        display: none;
+      }
+
+      .notes-row {
+        min-height: 84px;
+      }
+
+      .notes-row-footer {
+        gap: 5px;
+      }
+
+      .notes-row-collection-chip {
+        min-height: 24px;
+        font-size: 11px;
+      }
+
+      .notes-row-metadata {
+        display: block;
+        font-size: 11px;
+      }
     }
 
     @media (max-width: 1180px) {
@@ -18287,11 +18612,11 @@
       'Choose which app reminders appear in the notification overlay.': '-------- ----------- --- ---- -----------.', 'Archive review reminders': '----------- - -------- ------', 'Missing sources, OCR suggestions, and unlinked files.': '------------- ---------, ----------- OCR - ----------- -----.', 'Backup reminders': '----------- - --------- -----', 'Remind me when a local backup is recommended.': '----------, ----- ----- --------- -----.', 'Needs review place reminders': '----------- - ------------- ------', 'Imported place names and missing coordinates.': '--------------- -------- ---- - ------------- ----------.', 'Photo organization reminders': '----------- -- ----------- ----', 'Photos not assigned to albums.': '---------- --- --------.', 'Product tips': '------ -- --------', 'Occasional workflow tips inside the app.': '------------- ------ -- ------.',
       'Adjust interface density, contrast, and motion behavior.': '--------- ---------, -------- - -------- ----------.', 'Reduce motion': '--------- --------', 'Limit non-essential transitions.': '---------- -------------- --------.', 'Increase contrast': '-------- --------', 'Strengthen borders and text contrast.': '------- ------- - -------- ------.', 'Interface density': '--------- ----------', 'Choose comfortable or compact spacing.': '-------- ------- --- ---------- -------.', 'Comfortable': '-------', 'Compact': '----------', 'Font size': '------ ------', 'Default app text size.': '------ ------ -- ---------.', 'Default': '-- ---------', 'Large': '-------', 'Always show focus outlines': '------ ---------- -----', 'Keep keyboard focus visible.': '---------- ----- ----------.',
       'About GeneoGraph': '- GeneoGraph', 'Prototype information and reference links.': '---------- - --------- - ------.', 'GeneoGraph prototype': '-------- GeneoGraph', 'Version 0.1 prototype - local-first genealogy workspace': '-------- 0.1 - --------- ------- ------------ ----------', 'Active': '-------', 'Help Center would open here.': '----- -------- -- ----- ------.', 'Release notes': '------- - -------', 'Product updates and prototype changes.': '---------- -------- - --------- ---------.', 'View': '--------', 'Privacy policy': '-------- ------------------', 'Privacy documentation placeholder.': '-------- ------------ - ------------------.',
-      'Create family tree': '------- -------- ------', 'Import GEDCOM': '------------- GEDCOM', 'Open project': '------- ------', 'Tip of the day': '----- ---', 'You can drag and drop a GEDCOM file anywhere to import it.': '---------- GEDCOM----- - ----- -----, ----- ------------- ---.', 'Learn more': '--------- ?', 'Search projects...': '----- --------', 'Sort: Date modified': '----------: ---- ---------', 'Sort: Recently modified': '----------: ------- ---------', 'Sort: Name': '----------: ---', 'Sort: People count': '----------: ----- -----', 'All projects': '--- -------', 'Search results': '---------- ------', 'Continue where you left off': '---------- - -----, --- -- ----------', 'Last opened': '--------- -------', 'No projects yet': '------- ---- ---', 'No projects match': '------- -- ----------', 'Try another project name or clear the search.': '---------- ------- ----- ------- --- ------- -----.', 'Clear search': '------- -----', 'Welcome back! Here you can create, open, and manage your family-history projects.': '----------, ---------- - ----------- --------- -------- -------.', 'Drop a GeneoGraph or GEDCOM file here to open or import': '---------- ---- GeneoGraph --- GEDCOM --- -------- --- -------', 'Supports .ggproj and .ged files': '-------------- .ggproj - .ged', 'Recent activity': '-------- --------', 'Insights': '-------', 'Sync status': '-------------', 'Project': '------', 'Project overview': '----- -------', 'Project settings': '--------- -------', 'Back to all projects': '----- -- ---- --------', 'Go to Family Tree': '------- - ------', 'Export': '-------', 'Delete project': '------- ------', 'Manage backups': '--------- -------', 'Open': '-------',
-      'Navigation': '---------', 'Saved filters': '---------- ----', 'Review center': '----- --------', 'Statistics': '----------', 'Profile': '-------', 'Search people...': '----- -----...', 'Columns': '-------', 'Filter': '------', 'Add person': '-------- --------', 'Sort: Birth date': '----------: ---- --------', 'Name': '---', 'Living': '---', 'Deceased': '----', 'Unknown': '----------', 'Living status': '------ -----', 'Birth date': '---- --------', 'Birth place': '----- --------', 'Death date': '---- ------', 'Death place': '----- ------', 'Updated': '---------', 'Actions': '--------', 'Record Info': '---------- - ------', 'Facts': '-----', 'Relationships': '-----', 'Photos': '----', 'Files': '-----', 'Full profile': '------ -------', 'Open profile': '------- -------', 'Add relative': '-------- ------------', 'Connect relative': '------- ------------', 'More actions': '--- --------', 'Back to people': '----- - -----', 'Edit profile': '------------- -------', 'Save changes': '--------- ---------', 'Cancel': '------', 'Locked': '-------------', 'Editing': '--------------', 'Main information': '-------- ----------', 'Education': '-----------', 'Work': '------', 'Other': '------', 'First name': '---', 'Last name': '-------', 'Patronym': '--------', 'Maiden name': '------- -------', 'Prefix': '-------', 'Suffix': '-------', 'Exact date': '------ ----', 'Before': '--', 'After': '-----', 'Between': '-----', 'About / Circa': '-----', 'Cause of Death': '------- ------', 'Death reason': '------- ------', 'Burial place': '----- -----------', 'Record info': '---------- - ------', 'Profile ID': 'ID -------', 'Created': '-------', 'Review issues': '-------- --------', 'Source status': '------ ----------', 'Partly sourced': '-------- ------------', 'Living protected': '------- --------', 'Immediate Family': '--------- -----', 'Parents': '--------', 'Children': '----', 'Siblings': '------ - -----', 'Grandparents': '------- - -------', 'Partners': '-------', 'Partner': '------', 'Spouse': '------(-)', 'Father': '----', 'Mother': '----', 'Brother': '----', 'Sister': '------', 'Grandmother': '-------', 'Grandfather': '-------', 'Cat': '---', 'Timeline': '----------', 'Add fact': '-------- ----', 'Birth': '--------', 'Wedding': '-------', 'Education start': '------ --------', 'Education finish': '--------- --------', 'Archive': '-----', 'Add': '--------', 'Open ?': '------- ?',
-      'Create new board': '------- -----', 'Import board': '------------- -----', 'Board type': '---------', 'Categories': '---------', 'All Boards': '--- -----', 'Recently viewed': '--------', 'Favourites': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'DNA': '---', 'Publication': '----------', 'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '---- ------------ --- ------------, ------------ - ----------.', 'Search boards...': '----- -----', 'Sort: Board type': '----------: --- -----', 'All boards': '--- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Note': '-------', 'Image': '-----------', 'Place': '-----', 'Case': '------', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '-----------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Appearance': '------- ---', 'Layout': '-----', 'Linked to person': '------- - ---------', 'Visual only': '------ ---------',
-      'Add photos': '-------- ----', 'New album': '----- ------', 'All photos': '--- ----', 'Not in Album': '--- -------', 'Recently deleted': '------- --------', 'Search photos...': '----- ----...', 'Sort: Filename': '----------: --- -----', 'Sort: Photo date': '----------: ---- ----', 'People in this photo': '---- -- ----', 'Date': '----', 'Caption / story': '------- / -------', 'Source': '--------', 'Delete photo': '------- ----', 'Make favourite': '-------- - ---------', 'Remove favourite': '------ -- ----------', 'Tag people': '-------- -----', 'Open photo': '------- ----', 'No people tagged': '---- -- --------', 'Unknown date': '---- ----------', 'Unknown place': '----- ----------',
-      'Add files': '-------- -----', 'Create source': '------- --------', 'Sources': '---------', 'Imports': '-------', 'Review': '--------', 'Folders': '-----', 'Search this folder...': '----- - ---- -----...', 'Create folder': '------- -----', 'Sort: Updated': '----------: ---------', 'Sort: Source status': '----------: ------ ---------', 'Source / provenance': '--------', 'Linked to': '------- -', 'Date / place': '---- / -----', 'OCR': 'OCR', 'File info': '---------- - -----', 'Linked evidence': '--------- --------------', 'Assign source': '--------- --------', 'Run OCR': '--------- OCR', 'Restore': '------------', 'Reviewed': '---------', 'Needs review': '----- --------', 'Missing source': '--- ---------', 'Not linked': '-- -------',
+      'Create family tree': '------- -------- ------', 'Import GEDCOM': '------------- GEDCOM', 'Open project': '------- ------', 'Tip of the day': '----- ---', 'You can drag and drop a GEDCOM file anywhere to import it.': '---------- GEDCOM----- - ----- -----, ----- ------------- ---.', 'Learn more': '--------- ?', 'Search projects...': '----- --------', 'Date modified': '----------: ---- ---------', ' Updated': '----------: ------- ---------', ' Name': '----------: ---', ' People count': '----------: ----- -----', 'All projects': '--- -------', 'Search results': '---------- ------', 'Continue where you left off': '---------- - -----, --- -- ----------', 'Last opened': '--------- -------', 'No projects yet': '------- ---- ---', 'No projects match': '------- -- ----------', 'Try another project name or clear the search.': '---------- ------- ----- ------- --- ------- -----.', 'Clear search': '------- -----', 'Welcome back! Here you can create, open, and manage your family-history projects.': '----------, ---------- - ----------- --------- -------- -------.', 'Drop a GeneoGraph or GEDCOM file here to open or import': '---------- ---- GeneoGraph --- GEDCOM --- -------- --- -------', 'Supports .ggproj and .ged files': '-------------- .ggproj - .ged', 'Recent activity': '-------- --------', 'Insights': '-------', 'Sync status': '-------------', 'Project': '------', 'Project overview': '----- -------', 'Project settings': '--------- -------', 'Back to all projects': '----- -- ---- --------', 'Go to Family Tree': '------- - ------', 'Export': '-------', 'Delete project': '------- ------', 'Manage backups': '--------- -------', 'Open': '-------',
+      'Navigation': '---------', 'Saved filters': '---------- ----', 'Review center': '----- --------', 'Statistics': '----------', 'Profile': '-------', 'Search people...': '----- -----...', 'Columns': '-------', 'Filter': '------', 'Add person': '-------- --------', ' Birth date': '----------: ---- --------', 'Name': '---', 'Living': '---', 'Deceased': '----', 'Unknown': '----------', 'Living status': '------ -----', 'Birth date': '---- --------', 'Birth place': '----- --------', 'Death date': '---- ------', 'Death place': '----- ------', 'Updated': '---------', 'Actions': '--------', 'Record Info': '---------- - ------', 'Facts': '-----', 'Relationships': '-----', 'Photos': '----', 'Files': '-----', 'Full profile': '------ -------', 'Open profile': '------- -------', 'Add relative': '-------- ------------', 'Connect relative': '------- ------------', 'More actions': '--- --------', 'Back to people': '----- - -----', 'Edit profile': '------------- -------', 'Save changes': '--------- ---------', 'Cancel': '------', 'Locked': '-------------', 'Editing': '--------------', 'Main information': '-------- ----------', 'Education': '-----------', 'Work': '------', 'Other': '------', 'First name': '---', 'Last name': '-------', 'Patronym': '--------', 'Maiden name': '------- -------', 'Prefix': '-------', 'Suffix': '-------', 'Exact date': '------ ----', 'Before': '--', 'After': '-----', 'Between': '-----', 'About / Circa': '-----', 'Cause of Death': '------- ------', 'Death reason': '------- ------', 'Burial place': '----- -----------', 'Record info': '---------- - ------', 'Profile ID': 'ID -------', 'Created': '-------', 'Review issues': '-------- --------', 'Source status': '------ ----------', 'Partly sourced': '-------- ------------', 'Living protected': '------- --------', 'Immediate Family': '--------- -----', 'Parents': '--------', 'Children': '----', 'Siblings': '------ - -----', 'Grandparents': '------- - -------', 'Partners': '-------', 'Partner': '------', 'Spouse': '------(-)', 'Father': '----', 'Mother': '----', 'Brother': '----', 'Sister': '------', 'Grandmother': '-------', 'Grandfather': '-------', 'Cat': '---', 'Timeline': '----------', 'Add fact': '-------- ----', 'Birth': '--------', 'Wedding': '-------', 'Education start': '------ --------', 'Education finish': '--------- --------', 'Archive': '-----', 'Add': '--------', 'Open ?': '------- ?',
+      'Create new board': '------- -----', 'Import board': '------------- -----', 'Board type': '---------', 'Categories': '---------', 'All Boards': '--- -----', 'Recently viewed': '--------', 'Favourites': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'DNA': '---', 'Publication': '----------', 'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '---- ------------ --- ------------, ------------ - ----------.', 'Search boards...': '----- -----', ' Board type': '----------: --- -----', 'All boards': '--- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Note': '-------', 'Image': '-----------', 'Place': '-----', 'Case': '------', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '-----------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Appearance': '------- ---', 'Layout': '-----', 'Linked to person': '------- - ---------', 'Visual only': '------ ---------',
+      'Add photos': '-------- ----', 'New album': '----- ------', 'All photos': '--- ----', 'Not in Album': '--- -------', 'Recently deleted': '------- --------', 'Search photos...': '----- ----...', ' Filename': '----------: --- -----', ' Photo date': '----------: ---- ----', 'People in this photo': '---- -- ----', 'Date': '----', 'Caption / story': '------- / -------', 'Source': '--------', 'Delete photo': '------- ----', 'Make favourite': '-------- - ---------', 'Remove favourite': '------ -- ----------', 'Tag people': '-------- -----', 'Open photo': '------- ----', 'No people tagged': '---- -- --------', 'Unknown date': '---- ----------', 'Unknown place': '----- ----------',
+      'Add files': '-------- -----', 'Create source': '------- --------', 'Sources': '---------', 'Imports': '-------', 'Review': '--------', 'Folders': '-----', 'Search this folder...': '----- - ---- -----...', 'Create folder': '------- -----', ' Updated': '----------: ---------', ' Source status': '----------: ------ ---------', 'Source / provenance': '--------', 'Linked to': '------- -', 'Date / place': '---- / -----', 'OCR': 'OCR', 'File info': '---------- - -----', 'Linked evidence': '--------- --------------', 'Assign source': '--------- --------', 'Run OCR': '--------- OCR', 'Restore': '------------', 'Reviewed': '---------', 'Needs review': '----- --------', 'Missing source': '--- ---------', 'Not linked': '-- -------',
       'Add note': '----- -------', 'New collection': '----- ---------', 'All notes': '--- -------', 'Collections': '---------', 'Search notes...': '----- -------...', 'Cards': '--------', 'List': '------', 'Saved': '---------', 'Linked people': '--------- ----', 'Linked sources': '--------- ---------', 'Linked places': '--------- -----', 'Related notes': '--------- -------', 'Tasks': '------', 'Note type': '--- -------',
       'New place': '----- -----', 'New collection': '----- ---------', 'Countries': '------', 'Search places': '----- ----', 'Map': '-----', 'Resolved': '---------', 'Approximate': '--------------', 'Missing': '-----------', 'Ambiguous': '------------', 'Back to places': '----- - ------', 'Edit place': '------------- -----', 'Connected people': '--------- ----', 'Sources / files': '--------- / -----', 'Events here': '------- -----', 'Historical names': '------------ --------', 'Identity': '------------', 'Coordinates': '----------', 'Hierarchy': '--------',
       'New Publication': '----- ----------', 'Export history': '------- --------', 'AI Assistant': 'AI----------', 'All outputs': '--- ---------', 'Drafts': '---------', 'Ready to export': '------ - --------', 'Needs update': '------- ----------', 'Published': '------------', 'Archived': '- ------', 'Reports': '------', 'Books': '-----', 'Charts': '---------', 'Maps': '-----', 'Photo stories': '-----------', 'Archive indexes': '------- ------', 'DNA reports': '----------', 'Preview': '------------', 'Content': '-------', 'Settings': '---------', 'Export PDF': '------- PDF', 'Export DOCX': '------- DOCX', 'Share': '----------', 'Duplicate': '-----------', 'Delete': '-------',
@@ -18374,13 +18699,13 @@
       'Add person': '-------- --------', 'Edit person': '------------- --------', 'Create a new person in this project': '-------- ------ -------- - ---- -------', 'Identity': '------', 'Life events': '------- -----', 'Additional facts': '-------------- -----', 'Middle name / Patronym': '-------- / ------- ---', 'Alternative names': '------ -----', 'Cause of death': '------- ------', 'Occupation': '---------', 'Create and add another': '------- - -------- ---', 'Attach to this person': '---------- - ----- --------', 'Possible matches': '--------- ----------', 'Similar people in this project': '------- ---- - -------',
 
       // People
-      'Navigation': '---------', 'Review center': '----- --------', 'Statistics': '----------', 'Saved filters': '---------- ----', 'Columns': '-------', 'Filter': '------', 'Sort: Date modified': '----------: ---- ---------', 'Sort: Name': '----------: ---', 'Sort: Birth date': '----------: ---- --------', 'Name': '---', 'Birth date': '---- --------', 'Birth Date': '---- --------', 'Birth place': '----- --------', 'Birth Place': '----- --------', 'Death date': '---- ------', 'Death Date': '---- ------', 'Death place': '----- ------', 'Death Place': '----- ------', 'Updated': '---------', 'Rows per page': '----- -- --------', 'Record Info': '---------- - ------', 'Record info': '---------- - ------', 'Facts': '-----', 'Relationships': '-----', 'Record ID': 'ID ------', 'Created': '-------', 'Updated': '---------', 'Review issues': '-------- --------', 'Privacy': '------------------', 'Source status': '------ ----------', 'Partly sourced': '-------- ------------', 'Living protected': '------- ------- -------', 'Main information': '-------- ----------', 'First name': '---', 'Last name': '-------', 'Patronym': '--------', 'Maiden name': '------- -------', 'Maiden Name': '------- -------', 'Prefix': '-------', 'Suffix': '-------', 'Gender': '---', 'Living status': '------ -----', 'Death reason': '------- ------', 'Cause of Death': '------- ------', 'Burial place': '----- -----------', 'Burial Place': '----- -----------', 'Education': '-----------', 'Work': '------', 'Other': '------', 'Education place': '----- --------', 'Company name': '--------', 'Religion': '-------', 'Baptism place': '----- --------', 'Baptism date': '---- --------', 'Immediate Family': '--------- -----', 'Family': '-----',
+      'Navigation': '---------', 'Review center': '----- --------', 'Statistics': '----------', 'Saved filters': '---------- ----', 'Columns': '-------', 'Filter': '------', ' Date modified': '----------: ---- ---------', ' Name': '----------: ---', ' Birth date': '----------: ---- --------', 'Name': '---', 'Birth date': '---- --------', 'Birth Date': '---- --------', 'Birth place': '----- --------', 'Birth Place': '----- --------', 'Death date': '---- ------', 'Death Date': '---- ------', 'Death place': '----- ------', 'Death Place': '----- ------', 'Updated': '---------', 'Rows per page': '----- -- --------', 'Record Info': '---------- - ------', 'Record info': '---------- - ------', 'Facts': '-----', 'Relationships': '-----', 'Record ID': 'ID ------', 'Created': '-------', 'Updated': '---------', 'Review issues': '-------- --------', 'Privacy': '------------------', 'Source status': '------ ----------', 'Partly sourced': '-------- ------------', 'Living protected': '------- ------- -------', 'Main information': '-------- ----------', 'First name': '---', 'Last name': '-------', 'Patronym': '--------', 'Maiden name': '------- -------', 'Maiden Name': '------- -------', 'Prefix': '-------', 'Suffix': '-------', 'Gender': '---', 'Living status': '------ -----', 'Death reason': '------- ------', 'Cause of Death': '------- ------', 'Burial place': '----- -----------', 'Burial Place': '----- -----------', 'Education': '-----------', 'Work': '------', 'Other': '------', 'Education place': '----- --------', 'Company name': '--------', 'Religion': '-------', 'Baptism place': '----- --------', 'Baptism date': '---- --------', 'Immediate Family': '--------- -----', 'Family': '-----',
 
       // Geneograph
-      'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '------ ------------ --- ------------, ------------ - ----------.', 'Create new board': '------- -----', 'Import board': '------------- -----', 'All Boards': '--- -----', 'Recently viewed': '------- -------------', 'Favourites': '---------', 'Categories': '---------', 'Board type': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'Publication': '----------', 'DNA': '---', 'Search boards...': '----- -----', 'Sort: Board type': '----------: --- -----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '--------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Case': '----', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Object palette': '------- --------', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Display name': '------------ ---', 'Life dates': '---- -----', 'Metadata': '----------', 'Short note': '-------- -------', 'Body / description': '----- / --------', 'Delete object': '------- ------', 'Appearance': '------- ---', 'Layout': '-----', 'Card style': '----- --------', 'Show dates': '---------- ----', 'Show place': '---------- -----', 'Show badge': '---------- -----', 'Locked': '-------------', 'Layer': '----', 'Zoom controls': '-------', 'Zoom out': '---------', 'Zoom in': '---------', 'Fit board': '------- -----', 'Fit': '-------',
+      'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '------ ------------ --- ------------, ------------ - ----------.', 'Create new board': '------- -----', 'Import board': '------------- -----', 'All Boards': '--- -----', 'Recently viewed': '------- -------------', 'Favourites': '---------', 'Categories': '---------', 'Board type': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'Publication': '----------', 'DNA': '---', 'Search boards...': '----- -----', ' Board type': '----------: --- -----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '--------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Case': '----', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Object palette': '------- --------', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Display name': '------------ ---', 'Life dates': '---- -----', 'Metadata': '----------', 'Short note': '-------- -------', 'Body / description': '----- / --------', 'Delete object': '------- ------', 'Appearance': '------- ---', 'Layout': '-----', 'Card style': '----- --------', 'Show dates': '---------- ----', 'Show place': '---------- -----', 'Show badge': '---------- -----', 'Locked': '-------------', 'Layer': '----', 'Zoom controls': '-------', 'Zoom out': '---------', 'Zoom in': '---------', 'Fit board': '------- -----', 'Fit': '-------',
 
       // Albums
-      'Photos': '----', 'Photo details': '------ ----', 'Select a photo': '-------- ----', 'Select a photo to view details, albums, people, date, place and caption.': '-------- ----, ----- ------- ------, -------, -----, ----, ----- - -------.', 'Grid view': '------', 'List view': '------', 'Search photos-': '----- ----', 'Search photos...': '----- ----...', 'Sort: Filename': '----------: --- -----', 'Sort: Photo date': '----------: ---- ----', 'Date precision': '-------- ----', 'Caption / story': '------- / -------', 'Add to album': '-------- - ------', 'Delete photo?': '------- ----?', 'This photo will be moved to Recently deleted. You can restore it later from the Albums sidebar.': '---- ----- ---------- - ------- --------. --- ----- ----- ------------ -- ------ --------.', 'No photos yet': '---- ---- ---', 'No deleted photos': '-------- ---- ---', 'No favourite photos yet': '--------- ---- ---- ---', 'Every photo is in an album': '--- ---- --- - --------', 'Open photo': '------- ----',
+      'Photos': '----', 'Photo details': '------ ----', 'Select a photo': '-------- ----', 'Select a photo to view details, albums, people, date, place and caption.': '-------- ----, ----- ------- ------, -------, -----, ----, ----- - -------.', 'Grid view': '------', 'List view': '------', 'Search photos-': '----- ----', 'Search photos...': '----- ----...', ' Filename': '----------: --- -----', ' Photo date': '----------: ---- ----', 'Date precision': '-------- ----', 'Caption / story': '------- / -------', 'Add to album': '-------- - ------', 'Delete photo?': '------- ----?', 'This photo will be moved to Recently deleted. You can restore it later from the Albums sidebar.': '---- ----- ---------- - ------- --------. --- ----- ----- ------------ -- ------ --------.', 'No photos yet': '---- ---- ---', 'No deleted photos': '-------- ---- ---', 'No favourite photos yet': '--------- ---- ---- ---', 'Every photo is in an album': '--- ---- --- - --------', 'Open photo': '------- ----',
 
       // Archive
       'Archive workspace': '------- ------- ------', 'Files': '-----', 'Sources': '---------', 'Sources & provenance': '---------', 'Imports': '-------', 'Folders': '-----', 'Search sources...': '----- ----------...', 'Search this folder...': '----- - ---- -----...', 'Filter by type': '------ -- ----', 'Origin type': '--- -------------', 'Repository / holder': '----------- / --------', 'Reference': '------', 'Coverage': '-----', 'Attached': '-----------', 'Used as evidence': '------------ --- --------------', 'Citation': '-----------', 'Batch': '-----', 'Date added': '---- ----------', 'Destination': '----------', 'Review progress': '-------- --------', 'Issues': '--------', 'Status': '------', 'Issue': '--------', 'Affected item': '---------- -------', 'Severity': '--------', 'Suggested action': '------------ --------', 'No open issues in this filter': '--- -------- ------- - ---- -------', 'No deleted archive items': '--- -------- -------- ---------', 'File info': '---------- - -----', 'Size': '------', 'Added': '---------', 'Linked evidence': '--------- --------------', 'OCR / notes': 'OCR / -------', 'Folder contents': '---------- -----',
@@ -18389,7 +18714,7 @@
       'Notes browser': '------- -------', 'Filter by type': '------ -- ----', 'Cards view': '--------', 'List view': '------', 'Untitled note': '---------- -------', 'Note status': '------ -------', 'Evidence references': '------ -- --------------', 'Collapse editor': '-------- --------', 'Note body': '----- -------', 'Bold': '------', 'Italic': '------', 'Heading': '---------', 'Checklist': '--------', 'Quote': '------', 'Link person': '------- --------', 'Link source': '------- --------', 'Link place': '------- -----', 'Add evidence': '-------- --------------', 'Collection': '---------', 'Archived': '- ------',
 
       // Places
-      'All places': '--- -----', 'Needs review': '-------------', 'Countries': '------', 'Search places': '----- ----', 'Sort: Most linked': '----------: ------ ------', 'Map view': '-----', 'List view': '------', 'Legend': '-------', 'Approximate': '--------------', 'Archive / repository': '----- / -----------', 'Residence / story place': '----- ---------- / -------', 'Open place': '------- -----', 'Related people': '--------- ----', 'No events linked yet.': '--------- ------- ---- ---.', 'Events here': '------- -----', 'Historical names': '------------ --------', 'Connected to this place': '------- - ---- ------', 'No aliases recorded.': '---------- -- --------.', 'Place name': '-------- -----', 'Place type': '--- -----', 'Country': '------', 'City': '-----', 'Village': '-------', 'Region': '------', 'Residence': '----- ----------', 'Cemetery': '--------', 'Church': '-------', 'Repository': '-----------', 'Coordinate status': '------ ---------', 'Delete place permanently?': '------- ----- --------?',
+      'All places': '--- -----', 'Needs review': '-------------', 'Countries': '------', 'Search places': '----- ----', ' Most linked': '----------: ------ ------', 'Map view': '-----', 'List view': '------', 'Legend': '-------', 'Approximate': '--------------', 'Archive / repository': '----- / -----------', 'Residence / story place': '----- ---------- / -------', 'Open place': '------- -----', 'Related people': '--------- ----', 'No events linked yet.': '--------- ------- ---- ---.', 'Events here': '------- -----', 'Historical names': '------------ --------', 'Connected to this place': '------- - ---- ------', 'No aliases recorded.': '---------- -- --------.', 'Place name': '-------- -----', 'Place type': '--- -----', 'Country': '------', 'City': '-----', 'Village': '-------', 'Region': '------', 'Residence': '----- ----------', 'Cemetery': '--------', 'Church': '-------', 'Repository': '-----------', 'Coordinate status': '------ ---------', 'Delete place permanently?': '------- ----- --------?',
       'Routes': 'Маршруты',
       'Route settings': 'Настройки маршрута',
       'Calculate route': 'Рассчитать маршрут',
@@ -23644,14 +23969,43 @@
                 <label class="app-search-field" aria-label="Search projects">${icon.search}<input id="projectSearch" type="search" placeholder="Search projects..." value="${escapeHtml(state.search)}"></label>
               </div>
               <div class="toolbar-right">
-                  <span class="sort-field">
-                    <select class="select sort-select" id="sortProjects" aria-label="Sort projects">
-                      <option value="modified" ${state.sort === 'modified' ? 'selected' : ''}>Sort: Recently modified</option>
-                      <option value="name" ${state.sort === 'name' ? 'selected' : ''}>Sort: Name</option>
-                      <option value="people" ${state.sort === 'people' ? 'selected' : ''}>Sort: People count</option>
-                    </select>
-                    <span class="sort-chevron" aria-hidden="true">${icon.chevron}</span>
-                  </span>
+                ${renderAppSortSelect({
+                  id:
+                    'sortProjects',
+
+                  value:
+                    state.sort,
+
+                  ariaLabel:
+                    'Sort projects',
+
+                  className:
+                    'projects-sort-field',
+
+                  options: [
+                    {
+                      value:
+                        'modified',
+
+                      label:
+                        'Updated'
+                    },
+                    {
+                      value:
+                        'name',
+
+                      label:
+                        'Name'
+                    },
+                    {
+                      value:
+                        'people',
+
+                      label:
+                        'People count'
+                    }
+                  ]
+                })}
                 <button class="toolbar-button ${state.viewMode === 'grid' ? 'active' : ''}" type="button" data-view="grid" aria-label="Grid view" aria-pressed="${state.viewMode === 'grid'}">${icon.grid}</button>
                 <button class="toolbar-button ${state.viewMode === 'list' ? 'active' : ''}" type="button" data-view="list" aria-label="List view" aria-pressed="${state.viewMode === 'list'}">${icon.list}</button>
               </div>
@@ -25481,6 +25835,107 @@
         <span class="panel-button-icon" aria-hidden="true">${iconHtml}</span>
         <span class="panel-button-text">${escapeHtml(label)}</span>
       </span>`;
+    }
+
+    function renderAppSortSelect({
+      id,
+      value,
+      ariaLabel,
+      options,
+      className = ''
+    }) {
+      return `
+        <span
+          class="
+            app-sort-field
+            ${escapeHtml(className)}
+          ">
+
+          <span
+            class="app-sort-icon"
+            aria-hidden="true">
+            ${icon.sortLines}
+          </span>
+
+          <select
+            class="app-sort-select"
+            id="${escapeHtml(id)}"
+            aria-label="${escapeHtml(
+              ariaLabel
+            )}">
+
+            ${options
+              .map(option => `
+                <option
+                  value="${escapeHtml(
+                    option.value
+                  )}"
+                  ${
+                    String(value)
+                      === String(
+                        option.value
+                      )
+                      ? 'selected'
+                      : ''
+                  }>
+                  ${escapeHtml(
+                    option.label
+                  )}
+                </option>
+              `)
+              .join('')}
+          </select>
+
+          <span
+            class="app-sort-chevron"
+            aria-hidden="true">
+            ${icon.chevron}
+          </span>
+        </span>
+      `;
+    }
+
+    function renderAppSortMenuButton({
+      id,
+      label,
+      ariaLabel,
+      className = ''
+    }) {
+      return `
+        <span
+          class="
+            app-sort-field
+            ${escapeHtml(className)}
+          ">
+
+          <span
+            class="app-sort-icon"
+            aria-hidden="true">
+            ${icon.sortLines}
+          </span>
+
+          <button
+            class="app-sort-button"
+            type="button"
+            id="${escapeHtml(id)}"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-label="${escapeHtml(
+              ariaLabel
+            )}">
+
+            <span class="app-sort-value">
+              ${escapeHtml(label)}
+            </span>
+          </button>
+
+          <span
+            class="app-sort-chevron"
+            aria-hidden="true">
+            ${icon.chevron}
+          </span>
+        </span>
+      `;
     }
 
     function treePersonToPeopleRecordId(person) {
@@ -32858,49 +33313,40 @@
             }
           </button>
 
-          <span class="app-sort-field">
-            <select
-              class="app-sort-select"
-              id="peopleSort"
-              aria-label="Sort people">
+          ${renderAppSortSelect({
+            id:
+              'peopleSort',
 
-              <option
-                value="modified"
-                ${
-                  state.peopleSort === 'modified'
-                    ? 'selected'
-                    : ''
-                }>
-                Sort: Date modified
-              </option>
+            value:
+              state.peopleSort,
 
-              <option
-                value="name"
-                ${
-                  state.peopleSort === 'name'
-                    ? 'selected'
-                    : ''
-                }>
-                Sort: Name
-              </option>
+            ariaLabel:
+              'Sort people',
 
-              <option
-                value="birth"
-                ${
-                  state.peopleSort === 'birth'
-                    ? 'selected'
-                    : ''
-                }>
-                Sort: Birth date
-              </option>
-            </select>
+            options: [
+              {
+                value:
+                  'modified',
 
-            <span
-              class="app-sort-chevron"
-              aria-hidden="true">
-              ${icon.chevron}
-            </span>
-          </span>
+                label:
+                  'Date modified'
+              },
+              {
+                value:
+                  'name',
+
+                label:
+                  'Name'
+              },
+              {
+                value:
+                  'birth',
+
+                label:
+                  'Birth date'
+              }
+            ]
+          })}
 
           <button
             class="button primary"
@@ -41787,48 +42233,43 @@
             }
           </button>
 
-          <span class="sort-field albums-sort-field">
-            <select
-              class="select sort-select albums-select"
-              id="albumsSort"
-              aria-label="Sort photos">
-              <option
-                value="modified"
-                ${
-                  state.albumsSort === 'modified'
-                    ? 'selected'
-                    : ''
-                }>
-                Recently modified
-              </option>
+          ${renderAppSortSelect({
+            id:
+              'albumsSort',
 
-              <option
-                value="oldest"
-                ${
-                  state.albumsSort === 'oldest'
-                    ? 'selected'
-                    : ''
-                }>
-                Oldest added
-              </option>
+            value:
+              state.albumsSort,
 
-              <option
-                value="title"
-                ${
-                  state.albumsSort === 'title'
-                    ? 'selected'
-                    : ''
-                }>
-                Title
-              </option>
-            </select>
+            ariaLabel:
+              'Sort photos',
 
-            <span
-              class="sort-chevron"
-              aria-hidden="true">
-              ${icon.chevron}
-            </span>
-          </span>
+            className:
+              'albums-sort-field',
+
+            options: [
+              {
+                value:
+                  'modified',
+
+                label:
+                  'Updated'
+              },
+              {
+                value:
+                  'oldest',
+
+                label:
+                  'Oldest added'
+              },
+              {
+                value:
+                  'title',
+
+                label:
+                  'Title'
+              }
+            ]
+          })}
 
           <div
             class="albums-view-switch"
@@ -48261,7 +48702,43 @@
               <label class="app-search-field" aria-label="Search boards">${icon.search}<input id="geneoBoardSearch" type="search" placeholder="Search boards..." value="${escapeHtml(state.geneoBoardSearch)}"></label>
             </div>
             <div class="geneo-board-toolbar-right">
-              <select class="select" id="geneoBoardSort" aria-label="Sort boards"><option>Sort: Date modified</option><option>Sort: Name</option><option>Sort: Board type</option></select>
+              ${renderAppSortSelect({
+                id:
+                  'geneoBoardSort',
+
+                value:
+                  'modified',
+
+                ariaLabel:
+                  'Sort boards',
+
+                className:
+                  'geneo-sort-field',
+
+                options: [
+                  {
+                    value:
+                      'modified',
+
+                    label:
+                      'Date modified'
+                  },
+                  {
+                    value:
+                      'name',
+
+                    label:
+                      'Name'
+                  },
+                  {
+                    value:
+                      'type',
+
+                    label:
+                      'Board type'
+                  }
+                ]
+              })}
               <button class="toolbar-button ${state.geneoBoardViewMode === 'grid' ? 'active' : ''}" type="button" data-geneo-board-view="grid" aria-label="Grid view">${icon.grid}</button>
               <button class="toolbar-button ${state.geneoBoardViewMode === 'list' ? 'active' : ''}" type="button" data-geneo-board-view="list" aria-label="List view">${icon.list}</button>
             </div>
@@ -50114,45 +50591,43 @@
             class="
               archive-toolbar-right
             ">
-            <select
-              class="archive-select"
-              id="archiveSort"
-              aria-label="
-                Sort archive files
-              ">
-              <option
-                value="updated"
-                ${
-                  state.archiveSort
-                    === 'updated'
-                    ? 'selected'
-                    : ''
-                }>
-                Sort: Updated
-              </option>
+            ${renderAppSortSelect({
+              id:
+                'archiveSort',
 
-              <option
-                value="name"
-                ${
-                  state.archiveSort
-                    === 'name'
-                    ? 'selected'
-                    : ''
-                }>
-                Sort: Name
-              </option>
+              value:
+                state.archiveSort,
 
-              <option
-                value="source"
-                ${
-                  state.archiveSort
-                    === 'source'
-                    ? 'selected'
-                    : ''
-                }>
-                Sort: Source status
-              </option>
-            </select>
+              ariaLabel:
+                'Sort archive files',
+
+              className:
+                'archive-sort-field',
+
+              options: [
+                {
+                  value:
+                    'updated',
+
+                  label:
+                    'Updated'
+                },
+                {
+                  value:
+                    'name',
+
+                  label:
+                    'Name'
+                },
+                {
+                  value:
+                    'source',
+
+                  label:
+                    'Source status'
+                }
+              ]
+            })}
 
             <button
               class="
@@ -50306,7 +50781,38 @@
       const sources = filteredArchiveSources();
       return `
         ${renderArchiveHeader('Sources', 'Manage source records attached to files, folders, import batches, and evidence links.', `<button class="button primary" type="button" id="archiveCreateSourceInline">${icon.plus} Create source</button>`)}
-        <div class="archive-toolbar"><div class="archive-toolbar-left"><label class="app-search-field">${icon.search}<input id="archiveSearch" type="search" placeholder="Search sources..." value="${escapeHtml(state.archiveSearch)}"></label><button class="button secondary compact" type="button" data-toast="Source type filters are planned for a later iteration.">Filter by type</button></div><div class="archive-toolbar-right"><select class="archive-select" id="archiveSort"><option value="updated" ${state.archiveSort === 'updated' ? 'selected' : ''}>Sort: Updated</option><option value="name" ${state.archiveSort === 'name' ? 'selected' : ''}>Sort: Title</option></select></div></div>
+        <div class="archive-toolbar"><div class="archive-toolbar-left"><label class="app-search-field">${icon.search}<input id="archiveSearch" type="search" placeholder="Search sources..." value="${escapeHtml(state.archiveSearch)}"></label><button class="button secondary compact" type="button" data-toast="Source type filters are planned for a later iteration.">Filter by type</button></div><div class="archive-toolbar-right">
+          ${renderAppSortSelect({
+            id:
+              'archiveSort',
+
+            value:
+              state.archiveSort,
+
+            ariaLabel:
+              'Sort sources',
+
+            className:
+              'archive-sort-field',
+
+            options: [
+              {
+                value:
+                  'updated',
+
+                label:
+                  'Updated'
+              },
+              {
+                value:
+                  'name',
+
+                label:
+                  'Title'
+              }
+            ]
+          })}
+          </div></div>
         ${sources.length ? `<div class="archive-table-wrap"><table class="archive-table"><thead><tr><th>Source title</th><th>Origin type</th><th>Repository / holder</th><th>Reference</th><th>Coverage</th><th>Attached</th><th>Used as evidence</th><th>Citation</th><th>Updated</th><th></th></tr></thead><tbody>${sources.map(source => `<tr class="${state.archiveSelectedSourceId === source.id ? 'selected' : ''}" data-archive-source="${source.id}"><td><div class="archive-name-cell"><div class="archive-file-icon doc">SRC</div><div><strong>${escapeHtml(source.title)}</strong><span>${escapeHtml(source.type)}</span></div></div></td><td>${escapeHtml(source.type)}</td><td>${escapeHtml(source.holder)}</td><td>${escapeHtml(source.reference)}</td><td>${escapeHtml(source.coverage)}</td><td>${source.attached} items</td><td>${source.used} links</td><td><span class="archive-status-chip ${source.citation === 'Complete' ? 'good' : source.citation === 'Incomplete' ? 'warn' : ''}">${escapeHtml(source.citation)}</span></td><td>${escapeHtml(source.updated)}</td><td><button class="archive-row-action" type="button" data-toast="Source menu is a placeholder.">${icon.more}</button></td></tr>`).join('')}</tbody></table></div>` : renderArchiveEmpty('No sources found', 'Try a different source search.', '')}`;
     }
 
@@ -53763,11 +54269,21 @@
     function renderNotesBrowserPane(
       list
     ) {
-      const collectionDescription =
-        notesBrowserCollectionDescription();
+    const collectionDescription =
+      notesBrowserCollectionDescription();
 
-      const filterCount =
-        notesFilterCount();
+    const browserSubtitle = [
+      notesBrowserSubtitle(
+        list
+      ),
+
+      collectionDescription
+    ]
+      .filter(Boolean)
+      .join(' · ');
+
+    const filterCount =
+      notesFilterCount();
 
       return `
         <section
@@ -53783,23 +54299,9 @@
                   )}
                 </h1>
 
-                ${
-                  collectionDescription
-                    ? `
-                      <p class="notes-browser-description">
-                        ${escapeHtml(
-                          collectionDescription
-                        )}
-                      </p>
-                    `
-                    : ''
-                }
-
-                <p class="notes-browser-count">
+                <p class="notes-browser-subtitle">
                   ${escapeHtml(
-                    notesBrowserSubtitle(
-                      list
-                    )
+                    browserSubtitle
                   )}
                 </p>
               </div>
@@ -53817,42 +54319,64 @@
             ${renderNotesContextFilterBar()}
 
             <div class="notes-toolbar-line">
-              <label
-                class="app-search-field"
-                aria-label="Search notes">
-                ${icon.search}
-                <input
-                  id="notesSearch"
-                  type="search"
-                  placeholder="Search notes, checklists, and linked records..."
-                  value="${escapeHtml(
-                    state.notesSearch
-                  )}">
-              </label>
+              <div class="notes-toolbar-search">
+                <label
+                  class="app-search-field"
+                  aria-label="Search notes">
 
+                  ${icon.search}
+
+                  <input
+                    id="notesSearch"
+                    type="search"
+                    placeholder="Search notes..."
+                    value="${escapeHtml(
+                      state.notesSearch
+                    )}">
+                </label>
+              </div>
+
+              <div class="notes-toolbar-actions">
               <button
-                class="notes-control-button ${
-                  filterCount
-                    ? 'active'
-                    : ''
-                }"
+                class="
+                  module-filter-button
+                  notes-filter-button
+                  ${
+                    filterCount
+                      ? 'active'
+                      : ''
+                  }
+                "
                 type="button"
                 id="notesFilterButton"
                 aria-haspopup="menu"
+                aria-expanded="false"
                 aria-label="${
                   filterCount
                     ? `Filter notes, ${filterCount} active`
                     : 'Filter notes'
                 }"
                 title="Filter notes">
-                ${icon.filter}
+
+                <span
+                  class="module-filter-icon"
+                  aria-hidden="true">
+
+                  ${
+                    filterCount
+                      ? icon.filterclear
+                      : icon.filter
+                  }
+                </span>
+
                 <span class="notes-control-label">
                   Filter
                 </span>
+
                 ${
                   filterCount
                     ? `
-                      <span class="notes-filter-count">
+                      <span class="module-filter-count">
                         ${filterCount}
                       </span>
                     `
@@ -53860,27 +54384,23 @@
                 }
               </button>
 
-              <button
-                class="notes-control-button"
-                type="button"
-                id="notesSortButton"
-                aria-haspopup="menu"
-                aria-label="Sort notes by ${escapeHtml(
-                  notesSortLabel()
-                )}"
-                title="Sort notes">
-                ${icon.sortLines}
-                <span class="notes-control-label">
-                  Sort: ${escapeHtml(
+              ${renderAppSortMenuButton({
+                id:
+                  'notesSortButton',
+
+                label:
+                  notesSortLabel(),
+
+                ariaLabel:
+                  `Sort notes by ${
                     notesSortLabel()
-                  )}
-                </span>
-                <span
-                  class="notes-control-caret"
-                  aria-hidden="true">
-                  ${icon.chevron}
-                </span>
-              </button>
+                  }`,
+
+                className:
+                  'notes-sort-field'
+              })}
+
+              </div>
             </div>
 
             ${renderNotesActiveFilters()}
@@ -55134,9 +55654,6 @@
             tone:
               item.config.chipTone,
 
-            iconSvg:
-              item.config.iconSvg,
-
             count:
               item.count,
 
@@ -55158,9 +55675,6 @@
 
           tone:
             'related',
-
-          iconSvg:
-            icon.note,
 
           count:
             relatedCount,
@@ -55196,13 +55710,10 @@
                 aria-label="Show ${item.count} ${escapeHtml(
                   item.label
                 )}">
-                ${item.iconSvg}
-                <span>
-                  ${item.count}
-                  ${escapeHtml(
-                    item.label
-                  )}
-                </span>
+                ${item.count}
+                ${escapeHtml(
+                  item.label
+                )}
               </button>
             `)
             .join('')}
@@ -55369,7 +55880,8 @@
               <textarea
                 class="notes-body-input"
                 id="notesBodyInput"
-                aria-label="Note body">${escapeHtml(
+                aria-label="Note body"
+                placeholder="Start writing…">${escapeHtml(
                   note.body
                 )}</textarea>
             </div>
@@ -57095,9 +57607,16 @@
       textarea.style.height =
         'auto';
 
+      const minimumHeight =
+        Number.parseFloat(
+          getComputedStyle(
+            textarea
+          ).minHeight
+        ) || 160;
+
       textarea.style.height =
         `${Math.max(
-          420,
+          minimumHeight,
           textarea.scrollHeight
         )}px`;
     }
@@ -57703,26 +58222,30 @@
             createCentralNote()
         );
 
-      main
-        .querySelectorAll(
-          '[data-note-row]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              state.selectedNoteId =
-                button.dataset.noteRow;
-              state.notesRightCollapsed =
-                false;
-              state.notesMobilePane =
-                'editor';
-              state.notesSaveStatus =
-                'Saved';
-              renderNotes();
-            }
-          );
-        });
+    main
+      .querySelectorAll(
+        '[data-note-row]'
+      )
+      .forEach(button => {
+        button.addEventListener(
+          'click',
+          () => {
+            state.selectedNoteId =
+              button.dataset.noteRow;
+
+            state.notesRightCollapsed =
+              false;
+
+            state.notesMobilePane =
+              'editor';
+
+            state.notesSaveStatus =
+              'Saved';
+
+            renderNotesPreservingInteraction();
+          }
+        );
+      });
 
       main
         .querySelectorAll(
@@ -57790,7 +58313,8 @@
           () => {
             state.notesMobilePane =
               'browser';
-            renderNotes();
+
+            renderNotesPreservingInteraction();
           }
         );
 
@@ -57811,7 +58335,7 @@
                 'editor';
             }
 
-            renderNotes();
+            renderNotesPreservingInteraction();
           }
         );
 
@@ -63481,41 +64005,43 @@
                             places-sort-field
                           ">
 
-                          <select
-                            class="app-sort-select"
-                            id="placesSort"
-                            aria-label="Sort places">
+                          ${renderAppSortSelect({
+                            id:
+                              'placesSort',
 
-                            <option
-                              value="name"
-                              ${
-                                state.placesSort === 'name'
-                                  ? 'selected'
-                                  : ''
-                              }>
-                              Sort: Name
-                            </option>
+                            value:
+                              state.placesSort,
 
-                            <option
-                              value="country"
-                              ${
-                                state.placesSort === 'country'
-                                  ? 'selected'
-                                  : ''
-                              }>
-                              Sort: Country
-                            </option>
+                            ariaLabel:
+                              'Sort places',
 
-                            <option
-                              value="updated"
-                              ${
-                                state.placesSort === 'updated'
-                                  ? 'selected'
-                                  : ''
-                              }>
-                              Sort: Recently updated
-                            </option>
-                          </select>
+                            className:
+                              'places-sort-field',
+
+                            options: [
+                              {
+                                value:
+                                  'name',
+
+                                label:
+                                  'Name'
+                              },
+                              {
+                                value:
+                                  'country',
+
+                                label:
+                                  'Country'
+                              },
+                              {
+                                value:
+                                  'updated',
+
+                                label:
+                                  'Recently updated'
+                              }
+                            ]
+                          })}
 
                           <span
                             class="app-sort-chevron"
