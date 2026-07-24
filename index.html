@@ -12630,6 +12630,11 @@
 
     /* Notes module */
     .notes-shell {
+      --notes-card-default: #171D1B;
+      --notes-card-hover: #1D2522;
+      --notes-card-selected: #193128;
+      --notes-card-selected-hover: #1D3A2E;
+      --notes-card-selected-border: rgba(98,217,154,.18);
       height: 100%;
       min-width: 0;
       min-height: 0;
@@ -12638,17 +12643,17 @@
       background: var(--surface-main);
       overflow: hidden;
     }
-
     .notes-shell.editor-open {
       grid-template-columns:
-        minmax(320px, var(--notes-browser-width, 360px))
+        minmax(360px, var(--notes-browser-width, 440px))
         10px
         minmax(460px, 1fr);
     }
-
     .notes-shell.right-collapsed,
     .notes-shell.editor-open.right-collapsed {
-      grid-template-columns: minmax(0, 1fr) 58px;
+      grid-template-columns:
+        minmax(0, 1fr)
+        var(--inspector-collapsed-width);
     }
 
     .notes-browser-pane {
@@ -12658,28 +12663,23 @@
       grid-template-rows: auto minmax(0, 1fr);
       overflow: hidden;
       background:
-        radial-gradient(
-          circle at 92% -5%,
-          rgba(47, 174, 116, .055),
-          transparent 28%
-        ),
+        radial-gradient(circle at 92% -5%, rgba(47,174,116,.05), transparent 28%),
         var(--surface-main);
       container-type: inline-size;
       container-name: notes-browser;
     }
-
     .notes-browser-header {
-      padding: var(--space-5) var(--space-6) var(--space-4);
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      padding: var(--space-5) var(--space-5) var(--space-4);
       display: grid;
       gap: var(--space-4);
       border-bottom: 1px solid var(--border-default);
-      background: rgba(15, 20, 19, .82);
+      background: rgba(15,20,19,.96);
+      backdrop-filter: blur(12px);
     }
-
-    .notes-browser-header .resource-person-filterbar {
-      padding: 0;
-    }
-
+    .notes-browser-header .resource-person-filterbar { padding: 0; }
     .notes-browser-top {
       min-width: 0;
       display: grid;
@@ -12687,23 +12687,18 @@
       align-items: start;
       gap: var(--space-4);
     }
-
-    .notes-browser-title {
-      min-width: 0;
-    }
-
+    .notes-browser-title { min-width: 0; }
     .notes-browser-title h1 {
       min-width: 0;
       margin: 0;
       overflow: hidden;
       color: var(--text-primary);
-      font-size: 26px;
+      font-size: 25px;
       line-height: 1.08;
       letter-spacing: -.03em;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-
     .notes-browser-description {
       max-width: 720px;
       margin: 6px 0 0;
@@ -12717,7 +12712,6 @@
       -webkit-line-clamp: 2;
       line-clamp: 2;
     }
-
     .notes-browser-count {
       margin: 5px 0 0;
       color: var(--text-tertiary);
@@ -12725,35 +12719,27 @@
       font-weight: 800;
       line-height: 1.4;
     }
-
     .notes-browser-actions,
     .notes-new-note-group {
       display: flex;
       align-items: stretch;
       justify-content: flex-end;
     }
-
-    .notes-new-note-group .button {
-      min-height: 44px;
-      white-space: nowrap;
-    }
-
+    .notes-new-note-group .button { min-height: 44px; white-space: nowrap; }
     .notes-new-note-group .button:first-child {
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
     }
-
     .notes-new-note-menu-button {
       width: 42px;
       min-width: 42px;
       padding: 0;
       display: grid;
       place-items: center;
-      border-left-color: rgba(0, 0, 0, .18);
+      border-left-color: rgba(0,0,0,.18);
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
     }
-
     .notes-new-note-menu-button svg {
       width: 16px !important;
       height: 16px !important;
@@ -12763,138 +12749,236 @@
     .notes-toolbar-line {
       min-width: 0;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 176px;
+      grid-template-columns: minmax(0, 1fr) auto auto;
       align-items: center;
-      gap: var(--space-3);
+      gap: var(--space-2);
     }
-
     .notes-toolbar-line .app-search-field {
       width: 100%;
       max-width: none;
       flex: none;
     }
-
-    .notes-sort-field {
-      width: 100%;
+    .notes-control-button {
+      min-width: var(--control-height);
+      height: var(--control-height);
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-input);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
     }
+    .notes-control-button:hover,
+    .notes-control-button:focus-visible,
+    .notes-control-button.active {
+      border-color: var(--border-strong);
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
+    }
+    .notes-control-button:focus-visible {
+      outline: 2px solid var(--brand-green-300);
+      outline-offset: 2px;
+    }
+    .notes-control-button svg {
+      width: 17px;
+      height: 17px;
+      flex: 0 0 17px;
+      display: block;
+    }
+    .notes-control-caret svg {
+      width: 13px;
+      height: 13px;
+      transform: rotate(90deg);
+    }
+    .notes-filter-count {
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: rgba(47,174,116,.2);
+      color: var(--brand-green-300);
+      font-size: 10px;
+      line-height: 1;
+    }
+    .notes-active-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+    .notes-active-filter-chip {
+      min-height: 28px;
+      padding: 0 7px 0 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(98,217,154,.2);
+      border-radius: 999px;
+      background: rgba(47,174,116,.08);
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .notes-active-filter-chip svg { width: 12px; height: 12px; }
 
     .notes-browser-scroll {
       min-height: 0;
-      padding: var(--space-5) var(--space-6) var(--space-6);
+      padding: var(--space-5);
       overflow: auto;
     }
-
-    .notes-list-table {
-      overflow: hidden;
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-lg);
-      background: rgba(26, 32, 31, .72);
-    }
-
+    .notes-list { display: grid; gap: 11px; }
     .notes-row {
       width: 100%;
       min-width: 0;
-      min-height: 76px;
-      padding: 9px var(--space-3);
+      min-height: 104px;
+      padding: 12px 12px 12px 10px;
       display: grid;
-      grid-template-columns: 34px minmax(0, 1fr) 34px;
-      align-items: center;
-      gap: var(--space-2);
-      border-bottom: 1px solid var(--border-default);
-      background: transparent;
+      grid-template-columns: 32px minmax(0, 1fr) 32px;
+      align-items: start;
+      gap: 9px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--notes-card-default);
       color: var(--text-secondary);
-      transition: background var(--ease), color var(--ease), box-shadow var(--ease);
+      box-shadow: inset 0 0 0 0 transparent;
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        box-shadow var(--ease);
     }
-
-    .notes-row:last-child { border-bottom: 0; }
-    .notes-row:hover { background: rgba(255, 255, 255, .035); }
+    .notes-row:hover {
+      background: var(--notes-card-hover);
+      border-color: var(--border-strong);
+    }
     .notes-row.active {
-      background: var(--surface-selected);
+      background: var(--notes-card-selected);
+      border-color: var(--notes-card-selected-border);
       box-shadow: inset 3px 0 0 var(--brand-green-400);
     }
-
+    .notes-row.active:hover { background: var(--notes-card-selected-hover); }
     .notes-row-favorite,
     .notes-row-menu {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       padding: 0;
       display: grid;
       place-items: center;
       border: 1px solid transparent;
-      border-radius: 9px;
+      border-radius: 8px;
       background: transparent;
-      color: var(--text-tertiary);
-      transition: background var(--ease), border-color var(--ease), color var(--ease), opacity var(--ease);
+      color: #8A9692;
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease),
+        opacity var(--ease);
     }
-
     .notes-row-favorite svg,
-    .notes-row-menu svg {
-      width: 17px;
-      height: 17px;
-      display: block;
-    }
-
+    .notes-row-menu svg { width: 16px; height: 16px; display: block; }
     .notes-row-favorite:hover,
     .notes-row-menu:hover {
       border-color: var(--border-default);
-      background: var(--surface-card-hover);
+      background: rgba(255,255,255,.045);
       color: var(--text-primary);
     }
-
     .notes-row-favorite.active { color: var(--amber); }
-
     .notes-row-favorite:focus-visible,
     .notes-row-menu:focus-visible,
     .notes-row-open:focus-visible,
-    .notes-editor-back:focus-visible {
+    .notes-editor-back:focus-visible,
+    .notes-editor-collapse:focus-visible,
+    .notes-editor-restore:focus-visible,
+    .notes-summary-chip:focus-visible {
       outline: 2px solid var(--brand-green-300);
       outline-offset: 2px;
     }
-
-    .notes-row-menu { opacity: .68; }
+    .notes-row-menu { opacity: .62; }
     .notes-row:hover .notes-row-menu,
     .notes-row:focus-within .notes-row-menu { opacity: 1; }
-
     .notes-row-open {
       min-width: 0;
       padding: 0;
       display: grid;
-      gap: 3px;
+      gap: 5px;
       border: 0;
       background: transparent;
       color: inherit;
       text-align: left;
     }
-
-    .notes-row-title,
-    .notes-row-excerpt,
-    .notes-row-metadata {
+    .notes-row-title {
       min-width: 0;
       overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .notes-row-title {
       color: var(--text-primary);
       font-size: 14px;
       font-weight: 900;
-      line-height: 1.3;
+      line-height: 1.35;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-
     .notes-row-excerpt {
+      min-width: 0;
+      overflow: hidden;
+      display: -webkit-box;
       color: var(--text-secondary);
       font-size: 12px;
       font-weight: 600;
-      line-height: 1.35;
+      line-height: 1.42;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
     }
-
+    .notes-row-footer {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 5px 8px;
+    }
+    .notes-row-collections {
+      min-width: 0;
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .notes-row-collection-chip {
+      max-width: 150px;
+      min-height: 23px;
+      padding: 0 7px;
+      display: inline-flex;
+      align-items: center;
+      overflow: hidden;
+      border-radius: 5px;
+      background: rgba(255,255,255,.055);
+      color: var(--text-tertiary);
+      font-size: 10px;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .notes-row.active .notes-row-collection-chip {
+      background: rgba(255,255,255,.07);
+      color: #A9BDB4;
+    }
     .notes-row-metadata {
-      color: #929d99;
-      font-size: 11px;
+      min-width: 0;
+      overflow: hidden;
+      color: #929D99;
+      font-size: 10.5px;
       font-weight: 700;
       line-height: 1.35;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
+    .notes-row.active .notes-row-excerpt { color: #C1CAC6; }
+    .notes-row.active .notes-row-metadata { color: #A9BDB4; }
 
     .notes-resizer {
       min-width: 10px;
@@ -12903,20 +12987,29 @@
       position: relative;
       z-index: 3;
       touch-action: none;
-      background: linear-gradient(90deg, transparent 0 3px, var(--border-default) 3px 4px, transparent 4px 6px, var(--border-default) 6px 7px, transparent 7px);
+      background:
+        linear-gradient(
+          90deg,
+          transparent 0 3px,
+          var(--border-default) 3px 4px,
+          transparent 4px 6px,
+          var(--border-default) 6px 7px,
+          transparent 7px
+        );
     }
-
-    .notes-resizer::after {
-      content: "";
-      position: absolute;
-      inset: 0 -8px;
-    }
-
+    .notes-resizer::after { content: ""; position: absolute; inset: 0 -10px; }
     .notes-resizer:hover,
     .notes-resizer.dragging {
-      background: linear-gradient(90deg, transparent 0 3px, rgba(98,217,154,.68) 3px 4px, transparent 4px 6px, rgba(98,217,154,.68) 6px 7px, transparent 7px);
+      background:
+        linear-gradient(
+          90deg,
+          transparent 0 3px,
+          rgba(98,217,154,.68) 3px 4px,
+          transparent 4px 6px,
+          rgba(98,217,154,.68) 6px 7px,
+          transparent 7px
+        );
     }
-
     .notes-right-pane {
       min-width: 0;
       min-height: 0;
@@ -12925,28 +13018,33 @@
       overflow: auto;
       overscroll-behavior: contain;
     }
-
     .notes-right-rail {
+      position: relative;
       height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--space-3);
-      padding: var(--space-4) 10px;
+      min-width: 0;
       border-left: 1px solid var(--border-default);
       background: var(--surface-sidebar);
-      color: var(--text-tertiary);
     }
-
-    .notes-rail-title {
-      writing-mode: vertical-rl;
+    .notes-editor-restore {
+      position: absolute;
+      top: 18px;
+      left: 8px;
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-card);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-soft);
+    }
+    .notes-editor-restore svg {
+      width: 18px;
+      height: 18px;
+      display: block;
       transform: rotate(180deg);
-      max-height: 280px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      font-weight: 900;
-      color: var(--text-secondary);
     }
 
     .notes-editor-card {
@@ -12955,19 +13053,17 @@
       align-content: start;
       background: transparent;
     }
-
     .notes-editor-header {
       position: sticky;
       top: 0;
       z-index: 4;
-      padding: var(--space-4) var(--space-5);
+      padding: var(--space-4) var(--space-5) var(--space-5);
       display: grid;
       gap: var(--space-3);
       border-bottom: 1px solid var(--border-default);
-      background: rgba(15, 20, 19, .96);
+      background: rgba(15,20,19,.96);
       backdrop-filter: blur(12px);
     }
-
     .notes-editor-topline {
       min-width: 0;
       display: flex;
@@ -12975,32 +13071,13 @@
       justify-content: space-between;
       gap: var(--space-3);
     }
-
     .notes-editor-navigation,
     .notes-editor-actions {
       display: flex;
       align-items: center;
       gap: var(--space-2);
     }
-
-    .notes-editor-kicker {
-      color: var(--text-tertiary);
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    .notes-save-status {
-      min-width: 54px;
-      color: var(--text-tertiary);
-      font-size: 11px;
-      font-weight: 800;
-    }
-
-    .notes-save-status.saving { color: var(--amber); }
-    .notes-save-status.error { color: var(--red); }
-
+    .notes-editor-actions { justify-content: flex-end; }
     .notes-editor-back {
       display: none;
       width: 38px;
@@ -13012,7 +13089,53 @@
       background: var(--surface-card);
       color: var(--text-secondary);
     }
-
+    .notes-editor-collapse {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-secondary);
+    }
+    .notes-editor-collapse:hover {
+      border-color: var(--border-default);
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
+    }
+    .notes-editor-collapse svg,
+    .notes-editor-back svg { width: 18px; height: 18px; display: block; }
+    .notes-save-status {
+      min-width: 62px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .notes-save-status::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      flex: 0 0 7px;
+      border-radius: 50%;
+      background: var(--brand-green-400);
+      box-shadow: 0 0 0 3px rgba(54,201,133,.08);
+    }
+    .notes-save-status.saving { color: var(--amber); }
+    .notes-save-status.saving::before {
+      background: var(--amber);
+      box-shadow: 0 0 0 3px rgba(212,170,107,.08);
+    }
+    .notes-save-status.error { color: var(--red); }
+    .notes-save-status.error::before {
+      background: var(--red);
+      box-shadow: 0 0 0 3px rgba(212,107,107,.08);
+    }
     .notes-icon-button {
       width: 38px;
       height: 38px;
@@ -13024,27 +13147,17 @@
       background: var(--surface-card);
       color: var(--text-secondary);
     }
-
-    .notes-icon-button svg,
-    .notes-editor-back svg {
-      width: 17px;
-      height: 17px;
-      display: block;
-    }
-
-    .notes-icon-button:hover,
-    .notes-editor-back:hover {
+    .notes-icon-button svg { width: 17px; height: 17px; display: block; }
+    .notes-icon-button:hover {
       border-color: var(--border-strong);
       background: var(--surface-card-hover);
       color: var(--text-primary);
     }
-
     .notes-icon-button.active {
-      border-color: rgba(212, 170, 107, .35);
-      background: rgba(212, 170, 107, .1);
+      border-color: rgba(212,170,107,.35);
+      background: rgba(212,170,107,.1);
       color: var(--amber);
     }
-
     .notes-title-input {
       width: 100%;
       min-width: 0;
@@ -13053,228 +13166,128 @@
       outline: 0;
       background: transparent;
       color: var(--text-primary);
-      font-size: clamp(24px, 2.2vw, 32px);
+      font-size: clamp(26px,2.25vw,34px);
       font-weight: 900;
       line-height: 1.12;
       letter-spacing: -.035em;
     }
-
     .notes-title-input::placeholder { color: var(--text-tertiary); }
-
-    .notes-editor-meta {
+    .notes-summary-chips {
       min-width: 0;
       display: flex;
       align-items: center;
       flex-wrap: wrap;
       gap: var(--space-2);
     }
-
-    .notes-editor-meta-label {
-      color: var(--text-tertiary);
+    .notes-summary-chip {
+      min-height: 28px;
+      padding: 0 9px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: rgba(255,255,255,.045);
+      color: var(--text-secondary);
       font-size: 11px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: .06em;
+      font-weight: 800;
+      white-space: nowrap;
     }
+    .notes-summary-chip svg { width: 14px; height: 14px; display: block; }
+    .notes-summary-chip:hover { border-color: currentColor; filter: brightness(1.12); }
+    .notes-summary-chip.people { background: rgba(47,174,116,.16); color: var(--brand-green-300); }
+    .notes-summary-chip.places { background: rgba(93,173,236,.14); color: #89C7F5; }
+    .notes-summary-chip.events { background: rgba(93,173,236,.1); color: #7DB7EA; }
+    .notes-summary-chip.sources { background: rgba(98,217,154,.1); color: #89DAB0; }
+    .notes-summary-chip.files { background: rgba(212,170,107,.15); color: var(--amber); }
+    .notes-summary-chip.related { background: rgba(141,108,232,.16); color: #B39BFF; }
 
     .notes-editor-body {
-      padding: var(--space-5);
+      padding: 0 var(--space-5) var(--space-6);
       display: grid;
-      gap: var(--space-5);
+      gap: 0;
     }
-
     .notes-editor-writing {
+      width: min(100%, 920px);
+      padding: var(--space-6) 0 var(--space-8);
       display: grid;
-      gap: var(--space-2);
+      margin: 0 auto;
     }
-
-    .notes-editor-field-label {
-      color: var(--text-secondary);
-      font-size: 12px;
-      font-weight: 900;
-    }
-
     .notes-body-input {
       width: 100%;
       min-height: 420px;
-      padding: var(--space-4);
+      padding: var(--space-2) 0;
       resize: none;
       overflow: hidden;
       box-sizing: border-box;
-      border: 1px solid var(--border-default);
+      border: 1px solid transparent;
       border-radius: var(--radius-sm);
       outline: 0;
-      background: #121817;
+      background: transparent;
       color: var(--text-secondary);
       font: inherit;
-      line-height: 1.72;
+      font-size: 15px;
+      line-height: 1.75;
+      white-space: pre-wrap;
     }
-
     .notes-body-input:focus {
-      border-color: rgba(98, 217, 154, .45);
-      box-shadow: 0 0 0 1px rgba(47, 174, 116, .12);
+      border-color: rgba(98,217,154,.34);
+      box-shadow: 0 0 0 1px rgba(47,174,116,.08);
     }
 
-    .notes-editor-section {
+    .notes-editor-sections {
       min-width: 0;
-      padding-top: var(--space-4);
-      display: grid;
-      gap: var(--space-3);
       border-top: 1px solid var(--border-default);
     }
-
-    .notes-editor-section-head {
-      min-height: 42px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-3);
+    .notes-panel-section { min-width: 0; }
+    .notes-panel-section .panel-section { border-bottom: 1px solid var(--border-default); }
+    .notes-panel-section .panel-section-header,
+    .notes-panel-section .panel-section-header-row .panel-section-header {
+      min-height: 58px;
+      padding-left: 0;
+      padding-right: 0;
     }
-
-    .notes-editor-section-title {
-      min-width: 0;
-      display: grid;
-      gap: 2px;
-    }
-
-    .notes-editor-section-title h3 {
-      margin: 0;
-      color: var(--text-primary);
+    .notes-panel-section .panel-section-header-row .panel-section-extra { padding-right: 0; }
+    .notes-panel-section .panel-section-body { padding: 0 0 var(--space-5); }
+    .notes-panel-section .panel-section-heading h3 {
       font-size: 15px;
-      line-height: 1.3;
+      letter-spacing: .02em;
     }
+    .notes-panel-section .panel-section-inline-action { min-height: 34px; }
 
-    .notes-editor-section-title span {
-      color: var(--text-tertiary);
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .notes-editor-section-body {
-      min-width: 0;
-      display: grid;
-      gap: var(--space-3);
-    }
-
-    .notes-chip-list {
-      min-width: 0;
+    .notes-collection-assignment-list {
       display: flex;
       flex-wrap: wrap;
       gap: var(--space-2);
     }
-
-    .notes-chip {
-      min-width: 0;
-      min-height: 30px;
-      padding: 0 6px 0 11px;
-      display: inline-flex;
+    .notes-collection-assignment {
+      min-width: min(100%,260px);
+      min-height: 42px;
+      padding: 0 7px 0 12px;
+      display: inline-grid;
+      grid-template-columns: 18px minmax(0, 1fr) 30px;
       align-items: center;
-      gap: 5px;
+      gap: var(--space-2);
       border: 1px solid var(--border-default);
-      border-radius: 999px;
+      border-radius: 6px;
       background: var(--surface-card);
       color: var(--text-secondary);
-      font-size: 12px;
-      font-weight: 800;
     }
-
-    .notes-chip-label {
+    .notes-collection-assignment > svg {
+      width: 17px;
+      height: 17px;
+      color: var(--text-tertiary);
+    }
+    .notes-collection-assignment-name {
       min-width: 0;
-      max-width: 220px;
       overflow: hidden;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 800;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-
-    .notes-chip-remove {
-      width: 24px;
-      height: 24px;
-      padding: 0;
-      display: grid;
-      place-items: center;
-      border: 0;
-      border-radius: 50%;
-      background: transparent;
-      color: var(--text-tertiary);
-    }
-
-    .notes-chip-remove:hover {
-      background: rgba(255, 255, 255, .06);
-      color: var(--text-primary);
-    }
-
-    .notes-chip-remove svg { width: 13px; height: 13px; }
-
-    .notes-section-empty,
-    .notes-optional-copy {
-      color: var(--text-tertiary);
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .notes-optional-row {
-      min-height: 54px;
-      padding: var(--space-3);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-3);
-      border: 1px dashed var(--border-default);
-      border-radius: var(--radius-sm);
-      background: rgba(255, 255, 255, .018);
-    }
-
-    .notes-checklist-list,
-    .notes-context-list,
-    .notes-linked-list {
-      display: grid;
-      gap: var(--space-2);
-    }
-
-    .notes-checklist-row {
-      min-width: 0;
-      min-height: 44px;
-      padding: 6px 7px 6px 10px;
-      display: grid;
-      grid-template-columns: 22px minmax(0, 1fr) 32px;
-      align-items: center;
-      gap: var(--space-2);
-      border: 1px solid rgba(255, 255, 255, .055);
-      border-radius: var(--radius-sm);
-      background: rgba(255, 255, 255, .025);
-    }
-
-    .notes-checklist-row input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-      accent-color: var(--brand-green-500);
-    }
-
-    .notes-checklist-text {
-      width: 100%;
-      min-width: 0;
-      padding: 5px 7px;
-      border: 1px solid transparent;
-      border-radius: 6px;
-      outline: 0;
-      background: transparent;
-      color: var(--text-secondary);
-      font: inherit;
-      font-size: 13px;
-    }
-
-    .notes-checklist-row.done .notes-checklist-text {
-      color: var(--text-tertiary);
-      text-decoration: line-through;
-    }
-
-    .notes-checklist-text:hover,
-    .notes-checklist-text:focus {
-      border-color: var(--border-default);
-      background: var(--surface-input);
-      color: var(--text-primary);
-    }
-
+    .notes-collection-remove,
     .notes-checklist-delete,
     .notes-linked-action {
       width: 30px;
@@ -13287,67 +13300,66 @@
       background: transparent;
       color: var(--text-tertiary);
     }
-
+    .notes-collection-remove:hover,
     .notes-checklist-delete:hover,
     .notes-linked-action.danger:hover {
-      border-color: rgba(212, 107, 107, .25);
-      background: rgba(212, 107, 107, .08);
+      border-color: rgba(212,107,107,.25);
+      background: rgba(212,107,107,.08);
       color: var(--red);
     }
-
+    .notes-collection-remove svg,
     .notes-checklist-delete svg,
     .notes-linked-action svg { width: 14px; height: 14px; }
-
-    .notes-context-group {
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, .055);
-      border-radius: var(--radius-sm);
-      background: rgba(255, 255, 255, .018);
+    .notes-section-empty {
+      color: var(--text-tertiary);
+      font-size: 12px;
+      line-height: 1.5;
     }
 
-    .notes-context-toggle {
-      width: 100%;
+    .notes-checklist-list,
+    .notes-linked-list { display: grid; gap: var(--space-2); }
+    .notes-checklist-row {
+      min-width: 0;
       min-height: 44px;
-      padding: 0 var(--space-3);
+      padding: 6px 7px 6px 10px;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto 18px;
+      grid-template-columns: 22px minmax(0, 1fr) 32px;
       align-items: center;
       gap: var(--space-2);
-      border: 0;
+      border: 1px solid rgba(255,255,255,.055);
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,.025);
+    }
+    .notes-checklist-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--brand-green-500);
+    }
+    .notes-checklist-text {
+      width: 100%;
+      min-width: 0;
+      padding: 5px 7px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      outline: 0;
       background: transparent;
       color: var(--text-secondary);
-      text-align: left;
-      font-weight: 900;
+      font: inherit;
+      font-size: 13px;
     }
-
-    .notes-context-toggle:hover {
-      background: rgba(255, 255, 255, .025);
+    .notes-checklist-row.done .notes-checklist-text {
+      color: var(--text-tertiary);
+      text-decoration: line-through;
+    }
+    .notes-checklist-text:hover,
+    .notes-checklist-text:focus {
+      border-color: var(--border-default);
+      background: var(--surface-input);
       color: var(--text-primary);
     }
-
-    .notes-context-toggle-count {
-      color: var(--text-tertiary);
-      font-size: 11px;
-    }
-
-    .notes-context-toggle-icon {
-      width: 18px;
-      height: 18px;
-      display: grid;
-      place-items: center;
-      color: var(--text-tertiary);
-      transition: transform var(--ease);
-    }
-
-    .notes-context-toggle-icon.open { transform: rotate(90deg); }
-    .notes-context-toggle-icon svg { width: 15px; height: 15px; }
-
-    .notes-context-body {
-      padding: var(--space-3);
-      display: grid;
-      gap: var(--space-2);
-      border-top: 1px solid var(--border-default);
-    }
+    .notes-checklist-delete { opacity: .18; }
+    .notes-checklist-row:hover .notes-checklist-delete,
+    .notes-checklist-row:focus-within .notes-checklist-delete { opacity: 1; }
 
     .notes-linked-row {
       min-width: 0;
@@ -13356,11 +13368,10 @@
       grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
       gap: var(--space-2);
-      border: 1px solid rgba(255, 255, 255, .055);
+      border: 1px solid rgba(255,255,255,.055);
       border-radius: var(--radius-sm);
-      background: rgba(255, 255, 255, .025);
+      background: rgba(255,255,255,.025);
     }
-
     .notes-linked-main {
       min-width: 0;
       min-height: 46px;
@@ -13373,29 +13384,49 @@
       color: var(--text-secondary);
       text-align: left;
     }
-
     .notes-linked-main:hover { color: var(--text-primary); }
-
     .notes-linked-main strong,
     .notes-linked-main span {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-
     .notes-linked-main strong { color: var(--text-primary); font-size: 13px; }
     .notes-linked-main span { color: var(--text-tertiary); font-size: 11px; }
-
     .notes-linked-actions {
       padding-right: 7px;
       display: flex;
       gap: 4px;
     }
-
     .notes-linked-action:hover {
       border-color: var(--border-default);
       background: var(--surface-card-hover);
       color: var(--text-primary);
+    }
+
+    .notes-info-grid {
+      display: grid;
+      gap: 0;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .notes-info-row {
+      min-height: 42px;
+      padding: 0 var(--space-3);
+      display: grid;
+      grid-template-columns: minmax(100px,.45fr) minmax(0,1fr);
+      align-items: center;
+      gap: var(--space-3);
+      border-bottom: 1px solid var(--border-default);
+      color: var(--text-tertiary);
+      font-size: 12px;
+    }
+    .notes-info-row:last-child { border-bottom: 0; }
+    .notes-info-row strong {
+      color: var(--text-secondary);
+      text-align: right;
+      font-weight: 800;
     }
 
     .notes-empty {
@@ -13407,7 +13438,6 @@
       color: var(--text-tertiary);
       text-align: center;
     }
-
     .notes-empty-card {
       max-width: 460px;
       padding: var(--space-8);
@@ -13415,21 +13445,76 @@
       border-radius: var(--radius-lg);
       background: rgba(26,32,31,.55);
     }
-
     .notes-empty h2 { margin: 0 0 var(--space-2); color: var(--text-primary); }
     .notes-empty p { margin: 0 0 var(--space-4); }
+
+    .notes-sidebar-tip { margin-top: auto; }
+    .notes-sidebar-tip .tip-card { padding: var(--space-3); }
+    .notes-sidebar-tip .tip-card p {
+      margin-bottom: var(--space-3);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .notes-filter-popover {
+      position: fixed;
+      z-index: 220;
+      width: min(330px, calc(100vw - 24px));
+      max-height: calc(100vh - 24px);
+      display: grid;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: var(--surface-card);
+      box-shadow: var(--shadow-soft);
+      overflow: auto;
+    }
+    .notes-filter-popover-head,
+    .notes-filter-popover-body,
+    .notes-filter-popover-footer { padding: var(--space-4); }
+    .notes-filter-popover-head {
+      display: grid;
+      gap: 3px;
+      border-bottom: 1px solid var(--border-default);
+    }
+    .notes-filter-popover-head span { color: var(--text-tertiary); font-size: 12px; }
+    .notes-filter-popover-body { display: grid; gap: var(--space-3); }
+    .notes-filter-field {
+      display: grid;
+      gap: 6px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .notes-filter-field select {
+      width: 100%;
+      height: var(--control-height);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-input);
+      color: var(--text-secondary);
+      padding: 0 36px 0 12px;
+    }
+    .notes-filter-popover-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-2);
+      border-top: 1px solid var(--border-default);
+    }
+    .notes-sort-popover button.active { color: var(--brand-green-300); }
+    .notes-sort-popover button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+    .notes-sort-popover .notes-menu-check { color: var(--brand-green-300); }
 
     .notes-collection-picker {
       min-width: 0;
       display: grid;
       gap: var(--space-3);
     }
-
-    .notes-collection-picker .app-search-field {
-      width: 100%;
-      max-width: none;
-    }
-
+    .notes-collection-picker .app-search-field { width: 100%; max-width: none; }
     .notes-collection-choice-list {
       max-height: 260px;
       padding: 4px;
@@ -13440,7 +13525,6 @@
       border-radius: var(--radius-sm);
       background: var(--surface-input);
     }
-
     .field .notes-collection-choice,
     .notes-collection-choice {
       min-height: 44px;
@@ -13454,12 +13538,10 @@
       cursor: pointer;
       margin: 0;
     }
-
     .notes-collection-choice:hover {
       background: var(--surface-card-hover);
       color: var(--text-primary);
     }
-
     .field .notes-collection-choice input[type="checkbox"],
     .notes-collection-choice input[type="checkbox"],
     .notes-modal-choice input[type="checkbox"],
@@ -13472,14 +13554,12 @@
       margin: 0;
       accent-color: var(--brand-green-500);
     }
-
     .notes-collection-choice-copy,
     .notes-modal-choice-copy {
       min-width: 0;
       display: grid;
       gap: 2px;
     }
-
     .notes-collection-choice-copy strong,
     .notes-collection-choice-copy span,
     .notes-modal-choice-copy strong,
@@ -13488,128 +13568,115 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-
     .notes-collection-choice-copy strong,
     .notes-modal-choice-copy strong {
       color: var(--text-primary);
       font-size: 13px;
     }
-
     .notes-collection-choice-copy span,
     .notes-modal-choice-copy span {
       color: var(--text-tertiary);
       font-size: 11px;
     }
-
     .notes-collection-picker-empty {
       padding: var(--space-3);
       color: var(--text-tertiary);
       font-size: 12px;
     }
-
     .notes-inline-collection-create {
       padding: var(--space-3);
       display: grid;
       gap: var(--space-3);
       border: 1px solid var(--border-default);
       border-radius: var(--radius-sm);
-      background: rgba(255, 255, 255, .025);
+      background: rgba(255,255,255,.025);
     }
-
     .notes-inline-collection-create[hidden] { display: none; }
-
     .notes-inline-collection-actions {
       display: flex;
       justify-content: flex-end;
       gap: var(--space-2);
     }
-
     .notes-modal-list {
       max-height: 360px;
       display: grid;
       gap: var(--space-2);
       overflow-y: auto;
     }
-
     .field .notes-modal-choice,
     .notes-modal-choice {
       min-height: 48px;
       padding: 7px var(--space-3);
       display: grid;
-      grid-template-columns: 20px minmax(0, 1fr);
+      grid-template-columns: 20px minmax(0,1fr);
       align-items: center;
       gap: var(--space-3);
       border: 1px solid var(--border-default);
       border-radius: var(--radius-sm);
-      background: rgba(255, 255, 255, .025);
+      background: rgba(255,255,255,.025);
       color: var(--text-secondary);
       cursor: pointer;
       margin: 0;
     }
-
     .notes-modal-choice:hover {
       border-color: var(--border-strong);
       background: var(--surface-card-hover);
       color: var(--text-primary);
     }
-
     .notes-confirmation-card {
       padding: var(--space-3);
       display: grid;
       gap: 5px;
-      border: 1px solid rgba(98, 217, 154, .18);
+      border: 1px solid rgba(98,217,154,.18);
       border-radius: var(--radius-sm);
-      background: rgba(22, 58, 42, .28);
+      background: rgba(22,58,42,.28);
       color: var(--text-secondary);
     }
-
     .notes-confirmation-card strong { color: var(--text-primary); }
 
-    @container notes-browser (max-width: 460px) {
+    @container notes-browser (max-width: 520px) {
+      .notes-control-label,
+      .notes-control-caret { display: none; }
+      .notes-control-button { width: var(--control-height); padding: 0; }
       .notes-browser-header { padding: var(--space-4); gap: var(--space-3); }
       .notes-browser-title h1 { font-size: 22px; }
-      .notes-toolbar-line { grid-template-columns: minmax(0, 1fr); }
-      .notes-browser-scroll { padding: var(--space-3); }
-      .notes-row { min-height: 64px; }
-      .notes-row-excerpt { display: none; }
+      .notes-browser-scroll { padding: var(--space-4); }
+      .notes-row { min-height: 88px; }
+      .notes-row-excerpt { -webkit-line-clamp: 1; line-clamp: 1; }
+      .notes-row-collection-chip:nth-child(n+2) { display: none; }
     }
 
-    @container notes-browser (max-width: 340px) {
-      .notes-browser-top { grid-template-columns: minmax(0, 1fr); }
-      .notes-browser-actions { justify-content: stretch; }
-      .notes-new-note-group { width: 100%; }
+    @container notes-browser (max-width: 390px) {
+      .notes-browser-top { grid-template-columns: minmax(0,1fr); }
+      .notes-browser-actions,
+      .notes-new-note-group { width: 100%; justify-content: stretch; }
       .notes-new-note-group .button:first-child { flex: 1; }
+      .notes-toolbar-line { grid-template-columns: minmax(0,1fr) auto auto; }
+      .notes-row-excerpt,
+      .notes-row-metadata { display: none; }
     }
 
     @media (max-width: 1180px) {
       .notes-editor-topline { align-items: flex-start; }
-      .notes-editor-actions { flex-wrap: wrap; justify-content: flex-end; }
+      .notes-editor-actions { flex-wrap: wrap; }
     }
 
     @media (max-width: 1100px) {
       .notes-shell.editor-open,
       .notes-shell.right-collapsed,
       .notes-shell.editor-open.right-collapsed {
-        grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: minmax(0,1fr);
       }
-
       .notes-shell.editor-open.notes-mobile-browser .notes-resizer,
       .notes-shell.editor-open.notes-mobile-browser .notes-right-pane,
-      .notes-shell.editor-open.notes-mobile-browser .notes-right-rail {
-        display: none;
-      }
-
+      .notes-shell.editor-open.notes-mobile-browser .notes-right-rail { display: none; }
       .notes-shell.editor-open.notes-mobile-editor .notes-browser-pane,
       .notes-shell.editor-open.notes-mobile-editor .notes-resizer,
-      .notes-shell.editor-open.notes-mobile-editor .notes-right-rail {
-        display: none;
-      }
-
+      .notes-shell.editor-open.notes-mobile-editor .notes-right-rail { display: none; }
       .notes-shell.editor-open.notes-mobile-editor .notes-right-pane {
         display: block;
         border-left: 0;
       }
-
       .notes-editor-back { display: grid; }
       .notes-editor-collapse { display: none; }
       .notes-browser-header,
@@ -13617,15 +13684,15 @@
     }
 
     @media (max-width: 720px) {
-      .notes-browser-top { grid-template-columns: minmax(0, 1fr); }
-      .notes-browser-actions { justify-content: stretch; }
-      .notes-new-note-group { width: 100%; }
+      .notes-browser-top { grid-template-columns: minmax(0,1fr); }
+      .notes-browser-actions,
+      .notes-new-note-group { width: 100%; justify-content: stretch; }
       .notes-new-note-group .button:first-child { flex: 1; }
-      .notes-toolbar-line { grid-template-columns: minmax(0, 1fr); }
-      .notes-editor-header,
-      .notes-editor-body { padding: var(--space-4); }
+      .notes-editor-header { padding: var(--space-4); }
+      .notes-editor-body { padding-inline: var(--space-4); }
       .notes-title-input { font-size: 24px; }
-      .notes-optional-row { align-items: stretch; flex-direction: column; }
+      .notes-panel-section .panel-section-header-row { align-items: stretch; }
+      .notes-panel-section .panel-section-header-row .panel-section-extra { align-items: center; }
     }
 
     .places-nav .badge {
@@ -18136,6 +18203,7 @@
       print: '<svg viewBox="0 0 24 24" fill="none" ><path d="M7 17H5C3.89543 17 3 16.1046 3 15V11C3 9.34315 4.34315 8 6 8H7M7 17V14H17V17M7 17V18C7 19.1046 7.89543 20 9 20H15C16.1046 20 17 19.1046 17 18V17M17 17H19C20.1046 17 21 16.1046 21 15V11C21 9.34315 19.6569 8 18 8H17M7 8V6C7 4.89543 7.89543 4 9 4H15C16.1046 4 17 4.89543 17 6V8M7 8H17M15 11H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>',
       profile: '<svg width="512" height="512" viewBox="0 0 512 512" fill="none" ><path d="M256.747 308C352.676 308 432.001 382.835 444.909 480.069C446.944 495.399 434.136 508 418.672 508H94.9334C79.4696 508 66.55 495.399 68.5848 480.069C81.4928 382.835 160.818 308 256.747 308Z" fill="currentColor"/><path d="M384.746 131C384.746 201.692 327.439 259 256.746 259C186.054 259 128.746 201.692 128.746 131C128.746 60.3075 186.054 3 256.746 3C327.439 3 384.746 60.3075 384.746 131Z" fill="currentColor"/><path d="M384.746 131C384.746 201.692 327.439 259 256.746 259C186.054 259 128.746 201.692 128.746 131C128.746 60.3075 186.054 3 256.746 3C327.439 3 384.746 60.3075 384.746 131Z" fill="currentColor"/></svg>',
       search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 3.5 3.5"/></svg>',
+      sortLines: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h11M4 12h8M4 17h5"/><path d="m17 14 3 3 3-3M20 17V6"/></svg>',
       settings: '<svg class="settings-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill="none" d="M0 0h24v24H0z"/><path d="M9.954 2.21a9.99 9.99 0 0 1 4.091-.002A3.993 3.993 0 0 0 16 5.07a3.993 3.993 0 0 0 3.457.261A9.99 9.99 0 0 1 21.5 8.876 3.993 3.993 0 0 0 20 12c0 1.264.586 2.391 1.502 3.124a10.043 10.043 0 0 1-2.046 3.543 3.993 3.993 0 0 0-3.456.261 3.993 3.993 0 0 0-1.954 2.86 9.99 9.99 0 0 1-4.091.004A3.993 3.993 0 0 0 8 18.927a3.993 3.993 0 0 0-3.457-.26A9.99 9.99 0 0 1 2.5 15.121 3.993 3.993 0 0 0 4 11.999a3.993 3.993 0 0 0-1.502-3.124 10.043 10.043 0 0 1 2.046-3.543A3.993 3.993 0 0 0 8 5.071a3.993 3.993 0 0 0 1.954-2.86zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>',
       star: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" ><path d="M12 3.5L14.7 8.9L20.7 9.8L16.35 14.05L17.38 20.02L12 17.2L6.62 20.02L7.65 14.05L3.3 9.8L9.3 8.9L12 3.5Z" fill="currentColor"/></svg>',
       sync: '<svg viewBox="0 0 24 24" fill="none" ><path d="M3 13.6493C3 16.6044 5.41766 19 8.4 19L16.5 19C18.9853 19 21 16.9839 21 14.4969C21 12.6503 19.8893 10.9449 18.3 10.25C18.1317 7.32251 15.684 5 12.6893 5C10.3514 5 8.34694 6.48637 7.5 8.5C4.8 8.9375 3 11.2001 3 13.6493Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>',
@@ -22774,14 +22842,24 @@
       notesSaveStatus: 'Saved',
 
       notesRightCollapsed: true,
-      notesBrowserWidth: 360,
+      notesBrowserWidth: 440,
 
-      notesOpenBlocks: {
+      notesFilters: {
+        linkedRecords: 'any',
+        relatedNotes: 'any',
+        collections: 'any'
+      },
+
+      notesEditorSections: {
+        collections: true,
+        checklist: true,
         people: false,
         places: false,
         events: false,
         sources: false,
-        files: false
+        files: false,
+        related: false,
+        info: false
       },
       placesView: 'all',
       placesSavedFilterId: '',
@@ -51702,7 +51780,13 @@
           field:
             'linkedPersonIds',
 
-          openKey:
+          sectionKey:
+            'people',
+
+          iconSvg:
+            icon.people,
+
+          chipTone:
             'people',
 
           contextLabel:
@@ -51767,7 +51851,13 @@
           field:
             'linkedPlaceIds',
 
-          openKey:
+          sectionKey:
+            'places',
+
+          iconSvg:
+            icon.mapPin,
+
+          chipTone:
             'places',
 
           contextLabel:
@@ -51826,7 +51916,13 @@
           field:
             'linkedEventIds',
 
-          openKey:
+          sectionKey:
+            'events',
+
+          iconSvg:
+            icon.calendar,
+
+          chipTone:
             'events',
 
           contextLabel:
@@ -51919,7 +52015,13 @@
           field:
             'linkedSourceIds',
 
-          openKey:
+          sectionKey:
+            'sources',
+
+          iconSvg:
+            icon.archive,
+
+          chipTone:
             'sources',
 
           contextLabel:
@@ -51984,7 +52086,13 @@
           field:
             'linkedArchiveFileIds',
 
-          openKey:
+          sectionKey:
+            'files',
+
+          iconSvg:
+            icon.file,
+
+          chipTone:
             'files',
 
           contextLabel:
@@ -52788,12 +52896,12 @@
 
       const width =
         Math.max(
-          320,
+          360,
           Math.min(
-            520,
+            600,
             Number(
               state.notesBrowserWidth
-            ) || 360
+            ) || 440
           )
         );
 
@@ -52873,10 +52981,7 @@
 
                   ${icon.folder}
 
-                  <span
-                    class="
-                      sidebar-entity-name
-                    ">
+                  <span class="sidebar-entity-name">
                     ${escapeHtml(
                       collection.name
                     )}
@@ -52911,7 +53016,7 @@
 
           <div>
             <div class="side-section-title">
-              Notes
+              Navigation
             </div>
 
             <div class="side-nav">
@@ -52957,6 +53062,35 @@
 
             <div class="side-nav">
               ${collectionRows}
+            </div>
+          </div>
+
+          <div class="notes-sidebar-tip">
+            <div class="tip-card">
+              <div class="tip-title">
+                ${icon.info}
+                <span>Tip of the day</span>
+              </div>
+
+              <p>
+                Link notes to people, places,
+                sources and files to keep your
+                research connected.
+              </p>
+
+              <button
+                class="link tip-link"
+                type="button"
+                data-notes-tip>
+                <span class="tip-link-text">
+                  Learn more
+                </span>
+                <span
+                  class="tip-link-icon"
+                  aria-hidden="true">
+                  ${icon.openlink}
+                </span>
+              </button>
             </div>
           </div>
         </nav>
@@ -53027,6 +53161,9 @@
     ) {
       const collectionDescription =
         notesBrowserCollectionDescription();
+
+      const filterCount =
+        notesFilterCount();
 
       return `
         <section
@@ -53102,49 +53239,60 @@
                   )}">
               </label>
 
-              <span class="app-sort-field notes-sort-field">
-                <select
-                  class="app-sort-select"
-                  id="notesSort"
-                  aria-label="Sort notes">
-                  <option
-                    value="updated"
-                    ${
-                      state.notesSort
-                        === 'updated'
-                        ? 'selected'
-                        : ''
-                    }>
-                    Sort: Updated
-                  </option>
-                  <option
-                    value="title"
-                    ${
-                      state.notesSort
-                        === 'title'
-                        ? 'selected'
-                        : ''
-                    }>
-                    Sort: Title
-                  </option>
-                  <option
-                    value="created"
-                    ${
-                      state.notesSort
-                        === 'created'
-                        ? 'selected'
-                        : ''
-                    }>
-                    Sort: Created
-                  </option>
-                </select>
+              <button
+                class="notes-control-button ${
+                  filterCount
+                    ? 'active'
+                    : ''
+                }"
+                type="button"
+                id="notesFilterButton"
+                aria-haspopup="menu"
+                aria-label="${
+                  filterCount
+                    ? `Filter notes, ${filterCount} active`
+                    : 'Filter notes'
+                }"
+                title="Filter notes">
+                ${icon.filter}
+                <span class="notes-control-label">
+                  Filter
+                </span>
+                ${
+                  filterCount
+                    ? `
+                      <span class="notes-filter-count">
+                        ${filterCount}
+                      </span>
+                    `
+                    : ''
+                }
+              </button>
+
+              <button
+                class="notes-control-button"
+                type="button"
+                id="notesSortButton"
+                aria-haspopup="menu"
+                aria-label="Sort notes by ${escapeHtml(
+                  notesSortLabel()
+                )}"
+                title="Sort notes">
+                ${icon.sortLines}
+                <span class="notes-control-label">
+                  Sort: ${escapeHtml(
+                    notesSortLabel()
+                  )}
+                </span>
                 <span
-                  class="app-sort-chevron"
+                  class="notes-control-caret"
                   aria-hidden="true">
                   ${icon.chevron}
                 </span>
-              </span>
+              </button>
             </div>
+
+            ${renderNotesActiveFilters()}
           </header>
 
           <div class="notes-browser-scroll">
@@ -53286,48 +53434,165 @@
     }
 
 
-    function noteChecklistProgress(
+    function noteEntityCountItems(
       note
     ) {
-      const items =
-        note?.checklist || [];
+      return Object
+        .entries(
+          NOTE_ENTITY_TYPES
+        )
+        .map(([
+          type,
+          config
+        ]) => ({
+          type,
+          config,
+          count:
+            new Set(
+              note?.[
+                config.field
+              ] || []
+            ).size
+        }))
+        .filter(
+          item =>
+            item.count > 0
+        );
+    }
+
+    function noteBrowserEntitySummary(
+      note
+    ) {
+      const entityItems =
+        noteEntityCountItems(
+          note
+        );
+
+      const relatedCount =
+        new Set(
+          note?.relatedNoteIds
+          || []
+        ).size;
+
+      const items = [
+        ...entityItems.map(item => ({
+          count:
+            item.count,
+
+          label:
+            item.count === 1
+              ? item.config.singular
+              : item.config.plural
+        })),
+
+        ...(relatedCount
+          ? [{
+              count:
+                relatedCount,
+
+              label:
+                relatedCount === 1
+                  ? 'note'
+                  : 'notes'
+            }]
+          : [])
+      ];
 
       if (!items.length) {
         return '';
       }
 
-      const completed =
-        items.filter(
-          item => item.done
-        ).length;
+      if (items.length <= 2) {
+        return items
+          .map(item =>
+            `${item.count} ${
+              item.label
+            }`
+          )
+          .join(' · ');
+      }
 
-      return `${completed} of ${
-        items.length
-      } complete`;
+      const total =
+        items.reduce(
+          (
+            sum,
+            item
+          ) =>
+            sum + item.count,
+          0
+        );
+
+      return `${total} linked records`;
+    }
+
+    function renderNoteBrowserCollectionChips(
+      note
+    ) {
+      const collections =
+        getCollectionsForNote(
+          note.id,
+          {
+            projectId:
+              note.projectId
+          }
+        );
+
+      if (!collections.length) {
+        return `
+          <span class="notes-row-collection-chip">
+            No collection
+          </span>
+        `;
+      }
+
+      const visible =
+        collections.slice(0, 2);
+
+      const hiddenCount =
+        collections.length
+        - visible.length;
+
+      return [
+        ...visible.map(collection => `
+          <span
+            class="notes-row-collection-chip"
+            title="${escapeHtml(
+              collection.name
+            )}">
+            ${escapeHtml(
+              collection.name
+            )}
+          </span>
+        `),
+
+        hiddenCount > 0
+          ? `
+            <span
+              class="notes-row-collection-chip"
+              title="${escapeHtml(
+                collections
+                  .slice(2)
+                  .map(collection =>
+                    collection.name
+                  )
+                  .join(', ')
+              )}">
+              +${hiddenCount}
+            </span>
+          `
+          : ''
+      ]
+        .filter(Boolean)
+        .join('');
     }
 
     function noteBrowserMetadata(
       note
     ) {
-      const linkedCount =
-        noteLinkedEntityCount(
-          note
-        );
-
       return [
-        formatNoteCollectionSummary(
+        noteBrowserEntitySummary(
           note
         ),
-
-        noteChecklistProgress(
-          note
-        ),
-
-        `${linkedCount} ${
-          linkedCount === 1
-            ? 'link'
-            : 'links'
-        }`,
 
         formatNoteRelativeUpdatedAt(
           note
@@ -53335,6 +53600,502 @@
       ]
         .filter(Boolean)
         .join(' · ');
+    }
+
+    function notesFilterCount() {
+      return Object
+        .values(
+          state.notesFilters
+          || {}
+        )
+        .filter(
+          value =>
+            value
+            && value !== 'any'
+        )
+        .length;
+    }
+
+    function notesActiveFilterDescriptors() {
+      const filters =
+        state.notesFilters || {};
+
+      const labels = {
+        linkedRecords: {
+          with:
+            'Has linked records',
+
+          without:
+            'No linked records'
+        },
+
+        relatedNotes: {
+          with:
+            'Has related notes',
+
+          without:
+            'No related notes'
+        },
+
+        collections: {
+          with:
+            'In a collection',
+
+          without:
+            'No collection'
+        }
+      };
+
+      return Object
+        .entries(filters)
+        .filter(([
+          ,
+          value
+        ]) =>
+          value
+          && value !== 'any'
+        )
+        .map(([
+          key,
+          value
+        ]) => ({
+          key,
+          label:
+            labels[key]?.[value]
+            || value
+        }));
+    }
+
+    function renderNotesActiveFilters() {
+      const filters =
+        notesActiveFilterDescriptors();
+
+      if (!filters.length) {
+        return '';
+      }
+
+      return `
+        <div
+          class="notes-active-filters"
+          aria-label="Active note filters">
+
+          ${filters
+            .map(filter => `
+              <button
+                class="notes-active-filter-chip"
+                type="button"
+                data-clear-notes-filter="${escapeHtml(
+                  filter.key
+                )}"
+                aria-label="Remove ${escapeHtml(
+                  filter.label
+                )} filter">
+                ${escapeHtml(
+                  filter.label
+                )}
+                ${icon.close}
+              </button>
+            `)
+            .join('')}
+        </div>
+      `;
+    }
+
+    function openNotesFilterMenu(
+      anchor
+    ) {
+      closeMenu();
+
+      const rect =
+        anchor.getBoundingClientRect();
+
+      const filters = {
+        linkedRecords:
+          state.notesFilters
+            ?.linkedRecords
+          || 'any',
+
+        relatedNotes:
+          state.notesFilters
+            ?.relatedNotes
+          || 'any',
+
+        collections:
+          state.notesFilters
+            ?.collections
+          || 'any'
+      };
+
+      const menu =
+        document.createElement(
+          'div'
+        );
+
+      menu.className =
+        'notes-filter-popover';
+
+      menu.id =
+        'projectMenu';
+
+      menu.style.top =
+        `${rect.bottom + 6}px`;
+
+      menu.style.left =
+        `${
+          Math.max(
+            12,
+            Math.min(
+              window.innerWidth
+              - 342,
+              rect.right - 330
+            )
+          )
+        }px`;
+
+      menu.innerHTML = `
+        <div class="notes-filter-popover-head">
+          <strong>Filter notes</strong>
+          <span>
+            Narrow the current Notes view.
+          </span>
+        </div>
+
+        <div class="notes-filter-popover-body">
+          <label class="notes-filter-field">
+            Linked records
+            <select
+              data-notes-filter-input="linkedRecords">
+              <option
+                value="any"
+                ${
+                  filters.linkedRecords
+                    === 'any'
+                    ? 'selected'
+                    : ''
+                }>
+                Any
+              </option>
+              <option
+                value="with"
+                ${
+                  filters.linkedRecords
+                    === 'with'
+                    ? 'selected'
+                    : ''
+                }>
+                Has linked records
+              </option>
+              <option
+                value="without"
+                ${
+                  filters.linkedRecords
+                    === 'without'
+                    ? 'selected'
+                    : ''
+                }>
+                No linked records
+              </option>
+            </select>
+          </label>
+
+          <label class="notes-filter-field">
+            Related notes
+            <select
+              data-notes-filter-input="relatedNotes">
+              <option
+                value="any"
+                ${
+                  filters.relatedNotes
+                    === 'any'
+                    ? 'selected'
+                    : ''
+                }>
+                Any
+              </option>
+              <option
+                value="with"
+                ${
+                  filters.relatedNotes
+                    === 'with'
+                    ? 'selected'
+                    : ''
+                }>
+                Has related notes
+              </option>
+              <option
+                value="without"
+                ${
+                  filters.relatedNotes
+                    === 'without'
+                    ? 'selected'
+                    : ''
+                }>
+                No related notes
+              </option>
+            </select>
+          </label>
+
+          <label class="notes-filter-field">
+            Collections
+            <select
+              data-notes-filter-input="collections">
+              <option
+                value="any"
+                ${
+                  filters.collections
+                    === 'any'
+                    ? 'selected'
+                    : ''
+                }>
+                Any
+              </option>
+              <option
+                value="with"
+                ${
+                  filters.collections
+                    === 'with'
+                    ? 'selected'
+                    : ''
+                }>
+                In a collection
+              </option>
+              <option
+                value="without"
+                ${
+                  filters.collections
+                    === 'without'
+                    ? 'selected'
+                    : ''
+                }>
+                No collection
+              </option>
+            </select>
+          </label>
+        </div>
+
+        <div class="notes-filter-popover-footer">
+          <button
+            class="button secondary"
+            type="button"
+            data-notes-filter-reset>
+            Reset
+          </button>
+
+          <button
+            class="button primary"
+            type="button"
+            data-notes-filter-apply>
+            Apply filters
+          </button>
+        </div>
+      `;
+
+      document.body.appendChild(
+        menu
+      );
+
+      const menuRect =
+        menu.getBoundingClientRect();
+
+      menu.style.top =
+        `${
+          Math.max(
+            12,
+            Math.min(
+              rect.bottom + 6,
+              window.innerHeight
+              - menuRect.height
+              - 12
+            )
+          )
+        }px`;
+
+      menu
+        .querySelector(
+          '[data-notes-filter-reset]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            state.notesFilters = {
+              linkedRecords:
+                'any',
+
+              relatedNotes:
+                'any',
+
+              collections:
+                'any'
+            };
+
+            closeMenu();
+            renderNotes();
+          }
+        );
+
+      menu
+        .querySelector(
+          '[data-notes-filter-apply]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            state.notesFilters = {
+              linkedRecords:
+                menu
+                  .querySelector(
+                    '[data-notes-filter-input="linkedRecords"]'
+                  )
+                  ?.value
+                || 'any',
+
+              relatedNotes:
+                menu
+                  .querySelector(
+                    '[data-notes-filter-input="relatedNotes"]'
+                  )
+                  ?.value
+                || 'any',
+
+              collections:
+                menu
+                  .querySelector(
+                    '[data-notes-filter-input="collections"]'
+                  )
+                  ?.value
+                || 'any'
+            };
+
+            closeMenu();
+            renderNotes();
+          }
+        );
+
+      bindMenuLifecycle(
+        anchor
+      );
+    }
+
+    function notesSortLabel() {
+      return {
+        updated:
+          'Updated',
+
+        title:
+          'Title',
+
+        created:
+          'Created'
+      }[state.notesSort]
+      || 'Updated';
+    }
+
+    function openNotesSortMenu(
+      anchor
+    ) {
+      closeMenu();
+
+      const rect =
+        anchor.getBoundingClientRect();
+
+      const menu =
+        document.createElement(
+          'div'
+        );
+
+      menu.className =
+        'menu-popover notes-sort-popover';
+
+      menu.id =
+        'projectMenu';
+
+      menu.style.top =
+        `${rect.bottom + 6}px`;
+
+      menu.style.left =
+        `${
+          Math.max(
+            12,
+            rect.right - 190
+          )
+        }px`;
+
+      const options = [
+        [
+          'updated',
+          'Updated'
+        ],
+        [
+          'title',
+          'Title'
+        ],
+        [
+          'created',
+          'Created'
+        ]
+      ];
+
+      menu.innerHTML =
+        options
+          .map(([
+            value,
+            label
+          ]) => `
+            <button
+              class="${
+                state.notesSort
+                  === value
+                  ? 'active'
+                  : ''
+              }"
+              type="button"
+              data-notes-sort="${escapeHtml(
+                value
+              )}">
+              <span>
+                ${escapeHtml(label)}
+              </span>
+              ${
+                state.notesSort
+                  === value
+                  ? `
+                    <span
+                      class="notes-menu-check"
+                      aria-hidden="true">
+                      ${icon.check}
+                    </span>
+                  `
+                  : ''
+              }
+            </button>
+          `)
+          .join('');
+
+      document.body.appendChild(
+        menu
+      );
+
+      menu
+        .querySelectorAll(
+          '[data-notes-sort]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              state.notesSort =
+                button.dataset
+                  .notesSort;
+
+              closeMenu();
+              renderNotes();
+            }
+          );
+        });
+
+      bindMenuLifecycle(
+        anchor
+      );
     }
 
     function formatConnectedNoteMetadata(
@@ -53489,7 +54250,7 @@
     ) {
       return `
         <div
-          class="notes-list-table"
+          class="notes-list"
           role="list">
 
           ${list
@@ -53570,20 +54331,28 @@
               ${escapeHtml(
                 noteExcerpt(
                   note,
-                  150
+                  180
                 )
                 || 'No note content'
               )}
             </span>
 
-            <span
-              class="notes-row-metadata"
-              title="${escapeHtml(
-                metadata
-              )}">
-              ${escapeHtml(
-                metadata
-              )}
+            <span class="notes-row-footer">
+              <span class="notes-row-collections">
+                ${renderNoteBrowserCollectionChips(
+                  note
+                )}
+              </span>
+
+              <span
+                class="notes-row-metadata"
+                title="${escapeHtml(
+                  metadata
+                )}">
+                ${escapeHtml(
+                  metadata
+                )}
+              </span>
             </span>
           </button>
 
@@ -53664,20 +54433,15 @@
             class="notes-right-rail"
             aria-label="Collapsed note editor">
             <button
-              class="notes-icon-button"
+              class="notes-editor-restore"
               type="button"
               id="notesToggleRight"
               aria-expanded="false"
               aria-controls="notesRightPane"
-              aria-label="Show editor">
-              ${icon.collapse}
+              aria-label="Show note editor"
+              title="Show note editor">
+              ${icon.doublechevronSidebar}
             </button>
-
-            <div class="notes-rail-title">
-              ${escapeHtml(
-                note.title
-              )}
-            </div>
           </aside>
         `;
       }
@@ -53689,11 +54453,11 @@
           role="separator"
           aria-orientation="vertical"
           aria-label="Resize notes browser"
-          aria-valuemin="320"
-          aria-valuemax="520"
+          aria-valuemin="360"
+          aria-valuemax="600"
           aria-valuenow="${Math.round(
             state.notesBrowserWidth
-            || 360
+            || 440
           )}"
           tabindex="0">
         </div>
@@ -53709,55 +54473,218 @@
       `;
     }
 
+    
+
+    function noteEditorSectionIsOpen(
+      id
+    ) {
+      return (
+        state.notesEditorSections?.[
+          id
+        ] !== false
+      );
+    }
+
     function renderNoteEditorSection({
+      id,
       title,
       meta = '',
       action = '',
       body
     }) {
       return `
-        <section class="notes-editor-section">
-          <header
-            class="
-              notes-editor-section-head
-            ">
+        <div
+          class="notes-panel-section"
+          data-note-editor-section="${escapeHtml(
+            id
+          )}">
+          ${renderInspectorSection(
+            id,
+            title,
+            meta,
+            body,
+            action,
+            {
+              open:
+                noteEditorSectionIsOpen(
+                  id
+                ),
 
-            <div
-              class="
-                notes-editor-section-title
-              ">
+              toggleAttribute:
+                'data-note-editor-section-toggle',
 
-              <h3>
-                ${escapeHtml(title)}
-              </h3>
+              sectionId:
+                `noteEditorSection-${
+                  id
+                }`,
 
-              ${
-                meta
-                  ? `
-                    <span>
-                      ${escapeHtml(meta)}
-                    </span>
-                  `
-                  : ''
-              }
-            </div>
+              inlineAction:
+                Boolean(action),
 
-            ${action}
-          </header>
-
-          <div
-            class="
-              notes-editor-section-body
-            ">
-            ${body}
-          </div>
-        </section>
+              alwaysShowAction:
+                Boolean(action)
+            }
+          )}
+        </div>
       `;
+    }
+
+    function renderNoteSummaryChips(
+      note
+    ) {
+      const items =
+        noteEntityCountItems(
+          note
+        )
+          .map(item => ({
+            sectionKey:
+              item.config.sectionKey,
+
+            tone:
+              item.config.chipTone,
+
+            iconSvg:
+              item.config.iconSvg,
+
+            count:
+              item.count,
+
+            label:
+              item.count === 1
+                ? item.config.singular
+                : item.config.plural
+          }));
+
+      const relatedCount =
+        new Set(
+          note.relatedNoteIds || []
+        ).size;
+
+      if (relatedCount) {
+        items.push({
+          sectionKey:
+            'related',
+
+          tone:
+            'related',
+
+          iconSvg:
+            icon.note,
+
+          count:
+            relatedCount,
+
+          label:
+            relatedCount === 1
+              ? 'note'
+              : 'notes'
+        });
+      }
+
+      if (!items.length) {
+        return '';
+      }
+
+      return `
+        <div
+          class="notes-summary-chips"
+          aria-label="Note connections">
+          ${items
+            .map(item => `
+              <button
+                class="
+                  notes-summary-chip
+                  ${escapeHtml(
+                    item.tone
+                  )}
+                "
+                type="button"
+                data-note-summary-section="${escapeHtml(
+                  item.sectionKey
+                )}"
+                aria-label="Show ${item.count} ${escapeHtml(
+                  item.label
+                )}">
+                ${item.iconSvg}
+                <span>
+                  ${item.count}
+                  ${escapeHtml(
+                    item.label
+                  )}
+                </span>
+              </button>
+            `)
+            .join('')}
+        </div>
+      `;
+    }
+
+    function noteBodyWordCount(
+      note
+    ) {
+      const body =
+        String(
+          note?.body || ''
+        )
+          .trim();
+
+      return body
+        ? body
+            .split(/\s+/)
+            .length
+        : 0;
+    }
+
+    function formatNoteInfoDate(
+      value
+    ) {
+      const timestamp =
+        Date.parse(
+          value || ''
+        );
+
+      if (
+        !Number.isFinite(
+          timestamp
+        )
+      ) {
+        return 'Unknown';
+      }
+
+      return new Intl
+        .DateTimeFormat(
+          undefined,
+          {
+            dateStyle:
+              'medium',
+
+            timeStyle:
+              'short'
+          }
+        )
+        .format(
+          new Date(
+            timestamp
+          )
+        );
     }
 
     function renderNoteEditorContent(
       note
     ) {
+      const linkedSections =
+        Object
+          .keys(
+            NOTE_ENTITY_TYPES
+          )
+          .map(type =>
+            renderNoteLinkedEntitySection(
+              note,
+              type
+            )
+          )
+          .join('');
+
       return `
         <article class="notes-editor-card">
           <header class="notes-editor-header">
@@ -53772,10 +54699,19 @@
                   ${icon.arrow}
                 </button>
 
-                <span class="notes-editor-kicker">
-                  Note
-                </span>
+                <button
+                  class="notes-editor-collapse"
+                  type="button"
+                  id="notesToggleRight"
+                  aria-expanded="true"
+                  aria-controls="notesRightPane"
+                  aria-label="Collapse note editor"
+                  title="Collapse note editor">
+                  ${icon.doublechevronSidebar}
+                </button>
+              </div>
 
+              <div class="notes-editor-actions">
                 <span
                   class="notes-save-status ${
                     state.notesSaveStatus
@@ -53788,9 +54724,7 @@
                     state.notesSaveStatus
                   )}
                 </span>
-              </div>
 
-              <div class="notes-editor-actions">
                 <button
                   class="notes-icon-button ${
                     note.favorite
@@ -53822,17 +54756,6 @@
                   title="More note actions">
                   ${icon.more}
                 </button>
-
-                <button
-                  class="notes-icon-button notes-editor-collapse"
-                  type="button"
-                  id="notesToggleRight"
-                  aria-expanded="true"
-                  aria-controls="notesRightPane"
-                  aria-label="Collapse editor"
-                  title="Collapse editor">
-                  ${icon.collapse}
-                </button>
               </div>
             </div>
 
@@ -53845,19 +54768,13 @@
               placeholder="Untitled note"
               aria-label="Note title">
 
-            ${renderNoteCollectionsSection(
+            ${renderNoteSummaryChips(
               note
             )}
           </header>
 
           <div class="notes-editor-body">
             <div class="notes-editor-writing">
-              <label
-                class="notes-editor-field-label"
-                for="notesBodyInput">
-                Body
-              </label>
-
               <textarea
                 class="notes-body-input"
                 id="notesBodyInput"
@@ -53866,17 +54783,25 @@
                 )}</textarea>
             </div>
 
-            ${renderNoteChecklistSection(
-              note
-            )}
+            <div class="notes-editor-sections">
+              ${renderNoteCollectionsSection(
+                note
+              )}
 
-            ${renderNoteLinkedContextSection(
-              note
-            )}
+              ${renderNoteChecklistSection(
+                note
+              )}
 
-            ${renderNoteRelatedSection(
-              note
-            )}
+              ${linkedSections}
+
+              ${renderNoteRelatedSection(
+                note
+              )}
+
+              ${renderNoteInfoSection(
+                note
+              )}
+            </div>
           </div>
         </article>
       `;
@@ -53894,60 +54819,77 @@
           }
         );
 
-      const chips =
+      const rows =
         collections.length
-          ? collections
-              .map(collection => `
-                <span class="notes-chip">
-                  <span
-                    class="notes-chip-label"
-                    title="${escapeHtml(
-                      collection.name
-                    )}">
-                    ${escapeHtml(
-                      collection.name
-                    )}
-                  </span>
+          ? `
+            <div class="notes-collection-assignment-list">
+              ${collections
+                .map(collection => `
+                  <div class="notes-collection-assignment">
+                    ${icon.folder}
 
-                  <button
-                    class="notes-chip-remove"
-                    type="button"
-                    data-note-remove-collection="${escapeHtml(
-                      collection.id
-                    )}"
-                    aria-label="Remove ${escapeHtml(
-                      collection.name
-                    )} from note"
-                    title="Remove from collection">
-                    ${icon.close}
-                  </button>
-                </span>
-              `)
-              .join('')
+                    <span
+                      class="notes-collection-assignment-name"
+                      title="${escapeHtml(
+                        collection.name
+                      )}">
+                      ${escapeHtml(
+                        collection.name
+                      )}
+                    </span>
+
+                    <button
+                      class="notes-collection-remove"
+                      type="button"
+                      data-note-remove-collection="${escapeHtml(
+                        collection.id
+                      )}"
+                      aria-label="Remove ${escapeHtml(
+                        collection.name
+                      )} from this note"
+                      title="Remove from this note">
+                      ${icon.close}
+                    </button>
+                  </div>
+                `)
+                .join('')}
+            </div>
+          `
           : `
             <span class="notes-section-empty">
-              No collections
+              This note is not in a collection.
             </span>
           `;
 
-      return `
-        <div class="notes-editor-meta">
-          <span class="notes-editor-meta-label">
-            Collections
-          </span>
+      return renderNoteEditorSection({
+        id:
+          'collections',
 
-          <div class="notes-chip-list">
-            ${chips}
-          </div>
+        title:
+          'Collections',
 
+        meta:
+          `${collections.length} ${
+            collections.length === 1
+              ? 'collection'
+              : 'collections'
+          }`,
+
+        action: `
           <button
-            class="button ghost"
+            class="link"
             type="button"
             id="notesManageCollections">
-            Manage
+            ${renderPanelButtonLabel(
+              icon.plus,
+              'Add to collection'
+            )}
           </button>
-        </div>
-      `;
+        `,
+
+        body:
+          rows
+      });
     }
 
     
@@ -53958,102 +54900,93 @@
       const items =
         note.checklist || [];
 
-      if (!items.length) {
-        return `
-          <section class="notes-editor-section">
-            <div class="notes-optional-row">
-              <div>
-                <strong>Checklist</strong>
-                <div class="notes-optional-copy">
-                  Add lightweight research steps when this note needs them.
-                </div>
-              </div>
-
-              <button
-                class="button secondary"
-                type="button"
-                id="notesAddChecklistItem">
-                ${icon.plus}
-                Add checklist
-              </button>
-            </div>
-          </section>
-        `;
-      }
-
       const completed =
         items.filter(
           item => item.done
         ).length;
 
-      const rows = `
-        <div class="notes-checklist-list">
-          ${items
-            .map(item => `
-              <div
-                class="notes-checklist-row ${
-                  item.done
-                    ? 'done'
-                    : ''
-                }">
-                <input
-                  type="checkbox"
-                  data-note-checklist-toggle="${escapeHtml(
-                    item.id
-                  )}"
-                  aria-label="Complete ${escapeHtml(
-                    item.text
-                  )}"
-                  ${
-                    item.done
-                      ? 'checked'
-                      : ''
-                  }>
+      const rows =
+        items.length
+          ? `
+            <div class="notes-checklist-list">
+              ${items
+                .map(item => `
+                  <div
+                    class="notes-checklist-row ${
+                      item.done
+                        ? 'done'
+                        : ''
+                    }">
+                    <input
+                      type="checkbox"
+                      data-note-checklist-toggle="${escapeHtml(
+                        item.id
+                      )}"
+                      aria-label="Complete ${escapeHtml(
+                        item.text
+                      )}"
+                      ${
+                        item.done
+                          ? 'checked'
+                          : ''
+                      }>
 
-                <input
-                  class="notes-checklist-text"
-                  type="text"
-                  maxlength="240"
-                  data-note-checklist-text="${escapeHtml(
-                    item.id
-                  )}"
-                  value="${escapeHtml(
-                    item.text
-                  )}"
-                  aria-label="Checklist item">
+                    <input
+                      class="notes-checklist-text"
+                      type="text"
+                      maxlength="240"
+                      data-note-checklist-text="${escapeHtml(
+                        item.id
+                      )}"
+                      value="${escapeHtml(
+                        item.text
+                      )}"
+                      aria-label="Checklist item">
 
-                <button
-                  class="notes-checklist-delete"
-                  type="button"
-                  data-note-checklist-delete="${escapeHtml(
-                    item.id
-                  )}"
-                  aria-label="Delete checklist item"
-                  title="Delete checklist item">
-                  ${icon.trash}
-                </button>
-              </div>
-            `)
-            .join('')}
-        </div>
-      `;
+                    <button
+                      class="notes-checklist-delete"
+                      type="button"
+                      data-note-checklist-delete="${escapeHtml(
+                        item.id
+                      )}"
+                      aria-label="Delete checklist item"
+                      title="Delete checklist item">
+                      ${icon.trash}
+                    </button>
+                  </div>
+                `)
+                .join('')}
+            </div>
+          `
+          : `
+            <span class="notes-section-empty">
+              No checklist items.
+            </span>
+          `;
 
       return renderNoteEditorSection({
+        id:
+          'checklist',
+
         title:
           'Checklist',
 
         meta:
-          `${completed} of ${
-            items.length
-          } complete`,
+          items.length
+            ? `${completed} of ${
+                items.length
+              } complete`
+            : 'No items',
 
         action: `
           <button
-            class="button secondary"
+            class="link"
             type="button"
             id="notesAddChecklistItem">
-            ${icon.plus}
-            Add item
+            ${renderPanelButtonLabel(
+              icon.plus,
+              'Add item'
+            )}
           </button>
         `,
 
@@ -54062,22 +54995,23 @@
       });
     }
 
-    function renderNoteLinkedContextGroup(
+    function renderNoteLinkedEntitySection(
       note,
       type
     ) {
       const config =
-        getNoteEntityConfig(type);
+        getNoteEntityConfig(
+          type
+        );
 
       if (!config) {
         return '';
       }
 
-      const ids =
-        note[config.field] || [];
-
       const records =
-        ids
+        (
+          note[config.field] || []
+        )
           .map(id =>
             noteEntityById(
               type,
@@ -54087,11 +55021,6 @@
           )
           .filter(Boolean);
 
-      const open =
-        state.notesOpenBlocks[
-          config.openKey
-        ] !== false;
-
       const countLabel =
         `${records.length} ${
           records.length === 1
@@ -54099,184 +55028,108 @@
             : config.plural
         }`;
 
-      const buttonId =
-        `noteContext-${
-          note.id
-        }-${config.openKey}-button`;
-
-      const panelId =
-        `noteContext-${
-          note.id
-        }-${config.openKey}-panel`;
-
-      return `
-        <section class="notes-context-group">
-          <h4 style="margin:0">
-            <button
-              class="notes-context-toggle"
-              type="button"
-              id="${escapeHtml(
-                buttonId
-              )}"
-              data-note-context-toggle="${escapeHtml(
-                config.openKey
-              )}"
-              aria-expanded="${open}"
-              aria-controls="${escapeHtml(
-                panelId
-              )}">
-              <span>
-                ${escapeHtml(
-                  config.title
-                )}
-              </span>
-
-              <span class="notes-context-toggle-count">
-                ${escapeHtml(
-                  countLabel
-                )}
-              </span>
-
-              <span
-                class="notes-context-toggle-icon ${
-                  open ? 'open' : ''
-                }"
-                aria-hidden="true">
-                ${icon.chevron}
-              </span>
-            </button>
-          </h4>
-
-          ${
-            open
-              ? `
-                <div
-                  class="notes-context-body"
-                  id="${escapeHtml(
-                    panelId
-                  )}"
-                  aria-labelledby="${escapeHtml(
-                    buttonId
-                  )}">
-                  ${
-                    records.length
-                      ? `
-                        <div class="notes-linked-list">
-                          ${records
-                            .map(record => `
-                              <div class="notes-linked-row">
-                                <button
-                                  class="notes-linked-main"
-                                  type="button"
-                                  data-note-linked-open
-                                  data-note-linked-type="${escapeHtml(
-                                    type
-                                  )}"
-                                  data-note-linked-id="${escapeHtml(
-                                    record.id
-                                  )}">
-                                  <strong>
-                                    ${escapeHtml(
-                                      noteEntityLabel(
-                                        type,
-                                        record
-                                      )
-                                    )}
-                                  </strong>
-                                  <span>
-                                    ${escapeHtml(
-                                      noteEntityMeta(
-                                        type,
-                                        record
-                                      )
-                                    )}
-                                  </span>
-                                </button>
-
-                                <div class="notes-linked-actions">
-                                  <button
-                                    class="notes-linked-action danger"
-                                    type="button"
-                                    data-note-linked-remove
-                                    data-note-linked-type="${escapeHtml(
-                                      type
-                                    )}"
-                                    data-note-linked-id="${escapeHtml(
-                                      record.id
-                                    )}"
-                                    aria-label="Remove link"
-                                    title="Remove link">
-                                    ${icon.close}
-                                  </button>
-                                </div>
-                              </div>
-                            `)
-                            .join('')}
-                        </div>
-                      `
-                      : `
-                        <span class="notes-section-empty">
-                          Nothing linked yet
-                        </span>
-                      `
-                  }
-
-                  <div>
+      const rows =
+        records.length
+          ? `
+            <div class="notes-linked-list">
+              ${records
+                .map(record => `
+                  <div class="notes-linked-row">
                     <button
-                      class="button secondary"
+                      class="notes-linked-main"
                       type="button"
-                      data-note-manage-links="${escapeHtml(
+                      data-note-linked-open
+                      data-note-linked-type="${escapeHtml(
                         type
+                      )}"
+                      data-note-linked-id="${escapeHtml(
+                        record.id
                       )}">
-                      ${icon.plus}
-                      Manage ${escapeHtml(
-                        config.title
-                          .toLowerCase()
-                      )}
-                    </button>
-                  </div>
-                </div>
-              `
-              : ''
-          }
-        </section>
-      `;
-    }
+                      <strong>
+                        ${escapeHtml(
+                          noteEntityLabel(
+                            type,
+                            record
+                          )
+                        )}
+                      </strong>
 
-    function renderNoteLinkedContextSection(
-      note
-    ) {
-      const types = [
-        'person',
-        'place',
-        'event',
-        'source',
-        'archiveFile'
-      ];
+                      <span>
+                        ${escapeHtml(
+                          noteEntityMeta(
+                            type,
+                            record
+                          )
+                        )}
+                      </span>
+                    </button>
+
+                    <div class="notes-linked-actions">
+                      <button
+                        class="
+                          notes-linked-action
+                          danger
+                        "
+                        type="button"
+                        data-note-linked-remove
+                        data-note-linked-type="${escapeHtml(
+                          type
+                        )}"
+                        data-note-linked-id="${escapeHtml(
+                          record.id
+                        )}"
+                        aria-label="Remove ${escapeHtml(
+                          config.singular
+                        )} link"
+                        title="Remove link">
+                        ${icon.close}
+                      </button>
+                    </div>
+                  </div>
+                `)
+                .join('')}
+            </div>
+          `
+          : `
+            <span class="notes-section-empty">
+              No ${escapeHtml(
+                config.plural
+              )} linked to this note.
+            </span>
+          `;
 
       return renderNoteEditorSection({
+        id:
+          config.sectionKey,
+
         title:
-          'Research context',
+          config.title,
 
         meta:
-          `${noteExternalEntityCount(
-            note
-          )} links`,
+          countLabel,
 
-        body: `
-          <div class="notes-context-list">
-            ${types
-              .map(type =>
-                renderNoteLinkedContextGroup(
-                  note,
-                  type
-                )
-              )
-              .join('')}
-          </div>
-        `
+        action: `
+          <button
+            class="link"
+            type="button"
+            data-note-manage-links="${escapeHtml(
+              type
+            )}">
+            ${renderPanelButtonLabel(
+              icon.plus,
+              `Add ${
+                config.singular
+              }`
+            )}
+          </button>
+        `,
+
+        body:
+          rows
       });
     }
+
+    
 
     function renderNoteRelatedSection(
       note
@@ -54311,6 +55164,7 @@
                           item.title
                         )}
                       </strong>
+
                       <span>
                         ${
                           item.archived
@@ -54326,7 +55180,10 @@
 
                     <div class="notes-linked-actions">
                       <button
-                        class="notes-linked-action danger"
+                        class="
+                          notes-linked-action
+                          danger
+                        "
                         type="button"
                         data-note-related-remove="${escapeHtml(
                           item.id
@@ -54343,11 +55200,14 @@
           `
           : `
             <span class="notes-section-empty">
-              No related notes
+              No related notes.
             </span>
           `;
 
       return renderNoteEditorSection({
+        id:
+          'related',
+
         title:
           'Related notes',
 
@@ -54360,15 +55220,77 @@
 
         action: `
           <button
-            class="button secondary"
+            class="link"
             type="button"
             id="notesManageRelated">
-            Manage related notes
+            ${renderPanelButtonLabel(
+              icon.plus,
+              'Add note'
+            )}
           </button>
         `,
 
         body:
           rows
+      });
+    }
+
+    function renderNoteInfoSection(
+      note
+    ) {
+      const body =
+        String(
+          note.body || ''
+        );
+
+      return renderNoteEditorSection({
+        id:
+          'info',
+
+        title:
+          'Note info',
+
+        body: `
+          <div class="notes-info-grid">
+            <div class="notes-info-row">
+              <span>Created</span>
+              <strong>
+                ${escapeHtml(
+                  formatNoteInfoDate(
+                    note.createdAt
+                  )
+                )}
+              </strong>
+            </div>
+
+            <div class="notes-info-row">
+              <span>Updated</span>
+              <strong>
+                ${escapeHtml(
+                  formatNoteInfoDate(
+                    note.updatedAt
+                  )
+                )}
+              </strong>
+            </div>
+
+            <div class="notes-info-row">
+              <span>Words</span>
+              <strong>
+                ${noteBodyWordCount(
+                  note
+                )}
+              </strong>
+            </div>
+
+            <div class="notes-info-row">
+              <span>Characters</span>
+              <strong>
+                ${body.length}
+              </strong>
+            </div>
+          </div>
+        `
       });
     }
 
@@ -55489,6 +56411,18 @@
             }
           );
         });
+    
+      root
+        .querySelector(
+          '[data-notes-tip]'
+        )
+        ?.addEventListener(
+          'click',
+          () =>
+            showToast(
+              'Notes can link directly to people, places, events, sources and files.'
+            )
+        );
     }
 
     function touchNote(
@@ -55601,6 +56535,11 @@
           '.notes-row-excerpt'
         );
 
+      const collections =
+        row.querySelector(
+          '.notes-row-collections'
+        );
+
       const metadata =
         row.querySelector(
           '.notes-row-metadata'
@@ -55628,9 +56567,16 @@
         excerpt.textContent =
           noteExcerpt(
             note,
-            150
+            180
           )
           || 'No note content';
+      }
+
+      if (collections) {
+        collections.innerHTML =
+          renderNoteBrowserCollectionChips(
+            note
+          );
       }
 
       if (metadata) {
@@ -56090,16 +57036,58 @@
 
       main
         .querySelector(
-          '#notesSort'
+          '#notesFilterButton'
         )
         ?.addEventListener(
-          'change',
+          'click',
           event => {
-            state.notesSort =
-              event.target.value;
-            renderNotes();
+            event.stopPropagation();
+            openNotesFilterMenu(
+              event.currentTarget
+            );
           }
         );
+
+      main
+        .querySelector(
+          '#notesSortButton'
+        )
+        ?.addEventListener(
+          'click',
+          event => {
+            event.stopPropagation();
+            openNotesSortMenu(
+              event.currentTarget
+            );
+          }
+        );
+
+      main
+        .querySelectorAll(
+          '[data-clear-notes-filter]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              const key =
+                button.dataset
+                  .clearNotesFilter;
+
+              if (
+                !state.notesFilters
+                || !(key in state.notesFilters)
+              ) {
+                return;
+              }
+
+              state.notesFilters[key] =
+                'any';
+
+              renderNotes();
+            }
+          );
+        });
 
       main
         .querySelector(
@@ -56266,9 +57254,9 @@
         value => {
           const next =
             Math.max(
-              320,
+              360,
               Math.min(
-                520,
+                600,
                 value
               )
             );
@@ -56380,7 +57368,7 @@
             (
               Number(
                 state.notesBrowserWidth
-              ) || 360
+              ) || 440
             )
             + (
                 event.key
@@ -56659,26 +57647,85 @@
 
       main
         .querySelectorAll(
-          '[data-note-context-toggle]'
+          '[data-note-editor-section-toggle]'
         )
         .forEach(button => {
           button.addEventListener(
             'click',
             () => {
-              const stateKey =
+              const sectionKey =
                 button.dataset
-                  .noteContextToggle;
+                  .noteEditorSectionToggle;
 
-              state.notesOpenBlocks[
-                stateKey
+              state.notesEditorSections[
+                sectionKey
               ] =
-                !(
-                  state.notesOpenBlocks[
-                    stateKey
-                  ] !== false
+                !noteEditorSectionIsOpen(
+                  sectionKey
                 );
 
-              renderNotesPreservingInteraction();
+              renderNotesPreservingInteraction({
+                focusSelector:
+                  `[data-note-editor-section-toggle="${
+                    CSS.escape(
+                      sectionKey
+                    )
+                  }"]`
+              });
+            }
+          );
+        });
+
+      main
+        .querySelectorAll(
+          '[data-note-summary-section]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              const sectionKey =
+                button.dataset
+                  .noteSummarySection;
+
+              state.notesEditorSections[
+                sectionKey
+              ] =
+                true;
+
+              const selector =
+                `[data-note-editor-section="${
+                  CSS.escape(
+                    sectionKey
+                  )
+                }"]`;
+
+              renderNotesPreservingInteraction({
+                focusSelector:
+                  `[data-note-editor-section-toggle="${
+                    CSS.escape(
+                      sectionKey
+                    )
+                  }"]`
+              });
+
+              requestAnimationFrame(
+                () =>
+                  requestAnimationFrame(
+                    () =>
+                      main
+                        .querySelector(
+                          selector
+                        )
+                        ?.scrollIntoView({
+                          block:
+                            'start',
+
+                          behavior:
+                            'smooth'
+                        })
+                  )
+              );
             }
           );
         });
@@ -56955,6 +58002,69 @@
               note.id
             )
           );
+      }
+
+      const filters =
+        state.notesFilters || {};
+
+      if (
+        filters.linkedRecords
+        && filters.linkedRecords
+          !== 'any'
+      ) {
+        list =
+          list.filter(note => {
+            const hasLinks =
+              noteExternalEntityCount(
+                note
+              ) > 0;
+
+            return filters
+              .linkedRecords
+              === 'with'
+                ? hasLinks
+                : !hasLinks;
+          });
+      }
+
+      if (
+        filters.relatedNotes
+        && filters.relatedNotes
+          !== 'any'
+      ) {
+        list =
+          list.filter(note => {
+            const hasRelated =
+              (
+                note.relatedNoteIds || []
+              ).length > 0;
+
+            return filters
+              .relatedNotes
+              === 'with'
+                ? hasRelated
+                : !hasRelated;
+          });
+      }
+
+      if (
+        filters.collections
+        && filters.collections
+          !== 'any'
+      ) {
+        list =
+          list.filter(note => {
+            const hasCollections =
+              (
+                note.collectionIds || []
+              ).length > 0;
+
+            return filters
+              .collections
+              === 'with'
+                ? hasCollections
+                : !hasCollections;
+          });
       }
 
       const query =
@@ -58086,6 +59196,17 @@
 
       state.notesSaveStatus =
         'Saved';
+
+      state.notesFilters = {
+        linkedRecords:
+          'any',
+
+        relatedNotes:
+          'any',
+
+        collections:
+          'any'
+      };
 
       renderNotes();
 
@@ -68361,6 +69482,17 @@
 
         state.notesSaveStatus =
           'Saved';
+
+        state.notesFilters = {
+          linkedRecords:
+            'any',
+
+          relatedNotes:
+            'any',
+
+          collections:
+            'any'
+        };
 
         resetAlbumsPage();
         state.placesView =
