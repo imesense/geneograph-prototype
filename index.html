@@ -1663,20 +1663,291 @@
       transform: translateY(1px);
     }
     .project-desc { max-width: 780px; color: var(--text-secondary); font-size: 16px; margin-bottom: var(--space-4); }
-    .stat-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-    .chip {
+    /* Shared entity and count chips */
+    .app-chip-row {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .app-chip {
+      --app-chip-border: rgba(255,255,255,.1);
+      --app-chip-background: rgba(255,255,255,.055);
+      --app-chip-color: var(--text-secondary);
+
+      min-height: 30px;
+      padding: 0 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
       display: inline-flex;
       align-items: center;
-      min-height: 28px;
-      padding: 0 var(--space-2);
-      border-radius: 6px;
-      background: #1A201F;
-      color: var(--brand-green-300);
-      font-weight: 800;
+      justify-content: center;
+      border: 1px solid var(--app-chip-border);
+      background: var(--app-chip-background);
+      color: var(--app-chip-color);
+      font: inherit;
+      white-space: nowrap;
     }
-    .chip.red { background: #3A1E1E; color: #D8898A; }
-    .chip.amber { background: #3A2B16; color: var(--amber); }
-    .chip.purple { background: #252538; color: #BCA6FF; }
+
+    button.app-chip,
+    a.app-chip {
+      appearance: none;
+      text-decoration: none;
+      cursor: pointer;
+
+      transition:
+        border-color var(--ease),
+        background var(--ease),
+        color var(--ease),
+        filter var(--ease),
+        transform var(--ease),
+        box-shadow var(--ease);
+    }
+
+    button.app-chip:hover,
+    a.app-chip:hover {
+      filter: brightness(1.1);
+
+      box-shadow:
+        inset 0 0 0 1px
+        currentColor;
+    }
+
+    button.app-chip:active,
+    a.app-chip:active {
+      transform: translateY(1px);
+    }
+
+    button.app-chip:focus-visible,
+    a.app-chip:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+    }
+
+    button.app-chip:disabled,
+    .app-chip[aria-disabled="true"] {
+      opacity: .55;
+      cursor: not-allowed;
+      filter: none;
+      transform: none;
+    }
+
+    .app-chip.is-active,
+    .app-chip[aria-pressed="true"],
+    .app-chip[aria-current="true"] {
+      box-shadow: inset 0 0 0 1px currentColor;
+      filter: brightness(1.08);
+    }
+
+    .app-chip--people {
+      --app-chip-border:
+        rgba(47, 174, 116, .28);
+
+      --app-chip-background:
+        rgba(47, 174, 116, .18);
+
+      --app-chip-color:
+        var(--brand-green-300);
+
+      --app-chip-on-accent-border:
+        rgba(112, 226, 163, .42);
+
+      --app-chip-on-accent-color:
+        #70E2A3;
+    }
+
+    .app-chip--places {
+      --app-chip-border:
+        rgba(76, 183, 183, .32);
+
+      --app-chip-background:
+        rgba(76, 183, 183, .18);
+
+      --app-chip-color:
+        #4CB7B7;
+
+      --app-chip-on-accent-border:
+        rgba(103, 207, 207, .42);
+
+      --app-chip-on-accent-color:
+        #73D0D0;
+    }
+
+    .app-chip--events {
+      --app-chip-border:
+        rgba(93, 173, 236, .3);
+
+      --app-chip-background:
+        rgba(93, 173, 236, .17);
+
+      --app-chip-color:
+        #8BC8F5;
+
+      --app-chip-on-accent-border:
+        rgba(139, 200, 245, .42);
+
+      --app-chip-on-accent-color:
+        #A7D6F8;
+    }
+
+    .app-chip--photos,
+    .app-chip--albums {
+      --app-chip-border:
+        rgba(212, 107, 107, .32);
+
+      --app-chip-background:
+        rgba(212, 107, 107, .18);
+
+      --app-chip-color:
+        #E99A9A;
+
+      --app-chip-on-accent-border:
+        rgba(233, 154, 154, .42);
+
+      --app-chip-on-accent-color:
+        #F2AEAE;
+    }
+
+    .app-chip--sources {
+      --app-chip-border:
+        rgba(184, 148, 99, .38);
+
+      --app-chip-background:
+        rgba(92, 70, 43, .3);
+
+      --app-chip-color:
+        #D8BC96;
+
+      --app-chip-on-accent-border:
+        rgba(184, 148, 99, .48);
+
+      --app-chip-on-accent-color:
+        #E1C7A4;
+    }
+
+    .app-chip--files {
+      --app-chip-border:
+        rgba(212, 170, 107, .32);
+
+      --app-chip-background:
+        rgba(135, 94, 30, .26);
+
+      --app-chip-color:
+        #EAC27F;
+
+      --app-chip-on-accent-border:
+        rgba(234, 194, 127, .44);
+
+      --app-chip-on-accent-color:
+        #F1CE94;
+    }
+
+    .app-chip--notes,
+    .app-chip--related {
+      --app-chip-border:
+        rgba(141, 108, 232, .32);
+
+      --app-chip-background:
+        rgba(141, 108, 232, .18);
+
+      --app-chip-color:
+        #B9A1FF;
+
+      --app-chip-on-accent-border:
+        rgba(185, 161, 255, .44);
+
+      --app-chip-on-accent-color:
+        #CBB9FF;
+    }
+
+    .app-chip--neutral,
+    .app-chip--collection,
+    .app-chip--collections {
+      --app-chip-border:
+        rgba(255, 255, 255, .12);
+
+      --app-chip-background:
+        rgba(255, 255, 255, .06);
+
+      --app-chip-color:
+        var(--text-secondary);
+
+      --app-chip-on-accent-border:
+        rgba(255, 255, 255, .2);
+
+      --app-chip-on-accent-color:
+        #DCE4E0;
+    }
+
+    /* Person status chips */
+
+    .app-chip--living {
+      --app-chip-border:
+        rgba(98, 217, 154, .32);
+
+      --app-chip-background:
+        rgba(47, 174, 116, .17);
+
+      --app-chip-color:
+        var(--brand-green-300);
+    }
+
+    .app-chip--deceased {
+      --app-chip-border:
+        rgba(167, 177, 173, .24);
+
+      --app-chip-background:
+        rgba(167, 177, 173, .1);
+
+      --app-chip-color:
+        #B9C1BD;
+    }
+
+    .app-chip--unknown {
+      --app-chip-border:
+        rgba(212, 170, 107, .3);
+
+      --app-chip-background:
+        rgba(212, 170, 107, .15);
+
+      --app-chip-color:
+        #DFBA7D;
+    }
+
+    /*
+      Shared treatment for chips placed on
+      strong gradients and colored surfaces.
+    */
+
+    .app-chip-row--on-accent
+    .app-chip {
+      background:
+        rgba(7, 15, 12, .66);
+
+      box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, .04),
+        0 1px 2px
+        rgba(0, 0, 0, .18);
+    }
+
+    .app-chip-row--on-accent
+    button.app-chip:hover,
+    .app-chip-row--on-accent
+    a.app-chip:hover {
+      background:
+        rgba(7, 15, 12, .82);
+
+      box-shadow:
+        inset 0 0 0 1px
+        currentColor,
+        0 2px 5px
+        rgba(0, 0, 0, .2);
+    }
    
     .overview-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-5); }
     .activity-panel { min-height: 312px; }
@@ -3380,7 +3651,6 @@
     .person-summary { display: grid; grid-template-columns: 90px 1fr; gap: var(--space-3); align-items: start; }
     .person-summary-text { color: var(--text-secondary); font-size: 13px; }
     .person-summary-text strong { color: var(--text-primary); }
-    .person-chip-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
     .tree-person-hero {
       margin: var(--space-3);
       border: 1px solid rgba(98,217,154,.10);
@@ -3466,38 +3736,38 @@
     .tree-person-hero-tags {
       position: relative;
       z-index: 1;
+
       flex-wrap: nowrap;
       overflow-x: auto;
+
       margin-top: 0;
-      padding-bottom: 1px;
+      padding-bottom: 3px;
+
       scrollbar-width: none;
     }
-    .tree-person-hero-tags::-webkit-scrollbar { display: none; }
-    .tree-person-hero-tags .person-chip { flex: 0 0 auto; }
-    .person-chip { border-radius: 6px; padding: 4px 8px; background: #1A201F; color: var(--brand-green-300); font-size: 12px; font-weight: 800; }
-    .person-chip.red { background: #3A1E1E; color: #D8898A; }
-    .person-chip.amber { background: #3A2B16; color: var(--amber); }
-    .person-chip.purple { background: #252538; color: #bca6ff; }
+
+    .tree-person-hero-tags::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tree-person-hero-tags
+    .app-chip {
+      flex: 0 0 auto;
+    }
 
     .living-status-chip {
-      display: inline-flex;
-      align-items: center;
       gap: var(--space-2);
-      color: var(--brand-green-300);
     }
 
-    .living-status-chip.deceased {
-      color: var(--text-secondary);
-    }
-
-    .living-status-chip.unknown {
-      color: var(--amber);
-    }
-
-    .living-status-chip .add-person-status-dot {
+    .living-status-chip
+    .add-person-status-dot {
       width: 7px;
       height: 7px;
       flex: 0 0 7px;
+    }
+    .person-profile-chips {
+      margin-top:
+        var(--space-3);
     }
     .panel-section { border-bottom: 1px solid var(--border-default); padding: 0; }
     .panel-section-header {
@@ -12987,10 +13257,6 @@
       outline: 2px solid var(--brand-green-300);
       outline-offset: 2px;
     }
-    .notes-summary-chip:focus-visible {
-      outline: 2px solid currentColor;
-      outline-offset: 2px;
-    }
     .notes-row-menu { opacity: .62; }
     .notes-row:hover .notes-row-menu,
     .notes-row:focus-within .notes-row-menu { opacity: 1; }
@@ -13329,91 +13595,6 @@
       letter-spacing: -.035em;
     }
     .notes-title-input::placeholder { color: var(--text-tertiary); }
-    .notes-summary-chips {
-      min-width: 0;
-
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: var(--space-2);
-    }
-
-    /*
-      Uses the same geometry and weight
-      as the chips in Projects.
-    */
-    .notes-summary-chip {
-      min-height: 28px;
-      padding: 0 var(--space-2);
-
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-
-      border: 0;
-      border-radius: 6px;
-
-      background: #1A201F;
-      color: var(--brand-green-300);
-
-      font: inherit;
-      font-size: 13px;
-      font-weight: 800;
-      line-height: 1;
-      white-space: nowrap;
-
-      cursor: pointer;
-
-      transition:
-        background var(--ease),
-        color var(--ease),
-        filter var(--ease),
-        transform var(--ease);
-    }
-
-    .notes-summary-chip:hover {
-      filter: brightness(1.14);
-    }
-
-    .notes-summary-chip:active {
-      transform: translateY(1px);
-    }
-
-    /* People */
-    .notes-summary-chip.people {
-      background: #1A201F;
-      color: var(--brand-green-300);
-    }
-
-    /* Places */
-    .notes-summary-chip.places {
-      background: #173131;
-      color: #4CB7B7;
-    }
-
-    /* Events */
-    .notes-summary-chip.events {
-      background: #1B2C3A;
-      color: #7DB7EA;
-    }
-
-    /* Sources */
-    .notes-summary-chip.sources {
-      background: #332A20;
-      color: #B89463;
-    }
-
-    /* Files */
-    .notes-summary-chip.files {
-      background: #3A2B16;
-      color: var(--amber);
-    }
-
-    /* Related notes */
-    .notes-summary-chip.related {
-      background: #252538;
-      color: #BCA6FF;
-    }
 
     .notes-editor-body {
       padding: 0 var(--space-5) var(--space-6);
@@ -15837,131 +16018,6 @@
     .places-inspector-tags {
       margin-top:
         var(--space-2);
-
-      display:
-        flex;
-
-      flex-wrap:
-        wrap;
-
-      gap:
-        7px;
-    }
-
-    .places-inspector-tag {
-      min-height:
-        29px;
-
-      padding:
-        5px
-        8px;
-
-      border:
-        1px solid
-        transparent;
-
-      border-radius:
-        5px;
-
-      font:
-        inherit;
-
-      font-size:
-        12px;
-
-      font-weight:
-        600;
-
-      line-height:
-        1;
-
-      white-space:
-        nowrap;
-
-      cursor:
-        pointer;
-
-      transition:
-        border-color
-          var(--ease),
-        filter
-          var(--ease),
-        transform
-          var(--ease);
-    }
-
-    .places-inspector-tag:hover {
-      filter:
-        brightness(1.12);
-    }
-
-    .places-inspector-tag:active {
-      transform:
-        translateY(1px);
-    }
-
-    .places-inspector-tag:focus-visible {
-      outline:
-        2px solid
-        var(--brand-green-300);
-
-      outline-offset:
-        2px;
-    }
-
-    .places-inspector-tag.tone-people {
-      border-color:
-        rgba(47, 174, 116, .25);
-
-      background:
-        rgba(47, 174, 116, .18);
-
-      color:
-        var(--brand-green-300);
-    }
-
-    .places-inspector-tag.tone-events {
-      border-color:
-        rgba(93, 173, 236, .25);
-
-      background:
-        rgba(93, 173, 236, .18);
-
-      color:
-        #8bc8f5;
-    }
-
-    .places-inspector-tag.tone-photos {
-      border-color:
-        rgba(212, 107, 107, .25);
-
-      background:
-        rgba(212, 107, 107, .18);
-
-      color:
-        #e99a9a;
-    }
-
-    .places-inspector-tag.tone-files {
-      border-color:
-        rgba(212, 170, 107, .25);
-
-      background:
-        rgba(212, 170, 107, .18);
-
-      color:
-        #e5bd7f;
-    }
-
-    .places-inspector-tag.tone-notes {
-      border-color:
-        rgba(141, 108, 232, .28);
-
-      background:
-        rgba(141, 108, 232, .18);
-
-      color:
-        #b9a1ff;
     }
 
     .places-attention {
@@ -24238,17 +24294,22 @@
                     <span><span class="project-hero-meta-dot" aria-hidden="true"></span>${escapeHtml(formatProjectModified(project, 'Last modified'))}</span>
                   </div>
                   <div class="project-desc">${escapeHtml(project.desc)}</div>
-                  <div class="stat-chips">
-                    <span class="chip">
+                  <div
+                    class="
+                      stat-chips
+                      app-chip-row
+                      app-chip-row--on-accent
+                    ">
+                    <span class="app-chip app-chip--people">
                       ${escapeHtml(
                         formatProjectPeopleCount(
                           project.id
                         )
                       )}
                     </span>
-                    <span class="chip red">${getProjectPhotos(project.id).length} photos</span>
-                    <span class="chip amber">${project.files} files</span>
-                    <span class="chip purple">${project.notes} notes</span>
+                    <span class="app-chip app-chip--photos">${getProjectPhotos(project.id).length} photos</span>
+                    <span class="app-chip app-chip--files">${project.files} files</span>
+                    <span class="app-chip app-chip--notes">${project.notes} notes</span>
                   </div>
                 </div>
                 <div class="project-hero-actions" aria-label="Project actions">
@@ -26258,24 +26319,167 @@
       return `<div class="tree-person-life">${rows.map(row => `<div class="tree-person-life-line"><div><strong>${escapeHtml(row.label)}:</strong> ${escapeHtml(row.date)}</div>${row.place ? `<div class="tree-person-life-place">${escapeHtml(row.place)}</div>` : ''}</div>`).join('')}</div>`;
     }
 
-    function renderFamilyTreePersonHero(person) {
-      const status = person.status || person.living;
-      return `<div class="people-hero tree-person-hero">
-        <div class="tree-person-hero-top">
-          <button class="people-collapse-button people-sidebar-toggle-icon people-sidebar-toggle-collapse" type="button" id="collapseInspector" aria-label="Collapse person sidebar">${icon.doublechevronSidebar}</button>
-          <button class="tree-person-hero-profile" type="button" data-tree-view-profile="${escapeHtml(person.id)}" aria-label="View ${escapeHtml(person.name)} profile"><span>View profile</span></button>
+    function renderFamilyTreePersonHero(
+      person
+    ) {
+      const status =
+        person.status
+        || person.living;
+
+      const photoCount =
+        getPersonPhotoCount(
+          person.id
+        );
+
+      const fileCount =
+        getArchiveFilesForPerson(
+          person.id
+        ).length;
+
+      const noteCount =
+        getNotesForPerson(
+          person.id
+        ).length;
+
+      return `
+        <div
+          class="
+            people-hero
+            tree-person-hero
+          ">
+
+          <div class="tree-person-hero-top">
+            <button
+              class="
+                people-collapse-button
+                people-sidebar-toggle-icon
+                people-sidebar-toggle-collapse
+              "
+              type="button"
+              id="collapseInspector"
+              aria-label="Collapse person sidebar">
+
+              ${icon.doublechevronSidebar}
+            </button>
+
+            <button
+              class="tree-person-hero-profile"
+              type="button"
+              data-tree-view-profile="${
+                escapeHtml(
+                  person.id
+                )
+              }"
+              aria-label="View ${
+                escapeHtml(
+                  person.name
+                )
+              } profile">
+
+              <span>
+                View profile
+              </span>
+            </button>
+          </div>
+
+          <div class="tree-person-hero-main">
+            ${renderEditablePersonAvatar(
+              person,
+              'tree-person-hero-photo'
+            )}
+
+            <div class="tree-person-hero-copy">
+              <h2>
+                ${escapeHtml(
+                  person.name
+                )}
+              </h2>
+
+              ${renderFamilyTreeHeroLifeDetails(
+                person
+              )}
+            </div>
+          </div>
+
+          <div
+            class="
+              tree-person-hero-tags
+              app-chip-row
+              app-chip-row--on-accent
+            ">
+
+            ${renderLivingStatusChip(
+              status
+            )}
+
+            <button
+              class="
+                app-chip
+                app-chip--photos
+              "
+              type="button"
+              data-person-chip-section="photos"
+              aria-controls="section-photos"
+              aria-label="Show ${photoCount} ${
+                photoCount === 1
+                  ? 'photo'
+                  : 'photos'
+              }">
+
+              ${photoCount}
+              ${
+                photoCount === 1
+                  ? 'photo'
+                  : 'photos'
+              }
+            </button>
+
+            <button
+              class="
+                app-chip
+                app-chip--files
+              "
+              type="button"
+              data-person-chip-section="archive"
+              aria-controls="section-archive"
+              aria-label="Show ${fileCount} ${
+                fileCount === 1
+                  ? 'file'
+                  : 'files'
+              }">
+
+              ${fileCount}
+              ${
+                fileCount === 1
+                  ? 'file'
+                  : 'files'
+              }
+            </button>
+
+            <button
+              class="
+                app-chip
+                app-chip--notes
+              "
+              type="button"
+              data-person-chip-section="notes"
+              aria-controls="section-notes"
+              aria-label="Show ${noteCount} ${
+                noteCount === 1
+                  ? 'note'
+                  : 'notes'
+              }">
+
+              ${noteCount}
+              ${
+                noteCount === 1
+                  ? 'note'
+                  : 'notes'
+              }
+            </button>
+          </div>
         </div>
-        <div class="tree-person-hero-main">
-          ${renderEditablePersonAvatar(person, 'tree-person-hero-photo')}
-          <div class="tree-person-hero-copy"><h2>${escapeHtml(person.name)}</h2>${renderFamilyTreeHeroLifeDetails(person)}</div>
-        </div>
-        <div class="person-chip-row tree-person-hero-tags">
-          ${renderLivingStatusChip(status)}
-          <span class="person-chip red">${person.photos} photos</span>
-          <span class="person-chip amber">${person.files} files</span>
-          <span class="person-chip purple">${person.notes} notes</span>
-        </div>
-      </div>`;
+      `;
     }
 
     function personSidebarTreePerson(personOrId) {
@@ -27306,21 +27510,65 @@
       return 'Living';
     }
 
-    function renderLivingStatusChip(status) {
-      const safeStatus = normalizeLivingStatus(status);
+    function livingStatusChipTone(
+      status
+    ) {
+      const safeStatus =
+        normalizeLivingStatus(
+          status
+        );
 
-      return `<span class="person-chip living-status-chip ${statusDotClass(safeStatus)}">
-        <span class="add-person-status-dot ${statusDotClass(safeStatus)}" aria-hidden="true"></span>
-        <span>${escapeHtml(safeStatus)}</span>
-      </span>`;
+      if (
+        safeStatus === 'Deceased'
+      ) {
+        return 'app-chip--deceased';
+      }
+
+      if (
+        safeStatus === 'Unknown'
+      ) {
+        return 'app-chip--unknown';
+      }
+
+      return 'app-chip--living';
     }
-    
-    let connectPersonModalState = {
-      anchorPersonId: '',
-      relationshipType: 'parent',
-      query: '',
-      selectedPersonId: ''
-    };
+
+    function renderLivingStatusChip(
+      status
+    ) {
+      const safeStatus =
+        normalizeLivingStatus(
+          status
+        );
+
+      return `
+        <span
+          class="
+            app-chip
+            ${livingStatusChipTone(
+              safeStatus
+            )}
+            living-status-chip
+          ">
+
+          <span
+            class="
+              add-person-status-dot
+              ${statusDotClass(
+                safeStatus
+              )}
+            "
+            aria-hidden="true">
+          </span>
+
+          <span>
+            ${escapeHtml(
+              safeStatus
+            )}
+          </span>
+        </span>
+      `;
+    }
 
     function normalizeConnectRelationshipType(type) {
       const value = String(type || '').toLowerCase();
@@ -33705,21 +33953,58 @@
                 )}
               </p>
 
-              <div class="person-chip-row">
-                ${renderLivingStatusChip(person.living)}
+            <div
+              class="
+                app-chip-row
+                app-chip-row--on-accent
+                person-profile-chips
+              ">
 
-                <span class="person-chip red">
-                  ${person.photos} photos
-                </span>
+              ${renderLivingStatusChip(
+                person.living
+              )}
 
-                <span class="person-chip amber">
-                  ${person.files} files
-                </span>
+              <span
+                class="
+                  app-chip
+                  app-chip--photos
+                ">
 
-                <span class="person-chip purple">
-                  ${person.notes} notes
-                </span>
-              </div>
+                ${person.photos}
+                ${
+                  person.photos === 1
+                    ? 'photo'
+                    : 'photos'
+                }
+              </span>
+
+              <span
+                class="
+                  app-chip
+                  app-chip--files
+                ">
+
+                ${person.files}
+                ${
+                  person.files === 1
+                    ? 'file'
+                    : 'files'
+                }
+              </span>
+
+              <span
+                class="
+                  app-chip
+                  app-chip--notes
+                ">
+
+                ${person.notes}
+                ${
+                  person.notes === 1
+                    ? 'note'
+                    : 'notes'
+                }
+              </span>
             </div>
 
             <div class="profile-hero-actions">
@@ -37602,6 +37887,7 @@
       context,
       {
         focusSectionId = '',
+        scrollSectionId = '',
         preserveScroll = true
       } = {}
     ) {
@@ -37694,6 +37980,49 @@
               requestedScroll,
               maximumScroll
             );
+        }
+
+        if (scrollSectionId) {
+          const sectionBody =
+            nextPanel.querySelector(
+              `#section-${
+                CSS.escape(
+                  scrollSectionId
+                )
+              }`
+            );
+
+          const section =
+            sectionBody?.closest(
+              '.panel-section'
+            );
+
+          if (section) {
+            const panelRect =
+              nextPanel
+                .getBoundingClientRect();
+
+            const sectionRect =
+              section
+                .getBoundingClientRect();
+
+            const targetTop =
+              nextPanel.scrollTop
+              + sectionRect.top
+              - panelRect.top
+              - 12;
+
+            nextPanel.scrollTo({
+              top:
+                Math.max(
+                  0,
+                  targetTop
+                ),
+
+              behavior:
+                'smooth'
+            });
+          }
         }
 
         if (focusSectionId) {
@@ -37831,6 +38160,39 @@
     function bindPersonSidebar(root, context = 'tree') {
       const selectedId = personSidebarSelectedId(context);
       const selected = personSidebarTreePerson(selectedId);
+      root
+        .querySelectorAll(
+          '[data-person-chip-section]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              const sectionId =
+                button.dataset
+                  .personChipSection;
+
+              if (!sectionId) {
+                return;
+              }
+
+              state.inspectorSections[
+                sectionId
+              ] = true;
+
+              rerenderPersonSidebarContext(
+                context,
+                {
+                  focusSectionId:
+                    sectionId,
+
+                  scrollSectionId:
+                    sectionId
+                }
+              );
+            }
+          );
+        });
       root.querySelector('#quickEdit')?.addEventListener('click', () => {
         if (!selected?.id) return;
         syncPersonSidebarSelection(selected.id, context);
@@ -55674,7 +56036,7 @@
             'related',
 
           tone:
-            'related',
+            'notes',
 
           count:
             relatedCount,
@@ -55692,14 +56054,14 @@
 
       return `
         <div
-          class="notes-summary-chips"
+          class="notes-summary-chips app-chip-row"
           aria-label="Note connections">
           ${items
             .map(item => `
               <button
                 class="
-                  notes-summary-chip
-                  ${escapeHtml(
+                  app-chip
+                  app-chip--${escapeHtml(
                     item.tone
                   )}
                 "
@@ -66124,6 +66486,7 @@
             <div
               class="
                 places-inspector-tags
+                app-chip-row
               "
               aria-label="Connected records">
 
@@ -66131,8 +66494,8 @@
                 .map(tag => `
                   <button
                     class="
-                      places-inspector-tag
-                      tone-${escapeHtml(
+                      app-chip
+                      app-chip--${escapeHtml(
                         tag.key
                       )}
                     "
