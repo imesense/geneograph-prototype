@@ -13991,6 +13991,26 @@
       color: var(--text-tertiary);
       font-size: 11px;
     }
+    .albums-note-link-modal
+    .modal-footer {
+      justify-content:
+        space-between;
+
+      align-items:
+        center;
+
+      flex-wrap:
+        wrap;
+    }
+
+    .albums-note-link-actions {
+      margin-left: auto;
+
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-3);
+    }
     .notes-collection-picker-empty {
       padding: var(--space-3);
       color: var(--text-tertiary);
@@ -14035,6 +14055,115 @@
       border-color: var(--border-strong);
       background: var(--surface-card-hover);
       color: var(--text-primary);
+    }
+    /* Linked photos inside the Note editor */
+    .notes-linked-photo-grid {
+      grid-template-columns:
+        repeat(
+          auto-fill,
+          minmax(96px, 1fr)
+        );
+    }
+
+    .notes-linked-photo-item {
+      position: relative;
+      min-width: 0;
+      aspect-ratio: 1;
+    }
+
+    .notes-linked-photo-item
+    > .connected-photo-button {
+      position: absolute;
+      inset: 0;
+
+      aspect-ratio: auto;
+    }
+
+    .notes-linked-photo-remove {
+      position: absolute;
+      z-index: 3;
+      top: 6px;
+      right: 6px;
+
+      width: 28px;
+      height: 28px;
+      padding: 0;
+
+      display: grid;
+      place-items: center;
+
+      border:
+        1px solid
+        rgba(255, 255, 255, .16);
+
+      border-radius: 7px;
+
+      background:
+        rgba(9, 14, 12, .82);
+
+      color:
+        var(--text-secondary);
+
+      box-shadow:
+        0 2px 8px
+        rgba(0, 0, 0, .24);
+    }
+
+    .notes-linked-photo-remove:hover {
+      border-color:
+        rgba(212, 107, 107, .4);
+
+      background:
+        rgba(58, 30, 30, .92);
+
+      color:
+        var(--red);
+    }
+
+    .notes-linked-photo-remove:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset: 2px;
+    }
+
+    .notes-linked-photo-remove svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Visual choices in the Photos picker */
+
+    .notes-modal-choice.notes-photo-choice {
+      grid-template-columns:
+        20px
+        68px
+        minmax(0, 1fr);
+    }
+
+    .notes-photo-choice-thumb {
+      position: relative;
+
+      width: 68px;
+      height: 52px;
+
+      overflow: hidden;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius: 6px;
+
+      background:
+        var(--surface-card);
+    }
+
+    .notes-photo-choice-thumb
+    > .photo-thumbnail {
+      position: absolute;
+      inset: 0;
     }
     .notes-confirmation-card {
       padding: var(--space-3);
@@ -22269,6 +22398,15 @@
             file.id
           )
         );
+      const mediaById =
+        new Map(
+          (
+            sampleData.media || []
+          ).map(photo => [
+            photo.id,
+            photo
+          ])
+        );
 
       const eventIds =
         new Set(
@@ -22460,6 +22598,7 @@
         'linkedPersonIds',
         'linkedPlaceIds',
         'linkedEventIds',
+        'linkedPhotoIds',
         'linkedSourceIds',
         'linkedArchiveFileIds',
         'relatedNoteIds'
@@ -22753,6 +22892,13 @@
           'linkedEventIds',
           eventById,
           'event'
+        );
+
+        validateNoteReferences(
+          note,
+          'linkedPhotoIds',
+          mediaById,
+          'photo'
         );
 
         validateNoteReferences(
@@ -23252,6 +23398,7 @@
         details: true,
         people: true,
         albums: true,
+        notes: true,
         sources: false,
         metadata: false
       },
@@ -23316,6 +23463,7 @@
         people: false,
         places: false,
         events: false,
+        photos: false,
         sources: false,
         files: false,
         related: false,
@@ -42203,6 +42351,14 @@
           '.albums-content'
         );
 
+      const detail =
+        main.querySelector(
+          '.albums-detail'
+        );
+
+      const detailScrollTop =
+        detail?.scrollTop || 0;
+
       const scrollTop =
         content?.scrollTop || 0;
 
@@ -42224,6 +42380,26 @@
               nextContent.scrollHeight
               - nextContent.clientHeight
             );
+
+        const nextDetail =
+          main.querySelector(
+            '.albums-detail'
+          );
+
+        if (nextDetail) {
+          const maximumDetailTop =
+            Math.max(
+              0,
+              nextDetail.scrollHeight
+              - nextDetail.clientHeight
+            );
+
+          nextDetail.scrollTop =
+            Math.min(
+              detailScrollTop,
+              maximumDetailTop
+            );
+        }
 
           const maximumLeft =
             Math.max(
@@ -43153,20 +43329,30 @@
       id,
       title,
       content,
-      actionHtml = ''
+      actionHtml = '',
+      meta = ''
     ) {
       return renderInspectorSection(
         id,
         title,
-        '',
+        meta,
         content,
         actionHtml,
         {
-          inlineAction: Boolean(actionHtml),
-          alwaysShowAction: true,
-          open: albumsDetailSectionIsOpen(id),
+          inlineAction:
+            Boolean(actionHtml),
+
+          alwaysShowAction:
+            true,
+
+          open:
+            albumsDetailSectionIsOpen(
+              id
+            ),
+
           toggleAttribute:
             'data-albums-section-toggle',
+
           sectionId:
             `albums-detail-section-${id}`
         }
@@ -44025,6 +44211,334 @@
       `;
     }
 
+    function renderAlbumsPhotoNotes(
+      photo,
+      notes = getNotesForPhoto(
+        photo.id,
+        {
+          projectId:
+            photo.projectId,
+
+          includeArchived:
+            false
+        }
+      )
+    ) {
+      return renderConnectedNoteList({
+        notes,
+
+        contextType:
+          'photo',
+
+        contextId:
+          photo.id,
+
+        emptyText:
+          'No notes linked to this photo.'
+      });
+    }
+
+    function renderAlbumsPhotoNoteChoice(
+      note,
+      selectedIds
+    ) {
+      const excerpt =
+        noteExcerpt(
+          note,
+          110
+        )
+        || 'No note content';
+
+      const metadata =
+        formatNoteCollectionSummary(
+          note
+        );
+
+      const searchText = `
+        ${note.title}
+        ${excerpt}
+        ${metadata}
+      `
+        .trim()
+        .toLowerCase();
+
+      return `
+        <label
+          class="notes-modal-choice"
+          data-albums-note-choice
+          data-search-text="${escapeHtml(
+            searchText
+          )}">
+
+          <input
+            type="checkbox"
+            value="${escapeHtml(
+              note.id
+            )}"
+            ${
+              selectedIds.has(
+                note.id
+              )
+                ? 'checked'
+                : ''
+            }>
+
+          <span class="notes-modal-choice-copy">
+            <strong>
+              ${escapeHtml(
+                note.title
+              )}
+            </strong>
+
+            <span>
+              ${escapeHtml(
+                excerpt
+              )}
+            </span>
+          </span>
+        </label>
+      `;
+    }
+
+    function openAlbumsPhotoNotesModal(
+      photoId =
+        state.selectedPhotoId
+    ) {
+      const photo =
+        getPhoto(
+          photoId,
+          {
+            projectId:
+              currentProjectId()
+          }
+        );
+
+      if (!photo) {
+        return;
+      }
+
+      /*
+        Archived Notes are deliberately
+        omitted from normal Albums linking.
+        Their existing relationships remain.
+      */
+      const notes =
+        getProjectNotes(
+          photo.projectId,
+          {
+            includeArchived:
+              false
+          }
+        );
+
+      const selectedIds =
+        new Set(
+          getNotesForPhoto(
+            photo.id,
+            {
+              projectId:
+                photo.projectId,
+
+              includeArchived:
+                false
+            }
+          ).map(note =>
+            note.id
+          )
+        );
+
+      const choices =
+        notes.length
+          ? notes
+              .map(note =>
+                renderAlbumsPhotoNoteChoice(
+                  note,
+                  selectedIds
+                )
+              )
+              .join('')
+          : `
+            <span class="notes-section-empty">
+              No notes available in this project.
+            </span>
+          `;
+
+      const photoLabel =
+        photo.title
+        || photo.filename
+        || 'this photo';
+
+      openModal(`
+        <div
+          class="
+            modal
+            albums-note-link-modal
+          "
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="albumsPhotoNotesTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="albumsPhotoNotesTitle">
+                Manage notes
+              </h2>
+
+              <p>
+                Link existing notes to
+                ${escapeHtml(
+                  photoLabel
+                )}.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close">
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body form-grid">
+            <label
+              class="app-search-field"
+              aria-label="Search notes">
+
+              ${icon.search}
+
+              <input
+                id="albumsPhotoNotesSearch"
+                type="search"
+                autocomplete="off"
+                placeholder="Search notes...">
+            </label>
+
+            <div class="notes-modal-list">
+              ${choices}
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              id="albumsCreateLinkedNote">
+
+              ${icon.plus}
+              Create linked note
+            </button>
+
+            <div class="albums-note-link-actions">
+              <button
+                class="button secondary"
+                type="button"
+                data-close>
+                Cancel
+              </button>
+
+              <button
+                class="button primary"
+                type="button"
+                id="albumsConfirmPhotoNotes">
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      `);
+
+      bindNotesModalSearch(
+        modalBackdrop,
+        '#albumsPhotoNotesSearch',
+        '[data-albums-note-choice]'
+      );
+
+      modalBackdrop
+        .querySelector(
+          '#albumsCreateLinkedNote'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            closeModal();
+
+            openNewNoteForContext(
+              'photo',
+              photo.id
+            );
+          }
+        );
+
+      modalBackdrop
+        .querySelector(
+          '#albumsConfirmPhotoNotes'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const nextSelectedIds =
+              new Set(
+                [
+                  ...modalBackdrop
+                    .querySelectorAll(
+                      '[data-albums-note-choice] input:checked'
+                    )
+                ].map(
+                  input =>
+                    input.value
+                )
+              );
+
+            /*
+              Only active Notes are changed.
+              Archived Note links are retained.
+            */
+            notes.forEach(note => {
+              const nextPhotoIds =
+                new Set(
+                  note.linkedPhotoIds
+                  || []
+                );
+
+              if (
+                nextSelectedIds.has(
+                  note.id
+                )
+              ) {
+                nextPhotoIds.add(
+                  photo.id
+                );
+              } else {
+                nextPhotoIds.delete(
+                  photo.id
+                );
+              }
+
+              setNotePhotoLinks(
+                note.id,
+                [
+                  ...nextPhotoIds
+                ],
+                {
+                  projectId:
+                    photo.projectId
+                }
+              );
+            });
+
+            closeModal();
+
+            renderAlbumsPreserveViewport();
+
+            showToast(
+              'Photo note links updated.'
+            );
+          }
+        );
+    }
+
     function renderAlbumsPhotoSources() {
       return `
         <div class="albums-inspector-empty">
@@ -44139,6 +44653,18 @@
       const actionsLocked =
         editing;
 
+      const photoNotes =
+        getNotesForPhoto(
+          photo.id,
+          {
+            projectId:
+              photo.projectId,
+
+            includeArchived:
+              false
+          }
+        );
+
       const peopleAction =
         actionsLocked
           ? ''
@@ -44167,6 +44693,22 @@
               ${renderPanelButtonLabel(
                 icon.plus,
                 'Add to album'
+              )}
+            </button>
+          `;
+
+      const notesAction =
+        actionsLocked
+          ? ''
+          : `
+            <button
+              class="link"
+              type="button"
+              id="albumsManagePhotoNotes">
+
+              ${renderPanelButtonLabel(
+                icon.plus,
+                'Add note'
               )}
             </button>
           `;
@@ -44237,6 +44779,21 @@
               actionsLocked
             ),
             albumAction
+          )}
+
+          ${renderAlbumsDetailSection(
+            'notes',
+            'Notes',
+            renderAlbumsPhotoNotes(
+              photo,
+              photoNotes
+            ),
+            notesAction,
+            `${photoNotes.length} ${
+              photoNotes.length === 1
+                ? 'note'
+                : 'notes'
+            }`
           )}
 
           ${renderAlbumsDetailSection(
@@ -46177,6 +46734,10 @@
             && !mediaTarget
           );
         });
+
+      removePhotosFromAllNotes(
+        [...ids]
+      );
 
       for (
         let index =
@@ -48393,6 +48954,7 @@
 
     function bindAlbumsControls() {
       bindToasts(main);
+      bindConnectedNoteLinks(main);
       bindGenealogyDateFields(main);
       bindPlaceComboboxes(main);
 
@@ -48788,6 +49350,18 @@
 
             openAddToAlbumModal();
           }
+        );
+
+      main
+        .querySelector(
+          '#albumsManagePhotoNotes'
+        )
+        ?.addEventListener(
+          'click',
+          () =>
+            openAlbumsPhotoNotesModal(
+              state.selectedPhotoId
+            )
         );
 
       const editRoot =
@@ -52196,6 +52770,7 @@
         linkedPersonIds: [],
         linkedPlaceIds: [],
         linkedEventIds: [],
+        linkedPhotoIds: [],
         linkedSourceIds: [],
         linkedArchiveFileIds: [],
         relatedNoteIds: [],
@@ -52281,6 +52856,11 @@
 
           linkedSourceIds: [
             'as1'
+          ],
+
+          linkedPhotoIds: [
+            'photo-daisy-school',
+            'photo-grandparents-garden'
           ],
 
           linkedArchiveFileIds: [
@@ -52513,6 +53093,11 @@
             'as5'
           ],
 
+          linkedPhotoIds: [
+            'photo-family-table',
+            'photo-grandparents-garden'
+          ],
+
           linkedArchiveFileIds: [
             'af7'
           ],
@@ -52707,6 +53292,10 @@
 
           linkedSourceIds: [
             'as3'
+          ],
+
+          linkedPhotoIds: [
+            'photo-silver-luna-wedding'
           ],
 
           linkedArchiveFileIds: [
@@ -53483,6 +54072,67 @@
             }
         }),
 
+        photo: Object.freeze({
+          field:
+            'linkedPhotoIds',
+
+          sectionKey:
+            'photos',
+
+          iconSvg:
+            icon.image,
+
+          chipTone:
+            'photos',
+
+          contextLabel:
+            'Photo',
+
+          title:
+            'Photos',
+
+          singular:
+            'photo',
+
+          plural:
+            'photos',
+
+          records:
+            projectId =>
+              getProjectPhotos(
+                projectId
+              ),
+
+          label:
+            record =>
+              record.title
+              || record.filename
+              || 'Untitled photo',
+
+          meta:
+            record =>
+              [
+                formatPhotoDate(
+                  record
+                ),
+
+                getPlaceDisplay(
+                  record.placeId
+                )
+                || record.placeText
+              ]
+                .filter(Boolean)
+                .join(' · ')
+              || 'Photo',
+
+          open:
+            record => {
+              openAlbumsForPhoto(
+                record.id
+              );
+            }
+        }),
+
         source: Object.freeze({
           field:
             'linkedSourceIds',
@@ -53791,6 +54441,210 @@
         'archiveFile',
         fileId,
         options
+      );
+    }
+
+    function getNotesForPhoto(
+      photoId,
+      options = {}
+    ) {
+      return getNotesForEntity(
+        'photo',
+        photoId,
+        options
+      );
+    }
+
+    function getPhotosForNote(
+      noteId,
+      {
+        projectId =
+          currentProjectId()
+      } = {}
+    ) {
+      const note =
+        getNote(
+          noteId,
+          {
+            projectId,
+            includeArchived: true
+          }
+        );
+
+      if (!note) {
+        return [];
+      }
+
+      return (
+        note.linkedPhotoIds || []
+      )
+        .map(photoId =>
+          getPhoto(
+            photoId,
+            {
+              projectId:
+                note.projectId
+            }
+          )
+        )
+        .filter(Boolean);
+    }
+
+    /*
+      Shared mutation path for every
+      Note-to-entity relationship.
+    */
+    function setNoteEntityLinks(
+      noteId,
+      type,
+      linkedIds,
+      {
+        projectId =
+          currentProjectId(),
+
+        touchUpdatedAt = true,
+
+        refreshPreview = true
+      } = {}
+    ) {
+      const note =
+        getNote(
+          noteId,
+          {
+            projectId,
+            includeArchived: true
+          }
+        );
+
+      const config =
+        getNoteEntityConfig(
+          type
+        );
+
+      if (!note || !config) {
+        return null;
+      }
+
+      const validIds =
+        new Set(
+          noteEntityRecords(
+            type,
+            note.projectId
+          ).map(record =>
+            record.id
+          )
+        );
+
+      const nextIds =
+        normalizeCentralNoteIdArray(
+          Array.isArray(linkedIds)
+            ? linkedIds
+            : []
+        ).filter(id =>
+          validIds.has(id)
+        );
+
+      const currentIds =
+        note[config.field] || [];
+
+      const unchanged =
+        nextIds.length
+          === currentIds.length
+        && nextIds.every(
+          (
+            id,
+            index
+          ) =>
+            id === currentIds[index]
+        );
+
+      if (unchanged) {
+        return note;
+      }
+
+      note[config.field] =
+        nextIds;
+
+      if (touchUpdatedAt) {
+        if (
+          state.activeModule
+            === 'Notes'
+          && state.selectedNoteId
+            === note.id
+        ) {
+          touchNote(
+            note,
+            {
+              refreshPreview
+            }
+          );
+        } else {
+          note.updatedAt =
+            new Date()
+              .toISOString();
+        }
+      }
+
+      return note;
+    }
+
+    function setNotePhotoLinks(
+      noteId,
+      photoIds,
+      options = {}
+    ) {
+      return setNoteEntityLinks(
+        noteId,
+        'photo',
+        photoIds,
+        options
+      );
+    }
+
+    function removePhotosFromAllNotes(
+      photoIds
+    ) {
+      const ids =
+        new Set(
+          (
+            Array.isArray(photoIds)
+              ? photoIds
+              : [photoIds]
+          ).filter(Boolean)
+        );
+
+      if (!ids.size) {
+        return;
+      }
+
+      const now =
+        new Date()
+          .toISOString();
+
+      sampleData.notes.forEach(
+        note => {
+          const current =
+            note.linkedPhotoIds || [];
+
+          const next =
+            current.filter(
+              photoId =>
+                !ids.has(photoId)
+            );
+
+          if (
+            next.length
+              === current.length
+          ) {
+            return;
+          }
+
+          note.linkedPhotoIds =
+            next;
+
+          note.updatedAt =
+            now;
+        }
       );
     }
 
@@ -56460,6 +57314,139 @@
       });
     }
 
+    function renderNoteLinkedRecordRows(
+      type,
+      config,
+      records
+    ) {
+      return `
+        <div class="notes-linked-list">
+          ${records
+            .map(record => `
+              <div class="notes-linked-row">
+                <button
+                  class="notes-linked-main"
+                  type="button"
+                  data-note-linked-open
+                  data-note-linked-type="${escapeHtml(
+                    type
+                  )}"
+                  data-note-linked-id="${escapeHtml(
+                    record.id
+                  )}">
+
+                  <strong>
+                    ${escapeHtml(
+                      noteEntityLabel(
+                        type,
+                        record
+                      )
+                    )}
+                  </strong>
+
+                  <span>
+                    ${escapeHtml(
+                      noteEntityMeta(
+                        type,
+                        record
+                      )
+                    )}
+                  </span>
+                </button>
+
+                <div class="notes-linked-actions">
+                  <button
+                    class="
+                      notes-linked-action
+                      danger
+                    "
+                    type="button"
+                    data-note-linked-remove
+                    data-note-linked-type="${escapeHtml(
+                      type
+                    )}"
+                    data-note-linked-id="${escapeHtml(
+                      record.id
+                    )}"
+                    aria-label="Remove ${escapeHtml(
+                      config.singular
+                    )} link"
+                    title="Remove link">
+
+                    ${icon.close}
+                  </button>
+                </div>
+              </div>
+            `)
+            .join('')}
+        </div>
+      `;
+    }
+
+    function renderNoteLinkedPhotoGrid(
+      records
+    ) {
+      return `
+        <div
+          class="
+            connected-photo-grid
+            notes-linked-photo-grid
+          ">
+
+          ${records
+            .map(photo => {
+              const label =
+                noteEntityLabel(
+                  'photo',
+                  photo
+                );
+
+              return `
+                <div class="notes-linked-photo-item">
+                  <button
+                    class="connected-photo-button"
+                    type="button"
+                    data-note-linked-open
+                    data-note-linked-type="photo"
+                    data-note-linked-id="${escapeHtml(
+                      photo.id
+                    )}"
+                    title="${escapeHtml(
+                      label
+                    )}"
+                    aria-label="Open ${escapeHtml(
+                      label
+                    )} in Albums">
+
+                    ${renderPhotoThumbnail(
+                      photo,
+                      {
+                        label
+                      }
+                    )}
+                  </button>
+
+                  <button
+                    class="notes-linked-photo-remove"
+                    type="button"
+                    data-note-linked-remove
+                    data-note-linked-type="photo"
+                    data-note-linked-id="${escapeHtml(
+                      photo.id
+                    )}"
+                    aria-label="Remove photo link"
+                    title="Remove link">
+
+                    ${icon.close}
+                  </button>
+                </div>
+              `;
+            })
+            .join('')}
+        </div>
+      `;
+    }
+
     function renderNoteLinkedEntitySection(
       note,
       type
@@ -56474,17 +57461,25 @@
       }
 
       const records =
-        (
-          note[config.field] || []
-        )
-          .map(id =>
-            noteEntityById(
-              type,
-              id,
-              note.projectId
+        type === 'photo'
+          ? getPhotosForNote(
+              note.id,
+              {
+                projectId:
+                  note.projectId
+              }
             )
-          )
-          .filter(Boolean);
+          : (
+              note[config.field] || []
+            )
+              .map(id =>
+                noteEntityById(
+                  type,
+                  id,
+                  note.projectId
+                )
+              )
+              .filter(Boolean);
 
       const countLabel =
         `${records.length} ${
@@ -56495,66 +57490,17 @@
 
       const rows =
         records.length
-          ? `
-            <div class="notes-linked-list">
-              ${records
-                .map(record => `
-                  <div class="notes-linked-row">
-                    <button
-                      class="notes-linked-main"
-                      type="button"
-                      data-note-linked-open
-                      data-note-linked-type="${escapeHtml(
-                        type
-                      )}"
-                      data-note-linked-id="${escapeHtml(
-                        record.id
-                      )}">
-                      <strong>
-                        ${escapeHtml(
-                          noteEntityLabel(
-                            type,
-                            record
-                          )
-                        )}
-                      </strong>
-
-                      <span>
-                        ${escapeHtml(
-                          noteEntityMeta(
-                            type,
-                            record
-                          )
-                        )}
-                      </span>
-                    </button>
-
-                    <div class="notes-linked-actions">
-                      <button
-                        class="
-                          notes-linked-action
-                          danger
-                        "
-                        type="button"
-                        data-note-linked-remove
-                        data-note-linked-type="${escapeHtml(
-                          type
-                        )}"
-                        data-note-linked-id="${escapeHtml(
-                          record.id
-                        )}"
-                        aria-label="Remove ${escapeHtml(
-                          config.singular
-                        )} link"
-                        title="Remove link">
-                        ${icon.close}
-                      </button>
-                    </div>
-                  </div>
-                `)
-                .join('')}
-            </div>
-          `
+          ? (
+              type === 'photo'
+                ? renderNoteLinkedPhotoGrid(
+                    records
+                  )
+                : renderNoteLinkedRecordRows(
+                    type,
+                    config,
+                    records
+                  )
+            )
           : `
             <span class="notes-section-empty">
               No ${escapeHtml(
@@ -56580,6 +57526,7 @@
             data-note-manage-links="${escapeHtml(
               type
             )}">
+
             ${renderPanelButtonLabel(
               icon.plus,
               `Add ${
@@ -56593,8 +57540,6 @@
           rows
       });
     }
-
-    
 
     function renderNoteRelatedSection(
       note
@@ -57362,6 +58307,137 @@
       );
     }
 
+    function renderNotesLinkEntityChoice(
+      type,
+      record,
+      selected
+    ) {
+      const label =
+        noteEntityLabel(
+          type,
+          record
+        );
+
+      const meta =
+        noteEntityMeta(
+          type,
+          record
+        );
+
+      const additionalPhotoText =
+        type === 'photo'
+          ? [
+              record.filename,
+              record.caption,
+
+              (
+                record.albumIds || []
+              )
+                .map(getAlbumName)
+                .filter(Boolean)
+                .join(' ')
+            ]
+              .filter(Boolean)
+              .join(' ')
+          : '';
+
+      const searchText = `
+        ${label}
+        ${meta}
+        ${additionalPhotoText}
+      `
+        .trim()
+        .toLowerCase();
+
+      if (type === 'photo') {
+        return `
+          <label
+            class="
+              notes-modal-choice
+              notes-photo-choice
+            "
+            data-note-link-choice
+            data-search-text="${escapeHtml(
+              searchText
+            )}">
+
+            <input
+              type="checkbox"
+              value="${escapeHtml(
+                record.id
+              )}"
+              ${
+                selected.has(
+                  record.id
+                )
+                  ? 'checked'
+                  : ''
+              }>
+
+            <span class="notes-photo-choice-thumb">
+              ${renderPhotoThumbnail(
+                record,
+                {
+                  label
+                }
+              )}
+            </span>
+
+            <span class="notes-modal-choice-copy">
+              <strong>
+                ${escapeHtml(
+                  label
+                )}
+              </strong>
+
+              <span>
+                ${escapeHtml(
+                  meta
+                )}
+              </span>
+            </span>
+          </label>
+        `;
+      }
+
+      return `
+        <label
+          class="notes-modal-choice"
+          data-note-link-choice
+          data-search-text="${escapeHtml(
+            searchText
+          )}">
+
+          <input
+            type="checkbox"
+            value="${escapeHtml(
+              record.id
+            )}"
+            ${
+              selected.has(
+                record.id
+              )
+                ? 'checked'
+                : ''
+            }>
+
+          <span class="notes-modal-choice-copy">
+            <strong>
+              ${escapeHtml(
+                label
+              )}
+            </strong>
+
+            <span>
+              ${escapeHtml(
+                meta
+              )}
+            </span>
+          </span>
+        </label>
+      `;
+    }
+
     function openNotesLinkEntityModal(
       type
     ) {
@@ -57391,63 +58467,13 @@
       const choices =
         records.length
           ? records
-              .map(record => {
-                const label =
-                  noteEntityLabel(
-                    type,
-                    record
-                  );
-
-                const meta =
-                  noteEntityMeta(
-                    type,
-                    record
-                  );
-
-                const searchText = `
-                  ${label}
-                  ${meta}
-                `
-                  .trim()
-                  .toLowerCase();
-
-                return `
-                  <label
-                    class="notes-modal-choice"
-                    data-note-link-choice
-                    data-search-text="${escapeHtml(
-                      searchText
-                    )}">
-
-                    <input
-                      type="checkbox"
-                      value="${escapeHtml(
-                        record.id
-                      )}"
-                      ${
-                        selected.has(
-                          record.id
-                        )
-                          ? 'checked'
-                          : ''
-                      }>
-
-                    <span
-                      class="
-                        notes-modal-choice-copy
-                      ">
-
-                      <strong>
-                        ${escapeHtml(label)}
-                      </strong>
-
-                      <span>
-                        ${escapeHtml(meta)}
-                      </span>
-                    </span>
-                  </label>
-                `;
-              })
+              .map(record =>
+                renderNotesLinkEntityChoice(
+                  type,
+                  record,
+                  selected
+                )
+              )
               .join('')
           : `
             <span class="notes-section-empty">
@@ -57534,22 +58560,31 @@
         ?.addEventListener(
           'click',
           () => {
-            note[config.field] =
-              normalizeCentralNoteIdArray(
-                [
-                  ...modalBackdrop
-                    .querySelectorAll(
-                      '[data-note-link-choice] input:checked'
-                    )
-                ].map(
-                  input =>
-                    input.value
-                )
-              );
+            setNoteEntityLinks(
+              note.id,
+              type,
+              [
+                ...modalBackdrop
+                  .querySelectorAll(
+                    '[data-note-link-choice] input:checked'
+                  )
+              ].map(
+                input =>
+                  input.value
+              ),
+              {
+                projectId:
+                  note.projectId
+              }
+            );
 
-            touchNote(note);
             closeModal();
-            renderNotes();
+
+            renderNotesPreservingInteraction();
+
+            showToast(
+              `${config.title} links updated.`
+            );
 
             showToast(
               `${config.title} links updated.`
@@ -57885,7 +58920,7 @@
           'click',
           () =>
             showToast(
-              'Notes can link directly to people, places, events, sources and files.'
+              'Notes can link directly to people, places, events, photos, sources and files.'
             )
         );
     }
@@ -58435,6 +59470,10 @@
 
           linkedEventIds: [
             ...note.linkedEventIds
+          ],
+
+          linkedPhotoIds: [
+            ...note.linkedPhotoIds
           ],
 
           linkedSourceIds: [
@@ -59246,14 +60285,22 @@
                 return;
               }
 
-              note[config.field] =
-                note[config.field]
-                  .filter(
-                    linkedId =>
-                      linkedId !== id
-                  );
+              setNoteEntityLinks(
+                note.id,
+                type,
+                (
+                  note[config.field]
+                  || []
+                ).filter(
+                  linkedId =>
+                    linkedId !== id
+                ),
+                {
+                  projectId:
+                    note.projectId
+                }
+              );
 
-              touchNote(note);
               renderNotesPreservingInteraction();
               showToast(
                 'Link removed.'
@@ -60576,6 +61623,8 @@
         linkedEventIds:
           [],
 
+        linkedPhotoIds:
+          [],
         linkedSourceIds:
           [],
 
@@ -72549,6 +73598,21 @@
       note.linkedEventIds =
         normalizeCentralNoteIdArray(
           note.linkedEventIds
+        );
+
+      note.linkedPhotoIds =
+        normalizeCentralNoteIdArray(
+          note.linkedPhotoIds
+        ).filter(photoId =>
+          Boolean(
+            getPhoto(
+              photoId,
+              {
+                projectId:
+                  note.projectId
+              }
+            )
+          )
         );
 
       note.linkedSourceIds =
