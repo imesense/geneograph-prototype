@@ -12710,31 +12710,15 @@
       font-weight: 800;
       line-height: 1.4;
     }
-    .notes-browser-actions,
-    .notes-new-note-group {
+    .notes-browser-actions {
       display: flex;
       align-items: stretch;
       justify-content: flex-end;
     }
-    .notes-new-note-group .button { min-height: 44px; white-space: nowrap; }
-    .notes-new-note-group .button:first-child {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-    .notes-new-note-menu-button {
-      width: 42px;
-      min-width: 42px;
-      padding: 0;
-      display: grid;
-      place-items: center;
-      border-left-color: rgba(0,0,0,.18);
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-    }
-    .notes-new-note-menu-button svg {
-      width: 16px !important;
-      height: 16px !important;
-      transform: rotate(90deg);
+
+    .notes-browser-actions > .button {
+      min-height: 44px;
+      white-space: nowrap;
     }
 
     .notes-toolbar-line {
@@ -13639,9 +13623,14 @@
 
     @container notes-browser (max-width: 390px) {
       .notes-browser-top { grid-template-columns: minmax(0,1fr); }
-      .notes-browser-actions,
-      .notes-new-note-group { width: 100%; justify-content: stretch; }
-      .notes-new-note-group .button:first-child { flex: 1; }
+      .notes-browser-actions {
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      .notes-browser-actions > .button {
+        width: 100%;
+      }
       .notes-toolbar-line { grid-template-columns: minmax(0,1fr) auto auto; }
       .notes-row-excerpt,
       .notes-row-metadata { display: none; }
@@ -13676,9 +13665,14 @@
 
     @media (max-width: 720px) {
       .notes-browser-top { grid-template-columns: minmax(0,1fr); }
-      .notes-browser-actions,
-      .notes-new-note-group { width: 100%; justify-content: stretch; }
-      .notes-new-note-group .button:first-child { flex: 1; }
+      .notes-browser-actions {
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      .notes-browser-actions > .button {
+        width: 100%;
+      }
       .notes-editor-header { padding: var(--space-4); }
       .notes-editor-body { padding-inline: var(--space-4); }
       .notes-title-input { font-size: 24px; }
@@ -18298,7 +18292,7 @@
       'Create new board': '------- -----', 'Import board': '------------- -----', 'Board type': '---------', 'Categories': '---------', 'All Boards': '--- -----', 'Recently viewed': '--------', 'Favourites': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'DNA': '---', 'Publication': '----------', 'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '---- ------------ --- ------------, ------------ - ----------.', 'Search boards...': '----- -----', 'Sort: Board type': '----------: --- -----', 'All boards': '--- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Note': '-------', 'Image': '-----------', 'Place': '-----', 'Case': '------', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '-----------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Appearance': '------- ---', 'Layout': '-----', 'Linked to person': '------- - ---------', 'Visual only': '------ ---------',
       'Add photos': '-------- ----', 'New album': '----- ------', 'All photos': '--- ----', 'Not in Album': '--- -------', 'Recently deleted': '------- --------', 'Search photos...': '----- ----...', 'Sort: Filename': '----------: --- -----', 'Sort: Photo date': '----------: ---- ----', 'People in this photo': '---- -- ----', 'Date': '----', 'Caption / story': '------- / -------', 'Source': '--------', 'Delete photo': '------- ----', 'Make favourite': '-------- - ---------', 'Remove favourite': '------ -- ----------', 'Tag people': '-------- -----', 'Open photo': '------- ----', 'No people tagged': '---- -- --------', 'Unknown date': '---- ----------', 'Unknown place': '----- ----------',
       'Add files': '-------- -----', 'Create source': '------- --------', 'Sources': '---------', 'Imports': '-------', 'Review': '--------', 'Folders': '-----', 'Search this folder...': '----- - ---- -----...', 'Create folder': '------- -----', 'Sort: Updated': '----------: ---------', 'Sort: Source status': '----------: ------ ---------', 'Source / provenance': '--------', 'Linked to': '------- -', 'Date / place': '---- / -----', 'OCR': 'OCR', 'File info': '---------- - -----', 'Linked evidence': '--------- --------------', 'Assign source': '--------- --------', 'Run OCR': '--------- OCR', 'Restore': '------------', 'Reviewed': '---------', 'Needs review': '----- --------', 'Missing source': '--- ---------', 'Not linked': '-- -------',
-      'New note': '----- -------', 'New collection': '----- ---------', 'All notes': '--- -------', 'Collections': '---------', 'Search notes...': '----- -------...', 'Cards': '--------', 'List': '------', 'Saved': '---------', 'Linked people': '--------- ----', 'Linked sources': '--------- ---------', 'Linked places': '--------- -----', 'Related notes': '--------- -------', 'Tasks': '------', 'Note type': '--- -------',
+      'Add note': '----- -------', 'New collection': '----- ---------', 'All notes': '--- -------', 'Collections': '---------', 'Search notes...': '----- -------...', 'Cards': '--------', 'List': '------', 'Saved': '---------', 'Linked people': '--------- ----', 'Linked sources': '--------- ---------', 'Linked places': '--------- -----', 'Related notes': '--------- -------', 'Tasks': '------', 'Note type': '--- -------',
       'New place': '----- -----', 'New collection': '----- ---------', 'Countries': '------', 'Search places': '----- ----', 'Map': '-----', 'Resolved': '---------', 'Approximate': '--------------', 'Missing': '-----------', 'Ambiguous': '------------', 'Back to places': '----- - ------', 'Edit place': '------------- -----', 'Connected people': '--------- ----', 'Sources / files': '--------- / -----', 'Events here': '------- -----', 'Historical names': '------------ --------', 'Identity': '------------', 'Coordinates': '----------', 'Hierarchy': '--------',
       'New Publication': '----- ----------', 'Export history': '------- --------', 'AI Assistant': 'AI----------', 'All outputs': '--- ---------', 'Drafts': '---------', 'Ready to export': '------ - --------', 'Needs update': '------- ----------', 'Published': '------------', 'Archived': '- ------', 'Reports': '------', 'Books': '-----', 'Charts': '---------', 'Maps': '-----', 'Photo stories': '-----------', 'Archive indexes': '------- ------', 'DNA reports': '----------', 'Preview': '------------', 'Content': '-------', 'Settings': '---------', 'Export PDF': '------- PDF', 'Export DOCX': '------- DOCX', 'Share': '----------', 'Duplicate': '-----------', 'Delete': '-------',
       'Save': '---------', 'Create': '-------', 'Edit': '-------------', 'Delete person': '------- --------', 'Show in Family Tree': '-------- - -------- ------', 'Clear all': '-------- --', 'Save filter': '--------- ---', 'View all': '-------- ---', 'View all files': '--- -----', 'View all notes': '--- -------', 'View all photos': '--- ----', 'Add note': '-------- -------', 'Add file': '-------- ----', 'Add photo': '-------- ----', 'Created May 1, 2026': '------- 1 --- 2026', 'Today': '-------', 'Yesterday': '-----', 'Just now': '------ ---', 'Local project': '--------- ------', 'No insights found': '------- -- -------', 'No insights found for this person.': '--- ----- -------- ------- -- -------.', 'Unknown': '----------'
@@ -51318,31 +51312,6 @@
       }
     ];
 
-    const noteCreationTemplates = {
-      blank: {
-        label: 'Blank note',
-        description:
-          'Start with an empty research note.',
-        body: ''
-      },
-
-      question: {
-        label: 'Research question',
-        description:
-          'Start with a question, observations, and next steps.',
-        body:
-          'Research question\n\nCurrent observations\n\nNext steps'
-      },
-
-      source: {
-        label: 'Source extract',
-        description:
-          'Start with source details, an extract, and interpretation.',
-        body:
-          'Source details\n\nExtract or transcription\n\nInterpretation\n\nQuestions'
-      }
-    };
-
     sampleData.notes = (() => {
       const body = (...lines) =>
         lines.join('\n');
@@ -53703,7 +53672,7 @@
           <div class="notes-sidebar-tip">
             <div class="tip-card">
               <div class="tip-title">
-                ${icon.info}
+                ${icon.tip}
                 <span>Tip of the day</span>
               </div>
 
@@ -53836,27 +53805,14 @@
               </div>
 
               <div class="notes-browser-actions">
-                <div class="notes-new-note-group">
-                  <button
-                    class="button primary"
-                    type="button"
-                    id="notesNewNoteButton">
-                    ${icon.plus}
-                    New note
-                  </button>
-
-                  <button
-                    class="button primary notes-new-note-menu-button"
-                    type="button"
-                    id="notesNewNoteMenuButton"
-                    aria-label="More note starting options"
-                    aria-haspopup="menu"
-                    title="More note starting options">
-                    ${icon.chevron}
-                  </button>
-                </div>
+                <button
+                  class="button primary"
+                  type="button"
+                  id="notesNewNoteButton">
+                  ${icon.plus}
+                  Add note
+                </button>
               </div>
-            </div>
 
             ${renderNotesContextFilterBar()}
 
@@ -57748,20 +57704,6 @@
         );
 
       main
-        .querySelector(
-          '#notesNewNoteMenuButton'
-        )
-        ?.addEventListener(
-          'click',
-          event => {
-            event.stopPropagation();
-            openNewNoteTemplateMenu(
-              event.currentTarget
-            );
-          }
-        );
-
-      main
         .querySelectorAll(
           '[data-note-row]'
         )
@@ -59672,14 +59614,13 @@
         : null;
     }
 
-    function createCentralNote(
-      {
-        templateKey = 'blank',
-        contextType = '',
-        contextId = '',
-        collectionIds = null
-      } = {}
-    ) {
+      function createCentralNote(
+        {
+          contextType = '',
+          contextId = '',
+          collectionIds = null
+        } = {}
+      ) {
       const creationContext =
         resolveNoteCreationContext({
           contextType,
@@ -59710,12 +59651,6 @@
                 : []
             );
 
-      const template =
-        noteCreationTemplates[
-          templateKey
-        ]
-        || noteCreationTemplates.blank;
-
       const now =
         new Date().toISOString();
 
@@ -59732,7 +59667,7 @@
           'Untitled note',
 
         body:
-          template.body,
+          '',
 
         collectionIds:
           initialCollectionIds,
@@ -59855,86 +59790,11 @@
         title?.select();
       });
 
-      showToast(
-        templateKey === 'blank'
-          ? 'Note created.'
-          : `${template.label} created.`
+        showToast(
+          'Note created.'
       );
 
       return newNote;
-    }
-
-    function openNewNoteTemplateMenu(
-      anchor
-    ) {
-      closeMenu();
-
-      const rect =
-        anchor.getBoundingClientRect();
-
-      const menu =
-        document.createElement(
-          'div'
-        );
-
-      menu.className =
-        'menu-popover';
-
-      menu.id =
-        'projectMenu';
-
-      menu.style.top =
-        `${rect.bottom + 6}px`;
-
-      menu.style.left =
-        `${Math.max(
-          12,
-          rect.right - 230
-        )}px`;
-
-      menu.innerHTML = `
-        <button
-          type="button"
-          data-note-template="question">
-          Research question
-        </button>
-
-        <button
-          type="button"
-          data-note-template="source">
-          Source extract
-        </button>
-      `;
-
-      document.body.appendChild(
-        menu
-      );
-
-      menu.addEventListener(
-        'click',
-        event => {
-          const templateKey =
-            event.target
-              .closest(
-                '[data-note-template]'
-              )
-              ?.dataset.noteTemplate;
-
-          if (!templateKey) {
-            return;
-          }
-
-          closeMenu();
-
-          createCentralNote({
-            templateKey
-          });
-        }
-      );
-
-      bindMenuLifecycle(
-        anchor
-      );
     }
 
     function openNewCollectionModal() {
