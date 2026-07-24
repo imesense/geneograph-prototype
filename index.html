@@ -9896,15 +9896,13 @@
       backdrop-filter: blur(6px);
     }
     .person-photo-untagged-badge { top: auto; bottom: 8px; color: var(--brand-green-200); }
-    .person-photo-picker-notice,
-    .person-photo-deleted-notice {
+    .person-photo-picker-notice {
       padding: var(--space-3);
       border: 1px solid rgba(98,217,154,.2);
       border-radius: var(--radius-sm);
       background: rgba(47,174,116,.08);
       color: var(--text-secondary);
     }
-    .person-photo-deleted-notice { border-color: rgba(241,201,108,.25); background: rgba(241,201,108,.07); }
     .person-photo-empty { min-height: 220px; display: grid; place-items: center; text-align: center; }
     .person-photo-empty > div { max-width: 440px; display: grid; justify-items: center; gap: var(--space-3); }
     .person-photo-empty-actions { display: flex; justify-content: center; gap: var(--space-2); flex-wrap: wrap; }
@@ -10844,13 +10842,6 @@
         var(--space-2)
         0
         0;
-    }
-
-    .albums-detail-deleted-copy {
-      margin: var(--space-2) 0 0;
-      color: var(--red);
-      font-size: 12px;
-      font-weight: 800;
     }
 
     .albums-detail-title-field {
@@ -18746,21 +18737,20 @@
         }
       ],
       media: [
-        { id: 'photo-silver-portrait', projectId: 'p1', kind: 'photo', title: 'Silver portrait', filename: 'silver-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1400, height: 1800, sizeBytes: 168960, placeholder: { pattern: 'orbit', palette: 'mono', seed: 1 }, personIds: ['silver'], albumIds: ['al-family', 'al-personal'], date: { date: '03.03.1998', dateLabel: '03 Mar 1998', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Portrait of Silver Whiskerfield.', origin: { type: 'upload', label: 'Family upload' }, favorite: true, createdAt: '2026-05-01T10:00:00Z', updatedAt: '2026-05-01T10:00:00Z', deletedAt: null },
-        { id: 'photo-family-table', projectId: 'p1', kind: 'photo', title: 'Family table', filename: 'family-table-2025.jpg', src: '', mimeType: 'image/jpeg', width: 2400, height: 1350, sizeBytes: 3984588, placeholder: { pattern: 'bands', palette: 'moss', seed: 2 }, personIds: ['silver', 'luna', 'oliver'], albumIds: ['al-family', 'al-personal'], date: { date: '2025', dateLabel: '2025', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Family table after a celebration.', origin: { type: 'scan', label: 'Personal album scan' }, favorite: true, createdAt: '2026-04-18T09:30:00Z', updatedAt: '2026-05-02T11:10:00Z', deletedAt: null },
-        { id: 'photo-barnaby-portrait', projectId: 'p1', kind: 'photo', title: 'Barnaby portrait', filename: 'barnaby-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1200, height: 1600, sizeBytes: 1228800, placeholder: { pattern: 'window', palette: 'mono', seed: 3 }, personIds: ['barnaby'], albumIds: ['al-grandma', 'al-portraits'], date: { date: '1975', dateLabel: '1975', dateType: 'About / Circa', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Barnaby Whiskerfield in Pawford.', origin: { type: 'scan', label: 'Family album scan' }, favorite: false, createdAt: '2026-05-03T08:00:00Z', updatedAt: '2026-05-03T08:00:00Z', deletedAt: null },
-        { id: 'photo-luna-portrait', projectId: 'p1', kind: 'photo', title: 'Luna portrait', filename: 'luna-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1300, height: 1700, sizeBytes: 1480000, placeholder: { pattern: 'halo', palette: 'plum', seed: 4 }, personIds: ['luna'], albumIds: ['al-personal'], date: { date: '2018', dateLabel: '2018', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Portrait of Luna Purrington.', origin: { type: 'upload', label: 'Luna upload' }, favorite: false, createdAt: '2026-04-30T12:00:00Z', updatedAt: '2026-04-30T12:00:00Z', deletedAt: null },
-        { id: 'photo-grandparents-garden', projectId: 'p1', kind: 'photo', title: 'Grandparents in the garden', filename: 'grandparents-garden.jpg', src: '', mimeType: 'image/jpeg', width: 2100, height: 1400, sizeBytes: 2200000, placeholder: { pattern: 'fold', palette: 'amber', seed: 5 }, personIds: ['barnaby', 'daisy'], albumIds: ['al-family', 'al-grandma'], date: { date: '', dateLabel: '', dateType: 'Between', fromDate: '1970', toDate: '1975' }, placeId: 'place-pawford-garden', placeText: 'Pawford garden', caption: 'Barnaby and Daisy in the family garden.', origin: { type: 'scan', label: 'Family album scan' }, favorite: true, createdAt: '2026-05-04T14:00:00Z', updatedAt: '2026-05-04T14:00:00Z', deletedAt: null },
-        { id: 'photo-daisy-school', projectId: 'p1', kind: 'photo', title: 'Daisy school portrait', filename: 'daisy-school-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1100, height: 1500, sizeBytes: 980000, placeholder: { pattern: 'archive', palette: 'rose', seed: 6 }, personIds: ['daisy'], albumIds: ['al-grandma', 'al-portraits'], date: { date: '1960', dateLabel: '1960', dateType: 'Before', fromDate: '', toDate: '' }, placeId: 'place-meowbridge-school', placeText: 'Meowbridge school', caption: 'Early portrait of Daisy Milkpaw.', origin: { type: 'scan', label: 'Inherited print' }, favorite: false, createdAt: '2026-05-05T10:15:00Z', updatedAt: '2026-05-05T10:15:00Z', deletedAt: null },
-        { id: 'photo-silver-luna-wedding', projectId: 'p1', kind: 'photo', title: 'Silver and Luna', filename: 'silver-luna-wedding.jpg', src: '', mimeType: 'image/jpeg', width: 2000, height: 1333, sizeBytes: 2450000, placeholder: { pattern: 'orbit', palette: 'plum', seed: 7 }, personIds: ['silver', 'luna'], albumIds: ['al-family', 'al-personal'], date: { date: '18.08.2023', dateLabel: '18 Aug 2023', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Silver and Luna at their wedding celebration.', origin: { type: 'upload', label: 'Family upload' }, favorite: true, createdAt: '2026-05-06T16:45:00Z', updatedAt: '2026-05-06T16:45:00Z', deletedAt: null },
-        { id: 'photo-purrington-family', projectId: 'p1', kind: 'photo', title: 'Purrington family visit', filename: 'purrington-family-visit.jpg', src: '', mimeType: 'image/jpeg', width: 2300, height: 1500, sizeBytes: 3100000, placeholder: { pattern: 'bands', palette: 'amber', seed: 8 }, personIds: ['luna', 'rupert', 'mabel'], albumIds: ['al-family'], date: { date: '1980', dateLabel: '1980', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-fishmarket-row', placeText: 'Fishmarket Row', caption: 'A Purrington family visit.', origin: { type: 'scan', label: 'Rupert collection' }, favorite: false, createdAt: '2026-05-07T09:00:00Z', updatedAt: '2026-05-07T09:00:00Z', deletedAt: null },
-        { id: 'photo-oliver-portrait', projectId: 'p1', kind: 'photo', title: 'Oliver portrait', filename: 'oliver-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1250, height: 1600, sizeBytes: 1170000, placeholder: { pattern: 'window', palette: 'sea', seed: 9 }, personIds: ['oliver'], albumIds: ['al-personal'], date: { date: '18.05.2024', dateLabel: '18 May 2024', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Oliver Whiskerfield portrait.', origin: { type: 'upload', label: 'Family upload' }, favorite: false, createdAt: '2026-05-08T13:00:00Z', updatedAt: '2026-05-08T13:00:00Z', deletedAt: null },
-        { id: 'photo-pearl-portrait', projectId: 'p1', kind: 'photo', title: 'Pearl portrait', filename: 'pearl-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1000, height: 1450, sizeBytes: 910000, placeholder: { pattern: 'halo', palette: 'mono', seed: 10 }, personIds: ['pearl'], albumIds: ['al-portraits'], date: { date: '1950', dateLabel: '1950', dateType: 'About / Circa', fromDate: '', toDate: '' }, placeId: 'place-old-cattery', placeText: 'Old Cattery', caption: 'Portrait identified as Pearl Velvetpaw.', origin: { type: 'scan', label: 'Old Cattery collection' }, favorite: false, createdAt: '2026-05-09T10:00:00Z', updatedAt: '2026-05-09T10:00:00Z', deletedAt: null },
-        { id: 'photo-young-family', projectId: 'p1', kind: 'photo', title: 'Young Whiskerfield family', filename: 'young-whiskerfield-family.jpg', src: '', mimeType: 'image/jpeg', width: 2600, height: 1700, sizeBytes: 4300000, placeholder: { pattern: 'fold', palette: 'moss', seed: 11 }, personIds: ['silver', 'luna', 'oliver', 'mochi', 'cleo'], albumIds: ['al-family', 'al-personal'], date: { date: '2026', dateLabel: '2026', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'The young Whiskerfield household.', origin: { type: 'upload', label: 'Household upload' }, favorite: false, createdAt: '2026-05-10T15:30:00Z', updatedAt: '2026-05-10T15:30:00Z', deletedAt: null },
-        { id: 'photo-unidentified-studio', projectId: 'p1', kind: 'photo', title: 'Unidentified studio portrait', filename: 'unidentified-studio-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 900, height: 1300, sizeBytes: 740000, placeholder: { pattern: 'archive', palette: 'mono', seed: 12 }, personIds: [], albumIds: ['al-portraits'], date: { date: '', dateLabel: '', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-unknown', placeText: 'North quay studio', caption: 'Unidentified portrait awaiting research.', origin: { type: 'scan', label: 'Unsorted envelope' }, favorite: false, createdAt: '2026-05-11T11:00:00Z', updatedAt: '2026-05-11T11:00:00Z', deletedAt: null },
-        { id: 'photo-archive-yard', projectId: 'p1', kind: 'photo', title: 'Archive yard', filename: 'archive-yard.jpg', src: '', mimeType: 'image/jpeg', width: 1900, height: 1200, sizeBytes: 2050000, placeholder: { pattern: 'orbit', palette: 'sea', seed: 13 }, personIds: [], albumIds: [], date: { date: '1948', dateLabel: '1948', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'View of the Pawford archive yard.', origin: { type: 'archive', label: 'Pawford archive copy' }, favorite: false, createdAt: '2026-05-12T09:20:00Z', updatedAt: '2026-05-12T09:20:00Z', deletedAt: null },
-        { id: 'photo-archibald-workshop', projectId: 'p1', kind: 'photo', title: 'Archibald at the workshop', filename: 'archibald-workshop.jpg', src: '', mimeType: 'image/jpeg', width: 1800, height: 1200, sizeBytes: 1760000, placeholder: { pattern: 'bands', palette: 'rose', seed: 14 }, personIds: ['archibald'], albumIds: [], date: { date: '1940', dateLabel: '1940', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Archibald Whiskerfield outside the workshop.', origin: { type: 'scan', label: 'Workshop collection' }, favorite: false, createdAt: '2026-05-13T12:40:00Z', updatedAt: '2026-05-13T12:40:00Z', deletedAt: null },
-        { id: 'photo-deleted-contact-sheet', projectId: 'p1', kind: 'photo', title: 'Damaged contact sheet', filename: 'damaged-contact-sheet.jpg', src: '', mimeType: 'image/jpeg', width: 1600, height: 1600, sizeBytes: 1320000, placeholder: { pattern: 'window', palette: 'amber', seed: 15 }, personIds: [], albumIds: ['al-scans'], date: { date: '', dateLabel: '', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: null, placeText: '', caption: 'Damaged contact sheet retained for possible restoration.', origin: { type: 'scan', label: 'Unsorted scans' }, favorite: false, createdAt: '2026-05-14T08:10:00Z', updatedAt: '2026-05-15T08:10:00Z', deletedAt: '2026-05-15T08:10:00Z' }
+        { id: 'photo-silver-portrait', projectId: 'p1', kind: 'photo', title: 'Silver portrait', filename: 'silver-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1400, height: 1800, sizeBytes: 168960, placeholder: { pattern: 'orbit', palette: 'mono', seed: 1 }, personIds: ['silver'], albumIds: ['al-family', 'al-personal'], date: { date: '03.03.1998', dateLabel: '03 Mar 1998', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Portrait of Silver Whiskerfield.', origin: { type: 'upload', label: 'Family upload' }, favorite: true, createdAt: '2026-05-01T10:00:00Z', updatedAt: '2026-05-01T10:00:00Z' },
+        { id: 'photo-family-table', projectId: 'p1', kind: 'photo', title: 'Family table', filename: 'family-table-2025.jpg', src: '', mimeType: 'image/jpeg', width: 2400, height: 1350, sizeBytes: 3984588, placeholder: { pattern: 'bands', palette: 'moss', seed: 2 }, personIds: ['silver', 'luna', 'oliver'], albumIds: ['al-family', 'al-personal'], date: { date: '2025', dateLabel: '2025', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Family table after a celebration.', origin: { type: 'scan', label: 'Personal album scan' }, favorite: true, createdAt: '2026-04-18T09:30:00Z', updatedAt: '2026-05-02T11:10:00Z' },
+        { id: 'photo-barnaby-portrait', projectId: 'p1', kind: 'photo', title: 'Barnaby portrait', filename: 'barnaby-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1200, height: 1600, sizeBytes: 1228800, placeholder: { pattern: 'window', palette: 'mono', seed: 3 }, personIds: ['barnaby'], albumIds: ['al-grandma', 'al-portraits'], date: { date: '1975', dateLabel: '1975', dateType: 'About / Circa', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Barnaby Whiskerfield in Pawford.', origin: { type: 'scan', label: 'Family album scan' }, favorite: false, createdAt: '2026-05-03T08:00:00Z', updatedAt: '2026-05-03T08:00:00Z' },
+        { id: 'photo-luna-portrait', projectId: 'p1', kind: 'photo', title: 'Luna portrait', filename: 'luna-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1300, height: 1700, sizeBytes: 1480000, placeholder: { pattern: 'halo', palette: 'plum', seed: 4 }, personIds: ['luna'], albumIds: ['al-personal'], date: { date: '2018', dateLabel: '2018', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Portrait of Luna Purrington.', origin: { type: 'upload', label: 'Luna upload' }, favorite: false, createdAt: '2026-04-30T12:00:00Z', updatedAt: '2026-04-30T12:00:00Z' },
+        { id: 'photo-grandparents-garden', projectId: 'p1', kind: 'photo', title: 'Grandparents in the garden', filename: 'grandparents-garden.jpg', src: '', mimeType: 'image/jpeg', width: 2100, height: 1400, sizeBytes: 2200000, placeholder: { pattern: 'fold', palette: 'amber', seed: 5 }, personIds: ['barnaby', 'daisy'], albumIds: ['al-family', 'al-grandma'], date: { date: '', dateLabel: '', dateType: 'Between', fromDate: '1970', toDate: '1975' }, placeId: 'place-pawford-garden', placeText: 'Pawford garden', caption: 'Barnaby and Daisy in the family garden.', origin: { type: 'scan', label: 'Family album scan' }, favorite: true, createdAt: '2026-05-04T14:00:00Z', updatedAt: '2026-05-04T14:00:00Z' },
+        { id: 'photo-daisy-school', projectId: 'p1', kind: 'photo', title: 'Daisy school portrait', filename: 'daisy-school-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1100, height: 1500, sizeBytes: 980000, placeholder: { pattern: 'archive', palette: 'rose', seed: 6 }, personIds: ['daisy'], albumIds: ['al-grandma', 'al-portraits'], date: { date: '1960', dateLabel: '1960', dateType: 'Before', fromDate: '', toDate: '' }, placeId: 'place-meowbridge-school', placeText: 'Meowbridge school', caption: 'Early portrait of Daisy Milkpaw.', origin: { type: 'scan', label: 'Inherited print' }, favorite: false, createdAt: '2026-05-05T10:15:00Z', updatedAt: '2026-05-05T10:15:00Z' },
+        { id: 'photo-silver-luna-wedding', projectId: 'p1', kind: 'photo', title: 'Silver and Luna', filename: 'silver-luna-wedding.jpg', src: '', mimeType: 'image/jpeg', width: 2000, height: 1333, sizeBytes: 2450000, placeholder: { pattern: 'orbit', palette: 'plum', seed: 7 }, personIds: ['silver', 'luna'], albumIds: ['al-family', 'al-personal'], date: { date: '18.08.2023', dateLabel: '18 Aug 2023', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Silver and Luna at their wedding celebration.', origin: { type: 'upload', label: 'Family upload' }, favorite: true, createdAt: '2026-05-06T16:45:00Z', updatedAt: '2026-05-06T16:45:00Z' },
+        { id: 'photo-purrington-family', projectId: 'p1', kind: 'photo', title: 'Purrington family visit', filename: 'purrington-family-visit.jpg', src: '', mimeType: 'image/jpeg', width: 2300, height: 1500, sizeBytes: 3100000, placeholder: { pattern: 'bands', palette: 'amber', seed: 8 }, personIds: ['luna', 'rupert', 'mabel'], albumIds: ['al-family'], date: { date: '1980', dateLabel: '1980', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-fishmarket-row', placeText: 'Fishmarket Row', caption: 'A Purrington family visit.', origin: { type: 'scan', label: 'Rupert collection' }, favorite: false, createdAt: '2026-05-07T09:00:00Z', updatedAt: '2026-05-07T09:00:00Z' },
+        { id: 'photo-oliver-portrait', projectId: 'p1', kind: 'photo', title: 'Oliver portrait', filename: 'oliver-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1250, height: 1600, sizeBytes: 1170000, placeholder: { pattern: 'window', palette: 'sea', seed: 9 }, personIds: ['oliver'], albumIds: ['al-personal'], date: { date: '18.05.2024', dateLabel: '18 May 2024', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Oliver Whiskerfield portrait.', origin: { type: 'upload', label: 'Family upload' }, favorite: false, createdAt: '2026-05-08T13:00:00Z', updatedAt: '2026-05-08T13:00:00Z' },
+        { id: 'photo-pearl-portrait', projectId: 'p1', kind: 'photo', title: 'Pearl portrait', filename: 'pearl-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1000, height: 1450, sizeBytes: 910000, placeholder: { pattern: 'halo', palette: 'mono', seed: 10 }, personIds: ['pearl'], albumIds: ['al-portraits'], date: { date: '1950', dateLabel: '1950', dateType: 'About / Circa', fromDate: '', toDate: '' }, placeId: 'place-old-cattery', placeText: 'Old Cattery', caption: 'Portrait identified as Pearl Velvetpaw.', origin: { type: 'scan', label: 'Old Cattery collection' }, favorite: false, createdAt: '2026-05-09T10:00:00Z', updatedAt: '2026-05-09T10:00:00Z' },
+        { id: 'photo-young-family', projectId: 'p1', kind: 'photo', title: 'Young Whiskerfield family', filename: 'young-whiskerfield-family.jpg', src: '', mimeType: 'image/jpeg', width: 2600, height: 1700, sizeBytes: 4300000, placeholder: { pattern: 'fold', palette: 'moss', seed: 11 }, personIds: ['silver', 'luna', 'oliver', 'mochi', 'cleo'], albumIds: ['al-family', 'al-personal'], date: { date: '2026', dateLabel: '2026', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'The young Whiskerfield household.', origin: { type: 'upload', label: 'Household upload' }, favorite: false, createdAt: '2026-05-10T15:30:00Z', updatedAt: '2026-05-10T15:30:00Z' },
+        { id: 'photo-unidentified-studio', projectId: 'p1', kind: 'photo', title: 'Unidentified studio portrait', filename: 'unidentified-studio-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 900, height: 1300, sizeBytes: 740000, placeholder: { pattern: 'archive', palette: 'mono', seed: 12 }, personIds: [], albumIds: ['al-portraits'], date: { date: '', dateLabel: '', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-unknown', placeText: 'North quay studio', caption: 'Unidentified portrait awaiting research.', origin: { type: 'scan', label: 'Unsorted envelope' }, favorite: false, createdAt: '2026-05-11T11:00:00Z', updatedAt: '2026-05-11T11:00:00Z' },
+        { id: 'photo-archive-yard', projectId: 'p1', kind: 'photo', title: 'Archive yard', filename: 'archive-yard.jpg', src: '', mimeType: 'image/jpeg', width: 1900, height: 1200, sizeBytes: 2050000, placeholder: { pattern: 'orbit', palette: 'sea', seed: 13 }, personIds: [], albumIds: [], date: { date: '1948', dateLabel: '1948', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'View of the Pawford archive yard.', origin: { type: 'archive', label: 'Pawford archive copy' }, favorite: false, createdAt: '2026-05-12T09:20:00Z', updatedAt: '2026-05-12T09:20:00Z' },
+        { id: 'photo-archibald-workshop', projectId: 'p1', kind: 'photo', title: 'Archibald at the workshop', filename: 'archibald-workshop.jpg', src: '', mimeType: 'image/jpeg', width: 1800, height: 1200, sizeBytes: 1760000, placeholder: { pattern: 'bands', palette: 'rose', seed: 14 }, personIds: ['archibald'], albumIds: [], date: { date: '1940', dateLabel: '1940', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Archibald Whiskerfield outside the workshop.', origin: { type: 'scan', label: 'Workshop collection' }, favorite: false, createdAt: '2026-05-13T12:40:00Z', updatedAt: '2026-05-13T12:40:00Z' }
       ],
       albums: [
         { id: 'al-family', projectId: 'p1', name: 'Family photos', description: 'Shared family portraits and gatherings.', createdAt: '2026-05-08T10:00:00Z' },
@@ -18847,20 +18837,42 @@
     }
 
     // ---------- Canonical media access ----------
-    function photoIsDeleted(photo) {
-      return Boolean(photo?.deletedAt);
+    function getPhoto(
+      photoId,
+      {
+        projectId = ''
+      } = {}
+    ) {
+      const photo =
+        sampleData.media.find(
+          item =>
+            item.id === photoId
+        )
+        || null;
+
+      if (
+        !photo
+        || (
+          projectId
+          && photo.projectId
+            !== projectId
+        )
+      ) {
+        return null;
+      }
+
+      return photo;
     }
 
-    function getPhoto(photoId, { includeDeleted = false, projectId = '' } = {}) {
-      const photo = sampleData.media.find(item => item.id === photoId) || null;
-      if (!photo || (projectId && photo.projectId !== projectId)) return null;
-      return includeDeleted || !photoIsDeleted(photo) ? photo : null;
-    }
-
-    function getProjectPhotos(projectId = currentProjectId(), { includeDeleted = false } = {}) {
-      return sampleData.media.filter(photo =>
-        (!projectId || photo.projectId === projectId)
-        && (includeDeleted || !photoIsDeleted(photo))
+    function getProjectPhotos(
+      projectId =
+        currentProjectId()
+    ) {
+      return sampleData.media.filter(
+        photo =>
+          !projectId
+          || photo.projectId
+            === projectId
       );
     }
 
@@ -19346,7 +19358,7 @@
     }
 
     function setPhotoPersonIds(photoId, personIds, { rerender = true } = {}) {
-      const photo = getPhoto(photoId, { includeDeleted: true });
+      const photo = getPhoto(photoId);
       if (!photo) return false;
       const validIds = [...new Set(personIds || [])].filter(personId =>
         getPerson(personId)?.projectId === photo.projectId
@@ -19366,7 +19378,7 @@
           Boolean(getPhoto(photoId, { projectId: person.projectId }))
         )
       );
-      getProjectPhotos(person.projectId, { includeDeleted: true }).forEach(photo => {
+      getProjectPhotos(person.projectId).forEach(photo => {
         const ids = new Set(photo.personIds || []);
         if (selected.has(photo.id)) ids.add(person.id);
         else ids.delete(person.id);
@@ -19394,17 +19406,46 @@
       return true;
     }
 
-    function openAlbumsForPhoto(photoId) {
-      const photo = getPhoto(photoId, { includeDeleted: true });
-      if (!photo) return;
-      state.activeModule = 'Albums';
-      state.albumsView = photoIsDeleted(photo) ? 'deleted' : 'all';
-      state.activeAlbumId = null;
+    function openAlbumsForPhoto(
+      photoId
+    ) {
+      const photo =
+        getPhoto(
+          photoId
+        );
+
+      if (!photo) {
+        showToast(
+          'The photo is no longer available.'
+        );
+
+        return;
+      }
+
+      state.activeModule =
+        'Albums';
+
+      state.albumsView =
+        'all';
+
+      state.activeAlbumId =
+        null;
+
       resetAlbumsPage();
-      state.albumsFilters = { ...defaultAlbumFilters };
-      state.selectedPhotoId = photo.id;
-      state.selectedPhotoIds = [];
-      state.albumsDetailCollapsed = false;
+
+      state.albumsFilters = {
+        ...defaultAlbumFilters
+      };
+
+      state.selectedPhotoId =
+        photo.id;
+
+      state.selectedPhotoIds =
+        [];
+
+      state.albumsDetailCollapsed =
+        false;
+
       render();
     }
 
@@ -19763,8 +19804,19 @@
       });
     }
 
-    function getPhotosForPlace(placeId, { projectId = currentProjectId(), includeDeleted = false } = {}) {
-      return getProjectPhotos(projectId, { includeDeleted }).filter(photo => photo.placeId === placeId);
+    function getPhotosForPlace(
+      placeId,
+      {
+        projectId =
+          currentProjectId()
+      } = {}
+    ) {
+      return getProjectPhotos(
+        projectId
+      ).filter(
+        photo =>
+          photo.placeId === placeId
+      );
     }
 
     function getArchiveFilesForPlace(placeId, { projectId = currentProjectId(), includeDeleted = false } = {}) {
@@ -22654,7 +22706,6 @@
         ['createdAt', 'updatedAt'].forEach(field => {
           if (!Number.isFinite(Date.parse(photo[field] || ''))) warn(`Media ${photo.id} has invalid ${field}`);
         });
-        if (photo.deletedAt && !Number.isFinite(Date.parse(photo.deletedAt))) warn(`Media ${photo.id} has invalid deletedAt`);
       });
 
       sampleData.people.forEach(person => {
@@ -22674,12 +22725,46 @@
           (event.citations || []).forEach(citation => { if (citation.sourceId && !sourceIds.has(citation.sourceId)) warn(`Event ${event.id} citation points to missing source ${citation.sourceId}`); });
           (event.mediaIds || []).forEach(mediaId => { if (!mediaIds.has(mediaId)) warn(`Event ${event.id} points to missing media ${mediaId}`); });
         });
-        if (person.primaryPhotoId) {
-          const primaryPhoto = getPhoto(person.primaryPhotoId, { includeDeleted: true });
-          if (!primaryPhoto) warn(`Person ${person.id} points to missing primary photo ${person.primaryPhotoId}`);
-          else if (primaryPhoto.projectId !== person.projectId) warn(`Person ${person.id} primary photo is in another project`);
-          else if (photoIsDeleted(primaryPhoto)) warn(`Person ${person.id} primary photo is deleted`);
-          else if (!(primaryPhoto.personIds || []).includes(person.id)) warn(`Person ${person.id} is not tagged in primary photo ${primaryPhoto.id}`);
+        if (
+          person.primaryPhotoId
+        ) {
+          const primaryPhoto =
+            getPhoto(
+              person.primaryPhotoId
+            );
+
+          if (!primaryPhoto) {
+            warn(
+              `Person ${
+                person.id
+              } points to missing primary photo ${
+                person.primaryPhotoId
+              }`
+            );
+          } else if (
+            primaryPhoto.projectId
+              !== person.projectId
+          ) {
+            warn(
+              `Person ${
+                person.id
+              } primary photo is in another project`
+            );
+          } else if (
+            !(
+              primaryPhoto.personIds || []
+            ).includes(
+              person.id
+            )
+          ) {
+            warn(
+              `Person ${
+                person.id
+              } is not tagged in primary photo ${
+                primaryPhoto.id
+              }`
+            );
+          }
         }
         if (person.primaryPhotoCrop != null) {
           const crop = person.primaryPhotoCrop;
@@ -38130,16 +38215,6 @@
       return getPerson(state.personPhotoPicker?.personId) || null;
     }
 
-    function personPhotoPickerDeletedPrimary() {
-      const person = personPhotoPickerPerson();
-      if (!person?.primaryPhotoId) return null;
-      const photo = getPhoto(person.primaryPhotoId, {
-        includeDeleted: true,
-        projectId: person.projectId
-      });
-      return photoIsDeleted(photo) ? photo : null;
-    }
-
     function personPhotoUploadDraftAsPhoto(draft = state.personPhotoPicker?.uploadDraft) {
       if (!draft) return null;
       return {
@@ -38164,8 +38239,7 @@
         origin: { type: 'upload', label: 'Person photo upload' },
         favorite: false,
         createdAt: '',
-        updatedAt: '',
-        deletedAt: null
+        updatedAt: ''
       };
     }
 
@@ -38331,32 +38405,92 @@
     }
 
     function renderPersonPhotoChooseStage() {
-      const person = personPhotoPickerPerson();
-      const deletedPrimary = personPhotoPickerDeletedPrimary();
-      const hasStoredPrimaryReference = Boolean(person?.primaryPhotoId);
-      return `<div class="person-photo-picker-tabs" role="tablist" aria-label="Photo source">
-        <button class="person-photo-picker-tab" type="button" role="tab" data-person-photo-tab="project" aria-selected="${state.personPhotoPicker.sourceTab === 'project'}">Project photos</button>
-        <button class="person-photo-picker-tab" type="button" role="tab" data-person-photo-tab="upload" aria-selected="${state.personPhotoPicker.sourceTab === 'upload'}">Upload new</button>
-      </div>
-      ${deletedPrimary ? `<div class="person-photo-deleted-notice">
-        <strong>The previous profile photo is in Recently deleted.</strong>
-        <div class="person-photo-empty-actions">
-          <button class="button secondary" type="button" data-person-photo-browse-all>Choose another photo</button>
-          <button class="button secondary" type="button" data-person-photo-view-deleted="${escapeHtml(deletedPrimary.id)}">View Recently deleted</button>
+      const person =
+        personPhotoPickerPerson();
+
+      const hasStoredPrimaryReference =
+        Boolean(
+          person?.primaryPhotoId
+        );
+
+      return `
+        <div
+          class="person-photo-picker-tabs"
+          role="tablist"
+          aria-label="Photo source">
+
+          <button
+            class="person-photo-picker-tab"
+            type="button"
+            role="tab"
+            data-person-photo-tab="project"
+            aria-selected="${
+              state.personPhotoPicker
+                .sourceTab === 'project'
+            }">
+            Project photos
+          </button>
+
+          <button
+            class="person-photo-picker-tab"
+            type="button"
+            role="tab"
+            data-person-photo-tab="upload"
+            aria-selected="${
+              state.personPhotoPicker
+                .sourceTab === 'upload'
+            }">
+            Upload new
+          </button>
         </div>
-      </div>` : ''}
-      <div role="tabpanel">
-        ${state.personPhotoPicker.sourceTab === 'project'
-          ? renderPersonPhotoProjectPanel()
-          : renderPersonPhotoUploadPanel()}
-      </div>
-      <div class="modal-footer">
-        <div>${hasStoredPrimaryReference ? '<button class="button secondary" type="button" data-person-photo-remove-current>Remove current photo</button>' : ''}</div>
-        <div class="modal-footer-actions">
-          <button class="button secondary" type="button" data-close>Cancel</button>
-          <button class="button primary" type="button" data-person-photo-continue ${personPhotoPickerHasSource() ? '' : 'disabled'}>Continue</button>
+
+        <div role="tabpanel">
+          ${
+            state.personPhotoPicker
+              .sourceTab === 'project'
+                ? renderPersonPhotoProjectPanel()
+                : renderPersonPhotoUploadPanel()
+          }
         </div>
-      </div>`;
+
+        <div class="modal-footer">
+          <div>
+            ${
+              hasStoredPrimaryReference
+                ? `
+                  <button
+                    class="button secondary"
+                    type="button"
+                    data-person-photo-remove-current>
+                    Remove current photo
+                  </button>
+                `
+                : ''
+            }
+          </div>
+
+          <div class="modal-footer-actions">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+              Cancel
+            </button>
+
+            <button
+              class="button primary"
+              type="button"
+              data-person-photo-continue
+              ${
+                personPhotoPickerHasSource()
+                  ? ''
+                  : 'disabled'
+              }>
+              Continue
+            </button>
+          </div>
+        </div>
+      `;
     }
 
     function renderPersonPhotoCropMedia(
@@ -38599,7 +38733,7 @@
       const base = `photo-${personId}-${Date.now()}`;
       let id = base;
       let suffix = 2;
-      while (getPhoto(id, { includeDeleted: true })) {
+      while (getPhoto(id)) {
         id = `${base}-${suffix}`;
         suffix += 1;
       }
@@ -38634,8 +38768,7 @@
         origin: { type: 'upload', label: 'Person photo upload' },
         favorite: false,
         createdAt: now,
-        updatedAt: now,
-        deletedAt: null
+        updatedAt: now
       };
       sampleData.media.push(photo);
       return photo;
@@ -39024,8 +39157,7 @@
 
         favorite: false,
         createdAt: '',
-        updatedAt: '',
-        deletedAt: null
+        updatedAt: ''
       };
     }
 
@@ -40437,12 +40569,6 @@
         });
       });
       modalBackdrop.querySelector('[data-person-photo-remove-current]')?.addEventListener('click', removeCurrentPersonPhoto);
-      modalBackdrop.querySelector('[data-person-photo-view-deleted]')?.addEventListener('click', event => {
-        const photoId = event.currentTarget.dataset.personPhotoViewDeleted;
-        resetPersonPhotoPickerState();
-        closeModal({ force: true });
-        openAlbumsForPhoto(photoId);
-      });
       bindPersonPhotoCropDrag();
     }
 
@@ -40539,24 +40665,68 @@
     }
 
     function albumContext() {
-      if (state.albumsView === 'album') {
-        const album = getProjectAlbums().find(item => item.id === state.activeAlbumId);
+      if (
+        state.albumsView === 'album'
+      ) {
+        const album =
+          getProjectAlbums()
+            .find(
+              item =>
+                item.id
+                  === state.activeAlbumId
+            );
+
         return {
-          title: album?.name || 'Album',
-          subtitle: album?.description || 'Album photos',
-          empty: 'This album has no photos yet.'
+          title:
+            album?.name
+            || 'Album',
+
+          subtitle:
+            album?.description
+            || 'Album photos',
+
+          empty:
+            'This album has no photos yet.'
         };
       }
+
       const contexts = {
-        favorites: { title: 'Favorites', subtitle: 'Photos marked as favorites.', empty: 'No favorite photos yet.' },
-        unassigned: { title: 'Not in an album', subtitle: 'Photos waiting to be organized.', empty: 'Every active photo belongs to an album.' },
-        deleted: { title: 'Recently deleted', subtitle: 'Soft-deleted photos can be restored or removed permanently.', empty: 'Recently deleted is empty.' }
+        favorites: {
+          title:
+            'Favorites',
+
+          subtitle:
+            'Photos marked as favorites.',
+
+          empty:
+            'No favorite photos yet.'
+        },
+
+        unassigned: {
+          title:
+            'Not in an album',
+
+          subtitle:
+            'Photos waiting to be organized.',
+
+          empty:
+            'Every active photo belongs to an album.'
+        }
       };
-      return contexts[state.albumsView] || {
-        title: 'All photos',
-        subtitle: 'Your photos and visual memories.',
-        empty: 'No photos match this view.'
-      };
+
+      return (
+        contexts[state.albumsView]
+        || {
+          title:
+            'All photos',
+
+          subtitle:
+            'Your photos and visual memories.',
+
+          empty:
+            'No photos match this view.'
+        }
+      );
     }
 
     function photoSearchText(photo) {
@@ -40572,36 +40742,191 @@
     }
 
     function filteredAlbumPhotos() {
-      const includeDeleted = state.albumsView === 'deleted';
-      let photos = getProjectPhotos(currentProjectId(), { includeDeleted })
-        .filter(photo => includeDeleted ? photoIsDeleted(photo) : !photoIsDeleted(photo));
+      let photos =
+        getProjectPhotos(
+          currentProjectId()
+        );
 
-      if (state.albumsView === 'album') {
-        photos = photos.filter(photo => (photo.albumIds || []).includes(state.activeAlbumId));
-      } else if (state.albumsView === 'favorites') {
-        photos = photos.filter(photo => photo.favorite);
-      } else if (state.albumsView === 'unassigned') {
-        photos = photos.filter(photo => !(photo.albumIds || []).length);
+      if (
+        state.albumsView === 'album'
+      ) {
+        photos =
+          photos.filter(
+            photo =>
+              (
+                photo.albumIds || []
+              ).includes(
+                state.activeAlbumId
+              )
+          );
+      } else if (
+        state.albumsView
+          === 'favorites'
+      ) {
+        photos =
+          photos.filter(
+            photo =>
+              photo.favorite
+          );
+      } else if (
+        state.albumsView
+          === 'unassigned'
+      ) {
+        photos =
+          photos.filter(
+            photo =>
+              !(
+                photo.albumIds || []
+              ).length
+          );
       }
 
-      const query = String(state.albumsSearch || '').trim().toLowerCase();
-      if (query) photos = photos.filter(photo => photoSearchText(photo).includes(query));
+      const query =
+        String(
+          state.albumsSearch || ''
+        )
+          .trim()
+          .toLowerCase();
 
-      const filters = state.albumsFilters || defaultAlbumFilters;
-      if (filters.personId === 'none') photos = photos.filter(photo => !(photo.personIds || []).length);
-      else if (filters.personId) photos = photos.filter(photo => (photo.personIds || []).includes(filters.personId));
-      if (filters.placeId === 'none') photos = photos.filter(photo => !photo.placeId && !photo.placeText);
-      else if (filters.placeId) photos = photos.filter(photo => photo.placeId === filters.placeId);
-      if (filters.favouriteOnly) photos = photos.filter(photo => photo.favorite);
-      if (filters.dateRange === 'dated') photos = photos.filter(photo => formatPhotoDate(photo) !== 'Unknown date');
-      if (filters.dateRange === 'unknown') photos = photos.filter(photo => formatPhotoDate(photo) === 'Unknown date');
+      if (query) {
+        photos =
+          photos.filter(
+            photo =>
+              photoSearchText(
+                photo
+              ).includes(query)
+          );
+      }
+
+      const filters =
+        state.albumsFilters
+        || defaultAlbumFilters;
+
+      if (
+        filters.personId === 'none'
+      ) {
+        photos =
+          photos.filter(
+            photo =>
+              !(
+                photo.personIds || []
+              ).length
+          );
+      } else if (
+        filters.personId
+      ) {
+        photos =
+          photos.filter(
+            photo =>
+              (
+                photo.personIds || []
+              ).includes(
+                filters.personId
+              )
+          );
+      }
+
+      if (
+        filters.placeId === 'none'
+      ) {
+        photos =
+          photos.filter(
+            photo =>
+              !photo.placeId
+              && !photo.placeText
+          );
+      } else if (
+        filters.placeId
+      ) {
+        photos =
+          photos.filter(
+            photo =>
+              photo.placeId
+                === filters.placeId
+          );
+      }
+
+      if (
+        filters.favouriteOnly
+      ) {
+        photos =
+          photos.filter(
+            photo =>
+              photo.favorite
+          );
+      }
+
+      if (
+        filters.dateRange
+          === 'dated'
+      ) {
+        photos =
+          photos.filter(
+            photo =>
+              formatPhotoDate(
+                photo
+              ) !== 'Unknown date'
+          );
+      }
+
+      if (
+        filters.dateRange
+          === 'unknown'
+      ) {
+        photos =
+          photos.filter(
+            photo =>
+              formatPhotoDate(
+                photo
+              ) === 'Unknown date'
+          );
+      }
 
       const sorters = {
-        title: (a, b) => (a.title || '').localeCompare(b.title || ''),
-        oldest: (a, b) => String(a.createdAt || '').localeCompare(String(b.createdAt || '')),
-        modified: (a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || ''))
+        title:
+          (
+            first,
+            second
+          ) =>
+            (
+              first.title || ''
+            ).localeCompare(
+              second.title || ''
+            ),
+
+        oldest:
+          (
+            first,
+            second
+          ) =>
+            String(
+              first.createdAt || ''
+            ).localeCompare(
+              String(
+                second.createdAt || ''
+              )
+            ),
+
+        modified:
+          (
+            first,
+            second
+          ) =>
+            String(
+              second.updatedAt || ''
+            ).localeCompare(
+              String(
+                first.updatedAt || ''
+              )
+            )
       };
-      return [...photos].sort(sorters[state.albumsSort] || sorters.modified);
+
+      return [
+        ...photos
+      ].sort(
+        sorters[state.albumsSort]
+        || sorters.modified
+      );
     }
 
     const ALBUMS_ROWS_PER_PAGE_OPTIONS =
@@ -41161,7 +41486,6 @@
         getPhoto(
           state.selectedPhotoId,
           {
-            includeDeleted: true,
             projectId:
               currentProjectId()
           }
@@ -41215,7 +41539,8 @@
     }
 
     function renderAlbumsSidebar() {
-      const projectAlbums = getProjectAlbums();
+      const projectAlbums =
+        getProjectAlbums();
 
       return `
         <nav
@@ -41236,6 +41561,7 @@
                 }"
                 type="button"
                 data-albums-view="all">
+
                 ${icon.image}
                 <span>All photos</span>
               </button>
@@ -41248,6 +41574,7 @@
                 }"
                 type="button"
                 data-albums-view="favorites">
+
                 ${icon.star}
                 <span>Favorites</span>
               </button>
@@ -41260,26 +41587,20 @@
                 }"
                 type="button"
                 data-albums-view="unassigned">
+
                 ${icon.folder}
                 <span>Not in an album</span>
-              </button>
-
-              <button
-                class="side-link ${
-                  state.albumsView === 'deleted'
-                    ? 'active'
-                    : ''
-                }"
-                type="button"
-                data-albums-view="deleted">
-                ${icon.trash}
-                <span>Recently deleted</span>
               </button>
             </div>
           </div>
 
           <div>
-            <div class="side-section-title with-add">
+            <div
+              class="
+                side-section-title
+                with-add
+              ">
+
               <span>Albums</span>
 
               <button
@@ -41288,6 +41609,7 @@
                 id="albumsNewAlbum"
                 aria-label="Create album"
                 title="Create album">
+
                 ${icon.plus}
               </button>
             </div>
@@ -41296,7 +41618,8 @@
               ${projectAlbums
                 .map(album => {
                   const isActive =
-                    state.albumsView === 'album'
+                    state.albumsView
+                      === 'album'
                     && state.activeAlbumId
                       === album.id;
 
@@ -41304,11 +41627,17 @@
                     <div
                       class="
                         sidebar-entity-row
-                        ${isActive ? 'active' : ''}
+                        ${
+                          isActive
+                            ? 'active'
+                            : ''
+                        }
                       ">
 
                       <button
-                        class="sidebar-entity-main"
+                        class="
+                          sidebar-entity-main
+                        "
                         type="button"
                         data-album-open="${escapeHtml(
                           album.id
@@ -41320,7 +41649,9 @@
                         ${icon.folder}
 
                         <span
-                          class="sidebar-entity-name">
+                          class="
+                            sidebar-entity-name
+                          ">
                           ${escapeHtml(
                             album.name
                           )}
@@ -41348,35 +41679,40 @@
                 })
                 .join('')}
             </div>
+          </div>
 
-              </div>
-              <div class="tip-card albums-sidebar-tip">
-                <div class="tip-title">
-                  ${icon.tip}
-                  <span>Tip of the day</span>
-                </div>
+          <div class="tip-card albums-sidebar-tip">
+            <div class="tip-title">
+              ${icon.tip}
+              <span>Tip of the day</span>
+            </div>
 
-                <p>
-                  Add people, dates, and places as you identify them.
-                  Even partial details make photos easier to find later.
-                </p>
+            <p>
+              Add people, dates, and places
+              as you identify them. Even
+              partial details make photos
+              easier to find later.
+            </p>
 
-                <button
-                  class="link tip-link"
-                  type="button"
-                  data-toast="More photo organization guidance will be added later.">
-                  <span class="tip-link-text">
-                    Learn more
-                  </span>
+            <button
+              class="link tip-link"
+              type="button"
+              data-toast="More photo organization guidance will be added later.">
 
-                  <span
-                    class="tip-link-icon"
-                    aria-hidden="true">
-                    ${icon.openlink}
-                  </span>
-                </button>
-              </div>
-            </nav>`;
+              <span class="tip-link-text">
+                Learn more
+              </span>
+
+              <span
+                class="tip-link-icon"
+                aria-hidden="true">
+
+                ${icon.openlink}
+              </span>
+            </button>
+          </div>
+        </nav>
+      `;
     }
 
     function renderAlbumsMainMarkup() {
@@ -41394,7 +41730,16 @@
           : photos;
       return `<header class="albums-header">
         <div class="albums-title"><h1>${escapeHtml(context.title)}</h1><p>${escapeHtml(context.subtitle)}</p></div>
-        ${state.albumsView === 'deleted' ? '' : `<div class="albums-header-actions"><button class="button primary" type="button" id="albumsAddPhotos">${icon.plus} Add photos</button></div>`}
+        <div class="albums-header-actions">
+          <button
+            class="button primary"
+            type="button"
+            id="albumsAddPhotos">
+
+            ${icon.plus}
+            Add photos
+          </button>
+        </div>
       </header>
       <div
         class="albums-toolbar"
@@ -41561,15 +41906,67 @@
       }
 
     function renderAlbumsSelectionBar() {
-      const count = state.selectedPhotoIds.length;
-      const deleted = state.albumsView === 'deleted';
-      const selectAllAction = state.albumsViewMode === 'list'
-        ? ''
-        : '<button class="button secondary" type="button" id="albumsSelectAll">Select all</button>';
-      const actions = deleted
-        ? `<button class="button primary" type="button" id="albumsRestoreSelected">Restore selected</button><button class="button danger" type="button" id="albumsDeleteSelectedPermanent">Delete permanently</button>`
-        : `<button class="button secondary" type="button" id="albumsAddSelectedToAlbum">Add to album</button>${state.albumsView === 'album' ? '<button class="button secondary" type="button" id="albumsRemoveFromCurrent">Remove from album</button>' : ''}<button class="button danger" type="button" id="albumsDeleteSelected">Delete</button>`;
-      return `<div class="albums-selection-bar"><span class="albums-selection-copy">${count} selected</span><div class="albums-selection-actions">${selectAllAction}${actions}<button class="button secondary" type="button" id="albumsCancelSelection">Clear</button></div></div>`;
+      const count =
+        state.selectedPhotoIds.length;
+
+      const selectAllAction =
+        state.albumsViewMode
+          === 'list'
+            ? ''
+            : `
+              <button
+                class="button secondary"
+                type="button"
+                id="albumsSelectAll">
+                Select all
+              </button>
+            `;
+
+      return `
+        <div class="albums-selection-bar">
+          <span class="albums-selection-copy">
+            ${count} selected
+          </span>
+
+          <div class="albums-selection-actions">
+            ${selectAllAction}
+
+            <button
+              class="button secondary"
+              type="button"
+              id="albumsAddSelectedToAlbum">
+              Add to album
+            </button>
+
+            ${
+              state.albumsView === 'album'
+                ? `
+                  <button
+                    class="button secondary"
+                    type="button"
+                    id="albumsRemoveFromCurrent">
+                    Remove from album
+                  </button>
+                `
+                : ''
+            }
+
+            <button
+              class="button danger"
+              type="button"
+              id="albumsDeleteSelected">
+              Delete
+            </button>
+
+            <button
+              class="button secondary"
+              type="button"
+              id="albumsCancelSelection">
+              Clear
+            </button>
+          </div>
+        </div>
+      `;
     }
 
     function renderAlbumsPhotoCard(photo, selectedIds, width = 0) {
@@ -41582,7 +41979,60 @@
         : '';
 
       return `<article class="album-photo-card ${state.selectedPhotoId === photo.id ? 'selected-detail' : ''} ${selected ? 'is-checked' : ''}"${widthStyle} tabindex="0" data-photo-id="${escapeHtml(photo.id)}" aria-selected="${selected}">
-        <div class="albums-thumb">${renderPhotoThumbnail(photo, { label: photo.title })}<button class="albums-check" type="button" data-photo-check="${escapeHtml(photo.id)}" aria-pressed="${selected}" aria-label="${selected ? 'Deselect' : 'Select'} ${escapeHtml(photo.title)}">${selected ? icon.check : ''}</button>${state.albumsView === 'deleted' ? '' : `<button class="albums-fav-button ${photo.favorite ? 'active' : ''}" type="button" data-photo-fav="${escapeHtml(photo.id)}" aria-pressed="${photo.favorite}" aria-label="Toggle favorite">${icon.star}</button>`}</div>
+        <div class="albums-thumb">
+          ${renderPhotoThumbnail(
+            photo,
+            {
+              label:
+                photo.title
+            }
+          )}
+
+          <button
+            class="albums-check"
+            type="button"
+            data-photo-check="${escapeHtml(
+              photo.id
+            )}"
+            aria-pressed="${selected}"
+            aria-label="${
+              selected
+                ? 'Deselect'
+                : 'Select'
+            } ${escapeHtml(
+              photo.title
+            )}">
+
+            ${
+              selected
+                ? icon.check
+                : ''
+            }
+          </button>
+
+          <button
+            class="
+              albums-fav-button
+              ${
+                photo.favorite
+                  ? 'active'
+                  : ''
+              }
+            "
+            type="button"
+            data-photo-fav="${escapeHtml(
+              photo.id
+            )}"
+            aria-pressed="${photo.favorite}"
+            aria-label="${
+              photo.favorite
+                ? 'Remove from favorites'
+                : 'Mark as favorite'
+            }">
+
+            ${icon.star}
+          </button>
+        </div>
         <div class="albums-card-body">
           <strong
             class="albums-card-title"
@@ -42320,17 +42770,19 @@
 
     function renderAlbumsPhotoToolbar(
       photo,
-      editing,
-      deleted
+      editing
     ) {
       const collapseButton = `
         <button
-          class="people-collapse-button
+          class="
+            people-collapse-button
             people-sidebar-toggle-icon
-            albums-detail-collapse"
+            albums-detail-collapse
+          "
           type="button"
           data-albums-detail-toggle
           aria-label="Collapse photo inspector">
+
           ${icon.doublechevronSidebar}
         </button>
       `;
@@ -42341,7 +42793,9 @@
             ${collapseButton}
 
             <span
-              class="albums-detail-toolbar-spacer">
+              class="
+                albums-detail-toolbar-spacer
+              ">
             </span>
 
             <div class="albums-detail-edit-actions">
@@ -42363,40 +42817,14 @@
         `;
       }
 
-      if (deleted) {
-        return `
-          <div class="albums-detail-toolbar">
-            ${collapseButton}
-
-            <span
-              class="albums-detail-toolbar-spacer">
-            </span>
-
-            <button
-              class="button primary"
-              type="button"
-              id="albumsRestorePhoto">
-              Restore
-            </button>
-
-            <button
-              class="albums-detail-action"
-              type="button"
-              id="albumsInspectorMore"
-              aria-label="More photo actions"
-              aria-haspopup="menu">
-              ${icon.more}
-            </button>
-          </div>
-        `;
-      }
-
       return `
         <div class="albums-detail-toolbar">
           ${collapseButton}
 
           <span
-            class="albums-detail-toolbar-spacer">
+            class="
+              albums-detail-toolbar-spacer
+            ">
           </span>
 
           <button
@@ -42405,32 +42833,35 @@
             id="albumsEditPhoto"
             aria-label="Edit photo"
             title="Edit photo">
+
             ${icon.edit}
           </button>
 
           <button
-            class="albums-detail-action ${
-              photo.favorite
-                ? 'active'
-                : ''
-            }"
+            class="
+              albums-detail-action
+              ${
+                photo.favorite
+                  ? 'active'
+                  : ''
+              }
+            "
             type="button"
-            data-photo-fav="${escapeHtml(photo.id)}"
+            data-photo-fav="${escapeHtml(
+              photo.id
+            )}"
             aria-label="${
               photo.favorite
                 ? 'Remove from favorites'
                 : 'Mark as favorite'
             }"
-            aria-pressed="${
-              photo.favorite
-                ? 'true'
-                : 'false'
-            }"
+            aria-pressed="${photo.favorite}"
             title="${
               photo.favorite
                 ? 'Remove from favorites'
                 : 'Mark as favorite'
             }">
+
             ${icon.star}
           </button>
 
@@ -42440,6 +42871,7 @@
             id="albumsInspectorMore"
             aria-label="More photo actions"
             aria-haspopup="menu">
+
             ${icon.more}
           </button>
         </div>
@@ -42448,19 +42880,24 @@
 
     function renderAlbumsPhotoHero(
       photo,
-      editing,
-      deleted
+      editing
     ) {
       const draft =
         state.albumsDetailDraft
-        || albumPhotoEditDraftFromPhoto(photo);
+        || albumPhotoEditDraftFromPhoto(
+          photo
+        );
 
       return `
         <div class="albums-detail-hero">
           <button
-            class="albums-detail-preview-button"
+            class="
+              albums-detail-preview-button
+            "
             type="button"
-            data-photo-open="${escapeHtml(photo.id)}"
+            data-photo-open="${escapeHtml(
+              photo.id
+            )}"
             aria-label="Open full-size preview of ${escapeHtml(
               photo.title
               || photo.filename
@@ -42472,6 +42909,7 @@
               {
                 className:
                   'albums-detail-preview',
+
                 label:
                   photo.title
                   || photo.filename
@@ -42480,9 +42918,15 @@
           </button>
 
           <button
-            class="button secondary albums-detail-open"
+            class="
+              button
+              secondary
+              albums-detail-open
+            "
             type="button"
-            data-photo-open="${escapeHtml(photo.id)}">
+            data-photo-open="${escapeHtml(
+              photo.id
+            )}">
             Open preview
           </button>
 
@@ -42490,15 +42934,18 @@
             ${
               editing
                 ? `
-                  <label class="albums-detail-title-field">
+                  <label
+                    class="
+                      albums-detail-title-field
+                    ">
+
                     <span>Photo name</span>
 
                     <input
                       id="albumPhotoTitle"
                       maxlength="180"
                       value="${escapeHtml(
-                        draft.title
-                        || ''
+                        draft.title || ''
                       )}">
                   </label>
                 `
@@ -42515,7 +42962,9 @@
 
             <p class="albums-detail-summary">
               ${escapeHtml(
-                `${photo.width || 0} × ${
+                `${
+                  photo.width || 0
+                } × ${
                   photo.height || 0
                 } · ${
                   formatMediaBytes(
@@ -42524,27 +42973,11 @@
                 }`
               )}
             </p>
-
-            ${
-              deleted
-                ? `
-                  <p class="albums-detail-deleted-copy">
-                    Deleted ${
-                      escapeHtml(
-                        formatMediaTimestamp(
-                          photo.deletedAt
-                        )
-                      )
-                    }
-                  </p>
-                `
-                : ''
-            }
           </div>
         </div>
       `;
     }
-    
+        
     function renderAlbumsPhotoDetails(
       photo,
       editing
@@ -42846,15 +43279,6 @@
         ]
       ];
 
-      if (photo.deletedAt) {
-        rows.push([
-          'Deleted',
-          formatMediaTimestamp(
-            photo.deletedAt
-          )
-        ]);
-      }
-
       return `
         <div class="albums-metadata-list">
           ${rows.map(([label, value]) => `
@@ -42889,47 +43313,44 @@
     }
 
     function renderAlbumsDetailPane() {
-      const photo = getPhoto(
-        state.selectedPhotoId,
-        {
-          includeDeleted: true,
-          projectId: currentProjectId()
-        }
-      );
+      const photo =
+        getPhoto(
+          state.selectedPhotoId,
+          {
+            projectId:
+              currentProjectId()
+          }
+        );
 
       if (!photo) {
         return '';
       }
 
-      const deleted =
-        photoIsDeleted(photo);
-
       if (
         state.albumsDetailEditing
-        && state.albumsDetailDraft?.photoId
-          !== photo.id
+        && state.albumsDetailDraft
+          ?.photoId !== photo.id
       ) {
         resetAlbumsPhotoEditState();
       }
 
       const editing =
-        !deleted
-        && state.albumsDetailEditing
-        && state.albumsDetailDraft?.photoId
-          === photo.id;
+        state.albumsDetailEditing
+        && state.albumsDetailDraft
+          ?.photoId === photo.id;
 
-      const readOnly =
-        deleted
-        || editing;
+      const actionsLocked =
+        editing;
 
       const peopleAction =
-        readOnly
+        actionsLocked
           ? ''
           : `
             <button
               class="link"
               type="button"
               id="albumsTagPeople">
+
               ${renderPanelButtonLabel(
                 icon.plus,
                 'Tag person'
@@ -42938,13 +43359,14 @@
           `;
 
       const albumAction =
-        readOnly
+        actionsLocked
           ? ''
           : `
             <button
               class="link"
               type="button"
               id="albumsLinkAlbum">
+
               ${renderPanelButtonLabel(
                 icon.plus,
                 'Add to album'
@@ -42953,13 +43375,14 @@
           `;
 
       const sourceAction =
-        readOnly
+        actionsLocked
           ? ''
           : `
             <button
               class="link"
               type="button"
               data-toast="Source linking will be added when Albums is connected to central Sources and Citations.">
+
               ${renderPanelButtonLabel(
                 icon.plus,
                 'Add source'
@@ -42969,9 +43392,10 @@
 
       return `
         <aside
-          class="albums-detail ${
-            editing ? 'is-editing' : ''
-          }"
+          class="
+            albums-detail
+            ${editing ? 'is-editing' : ''}
+          "
           aria-label="Photo inspector"
           ${
             editing
@@ -42981,14 +43405,12 @@
 
           ${renderAlbumsPhotoToolbar(
             photo,
-            editing,
-            deleted
+            editing
           )}
 
           ${renderAlbumsPhotoHero(
             photo,
-            editing,
-            deleted
+            editing
           )}
 
           ${renderAlbumsDetailSection(
@@ -43005,7 +43427,7 @@
             'People',
             renderAlbumsPhotoPeople(
               photo,
-              readOnly
+              actionsLocked
             ),
             peopleAction
           )}
@@ -43015,7 +43437,7 @@
             'Albums',
             renderAlbumsPhotoAlbums(
               photo,
-              readOnly
+              actionsLocked
             ),
             albumAction
           )}
@@ -43199,7 +43621,7 @@
     }
 
     function openPhotoLightbox(photoId) {
-      const photo = getPhoto(photoId, { includeDeleted: true, projectId: currentProjectId() });
+      const photo = getPhoto(photoId, { projectId: currentProjectId() });
       if (!photo) return;
       openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="photoLightboxTitle"><div class="modal-header"><div><h2 id="photoLightboxTitle">${escapeHtml(photo.title || photo.filename)}</h2><p>${escapeHtml(formatPhotoDate(photo))}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body">${renderPhotoThumbnail(photo, { className: 'albums-lightbox-photo', label: photo.title })}<p>${escapeHtml(photo.caption || 'No caption.')}</p></div></div>`);
     }
@@ -44796,82 +45218,385 @@
       }
     }
 
-    function albumMutationPhotos(photoIds, { deleted } = {}) {
-      const ids = new Set(Array.isArray(photoIds) ? photoIds : [photoIds]);
-      return sampleData.media.filter(photo =>
-        ids.has(photo.id)
-        && photo.projectId === currentProjectId()
-        && (deleted === undefined || photoIsDeleted(photo) === deleted)
+    function getAlbumMutationPhotos(
+      photoIds
+    ) {
+      const ids =
+        new Set(
+          (
+            Array.isArray(photoIds)
+              ? photoIds
+              : [photoIds]
+          ).filter(Boolean)
+        );
+
+      return sampleData.media.filter(
+        photo =>
+          ids.has(photo.id)
+          && photo.projectId
+            === currentProjectId()
       );
     }
 
-    function softDeletePhotos(photoIds) {
-      const photos = albumMutationPhotos(photoIds, { deleted: false });
-      if (!photos.length) return;
-      const ids = new Set(photos.map(photo => photo.id));
-      const now = new Date().toISOString();
-      photos.forEach(photo => { photo.deletedAt = now; photo.updatedAt = now; });
-      repairPrimaryPhotoReferences(ids);
-      state.selectedPhotoIds = [];
-      ensureSelectedAlbumPhoto();
-      renderAlbums();
-      showToast(`${photos.length} photo${photos.length === 1 ? '' : 's'} moved to Recently deleted.`);
-    }
+    function deletePhotosPermanently(
+      photoIds
+    ) {
+      const photos =
+        getAlbumMutationPhotos(
+          photoIds
+        );
 
-    function restorePhotos(photoIds) {
-      const photos = albumMutationPhotos(photoIds, { deleted: true });
-      if (!photos.length) return;
-      const now = new Date().toISOString();
-      photos.forEach(photo => { photo.deletedAt = null; photo.updatedAt = now; });
-      state.selectedPhotoIds = [];
-      ensureSelectedAlbumPhoto();
-      renderAlbums();
-      showToast(`${photos.length} photo${photos.length === 1 ? '' : 's'} restored.`);
-    }
-
-    function permanentlyDeletePhotos(photoIds) {
-      const photos = albumMutationPhotos(photoIds);
-      if (!photos.length) return;
-      const ids = new Set(photos.map(photo => photo.id));
-      sampleData.people.forEach(person => {
-        if (!ids.has(person.primaryPhotoId)) return;
-        person.primaryPhotoId = '';
-        person.primaryPhotoCrop = null;
-      });
-      sampleData.people.forEach(person => {
-        (person.events || []).forEach(event => { event.mediaIds = (event.mediaIds || []).filter(id => !ids.has(id)); });
-        (person.attributes || []).forEach(attribute => { attribute.mediaIds = (attribute.mediaIds || []).filter(id => !ids.has(id)); });
-      });
-      centralFamilyRecords().forEach(family => {
-        (family.events || []).forEach(event => { event.mediaIds = (event.mediaIds || []).filter(id => !ids.has(id)); });
-        (family.attributes || []).forEach(attribute => { attribute.mediaIds = (attribute.mediaIds || []).filter(id => !ids.has(id)); });
-      });
-      (sampleData.events || []).forEach(event => {
-        event.mediaIds = (event.mediaIds || []).filter(id => !ids.has(id));
-      });
-      sampleData.links = (sampleData.links || []).filter(link => {
-        const mediaSource = (link.sourceType === 'media' && ids.has(link.sourceId))
-          || (link.fromType === 'media' && ids.has(link.fromId));
-        const mediaTarget = (link.targetType === 'media' && ids.has(link.targetId))
-          || (link.toType === 'media' && ids.has(link.toId));
-        return !mediaSource && !mediaTarget;
-      });
-      for (let index = sampleData.media.length - 1; index >= 0; index -= 1) {
-        if (ids.has(sampleData.media[index].id)) sampleData.media.splice(index, 1);
+      if (!photos.length) {
+        return;
       }
-      state.selectedPhotoIds = (state.selectedPhotoIds || []).filter(id => !ids.has(id));
-      if (ids.has(state.selectedPhotoId)) state.selectedPhotoId = null;
-      sampleData.events = buildSampleEvents();
+
+      const ids =
+        new Set(
+          photos.map(
+            photo =>
+              photo.id
+          )
+        );
+
+      sampleData.people.forEach(
+        person => {
+          if (
+            ids.has(
+              person.primaryPhotoId
+            )
+          ) {
+            person.primaryPhotoId =
+              '';
+
+            person.primaryPhotoCrop =
+              null;
+          }
+
+          (
+            person.events || []
+          ).forEach(event => {
+            event.mediaIds =
+              (
+                event.mediaIds || []
+              ).filter(
+                mediaId =>
+                  !ids.has(mediaId)
+              );
+          });
+
+          (
+            person.attributes || []
+          ).forEach(attribute => {
+            attribute.mediaIds =
+              (
+                attribute.mediaIds
+                || []
+              ).filter(
+                mediaId =>
+                  !ids.has(mediaId)
+              );
+          });
+        }
+      );
+
+      centralFamilyRecords()
+        .forEach(family => {
+          (
+            family.events || []
+          ).forEach(event => {
+            event.mediaIds =
+              (
+                event.mediaIds || []
+              ).filter(
+                mediaId =>
+                  !ids.has(mediaId)
+              );
+          });
+
+          (
+            family.attributes || []
+          ).forEach(attribute => {
+            attribute.mediaIds =
+              (
+                attribute.mediaIds
+                || []
+              ).filter(
+                mediaId =>
+                  !ids.has(mediaId)
+              );
+          });
+        });
+
+      (
+        sampleData.events || []
+      ).forEach(event => {
+        event.mediaIds =
+          (
+            event.mediaIds || []
+          ).filter(
+            mediaId =>
+              !ids.has(mediaId)
+          );
+      });
+
+      sampleData.links =
+        (
+          sampleData.links || []
+        ).filter(link => {
+          const mediaSource =
+            (
+              link.sourceType
+                === 'media'
+              && ids.has(
+                link.sourceId
+              )
+            )
+            || (
+              link.fromType
+                === 'media'
+              && ids.has(
+                link.fromId
+              )
+            );
+
+          const mediaTarget =
+            (
+              link.targetType
+                === 'media'
+              && ids.has(
+                link.targetId
+              )
+            )
+            || (
+              link.toType
+                === 'media'
+              && ids.has(
+                link.toId
+              )
+            );
+
+          return (
+            !mediaSource
+            && !mediaTarget
+          );
+        });
+
+      for (
+        let index =
+          sampleData.media.length - 1;
+        index >= 0;
+        index -= 1
+      ) {
+        if (
+          ids.has(
+            sampleData.media[index].id
+          )
+        ) {
+          sampleData.media.splice(
+            index,
+            1
+          );
+        }
+      }
+
+      state.selectedPhotoIds =
+        (
+          state.selectedPhotoIds || []
+        ).filter(
+          photoId =>
+            !ids.has(photoId)
+        );
+
+      if (
+        ids.has(
+          state.selectedPhotoId
+        )
+      ) {
+        state.selectedPhotoId =
+          null;
+
+        resetAlbumsPhotoEditState();
+      }
+
+      if (
+        state.personPhotoPicker
+      ) {
+        if (
+          ids.has(
+            state.personPhotoPicker
+              .selectedPhotoId
+          )
+        ) {
+          state.personPhotoPicker
+            .selectedPhotoId =
+            null;
+        }
+
+        if (
+          ids.has(
+            state.personPhotoPicker
+              .initialPhotoId
+          )
+        ) {
+          state.personPhotoPicker
+            .initialPhotoId =
+            null;
+        }
+      }
+
+      if (
+        state.personPhotosAdder
+      ) {
+        state.personPhotosAdder
+          .selectedProjectPhotoIds =
+          (
+            state.personPhotosAdder
+              .selectedProjectPhotoIds
+            || []
+          ).filter(
+            photoId =>
+              !ids.has(photoId)
+          );
+      }
+
+      sampleData.events =
+        buildSampleEvents();
+
       ensureSelectedAlbumPhoto();
       renderAlbums();
-      showToast(`${photos.length} photo${photos.length === 1 ? '' : 's'} permanently deleted.`);
+
+      showToast(
+        `${photos.length} photo${
+          photos.length === 1
+            ? ''
+            : 's'
+        } permanently deleted.`
+      );
     }
 
-    function openDeletePhotoConfirm(photoIds, permanent = false) {
-      const ids = [...new Set(Array.isArray(photoIds) ? photoIds : [photoIds])].filter(id => getPhoto(id, { includeDeleted: true, projectId: currentProjectId() }));
-      if (!ids.length) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deletePhotoTitle"><div class="modal-header"><div><h2 id="deletePhotoTitle">${permanent ? 'Delete permanently?' : 'Delete photos?'}</h2><p>${ids.length} photo${ids.length === 1 ? '' : 's'}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="albums-delete-copy">${permanent ? 'This cannot be undone. Primary-photo and event media references will be cleared.' : 'Photos can be restored from Recently deleted.'}</div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-confirm-photo-delete>${permanent ? 'Delete permanently' : 'Delete'}</button></div></div>`);
-      modalBackdrop.querySelector('[data-confirm-photo-delete]')?.addEventListener('click', () => { closeModal(); permanent ? permanentlyDeletePhotos(ids) : softDeletePhotos(ids); });
+    function openDeletePhotoConfirm(
+      photoIds
+    ) {
+      const photos =
+        getAlbumMutationPhotos(
+          photoIds
+        );
+
+      if (!photos.length) {
+        return;
+      }
+
+      const ids =
+        photos.map(
+          photo =>
+            photo.id
+        );
+
+      const count =
+        photos.length;
+
+      const title =
+        count === 1
+          ? 'Delete photo permanently?'
+          : `Delete ${count} photos permanently?`;
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="deletePhotoTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="deletePhotoTitle">
+                ${escapeHtml(title)}
+              </h2>
+
+              <p>
+                This action cannot be undone.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close">
+
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <div class="albums-delete-copy">
+              ${
+                count === 1
+                  ? `
+                    <strong>
+                      ${escapeHtml(
+                        photos[0].title
+                        || photos[0].filename
+                        || 'Untitled photo'
+                      )}
+                    </strong>
+                  `
+                  : `
+                    <strong>
+                      ${count} photos selected
+                    </strong>
+                  `
+              }
+
+              <p>
+                The photo${
+                  count === 1
+                    ? ''
+                    : 's'
+                } will be removed from Albums,
+                people, events, attributes, and
+                all other linked records.
+              </p>
+
+              <p>
+                Any affected primary-photo
+                assignments will be cleared.
+              </p>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+              Cancel
+            </button>
+
+            <button
+              class="button danger"
+              type="button"
+              data-confirm-photo-delete>
+              Delete permanently
+            </button>
+          </div>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelector(
+          '[data-confirm-photo-delete]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            closeModal();
+
+            deletePhotosPermanently(
+              ids
+            );
+          }
+        );
     }
 
     function openAlbumPhotoMenu(
@@ -44882,7 +45607,6 @@
         getPhoto(
           photoId,
           {
-            includeDeleted: true,
             projectId:
               currentProjectId()
           }
@@ -44919,62 +45643,45 @@
           )
         }px`;
 
-      if (photoIsDeleted(photo)) {
-        menu.innerHTML = `
-          <button
-            type="button"
-            data-photo-action="restore">
-            Restore
-          </button>
+      const favoriteLabel =
+        photo.favorite
+          ? 'Remove from favorites'
+          : 'Mark as favorite';
 
-          <button
-            class="danger"
-            type="button"
-            data-photo-action="permanent">
-            Delete permanently
-          </button>
-        `;
-      } else {
-        const favoriteLabel =
-          photo.favorite
-            ? 'Remove from favorites'
-            : 'Mark as favorite';
+      menu.innerHTML = `
+        <button
+          type="button"
+          data-photo-action="open">
+          Open
+        </button>
 
-        menu.innerHTML = `
-          <button
-            type="button"
-            data-photo-action="open">
-            Open
-          </button>
+        <button
+          type="button"
+          data-photo-action="favorite">
+          ${escapeHtml(
+            favoriteLabel
+          )}
+        </button>
 
-          <button
-            type="button"
-            data-photo-action="favorite">
-            ${escapeHtml(
-              favoriteLabel
-            )}
-          </button>
+        <button
+          type="button"
+          data-photo-action="people">
+          Tag people
+        </button>
 
-          <button
-            type="button"
-            data-photo-action="people">
-            Tag people
-          </button>
+        <button
+          type="button"
+          data-photo-action="album">
+          Add to album
+        </button>
 
-          <button
-            type="button"
-            data-photo-action="album">
-            Add to album
-          </button>
-
-          <button
-            class="danger"
-            type="button"
-            data-photo-action="delete">
-            Delete
-          </button>
-        `;
-      }
+        <button
+          class="danger"
+          type="button"
+          data-photo-action="delete">
+          Delete photo
+        </button>
+      `;
 
       document.body.appendChild(
         menu
@@ -44988,8 +45695,7 @@
               .closest(
                 '[data-photo-action]'
               )
-              ?.dataset
-              .photoAction;
+              ?.dataset.photoAction;
 
           if (!action) {
             return;
@@ -45005,7 +45711,9 @@
             return;
           }
 
-          if (action === 'favorite') {
+          if (
+            action === 'favorite'
+          ) {
             toggleAlbumPhotoFavourite(
               photo.id
             );
@@ -45027,6 +45735,7 @@
             ];
 
             openAddToAlbumModal();
+
             return;
           }
 
@@ -45034,25 +45743,6 @@
             openDeletePhotoConfirm([
               photo.id
             ]);
-
-            return;
-          }
-
-          if (action === 'restore') {
-            restorePhotos([
-              photo.id
-            ]);
-
-            return;
-          }
-
-          if (
-            action === 'permanent'
-          ) {
-            openDeletePhotoConfirm(
-              [photo.id],
-              true
-            );
           }
         }
       );
@@ -45166,39 +45856,16 @@
       photoId,
       anchor
     ) {
-      const photo = getPhoto(
-        photoId,
-        {
-          includeDeleted: true,
-          projectId: currentProjectId()
-        }
-      );
-
-      if (!photo) return;
-
-      if (photoIsDeleted(photo)) {
-        mountAlbumsActionMenu(
-          anchor,
-          `
-            <button
-              class="danger"
-              type="button"
-              role="menuitem"
-              data-albums-inspector-action="permanent">
-              Delete permanently
-            </button>
-          `,
-          'data-albums-inspector-action',
-          action => {
-            if (action === 'permanent') {
-              openDeletePhotoConfirm(
-                [photo.id],
-                true
-              );
-            }
+      const photo =
+        getPhoto(
+          photoId,
+          {
+            projectId:
+              currentProjectId()
           }
         );
 
+      if (!photo) {
         return;
       }
 
@@ -45229,10 +45896,14 @@
         `,
         'data-albums-inspector-action',
         action => {
-          if (action === 'save-copy') {
+          if (
+            action === 'save-copy'
+          ) {
             showToast(
               'Save copy will be available when real photo files are implemented.'
             );
+
+            return;
           }
 
           if (action === 'album') {
@@ -45241,6 +45912,8 @@
             ];
 
             openAddToAlbumModal();
+
+            return;
           }
 
           if (action === 'delete') {
@@ -45529,7 +46202,7 @@
       modalBackdrop.querySelector('[data-create-placeholder-photo]')?.addEventListener('click', () => {
         const now = new Date().toISOString();
         const id = `photo-${Date.now()}`;
-        sampleData.media.unshift({ id, projectId: currentProjectId(), kind: 'photo', title: 'Untitled photo', filename: 'untitled-photo.jpg', src: '', mimeType: 'image/jpeg', width: 1600, height: 1200, sizeBytes: 0, placeholder: { pattern: 'orbit', palette: 'moss', seed: Date.now() % 997 || 1 }, personIds: [], albumIds: state.albumsView === 'album' && state.activeAlbumId ? [state.activeAlbumId] : [], date: { date: '', dateLabel: '', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: null, placeText: '', caption: '', origin: { type: 'prototype', label: 'Prototype placeholder' }, favorite: false, createdAt: now, updatedAt: now, deletedAt: null });
+        sampleData.media.unshift({ id, projectId: currentProjectId(), kind: 'photo', title: 'Untitled photo', filename: 'untitled-photo.jpg', src: '', mimeType: 'image/jpeg', width: 1600, height: 1200, sizeBytes: 0, placeholder: { pattern: 'orbit', palette: 'moss', seed: Date.now() % 997 || 1 }, personIds: [], albumIds: state.albumsView === 'album' && state.activeAlbumId ? [state.activeAlbumId] : [], date: { date: '', dateLabel: '', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: null, placeText: '', caption: '', origin: { type: 'prototype', label: 'Prototype placeholder' }, favorite: false, createdAt: now, updatedAt: now });
         state.selectedPhotoId = id; closeModal(); renderAlbums(); showToast('Placeholder photo added.');
       });
     }
@@ -47351,17 +48024,6 @@
         );
 
       main
-        .querySelector('#albumsRestorePhoto')
-        ?.addEventListener(
-          'click',
-          () => {
-            restorePhotos([
-              state.selectedPhotoId
-            ]);
-          }
-        );
-
-      main
         .querySelector(
           '#albumsCancelSelection'
         )
@@ -47393,33 +48055,6 @@
         ?.addEventListener(
           'click',
           removeSelectedFromCurrentAlbum
-        );
-
-      main
-        .querySelector(
-          '#albumsRestoreSelected'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            restorePhotos(
-              state.selectedPhotoIds
-            );
-          }
-        );
-
-      main
-        .querySelector(
-          '#albumsDeleteSelectedPermanent'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            openDeletePhotoConfirm(
-              state.selectedPhotoIds,
-              true
-            );
-          }
         );
     }
 
@@ -70070,7 +70705,13 @@
       const nextProject = sampleData.projects[0] || null;
       const nextProjectId = nextProject?.id || '';
       const nextPerson = sampleData.people.find(person => person.projectId === nextProjectId) || null;
-      const nextPhoto = sampleData.media.find(photo => photo.projectId === nextProjectId && !photo.deletedAt) || null;
+      const nextPhoto =
+        sampleData.media.find(
+          photo =>
+            photo.projectId
+              === nextProjectId
+        )
+        || null;
       const nextPlace = sampleData.places.find(place => place.projectId === nextProjectId) || null;
 
       state.projectOpen = false;
