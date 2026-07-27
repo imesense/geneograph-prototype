@@ -15372,6 +15372,11 @@
       min-width: 0;
       border-top: 1px solid var(--border-default);
     }
+
+    .notes-editor-section {
+      scroll-margin-top:
+        12px;
+    }
     .notes-panel-section { min-width: 0; }
     .notes-panel-section .panel-section { border-bottom: 1px solid var(--border-default); }
     .notes-panel-section
@@ -15939,10 +15944,6 @@
       overflow: hidden;
     }
 
-    .notes-related-selected-panel[hidden] {
-      display: none;
-    }
-
     .notes-related-toolbar {
       display: grid;
       grid-template-columns:
@@ -16013,34 +16014,78 @@
     .notes-related-results {
       min-height: 0;
       max-height: none;
+
       padding-right:
         3px;
-      display: grid;
-      align-content: start;
+
+      display:
+        flex;
+
+      flex-direction:
+        column;
+
+      align-items:
+        stretch;
+
       gap:
         var(--space-2);
-      overflow-y: auto;
+
+      overflow-y:
+        auto;
+
       overscroll-behavior:
         contain;
     }
 
     .notes-related-choice {
-      min-width: 0;
-      min-height: 96px;
-      padding: 10px 12px;
-      display: grid;
+      flex:
+        0 0 auto;
+
+      min-width:
+        0;
+
+      min-height:
+        104px;
+
+      padding:
+        12px
+        14px
+        14px;
+
+      display:
+        grid;
+
       grid-template-columns:
         42px
         minmax(0, 1fr)
         auto
         18px;
-      align-items: center;
-      gap: var(--space-3);
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-md);
-      background: rgba(255, 255, 255, .025);
-      color: var(--text-secondary);
-      cursor: pointer;
+
+      align-items:
+        center;
+
+      gap:
+        var(--space-3);
+
+      box-sizing:
+        border-box;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-md);
+
+      background:
+        rgba(255, 255, 255, .025);
+
+      color:
+        var(--text-secondary);
+
+      cursor:
+        pointer;
+
       transition:
         border-color var(--ease),
         background var(--ease),
@@ -16048,95 +16093,189 @@
     }
 
     .notes-related-choice:hover {
-      border-color: var(--border-strong);
-      background: var(--surface-card-hover);
+      border-color:
+        var(--border-strong);
+
+      background:
+        var(--surface-card-hover);
     }
 
     .notes-related-choice.selected {
-      border-color: rgba(141, 108, 232, .68);
-      background: rgba(141, 108, 232, .10);
+      border-color:
+        rgba(141, 108, 232, .68);
+
+      background:
+        rgba(141, 108, 232, .10);
     }
 
     .notes-related-choice.already-related {
-      background: rgba(255, 255, 255, .018);
-      cursor: default;
+      background:
+        rgba(255, 255, 255, .018);
+
+      cursor:
+        default;
     }
 
     .notes-related-choice.already-related:hover {
-      border-color: var(--border-default);
-      background: rgba(255, 255, 255, .018);
+      border-color:
+        var(--border-default);
+
+      background:
+        rgba(255, 255, 255, .018);
     }
 
-    .notes-related-choice > input {
-      grid-column: 4;
+    .notes-related-choice-icon {
+      align-self:
+        center;
     }
 
     .notes-related-choice-copy {
-      min-width: 0;
-      display: grid;
-      gap: 4px;
+      min-width:
+        0;
+
+      display:
+        grid;
+
+      align-content:
+        start;
+
+      gap:
+        5px;
     }
 
     .notes-related-choice-title-line {
-      min-width: 0;
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
+      min-width:
+        0;
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      gap:
+        var(--space-2);
     }
 
-    .notes-related-choice-title-line strong {
-      min-width: 0;
-      overflow: hidden;
-      color: var(--text-primary);
-      font-size: 14px;
-      line-height: 1.35;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    .notes-related-choice-title-line
+    strong {
+      min-width:
+        0;
+
+      overflow:
+        hidden;
+
+      color:
+        var(--text-primary);
+
+      font-size:
+        14px;
+
+      line-height:
+        1.35;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
     }
 
     .notes-related-choice-excerpt {
-      display: -webkit-box;
-      overflow: hidden;
-      color: var(--text-secondary);
-      font-size: 12px;
-      line-height: 1.4;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
+      min-width:
+        0;
+
+      display:
+        -webkit-box;
+
+      overflow:
+        hidden;
+
+      color:
+        var(--text-secondary);
+
+      font-size:
+        12px;
+
+      line-height:
+        1.4;
+
+      -webkit-box-orient:
+        vertical;
+
+      -webkit-line-clamp:
+        2;
     }
 
     .notes-related-collection-chips {
-      min-width: 0;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
+      min-width:
+        0;
+
+      max-width:
+        100%;
+
+      margin:
+        2px 0 0;
+
+      padding:
+        0;
+
+      display:
+        flex;
+
+      flex-wrap:
+        wrap;
+
+      align-items:
+        center;
+
+      gap:
+        4px;
     }
 
     .notes-related-collection-chip {
-      max-width: 175px;
-      min-height: 26px;
+      max-width:
+        175px;
+
+      min-height:
+        26px;
+
       padding:
         0 8px;
+
       display:
         inline-flex;
+
       align-items:
         center;
+
       overflow:
         hidden;
-      border: 0;
+
+      border:
+        0;
+
       border-radius:
         5px;
+
       background:
         rgba(255, 255, 255, .055);
+
       color:
         var(--text-secondary);
+
       font-size:
         12px;
+
       font-weight:
         700;
+
       line-height:
         1;
+
       text-overflow:
         ellipsis;
+
       white-space:
         nowrap;
     }
@@ -16151,11 +16290,29 @@
     }
 
     .notes-related-choice-status {
-      align-self: center;
-      color: var(--text-tertiary);
-      font-size: 10px;
-      font-weight: 800;
-      white-space: nowrap;
+      align-self:
+        center;
+
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        10px;
+
+      font-weight:
+        800;
+
+      white-space:
+        nowrap;
+    }
+
+    .notes-related-choice
+    > input {
+      grid-column:
+        4;
+
+      align-self:
+        center;
     }
 
     .notes-related-empty {
@@ -70240,7 +70397,8 @@
         }
       );
     }
-
+    
+    
     function bindNoteEditorControls() {
       const note =
         selectedNote();
@@ -70518,59 +70676,105 @@
           );
         });
 
-      main
-        .querySelectorAll(
-          '[data-note-summary-section]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              const sectionKey =
-                button.dataset
-                  .noteSummarySection;
+        main
+          .querySelectorAll(
+            '[data-note-summary-section]'
+          )
+          .forEach(button => {
+            button.addEventListener(
+              'click',
+              () => {
+                const sectionKey =
+                  button.dataset
+                    .noteSummarySection;
 
-              state.notesEditorSections[
-                sectionKey
-              ] =
-                true;
+                if (!sectionKey) {
+                  return;
+                }
 
-              const selector =
-                `[data-note-editor-section="${
+                state.notesEditorSections[
+                  sectionKey
+                ] =
+                  true;
+
+                const escapedSectionKey =
                   CSS.escape(
                     sectionKey
-                  )
-                }"]`;
+                  );
 
-              renderNotesPreservingInteraction({
-                focusSelector:
-                  `[data-note-editor-section-toggle="${
-                    CSS.escape(
-                      sectionKey
-                    )
-                  }"]`
-              });
+                renderNotesPreservingInteraction({
+                  focusSelector:
+                    `[data-note-editor-section-toggle="${escapedSectionKey}"]`
+                });
 
-              requestAnimationFrame(
-                () =>
-                  requestAnimationFrame(
-                    () =>
-                      main
-                        .querySelector(
-                          selector
-                        )
-                        ?.scrollIntoView({
-                          block:
-                            'start',
+                /*
+                  renderNotesPreservingInteraction()
+                  registers its restoration callback
+                  first. This callback is registered
+                  afterward, so it runs after the
+                  previous scroll position and focus
+                  have been restored.
+                */
+                requestAnimationFrame(
+                  () => {
+                    const editorPane =
+                      main.querySelector(
+                        '.notes-right-pane'
+                      );
 
-                          behavior:
-                            'smooth'
-                        })
-                  )
-              );
-            }
-          );
-        });
+                    const section =
+                      editorPane
+                        ?.querySelector(
+                          `[data-note-editor-section="${escapedSectionKey}"]`
+                        );
+
+                    if (
+                      !editorPane
+                      || !section
+                    ) {
+                      return;
+                    }
+
+                    const stickyHeader =
+                      editorPane.querySelector(
+                        '.notes-editor-header'
+                      );
+
+                    const headerHeight =
+                      stickyHeader
+                        ?.getBoundingClientRect()
+                        .height
+                      || 0;
+
+                    /*
+                      Leave a small visible gap below
+                      the sticky Note header.
+                    */
+                    const scrollOffset =
+                      Math.ceil(
+                        headerHeight
+                      )
+                      + 12;
+
+                    section.style
+                      .scrollMarginTop =
+                        `${scrollOffset}px`;
+
+                    section.scrollIntoView({
+                      block:
+                        'start',
+
+                      inline:
+                        'nearest',
+
+                      behavior:
+                        'smooth'
+                    });
+                  }
+                );
+              }
+            );
+          });
 
       main
         .querySelectorAll(
