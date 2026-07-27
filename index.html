@@ -15213,9 +15213,34 @@
     /* Add related notes modal */
 
     .notes-related-modal {
-      width: min(720px, calc(100vw - 32px));
-      max-width: 720px;
-      max-height: min(820px, calc(100vh - 32px));
+      width:
+        min(
+          720px,
+          calc(100vw - 32px)
+        );
+
+      max-width:
+        720px;
+
+      height:
+        min(
+          820px,
+          calc(100vh - 32px)
+        );
+
+      max-height:
+        calc(100vh - 32px);
+
+      overflow:
+        hidden;
+
+      display:
+        grid;
+
+      grid-template-rows:
+        auto
+        minmax(0, 1fr)
+        auto;
     }
 
     .notes-related-reciprocal-note {
@@ -15232,19 +15257,37 @@
 
     .notes-related-picker-view {
       min-height: 0;
+
       display: grid;
+
       grid-template-rows:
         auto
         auto
-        minmax(180px, 1fr)
-        auto;
-      gap: var(--space-3);
+        minmax(0, 1fr);
+
+      gap:
+        var(--space-3);
+
+      overflow: hidden;
     }
 
-    .notes-related-picker-view[hidden],
-    .notes-related-create-view[hidden],
-    .notes-related-selected-panel[hidden],
-    .notes-related-footer[hidden] {
+    .notes-related-results-panel {
+      min-width: 0;
+      min-height: 0;
+
+      display: grid;
+
+      grid-template-rows:
+        auto
+        minmax(0, 1fr);
+
+      gap:
+        var(--space-2);
+
+      overflow: hidden;
+    }
+
+    .notes-related-selected-panel[hidden] {
       display: none;
     }
 
@@ -15317,17 +15360,21 @@
 
     .notes-related-results {
       min-height: 0;
-      max-height: 430px;
-      padding-right: 3px;
+      max-height: none;
+      padding-right:
+        3px;
       display: grid;
       align-content: start;
-      gap: var(--space-2);
+      gap:
+        var(--space-2);
       overflow-y: auto;
+      overscroll-behavior:
+        contain;
     }
 
     .notes-related-choice {
       min-width: 0;
-      min-height: 112px;
+      min-height: 96px;
       padding: 10px 12px;
       display: grid;
       grid-template-columns:
@@ -15413,41 +15460,42 @@
     }
 
     .notes-related-collection-chip {
-      max-width: 150px;
-      padding: 2px 7px;
-      overflow: hidden;
-      border: 1px solid rgba(141, 108, 232, .28);
-      border-radius: 999px;
-      background: rgba(141, 108, 232, .08);
-      color: #BBA9F6;
-      font-size: 10px;
-      font-weight: 750;
-      line-height: 1.4;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      max-width: 175px;
+      min-height: 26px;
+      padding:
+        0 8px;
+      display:
+        inline-flex;
+      align-items:
+        center;
+      overflow:
+        hidden;
+      border: 0;
+      border-radius:
+        5px;
+      background:
+        rgba(255, 255, 255, .055);
+      color:
+        var(--text-secondary);
+      font-size:
+        12px;
+      font-weight:
+        700;
+      line-height:
+        1;
+      text-overflow:
+        ellipsis;
+      white-space:
+        nowrap;
     }
 
-    .notes-related-choice-meta {
-      min-width: 0;
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      color: var(--text-tertiary);
-      font-size: 11px;
-      line-height: 1.35;
-    }
+    .notes-related-choice.selected
+    .notes-related-collection-chip {
+      background:
+        rgba(255, 255, 255, .07);
 
-    .notes-related-choice-meta span {
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .notes-related-choice-meta
-    span + span::before {
-      content: "·";
-      margin-right: var(--space-2);
+      color:
+        #C4CEC9;
     }
 
     .notes-related-choice-status {
@@ -15482,43 +15530,77 @@
       line-height: 1.45;
     }
 
-    .notes-related-empty-actions {
-      display: flex;
-      justify-content: center;
-      gap: var(--space-2);
+    .notes-related-selected-panel {
+      min-width: 0;
+
+      display: grid;
+
+      gap:
+        var(--space-2);
     }
 
-    .notes-related-selected-panel {
-      padding: var(--space-3);
-      display: grid;
-      gap: var(--space-2);
-      border: 1px solid rgba(141, 108, 232, .32);
-      border-radius: var(--radius-md);
-      background: rgba(141, 108, 232, .07);
+    .notes-related-selected-panel[hidden] {
+      display: none;
     }
 
     .notes-related-selected-head {
-      color: var(--text-primary);
-      font-size: 12px;
+      min-width: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap:
+        var(--space-3);
+
+      color:
+        var(--text-secondary);
+
+      font-size:
+        13px;
     }
 
     .notes-related-selected-list {
-      display: grid;
-      gap: 2px;
+      min-width: 0;
+
+      display: flex;
+      flex-wrap: wrap;
+
+      gap:
+        var(--space-2);
     }
 
     .notes-related-selected-row {
       min-width: 0;
+      max-width: 100%;
       min-height: 38px;
-      padding-left: 10px;
-      display: grid;
+
+      padding:
+        4px
+        6px
+        4px
+        10px;
+
+      display: inline-grid;
+
       grid-template-columns:
         minmax(0, 1fr)
-        auto;
+        26px;
+
       align-items: center;
-      gap: var(--space-2);
-      border-radius: 7px;
-      background: rgba(255, 255, 255, .035);
+
+      gap:
+        var(--space-2);
+
+      border:
+        1px solid
+        rgba(141, 108, 232, .24);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        rgba(141, 108, 232, .07);
     }
 
     .notes-related-selected-row > span {
@@ -15531,37 +15613,28 @@
       white-space: nowrap;
     }
 
-    .notes-related-create-view {
-      min-height: 300px;
-      display: grid;
-      place-items: center;
-    }
-
-    .notes-related-create-form {
-      width: min(480px, 100%);
-      display: grid;
-      gap: var(--space-4);
-    }
-
-    .notes-related-create-form h3 {
-      margin: 0 0 4px;
-      color: var(--text-primary);
-      font-size: 17px;
-    }
-
-    .notes-related-create-form p {
-      margin: 0;
-      color: var(--text-tertiary);
-      font-size: 12px;
-      line-height: 1.45;
-    }
-
-    .notes-related-create-actions,
     .notes-related-footer-actions {
       display: flex;
       align-items: center;
       justify-content: flex-end;
       gap: var(--space-3);
+    }
+
+    .notes-related-footer
+    [data-notes-related-save]:disabled,
+    .notes-related-footer
+    [data-notes-related-save]:disabled:hover {
+      opacity:
+        .46;
+
+      cursor:
+        not-allowed;
+
+      transform:
+        none;
+
+      filter:
+        none;
     }
 
     .notes-related-footer {
@@ -15578,8 +15651,14 @@
 
     @media (max-width: 720px) {
       .notes-related-modal {
-        width: calc(100vw - 16px);
-        max-height: calc(100vh - 16px);
+        width:
+          calc(100vw - 16px);
+
+        height:
+          calc(100vh - 16px);
+
+        max-height:
+          calc(100vh - 16px);
       }
 
       .notes-related-toolbar {
@@ -15606,17 +15685,6 @@
       .notes-related-choice-status {
         grid-column: 2 / -1;
         justify-self: start;
-      }
-
-      .notes-related-choice-meta {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 2px;
-      }
-
-      .notes-related-choice-meta
-      span + span::before {
-        content: none;
       }
 
       .notes-related-footer {
@@ -23922,22 +23990,77 @@
           const child = getPerson(childId);
           if (!child) return;
           const childBirthDate = eventDateFields(child.birth);
-          [familyPartnerAId(family), familyPartnerBId(family)].filter(Boolean).forEach(parentId => {
-            const parent = getPerson(parentId);
-            if (!parent) return;
-            events.push({
-              id: `event-${parentId}-${childId}-child-birth`,
-              projectId: family.projectId || child.projectId,
-              type: 'childBirth',
-              personIds: [parentId],
-              relatedPersonIds: [childId],
-              ...childBirthDate,
-              placeId: child.birth?.placeId || null,
-              placeText: child.birth?.placeText || '',
-              address: child.birth?.address || '',
-              title: `Birth of ${child.gender === 'female' ? 'daughter' : child.gender === 'male' ? 'son' : 'child'}`,
-              description: child.names.display
-            });
+          const parentIds =
+            [
+              ...new Set([
+                familyPartnerAId(
+                  family
+                ),
+
+                familyPartnerBId(
+                  family
+                )
+              ])
+            ]
+              .filter(Boolean)
+              .filter(parentId => {
+                const parent =
+                  getPerson(
+                    parentId
+                  );
+
+                return Boolean(
+                  parent
+                  && !parent.deleted
+                );
+              });
+
+          if (!parentIds.length) {
+            return;
+          }
+
+          events.push({
+            id:
+              `event-${family.id}-${childId}-child-birth`,
+
+            projectId:
+              family.projectId
+              || child.projectId,
+
+            type:
+              'childBirth',
+
+            personIds:
+              parentIds,
+
+            relatedPersonIds:
+              [childId],
+
+            ...childBirthDate,
+
+            placeId:
+              child.birth?.placeId
+              || null,
+
+            placeText:
+              child.birth?.placeText
+              || '',
+
+            address:
+              child.birth?.address
+              || '',
+
+            title:
+              `Birth of ${
+                child.gender === 'female'
+                  ? 'daughter'
+                  : child.gender === 'male'
+                    ? 'son'
+                    : 'child'
+              }`,
+
+            description:
+              child.names.display
           });
         });
       });
@@ -66433,8 +66556,6 @@
 
       const candidateSuggestion =
         candidate => {
-          const reasons = [];
-
           let score = 0;
 
           const entityWeights = {
@@ -66472,233 +66593,31 @@
               return;
             }
 
-            const ids =
+            score +=
               sharedIds(
                 note[config.field],
                 candidate[config.field]
-              );
-
-            if (!ids.length) {
-              return;
-            }
-
-            score +=
-              ids.length * weight;
-
-            const record =
-              noteEntityById(
-                type,
-                ids[0],
-                note.projectId
-              );
-
-            const firstLabel =
-              record
-                ? config.label(record)
-                : '';
-
-            reasons.push({
-              weight,
-
-              text:
-                ids.length === 1
-                && firstLabel
-                  ? `Shares ${firstLabel}`
-                  : `Shares ${ids.length} ${
-                      ids.length === 1
-                        ? config.singular
-                        : config.plural
-                    }`
-            });
+              ).length
+              * weight;
           });
 
-          const sharedCollectionIds =
+          score +=
             sharedIds(
               note.collectionIds,
               candidate.collectionIds
-            );
+            ).length
+            * 2;
 
-          if (sharedCollectionIds.length) {
-            score +=
-              sharedCollectionIds.length
-              * 2;
-
-            const collection =
-              getNoteCollection(
-                sharedCollectionIds[0]
-              );
-
-            reasons.push({
-              weight:
-                2,
-
-              text:
-                collection
-                  ? `Same collection · ${
-                      collection.name
-                    }`
-                  : 'Same collection'
-            });
-          }
-
-          const sharedTags =
+          score +=
             sharedIds(
               note.tags,
               candidate.tags
-            );
-
-          if (sharedTags.length) {
-            score +=
-              sharedTags.length * 2;
-
-            reasons.push({
-              weight:
-                2,
-
-              text:
-                `Shared tag · #${
-                  sharedTags[0]
-                }`
-            });
-          }
-
-          reasons.sort(
-            (first, second) =>
-              second.weight
-              - first.weight
-          );
-
-          const linkedCount =
-            noteExternalEntityCount(
-              candidate
-            );
+            ).length
+            * 2;
 
           return {
-            score,
-
-            reason:
-              reasons[0]?.text
-              || `${linkedCount} ${
-                linkedCount === 1
-                  ? 'linked record'
-                  : 'linked records'
-              }`
+            score
           };
-        };
-
-      const candidateSearchReason =
-        (
-          candidate,
-          normalizedQuery
-        ) => {
-          if (!normalizedQuery) {
-            return '';
-          }
-
-          const collections =
-            getCollectionsForNote(
-              candidate.id,
-              {
-                projectId:
-                  candidate.projectId
-              }
-            );
-
-          const collection =
-            collections.find(item =>
-              normalizeQuery(
-                item.name
-              ).includes(
-                normalizedQuery
-              )
-            );
-
-          if (collection) {
-            return `Matched collection: ${
-              collection.name
-            }`;
-          }
-
-          const tag =
-            (candidate.tags || [])
-              .find(item =>
-                normalizeQuery(item)
-                  .includes(
-                    normalizedQuery
-                  )
-              );
-
-          if (tag) {
-            return `Matched tag: #${tag}`;
-          }
-
-          const checklistItem =
-            (
-              candidate.checklist || []
-            ).find(item =>
-              normalizeQuery(
-                item.text
-              ).includes(
-                normalizedQuery
-              )
-            );
-
-          if (checklistItem) {
-            return 'Matched checklist text';
-          }
-
-          for (
-            const [
-              type,
-              config
-            ] of Object.entries(
-              NOTE_ENTITY_TYPES
-            )
-          ) {
-            const records =
-              (
-                candidate[config.field]
-                || []
-              )
-                .map(id =>
-                  noteEntityById(
-                    type,
-                    id,
-                    candidate.projectId
-                  )
-                )
-                .filter(Boolean);
-
-            const record =
-              records.find(item =>
-                normalizeQuery(`
-                  ${config.label(item)}
-                  ${config.meta(item)}
-                `).includes(
-                  normalizedQuery
-                )
-              );
-
-            if (record) {
-              return `Matched ${
-                config.singular
-              }: ${
-                config.label(record)
-              }`;
-            }
-          }
-
-          if (
-            normalizeQuery(
-              candidate.body
-            ).includes(
-              normalizedQuery
-            )
-          ) {
-            return 'Matched note content';
-          }
-
-          return '';
         };
 
       const visibleCandidates =
@@ -66707,14 +66626,20 @@
             normalizeQuery(
               query
             );
+            
 
           return allCandidates()
+            .filter(candidate =>
+              !selectedIds.has(
+                candidate.id
+              )
+            )
             .filter(candidate => {
               const alreadyRelated =
                 alreadyRelatedIds.has(
                   candidate.id
                 );
-
+                
               /*
                 An archived Note that is already
                 related remains searchable even
@@ -66795,8 +66720,7 @@
 
       const renderResult =
         ({
-          candidate,
-          suggestion
+          candidate
         }) => {
           const title =
             candidate.title
@@ -66811,18 +66735,6 @@
             selectedIds.has(
               candidate.id
             );
-
-          const normalized =
-            normalizeQuery(
-              query
-            );
-
-          const reason =
-            candidateSearchReason(
-              candidate,
-              normalized
-            )
-            || suggestion.reason;
 
           return `
             <label
@@ -66880,22 +66792,6 @@
                 ${renderRelatedNoteCollectionChips(
                   candidate
                 )}
-
-                <span class="notes-related-choice-meta">
-                  <span>
-                    ${escapeHtml(
-                      reason
-                    )}
-                  </span>
-
-                  <span>
-                    ${escapeHtml(
-                      formatNoteRelativeUpdatedAt(
-                        candidate
-                      )
-                    )}
-                  </span>
-                </span>
               </span>
 
               ${
@@ -66937,103 +66833,96 @@
           `;
         };
 
-      const renderEmptyState =
-        () => {
-          const normalized =
-            normalizeQuery(
-              query
-            );
+        const renderEmptyState =
+          () => {
+            const normalized =
+              normalizeQuery(
+                query
+              );
 
-          const candidates =
-            allCandidates();
+            const candidates =
+              allCandidates();
 
-          if (!candidates.length) {
-            return `
-              <div class="notes-related-empty">
-                <strong>No other notes yet</strong>
+            if (!candidates.length) {
+              return `
+                <div class="notes-related-empty">
+                  <strong>
+                    No other notes yet
+                  </strong>
 
-                <span>
-                  Create another note before adding a relationship.
-                </span>
+                  <span>
+                    Create another Note from the Notes toolbar,
+                    then return here to add the relationship.
+                  </span>
+                </div>
+              `;
+            }
 
-                <button
-                  class="button secondary"
-                  type="button"
-                  data-notes-related-new>
-                  ${icon.plus}
-                  New note
-                </button>
-              </div>
-            `;
-          }
+            if (normalized) {
+              return `
+                <div class="notes-related-empty">
+                  <strong>
+                    No notes match this search
+                  </strong>
 
-          if (normalized) {
-            return `
-              <div class="notes-related-empty">
-                <strong>
-                  No notes match this search
-                </strong>
+                  <span>
+                    Try another title, person, place,
+                    collection, or source.
+                  </span>
 
-                <span>
-                  Try another title, person, place, collection, or source.
-                </span>
-
-                <div class="notes-related-empty-actions">
                   <button
                     class="button secondary"
                     type="button"
                     data-notes-related-clear-search>
                     Clear search
                   </button>
-
-                  <button
-                    class="button secondary"
-                    type="button"
-                    data-notes-related-new>
-                    ${icon.plus}
-                    New note
-                  </button>
                 </div>
-              </div>
-            `;
-          }
+              `;
+            }
 
-          const activeUnrelated =
-            candidates.filter(candidate =>
-              !candidate.archived
-              && !alreadyRelatedIds.has(
-                candidate.id
-              )
-            );
+            const activeUnrelated =
+              candidates.filter(candidate =>
+                !candidate.archived
+                && !alreadyRelatedIds.has(
+                  candidate.id
+                )
+              );
 
-          if (!activeUnrelated.length) {
+            const archivedUnrelated =
+              candidates.filter(candidate =>
+                candidate.archived
+                && !alreadyRelatedIds.has(
+                  candidate.id
+                )
+              );
+
+            if (!activeUnrelated.length) {
+              return `
+                <div class="notes-related-empty">
+                  <strong>
+                    All available notes are already related
+                  </strong>
+
+                  <span>
+                    ${
+                      !showArchived
+                      && archivedUnrelated.length
+                        ? 'Enable “Show archived” to check archived Notes.'
+                        : 'There are no additional project Notes to relate.'
+                    }
+                  </span>
+                </div>
+              `;
+            }
+
             return `
               <div class="notes-related-empty">
                 <strong>
-                  All available notes are already related
+                  No notes available
                 </strong>
-
-                <span>
-                  Enable “Show archived” or create another note.
-                </span>
-
-                <button
-                  class="button secondary"
-                  type="button"
-                  data-notes-related-new>
-                  ${icon.plus}
-                  New note
-                </button>
               </div>
             `;
-          }
-
-          return `
-            <div class="notes-related-empty">
-              <strong>No notes available</strong>
-            </div>
-          `;
-        };
+          };
 
       const renderSelectedNotes =
         () => {
@@ -67069,10 +66958,12 @@
           return `
             <div class="notes-related-selected-head">
               <strong>
-                Selected notes · ${
-                  selectedNotes.length
-                }
+                Selected notes
               </strong>
+
+              <span>
+                ${selectedNotes.length}
+              </span>
             </div>
 
             <div class="notes-related-selected-list">
@@ -67144,8 +67035,7 @@
 
           <div class="modal-body notes-related-modal-body">
             <section
-              class="notes-related-picker-view"
-              data-notes-related-picker-view>
+              class="notes-related-picker-view">
 
               <div class="notes-related-toolbar">
                 <label
@@ -67170,87 +67060,34 @@
                 </label>
               </div>
 
-              <div class="notes-related-results-head">
-                <div>
-                  <strong data-notes-related-results-title>
-                    Suggested notes
-                  </strong>
-
-                  <span data-notes-related-results-meta>
-                  </span>
-                </div>
-
-                <button
-                  class="button secondary"
-                  type="button"
-                  data-notes-related-new>
-
-                  ${icon.plus}
-                  New note
-                </button>
-              </div>
-
-              <div
-                class="notes-related-results"
-                data-notes-related-results>
-              </div>
-
               <section
                 class="notes-related-selected-panel"
                 data-notes-related-selected
                 hidden>
               </section>
-            </section>
 
-            <section
-              class="notes-related-create-view"
-              data-notes-related-create-view
-              hidden>
+              <section class="notes-related-results-panel">
 
-              <form
-                class="notes-related-create-form"
-                data-notes-related-create-form>
+                <div class="notes-related-results-head">
+                  <div>
+                    <strong data-notes-related-results-title>
+                      Suggested notes
+                    </strong>
 
-                <div>
-                  <h3>Create a new note</h3>
-
-                  <p>
-                    The new note will be selected, but the relationship will not be saved until you press Add note.
-                  </p>
+                    <span data-notes-related-results-meta>
+                    </span>
+                  </div>
                 </div>
 
-                <label class="field">
-                  <span>Note title</span>
-
-                  <input
-                    type="text"
-                    maxlength="180"
-                    autocomplete="off"
-                    data-notes-related-new-title
-                    placeholder="Untitled note">
-                </label>
-
-                <div class="notes-related-create-actions">
-                  <button
-                    class="button secondary"
-                    type="button"
-                    data-notes-related-cancel-create>
-                    Back
-                  </button>
-
-                  <button
-                    class="button primary"
-                    type="submit">
-                    Create note
-                  </button>
+                <div
+                  class="notes-related-results"
+                  data-notes-related-results>
                 </div>
-              </form>
-            </section>
+              </section>
           </div>
 
           <div
-            class="modal-footer notes-related-footer"
-            data-notes-related-footer>
+            class="modal-footer notes-related-footer">
 
             <span
               class="notes-related-selection-count"
@@ -67287,21 +67124,6 @@
         return;
       }
 
-      const pickerView =
-        modal.querySelector(
-          '[data-notes-related-picker-view]'
-        );
-
-      const createView =
-        modal.querySelector(
-          '[data-notes-related-create-view]'
-        );
-
-      const footer =
-        modal.querySelector(
-          '[data-notes-related-footer]'
-        );
-
       const searchInput =
         modal.querySelector(
           '[data-notes-related-search]'
@@ -67336,35 +67158,6 @@
         modal.querySelector(
           '[data-notes-related-save]'
         );
-
-      const newTitleInput =
-        modal.querySelector(
-          '[data-notes-related-new-title]'
-        );
-
-      const setCreateMode =
-        enabled => {
-          pickerView.hidden =
-            enabled;
-
-          createView.hidden =
-            !enabled;
-
-          footer.hidden =
-            enabled;
-
-          requestAnimationFrame(() => {
-            if (enabled) {
-              newTitleInput?.focus();
-              return;
-            }
-
-            searchInput?.focus({
-              preventScroll:
-                true
-            });
-          });
-        };
 
       const refresh =
         () => {
@@ -67525,28 +67318,6 @@
 
           if (
             event.target.closest(
-              '[data-notes-related-new]'
-            )
-          ) {
-            if (newTitleInput) {
-              newTitleInput.value = '';
-            }
-
-            setCreateMode(true);
-            return;
-          }
-
-          if (
-            event.target.closest(
-              '[data-notes-related-cancel-create]'
-            )
-          ) {
-            setCreateMode(false);
-            return;
-          }
-
-          if (
-            event.target.closest(
               '[data-notes-related-save]'
             )
           ) {
@@ -67596,84 +67367,17 @@
           }
         }
       );
-
-      modal
-        .querySelector(
-          '[data-notes-related-create-form]'
-        )
-        ?.addEventListener(
-          'submit',
-          event => {
-            event.preventDefault();
-
-            const title =
-              newTitleInput?.value
-                .trim()
-              || '';
-
-            if (!title) {
-              newTitleInput?.focus();
-
-              showToast(
-                'Enter a note title.'
-              );
-
-              return;
-            }
-
-            const created =
-              createCentralNote({
-                title,
-
-                projectId:
-                  note.projectId,
-
-                collectionIds:
-                  [],
-
-                inheritActiveContext:
-                  false,
-
-                inheritActiveCollection:
-                  false,
-
-                activate:
-                  false,
-
-                renderAfterCreate:
-                  false,
-
-                focusTitleAfterCreate:
-                  false,
-
-                showCreatedToast:
-                  false
-              });
-
-            if (!created) {
-              return;
-            }
-
-            selectedIds.add(
-              created.id
-            );
-
-            setCreateMode(false);
-            refresh();
-
-            showToast(
-              'Note created and selected.'
-            );
-          }
-        );
-
       refresh();
 
-      searchInput?.focus({
-        preventScroll:
-          true
-      });
-    }
+      requestAnimationFrame(
+        () => {
+          searchInput?.focus({
+            preventScroll:
+              true
+          });
+        }
+      );
+      }
 
     function openCentralNoteInEditor(
       noteId
