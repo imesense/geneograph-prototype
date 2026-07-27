@@ -13,6 +13,11 @@
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
+  <script
+    src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
   <style>
     :root {
       --surface-app: #0B0F0E;
@@ -14716,6 +14721,653 @@
     .notes-body-input:focus::placeholder {
       color: var(--text-secondary);
     }
+
+    /* Notes rich-text editor (Quill 2) */
+    .notes-rich-editor-shell {
+      width: 100%;
+      min-width: 0;
+
+      position: relative;
+
+      overflow: visible;
+
+      border:
+        1px solid
+        rgba(255, 255, 255, .065);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        transparent;
+
+      transition:
+        border-color var(--ease),
+        box-shadow var(--ease),
+        background var(--ease);
+    }
+
+    .notes-rich-editor-shell:focus-within {
+      border-color:
+        rgba(98, 217, 154, .38);
+
+      box-shadow:
+        0 0 0 1px
+        rgba(47, 174, 116, .08);
+
+      background:
+        rgba(255, 255, 255, .012);
+    }
+
+    .notes-rich-editor-shell.is-fallback {
+      border-color:
+        transparent;
+    }
+
+    .notes-rich-editor-label {
+      width: 1px;
+      height: 1px;
+
+      position: absolute;
+
+      overflow: hidden;
+
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+
+      white-space: nowrap;
+    }
+
+    .notes-rich-editor-toolbar[hidden],
+    #notesRichTextEditor[hidden],
+    .notes-body-input[hidden] {
+      display: none !important;
+    }
+
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow {
+      min-width: 0;
+      min-height: 46px;
+
+      padding:
+        6px
+        7px;
+
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+
+      gap:
+        5px;
+
+      border: 0;
+      border-bottom:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        calc(var(--radius-sm) - 1px)
+        calc(var(--radius-sm) - 1px)
+        0
+        0;
+
+      background:
+        rgba(255, 255, 255, .022);
+    }
+
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .ql-formats {
+      margin: 0;
+
+      display: inline-flex;
+      align-items: center;
+
+      gap:
+        3px;
+    }
+
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .ql-formats
+    + .ql-formats {
+      padding-left:
+        6px;
+
+      border-left:
+        1px solid
+        var(--border-default);
+    }
+
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    button,
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .ql-picker-label {
+      width: 32px;
+      height: 32px;
+
+      padding: 0;
+
+      float: none;
+
+      display: grid;
+      place-items: center;
+
+      border:
+        1px solid
+        transparent;
+
+      border-radius:
+        7px;
+
+      background:
+        transparent;
+
+      color:
+        var(--text-tertiary);
+
+      transition:
+        border-color var(--ease),
+        background var(--ease),
+        color var(--ease);
+    }
+
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    button:hover,
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    button:focus-visible,
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .ql-picker-label:hover,
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .ql-picker-label:focus-visible {
+      border-color:
+        var(--border-strong);
+
+      background:
+        var(--surface-card-hover);
+
+      color:
+        var(--text-primary);
+    }
+
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    button:focus-visible,
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .ql-picker-label:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-400);
+
+      outline-offset:
+        2px;
+    }
+
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    button.ql-active,
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .ql-picker-label.ql-active,
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-expanded
+    .ql-picker-label {
+      border-color:
+        rgba(98, 217, 154, .34);
+
+      background:
+        rgba(47, 174, 116, .12);
+
+      color:
+        var(--brand-green-300);
+    }
+
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    button svg {
+      width: 17px;
+      height: 17px;
+
+      display: block;
+    }
+
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-header {
+      width: 116px;
+      height: 32px;
+    }
+
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-header
+    .ql-picker-label {
+      width: 116px;
+
+      padding:
+        0
+        25px
+        0
+        10px;
+
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-header
+    .ql-picker-label::before,
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-header
+    .ql-picker-item::before {
+      line-height: 1.2;
+    }
+
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .ql-picker-options {
+      min-width: 140px;
+
+      padding:
+        6px;
+
+      z-index:
+        40;
+
+      border:
+        1px solid
+        var(--border-strong);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        var(--surface-card);
+
+      box-shadow:
+        var(--shadow-soft);
+    }
+
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .ql-picker-item {
+      min-height: 34px;
+
+      padding:
+        8px
+        10px;
+
+      border-radius:
+        6px;
+
+      color:
+        var(--text-secondary);
+
+      font-size: 12px;
+    }
+
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .ql-picker-item:hover,
+    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .ql-picker-item.ql-selected {
+      background:
+        var(--surface-card-hover);
+
+      color:
+        var(--brand-green-300);
+    }
+
+    .notes-rich-editor-shell
+    .ql-snow
+    .ql-stroke {
+      stroke:
+        currentColor;
+    }
+
+    .notes-rich-editor-shell
+    .ql-snow
+    .ql-fill,
+    .notes-rich-editor-shell
+    .ql-snow
+    .ql-stroke.ql-fill {
+      fill:
+        currentColor;
+    }
+
+    .notes-rich-editor-shell
+    .ql-container.ql-snow {
+      height: auto;
+
+      border: 0;
+
+      border-radius:
+        0
+        0
+        calc(var(--radius-sm) - 1px)
+        calc(var(--radius-sm) - 1px);
+
+      background:
+        transparent;
+
+      color:
+        var(--text-secondary);
+
+      font-family:
+        inherit;
+
+      font-size:
+        15px;
+    }
+
+    .notes-rich-editor-shell
+    .ql-editor {
+      min-height: 160px;
+      height: auto;
+
+      padding:
+        14px;
+
+      overflow-y:
+        visible;
+
+      color:
+        var(--text-secondary);
+
+      font-size:
+        15px;
+
+      line-height:
+        1.75;
+
+      tab-size:
+        4;
+    }
+
+    .notes-rich-editor-shell
+    .ql-editor.ql-blank::before {
+      left: 14px;
+      right: 14px;
+
+      color:
+        var(--text-tertiary);
+
+      font-style:
+        normal;
+
+      opacity:
+        1;
+    }
+
+    .notes-rich-editor-shell:focus-within
+    .ql-editor.ql-blank::before {
+      color:
+        var(--text-secondary);
+    }
+
+    .notes-rich-editor-shell
+    .ql-editor
+    h2 {
+      margin:
+        1.2em
+        0
+        .35em;
+
+      color:
+        var(--text-primary);
+
+      font-size:
+        22px;
+
+      font-weight:
+        880;
+
+      line-height:
+        1.3;
+
+      letter-spacing:
+        -.018em;
+    }
+
+    .notes-rich-editor-shell
+    .ql-editor
+    h3 {
+      margin:
+        1.05em
+        0
+        .3em;
+
+      color:
+        var(--text-primary);
+
+      font-size:
+        18px;
+
+      font-weight:
+        850;
+
+      line-height:
+        1.35;
+    }
+
+    .notes-rich-editor-shell
+    .ql-editor
+    h2:first-child,
+    .notes-rich-editor-shell
+    .ql-editor
+    h3:first-child {
+      margin-top: 0;
+    }
+
+    .notes-rich-editor-shell
+    .ql-editor
+    blockquote {
+      margin:
+        .8em
+        0;
+
+      padding:
+        8px
+        12px;
+
+      border-left:
+        3px solid
+        rgba(98, 217, 154, .54);
+
+      border-radius:
+        0
+        6px
+        6px
+        0;
+
+      background:
+        rgba(98, 217, 154, .055);
+
+      color:
+        var(--text-secondary);
+    }
+
+    .notes-rich-editor-shell
+    .ql-editor
+    ol,
+    .notes-rich-editor-shell
+    .ql-editor
+    ul {
+      padding-left:
+        1.45em;
+    }
+
+    .notes-rich-editor-shell
+    .ql-editor
+    a {
+      color:
+        #8BC8F5;
+
+      text-decoration:
+        underline;
+
+      text-underline-offset:
+        2px;
+    }
+
+    .notes-rich-editor-shell
+    .ql-editor
+    a:focus-visible {
+      outline:
+        2px solid
+        var(--blue);
+
+      outline-offset:
+        2px;
+
+      border-radius:
+        2px;
+    }
+
+    .notes-rich-editor-shell
+    .ql-snow
+    .ql-tooltip {
+      max-width:
+        calc(100% - 16px);
+      padding:
+        8px;
+      z-index:
+        60;
+      box-sizing:
+        border-box;
+      border:
+        1px solid
+        var(--border-strong);
+      border-radius:
+        var(--radius-sm);
+      background:
+        var(--surface-card);
+      color:
+        var(--text-secondary);
+      box-shadow:
+        var(--shadow-soft);
+    }
+
+    .notes-rich-editor-shell
+    .ql-snow
+    .ql-tooltip.ql-editing:not(.ql-hidden) {
+      width:
+        min(
+          420px,
+          calc(100% - 16px)
+        );
+
+      display:
+        grid;
+
+      grid-template-columns:
+        auto
+        minmax(0, 1fr)
+        auto;
+
+      align-items:
+        center;
+
+      gap:
+        8px;
+
+      white-space:
+        normal;
+    }
+
+    .notes-rich-editor-shell
+    .ql-snow
+    .ql-tooltip.ql-hidden {
+      display:
+        none !important;
+    }
+
+    .ql-tooltip[data-mode="link"]::before {
+      content:
+        "Link URL:";
+    }
+
+    .notes-rich-editor-shell
+    .ql-snow
+    .ql-tooltip::before {
+      color:
+        var(--text-tertiary);
+    }
+
+    .notes-rich-editor-shell
+    .ql-snow
+    .ql-tooltip
+    input[type="text"] {
+      width:
+        100%;
+
+      min-width:
+        0;
+
+      max-width:
+        none;
+
+      height:
+        34px;
+
+      margin:
+        0;
+
+      padding:
+        0
+        9px;
+
+      box-sizing:
+        border-box;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        6px;
+
+      background:
+        var(--surface-input);
+
+      color:
+        var(--text-primary);
+
+      outline:
+        0;
+    }
+
+    .notes-rich-editor-shell
+    .ql-snow
+    .ql-tooltip
+    input[type="text"]:focus {
+      border-color:
+        var(--brand-green-400);
+    }
+
+    .notes-rich-editor-shell
+    .ql-snow
+    .ql-tooltip
+    a.ql-preview {
+      min-width:
+        0;
+
+      max-width:
+        min(
+          260px,
+          60%
+        );
+
+      overflow:
+        hidden;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
+    }
+
+    .notes-rich-editor-shell
+    .ql-snow
+    .ql-tooltip
+    a {
+      color:
+        var(--brand-green-300);
+    }
+
     .notes-editor-sections {
       min-width: 0;
       border-top: 1px solid var(--border-default);
@@ -16191,6 +16843,56 @@
       .notes-editor-header { padding: var(--space-4); }
       .notes-editor-body { padding-inline: var(--space-4); }
       .notes-title-input { font-size: 24px; }
+
+      .notes-rich-editor-toolbar.ql-toolbar.ql-snow {
+        padding:
+          6px;
+      }
+
+      .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+      .ql-formats
+      + .ql-formats {
+        padding-left:
+          4px;
+      }
+
+      .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+      .ql-picker.ql-header,
+      .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+      .ql-picker.ql-header
+      .ql-picker-label {
+        width:
+          108px;
+      }
+
+      .notes-rich-editor-shell
+      .ql-editor {
+        padding:
+          12px;
+      }
+
+      .notes-rich-editor-shell
+      .ql-editor.ql-blank::before {
+        left: 12px;
+        right: 12px;
+      }
+
+      .notes-rich-editor-shell
+      .ql-snow
+      .ql-tooltip {
+        left:
+          8px !important;
+
+        right:
+          auto;
+
+        width:
+          calc(100% - 16px);
+
+        max-width:
+          none;
+      }
+
       .notes-panel-section .panel-section-header-row { align-items: stretch; }
       .notes-panel-section .panel-section-header-row .panel-section-extra { align-items: center; }
     }
@@ -24642,6 +25344,62 @@
           );
         }
 
+        const normalizedBodyDelta =
+          note.bodyDelta
+            ? normalizeNoteBodyDelta(
+                note.bodyDelta
+              )
+            : null;
+
+        if (
+          note.bodyDelta
+          && !normalizedBodyDelta
+        ) {
+          warn(
+            `Note ${
+              note.id
+            } has an invalid bodyDelta`
+          );
+        }
+
+        if (
+          note.bodyFormat
+          && note.bodyFormat
+            !== 'quill-delta-v1'
+        ) {
+          warn(
+            `Note ${
+              note.id
+            } has an unsupported bodyFormat ${
+              note.bodyFormat
+            }`
+          );
+        }
+
+        if (
+          note.bodyFormat
+            === 'quill-delta-v1'
+          && !normalizedBodyDelta
+        ) {
+          warn(
+            `Note ${
+              note.id
+            } declares Quill content without a valid Delta`
+          );
+        }
+
+        if (
+          normalizedBodyDelta
+          && note.bodyFormat
+            !== 'quill-delta-v1'
+        ) {
+          warn(
+            `Note ${
+              note.id
+            } has Delta content without the Quill format marker`
+          );
+        }
+
         if (
           typeof note.favorite
             !== 'boolean'
@@ -25692,6 +26450,41 @@
     const toast = document.getElementById('toast');
     const workspace = document.querySelector('.workspace');
 
+    const notesRichTextRuntime = {
+      instance:
+        null,
+
+      noteId:
+        '',
+
+      toolbarElement:
+        null,
+
+      editorElement:
+        null,
+
+      fallbackElement:
+        null,
+
+      textChangeHandler:
+        null,
+
+      selectionChangeHandler:
+        null,
+
+      lastSelection:
+        null,
+
+      initializing:
+        false,
+
+      fallbackActive:
+        false,
+
+      fallbackToastShown:
+        false
+    };
+
     const localizationObserver = new MutationObserver(records => {
       if (state.language !== 'ru') return;
       records.forEach(record => record.addedNodes.forEach(node => {
@@ -25747,6 +26540,11 @@
 
     function render() {
       closeMenu();
+
+      if (state.activeModule !== 'Notes') {
+        destroyNotesRichTextEditor();
+      }
+
       if (state.activeModule !== 'People' && state.peopleSelectedIds.length) {
         clearPeopleSelection();
       }
@@ -54843,6 +55641,8 @@
         projectId: 'p1',
         title: '',
         body: '',
+        bodyDelta: null,
+        bodyFormat: '',
         collectionIds: [],
         favorite: false,
         archived: false,
@@ -57219,7 +58019,717 @@
       );
     }
 
+    function destroyNotesRichTextEditor() {
+      const instance =
+        notesRichTextRuntime
+          .instance;
+
+      if (
+        instance
+        && notesRichTextRuntime
+          .textChangeHandler
+      ) {
+        instance.off(
+          'text-change',
+          notesRichTextRuntime
+            .textChangeHandler
+        );
+      }
+
+      if (
+        instance
+        && notesRichTextRuntime
+          .selectionChangeHandler
+      ) {
+        instance.off(
+          'selection-change',
+          notesRichTextRuntime
+            .selectionChangeHandler
+        );
+      }
+
+      notesRichTextRuntime.instance =
+        null;
+
+      notesRichTextRuntime.noteId =
+        '';
+
+      notesRichTextRuntime.toolbarElement =
+        null;
+
+      notesRichTextRuntime.editorElement =
+        null;
+
+      notesRichTextRuntime.fallbackElement =
+        null;
+
+      notesRichTextRuntime.textChangeHandler =
+        null;
+
+      notesRichTextRuntime.selectionChangeHandler =
+        null;
+
+      notesRichTextRuntime.lastSelection =
+        null;
+
+      notesRichTextRuntime.initializing =
+        false;
+
+      notesRichTextRuntime.fallbackActive =
+        false;
+    }
+
+    function plainTextFromQuill(
+      instance
+    ) {
+      if (!instance) {
+        return '';
+      }
+
+      const text =
+        String(
+          instance.getText() || ''
+        );
+
+      return text.endsWith('\n')
+        ? text.slice(0, -1)
+        : text;
+    }
+
+    function prepareNotesRichTextAccessibility(
+      instance,
+      toolbar
+    ) {
+      if (!instance || !toolbar) {
+        return;
+      }
+
+      toolbar.setAttribute(
+        'role',
+        'toolbar'
+      );
+
+      toolbar.setAttribute(
+        'aria-label',
+        'Note formatting'
+      );
+
+      const controlLabels = [
+        [
+          'button.ql-bold',
+          'Bold'
+        ],
+
+        [
+          'button.ql-italic',
+          'Italic'
+        ],
+
+        [
+          'button.ql-list[value="bullet"]',
+          'Bulleted list'
+        ],
+
+        [
+          'button.ql-list[value="ordered"]',
+          'Numbered list'
+        ],
+
+        [
+          'button.ql-blockquote',
+          'Block quote'
+        ],
+
+        [
+          'button.ql-link',
+          'Link'
+        ],
+
+        [
+          'button.ql-clean',
+          'Clear formatting'
+        ]
+      ];
+
+      controlLabels.forEach(([
+        selector,
+        label
+      ]) => {
+        const control =
+          toolbar.querySelector(
+            selector
+          );
+
+        if (!control) {
+          return;
+        }
+
+        control.setAttribute(
+          'aria-label',
+          label
+        );
+
+        control.setAttribute(
+          'title',
+          label
+        );
+      });
+
+      const headerPicker =
+        toolbar.querySelector(
+          '.ql-picker.ql-header .ql-picker-label'
+        );
+
+      if (headerPicker) {
+        headerPicker.setAttribute(
+          'aria-label',
+          'Text style'
+        );
+
+        headerPicker.setAttribute(
+          'title',
+          'Text style'
+        );
+      }
+
+      instance.root.setAttribute(
+        'aria-label',
+        'Note body'
+      );
+
+      instance.root.setAttribute(
+        'aria-multiline',
+        'true'
+      );
+
+      instance.root.setAttribute(
+        'spellcheck',
+        'true'
+      );
+    }
+
+    function configureNotesRichTextLinkControl(
+      instance
+    ) {
+      if (!instance) {
+        return;
+      }
+
+      const toolbarModule =
+        instance.getModule(
+          'toolbar'
+        );
+
+      const tooltip =
+        instance.theme
+          ?.tooltip;
+
+      if (
+        !toolbarModule
+        || !tooltip
+      ) {
+        return;
+      }
+
+      const getLinkInput =
+        () =>
+          tooltip.textbox
+          || tooltip.root
+            ?.querySelector(
+              'input[type="text"]'
+            )
+          || null;
+
+      const prepareLinkInput =
+        () => {
+          const input =
+            getLinkInput();
+
+          if (!input) {
+            return null;
+          }
+
+          input.placeholder =
+            'Paste or enter a URL';
+
+          input.setAttribute(
+            'aria-label',
+            'Link URL'
+          );
+
+          input.setAttribute(
+            'autocomplete',
+            'url'
+          );
+
+          input.setAttribute(
+            'inputmode',
+            'url'
+          );
+
+          return input;
+        };
+
+      /*
+        Override Quill Snow's default handler.
+
+        The standard handler copies selected
+        editor text into the URL input. For
+        GeneoGraph, new links should begin with
+        an empty URL field.
+      */
+      toolbarModule.addHandler(
+        'link',
+        value => {
+          /*
+            Quill passes false when the active
+            Link button is clicked. Preserve
+            the normal unlink behaviour.
+          */
+          if (!value) {
+            instance.format(
+              'link',
+              false,
+              'user'
+            );
+
+            return;
+          }
+
+          /*
+            focus=true restores Quill's saved
+            selection after the toolbar button
+            receives focus.
+          */
+          const range =
+            instance.getSelection(
+              true
+            );
+
+          if (
+            !range
+            || range.length === 0
+          ) {
+            showToast(
+              'Select text before adding a link.'
+            );
+
+            return;
+          }
+
+          /*
+            Open Quill's normal link editor,
+            but pass an empty preview value
+            instead of the selected word.
+          */
+          tooltip.edit(
+            'link',
+            ''
+          );
+
+          const input =
+            prepareLinkInput();
+
+          if (!input) {
+            return;
+          }
+
+          input.value =
+            '';
+
+          requestAnimationFrame(
+            () => {
+              input.focus();
+
+              if (
+                typeof input
+                  .setSelectionRange
+                  === 'function'
+              ) {
+                input.setSelectionRange(
+                  0,
+                  0
+                );
+              }
+            }
+          );
+        }
+      );
+
+      prepareLinkInput();
+    }
+
+    function bindNotesBodyFallback(
+      note,
+      {
+        announce = true
+      } = {}
+    ) {
+      const shell =
+        main.querySelector(
+          '.notes-rich-editor-shell'
+        );
+
+      const toolbar =
+        main.querySelector(
+          '#notesRichTextToolbar'
+        );
+
+      const editorHost =
+        main.querySelector(
+          '#notesRichTextEditor'
+        );
+
+      const textarea =
+        main.querySelector(
+          '#notesBodyInput'
+        );
+
+      if (!textarea) {
+        return;
+      }
+
+      toolbar?.setAttribute(
+        'hidden',
+        ''
+      );
+
+      editorHost?.setAttribute(
+        'hidden',
+        ''
+      );
+
+      textarea.hidden =
+        false;
+
+      textarea.value =
+        String(
+          note?.body || ''
+        );
+
+      shell?.classList.add(
+        'is-fallback'
+      );
+
+      notesRichTextRuntime.fallbackActive =
+        true;
+
+      notesRichTextRuntime.noteId =
+        note?.id || '';
+
+      notesRichTextRuntime.fallbackElement =
+        textarea;
+
+      textarea.addEventListener(
+        'input',
+        event => {
+          const currentNote =
+            getNote(
+              note.id,
+              {
+                projectId:
+                  note.projectId,
+
+                includeArchived:
+                  true
+              }
+            );
+
+          if (!currentNote) {
+            return;
+          }
+
+          currentNote.body =
+            event.currentTarget.value;
+
+          currentNote.bodyDelta =
+            null;
+
+          currentNote.bodyFormat =
+            '';
+
+          autoSizeNoteBody(
+            event.currentTarget
+          );
+
+          touchNote(
+            currentNote
+          );
+        }
+      );
+
+      autoSizeNoteBody(
+        textarea
+      );
+
+      if (
+        announce
+        && !notesRichTextRuntime
+          .fallbackToastShown
+      ) {
+        notesRichTextRuntime.fallbackToastShown =
+          true;
+
+        showToast(
+          'Rich text is unavailable. Note opened in plain-text mode.'
+        );
+      }
+    }
+
+    function initializeNotesRichTextEditor(
+      note
+    ) {
+      if (!note) {
+        return;
+      }
+
+      const shell =
+        main.querySelector(
+          '.notes-rich-editor-shell'
+        );
+
+      const toolbar =
+        main.querySelector(
+          '#notesRichTextToolbar'
+        );
+
+      const editorHost =
+        main.querySelector(
+          '#notesRichTextEditor'
+        );
+
+      const fallback =
+        main.querySelector(
+          '#notesBodyInput'
+        );
+
+      if (
+        !shell
+        || !toolbar
+        || !editorHost
+        || !fallback
+      ) {
+        return;
+      }
+
+      if (
+        typeof window.Quill
+          !== 'function'
+      ) {
+        bindNotesBodyFallback(
+          note
+        );
+
+        return;
+      }
+
+      notesRichTextRuntime.initializing =
+        true;
+
+      try {
+        toolbar.hidden =
+          false;
+
+        editorHost.hidden =
+          false;
+
+        fallback.hidden =
+          true;
+
+        shell.classList.remove(
+          'is-fallback'
+        );
+
+        const instance =
+          new window.Quill(
+            editorHost,
+            {
+              theme:
+                'snow',
+
+              placeholder:
+                'Start writing…',
+
+              bounds:
+                shell,
+
+              formats: [
+                'header',
+                'bold',
+                'italic',
+                'blockquote',
+                'list',
+                'link'
+              ],
+
+              modules: {
+                toolbar: {
+                  container:
+                    toolbar
+                },
+
+                history: {
+                  delay:
+                    1000,
+
+                  maxStack:
+                    100,
+
+                  userOnly:
+                    true
+                }
+              }
+            }
+          );
+
+        const storedDelta =
+          cloneNoteBodyDelta(
+            note.bodyDelta
+          );
+
+        if (storedDelta) {
+          instance.setContents(
+            storedDelta,
+            'silent'
+          );
+        } else {
+          instance.setText(
+            String(
+              note.body || ''
+            ),
+            'silent'
+          );
+        }
+
+        instance.history.clear();
+
+        notesRichTextRuntime.instance =
+          instance;
+
+        notesRichTextRuntime.noteId =
+          note.id;
+
+        notesRichTextRuntime.toolbarElement =
+          toolbar;
+
+        notesRichTextRuntime.editorElement =
+          editorHost;
+
+        notesRichTextRuntime.fallbackElement =
+          fallback;
+
+        notesRichTextRuntime.fallbackActive =
+          false;
+
+        const textChangeHandler = (
+          delta,
+          oldDelta,
+          source
+        ) => {
+          if (
+            source !== 'user'
+            || notesRichTextRuntime
+              .instance !== instance
+            || notesRichTextRuntime
+              .noteId !== note.id
+          ) {
+            return;
+          }
+
+          const currentNote =
+            getNote(
+              note.id,
+              {
+                projectId:
+                  note.projectId,
+
+                includeArchived:
+                  true
+              }
+            );
+
+          if (!currentNote) {
+            return;
+          }
+
+          currentNote.bodyDelta =
+            normalizeNoteBodyDelta(
+              instance.getContents()
+            );
+
+          currentNote.bodyFormat =
+            currentNote.bodyDelta
+              ? 'quill-delta-v1'
+              : '';
+
+          currentNote.body =
+            plainTextFromQuill(
+              instance
+            );
+
+          touchNote(
+            currentNote
+          );
+        };
+
+        const selectionChangeHandler =
+          range => {
+            notesRichTextRuntime.lastSelection =
+              range
+                ? {
+                    index:
+                      range.index,
+
+                    length:
+                      range.length
+                  }
+                : null;
+          };
+
+        notesRichTextRuntime.textChangeHandler =
+          textChangeHandler;
+
+        notesRichTextRuntime.selectionChangeHandler =
+          selectionChangeHandler;
+
+        instance.on(
+          'text-change',
+          textChangeHandler
+        );
+
+        instance.on(
+          'selection-change',
+          selectionChangeHandler
+        );
+
+        prepareNotesRichTextAccessibility(
+          instance,
+          toolbar
+        );
+
+        configureNotesRichTextLinkControl(
+          instance
+        );
+
+        notesRichTextRuntime.initializing =
+          false;
+      } catch (error) {
+        console.warn(
+          '[Notes rich text]',
+          error
+        );
+
+        destroyNotesRichTextEditor();
+
+        bindNotesBodyFallback(
+          note
+        );
+      }
+    }
+
     function renderNotes() {
+      destroyNotesRichTextEditor();
+
       const validNotesViews =
         new Set([
           'all',
@@ -57325,11 +58835,12 @@
       `;
 
       bindNotesControls();
-      autoSizeNoteBody(
-        main.querySelector(
-          '#notesBodyInput'
-        )
-      );
+
+      if (editorOpen) {
+        initializeNotesRichTextEditor(
+          selected
+        );
+      }
     }
 
     function renderNotesSidebar() {
@@ -59113,13 +60624,110 @@
 
           <div class="notes-editor-body">
             <div class="notes-editor-writing">
-              <textarea
-                class="notes-body-input"
-                id="notesBodyInput"
-                aria-label="Note body"
-                placeholder="Start writing…">${escapeHtml(
-                  note.body
-                )}</textarea>
+              <div class="notes-rich-editor-shell">
+                <span
+                  class="notes-rich-editor-label"
+                  id="notesBodyLabel">
+                  Note body
+                </span>
+
+                <div
+                  class="notes-rich-editor-toolbar"
+                  id="notesRichTextToolbar"
+                  role="toolbar"
+                  aria-label="Note formatting">
+
+                  <span class="ql-formats">
+                    <select
+                      class="ql-header"
+                      aria-label="Text style"
+                      title="Text style">
+                      <option
+                        value=""
+                        selected>
+                        Normal
+                      </option>
+                      <option value="2">
+                        Heading 2
+                      </option>
+                      <option value="3">
+                        Heading 3
+                      </option>
+                    </select>
+                  </span>
+
+                  <span class="ql-formats">
+                    <button
+                      class="ql-bold"
+                      type="button"
+                      aria-label="Bold"
+                      title="Bold">
+                    </button>
+
+                    <button
+                      class="ql-italic"
+                      type="button"
+                      aria-label="Italic"
+                      title="Italic">
+                    </button>
+                  </span>
+
+                  <span class="ql-formats">
+                    <button
+                      class="ql-list"
+                      type="button"
+                      value="bullet"
+                      aria-label="Bulleted list"
+                      title="Bulleted list">
+                    </button>
+
+                    <button
+                      class="ql-list"
+                      type="button"
+                      value="ordered"
+                      aria-label="Numbered list"
+                      title="Numbered list">
+                    </button>
+                  </span>
+
+                  <span class="ql-formats">
+                    <button
+                      class="ql-blockquote"
+                      type="button"
+                      aria-label="Block quote"
+                      title="Block quote">
+                    </button>
+
+                    <button
+                      class="ql-link"
+                      type="button"
+                      aria-label="Link"
+                      title="Link">
+                    </button>
+
+                    <button
+                      class="ql-clean"
+                      type="button"
+                      aria-label="Clear formatting"
+                      title="Clear formatting">
+                    </button>
+                  </span>
+                </div>
+
+                <div
+                  id="notesRichTextEditor"
+                  aria-labelledby="notesBodyLabel">
+                </div>
+
+                <textarea
+                  class="notes-body-input"
+                  id="notesBodyInput"
+                  aria-label="Note body"
+                  placeholder="Start writing…"
+                  hidden>${escapeHtml(
+                    note.body
+                  )}</textarea>
+              </div>
             </div>
 
             <div class="notes-editor-sections">
@@ -67732,11 +69340,55 @@
           '.notes-browser-scroll'
         );
 
+      const richTextInstance =
+        notesRichTextRuntime
+          .instance;
+
+      const richTextRange =
+        richTextInstance
+        && notesRichTextRuntime
+          .noteId
+        && richTextInstance.hasFocus()
+          ? richTextInstance
+              .getSelection()
+          : null;
+
+      const richText =
+        richTextRange
+          ? {
+              noteId:
+                notesRichTextRuntime
+                  .noteId,
+
+              index:
+                richTextRange.index,
+
+              length:
+                richTextRange.length,
+
+              hadFocus:
+                true
+            }
+          : null;
+
       const active =
         document.activeElement;
 
+      const activeIsRichText =
+        Boolean(
+          richTextInstance
+          && active
+          && (
+            active
+              === richTextInstance.root
+            || richTextInstance.root
+              .contains(active)
+          )
+        );
+
       const focus =
-        active
+        !activeIsRichText
+        && active
         && main.contains(active)
           ? {
               id:
@@ -67768,6 +69420,7 @@
         browserScrollTop:
           browser?.scrollTop || 0,
 
+        richText,
         focus
       };
     }
@@ -67789,10 +69442,13 @@
           '.notes-browser-scroll'
         );
 
+      const editorScrollTop =
+        snapshot?.editorScrollTop
+        || 0;
+
       if (editor) {
         editor.scrollTop =
-          snapshot?.editorScrollTop
-          || 0;
+          editorScrollTop;
       }
 
       if (browser) {
@@ -67801,14 +69457,105 @@
           || 0;
       }
 
-      let target =
+      const explicitTarget =
         focusSelector
           ? main.querySelector(
               focusSelector
             )
           : null;
 
-      if (!target && snapshot?.focus) {
+      if (explicitTarget) {
+        explicitTarget.focus({
+          preventScroll: true
+        });
+
+        if (
+          select
+          && typeof explicitTarget.select
+            === 'function'
+        ) {
+          explicitTarget.select();
+        }
+
+        if (editor) {
+          editor.scrollTop =
+            editorScrollTop;
+        }
+
+        return;
+      }
+
+      const richText =
+        snapshot?.richText;
+
+      const richTextInstance =
+        notesRichTextRuntime
+          .instance;
+
+      if (
+        richText?.hadFocus
+        && richTextInstance
+        && richText.noteId
+          === notesRichTextRuntime
+            .noteId
+      ) {
+        const documentLength =
+          Math.max(
+            1,
+            richTextInstance
+              .getLength()
+          );
+
+        const maximumIndex =
+          Math.max(
+            0,
+            documentLength - 1
+          );
+
+        const index =
+          Math.max(
+            0,
+            Math.min(
+              Number(
+                richText.index
+              ) || 0,
+              maximumIndex
+            )
+          );
+
+        const length =
+          Math.max(
+            0,
+            Math.min(
+              Number(
+                richText.length
+              ) || 0,
+              maximumIndex - index
+            )
+          );
+
+        richTextInstance.focus({
+          preventScroll: true
+        });
+
+        richTextInstance.setSelection(
+          index,
+          length,
+          'silent'
+        );
+
+        if (editor) {
+          editor.scrollTop =
+            editorScrollTop;
+        }
+
+        return;
+      }
+
+      let target =
+        null;
+
+      if (snapshot?.focus) {
         if (snapshot.focus.id) {
           target =
             main.querySelector(
@@ -67857,6 +69604,11 @@
           snapshot.focus.selectionStart,
           snapshot.focus.selectionEnd
         );
+      }
+
+      if (editor) {
+        editor.scrollTop =
+          editorScrollTop;
       }
     }
 
@@ -68032,6 +69784,16 @@
 
           title:
             `${note.title} copy`,
+
+          bodyDelta:
+            cloneNoteBodyDelta(
+              note.bodyDelta
+            ),
+
+          bodyFormat:
+            note.bodyDelta
+              ? 'quill-delta-v1'
+              : '',
 
           collectionIds: [
             ...note.collectionIds
@@ -68492,11 +70254,6 @@
           '#notesTitleInput'
         );
 
-      const bodyInput =
-        main.querySelector(
-          '#notesBodyInput'
-        );
-
       titleInput
         ?.addEventListener(
           'input',
@@ -68517,19 +70274,6 @@
 
             note.title = title;
             event.target.value = title;
-            touchNote(note);
-          }
-        );
-
-      bodyInput
-        ?.addEventListener(
-          'input',
-          event => {
-            note.body =
-              event.target.value;
-            autoSizeNoteBody(
-              event.target
-            );
             touchNote(note);
           }
         );
@@ -70213,6 +71957,12 @@
           || 'Untitled note',
 
         body:
+          '',
+
+        bodyDelta:
+          null,
+
+        bodyFormat:
           '',
 
         collectionIds:
@@ -82262,6 +84012,158 @@
 
     
 
+    function normalizeNoteBodyDelta(
+      value
+    ) {
+      if (
+        !value
+        || typeof value
+          !== 'object'
+        || !Array.isArray(
+          value.ops
+        )
+      ) {
+        return null;
+      }
+
+      const normalizedOps =
+        value.ops
+          .map(operation => {
+            if (
+              !operation
+              || typeof operation
+                !== 'object'
+              || typeof operation.insert
+                !== 'string'
+              || operation.insert
+                === ''
+            ) {
+              return null;
+            }
+
+            const normalized = {
+              insert:
+                operation.insert
+            };
+
+            const sourceAttributes =
+              operation.attributes
+              && typeof operation.attributes
+                === 'object'
+                ? operation.attributes
+                : null;
+
+            if (!sourceAttributes) {
+              return normalized;
+            }
+
+            const attributes = {};
+
+            if (
+              sourceAttributes.bold
+                === true
+            ) {
+              attributes.bold =
+                true;
+            }
+
+            if (
+              sourceAttributes.italic
+                === true
+            ) {
+              attributes.italic =
+                true;
+            }
+
+            if (
+              sourceAttributes.blockquote
+                === true
+            ) {
+              attributes.blockquote =
+                true;
+            }
+
+            if (
+              sourceAttributes.header
+                === 2
+              || sourceAttributes.header
+                === 3
+            ) {
+              attributes.header =
+                sourceAttributes.header;
+            }
+
+            if (
+              sourceAttributes.list
+                === 'bullet'
+              || sourceAttributes.list
+                === 'ordered'
+            ) {
+              attributes.list =
+                sourceAttributes.list;
+            }
+
+            if (
+              typeof sourceAttributes.link
+                === 'string'
+              && sourceAttributes.link.trim()
+            ) {
+              attributes.link =
+                sourceAttributes.link
+                  .trim();
+            }
+
+            if (
+              Object.keys(
+                attributes
+              ).length
+            ) {
+              normalized.attributes =
+                attributes;
+            }
+
+            return normalized;
+          })
+          .filter(Boolean);
+
+      return {
+        ops:
+          normalizedOps
+      };
+    }
+
+    function cloneNoteBodyDelta(
+      value
+    ) {
+      return normalizeNoteBodyDelta(
+        value
+      );
+    }
+
+    function plainTextFromNoteBodyDelta(
+      value
+    ) {
+      const delta =
+        normalizeNoteBodyDelta(
+          value
+        );
+
+      if (!delta) {
+        return '';
+      }
+
+      const text =
+        delta.ops
+          .map(operation =>
+            operation.insert
+          )
+          .join('');
+
+      return text.endsWith('\n')
+        ? text.slice(0, -1)
+        : text;
+    }
+
     function normalizeCentralNoteTimestamp(
       value,
       fallback
@@ -82348,6 +84250,27 @@
         typeof note.body === 'string'
           ? note.body
           : '';
+
+      note.bodyDelta =
+        normalizeNoteBodyDelta(
+          note.bodyDelta
+        );
+
+      if (note.bodyDelta) {
+        note.bodyFormat =
+          'quill-delta-v1';
+
+        note.body =
+          plainTextFromNoteBodyDelta(
+            note.bodyDelta
+          );
+      } else {
+        note.bodyDelta =
+          null;
+
+        note.bodyFormat =
+          '';
+      }
 
       note.collectionIds =
         normalizeCentralNoteIdArray([
