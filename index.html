@@ -4354,6 +4354,133 @@
       gap: var(--space-2);
     }
 
+    .connected-note-item {
+      position: relative;
+
+      min-width: 0;
+    }
+
+    .connected-note-item.can-unlink
+    .connected-note-card {
+      /*
+        Reserve space so the hover action does not
+        cover the Note title.
+      */
+      padding-right: 50px;
+    }
+
+    .connected-note-unlink {
+      position: absolute;
+      z-index: 1;
+
+      width: 32px;
+      height: 32px;
+      padding: 0;
+
+      border:
+        1px solid
+        transparent;
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        rgba(15, 20, 19, .9);
+
+      color:
+        var(--text-tertiary);
+
+      display: grid;
+      place-items: center;
+
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      top: 50%;
+      right: 8px;
+
+      transform:
+        translateY(-50%)
+        scale(.96);
+      transition:
+        opacity var(--ease),
+        visibility var(--ease),
+        transform var(--ease),
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease);
+
+      cursor: pointer;
+    }
+
+    .connected-note-unlink svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .connected-note-item:hover
+    .connected-note-unlink,
+    .connected-note-item:focus-within
+    .connected-note-unlink {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+
+      transform:
+        translateY(-50%)
+        scale(1);
+    }
+
+    .connected-note-unlink:hover,
+    .connected-note-unlink:focus-visible {
+      border-color:
+        rgba(212, 107, 107, .32);
+
+      background:
+        rgba(212, 107, 107, .12);
+
+      color:
+        var(--red);
+    }
+
+    .connected-note-unlink:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset: 2px;
+    }
+
+    /*
+      Hover is unavailable on touch-only devices,
+      so keep the action discoverable.
+    */
+    @media (hover: none) {
+      .connected-note-item.can-unlink
+      .connected-note-unlink {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+
+        transform:
+          translateY(-50%)
+          scale(1);
+      }
+    }
+
+    .connected-note-unlink-warning {
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .connected-note-unlink-warning strong {
+      color: var(--text-primary);
+    }
+
+    .connected-note-unlink-warning span {
+      color: var(--text-secondary);
+    }
+
     .connected-note-card {
       width: 100%;
       min-width: 0;
@@ -8528,6 +8655,216 @@
     .profile-photo-carousel-button:disabled {
       opacity: .35;
       cursor: default;
+    }
+
+    /* Notes — compact portrait preview tiles */
+
+    .profile-resource-card--notes
+    .profile-resource-card__body {
+      padding:
+        var(--space-3);
+    }
+
+    .profile-note-tile-grid {
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+
+      display: grid;
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+      align-items: stretch;
+      gap: var(--space-2);
+    }
+
+    .profile-note-tile {
+      position: relative;
+
+      min-width: 0;
+      min-height: 0;
+    }
+
+    .profile-note-tile__open {
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+      padding:
+        9px;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        10px;
+
+      background:
+        rgba(255, 255, 255, .018);
+
+      color:
+        var(--text-secondary);
+
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      overflow: hidden;
+
+      text-align: left;
+
+      cursor: pointer;
+
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease);
+    }
+
+    .profile-note-tile__open:hover,
+    .profile-note-tile__open:focus-visible {
+      border-color:
+        var(--border-strong);
+
+      background:
+        rgba(255, 255, 255, .04);
+
+      color:
+        var(--text-primary);
+    }
+
+    .profile-note-tile__open:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset:
+        2px;
+    }
+
+    .profile-note-tile__title {
+      width: 100%;
+      min-width: 0;
+      /*
+        Keep the title clear of the unlink action.
+      */
+      padding-right: 32px;
+
+      color:
+        var(--text-primary);
+
+      font-size: 12.5px;
+      line-height: 1.3;
+      font-weight: 900;
+
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+
+      overflow: hidden;
+
+      /*
+        Reserve two lines so titles of different
+        lengths still produce aligned cards.
+      */
+      min-height:
+        calc(1.3em * 2);
+    }
+
+    .profile-note-tile__preview {
+      width: 100%;
+      min-width: 0;
+      margin-top: 8px;
+
+      color:
+        var(--text-secondary);
+
+      font-size: 11.5px;
+      line-height: 1.4;
+      font-weight: 500;
+
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+
+      overflow: hidden;
+    }
+
+    .profile-note-tile__collection,
+    .profile-note-tile__updated {
+      width: 100%;
+      min-width: 0;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .profile-note-tile__collection {
+      margin-top: auto;
+      padding-top: 8px;
+
+      color:
+        var(--text-secondary);
+
+      font-size: 11px;
+      line-height: 1.25;
+      font-weight: 800;
+    }
+
+    .profile-note-tile__updated {
+      margin-top: 3px;
+
+      color:
+        var(--text-tertiary);
+
+      font-size: 10.5px;
+      line-height: 1.25;
+    }
+
+    /*
+      The shared unlink button is vertically centered
+      for sidebar rows. Override its position only
+      inside portrait Note tiles.
+    */
+
+    .profile-note-tile
+    > .connected-note-unlink {
+      top: 8px;
+      right: 8px;
+
+      width: 29px;
+      height: 29px;
+
+      transform:
+        translateY(-2px)
+        scale(.96);
+    }
+
+    .profile-note-tile:hover
+    > .connected-note-unlink,
+    .profile-note-tile:focus-within
+    > .connected-note-unlink {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+
+      transform:
+        translateY(0)
+        scale(1);
+    }
+
+    @media (hover: none) {
+      .profile-note-tile
+      > .connected-note-unlink {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+
+        transform: none;
+      }
     }
 
     /* Archive */
@@ -15675,26 +16012,7 @@
       color: var(--text-tertiary);
       font-size: 11px;
     }
-    .albums-note-link-modal
-    .modal-footer {
-      justify-content:
-        space-between;
 
-      align-items:
-        center;
-
-      flex-wrap:
-        wrap;
-    }
-
-    .albums-note-link-actions {
-      margin-left: auto;
-
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: var(--space-3);
-    }
     .notes-modal-list {
       max-height: 360px;
       display: grid;
@@ -15956,6 +16274,21 @@
     .notes-related-toolbar
     .app-search-field {
       max-width: none;
+    }
+
+    .note-link-picker-toolbar-actions {
+      min-width: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-2);
+    }
+
+    .note-link-picker-toolbar-actions
+    .button {
+      flex: 0 0 auto;
+      white-space: nowrap;
     }
 
     .notes-related-archived-toggle {
@@ -16473,6 +16806,15 @@
       .notes-related-toolbar {
         grid-template-columns:
           minmax(0, 1fr);
+      }
+
+      .note-link-picker-toolbar-actions {
+        width: 100%;
+
+        justify-content:
+          flex-start;
+
+        flex-wrap: wrap;
       }
 
       .notes-related-archived-toggle {
@@ -29257,6 +29599,185 @@
       });
     }
 
+    function openPersonNotesModal(
+      personId,
+      context = 'tree'
+    ) {
+      const person =
+        getPerson(
+          personId
+        );
+
+      if (!person) {
+        showToast(
+          'Person record not found.'
+        );
+
+        return;
+      }
+
+      /*
+        The same sidebar renderer is used by:
+        - Family Tree: "tree"
+        - People preview: "people"
+      */
+      const sidebarContext =
+        context === 'people'
+          ? 'people'
+          : 'tree';
+
+      const personLabel =
+        noteEntityLabel(
+          'person',
+          person
+        )
+        || person.names?.display
+        || person.name
+        || 'this person';
+
+      const existingNoteIds =
+        getNotesForPerson(
+          person.id
+        ).map(note =>
+          note.id
+        );
+
+      openNoteLinkPickerModal({
+        projectId:
+          person.projectId
+          || currentProjectId(),
+
+        title:
+          'Add note',
+
+        description:
+          `Link existing notes to “${personLabel}”.`,
+
+        searchPlaceholder:
+          'Search by title, content, person, place, or source',
+
+        existingNoteIds,
+
+        /*
+          Keep person-sidebar linking aligned with
+          Albums: archived Notes are not offered as
+          new links.
+        */
+        includeArchived:
+          false,
+
+        existingStatus:
+          'Already linked',
+
+        existingMetaLabel:
+          'already linked',
+
+        createLabel:
+          'Create linked note',
+
+        onCreate:
+          () =>
+            openNewNoteForContext(
+              'person',
+              person.id
+            ),
+
+        onSave:
+          selectedNoteIds => {
+            const currentPerson =
+              getPerson(
+                person.id
+              );
+
+            if (!currentPerson) {
+              showToast(
+                'The person is no longer available.'
+              );
+
+              return false;
+            }
+
+            selectedNoteIds.forEach(
+              noteId => {
+                const note =
+                  getNote(
+                    noteId,
+                    {
+                      projectId:
+                        person.projectId
+                        || currentProjectId(),
+
+                      includeArchived:
+                        false
+                    }
+                  );
+
+                if (!note) {
+                  return;
+                }
+
+                const currentPersonIds =
+                  Array.isArray(
+                    note.linkedPersonIds
+                  )
+                    ? note.linkedPersonIds
+                    : [];
+
+                setNoteEntityLinks(
+                  note.id,
+                  'person',
+                  [
+                    ...new Set([
+                      ...currentPersonIds,
+                      currentPerson.id
+                    ])
+                  ],
+                  {
+                    projectId:
+                      note.projectId
+                  }
+                );
+              }
+            );
+
+            return true;
+          },
+
+        afterSave:
+          () => {
+            /*
+              Keep the Notes accordion open and
+              refresh only the sidebar that launched
+              the modal.
+            */
+            state.inspectorSections
+              .notes = true;
+
+            rerenderPersonSidebarContext(
+              sidebarContext,
+              {
+                preserveScroll:
+                  true,
+
+                scrollSectionId:
+                  'notes',
+
+                focusSectionId:
+                  'notes'
+              }
+            );
+          },
+
+        successMessage:
+          count =>
+            `${count} ${
+              count === 1
+                ? 'note was'
+                : 'notes were'
+            } linked to ${personLabel}.`
+      });
+    }
+
     function openFamilyPhoto(photoId) {
       openAlbumsForPhoto(photoId);
     }
@@ -29594,7 +30115,10 @@
         relationshipCount(person.id);
       const photosContent = renderFamilyPhotos(person);
       const archiveContent = renderFamilyArchiveItems(person);
-      const notesContent = renderFamilyNotes(person);
+      const notesContent =
+        renderFamilyNotes(
+          person
+        );
       const photoCount = getPersonPhotoCount(person.id);
       const archiveCount = getArchiveFilesForPerson(person.id).length;
       const noteCount = getNotesForPerson(person.id).length;
@@ -29716,10 +30240,9 @@
             <button
               class="link"
               type="button"
-              data-toast="
-                Notes module will define
-                the full note editor.
-              ">
+              data-person-add-note="${escapeHtml(
+                person.id
+              )}">
               ${renderPanelButtonLabel(
                 icon.plus,
                 'Add note'
@@ -38450,6 +38973,171 @@
       });
     }
 
+    function renderProfileNoteTiles(
+      person,
+      notes =
+        getNotesForPerson(
+          person.id
+        )
+    ) {
+      const preview =
+        notes.slice(
+          0,
+          3
+        );
+
+      if (!preview.length) {
+        return renderProfileResourceEmpty(
+          'No notes yet'
+        );
+      }
+
+      const personLabel =
+        person?.names?.display
+        || person?.name
+        || 'this person';
+
+      return `
+        <div
+          class="
+            profile-note-tile-grid
+          "
+          role="list"
+          aria-label="Notes linked to ${escapeHtml(
+            personLabel
+          )}">
+
+          ${preview
+            .map(note => {
+              const noteTitle =
+                note.title
+                || 'Untitled note';
+
+              const previewText =
+                noteExcerpt(
+                  note,
+                  120
+                )
+                || 'No note content';
+
+              const collectionLabel =
+                formatNoteCollectionSummary(
+                  note
+                )
+                || 'Research note';
+
+              const updatedLabel =
+                formatNoteRelativeUpdatedAt(
+                  note
+                )
+                || 'Updated date unknown';
+
+              return `
+                <div
+                  class="
+                    profile-note-tile
+                  "
+                  role="listitem">
+
+                  <button
+                    class="
+                      profile-note-tile__open
+                    "
+                    type="button"
+                    data-connected-note-id="${escapeHtml(
+                      note.id
+                    )}"
+                    data-connected-note-context-type="person"
+                    data-connected-note-context-id="${escapeHtml(
+                      person.id
+                    )}"
+                    aria-label="Open note: ${escapeHtml(
+                      noteTitle
+                    )}">
+
+                    <strong
+                      class="
+                        profile-note-tile__title
+                      "
+                      title="${escapeHtml(
+                        noteTitle
+                      )}">
+
+                      ${escapeHtml(
+                        noteTitle
+                      )}
+                    </strong>
+
+                    <span
+                      class="
+                        profile-note-tile__preview
+                      "
+                      title="${escapeHtml(
+                        previewText
+                      )}">
+
+                      ${escapeHtml(
+                        previewText
+                      )}
+                    </span>
+
+                    <span
+                      class="
+                        profile-note-tile__collection
+                      "
+                      title="${escapeHtml(
+                        collectionLabel
+                      )}">
+
+                      ${escapeHtml(
+                        collectionLabel
+                      )}
+                    </span>
+
+                    <span
+                      class="
+                        profile-note-tile__updated
+                      "
+                      title="${escapeHtml(
+                        updatedLabel
+                      )}">
+
+                      ${escapeHtml(
+                        updatedLabel
+                      )}
+                    </span>
+                  </button>
+
+                  <button
+                    class="
+                      connected-note-unlink
+                      profile-note-tile__unlink
+                    "
+                    type="button"
+                    data-connected-note-unlink="${escapeHtml(
+                      note.id
+                    )}"
+                    data-connected-note-context-type="person"
+                    data-connected-note-context-id="${escapeHtml(
+                      person.id
+                    )}"
+                    aria-label="Unlink ${escapeHtml(
+                      noteTitle
+                    )} from ${escapeHtml(
+                      personLabel
+                    )}"
+                    title="Unlink note">
+
+                    ${icon.unlink}
+                  </button>
+                </div>
+              `;
+            })
+            .join('')}
+        </div>
+      `;
+    }
+
     function renderProfileConnectedNotes(
       person
     ) {
@@ -38484,21 +39172,10 @@
           'add-note',
 
         body:
-          renderConnectedNoteList({
-            notes,
-
-            contextType:
-              'person',
-
-            contextId:
-              person.id,
-
-            limit:
-              2,
-
-            emptyText:
-              'No notes yet'
-          })
+          renderProfileNoteTiles(
+            person,
+            notes
+          )
       });
     }
 
@@ -41267,8 +41944,57 @@
           );
         });
       root.querySelectorAll('[data-family-archive]').forEach(button => button.addEventListener('click', () => openFamilyArchiveItem(button.dataset.familyArchive)));
+      const addNoteButton =
+        root.querySelector(
+          '[data-person-add-note]'
+        );
+
+      addNoteButton
+        ?.addEventListener(
+          'click',
+          () => {
+            openPersonNotesModal(
+              addNoteButton.dataset
+                .personAddNote,
+
+              context
+            );
+          }
+        );
       bindConnectedNoteLinks(
-        root
+        root,
+        {
+          onUnlinked:
+            ({
+              contextType
+            }) => {
+              if (
+                contextType
+                !== 'person'
+              ) {
+                return;
+              }
+
+              state.inspectorSections
+                .notes = true;
+
+              /*
+                Use the actual sidebar context:
+                - "tree" for Family Tree
+                - "people" for People
+              */
+              rerenderPersonSidebarContext(
+                context,
+                {
+                  preserveScroll:
+                    true,
+
+                  focusSectionId:
+                    'notes'
+                }
+              );
+            }
+        }
       );
       root
         .querySelectorAll(
@@ -47269,70 +47995,11 @@
           photo.id,
 
         emptyText:
-          'No notes linked to this photo.'
+          'No notes linked to this photo.',
+
+        allowUnlink:
+          true
       });
-    }
-
-    function renderAlbumsPhotoNoteChoice(
-      note,
-      selectedIds
-    ) {
-      const excerpt =
-        noteExcerpt(
-          note,
-          110
-        )
-        || 'No note content';
-
-      const metadata =
-        formatNoteCollectionSummary(
-          note
-        );
-
-      const searchText = `
-        ${note.title}
-        ${excerpt}
-        ${metadata}
-      `
-        .trim()
-        .toLowerCase();
-
-      return `
-        <label
-          class="notes-modal-choice"
-          data-albums-note-choice
-          data-search-text="${escapeHtml(
-            searchText
-          )}">
-
-          <input
-            type="checkbox"
-            value="${escapeHtml(
-              note.id
-            )}"
-            ${
-              selectedIds.has(
-                note.id
-              )
-                ? 'checked'
-                : ''
-            }>
-
-          <span class="notes-modal-choice-copy">
-            <strong>
-              ${escapeHtml(
-                note.title
-              )}
-            </strong>
-
-            <span>
-              ${escapeHtml(
-                excerpt
-              )}
-            </span>
-          </span>
-        </label>
-      `;
     }
 
     function openAlbumsPhotoNotesModal(
@@ -47353,225 +48020,138 @@
       }
 
       /*
-        Archived Notes are deliberately
-        omitted from normal Albums linking.
-        Their existing relationships remain.
+        Albums currently exposes only active Notes
+        for normal linking. Archived Note links are
+        preserved because this modal is additive and
+        never removes existing relationships.
       */
-      const notes =
-        getProjectNotes(
-          photo.projectId,
+      const existingNoteIds =
+        getNotesForPhoto(
+          photo.id,
           {
+            projectId:
+              photo.projectId,
+
             includeArchived:
               false
           }
+        ).map(note =>
+          note.id
         );
-
-      const selectedIds =
-        new Set(
-          getNotesForPhoto(
-            photo.id,
-            {
-              projectId:
-                photo.projectId,
-
-              includeArchived:
-                false
-            }
-          ).map(note =>
-            note.id
-          )
-        );
-
-      const choices =
-        notes.length
-          ? notes
-              .map(note =>
-                renderAlbumsPhotoNoteChoice(
-                  note,
-                  selectedIds
-                )
-              )
-              .join('')
-          : `
-            <span class="notes-section-empty">
-              No notes available in this project.
-            </span>
-          `;
 
       const photoLabel =
         photo.title
         || photo.filename
         || 'this photo';
 
-      openModal(`
-        <div
-          class="
-            modal
-            albums-note-link-modal
-          "
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="albumsPhotoNotesTitle">
+      openNoteLinkPickerModal({
+        projectId:
+          photo.projectId,
 
-          <div class="modal-header">
-            <div>
-              <h2 id="albumsPhotoNotesTitle">
-                Manage notes
-              </h2>
+        title:
+          'Add note',
 
-              <p>
-                Link existing notes to
-                ${escapeHtml(
-                  photoLabel
-                )}.
-              </p>
-            </div>
+        description:
+          `Link existing notes to “${photoLabel}”.`,
 
-            <button
-              class="close-button"
-              type="button"
-              data-close
-              aria-label="Close">
-              ${icon.close}
-            </button>
-          </div>
+        existingNoteIds,
 
-          <div class="modal-body form-grid">
-            <label
-              class="app-search-field"
-              aria-label="Search notes">
+        /*
+          Preserve the current Albums rule:
+          archived Notes are not offered for
+          new photo links.
+        */
+        includeArchived:
+          false,
 
-              ${icon.search}
+        existingStatus:
+          'Already linked',
 
-              <input
-                id="albumsPhotoNotesSearch"
-                type="search"
-                autocomplete="off"
-                placeholder="Search notes...">
-            </label>
+        existingMetaLabel:
+          'already linked',
 
-            <div class="notes-modal-list">
-              ${choices}
-            </div>
-          </div>
+        createLabel:
+          'Create linked note',
 
-          <div class="modal-footer">
-            <button
-              class="button secondary"
-              type="button"
-              id="albumsCreateLinkedNote">
-
-              ${icon.plus}
-              Create linked note
-            </button>
-
-            <div class="albums-note-link-actions">
-              <button
-                class="button secondary"
-                type="button"
-                data-close>
-                Cancel
-              </button>
-
-              <button
-                class="button primary"
-                type="button"
-                id="albumsConfirmPhotoNotes">
-                Apply
-              </button>
-            </div>
-          </div>
-        </div>
-      `);
-
-      bindNotesModalSearch(
-        modalBackdrop,
-        '#albumsPhotoNotesSearch',
-        '[data-albums-note-choice]'
-      );
-
-      modalBackdrop
-        .querySelector(
-          '#albumsCreateLinkedNote'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            closeModal();
-
+        /*
+          Retains the existing Albums capability
+          to create a new Note already connected
+          to the selected photo.
+        */
+        onCreate:
+          () =>
             openNewNoteForContext(
               'photo',
               photo.id
-            );
-          }
-        );
+            ),
 
-      modalBackdrop
-        .querySelector(
-          '#albumsConfirmPhotoNotes'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            const nextSelectedIds =
-              new Set(
-                [
-                  ...modalBackdrop
-                    .querySelectorAll(
-                      '[data-albums-note-choice] input:checked'
-                    )
-                ].map(
-                  input =>
-                    input.value
-                )
-              );
-
-            /*
-              Only active Notes are changed.
-              Archived Note links are retained.
-            */
-            notes.forEach(note => {
-              const nextPhotoIds =
-                new Set(
-                  note.linkedPhotoIds
-                  || []
-                );
-
-              if (
-                nextSelectedIds.has(
-                  note.id
-                )
-              ) {
-                nextPhotoIds.add(
-                  photo.id
-                );
-              } else {
-                nextPhotoIds.delete(
-                  photo.id
-                );
-              }
-
-              setNotePhotoLinks(
-                note.id,
-                [
-                  ...nextPhotoIds
-                ],
+        onSave:
+          selectedNoteIds => {
+            const currentPhoto =
+              getPhoto(
+                photo.id,
                 {
                   projectId:
                     photo.projectId
                 }
               );
-            });
 
-            closeModal();
+            if (!currentPhoto) {
+              return false;
+            }
 
-            renderAlbumsPreserveViewport();
+            selectedNoteIds.forEach(
+              noteId => {
+                const note =
+                  getNote(
+                    noteId,
+                    {
+                      projectId:
+                        photo.projectId,
 
-            showToast(
-              'Photo note links updated.'
+                      includeArchived:
+                        false
+                    }
+                  );
+
+                if (!note) {
+                  return;
+                }
+
+                setNotePhotoLinks(
+                  note.id,
+                  [
+                    ...new Set([
+                      ...(
+                        note.linkedPhotoIds
+                        || []
+                      ),
+
+                      photo.id
+                    ])
+                  ],
+                  {
+                    projectId:
+                      photo.projectId
+                  }
+                );
+              }
             );
-          }
-        );
+
+            return true;
+          },
+
+        afterSave:
+          renderAlbumsPreserveViewport,
+
+        successMessage:
+          count =>
+            `${count} ${
+              count === 1
+                ? 'note was'
+                : 'notes were'
+            } linked to the photo.`
+      });
     }
 
     function renderAlbumsPhotoSources() {
@@ -51989,9 +52569,44 @@
 
     function bindAlbumsControls() {
       bindToasts(main);
-      bindConnectedNoteLinks(main);
       bindGenealogyDateFields(main);
       bindPlaceComboboxes(main);
+      bindConnectedNoteLinks(
+        main,
+        {
+          onUnlinked:
+            ({
+              contextType
+            }) => {
+              if (
+                contextType
+                !== 'photo'
+              ) {
+                return;
+              }
+
+              renderAlbumsPreserveViewport();
+
+              /*
+                The removed row no longer exists.
+                Return keyboard focus to the stable
+                Add note action.
+              */
+              requestAnimationFrame(
+                () => {
+                  main
+                    .querySelector(
+                      '#albumsManagePhotoNotes'
+                    )
+                    ?.focus({
+                      preventScroll:
+                        true
+                    });
+                }
+              );
+            }
+        }
+      );
 
       const browsingLocked =
         state.albumsDetailEditing;
@@ -60086,12 +60701,19 @@
 
     function renderConnectedNoteList({
       notes = [],
+
       contextType = '',
+
       contextId = '',
+
       limit =
         notes.length,
+
       emptyText =
-        'No connected notes.'
+        'No connected notes.',
+
+      allowUnlink =
+        true
     }) {
       const visible =
         notes.slice(
@@ -60109,73 +60731,138 @@
         `;
       }
 
+      const contextConfig =
+        getNoteEntityConfig(
+          contextType
+        );
+
+      const unlinkSupported =
+        Boolean(
+          allowUnlink
+          && contextId
+          && contextConfig
+        );
+
+      const contextNoun =
+        contextConfig?.singular
+        || String(
+          contextConfig
+            ?.contextLabel
+          || 'item'
+  ).toLowerCase();
+
       return `
         <div class="connected-note-list">
 
           ${visible
             .map(note => {
+              const noteTitle =
+                note.title
+                || 'Untitled note';
+
               const metadata =
                 formatConnectedNoteMetadata(
                   note
                 );
 
               return `
-                <button
-                  class="connected-note-card"
-                  type="button"
-                  data-connected-note-id="${escapeHtml(
-                    note.id
-                  )}"
-                  data-connected-note-context-type="${escapeHtml(
-                    contextType
-                  )}"
-                  data-connected-note-context-id="${escapeHtml(
-                    contextId
-                  )}"
-                  aria-label="Open ${escapeHtml(
-                    note.title
-                  )}">
+                <div
+                  class="
+                    connected-note-item
+                    ${
+                      unlinkSupported
+                        ? 'can-unlink'
+                        : ''
+                    }
+                  ">
 
-                  <strong
-                    class="
-                      connected-note-title
-                    "
-                    title="${escapeHtml(
-                      note.title
+                  <button
+                    class="connected-note-card"
+                    type="button"
+                    data-connected-note-id="${escapeHtml(
+                      note.id
+                    )}"
+                    data-connected-note-context-type="${escapeHtml(
+                      contextType
+                    )}"
+                    data-connected-note-context-id="${escapeHtml(
+                      contextId
+                    )}"
+                    aria-label="Open ${escapeHtml(
+                      noteTitle
                     )}">
 
-                    ${escapeHtml(
-                      note.title
-                    )}
-                  </strong>
+                    <strong
+                      class="
+                        connected-note-title
+                      "
+                      title="${escapeHtml(
+                        noteTitle
+                      )}">
 
-                  <span
-                    class="
-                      connected-note-excerpt
-                    ">
+                      ${escapeHtml(
+                        noteTitle
+                      )}
+                    </strong>
 
-                    ${escapeHtml(
-                      noteExcerpt(
-                        note,
-                        120
-                      )
-                      || 'No note content'
-                    )}
-                  </span>
+                    <span
+                      class="
+                        connected-note-excerpt
+                      ">
 
-                  <span
-                    class="
-                      connected-note-meta
-                    "
-                    title="${escapeHtml(
-                      metadata
-                    )}">
+                      ${escapeHtml(
+                        noteExcerpt(
+                          note,
+                          120
+                        )
+                        || 'No note content'
+                      )}
+                    </span>
 
-                    ${escapeHtml(
-                      metadata
-                    )}
-                  </span>
-                </button>
+                    <span
+                      class="
+                        connected-note-meta
+                      "
+                      title="${escapeHtml(
+                        metadata
+                      )}">
+
+                      ${escapeHtml(
+                        metadata
+                      )}
+                    </span>
+                  </button>
+
+                  ${
+                    unlinkSupported
+                      ? `
+                        <button
+                          class="
+                            connected-note-unlink
+                          "
+                          type="button"
+                          data-connected-note-unlink="${escapeHtml(
+                            note.id
+                          )}"
+                          data-connected-note-context-type="${escapeHtml(
+                            contextType
+                          )}"
+                          data-connected-note-context-id="${escapeHtml(
+                            contextId
+                          )}"
+                          aria-label="Unlink ${escapeHtml(
+                            noteTitle
+                          )} from this ${escapeHtml(
+                            contextNoun
+                          )}"
+                          title="Unlink note">
+
+                          ${icon.unlink}
+                        </button>
+                      `
+                      : ''
+                  }
+                </div>
               `;
             })
             .join('')}
@@ -60183,8 +60870,347 @@
       `;
     }
 
+    function connectedNoteContextRecord(
+      contextType,
+      contextId,
+      projectId
+    ) {
+      return noteEntityById(
+        contextType,
+        contextId,
+        projectId
+      );
+    }
+        
+    function connectedNoteContextName(
+      contextType,
+      record
+    ) {
+      return (
+        noteEntityLabel(
+          contextType,
+          record
+        )
+        || 'this item'
+      );
+    }
+
+    function connectedNoteContextNoun(
+      contextType
+    ) {
+      const config =
+        getNoteEntityConfig(
+          contextType
+        );
+
+      return (
+        config?.singular
+        || String(
+          config?.contextLabel
+          || 'item'
+        ).toLowerCase()
+      );
+    }
+
+    function unlinkConnectedNote({
+      noteId,
+      contextType,
+      contextId
+    }) {
+      const note =
+        getNote(
+          noteId,
+          {
+            projectId:
+              currentProjectId(),
+
+            includeArchived:
+              true
+          }
+        );
+
+      const config =
+        getNoteEntityConfig(
+          contextType
+        );
+
+      if (
+        !note
+        || !config
+        || !contextId
+      ) {
+        return false;
+      }
+
+      const currentIds =
+        Array.isArray(
+          note[
+            config.field
+          ]
+        )
+          ? note[
+              config.field
+            ]
+          : [];
+
+      if (
+        !currentIds.includes(
+          contextId
+        )
+      ) {
+        return false;
+      }
+
+      const updatedNote =
+        setNoteEntityLinks(
+          note.id,
+          contextType,
+          currentIds.filter(
+            id =>
+              id !== contextId
+          ),
+          {
+            projectId:
+              note.projectId
+          }
+        );
+
+      return Boolean(
+        updatedNote
+      );
+    }
+
+    function openConnectedNoteUnlinkConfirm({
+      noteId,
+      contextType,
+      contextId,
+      onUnlinked =
+        null
+    }) {
+      const contextConfig =
+        getNoteEntityConfig(
+          contextType
+        );
+
+      if (
+        !contextConfig
+        || !contextId
+      ) {
+        return;
+      }
+      const note =
+        getNote(
+          noteId,
+          {
+            projectId:
+              currentProjectId(),
+
+            includeArchived:
+              true
+          }
+        );
+
+      if (!note) {
+        showToast(
+          'Note not found.'
+        );
+
+        return;
+      }
+
+      const config =
+        getNoteEntityConfig(
+          contextType
+        );
+
+      const linkedIds =
+        config
+          ? note[
+              config.field
+            ] || []
+          : [];
+
+      if (
+        !config
+        || !linkedIds.includes(
+          contextId
+        )
+      ) {
+        showToast(
+          'This note is no longer linked.'
+        );
+
+        return;
+      }
+
+      const contextRecord =
+        connectedNoteContextRecord(
+          contextType,
+          contextId,
+          note.projectId
+        );
+
+      if (!contextRecord) {
+        showToast(
+          'Linked record not found.'
+        );
+
+        return;
+      }
+
+      const noteTitle =
+        note.title
+        || 'Untitled note';
+
+      const contextName =
+        connectedNoteContextName(
+          contextType,
+          contextRecord
+        );
+
+      const contextNoun =
+        connectedNoteContextNoun(
+          contextType
+        );
+
+      openModal(`
+        <div
+          class="
+            modal
+            connected-note-unlink-modal
+          "
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="connectedNoteUnlinkTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="connectedNoteUnlinkTitle">
+                Unlink note from ${escapeHtml(
+                  contextNoun
+                )}?
+              </h2>
+
+              <p>
+                ${escapeHtml(
+                  noteTitle
+                )}
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close unlink confirmation">
+
+              ${icon.close}
+            </button>
+          </div>
+
+          <div
+            class="
+              modal-body
+              unlink-relationship-body
+            ">
+
+            <div
+              class="
+                unlink-relationship-warning
+                connected-note-unlink-warning
+              ">
+
+              <strong>
+                The note will not be deleted.
+              </strong>
+
+              <span>
+                Only the connection between
+                “${escapeHtml(
+                  noteTitle
+                )}” and
+                “${escapeHtml(
+                  contextName
+                )}” will be removed.
+                The note will remain available in
+                Notes and keep all its other links.
+              </span>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+              Cancel
+            </button>
+
+            <button
+              class="button danger"
+              type="button"
+              data-confirm-connected-note-unlink>
+              Unlink note
+            </button>
+          </div>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelector(
+          '[data-confirm-connected-note-unlink]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const unlinked =
+              unlinkConnectedNote({
+                noteId:
+                  note.id,
+
+                contextType,
+
+                contextId
+              });
+
+            /*
+              Close first so the modal can return
+              focus before the sidebar is rerendered.
+              The module callback then establishes
+              the final stable focus target.
+            */
+            closeModal();
+
+            if (!unlinked) {
+              showToast(
+                'The note could not be unlinked.'
+              );
+
+              return;
+            }
+
+            onUnlinked?.({
+              noteId:
+                note.id,
+
+              contextType,
+
+              contextId
+            });
+
+            showToast(
+              `Note unlinked from ${contextNoun}.`
+            );
+          }
+        );
+    }
+
     function bindConnectedNoteLinks(
-      root
+      root,
+      {
+        onUnlinked =
+          null
+      } = {}
     ) {
       root
         .querySelectorAll(
@@ -60210,6 +61236,57 @@
                     || ''
                 }
               );
+            }
+          );
+        });
+
+      root
+        .querySelectorAll(
+          '[data-connected-note-unlink]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              event.preventDefault();
+              event.stopPropagation();
+
+              openConnectedNoteUnlinkConfirm({
+                noteId:
+                  button.dataset
+                    .connectedNoteUnlink,
+
+                contextType:
+                  button.dataset
+                    .connectedNoteContextType
+                  || '',
+
+                contextId:
+                  button.dataset
+                    .connectedNoteContextId
+                  || '',
+
+                onUnlinked:
+                  payload => {
+                    if (
+                      typeof onUnlinked
+                      === 'function'
+                    ) {
+                      onUnlinked(
+                        payload
+                      );
+
+                      return;
+                    }
+
+                    /*
+                      Shared fallback for modules that use
+                      connected Note rows but do not yet have
+                      a viewport-preserving local renderer.
+                    */
+                    render();
+                  }
+              });
             }
           );
         });
@@ -62714,7 +63791,7 @@
           <button
             class="button secondary"
             type="button"
-            data-close>
+            data-note-collection-picker-cancel>
             Cancel
           </button>
 
@@ -62974,6 +64051,14 @@
       modal.addEventListener(
         'click',
         event => {
+          if (
+            event.target.closest(
+              '[data-note-collection-picker-cancel]'
+            )
+          ) {
+            closeModal();
+            return;
+          }
           if (
             event.target.closest(
               '[data-note-collection-picker-create]'
@@ -68243,38 +69328,187 @@
         );
     }
 
-    function openNotesRelatedModal() {
-      const note =
-        selectedNote();
+    /*
+      Shared note picker
 
-      if (!note) {
+      Used by:
+      - Notes → Add related note
+      - Albums inspector → Add note
+      - Family Tree inspector → Add note later
+
+      The picker only stages and adds new links.
+      Existing links are displayed as disabled rows
+      when they appear in search results.
+
+      Removing an existing link remains a contextual
+      action in the sidebar/editor where that link is shown.
+    */
+
+    function notePickerSharedIds(
+      firstValues = [],
+      secondValues = []
+    ) {
+      const secondIds =
+        new Set(
+          secondValues || []
+        );
+
+      return [
+        ...new Set(
+          firstValues || []
+        )
+      ].filter(id =>
+        secondIds.has(id)
+      );
+    }
+
+    function relatedNotePickerSuggestionScore(
+      sourceNote,
+      candidate
+    ) {
+      if (
+        !sourceNote
+        || !candidate
+      ) {
+        return 0;
+      }
+
+      let score = 0;
+
+      const entityWeights = {
+        person: 9,
+        event: 8,
+        source: 7,
+        archiveFile: 7,
+        place: 5,
+        photo: 4
+      };
+
+      Object.entries(
+        entityWeights
+      ).forEach(([
+        type,
+        weight
+      ]) => {
+        const config =
+          getNoteEntityConfig(
+            type
+          );
+
+        if (!config) {
+          return;
+        }
+
+        score +=
+          notePickerSharedIds(
+            sourceNote[
+              config.field
+            ],
+            candidate[
+              config.field
+            ]
+          ).length
+          * weight;
+      });
+
+      score +=
+        notePickerSharedIds(
+          sourceNote.collectionIds,
+          candidate.collectionIds
+        ).length
+        * 2;
+
+      score +=
+        notePickerSharedIds(
+          sourceNote.tags,
+          candidate.tags
+        ).length
+        * 2;
+
+      return score;
+    }
+
+    function openNoteLinkPickerModal({
+      projectId =
+        currentProjectId(),
+
+      title =
+        'Add notes',
+
+      description =
+        'Link existing notes.',
+
+      helperText =
+        '',
+
+      searchPlaceholder =
+        'Search by title, content, person, place, or source',
+
+      existingNoteIds =
+        [],
+
+      excludeNoteIds =
+        [],
+
+      /*
+        Notes relationships can include archived Notes.
+        Albums should pass false to preserve its current
+        active-Notes-only linking rule.
+      */
+      includeArchived =
+        false,
+
+      existingStatus =
+        'Already linked',
+
+      existingMetaLabel =
+        'already linked',
+
+      createLabel =
+        'Create note',
+
+      onCreate =
+        null,
+
+      getSuggestionScore =
+        () => 0,
+
+      onSave,
+
+      afterSave =
+        null,
+
+      successMessage =
+        null
+    } = {}) {
+      if (
+        !projectId
+        || typeof onSave
+          !== 'function'
+      ) {
         return;
       }
 
-      const alreadyRelatedIds =
+      const existingIds =
         new Set(
           (
-            note.relatedNoteIds || []
-          ).filter(relatedId =>
-            Boolean(
-              getNote(
-                relatedId,
-                {
-                  projectId:
-                    note.projectId,
+            existingNoteIds
+            || []
+          ).filter(Boolean)
+        );
 
-                  includeArchived:
-                    true
-                }
-              )
-            )
-          )
+      const excludedIds =
+        new Set(
+          (
+            excludeNoteIds
+            || []
+          ).filter(Boolean)
         );
 
       /*
-        Only newly selected Notes belong here.
-        Existing relationships remain disabled
-        and are merged back during Save.
+        selectedIds contains only new links.
+        Existing links are never removed by
+        this modal.
       */
       const selectedIds =
         new Set();
@@ -68284,106 +69518,24 @@
 
       const normalizeQuery =
         value =>
-          String(value || '')
+          String(
+            value || ''
+          )
             .trim()
             .toLowerCase();
 
       const allCandidates =
         () =>
           getProjectNotes(
-            note.projectId,
+            projectId,
             {
-              includeArchived:
-                true
+              includeArchived
             }
-          ).filter(item =>
-            item.id !== note.id
-          );
-
-      const sharedIds =
-        (
-          firstValues,
-          secondValues
-        ) => {
-          const second =
-            new Set(
-              secondValues || []
-            );
-
-          return [
-            ...new Set(
-              firstValues || []
+          ).filter(note =>
+            !excludedIds.has(
+              note.id
             )
-          ].filter(id =>
-            second.has(id)
           );
-        };
-
-      const candidateSuggestion =
-        candidate => {
-          let score = 0;
-
-          const entityWeights = {
-            person:
-              9,
-
-            event:
-              8,
-
-            source:
-              7,
-
-            archiveFile:
-              7,
-
-            place:
-              5,
-
-            photo:
-              4
-          };
-
-          Object.entries(
-            entityWeights
-          ).forEach(([
-            type,
-            weight
-          ]) => {
-            const config =
-              getNoteEntityConfig(
-                type
-              );
-
-            if (!config) {
-              return;
-            }
-
-            score +=
-              sharedIds(
-                note[config.field],
-                candidate[config.field]
-              ).length
-              * weight;
-          });
-
-          score +=
-            sharedIds(
-              note.collectionIds,
-              candidate.collectionIds
-            ).length
-            * 2;
-
-          score +=
-            sharedIds(
-              note.tags,
-              candidate.tags
-            ).length
-            * 2;
-
-          return {
-            score
-          };
-        };
 
       const visibleCandidates =
         () => {
@@ -68391,128 +69543,133 @@
             normalizeQuery(
               query
             );
-            
 
           return allCandidates()
-            .filter(candidate =>
+            /*
+              Selected Notes move into the
+              selected review panel.
+            */
+            .filter(note =>
               !selectedIds.has(
-                candidate.id
+                note.id
               )
             )
-            .filter(candidate => {
-              const alreadyRelated =
-                alreadyRelatedIds.has(
-                  candidate.id
+            .filter(note => {
+              const alreadyLinked =
+                existingIds.has(
+                  note.id
                 );
-                
+
               /*
-                An archived Note that is already
-                related remains searchable even
-                when Show archived is off.
+                Preserve the Notes modal behavior:
+                an archived existing link can still
+                appear in a direct search.
               */
               if (
-                candidate.archived
+                note.archived
                 && !showArchived
-                && !alreadyRelated
+                && !alreadyLinked
               ) {
                 return false;
               }
 
               if (normalized) {
                 return noteSearchText(
-                  candidate
+                  note
                 ).includes(
                   normalized
                 );
               }
 
               /*
-                Existing relationships do not
-                occupy the default suggestion list.
+                Existing links do not occupy the
+                default suggestion list.
               */
-              return !alreadyRelated;
+              return !alreadyLinked;
             })
-            .map(candidate => ({
-              candidate,
+            .map(note => ({
+              note,
 
-              suggestion:
-                candidateSuggestion(
-                  candidate
+              score:
+                Number(
+                  getSuggestionScore(
+                    note
+                  )
                 )
+                || 0
             }))
-            .sort((first, second) =>
-              /*
-                Archived Notes always follow active
-                Notes, even when their score is higher.
-              */
-              Number(
-                Boolean(
-                  first.candidate.archived
-                )
-              )
-              - Number(
+            .sort(
+              (
+                first,
+                second
+              ) =>
+                /*
+                  Active Notes appear before archived
+                  Notes even when the archived Note
+                  has a higher relevance score.
+                */
+                Number(
                   Boolean(
-                    second.candidate.archived
+                    first.note.archived
                   )
                 )
-              || second.suggestion.score
-                - first.suggestion.score
-              || (
-                  Date.parse(
-                    second.candidate.updatedAt
-                    || ''
+                - Number(
+                    Boolean(
+                      second.note.archived
+                    )
                   )
-                  || 0
-                )
-                - (
+                || second.score
+                  - first.score
+                || (
                     Date.parse(
-                      first.candidate.updatedAt
+                      second.note.updatedAt
                       || ''
                     )
                     || 0
                   )
-              || String(
-                  first.candidate.title
-                  || ''
-                ).localeCompare(
-                  String(
-                    second.candidate.title
+                  - (
+                      Date.parse(
+                        first.note.updatedAt
+                        || ''
+                      )
+                      || 0
+                    )
+                || String(
+                    first.note.title
                     || ''
+                  ).localeCompare(
+                    String(
+                      second.note.title
+                      || ''
+                    )
                   )
-                )
             );
         };
 
       const renderResult =
         ({
-          candidate
+          note
         }) => {
-          const title =
-            candidate.title
+          const noteTitle =
+            note.title
             || 'Untitled note';
 
-          const alreadyRelated =
-            alreadyRelatedIds.has(
-              candidate.id
-            );
-
-          const selected =
-            selectedIds.has(
-              candidate.id
+          const alreadyLinked =
+            existingIds.has(
+              note.id
             );
 
           return `
             <label
               class="
                 notes-related-choice
-                ${selected ? 'selected' : ''}
                 ${
-                  alreadyRelated
+                  alreadyLinked
                     ? 'already-related'
                     : ''
                 }
                 ${
-                  candidate.archived
+                  note.archived
                     ? 'archived'
                     : ''
                 }
@@ -68522,16 +69679,24 @@
                 'notes-related-choice-icon'
               )}
 
-              <span class="notes-related-choice-copy">
-                <span class="notes-related-choice-title-line">
+              <span
+                class="
+                  notes-related-choice-copy
+                ">
+
+                <span
+                  class="
+                    notes-related-choice-title-line
+                  ">
+
                   <strong>
                     ${escapeHtml(
-                      title
+                      noteTitle
                     )}
                   </strong>
 
                   ${
-                    candidate.archived
+                    note.archived
                       ? `
                         <span
                           class="
@@ -68544,10 +69709,13 @@
                   }
                 </span>
 
-                <span class="notes-related-choice-excerpt">
+                <span
+                  class="
+                    notes-related-choice-excerpt
+                  ">
                   ${escapeHtml(
                     noteExcerpt(
-                      candidate,
+                      note,
                       150
                     )
                     || 'No note content'
@@ -68555,15 +69723,20 @@
                 </span>
 
                 ${renderRelatedNoteCollectionChips(
-                  candidate
+                  note
                 )}
               </span>
 
               ${
-                alreadyRelated
+                alreadyLinked
                   ? `
-                    <span class="notes-related-choice-status">
-                      Already related
+                    <span
+                      class="
+                        notes-related-choice-status
+                      ">
+                      ${escapeHtml(
+                        existingStatus
+                      )}
                     </span>
                   `
                   : ''
@@ -68572,192 +69745,242 @@
               <input
                 type="checkbox"
                 value="${escapeHtml(
-                  candidate.id
+                  note.id
                 )}"
-                data-notes-related-choice
+                data-note-picker-choice
                 ${
-                  selected || alreadyRelated
-                    ? 'checked'
-                    : ''
-                }
-                ${
-                  alreadyRelated
-                    ? 'disabled'
+                  alreadyLinked
+                    ? 'checked disabled'
                     : ''
                 }
                 aria-label="${
-                  alreadyRelated
-                    ? `Already related to ${
-                        escapeHtml(title)
-                      }`
-                    : `Select ${
-                        escapeHtml(title)
-                      }`
+                  alreadyLinked
+                    ? `${escapeHtml(
+                        existingStatus
+                      )}: ${escapeHtml(
+                        noteTitle
+                      )}`
+                    : `Select ${escapeHtml(
+                        noteTitle
+                      )}`
                 }">
             </label>
           `;
         };
 
-        const renderEmptyState =
-          () => {
-            const normalized =
-              normalizeQuery(
-                query
-              );
+      const renderEmptyState =
+        () => {
+          const normalized =
+            normalizeQuery(
+              query
+            );
 
-            const candidates =
-              allCandidates();
+          const candidates =
+            allCandidates();
 
-            if (!candidates.length) {
-              return `
-                <div class="notes-related-empty">
-                  <strong>
-                    No other notes yet
-                  </strong>
-
-                  <span>
-                    Create another Note from the Notes toolbar,
-                    then return here to add the relationship.
-                  </span>
-                </div>
-              `;
-            }
-
-            if (normalized) {
-              return `
-                <div class="notes-related-empty">
-                  <strong>
-                    No notes match this search
-                  </strong>
-
-                  <span>
-                    Try another title, person, place,
-                    collection, or source.
-                  </span>
-
-                  <button
-                    class="button secondary"
-                    type="button"
-                    data-notes-related-clear-search>
-                    Clear search
-                  </button>
-                </div>
-              `;
-            }
-
-            const activeUnrelated =
-              candidates.filter(candidate =>
-                !candidate.archived
-                && !alreadyRelatedIds.has(
-                  candidate.id
-                )
-              );
-
-            const archivedUnrelated =
-              candidates.filter(candidate =>
-                candidate.archived
-                && !alreadyRelatedIds.has(
-                  candidate.id
-                )
-              );
-
-            if (!activeUnrelated.length) {
-              return `
-                <div class="notes-related-empty">
-                  <strong>
-                    All available notes are already related
-                  </strong>
-
-                  <span>
-                    ${
-                      !showArchived
-                      && archivedUnrelated.length
-                        ? 'Enable “Show archived” to check archived Notes.'
-                        : 'There are no additional project Notes to relate.'
-                    }
-                  </span>
-                </div>
-              `;
-            }
-
+          if (!candidates.length) {
             return `
-              <div class="notes-related-empty">
+              <div
+                class="
+                  notes-related-empty
+                ">
+
                 <strong>
                   No notes available
                 </strong>
+
+                <span>
+                  Create a Note first, then return
+                  here to link it.
+                </span>
               </div>
             `;
-          };
+          }
+
+          if (normalized) {
+            return `
+              <div
+                class="
+                  notes-related-empty
+                ">
+
+                <strong>
+                  No notes match this search
+                </strong>
+
+                <span>
+                  Try another title, person, place,
+                  collection, or source.
+                </span>
+
+                <button
+                  class="button secondary"
+                  type="button"
+                  data-note-picker-clear-search>
+                  Clear search
+                </button>
+              </div>
+            `;
+          }
+
+          const unlinkedCandidates =
+            candidates.filter(note =>
+              !existingIds.has(
+                note.id
+              )
+            );
+
+          if (
+            !unlinkedCandidates.length
+          ) {
+            return `
+              <div
+                class="
+                  notes-related-empty
+                ">
+
+                <strong>
+                  All available notes are linked
+                </strong>
+
+                <span>
+                  No additional Notes are available
+                  for this item.
+                </span>
+              </div>
+            `;
+          }
+
+          if (
+            includeArchived
+            && !showArchived
+            && unlinkedCandidates.every(
+              note =>
+                note.archived
+            )
+          ) {
+            return `
+              <div
+                class="
+                  notes-related-empty
+                ">
+
+                <strong>
+                  No active notes available
+                </strong>
+
+                <span>
+                  Enable “Show archived” to review
+                  archived Notes.
+                </span>
+              </div>
+            `;
+          }
+
+          return `
+            <div
+              class="
+                notes-related-empty
+              ">
+
+              <strong>
+                No notes available
+              </strong>
+            </div>
+          `;
+        };
 
       const renderSelectedNotes =
         () => {
-          const selectedNotes =
+          const notes =
             [...selectedIds]
-              .map(id =>
+              .map(noteId =>
                 getNote(
-                  id,
+                  noteId,
                   {
-                    projectId:
-                      note.projectId,
-
+                    projectId,
                     includeArchived:
                       true
                   }
                 )
               )
               .filter(Boolean)
-              .sort((first, second) =>
-                String(
-                  first.title || ''
-                ).localeCompare(
+              .sort(
+                (
+                  first,
+                  second
+                ) =>
                   String(
-                    second.title || ''
+                    first.title
+                    || ''
+                  ).localeCompare(
+                    String(
+                      second.title
+                      || ''
+                    )
                   )
-                )
               );
 
-          if (!selectedNotes.length) {
+          if (!notes.length) {
             return '';
           }
 
           return `
-            <div class="notes-related-selected-head">
+            <div
+              class="
+                notes-related-selected-head
+              ">
+
               <strong>
                 Selected notes
               </strong>
 
               <span>
-                ${selectedNotes.length}
+                ${notes.length}
               </span>
             </div>
 
-            <div class="notes-related-selected-list">
-              ${selectedNotes
-                .map(item => `
-                  <div class="notes-related-selected-row">
-                    <span>
-                      ${escapeHtml(
-                        item.title
-                        || 'Untitled note'
-                      )}
-                    </span>
+            <div
+              class="
+                notes-related-selected-list
+              ">
 
-                    <button
-                      class="relation-action-button"
-                      type="button"
-                      data-notes-related-remove="${escapeHtml(
-                        item.id
-                      )}"
-                      aria-label="Remove ${escapeHtml(
-                        item.title
-                        || 'Untitled note'
-                      )} from selection"
-                      title="Remove from selection">
+              ${notes
+                .map(note => {
+                  const noteTitle =
+                    note.title
+                    || 'Untitled note';
 
-                      ${icon.close}
-                    </button>
-                  </div>
-                `)
+                  return `
+                    <div
+                      class="
+                        notes-related-selected-row
+                      ">
+
+                      <span>
+                        ${escapeHtml(
+                          noteTitle
+                        )}
+                      </span>
+
+                      <button
+                        class="
+                          relation-action-button
+                        "
+                        type="button"
+                        data-note-picker-remove="${escapeHtml(
+                          note.id
+                        )}"
+                        aria-label="Remove ${escapeHtml(
+                          noteTitle
+                        )} from selection"
+                        title="Remove from selection">
+
+                        ${icon.close}
+                      </button>
+                    </div>
+                  `;
+                })
                 .join('')}
             </div>
           `;
@@ -68765,44 +69988,71 @@
 
       openModal(`
         <div
-          class="modal notes-related-modal"
+          class="
+            modal
+            notes-related-modal
+            note-link-picker-modal
+          "
           role="dialog"
           aria-modal="true"
-          aria-labelledby="notesRelatedTitle">
+          aria-labelledby="noteLinkPickerTitle">
 
           <div class="modal-header">
             <div>
-              <h2 id="notesRelatedTitle">
-                Add related notes
+              <h2 id="noteLinkPickerTitle">
+                ${escapeHtml(
+                  title
+                )}
               </h2>
 
               <p>
-                Link notes to “${escapeHtml(
-                  note.title
-                  || 'Untitled note'
-                )}”.
+                ${escapeHtml(
+                  description
+                )}
               </p>
 
-              <p class="notes-related-reciprocal-note">
-                The relationship will appear in both notes.
-              </p>
+              ${
+                helperText
+                  ? `
+                    <p
+                      class="
+                        notes-related-reciprocal-note
+                      ">
+                      ${escapeHtml(
+                        helperText
+                      )}
+                    </p>
+                  `
+                  : ''
+              }
             </div>
 
             <button
               class="close-button"
               type="button"
               data-close
-              aria-label="Close">
+              aria-label="Close note picker">
 
               ${icon.close}
             </button>
           </div>
 
-          <div class="modal-body notes-related-modal-body">
-            <section
-              class="notes-related-picker-view">
+          <div
+            class="
+              modal-body
+              notes-related-modal-body
+            ">
 
-              <div class="notes-related-toolbar">
+            <section
+              class="
+                notes-related-picker-view
+              ">
+
+              <div
+                class="
+                  notes-related-toolbar
+                ">
+
                 <label
                   class="app-search-field"
                   aria-label="Search notes">
@@ -68812,55 +70062,125 @@
                   <input
                     type="search"
                     autocomplete="off"
-                    data-notes-related-search
-                    placeholder="Search by title, content, person, place, or source">
+                    data-note-picker-search
+                    placeholder="${escapeHtml(
+                      searchPlaceholder
+                    )}">
                 </label>
 
-                <label class="notes-related-archived-toggle">
-                  <input
-                    type="checkbox"
-                    data-notes-related-show-archived>
+                ${
+                  includeArchived
+                  || typeof onCreate
+                    === 'function'
+                    ? `
+                      <div
+                        class="
+                          note-link-picker-toolbar-actions
+                        ">
 
-                  <span>Show archived</span>
-                </label>
+                        ${
+                          includeArchived
+                            ? `
+                              <label
+                                class="
+                                  notes-related-archived-toggle
+                                ">
+
+                                <input
+                                  type="checkbox"
+                                  data-note-picker-show-archived>
+
+                                <span>
+                                  Show archived
+                                </span>
+                              </label>
+                            `
+                            : ''
+                        }
+
+                        ${
+                          typeof onCreate
+                            === 'function'
+                            ? `
+                              <button
+                                class="button secondary"
+                                type="button"
+                                data-note-picker-create>
+
+                                ${icon.plus}
+
+                                ${escapeHtml(
+                                  createLabel
+                                )}
+                              </button>
+                            `
+                            : ''
+                        }
+                      </div>
+                    `
+                    : ''
+                }
               </div>
 
               <section
-                class="notes-related-selected-panel"
-                data-notes-related-selected
+                class="
+                  notes-related-selected-panel
+                "
+                data-note-picker-selected
                 hidden>
               </section>
 
-              <section class="notes-related-results-panel">
+              <section
+                class="
+                  notes-related-results-panel
+                ">
 
-                <div class="notes-related-results-head">
+                <div
+                  class="
+                    notes-related-results-head
+                  ">
+
                   <div>
-                    <strong data-notes-related-results-title>
+                    <strong
+                      data-note-picker-results-title>
                       Suggested notes
                     </strong>
 
-                    <span data-notes-related-results-meta>
+                    <span
+                      data-note-picker-results-meta>
                     </span>
                   </div>
                 </div>
 
                 <div
-                  class="notes-related-results"
-                  data-notes-related-results>
+                  class="
+                    notes-related-results
+                  "
+                  data-note-picker-results>
                 </div>
               </section>
+            </section>
           </div>
 
           <div
-            class="modal-footer notes-related-footer">
+            class="
+              modal-footer
+              notes-related-footer
+            ">
 
             <span
-              class="notes-related-selection-count"
-              data-notes-related-count>
+              class="
+                notes-related-selection-count
+              "
+              data-note-picker-count>
               0 notes selected
             </span>
 
-            <div class="notes-related-footer-actions">
+            <div
+              class="
+                notes-related-footer-actions
+              ">
+
               <button
                 class="button secondary"
                 type="button"
@@ -68871,7 +70191,7 @@
               <button
                 class="button primary"
                 type="button"
-                data-notes-related-save
+                data-note-picker-save
                 disabled>
                 Add notes
               </button>
@@ -68882,7 +70202,7 @@
 
       const modal =
         modalBackdrop.querySelector(
-          '.notes-related-modal'
+          '.note-link-picker-modal'
         );
 
       if (!modal) {
@@ -68891,37 +70211,37 @@
 
       const searchInput =
         modal.querySelector(
-          '[data-notes-related-search]'
+          '[data-note-picker-search]'
         );
 
       const resultsHost =
         modal.querySelector(
-          '[data-notes-related-results]'
+          '[data-note-picker-results]'
         );
 
       const selectedHost =
         modal.querySelector(
-          '[data-notes-related-selected]'
+          '[data-note-picker-selected]'
         );
 
       const resultsTitle =
         modal.querySelector(
-          '[data-notes-related-results-title]'
+          '[data-note-picker-results-title]'
         );
 
       const resultsMeta =
         modal.querySelector(
-          '[data-notes-related-results-meta]'
+          '[data-note-picker-results-meta]'
         );
 
       const countElement =
         modal.querySelector(
-          '[data-notes-related-count]'
+          '[data-note-picker-count]'
         );
 
       const saveButton =
         modal.querySelector(
-          '[data-notes-related-save]'
+          '[data-note-picker-save]'
         );
 
       const refresh =
@@ -68949,8 +70269,8 @@
                   ? 'matches'
                   : 'notes available'
             } · ${
-              alreadyRelatedIds.size
-            } already related`;
+              existingIds.size
+            } ${existingMetaLabel}`;
 
           resultsHost.innerHTML =
             visible.length
@@ -68998,7 +70318,8 @@
           'input',
           event => {
             query =
-              event.currentTarget.value;
+              event.currentTarget
+                .value;
 
             refresh();
           }
@@ -69006,13 +70327,14 @@
 
       modal
         .querySelector(
-          '[data-notes-related-show-archived]'
+          '[data-note-picker-show-archived]'
         )
         ?.addEventListener(
           'change',
           event => {
             showArchived =
-              event.currentTarget.checked;
+              event.currentTarget
+                .checked;
 
             refresh();
           }
@@ -69023,7 +70345,7 @@
         event => {
           const input =
             event.target.closest(
-              '[data-notes-related-choice]'
+              '[data-note-picker-choice]'
             );
 
           if (
@@ -69050,15 +70372,15 @@
       modal.addEventListener(
         'click',
         event => {
-          const remove =
+          const removeButton =
             event.target.closest(
-              '[data-notes-related-remove]'
+              '[data-note-picker-remove]'
             );
 
-          if (remove) {
+          if (removeButton) {
             selectedIds.delete(
-              remove.dataset
-                .notesRelatedRemove
+              removeButton.dataset
+                .notePickerRemove
             );
 
             refresh();
@@ -69067,7 +70389,7 @@
 
           if (
             event.target.closest(
-              '[data-notes-related-clear-search]'
+              '[data-note-picker-clear-search]'
             )
           ) {
             query = '';
@@ -69083,13 +70405,145 @@
 
           if (
             event.target.closest(
-              '[data-notes-related-save]'
+              '[data-note-picker-create]'
+            )
+          ) {
+            closeModal();
+            onCreate?.();
+            return;
+          }
+
+          if (
+            event.target.closest(
+              '[data-note-picker-save]'
             )
           ) {
             if (!selectedIds.size) {
               return;
             }
 
+            const noteIds =
+              [...selectedIds];
+
+            const saved =
+              onSave(
+                noteIds
+              );
+
+            /*
+              A wrapper may return false when its
+              context was removed while the modal
+              was open.
+            */
+            if (saved === false) {
+              closeModal();
+              return;
+            }
+
+            closeModal();
+
+            afterSave?.();
+
+            const message =
+              typeof successMessage
+                === 'function'
+                ? successMessage(
+                    noteIds.length
+                  )
+                : successMessage;
+
+            if (message) {
+              showToast(
+                message
+              );
+            }
+          }
+        }
+      );
+
+      refresh();
+
+      requestAnimationFrame(
+        () => {
+          searchInput?.focus({
+            preventScroll:
+              true
+          });
+        }
+      );
+    }
+
+    function openNotesRelatedModal() {
+      const note =
+        selectedNote();
+
+      if (!note) {
+        return;
+      }
+
+      const existingNoteIds =
+        (
+          note.relatedNoteIds
+          || []
+        ).filter(noteId =>
+          Boolean(
+            getNote(
+              noteId,
+              {
+                projectId:
+                  note.projectId,
+
+                includeArchived:
+                  true
+              }
+            )
+          )
+        );
+
+      openNoteLinkPickerModal({
+        projectId:
+          note.projectId,
+
+        title:
+          'Add related notes',
+
+        description:
+          `Link notes to “${
+            note.title
+            || 'Untitled note'
+          }”.`,
+
+        helperText:
+          'The relationship will appear in both notes.',
+
+        existingNoteIds,
+
+        /*
+          Prevent the current Note from
+          relating to itself.
+        */
+        excludeNoteIds: [
+          note.id
+        ],
+
+        includeArchived:
+          true,
+
+        existingStatus:
+          'Already related',
+
+        existingMetaLabel:
+          'already related',
+
+        getSuggestionScore:
+          candidate =>
+            relatedNotePickerSuggestionScore(
+              note,
+              candidate
+            ),
+
+        onSave:
+          selectedNoteIds => {
             const currentNote =
               getNote(
                 note.id,
@@ -69103,46 +70557,37 @@
               );
 
             if (!currentNote) {
-              closeModal();
-              return;
+              return false;
             }
 
             updateRelatedNoteLinks(
               currentNote.id,
               normalizeCentralNoteIdArray([
-                ...currentNote.relatedNoteIds,
-                ...selectedIds
+                ...(
+                  currentNote
+                    .relatedNoteIds
+                  || []
+                ),
+
+                ...selectedNoteIds
               ])
             );
 
-            const addedCount =
-              selectedIds.size;
+            return true;
+          },
 
-            closeModal();
+        afterSave:
+          renderNotesPreservingInteraction,
 
-            renderNotesPreservingInteraction();
-
-            showToast(
-              `${addedCount} ${
-                addedCount === 1
-                  ? 'note was'
-                  : 'notes were'
-              } related in both notes.`
-            );
-          }
-        }
-      );
-      refresh();
-
-      requestAnimationFrame(
-        () => {
-          searchInput?.focus({
-            preventScroll:
-              true
-          });
-        }
-      );
-      }
+        successMessage:
+          count =>
+            `${count} ${
+              count === 1
+                ? 'note was'
+                : 'notes were'
+            } related in both notes.`
+      });
+    }
 
     function openCentralNoteInEditor(
       noteId
@@ -72115,6 +73560,8 @@
         showCreatedToast = true
       } = {}
     ) {
+      const previousActiveModule =
+        state.activeModule;
       const creationContext =
         resolveNoteCreationContext({
           contextType,
@@ -72284,7 +73731,26 @@
       }
 
       if (renderAfterCreate) {
-        renderNotes();
+        /*
+          Entering Notes from another module requires
+          a full render so the global module navigation
+          receives the correct active state.
+
+          Creating a Note while already inside Notes can
+          use the smaller module-only render.
+        */
+        if (
+          activate
+          && previousActiveModule
+            !== 'Notes'
+        ) {
+          render();
+        } else if (
+          state.activeModule
+            === 'Notes'
+        ) {
+          renderNotes();
+        }
 
         if (
           activate
