@@ -23997,8 +23997,9 @@
         || null;
 
       state.archiveSelectedFolderId =
-        files[0]?.folderId
-        || 'archive';
+        archiveNormalizeFolderId(
+          files[0]?.folderId
+        );
 
       state.archiveSelectedFileIds =
         [];
@@ -24041,7 +24042,7 @@
         person.id;
 
       state.archiveSelectedFolderId =
-        'archive';
+        null;
 
       state.archiveSelectedFileId =
         files[0]?.id || null;
@@ -27436,8 +27437,8 @@
         uploadErrors: []
       },
       archiveView: 'files',
-      archiveSelectedFolderId: 'delo44',
-      archiveSelectedFileId: 'af1',
+      archiveSelectedFolderId: null,
+      archiveSelectedFileId: null,
       archiveSelectedSourceId: 'as1',
       archiveSelectedFileIds: [],
       archiveSearch: '',
@@ -27448,7 +27449,7 @@
       archiveSourceTypeFilter: 'all',
       archivePersonFilterId: '',
       archiveInspectorCollapsed: false,
-      archiveExpandedFolders: { archive: true, pawford: true, fond12: true, opis3: true, documents: true },
+      archiveExpandedFolders: {pawford: true, fond12: true, opis3: true, documents: true },
       notesView: 'all',
       notesActiveCollectionId: null,
       selectedNoteId: null,
@@ -30605,7 +30606,12 @@
       state.activeModule = 'Archive';
       state.archiveView = 'files';
       state.archiveSelectedFileId = fileId;
-      state.archiveSelectedFolderId = file?.folderId || state.archiveSelectedFolderId;
+      state.archiveSelectedFolderId =
+        file
+          ? archiveNormalizeFolderId(
+              file.folderId
+            )
+          : null;
       state.archiveSelectedFileIds = [];
       state.archiveInspectorCollapsed = false;
       render();
@@ -41250,7 +41256,7 @@
     function openProfileAllArchive() {
       state.activeModule = 'Archive';
       state.archiveView = 'files';
-      state.archiveSelectedFolderId = 'archive';
+      state.archiveSelectedFolderId = 'null';
       state.archiveSelectedFileId = null;
       state.archiveSelectedFileIds = [];
       state.archiveSearch = '';
@@ -55729,18 +55735,17 @@
     // ---------- Archive: genealogy file manager MVP ----------
 
     sampleData.archiveFolders = [
-      { id: 'archive', projectId: 'p1', parentId: null, name: 'Archive', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
-      { id: 'pawford', projectId: 'p1', parentId: 'archive', name: 'Archives', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
+      { id: 'pawford', projectId: 'p1', parentId: 'null', name: 'Archives', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
       { id: 'fond12', projectId: 'p1', parentId: 'pawford', name: 'United Kingdom', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
       { id: 'opis3', projectId: 'p1', parentId: 'fond12', name: 'North Yorkshire', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
       { id: 'delo44', projectId: 'p1', parentId: 'opis3', name: 'Pawford registers', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
       { id: 'delo45', projectId: 'p1', parentId: 'opis3', name: 'Household books', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-05-28T10:00:00Z' },
-      { id: 'documents', projectId: 'p1', parentId: 'archive', name: 'Family documents', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-05-19T10:00:00Z' },
+      { id: 'documents', projectId: 'p1', parentId: 'null', name: 'Family documents', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-05-19T10:00:00Z' },
       { id: 'certificates', projectId: 'p1', parentId: 'documents', name: 'Certificates', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-05-19T10:00:00Z' },
-      { id: 'interviews', projectId: 'p1', parentId: 'archive', name: 'Interviews and correspondence', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-04-05T10:00:00Z' },
-      { id: 'albums-origin', projectId: 'p1', parentId: 'archive', name: 'Books and reference', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-03-29T10:00:00Z' },
-      { id: 'unsorted', projectId: 'p1', parentId: 'archive', name: 'Scanned material', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
-      { id: 'inbox', projectId: 'p1', parentId: 'archive', name: 'Unfiled', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-01T10:00:00Z' }
+      { id: 'interviews', projectId: 'p1', parentId: 'null', name: 'Interviews and correspondence', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-04-05T10:00:00Z' },
+      { id: 'albums-origin', projectId: 'p1', parentId: 'null', name: 'Books and reference', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-03-29T10:00:00Z' },
+      { id: 'unsorted', projectId: 'p1', parentId: 'null', name: 'Scanned material', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z' },
+      { id: 'inbox', projectId: 'p1', parentId: 'null', name: 'Unfiled', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-01T10:00:00Z' }
     ];
 
     const ARCHIVE_SOURCE_TYPES = [
@@ -55883,57 +55888,387 @@
       return (sampleData.sources || []).find(source => source.id === id) || null;
     }
 
-    function archiveFolderParentId(folder) {
-      return folder?.parentId ?? folder?.parent ?? null;
+    const ARCHIVE_ROOT_PICKER_VALUE =
+      '__archive_root__';
+
+    function archiveIsRootLocation(
+      folderId
+    ) {
+      return (
+        folderId === null
+        || folderId === undefined
+        || folderId === ''
+      );
     }
 
-    function archiveFolderChildren(folderId) {
-      return (sampleData.archiveFolders || [])
-        .filter(folder => archiveFolderParentId(folder) === folderId)
-        .sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
-    }
-
-    function archiveFolderAncestors(folderId) {
-      const result = [];
-      const seen = new Set();
-      let current = archiveFolderById(folderId);
-      while (current && !seen.has(current.id)) {
-        result.unshift(current);
-        seen.add(current.id);
-        current = archiveFolderById(archiveFolderParentId(current));
+    function archiveNormalizeFolderId(
+      folderId
+    ) {
+      if (
+        archiveIsRootLocation(
+          folderId
+        )
+      ) {
+        return null;
       }
+
+      return archiveFolderById(
+        folderId
+      )?.id
+      || null;
+    }
+
+    function archiveFileFolderId(
+      file
+    ) {
+      return archiveNormalizeFolderId(
+        file?.folderId
+      );
+    }
+
+    function archiveFolderParentId(
+      folder
+    ) {
+      if (!folder) {
+        return null;
+      }
+
+      return archiveNormalizeFolderId(
+        folder.parentId
+        ?? folder.parent
+        ?? null
+      );
+    }
+
+    function archiveFolderChildren(
+      folderId = null
+    ) {
+      const rootLocation =
+        archiveIsRootLocation(
+          folderId
+        );
+
+      if (
+        !rootLocation
+        && !archiveFolderById(
+          folderId
+        )
+      ) {
+        return [];
+      }
+
+      const parentId =
+        rootLocation
+          ? null
+          : folderId;
+
+      return (
+        sampleData.archiveFolders
+        || []
+      )
+        .filter(folder =>
+          archiveFolderParentId(
+            folder
+          ) === parentId
+        )
+        .sort((a, b) =>
+          String(
+            a.name || ''
+          ).localeCompare(
+            String(
+              b.name || ''
+            )
+          )
+        );
+    }
+
+    function archiveFolderAncestors(
+      folderId
+    ) {
+      if (
+        archiveIsRootLocation(
+          folderId
+        )
+      ) {
+        return [];
+      }
+
+      const result = [];
+      const seen =
+        new Set();
+
+      let current =
+        archiveFolderById(
+          folderId
+        );
+
+      while (
+        current
+        && !seen.has(
+          current.id
+        )
+      ) {
+        result.unshift(
+          current
+        );
+
+        seen.add(
+          current.id
+        );
+
+        current =
+          archiveFolderById(
+            archiveFolderParentId(
+              current
+            )
+          );
+      }
+
       return result;
     }
 
-    function archiveFolderPath(folderId, { includeRoot = true } = {}) {
-      const folders = archiveFolderAncestors(folderId);
+    function archiveFolderPath(
+      folderId
+    ) {
+      const folders =
+        archiveFolderAncestors(
+          folderId
+        );
+
+      if (!folders.length) {
+        return 'Files';
+      }
+
       return folders
-        .filter(folder => includeRoot || folder.id !== 'archive')
-        .map(folder => folder.name)
-        .join(' / ') || 'Archive';
+        .map(folder =>
+          folder.name
+        )
+        .join(' / ');
     }
 
-    function archiveFolderDescendantIds(folderId, { includeSelf = true } = {}) {
+    /*
+      Returns every physical folder inside a
+      location. At the virtual root, null is also
+      included so root-level files belong to the
+      scope.
+    */
+
+    function archiveFolderScopeIds(
+      folderId
+    ) {
+      const ids =
+        new Set();
+
+      const visit =
+        id => {
+          ids.add(
+            id
+          );
+
+          archiveFolderChildren(
+            id
+          ).forEach(child =>
+            visit(
+              child.id
+            )
+          );
+        };
+
+      if (
+        archiveIsRootLocation(
+          folderId
+        )
+      ) {
+        ids.add(
+          null
+        );
+
+        archiveFolderChildren(
+          null
+        ).forEach(child =>
+          visit(
+            child.id
+          )
+        );
+
+        return ids;
+      }
+
+      const normalizedId =
+        archiveNormalizeFolderId(
+          folderId
+        );
+
+      if (normalizedId) {
+        visit(
+          normalizedId
+        );
+      }
+
+      return ids;
+    }
+
+    /*
+      This helper is for real-folder operations
+      such as delete and move. The virtual root is
+      deliberately excluded.
+    */
+
+    function archiveFolderDescendantIds(
+      folderId,
+      {
+        includeSelf =
+          true
+      } = {}
+    ) {
+      const folder =
+        archiveFolderById(
+          folderId
+        );
+
+      if (!folder) {
+        return [];
+      }
+
       const ids = [];
-      const visit = id => {
-        if (!ids.includes(id)) ids.push(id);
-        archiveFolderChildren(id).forEach(child => visit(child.id));
-      };
-      visit(folderId);
-      return includeSelf ? ids : ids.filter(id => id !== folderId);
+
+      const visit =
+        id => {
+          if (
+            !ids.includes(
+              id
+            )
+          ) {
+            ids.push(
+              id
+            );
+          }
+
+          archiveFolderChildren(
+            id
+          ).forEach(child =>
+            visit(
+              child.id
+            )
+          );
+        };
+
+      visit(
+        folder.id
+      );
+
+      return includeSelf
+        ? ids
+        : ids.filter(
+            id =>
+              id !== folder.id
+          );
     }
 
-    function archiveFolderDepth(folderId) {
-      return Math.max(0, archiveFolderAncestors(folderId).length - 1);
+    function archiveFolderDepth(
+      folderId
+    ) {
+      return Math.max(
+        0,
+
+        archiveFolderAncestors(
+          folderId
+        ).length - 1
+      );
     }
 
-    function archiveFolderImpact(folderId) {
-      const descendantIds = new Set(archiveFolderDescendantIds(folderId));
+    function archiveFlattenFolders(
+      parentId = null,
+      depth = 0
+    ) {
+      return archiveFolderChildren(
+        parentId
+      )
+        .flatMap(folder => [
+          {
+            folder,
+            depth
+          },
+
+          ...archiveFlattenFolders(
+            folder.id,
+            depth + 1
+          )
+        ]);
+    }
+
+    function archiveFolderImpact(
+      folderId
+    ) {
+      const folder =
+        archiveFolderById(
+          folderId
+        );
+
+      if (!folder) {
+        return {
+          folderIds:
+            [],
+
+          folders:
+            0,
+
+          files:
+            0
+        };
+      }
+
+      const descendantIds =
+        new Set(
+          archiveFolderDescendantIds(
+            folder.id
+          )
+        );
+
       return {
-        folderIds: [...descendantIds],
-        folders: Math.max(0, descendantIds.size - 1),
-        files: (sampleData.archiveFiles || []).filter(file => descendantIds.has(file.folderId)).length
+        folderIds:
+          [
+            ...descendantIds
+          ],
+
+        folders:
+          Math.max(
+            0,
+            descendantIds.size - 1
+          ),
+
+        files:
+          archiveProjectFiles()
+            .filter(file =>
+              descendantIds.has(
+                archiveFileFolderId(
+                  file
+                )
+              )
+            )
+            .length
       };
+    }
+
+    function archiveFolderChoiceValue(
+      folderId
+    ) {
+      return archiveIsRootLocation(
+        folderId
+      )
+        ? ARCHIVE_ROOT_PICKER_VALUE
+        : folderId;
+    }
+
+    function archiveFolderIdFromChoice(
+      value
+    ) {
+      return value
+        === ARCHIVE_ROOT_PICKER_VALUE
+          ? null
+          : archiveNormalizeFolderId(
+              value
+            );
     }
 
     function archiveProjectFiles() {
@@ -56215,30 +56550,137 @@
     }
 
     function archiveFilteredFiles() {
-      const folderId = archiveFolderById(state.archiveSelectedFolderId) ? state.archiveSelectedFolderId : 'archive';
-      const query = String(state.archiveSearch || '').trim().toLowerCase();
-      const personId = state.archivePersonFilterId || '';
-      let files = archiveProjectFiles();
+      const folderId =
+        archiveNormalizeFolderId(
+          state.archiveSelectedFolderId
+        );
 
-      if (state.archiveView === 'favorites') files = files.filter(file => file.favorite);
-      if (personId) files = files.filter(file => (file.linkedPersonIds || []).includes(personId) || familyArchiveLinks(getPerson(personId)).some(item => item.fileId === file.id));
+      const query =
+        String(
+          state.archiveSearch || ''
+        )
+          .trim()
+          .toLowerCase();
 
-      if (!personId) {
-        if (query && state.archiveSearchScope === 'all') {
-          // Search all project files.
-        } else if (state.archiveView === 'favorites') {
-          const folderIds = new Set(archiveFolderDescendantIds(folderId));
-          files = files.filter(file => folderIds.has(file.folderId));
-        } else if (query) {
-          const folderIds = new Set(archiveFolderDescendantIds(folderId));
-          files = files.filter(file => folderIds.has(file.folderId));
+      const personId =
+        state.archivePersonFilterId
+        || '';
+
+      let files =
+        archiveProjectFiles();
+
+      if (
+        state.archiveView
+          === 'favorites'
+      ) {
+        files =
+          files.filter(
+            file =>
+              file.favorite
+          );
+      }
+
+      if (personId) {
+        const person =
+          getPerson(
+            personId
+          );
+
+        const manuallyLinkedIds =
+          new Set(
+            familyArchiveLinks(
+              person
+            ).map(item =>
+              item.fileId
+            )
+          );
+
+        files =
+          files.filter(file =>
+            (
+              file.linkedPersonIds
+              || []
+            ).includes(
+              personId
+            )
+            || manuallyLinkedIds.has(
+              file.id
+            )
+          );
+      }
+
+      /*
+        "All files" bypasses the selected folder
+        only while an actual search query exists.
+      */
+
+      const searchingAllFiles =
+        Boolean(query)
+        && state.archiveSearchScope
+          === 'all';
+
+      if (
+        !personId
+        && !searchingAllFiles
+      ) {
+        if (
+          state.archiveView
+            === 'favorites'
+          || query
+        ) {
+          const scopeIds =
+            archiveFolderScopeIds(
+              folderId
+            );
+
+          files =
+            files.filter(file =>
+              scopeIds.has(
+                archiveFileFolderId(
+                  file
+                )
+              )
+            );
         } else {
-          files = files.filter(file => file.folderId === folderId);
+          /*
+            Normal folder browsing shows only files
+            directly inside the current location.
+          */
+
+          files =
+            files.filter(file =>
+              archiveFileFolderId(
+                file
+              ) === folderId
+            );
         }
       }
 
-      if (query) files = files.filter(file => archiveSearchText(file).includes(query));
-      if (state.archiveFileTypeFilter && state.archiveFileTypeFilter !== 'all') files = files.filter(file => archiveFileKind(file) === state.archiveFileTypeFilter);
+      if (query) {
+        files =
+          files.filter(file =>
+            archiveSearchText(
+              file
+            ).includes(
+              query
+            )
+          );
+      }
+
+      if (
+        state.archiveFileTypeFilter
+        && state.archiveFileTypeFilter
+          !== 'all'
+      ) {
+        files =
+          files.filter(file =>
+            archiveFileKind(
+              file
+            )
+            === state.archiveFileTypeFilter
+          );
+      }
+
       if (
         state.archiveLinkFilter
           === 'linked'
@@ -56254,26 +56696,92 @@
           === 'unlinked'
       ) {
         files =
-          files.filter(
-            file =>
-              !archiveFileHasLinks(
-                file
-              )
+          files.filter(file =>
+            !archiveFileHasLinks(
+              file
+            )
           );
       }
 
-      const sort = state.archiveSort || 'updated';
-      return files.slice().sort((a, b) => {
-        if (sort === 'name') return String(a.name || '').localeCompare(String(b.name || ''));
-        if (sort === 'type') return archiveFileTypeLabel(a).localeCompare(archiveFileTypeLabel(b)) || String(a.name || '').localeCompare(String(b.name || ''));
-        if (sort === 'added') return archiveDateValue(b.addedAt) - archiveDateValue(a.addedAt);
-        return archiveDateValue(b.updatedAt) - archiveDateValue(a.updatedAt);
-      });
+      const sort =
+        state.archiveSort
+        || 'updated';
+
+      return files
+        .slice()
+        .sort((a, b) => {
+          if (
+            sort === 'name'
+          ) {
+            return String(
+              a.name || ''
+            ).localeCompare(
+              String(
+                b.name || ''
+              )
+            );
+          }
+
+          if (
+            sort === 'type'
+          ) {
+            return (
+              archiveFileTypeLabel(
+                a
+              ).localeCompare(
+                archiveFileTypeLabel(
+                  b
+                )
+              )
+              || String(
+                a.name || ''
+              ).localeCompare(
+                String(
+                  b.name || ''
+                )
+              )
+            );
+          }
+
+          if (
+            sort === 'added'
+          ) {
+            return (
+              archiveDateValue(
+                b.addedAt
+              )
+              - archiveDateValue(
+                  a.addedAt
+                )
+            );
+          }
+
+          return (
+            archiveDateValue(
+              b.updatedAt
+            )
+            - archiveDateValue(
+                a.updatedAt
+              )
+          );
+        });
     }
 
     function archiveVisibleChildFolders() {
-      if (state.archiveView === 'favorites' || state.archivePersonFilterId || state.archiveSearch) return [];
-      return archiveFolderChildren(state.archiveSelectedFolderId || 'archive');
+      if (
+        state.archiveView
+          === 'favorites'
+        || state.archivePersonFilterId
+        || state.archiveSearch
+      ) {
+        return [];
+      }
+
+      return archiveFolderChildren(
+        archiveNormalizeFolderId(
+          state.archiveSelectedFolderId
+        )
+      );
     }
 
     function archiveFilteredSources() {
@@ -56293,11 +56801,58 @@
     }
 
     function ensureArchiveSelection() {
-      if (!archiveFolderById(state.archiveSelectedFolderId)) state.archiveSelectedFolderId = 'archive';
-      state.archiveSelectedFileIds = archiveUniqueIds(state.archiveSelectedFileIds).filter(id => archiveFileById(id));
-      if ((state.archiveView === 'files' || state.archiveView === 'favorites') && state.archiveSelectedFileId && !archiveFileById(state.archiveSelectedFileId)) state.archiveSelectedFileId = null;
-      if (state.archiveView === 'sources' && state.archiveSelectedSourceId && !archiveSourceById(state.archiveSelectedSourceId)) state.archiveSelectedSourceId = null;
-      if (state.archiveView === 'sources' && !state.archiveSelectedSourceId) state.archiveSelectedSourceId = archiveFilteredSources()[0]?.id || null;
+      state.archiveSelectedFolderId =
+        archiveNormalizeFolderId(
+          state.archiveSelectedFolderId
+        );
+
+      state.archiveSelectedFileIds =
+        archiveUniqueIds(
+          state.archiveSelectedFileIds
+        )
+          .filter(id =>
+            archiveFileById(
+              id
+            )
+          );
+
+      if (
+        (
+          state.archiveView
+            === 'files'
+          || state.archiveView
+            === 'favorites'
+        )
+        && state.archiveSelectedFileId
+        && !archiveFileById(
+          state.archiveSelectedFileId
+        )
+      ) {
+        state.archiveSelectedFileId =
+          null;
+      }
+
+      if (
+        state.archiveView
+          === 'sources'
+        && state.archiveSelectedSourceId
+        && !archiveSourceById(
+          state.archiveSelectedSourceId
+        )
+      ) {
+        state.archiveSelectedSourceId =
+          null;
+      }
+
+      if (
+        state.archiveView
+          === 'sources'
+        && !state.archiveSelectedSourceId
+      ) {
+        state.archiveSelectedSourceId =
+          archiveFilteredSources()[0]?.id
+          || null;
+      }
     }
 
     function renderArchive() {
@@ -56311,23 +56866,141 @@
       return `<button class="side-link ${state.archiveView === id ? 'active' : ''}" type="button" data-archive-view="${id}">${svg}<span>${escapeHtml(label)}</span></button>`;
     }
 
-    function renderArchiveFolderTree(parentId = null, depth = 0) {
-      const roots = parentId === null ? [archiveFolderById('archive')].filter(Boolean) : archiveFolderChildren(parentId);
-      return roots.map(folder => {
-        const children = archiveFolderChildren(folder.id);
-        const expanded = folder.id === 'archive' || Boolean(state.archiveExpandedFolders[folder.id]);
-        const active = folder.id === state.archiveSelectedFolderId;
-        return `
-          <div role="treeitem" aria-expanded="${children.length ? String(expanded) : 'false'}">
-            <div class="archive-folder-row ${active ? 'active' : ''}" style="padding-left:${Math.max(4, depth * 14 + 4)}px">
-              ${children.length
-                ? `<button class="archive-folder-toggle ${expanded ? 'expanded' : ''}" type="button" data-archive-toggle-folder="${escapeHtml(folder.id)}" aria-label="${expanded ? 'Collapse' : 'Expand'} ${escapeHtml(folder.name)}">${icon.chevron}</button>`
-                : '<span aria-hidden="true"></span>'}
-              <button class="archive-folder-main" type="button" data-archive-folder="${escapeHtml(folder.id)}" title="${escapeHtml(folder.name)}">${icon.folder}<span>${escapeHtml(folder.name)}</span></button>
+    function renderArchiveFolderTree(
+      parentId = null,
+      depth = 0
+    ) {
+      const folders =
+        archiveFolderChildren(
+          parentId
+        );
+
+      return folders
+        .map(folder => {
+          const children =
+            archiveFolderChildren(
+              folder.id
+            );
+
+          const expanded =
+            Boolean(
+              state
+                .archiveExpandedFolders[
+                  folder.id
+                ]
+            );
+
+          const active =
+            folder.id
+            === archiveNormalizeFolderId(
+              state.archiveSelectedFolderId
+            );
+
+          return `
+            <div
+              role="treeitem"
+              aria-selected="${
+                active
+                  ? 'true'
+                  : 'false'
+              }"
+              ${
+                children.length
+                  ? `aria-expanded="${String(
+                      expanded
+                    )}"`
+                  : ''
+              }>
+
+              <div
+                class="
+                  archive-folder-row
+                  ${
+                    active
+                      ? 'active'
+                      : ''
+                  }
+                "
+                style="padding-left:${
+                  Math.max(
+                    4,
+                    depth * 14 + 4
+                  )
+                }px">
+
+                ${
+                  children.length
+                    ? `
+                      <button
+                        class="
+                          archive-folder-toggle
+                          ${
+                            expanded
+                              ? 'expanded'
+                              : ''
+                          }
+                        "
+                        type="button"
+                        data-archive-toggle-folder="${escapeHtml(
+                          folder.id
+                        )}"
+                        aria-label="${
+                          expanded
+                            ? 'Collapse'
+                            : 'Expand'
+                        } ${escapeHtml(
+                          folder.name
+                        )}">
+
+                        ${icon.chevron}
+                      </button>
+                    `
+                    : `
+                      <span
+                        aria-hidden="true">
+                      </span>
+                    `
+                }
+
+                <button
+                  class="
+                    archive-folder-main
+                  "
+                  type="button"
+                  data-archive-folder="${escapeHtml(
+                    folder.id
+                  )}"
+                  title="${escapeHtml(
+                    folder.name
+                  )}">
+
+                  ${icon.folder}
+
+                  <span>
+                    ${escapeHtml(
+                      folder.name
+                    )}
+                  </span>
+                </button>
+              </div>
+
+              ${
+                children.length
+                && expanded
+                  ? `
+                    <div role="group">
+                      ${renderArchiveFolderTree(
+                        folder.id,
+                        depth + 1
+                      )}
+                    </div>
+                  `
+                  : ''
+              }
             </div>
-            ${children.length && expanded ? `<div role="group">${renderArchiveFolderTree(folder.id, depth + 1)}</div>` : ''}
-          </div>`;
-      }).join('');
+          `;
+        })
+        .join('');
     }
 
     function renderArchiveSourceFilters() {
@@ -56411,13 +57084,38 @@
           button.addEventListener(
             'click',
             () => {
-              state.archiveView =
+              const nextView =
                 button.dataset
                   .archiveView;
 
-              state.archiveSearch = '';
-              state.archiveSelectedFileIds = [];
-              state.archivePersonFilterId = '';
+              state.archiveView =
+                nextView;
+
+              /*
+                Files and Favourites navigation items
+                represent their virtual root views.
+              */
+
+              if (
+                nextView === 'files'
+                || nextView === 'favorites'
+              ) {
+                state.archiveSelectedFolderId =
+                  null;
+              }
+
+              state.archiveSearch =
+                '';
+
+              state.archiveSelectedFileId =
+                null;
+
+              state.archiveSelectedFileIds =
+                [];
+
+              state.archivePersonFilterId =
+                '';
+
               state.archiveInspectorCollapsed =
                 false;
 
@@ -56670,19 +57368,19 @@
         state.archiveView
           === 'favorites'
       ) {
-        return 'Files marked as favourites.';
+        return currentFolder
+          ? `Favourite files in ${
+              currentFolder.name
+            }.`
+          : 'Files marked as favourites.';
       }
 
-      if (
-        currentFolder?.id
-          === 'archive'
-      ) {
+      if (!currentFolder) {
         return 'Organize your research files and folders.';
       }
 
       return `Browse files and subfolders in ${
-        currentFolder?.name
-        || 'this folder'
+        currentFolder.name
       }.`;
     }
 
@@ -56749,11 +57447,69 @@
     }
 
     function renderArchiveBreadcrumbs() {
-      if (state.archivePersonFilterId) return '';
-      const folders = archiveFolderAncestors(state.archiveSelectedFolderId || 'archive');
-      return `<nav class="archive-breadcrumbs" aria-label="Archive folder path">${folders.map((folder, index) => `${index ? icon.chevron : ''}<button type="button" data-archive-breadcrumb="${escapeHtml(folder.id)}">${escapeHtml(folder.name)}</button>`).join('')}</nav>`;
-    }
+      if (
+        state.archivePersonFilterId
+      ) {
+        return '';
+      }
 
+      const folders =
+        archiveFolderAncestors(
+          state.archiveSelectedFolderId
+        );
+
+      const rootLabel =
+        state.archiveView
+          === 'favorites'
+            ? 'Favourites'
+            : 'Files';
+
+      return `
+        <nav
+          class="
+            archive-breadcrumbs
+          "
+          aria-label="Archive folder path">
+
+          <button
+            type="button"
+            data-archive-breadcrumb-root
+            ${
+              !folders.length
+                ? 'aria-current="page"'
+                : ''
+            }>
+
+            ${escapeHtml(
+              rootLabel
+            )}
+          </button>
+
+          ${folders
+            .map((folder, index) => `
+              ${icon.chevron}
+
+              <button
+                type="button"
+                data-archive-breadcrumb="${escapeHtml(
+                  folder.id
+                )}"
+                ${
+                  index
+                    === folders.length - 1
+                      ? 'aria-current="page"'
+                      : ''
+                }>
+
+                ${escapeHtml(
+                  folder.name
+                )}
+              </button>
+            `)
+            .join('')}
+        </nav>
+      `;
+    }
 
     function renderArchiveSelectionBar(files) {
       const selected = state.archiveSelectedFileIds.filter(id => archiveFileById(id));
@@ -56812,9 +57568,6 @@
       const currentFolder =
         archiveFolderById(
           state.archiveSelectedFolderId
-        )
-        || archiveFolderById(
-          'archive'
         );
 
       const person =
@@ -56841,21 +57594,28 @@
         files.length
         || folders.length;
 
+      const rootLocation =
+        !currentFolder;
+
       const emptyTitle =
         state.archiveView
           === 'favorites'
             ? 'No favourite files'
             : state.archiveSearch
               ? 'No files match this search'
-              : 'No files or folders here';
+              : rootLocation
+                ? 'No files or folders yet'
+                : 'This folder is empty';
 
       const emptyCopy =
         state.archiveView
           === 'favorites'
             ? 'Mark frequently used files as favourites to find them here.'
             : state.archiveSearch
-              ? 'Try a different search term or clear the filters.'
-              : 'Add files or create a folder to start organizing this part of the archive.';
+              ? 'Try a different search term or clear the active filters.'
+              : rootLocation
+                ? 'Add files or create a top-level folder to begin organizing your research.'
+                : 'Add files or create a subfolder here.';
 
       return `
         <div
@@ -57935,11 +58695,60 @@
       return `<aside class="archive-inspector-collapsed" aria-label="Archive inspector collapsed"><button class="archive-row-icon-button" type="button" data-archive-inspector-collapse="false" aria-label="Open inspector">${icon.expand}</button><span>Inspector</span></aside>`;
     }
 
+    function renderArchiveRootInspector() {
+      const favoritesView =
+        state.archiveView
+          === 'favorites';
+
+      return renderArchiveInspectorShell(
+        favoritesView
+          ? 'Favourites'
+          : 'Files',
+
+        'No item selected',
+
+        `
+          <div
+            class="
+              archive-section-empty
+            ">
+
+            Select a file or folder to view
+            its details.
+          </div>
+        `
+      );
+    }
+
     function renderArchiveInspector() {
-      if (state.archiveView === 'sources') return renderArchiveSourceInspector();
-      const file = archiveFileById(state.archiveSelectedFileId);
-      if (file) return renderArchiveFileInspector(file);
-      return renderArchiveFolderInspector(archiveFolderById(state.archiveSelectedFolderId) || archiveFolderById('archive'));
+      if (
+        state.archiveView
+          === 'sources'
+      ) {
+        return renderArchiveSourceInspector();
+      }
+
+      const file =
+        archiveFileById(
+          state.archiveSelectedFileId
+        );
+
+      if (file) {
+        return renderArchiveFileInspector(
+          file
+        );
+      }
+
+      const folder =
+        archiveFolderById(
+          state.archiveSelectedFolderId
+        );
+
+      return folder
+        ? renderArchiveFolderInspector(
+            folder
+          )
+        : renderArchiveRootInspector();
     }
 
     function renderArchiveInspectorShell(title, subtitle, body) {
@@ -57970,7 +58779,11 @@
         <div class="archive-inspector-primary-actions"><button class="button secondary" type="button" data-archive-open-file="${escapeHtml(file.id)}">Open</button><button class="archive-row-icon-button ${file.favorite ? 'active' : ''}" type="button" data-archive-toggle-favorite="${escapeHtml(file.id)}" aria-label="Toggle favourite">${icon.star}</button></div>
         <div class="archive-inspector-actions" style="margin-bottom:var(--space-3)"><button class="button ghost" type="button" data-archive-rename="file" data-archive-item-id="${escapeHtml(file.id)}">Rename</button><button class="button ghost" type="button" data-archive-move-file="${escapeHtml(file.id)}">Move</button><button class="button danger" type="button" data-archive-delete-file="${escapeHtml(file.id)}">Delete permanently</button></div>
         <section class="archive-inspector-section"><div class="archive-inspector-section-head"><strong>File details</strong></div><div class="archive-inspector-section-body"><div class="archive-kv-list">
-          <div class="archive-kv"><span>Type</span><span>${escapeHtml(archiveFileTypeLabel(file))}</span></div><div class="archive-kv"><span>Size</span><span>${escapeHtml(file.size || 'Unknown')}</span></div><div class="archive-kv"><span>Folder</span><span>${escapeHtml(archiveFolderPath(folder?.id || 'archive'))}</span></div><div class="archive-kv"><span>Date added</span><span>${escapeHtml(archiveFormatDate(file.addedAt, file.added))}</span></div><div class="archive-kv"><span>Date modified</span><span>${escapeHtml(archiveFormatDate(file.updatedAt, file.updated))}</span></div>
+          <div class="archive-kv"><span>Type</span><span>${escapeHtml(archiveFileTypeLabel(file))}</span></div><div class="archive-kv"><span>Size</span><span>${escapeHtml(file.size || 'Unknown')}</span></div><div class="archive-kv"><span>Folder</span><span>${escapeHtml(
+          archiveFolderPath(
+            file.folderId
+          )
+          )}</span></div><div class="archive-kv"><span>Date added</span><span>${escapeHtml(archiveFormatDate(file.addedAt, file.added))}</span></div><div class="archive-kv"><span>Date modified</span><span>${escapeHtml(archiveFormatDate(file.updatedAt, file.updated))}</span></div>
         </div></div></section>
         <section class="archive-inspector-section"><div class="archive-inspector-section-head"><strong>Research details</strong></div><div class="archive-inspector-section-body"><form class="archive-form-grid" data-archive-file-details-form="${escapeHtml(file.id)}"><div class="field"><label>Description</label><textarea data-archive-file-description placeholder="Add a short description of this file">${escapeHtml(file.description || '')}</textarea></div><div class="field"><label>Document date</label><div class="form-row"><select class="compact-select" data-archive-file-date-type><option ${file.documentDate?.type === 'Exact date' ? 'selected' : ''}>Exact date</option><option ${file.documentDate?.type === 'About / Circa' ? 'selected' : ''}>About / Circa</option><option ${file.documentDate?.type === 'Before' ? 'selected' : ''}>Before</option><option ${file.documentDate?.type === 'After' ? 'selected' : ''}>After</option><option ${file.documentDate?.type === 'Between' ? 'selected' : ''}>Between</option><option ${file.documentDate?.type === 'Unknown' ? 'selected' : ''}>Unknown</option></select><input data-archive-file-date-value value="${escapeHtml(file.documentDate?.value || '')}" placeholder="e.g. 12 Mar 1946"></div></div><button class="button secondary" type="submit">Save details</button></form></div></section>
         ${renderArchiveConnectionSection('file', file.id, 'person')}
@@ -57982,14 +58795,57 @@
     }
 
     function renderArchiveFolderInspector(folder) {
-      if (!folder) return renderArchiveInspectorShell('Archive', 'Folder', '<div class="archive-section-empty">Select a file or folder.</div>');
+      if (!folder) {
+        return renderArchiveRootInspector();
+      }
       const impact = archiveFolderImpact(folder.id);
       const directFolders = archiveFolderChildren(folder.id).length;
       const directFiles = archiveProjectFiles().filter(file => file.folderId === folder.id).length;
       const body = `<div class="archive-preview"><div class="archive-preview-content">${icon.folder}<strong>${escapeHtml(folder.name)}</strong><span>${escapeHtml(archiveFolderPath(folder.id))}</span></div></div>
         <div class="archive-inspector-actions" style="margin-bottom:var(--space-3)"><button class="button secondary" type="button" data-archive-create-folder data-archive-parent-folder="${escapeHtml(folder.id)}">${icon.plus} New subfolder</button><button class="button ghost" type="button" data-archive-add-files>${icon.plus} Add file</button></div>
         <section class="archive-inspector-section"><div class="archive-inspector-section-head"><strong>Folder details</strong></div><div class="archive-inspector-section-body"><div class="archive-kv-list"><div class="archive-kv"><span>Path</span><span>${escapeHtml(archiveFolderPath(folder.id))}</span></div><div class="archive-kv"><span>Direct folders</span><span>${directFolders}</span></div><div class="archive-kv"><span>Direct files</span><span>${directFiles}</span></div><div class="archive-kv"><span>Total nested files</span><span>${impact.files}</span></div></div></div></section>
-        <div class="archive-inspector-actions"><button class="button ghost" type="button" data-archive-rename="folder" data-archive-item-id="${escapeHtml(folder.id)}">Rename</button>${folder.id !== 'archive' ? `<button class="button ghost" type="button" data-archive-move-folder="${escapeHtml(folder.id)}">Move</button><button class="button danger" type="button" data-archive-delete-folder="${escapeHtml(folder.id)}">Delete permanently</button>` : ''}</div>`;
+        <div
+          class="
+            archive-inspector-actions
+          ">
+
+          <button
+            class="
+              button ghost
+            "
+            type="button"
+            data-archive-rename="folder"
+            data-archive-item-id="${escapeHtml(
+              folder.id
+            )}">
+
+            Rename
+          </button>
+
+          <button
+            class="
+              button ghost
+            "
+            type="button"
+            data-archive-move-folder="${escapeHtml(
+              folder.id
+            )}">
+
+            Move
+          </button>
+
+          <button
+            class="
+              button danger
+            "
+            type="button"
+            data-archive-delete-folder="${escapeHtml(
+              folder.id
+            )}">
+
+            Delete permanently
+          </button>
+        </div>`;
       return renderArchiveInspectorShell(folder.name, 'Folder', body);
     }
 
@@ -58014,26 +58870,224 @@
       showToast('File adding will be available in the working MVP.');
     }
 
-    function openArchiveCreateFolderModal(parentId = state.archiveSelectedFolderId || 'archive') {
-      const parent = archiveFolderById(parentId) || archiveFolderById('archive');
-      const options = (sampleData.archiveFolders || []).map(folder => `<option value="${escapeHtml(folder.id)}" ${folder.id === parent.id ? 'selected' : ''}>${escapeHtml(`${'— '.repeat(archiveFolderDepth(folder.id))}${folder.name}`)}</option>`).join('');
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveNewFolderTitle"><div class="modal-header"><div><h2 id="archiveNewFolderTitle">New folder</h2><p>Create a folder inside the Archive hierarchy.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><form data-archive-create-folder-form><div class="modal-body form-grid"><div class="field"><label>Folder name</label><input data-archive-folder-name required autofocus placeholder="e.g. Civil records"></div><div class="field"><label>Parent folder</label><select class="compact-select" data-archive-parent-folder>${options}</select></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create folder</button></div></form></div>`);
-      const form = modalBackdrop.querySelector('[data-archive-create-folder-form]');
-      form?.addEventListener('submit', event => {
-        event.preventDefault();
-        const name = form.querySelector('[data-archive-folder-name]').value.trim();
-        const selectedParentId = form.querySelector('[data-archive-parent-folder]').value;
-        if (!name) return;
-        const id = `folder-${Date.now()}`;
-        const now = new Date().toISOString();
-        sampleData.archiveFolders.push({ id, projectId: currentProjectId(), parentId: selectedParentId, name, createdAt: now, updatedAt: now });
-        state.archiveExpandedFolders[selectedParentId] = true;
-        state.archiveSelectedFolderId = id;
-        state.archiveSelectedFileId = null;
-        closeModal();
-        renderArchive();
-        showToast('Folder created.');
-      });
+    function openArchiveCreateFolderModal(
+      parentId =
+        state.archiveSelectedFolderId
+    ) {
+      const initialParentId =
+        archiveNormalizeFolderId(
+          parentId
+        );
+
+      const options = [
+        `
+          <option
+            value="${ARCHIVE_ROOT_PICKER_VALUE}"
+            ${
+              archiveIsRootLocation(
+                initialParentId
+              )
+                ? 'selected'
+                : ''
+            }>
+
+            Top level
+          </option>
+        `,
+
+        ...archiveFlattenFolders()
+          .map(({
+            folder,
+            depth
+          }) => `
+            <option
+              value="${escapeHtml(
+                folder.id
+              )}"
+              ${
+                folder.id
+                  === initialParentId
+                    ? 'selected'
+                    : ''
+              }>
+
+              ${escapeHtml(
+                `${
+                  '— '.repeat(
+                    depth + 1
+                  )
+                }${folder.name}`
+              )}
+            </option>
+          `)
+      ].join('');
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="archiveNewFolderTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="archiveNewFolderTitle">
+                New folder
+              </h2>
+
+              <p>
+                Create a top-level folder or place
+                it inside an existing folder.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close">
+
+              ${icon.close}
+            </button>
+          </div>
+
+          <form
+            data-archive-create-folder-form>
+
+            <div
+              class="
+                modal-body
+                form-grid
+              ">
+
+              <div class="field">
+                <label>
+                  Folder name
+                </label>
+
+                <input
+                  data-archive-folder-name
+                  required
+                  autofocus
+                  placeholder="e.g. Civil records">
+              </div>
+
+              <div class="field">
+                <label>
+                  Parent folder
+                </label>
+
+                <select
+                  class="compact-select"
+                  data-archive-parent-folder>
+
+                  ${options}
+                </select>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                class="button secondary"
+                type="button"
+                data-close>
+
+                Cancel
+              </button>
+
+              <button
+                class="button primary"
+                type="submit">
+
+                Create folder
+              </button>
+            </div>
+          </form>
+        </div>
+      `);
+
+      const form =
+        modalBackdrop.querySelector(
+          '[data-archive-create-folder-form]'
+        );
+
+      form?.addEventListener(
+        'submit',
+        event => {
+          event.preventDefault();
+
+          const name =
+            form
+              .querySelector(
+                '[data-archive-folder-name]'
+              )
+              .value
+              .trim();
+
+          if (!name) {
+            return;
+          }
+
+          const selectedParentId =
+            archiveFolderIdFromChoice(
+              form
+                .querySelector(
+                  '[data-archive-parent-folder]'
+                )
+                .value
+            );
+
+          const id =
+            `folder-${Date.now()}`;
+
+          const now =
+            new Date()
+              .toISOString();
+
+          sampleData
+            .archiveFolders
+            .push({
+              id,
+
+              projectId:
+                currentProjectId(),
+
+              parentId:
+                selectedParentId,
+
+              name,
+
+              createdAt:
+                now,
+
+              updatedAt:
+                now
+            });
+
+          if (selectedParentId) {
+            state
+              .archiveExpandedFolders[
+                selectedParentId
+              ] = true;
+          }
+
+          state.archiveView =
+            'files';
+
+          state.archiveSelectedFolderId =
+            id;
+
+          state.archiveSelectedFileId =
+            null;
+
+          closeModal();
+          renderArchive();
+
+          showToast(
+            'Folder created.'
+          );
+        }
+      );
     }
 
     function openArchiveSourceModal(
@@ -58118,42 +59172,305 @@
       });
     }
 
-    function archiveFolderPickerRows(selectedId, excludedIds = new Set()) {
-      return (sampleData.archiveFolders || []).filter(folder => !excludedIds.has(folder.id)).map(folder => `<button class="${selectedId === folder.id ? 'selected' : ''}" type="button" data-archive-folder-choice="${escapeHtml(folder.id)}" style="padding-left:${10 + archiveFolderDepth(folder.id) * 16}px">${icon.folder}<span>${escapeHtml(folder.name)}</span></button>`).join('');
+    function archiveFolderPickerRows(
+      selectedId,
+      excludedIds =
+        new Set()
+    ) {
+      const normalizedSelectedId =
+        archiveNormalizeFolderId(
+          selectedId
+        );
+
+      const rootRow = `
+        <button
+          class="${
+            archiveIsRootLocation(
+              normalizedSelectedId
+            )
+              ? 'selected'
+              : ''
+          }"
+          type="button"
+          data-archive-folder-choice="${ARCHIVE_ROOT_PICKER_VALUE}"
+          style="padding-left:10px">
+
+          ${icon.folder}
+
+          <span>
+            Top level
+          </span>
+        </button>
+      `;
+
+      const folderRows =
+        archiveFlattenFolders()
+          .filter(({
+            folder
+          }) =>
+            !excludedIds.has(
+              folder.id
+            )
+          )
+          .map(({
+            folder,
+            depth
+          }) => `
+            <button
+              class="${
+                normalizedSelectedId
+                  === folder.id
+                    ? 'selected'
+                    : ''
+              }"
+              type="button"
+              data-archive-folder-choice="${escapeHtml(
+                folder.id
+              )}"
+              style="padding-left:${
+                26 + depth * 16
+              }px">
+
+              ${icon.folder}
+
+              <span>
+                ${escapeHtml(
+                  folder.name
+                )}
+              </span>
+            </button>
+          `)
+          .join('');
+
+      return (
+        rootRow
+        + folderRows
+      );
     }
 
-    function openArchiveMoveModal({ fileIds = [], folderId = '' } = {}) {
-      const movingFolder = folderId ? archiveFolderById(folderId) : null;
-      const excluded = movingFolder ? new Set(archiveFolderDescendantIds(movingFolder.id)) : new Set();
-      let selectedId = movingFolder ? archiveFolderParentId(movingFolder) || 'archive' : archiveFileById(fileIds[0])?.folderId || state.archiveSelectedFolderId || 'archive';
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveMoveTitle"><div class="modal-header"><div><h2 id="archiveMoveTitle">Move ${movingFolder ? 'folder' : fileIds.length === 1 ? 'file' : `${fileIds.length} files`}</h2><p>Choose a destination folder.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-folder-picker" data-archive-folder-picker>${archiveFolderPickerRows(selectedId, excluded)}</div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-archive-move-confirm>Move</button></div></div>`);
-      const picker = modalBackdrop.querySelector('[data-archive-folder-picker]');
-      picker?.addEventListener('click', event => {
-        const button = event.target.closest('[data-archive-folder-choice]');
-        if (!button) return;
-        selectedId = button.dataset.archiveFolderChoice;
-        picker.querySelectorAll('[data-archive-folder-choice]').forEach(item => item.classList.toggle('selected', item === button));
-      });
-      modalBackdrop.querySelector('[data-archive-move-confirm]')?.addEventListener('click', () => {
-        if (!archiveFolderById(selectedId)) return;
-        if (movingFolder) {
-          movingFolder.parentId = selectedId;
-          movingFolder.updatedAt = new Date().toISOString();
-          state.archiveSelectedFolderId = movingFolder.id;
-          state.archiveExpandedFolders[selectedId] = true;
-        } else {
-          fileIds.forEach(id => {
-            const file = archiveFileById(id);
-            if (file) { file.folderId = selectedId; file.updatedAt = new Date().toISOString(); file.updated = 'Just now'; }
-          });
-          state.archiveSelectedFileIds = [];
-          state.archiveSelectedFolderId = selectedId;
-          state.archiveSelectedFileId = fileIds.length === 1 ? fileIds[0] : null;
+    function openArchiveMoveModal({
+      fileIds = [],
+      folderId = ''
+    } = {}) {
+      const movingFolder =
+        folderId
+          ? archiveFolderById(
+              folderId
+            )
+          : null;
+
+      const excluded =
+        movingFolder
+          ? new Set(
+              archiveFolderDescendantIds(
+                movingFolder.id
+              )
+            )
+          : new Set();
+
+      let selectedId =
+        movingFolder
+          ? archiveFolderParentId(
+              movingFolder
+            )
+          : archiveFileFolderId(
+              archiveFileById(
+                fileIds[0]
+              )
+            );
+
+      if (
+        !movingFolder
+        && !fileIds.length
+      ) {
+        selectedId =
+          archiveNormalizeFolderId(
+            state.archiveSelectedFolderId
+          );
+      }
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="archiveMoveTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="archiveMoveTitle">
+                Move ${
+                  movingFolder
+                    ? 'folder'
+                    : fileIds.length === 1
+                      ? 'file'
+                      : `${fileIds.length} files`
+                }
+              </h2>
+
+              <p>
+                Choose Top level or an existing
+                destination folder.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close">
+
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <div
+              class="
+                archive-folder-picker
+              "
+              data-archive-folder-picker>
+
+              ${archiveFolderPickerRows(
+                selectedId,
+                excluded
+              )}
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+
+              Cancel
+            </button>
+
+            <button
+              class="button primary"
+              type="button"
+              data-archive-move-confirm>
+
+              Move
+            </button>
+          </div>
+        </div>
+      `);
+
+      const picker =
+        modalBackdrop.querySelector(
+          '[data-archive-folder-picker]'
+        );
+
+      picker?.addEventListener(
+        'click',
+        event => {
+          const button =
+            event.target.closest(
+              '[data-archive-folder-choice]'
+            );
+
+          if (!button) {
+            return;
+          }
+
+          selectedId =
+            archiveFolderIdFromChoice(
+              button.dataset
+                .archiveFolderChoice
+            );
+
+          picker
+            .querySelectorAll(
+              '[data-archive-folder-choice]'
+            )
+            .forEach(item =>
+              item.classList.toggle(
+                'selected',
+                item === button
+              )
+            );
         }
-        closeModal();
-        renderArchive();
-        showToast('Item moved.');
-      });
+      );
+
+      modalBackdrop
+        .querySelector(
+          '[data-archive-move-confirm]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            if (
+              selectedId
+              && !archiveFolderById(
+                selectedId
+              )
+            ) {
+              return;
+            }
+
+            const now =
+              new Date()
+                .toISOString();
+
+            if (movingFolder) {
+              movingFolder.parentId =
+                selectedId;
+
+              movingFolder.updatedAt =
+                now;
+
+              state.archiveSelectedFolderId =
+                movingFolder.id;
+
+              if (selectedId) {
+                state
+                  .archiveExpandedFolders[
+                    selectedId
+                  ] = true;
+              }
+            } else {
+              fileIds.forEach(id => {
+                const file =
+                  archiveFileById(
+                    id
+                  );
+
+                if (!file) {
+                  return;
+                }
+
+                file.folderId =
+                  selectedId;
+
+                file.updatedAt =
+                  now;
+
+                file.updated =
+                  'Just now';
+              });
+
+              state.archiveSelectedFileIds =
+                [];
+
+              state.archiveSelectedFolderId =
+                selectedId;
+
+              state.archiveSelectedFileId =
+                fileIds.length === 1
+                  ? fileIds[0]
+                  : null;
+            }
+
+            closeModal();
+            renderArchive();
+
+            showToast(
+              'Item moved.'
+            );
+          }
+        );
     }
 
     function openArchiveConnectionPicker({ ownerType, ownerIds, entityType }) {
@@ -58296,14 +59613,19 @@
 
     function openArchiveDeleteFolderConfirm(folderId) {
       const folder = archiveFolderById(folderId);
-      if (!folder || folder.id === 'archive') return;
+      if (!folder) {
+        return;
+      }
       const impact = archiveFolderImpact(folder.id);
       openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveDeleteFolderTitle"><div class="modal-header"><div><h2 id="archiveDeleteFolderTitle">Delete folder permanently?</h2><p>${escapeHtml(folder.name)}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-delete-summary"><strong>This action cannot be undone.</strong><span>${impact.folders} nested ${impact.folders === 1 ? 'folder' : 'folders'} and ${impact.files} ${impact.files === 1 ? 'file' : 'files'} will be permanently deleted. Connections will be removed; connected genealogy records will remain.</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-archive-delete-folder-confirm>Delete permanently</button></div></div>`);
       modalBackdrop.querySelector('[data-archive-delete-folder-confirm]')?.addEventListener('click', () => {
         const ids = new Set(impact.folderIds);
         deleteArchiveFilesPermanently(archiveProjectFiles().filter(file => ids.has(file.folderId)).map(file => file.id));
         sampleData.archiveFolders = (sampleData.archiveFolders || []).filter(item => !ids.has(item.id));
-        state.archiveSelectedFolderId = archiveFolderParentId(folder) || 'archive';
+        state.archiveSelectedFolderId =
+          archiveFolderParentId(
+            folder
+          );
         state.archiveSelectedFileId = null;
         closeModal();
         renderArchive();
@@ -58333,7 +59655,42 @@
       const label = file?.name || folder?.name || source?.title || 'Item';
       openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveActionsTitle"><div class="modal-header"><div><h2 id="archiveActionsTitle">Actions</h2><p>${escapeHtml(label)}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-action-grid">
         ${file ? `<button class="button secondary" type="button" data-action="open">Open</button><button class="button secondary" type="button" data-action="rename">Rename</button><button class="button secondary" type="button" data-action="move">Move</button><button class="button secondary" type="button" data-action="favorite">${file.favorite ? 'Remove from favourites' : 'Add to favourites'}</button><button class="button danger" type="button" data-action="delete">Delete permanently</button>` : ''}
-        ${folder ? `<button class="button secondary" type="button" data-action="open">Open folder</button><button class="button secondary" type="button" data-action="rename">Rename</button>${folder.id !== 'archive' ? `<button class="button secondary" type="button" data-action="move">Move</button><button class="button danger" type="button" data-action="delete">Delete permanently</button>` : ''}` : ''}
+        ${folder
+            ? `
+              <button
+                class="button secondary"
+                type="button"
+                data-action="open">
+
+                Open folder
+              </button>
+
+              <button
+                class="button secondary"
+                type="button"
+                data-action="rename">
+
+                Rename
+              </button>
+
+              <button
+                class="button secondary"
+                type="button"
+                data-action="move">
+
+                Move
+              </button>
+
+              <button
+                class="button danger"
+                type="button"
+                data-action="delete">
+
+                Delete permanently
+              </button>
+            `
+            : ''
+        }
         ${source ? `<button class="button secondary" type="button" data-action="edit">Edit source</button><button class="button secondary" type="button" data-action="favorite">${source.favorite ? 'Remove from favourites' : 'Add to favourites'}</button><button class="button danger" type="button" data-action="delete">Delete permanently</button>` : ''}
       </div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Close</button></div></div>`);
       modalBackdrop.querySelectorAll('[data-action]').forEach(button => button.addEventListener('click', () => {
@@ -58370,7 +59727,30 @@
       }
       if (type === 'place') { state.activeModule = 'Places'; state.placesView = 'all'; state.selectedPlaceId = id; render(); return; }
       if (type === 'source') { state.archiveView = 'sources'; state.archiveSelectedSourceId = id; state.archiveInspectorCollapsed = false; renderArchive(); return; }
-      if (type === 'file') { state.archiveView = 'files'; state.archiveSelectedFileId = id; state.archiveSelectedFolderId = archiveFileById(id)?.folderId || 'archive'; renderArchive(); return; }
+      if (
+        type === 'file'
+      ) {
+        const file =
+          archiveFileById(
+            id
+          );
+
+        state.archiveView =
+          'files';
+
+        state.archiveSelectedFileId =
+          file?.id
+          || null;
+
+        state.archiveSelectedFolderId =
+          archiveNormalizeFolderId(
+            file?.folderId
+          );
+
+        renderArchive();
+
+        return;
+      }
       if (type === 'event') {
         const event = archiveConnectionRecord('event', id);
         const personId = event?.personIds?.[0];
@@ -58410,6 +59790,28 @@
       root.querySelectorAll('[data-archive-create-folder]').forEach(button => button.addEventListener('click', () => openArchiveCreateFolderModal(button.dataset.archiveParentFolder || state.archiveSelectedFolderId)));
       root.querySelectorAll('[data-archive-add-source]').forEach(button => button.addEventListener('click', () => openArchiveSourceModal()));
       root.querySelector('[data-clear-archive-person-filter]')?.addEventListener('click', () => { state.archivePersonFilterId = ''; state.archiveSearch = ''; state.archiveSelectedFileId = null; renderArchive(); });
+      root
+        .querySelector(
+          '[data-archive-breadcrumb-root]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            state.archiveSelectedFolderId =
+              null;
+
+            state.archiveSelectedFileId =
+              null;
+
+            state.archiveSelectedFileIds =
+              [];
+
+            state.archiveSearch =
+              '';
+
+            renderArchive();
+          }
+        );
       root.querySelectorAll('[data-archive-breadcrumb]').forEach(button => button.addEventListener('click', () => { state.archiveSelectedFolderId = button.dataset.archiveBreadcrumb; state.archiveSelectedFileId = null; state.archiveSearch = ''; renderArchive(); }));
       root.querySelectorAll('[data-archive-file-row]').forEach(row => {
         const open = () => { state.archiveSelectedFileId = row.dataset.archiveFileRow; state.archiveInspectorCollapsed = false; renderArchiveMain(); };
