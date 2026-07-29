@@ -27697,11 +27697,11 @@
 
     sampleData.notifications = [
       {
-        id: 'missing-source',
-        tone: 'warn',
-        icon: icon.warning,
-        title: '6 archive files are missing source information',
-        meta: 'Archive - Needs attention',
+        id: 'archive-files-added',
+        tone: 'green',
+        icon: icon.archive,
+        title: 'Archive files are ready to organize',
+        meta: 'Archive · Files',
         module: 'Archive'
       },
       {
@@ -46025,7 +46025,6 @@
           && photo
           && photo.projectId
             === person.projectId
-          && !photoIsDeleted(photo)
           && (
             photo.personIds || []
           ).includes(person.id)
@@ -46956,10 +46955,17 @@
         .filter(Boolean)
         .join(' ');
 
-      sidebar.innerHTML =
+      /*
+        Generate both panes before modifying the DOM.
+
+        If a rendering function throws, the existing
+        workspace stays intact instead of showing a
+        new sidebar beside stale module content.
+      */
+      const nextSidebarMarkup =
         renderAlbumsSidebar();
 
-      main.innerHTML = `
+      const nextMainMarkup = `
         <div class="${shellClasses}">
           <section class="albums-main">
             ${renderAlbumsMainMarkup()}
@@ -46974,6 +46980,12 @@
           }
         </div>
       `;
+
+      sidebar.innerHTML =
+        nextSidebarMarkup;
+
+      main.innerHTML =
+        nextMainMarkup;
 
       bindAlbumsSidebar();
       bindAlbumsControls();
@@ -47596,48 +47608,38 @@
               ? 'Remove from favorites'
               : 'Mark as favorite';
 
-          const favoriteControl =
-            photoIsDeleted(photo)
-              ? `
-                <span
-                  class="
-                    albums-list-favourite-spacer
-                  "
-                  aria-hidden="true">
-                </span>
-              `
-              : `
-                <button
-                  class="
-                    albums-list-favourite
-                    ${
-                      photo.favorite
-                        ? 'active'
-                        : ''
-                    }
-                  "
-                  type="button"
-                  data-photo-fav="${
-                    escapeHtml(photo.id)
-                  }"
-                  aria-pressed="${
-                    photo.favorite
-                      ? 'true'
-                      : 'false'
-                  }"
-                  aria-label="${
-                    escapeHtml(
-                      favoriteLabel
-                    )
-                  }"
-                  title="${
-                    escapeHtml(
-                      favoriteLabel
-                    )
-                  }">
-                  ${icon.star}
-                </button>
-              `;
+          const favoriteControl = `
+            <button
+              class="
+                albums-list-favourite
+                ${
+                  photo.favorite
+                    ? 'active'
+                    : ''
+                }
+              "
+              type="button"
+              data-photo-fav="${
+                escapeHtml(photo.id)
+              }"
+              aria-pressed="${
+                photo.favorite
+                  ? 'true'
+                  : 'false'
+              }"
+              aria-label="${
+                escapeHtml(
+                  favoriteLabel
+                )
+              }"
+              title="${
+                escapeHtml(
+                  favoriteLabel
+                )
+              }">
+              ${icon.star}
+            </button>
+          `;
 
           return `
             <div
@@ -47769,20 +47771,55 @@
       `;
     }
 
-    function renderAlbumsEmpty(context) {
-      const filtered = albumsHaveActiveQuery();
-      const deleted = state.albumsView === 'deleted';
-      const copy = filtered
-        ? 'Try a different search or clear the active filters.'
-        : deleted
-          ? 'Deleted photos will appear here until they are restored or removed permanently.'
+    function renderAlbumsEmpty(
+      context
+    ) {
+      const filtered =
+        albumsHaveActiveQuery();
+
+      const copy =
+        filtered
+          ? 'Try a different search or clear the active filters.'
           : 'Add a prototype photo to begin organizing this collection.';
-      const action = filtered
-        ? '<button class="button secondary" type="button" id="albumsEmptyClear">Clear search and filters</button>'
-        : deleted
-          ? ''
-          : '<button class="button primary" type="button" id="albumsEmptyAction">Add photos</button>';
-      return `<div class="albums-empty"><div class="albums-empty-card">${icon.image}<h2>${escapeHtml(context.empty)}</h2><p>${copy}</p>${action}</div></div>`;
+
+      const action =
+        filtered
+          ? `
+            <button
+              class="button secondary"
+              type="button"
+              id="albumsEmptyClear">
+              Clear search and filters
+            </button>
+          `
+          : `
+            <button
+              class="button primary"
+              type="button"
+              id="albumsEmptyAction">
+              Add photos
+            </button>
+          `;
+
+      return `
+        <div class="albums-empty">
+          <div class="albums-empty-card">
+            ${icon.image}
+
+            <h2>
+              ${escapeHtml(
+                context.empty
+              )}
+            </h2>
+
+            <p>
+              ${escapeHtml(copy)}
+            </p>
+
+            ${action}
+          </div>
+        </div>
+      `;
     }
 
     function albumsDetailSectionIsOpen(id) {
@@ -47975,7 +48012,7 @@
         }
       );
 
-      if (!photo || photoIsDeleted(photo)) {
+      if (!photo) {
         return;
       }
 
@@ -56022,6 +56059,47 @@
         .join(' ').toLowerCase();
     }
 
+    function archiveFileHasLinks(
+      file
+    ) {
+      if (!file) {
+        return false;
+      }
+
+      return Boolean(
+        (
+          file.linkedPersonIds
+          || []
+        ).length
+
+        || (
+          file.linkedEventIds
+          || []
+        ).length
+
+        || archiveNoteIdsForFile(
+          file
+        ).length
+
+        || archiveUniqueIds([
+          ...(
+            file.linkedPlaceIds
+            || []
+          ),
+
+          ...(
+            file.placeIds
+            || []
+          )
+        ]).length
+
+        || (
+          file.linkedSourceIds
+          || []
+        ).length
+      );
+    }
+
     function archiveFilteredFiles() {
       const folderId = archiveFolderById(state.archiveSelectedFolderId) ? state.archiveSelectedFolderId : 'archive';
       const query = String(state.archiveSearch || '').trim().toLowerCase();
@@ -56047,8 +56125,28 @@
 
       if (query) files = files.filter(file => archiveSearchText(file).includes(query));
       if (state.archiveFileTypeFilter && state.archiveFileTypeFilter !== 'all') files = files.filter(file => archiveFileKind(file) === state.archiveFileTypeFilter);
-      if (state.archiveLinkFilter === 'linked') files = files.filter(file => ['linkedPersonIds', 'linkedEventIds', 'linkedNoteIds', 'linkedPlaceIds', 'linkedSourceIds'].some(field => (file[field] || []).length));
-      if (state.archiveLinkFilter === 'unlinked') files = files.filter(file => !['linkedPersonIds', 'linkedEventIds', 'linkedNoteIds', 'linkedPlaceIds', 'linkedSourceIds'].some(field => (file[field] || []).length));
+      if (
+        state.archiveLinkFilter
+          === 'linked'
+      ) {
+        files =
+          files.filter(
+            archiveFileHasLinks
+          );
+      }
+
+      if (
+        state.archiveLinkFilter
+          === 'unlinked'
+      ) {
+        files =
+          files.filter(
+            file =>
+              !archiveFileHasLinks(
+                file
+              )
+          );
+      }
 
       const sort = state.archiveSort || 'updated';
       return files.slice().sort((a, b) => {
@@ -56189,12 +56287,107 @@
       localizeUI(sidebar);
     }
 
+    function ensureArchiveVisibleSelection() {
+      if (
+        state.archiveView === 'sources'
+      ) {
+        const visibleSources =
+          archiveFilteredSources();
+
+        const visibleSourceIds =
+          new Set(
+            visibleSources.map(
+              source =>
+                source.id
+            )
+          );
+
+        if (
+          state.archiveSelectedSourceId
+          && !visibleSourceIds.has(
+            state.archiveSelectedSourceId
+          )
+        ) {
+          state.archiveSelectedSourceId =
+            visibleSources[0]?.id
+            || null;
+        }
+
+        return;
+      }
+
+      const visibleFiles =
+        archiveFilteredFiles();
+
+      const visibleFileIds =
+        new Set(
+          visibleFiles.map(
+            file =>
+              file.id
+          )
+        );
+
+      /*
+        Do not retain hidden batch selections.
+        Otherwise actions could affect files the
+        user cannot currently see.
+      */
+      state.archiveSelectedFileIds =
+        (
+          state.archiveSelectedFileIds
+          || []
+        ).filter(
+          fileId =>
+            visibleFileIds.has(
+              fileId
+            )
+        );
+
+      if (
+        state.archiveSelectedFileId
+        && !visibleFileIds.has(
+          state.archiveSelectedFileId
+        )
+      ) {
+        state.archiveSelectedFileId =
+          null;
+      }
+    }
+
     function renderArchiveMain() {
+      ensureArchiveVisibleSelection();
+
       main.innerHTML = `
-        <div class="archive-shell ${state.archiveInspectorCollapsed ? 'inspector-collapsed' : ''}">
-          <section class="archive-main" aria-label="Archive workspace">${state.archiveView === 'sources' ? renderArchiveSourcesView() : renderArchiveFilesView()}</section>
-          ${state.archiveInspectorCollapsed ? renderArchiveInspectorCollapsed() : renderArchiveInspector()}
-        </div>`;
+        <div
+          class="
+            archive-shell
+            ${
+              state.archiveInspectorCollapsed
+                ? 'inspector-collapsed'
+                : ''
+            }
+          ">
+
+          <section
+            class="archive-main"
+            aria-label="Archive workspace">
+
+            ${
+              state.archiveView
+                === 'sources'
+                  ? renderArchiveSourcesView()
+                  : renderArchiveFilesView()
+            }
+          </section>
+
+          ${
+            state.archiveInspectorCollapsed
+              ? renderArchiveInspectorCollapsed()
+              : renderArchiveInspector()
+          }
+        </div>
+      `;
+
       bindArchiveControls();
       localizeUI(main);
     }
@@ -56333,7 +56526,35 @@
       return `<div class="archive-toolbar" aria-label="Source controls">
         <div class="archive-toolbar-group"><label class="app-search-field" aria-label="Search sources">${icon.search}<input type="search" data-archive-search value="${escapeHtml(state.archiveSearch || '')}" placeholder="Search sources..."></label></div>
         <div class="archive-toolbar-group">
-          <select class="archive-toolbar-select" data-archive-source-type aria-label="Filter sources by type"><option value="all">All source types</option>${ARCHIVE_SOURCE_TYPES.map(type => `<option value="${escapeHtml(type)}" ${state.archiveSourceTypeFilter === type ? 'selected' : ''}>${escapeHtml(type)}</option>`).join('')}</select>
+        <select
+          class="archive-toolbar-select"
+          data-archive-source-type
+          aria-label="Filter sources">
+
+          <option
+            value="all"
+            ${
+              state.archiveSourceTypeFilter
+                === 'all'
+                  ? 'selected'
+                  : ''
+            }>
+            All source types
+          </option>
+
+          <option
+            value="favorites"
+            ${
+              state.archiveSourceTypeFilter
+                === 'favorites'
+                  ? 'selected'
+                  : ''
+            }>
+            Favourite sources
+          </option>
+          ${ARCHIVE_SOURCE_TYPES.map(type => `
+          <option value="${escapeHtml(type)}" ${state.archiveSourceTypeFilter === type ? 'selected' : ''}>${escapeHtml(type)}</option>
+          `).join('')}</select>
           <select class="archive-toolbar-select" data-archive-sort aria-label="Sort sources"><option value="updated" ${state.archiveSort === 'updated' ? 'selected' : ''}>Updated</option><option value="name" ${state.archiveSort === 'name' ? 'selected' : ''}>Name</option><option value="type" ${state.archiveSort === 'type' ? 'selected' : ''}>Type</option></select>
           <button class="button primary" type="button" data-archive-add-source>${icon.plus} Add source</button>
         </div>
@@ -56470,7 +56691,13 @@
       });
     }
 
-    function openArchiveSourceModal(sourceId = '') {
+    function openArchiveSourceModal(
+      sourceId = '',
+      {
+        onCreated =
+          null
+      } = {}
+    ) {
       const source = archiveSourceById(sourceId);
       const editing = Boolean(source);
       const typeOptions = ARCHIVE_SOURCE_TYPES.map(type => `<option value="${escapeHtml(type)}" ${source?.type === type ? 'selected' : ''}>${escapeHtml(type)}</option>`).join('');
@@ -56503,6 +56730,22 @@
         target.updatedAt = now;
         target.updated = 'Just now';
         if (!source) sampleData.sources.unshift(target);
+        const created =
+          !source;
+
+        if (
+          created
+          && typeof onCreated
+            === 'function'
+        ) {
+          closeModal();
+
+          onCreated(
+            target
+          );
+
+          return;
+        }
         state.archiveView = 'sources';
         state.archiveSelectedSourceId = target.id;
         state.archiveSearch = '';
@@ -56598,7 +56841,56 @@
         if (input.checked) selected.add(input.value); else selected.delete(input.value);
         refresh();
       });
-      modal.querySelector('[data-archive-create-source-from-picker]')?.addEventListener('click', () => { closeModal(); openArchiveSourceModal(); });
+      modal
+        .querySelector(
+          '[data-archive-create-source-from-picker]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            closeModal();
+
+            openArchiveSourceModal(
+              '',
+              {
+                onCreated:
+                  createdSource => {
+                    ids.forEach(
+                      ownerId => {
+                        archiveSetConnection(
+                          ownerType,
+                          ownerId,
+                          'source',
+                          createdSource.id,
+                          true
+                        );
+                      }
+                    );
+
+                    state.archiveSelectedFileIds =
+                      [];
+
+                    if (
+                      ownerType === 'file'
+                    ) {
+                      state.archiveView =
+                        'files';
+
+                      state.archiveSelectedFileId =
+                        ids[0]
+                        || null;
+                    }
+
+                    renderArchive();
+
+                    showToast(
+                      'Source created and linked.'
+                    );
+                  }
+              }
+            );
+          }
+        );
       save.addEventListener('click', () => {
         ids.forEach(ownerId => selected.forEach(entityId => archiveSetConnection(ownerType, ownerId, entityType, entityId, true)));
         closeModal();
