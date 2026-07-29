@@ -14324,7 +14324,6 @@
     }
 
     .archive-page-actions,
-    .archive-toolbar-group,
     .archive-selection-actions,
     .archive-inspector-actions,
     .archive-modal-actions {
@@ -14340,49 +14339,267 @@
       justify-content: flex-end;
     }
 
-    .archive-breadcrumbs {
-      min-height: 40px;
-      margin:
-        var(--space-3)
-        0;
-      padding:
-        0
+    .archive-location-row {
+      min-width: 0;
+      flex: 0 0 auto;
+
+      margin-bottom:
         var(--space-3);
-      border:
-        1px solid
-        var(--border-default);
-      border-radius:
-        var(--radius-sm);
-      background:
-        rgba(21, 26, 26, .7);
+
+      display: grid;
+      grid-template-columns:
+        auto
+        minmax(0, 1fr);
+
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .archive-location-controls {
       display: flex;
       align-items: center;
       gap: 4px;
-      overflow-x: auto;
+    }
+
+    .archive-location-button {
+      width: 40px;
+      height: 40px;
+      flex: 0 0 40px;
+
+      padding: 0;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        transparent;
+
+      color:
+        var(--text-secondary);
+
+      display: grid;
+      place-items: center;
+
+      cursor: pointer;
+
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease),
+        opacity var(--ease);
+    }
+
+    .archive-location-button:hover:not(:disabled),
+    .archive-location-button:focus-visible:not(:disabled) {
+      border-color:
+        var(--border-strong);
+
+      background:
+        var(--surface-card-hover);
+
+      color:
+        var(--text-primary);
+    }
+
+    .archive-location-button:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-400);
+
+      outline-offset:
+        1px;
+    }
+
+    .archive-location-button:disabled {
+      opacity: .34;
+      cursor: default;
+    }
+
+    .archive-location-button svg {
+      width: 18px;
+      height: 18px;
+
+      display: block;
+    }
+
+    .archive-location-button--forward svg {
+      transform:
+        rotate(180deg);
+    }
+
+    .archive-location-button--up svg {
+      transform:
+        rotate(90deg);
+    }
+
+    .archive-breadcrumbs {
+      min-width: 0;
+      min-height: 40px;
+
+      padding:
+        0
+        10px;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        rgba(21, 26, 26, .34);
+
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+
+      overflow: hidden;
+    }
+
+    .archive-breadcrumb-leading-icon {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+
+      color:
+        var(--amber);
+
+      display: grid;
+      place-items: center;
+    }
+
+    .archive-breadcrumb-leading-icon svg {
+      width: 17px;
+      height: 17px;
+
+      display: block;
+    }
+
+    .archive-breadcrumbs ol {
+      min-width: 0;
+      flex: 1 1 auto;
+
+      margin: 0;
+      padding: 0;
+
+      list-style: none;
+
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      overflow: hidden;
+    }
+
+    .archive-breadcrumb-item {
+      min-width: 0;
+
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .archive-breadcrumb-item--root {
+      flex: 0 0 auto;
+    }
+
+    .archive-breadcrumb-item--middle {
+      min-width: 34px;
+      max-width: 160px;
+      flex: 0 1 160px;
+    }
+
+    .archive-breadcrumb-item--current {
+      min-width: 72px;
+      max-width: 320px;
+      flex: 0 1 auto;
+    }
+
+    .archive-breadcrumb-separator {
+      width: 14px;
+      height: 14px;
+      flex: 0 0 14px;
+
+      color:
+        var(--text-tertiary);
+
+      display: grid;
+      place-items: center;
+    }
+
+    .archive-breadcrumb-separator svg {
+      width: 14px;
+      height: 14px;
+
+      display: block;
+    }
+
+    .archive-breadcrumbs button,
+    .archive-breadcrumb-current {
+      min-width: 0;
+      max-width: 100%;
+
+      padding:
+        6px
+        8px;
+
+      border: 0;
+      border-radius: 7px;
+
+      overflow: hidden;
+
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.2;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .archive-breadcrumbs button {
-      min-width: 0;
-      border: 0;
-      background: transparent;
-      color: var(--text-secondary);
-      padding: 6px 8px;
-      border-radius: 7px;
-      font-weight: 800;
-      white-space: nowrap;
+      background:
+        transparent;
+
+      color:
+        var(--text-secondary);
+
+      cursor:
+        pointer;
     }
 
     .archive-breadcrumbs button:hover,
     .archive-breadcrumbs button:focus-visible {
-      color: var(--text-primary);
-      background: rgba(255, 255, 255, .05);
+      background:
+        rgba(255, 255, 255, .05);
+
+      color:
+        var(--text-primary);
     }
 
-    .archive-breadcrumbs svg {
-      width: 14px;
-      height: 14px;
-      flex: 0 0 auto;
-      color: var(--text-tertiary);
+    .archive-breadcrumbs button:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-400);
+
+      outline-offset:
+        1px;
+    }
+
+    .archive-breadcrumb-current {
+      color:
+        var(--text-primary);
+    }
+
+    .archive-page > .archive-toolbar,
+    .archive-page > .module-active-filterbar {
+      margin-bottom:
+        var(--space-3);
     }
 
     .archive-person-filterbar {
@@ -14466,6 +14683,111 @@
 
     .archive-table tbody tr:last-child td {
       border-bottom: 0;
+    }
+
+    .archive-table tbody
+    .archive-table-group-row {
+      cursor:
+        default;
+    }
+
+    .archive-table tbody
+    .archive-table-group-row:hover {
+      background:
+        transparent;
+    }
+
+    .archive-table tbody
+    .archive-table-group-row th {
+      position:
+        static;
+
+      height:
+        32px;
+
+      padding:
+        7px
+        12px;
+
+      border-bottom:
+        1px solid
+        var(--border-default);
+
+      background:
+        rgba(21, 26, 26, .72);
+
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        10.5px;
+
+      font-weight:
+        900;
+
+      letter-spacing:
+        .075em;
+
+      text-transform:
+        uppercase;
+    }
+
+    .archive-table-folder-row
+    .archive-name-copy strong {
+      font-weight:
+        900;
+    }
+
+    .archive-folder-name-line {
+      min-width: 0;
+
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .archive-folder-name-line strong {
+      min-width: 0;
+      flex: 0 1 auto;
+    }
+
+    .archive-folder-open-indicator {
+      width: 15px;
+      height: 15px;
+      flex: 0 0 15px;
+
+      color:
+        var(--text-tertiary);
+
+      display: grid;
+      place-items: center;
+
+      opacity:
+        .68;
+
+      transition:
+        color var(--ease),
+        transform var(--ease),
+        opacity var(--ease);
+    }
+
+    .archive-folder-open-indicator svg {
+      width: 14px;
+      height: 14px;
+
+      display: block;
+    }
+
+    .archive-table-folder-row:hover
+    .archive-folder-open-indicator {
+      color:
+        var(--text-primary);
+
+      opacity:
+        1;
+
+      transform:
+        translateX(2px);
     }
 
     .archive-col-check { width: 44px; }
@@ -24058,7 +24380,9 @@
       placeId
     ) {
       const place =
-        getPlace(placeId);
+        getPlace(
+          placeId
+        );
 
       if (!place) {
         return;
@@ -24069,34 +24393,36 @@
           place.id
         );
 
-      state.activeModule =
-        'Archive';
+      openArchiveLocation({
+        view:
+          'files',
 
-      state.archiveView =
-        'files';
+        /*
+          Place results can span several folders,
+          so the physical location is the Files root.
+        */
 
-      state.archivePersonFilterId =
-        '';
+        folderId:
+          null,
 
-      state.archiveSearch =
-        placePrimaryName(place);
+        search:
+          placePrimaryName(
+            place
+          ),
 
-      state.archiveSelectedFileId =
-        files[0]?.id
-        || null;
+        searchScope:
+          'all',
 
-      state.archiveSelectedFolderId =
-        archiveNormalizeFolderId(
-          files[0]?.folderId
-        );
+        personFilterId:
+          '',
 
-      state.archiveSelectedFileIds =
-        [];
+        selectedFileId:
+          files[0]?.id
+          || null,
 
-      state.archiveInspectorCollapsed =
-        false;
-
-      render();
+        inspectorCollapsed:
+          false
+      });
     }
 
     function openNotesForPlace(
@@ -24112,40 +24438,42 @@
       personId
     ) {
       const person =
-        getPerson(personId);
+        getPerson(
+          personId
+        );
 
-      if (!person) return;
+      if (!person) {
+        return;
+      }
 
       const files =
         getArchiveFilesForPerson(
           person.id
         );
 
-      state.activeModule =
-        'Archive';
+      openArchiveLocation({
+        view:
+          'files',
 
-      state.archiveView =
-        'files';
+        folderId:
+          null,
 
-      state.archivePersonFilterId =
-        person.id;
+        search:
+          '',
 
-      state.archiveSelectedFolderId =
-        null;
+        searchScope:
+          'folder',
 
-      state.archiveSelectedFileId =
-        files[0]?.id || null;
+        personFilterId:
+          person.id,
 
-      state.archiveSelectedFileIds =
-        [];
+        selectedFileId:
+          files[0]?.id
+          || null,
 
-      state.archiveSearch =
-        '';
-
-      state.archiveInspectorCollapsed =
-        true;
-
-      render();
+        inspectorCollapsed:
+          true
+      });
     }
 
     function openNotesForPerson(
@@ -27538,7 +27866,15 @@
       archiveSourceTypeFilter: 'all',
       archivePersonFilterId: '',
       archiveInspectorCollapsed: false,
-      archiveExpandedFolders: {pawford: true, fond12: true, opis3: true, documents: true },
+      archiveExpandedFolders: {
+        pawford: true,
+        fond12: true,
+        opis3: true,
+        documents: true
+      },
+      archiveNavigationBackStack: [],
+      archiveNavigationForwardStack: [],
+      archivePendingTreeRevealId: null,
       notesView: 'all',
       notesActiveCollectionId: null,
       selectedNoteId: null,
@@ -30689,23 +31025,54 @@
       openAlbumsForPhoto(photoId);
     }
 
-    function openFamilyArchiveItem(fileId) {
-      if (!fileId) { showToast('Archive item preview is simulated.'); return; }
-      const file = typeof archiveFileById === 'function' ? archiveFileById(fileId) : null;
-      state.activeModule = 'Archive';
-      state.archiveView = 'files';
-      state.archiveSelectedFileId = fileId;
-      state.archiveSelectedFolderId =
-        file
-          ? archiveNormalizeFolderId(
-              file.folderId
-            )
-          : null;
-      state.archiveSelectedFileIds = [];
-      state.archiveInspectorCollapsed = false;
-      render();
-    }
+    function openFamilyArchiveItem(
+      fileId
+    ) {
+      if (!fileId) {
+        showToast(
+          'Archive item preview is simulated.'
+        );
 
+        return;
+      }
+
+      const file =
+        archiveFileById(
+          fileId
+        );
+
+      openArchiveLocation(
+        {
+          view:
+            'files',
+
+          folderId:
+            archiveFileFolderId(
+              file
+            ),
+
+          search:
+            '',
+
+          searchScope:
+            'folder',
+
+          personFilterId:
+            '',
+
+          selectedFileId:
+            file?.id
+            || null,
+
+          inspectorCollapsed:
+            false
+        },
+        {
+          expandCurrent:
+            true
+        }
+      );
+    }
 
 
     function cleanFamilyTreeHeroDate(value) {
@@ -41343,14 +41710,28 @@
     }
 
     function openProfileAllArchive() {
-      state.activeModule = 'Archive';
-      state.archiveView = 'files';
-      state.archiveSelectedFolderId = 'null';
-      state.archiveSelectedFileId = null;
-      state.archiveSelectedFileIds = [];
-      state.archiveSearch = '';
-      state.archiveInspectorCollapsed = true;
-      render();
+      openArchiveLocation({
+        view:
+          'files',
+
+        folderId:
+          null,
+
+        search:
+          '',
+
+        searchScope:
+          'folder',
+
+        personFilterId:
+          '',
+
+        selectedFileId:
+          null,
+
+        inspectorCollapsed:
+          true
+      });
     }
 
     function openProfileAllNotes(
@@ -56254,18 +56635,6 @@
           );
     }
 
-    function archiveFolderDepth(
-      folderId
-    ) {
-      return Math.max(
-        0,
-
-        archiveFolderAncestors(
-          folderId
-        ).length - 1
-      );
-    }
-
     function archiveFlattenFolders(
       parentId = null,
       depth = 0
@@ -56339,16 +56708,6 @@
       };
     }
 
-    function archiveFolderChoiceValue(
-      folderId
-    ) {
-      return archiveIsRootLocation(
-        folderId
-      )
-        ? ARCHIVE_ROOT_PICKER_VALUE
-        : folderId;
-    }
-
     function archiveFolderIdFromChoice(
       value
     ) {
@@ -56358,6 +56717,599 @@
           : archiveNormalizeFolderId(
               value
             );
+    }
+
+    const ARCHIVE_NAVIGATION_HISTORY_LIMIT =
+      50;
+
+    function archiveIsLocationView(
+      view
+    ) {
+      return (
+        view === 'files'
+        || view === 'favorites'
+      );
+    }
+
+    function archiveNormalizeLocationSnapshot(
+      snapshot = {}
+    ) {
+      const view =
+        snapshot.view === 'favorites'
+          ? 'favorites'
+          : 'files';
+
+      const selectedFile =
+        archiveFileById(
+          snapshot.selectedFileId
+        );
+
+      const person =
+        snapshot.personFilterId
+          ? getPerson(
+              snapshot.personFilterId
+            )
+          : null;
+
+      return {
+        view,
+
+        folderId:
+          archiveNormalizeFolderId(
+            snapshot.folderId
+          ),
+
+        search:
+          String(
+            snapshot.search || ''
+          ),
+
+        searchScope:
+          snapshot.searchScope === 'all'
+            ? 'all'
+            : 'folder',
+
+        fileTypeFilter:
+          snapshot.fileTypeFilter
+          || 'all',
+
+        linkFilter:
+          snapshot.linkFilter
+          || 'all',
+
+        personFilterId:
+          person?.id
+          || '',
+
+        selectedFileId:
+          selectedFile?.id
+          || null,
+
+        inspectorCollapsed:
+          Boolean(
+            snapshot.inspectorCollapsed
+          )
+      };
+    }
+
+    function archiveCurrentLocationSnapshot() {
+      return archiveNormalizeLocationSnapshot({
+        view:
+          state.archiveView,
+
+        folderId:
+          state.archiveSelectedFolderId,
+
+        search:
+          state.archiveSearch,
+
+        searchScope:
+          state.archiveSearchScope,
+
+        fileTypeFilter:
+          state.archiveFileTypeFilter,
+
+        linkFilter:
+          state.archiveLinkFilter,
+
+        personFilterId:
+          state.archivePersonFilterId,
+
+        selectedFileId:
+          state.archiveSelectedFileId,
+
+        inspectorCollapsed:
+          state.archiveInspectorCollapsed
+      });
+    }
+
+    function archiveLocationSnapshotKey(
+      snapshot
+    ) {
+      const normalized =
+        archiveNormalizeLocationSnapshot(
+          snapshot
+        );
+
+      return JSON.stringify([
+        normalized.view,
+        normalized.folderId,
+        normalized.search,
+        normalized.searchScope,
+        normalized.fileTypeFilter,
+        normalized.linkFilter,
+        normalized.personFilterId,
+        normalized.selectedFileId,
+        normalized.inspectorCollapsed
+      ]);
+    }
+
+    function archivePushHistoryEntry(
+      stack,
+      snapshot
+    ) {
+      const normalized =
+        archiveNormalizeLocationSnapshot(
+          snapshot
+        );
+
+      const previous =
+        stack[
+          stack.length - 1
+        ];
+
+      if (
+        previous
+        && archiveLocationSnapshotKey(
+          previous
+        )
+          === archiveLocationSnapshotKey(
+            normalized
+          )
+      ) {
+        return;
+      }
+
+      stack.push(
+        normalized
+      );
+
+      if (
+        stack.length
+          > ARCHIVE_NAVIGATION_HISTORY_LIMIT
+      ) {
+        stack.splice(
+          0,
+          stack.length
+            - ARCHIVE_NAVIGATION_HISTORY_LIMIT
+        );
+      }
+    }
+
+    function archiveRememberCurrentLocation() {
+      if (
+        !archiveIsLocationView(
+          state.archiveView
+        )
+      ) {
+        return;
+      }
+
+      archivePushHistoryEntry(
+        state.archiveNavigationBackStack,
+        archiveCurrentLocationSnapshot()
+      );
+    }
+
+    function archiveApplyLocationSnapshot(
+      snapshot
+    ) {
+      const normalized =
+        archiveNormalizeLocationSnapshot(
+          snapshot
+        );
+
+      state.archiveView =
+        normalized.view;
+
+      state.archiveSelectedFolderId =
+        normalized.folderId;
+
+      state.archiveSearch =
+        normalized.search;
+
+      state.archiveSearchScope =
+        normalized.searchScope;
+
+      state.archiveFileTypeFilter =
+        normalized.fileTypeFilter;
+
+      state.archiveLinkFilter =
+        normalized.linkFilter;
+
+      state.archivePersonFilterId =
+        normalized.personFilterId;
+
+      state.archiveSelectedFileId =
+        normalized.selectedFileId;
+
+      state.archiveSelectedFileIds =
+        [];
+
+      state.archiveInspectorCollapsed =
+        normalized.inspectorCollapsed;
+    }
+
+    function archivePrepareTreeForLocation(
+      folderId,
+      {
+        expandCurrent =
+          false
+      } = {}
+    ) {
+      const normalizedFolderId =
+        archiveNormalizeFolderId(
+          folderId
+        );
+
+      if (!normalizedFolderId) {
+        state.archivePendingTreeRevealId =
+          null;
+
+        return;
+      }
+
+      const path =
+        archiveFolderAncestors(
+          normalizedFolderId
+        );
+
+      const foldersToExpand =
+        expandCurrent
+          ? path
+          : path.slice(
+              0,
+              -1
+            );
+
+      foldersToExpand.forEach(
+        folder => {
+          state
+            .archiveExpandedFolders[
+              folder.id
+            ] = true;
+        }
+      );
+
+      state.archivePendingTreeRevealId =
+        normalizedFolderId;
+    }
+
+    function archiveNavigateToLocation(
+      location = {},
+      {
+        recordHistory =
+          true,
+
+        clearForward =
+          true,
+
+        expandCurrent =
+          false,
+
+        renderMode =
+          'archive'
+      } = {}
+    ) {
+      const currentIsLocation =
+        archiveIsLocationView(
+          state.archiveView
+        );
+
+      const current =
+        archiveCurrentLocationSnapshot();
+
+      const base =
+        currentIsLocation
+          ? current
+          : archiveNormalizeLocationSnapshot({
+              view:
+                location.view
+                || 'files',
+
+              folderId:
+                null,
+
+              search:
+                '',
+
+              searchScope:
+                'folder',
+
+              fileTypeFilter:
+                state.archiveFileTypeFilter,
+
+              linkFilter:
+                state.archiveLinkFilter,
+
+              personFilterId:
+                '',
+
+              selectedFileId:
+                null,
+
+              inspectorCollapsed:
+                false
+            });
+
+      const target =
+        archiveNormalizeLocationSnapshot({
+          ...base,
+          ...location
+        });
+
+      const changed =
+        !currentIsLocation
+        || archiveLocationSnapshotKey(
+          current
+        )
+          !== archiveLocationSnapshotKey(
+            target
+          );
+
+      if (
+        recordHistory
+        && currentIsLocation
+        && changed
+      ) {
+        archivePushHistoryEntry(
+          state.archiveNavigationBackStack,
+          current
+        );
+      }
+
+      if (
+        clearForward
+        && changed
+      ) {
+        state.archiveNavigationForwardStack =
+          [];
+      }
+
+      archiveApplyLocationSnapshot(
+        target
+      );
+
+      archivePrepareTreeForLocation(
+        target.folderId,
+        {
+          expandCurrent
+        }
+      );
+
+      ensureArchiveSelection();
+
+      if (
+        renderMode === 'app'
+      ) {
+        render();
+      } else {
+        renderArchive();
+      }
+    }
+
+    function archiveNavigationCanGoBack() {
+      return Boolean(
+        state
+          .archiveNavigationBackStack
+          .length
+      );
+    }
+
+    function archiveNavigationCanGoForward() {
+      return Boolean(
+        state
+          .archiveNavigationForwardStack
+          .length
+      );
+    }
+
+    function archiveNavigationCanGoUp() {
+      return Boolean(
+        archiveFolderById(
+          state.archiveSelectedFolderId
+        )
+      );
+    }
+
+    function archiveNavigateBack() {
+      const target =
+        state
+          .archiveNavigationBackStack
+          .pop();
+
+      if (!target) {
+        return;
+      }
+
+      if (
+        archiveIsLocationView(
+          state.archiveView
+        )
+      ) {
+        archivePushHistoryEntry(
+          state.archiveNavigationForwardStack,
+          archiveCurrentLocationSnapshot()
+        );
+      }
+
+      archiveApplyLocationSnapshot(
+        target
+      );
+
+      archivePrepareTreeForLocation(
+        target.folderId
+      );
+
+      ensureArchiveSelection();
+      renderArchive();
+    }
+
+    function archiveNavigateForward() {
+      const target =
+        state
+          .archiveNavigationForwardStack
+          .pop();
+
+      if (!target) {
+        return;
+      }
+
+      if (
+        archiveIsLocationView(
+          state.archiveView
+        )
+      ) {
+        archivePushHistoryEntry(
+          state.archiveNavigationBackStack,
+          archiveCurrentLocationSnapshot()
+        );
+      }
+
+      archiveApplyLocationSnapshot(
+        target
+      );
+
+      archivePrepareTreeForLocation(
+        target.folderId
+      );
+
+      ensureArchiveSelection();
+      renderArchive();
+    }
+
+    function archiveNavigateUp() {
+      const currentFolder =
+        archiveFolderById(
+          state.archiveSelectedFolderId
+        );
+
+      if (!currentFolder) {
+        return;
+      }
+
+      archiveNavigateToLocation({
+        folderId:
+          archiveFolderParentId(
+            currentFolder
+          ),
+
+        search:
+          '',
+
+        searchScope:
+          'folder',
+
+        personFilterId:
+          '',
+
+        selectedFileId:
+          null,
+
+        inspectorCollapsed:
+          false
+      });
+    }
+
+    function archivePruneNavigationHistory() {
+      const cleanStack =
+        stack => {
+          const result = [];
+
+          stack.forEach(
+            snapshot => {
+              const folderValid =
+                archiveIsRootLocation(
+                  snapshot.folderId
+                )
+                || Boolean(
+                  archiveFolderById(
+                    snapshot.folderId
+                  )
+                );
+
+              if (!folderValid) {
+                return;
+              }
+
+              const normalized =
+                archiveNormalizeLocationSnapshot(
+                  snapshot
+                );
+
+              const previous =
+                result[
+                  result.length - 1
+                ];
+
+              if (
+                previous
+                && archiveLocationSnapshotKey(
+                  previous
+                )
+                  === archiveLocationSnapshotKey(
+                    normalized
+                  )
+              ) {
+                return;
+              }
+
+              result.push(
+                normalized
+              );
+            }
+          );
+
+          return result.slice(
+            -ARCHIVE_NAVIGATION_HISTORY_LIMIT
+          );
+        };
+
+      state.archiveNavigationBackStack =
+        cleanStack(
+          state.archiveNavigationBackStack
+          || []
+        );
+
+      state.archiveNavigationForwardStack =
+        cleanStack(
+          state.archiveNavigationForwardStack
+          || []
+        );
+    }
+
+    function openArchiveLocation(
+      location,
+      {
+        recordHistory =
+          true,
+
+        expandCurrent =
+          false
+      } = {}
+    ) {
+      state.activeModule =
+        'Archive';
+
+      archiveNavigateToLocation(
+        location,
+        {
+          recordHistory,
+          expandCurrent,
+          renderMode:
+            'app'
+        }
+      );
     }
 
     function archiveProjectFiles() {
@@ -56945,8 +57897,13 @@
     }
 
     function renderArchive() {
-      workspace.classList.remove('no-sidebar');
+      workspace.classList.remove(
+        'no-sidebar'
+      );
+
+      archivePruneNavigationHistory();
       ensureArchiveSelection();
+
       renderArchiveSidebar();
       renderArchiveMain();
     }
@@ -57092,6 +58049,41 @@
         .join('');
     }
 
+    function archiveRevealPendingFolderInSidebar() {
+      const folderId =
+        state.archivePendingTreeRevealId;
+
+      if (!folderId) {
+        return;
+      }
+
+      requestAnimationFrame(
+        () => {
+          const button =
+            [
+              ...sidebar.querySelectorAll(
+                '[data-archive-folder]'
+              )
+            ].find(item =>
+              item.dataset
+                .archiveFolder
+                === folderId
+            );
+
+          button?.scrollIntoView({
+            block:
+              'nearest',
+
+            inline:
+              'nearest'
+          });
+
+          state.archivePendingTreeRevealId =
+            null;
+        }
+      );
+    }
+
     function renderArchiveSourceFilters() {
       const sources = archiveProjectSources();
       const countFor = value => value === 'all' ? sources.length : value === 'favorites' ? sources.filter(source => source.favorite).length : sources.filter(source => source.type === value).length;
@@ -57177,39 +58169,57 @@
                 button.dataset
                   .archiveView;
 
-              state.archiveView =
-                nextView;
-
-              /*
-                Files and Favourites navigation items
-                represent their virtual root views.
-              */
-
               if (
-                nextView === 'files'
-                || nextView === 'favorites'
+                nextView === 'sources'
               ) {
-                state.archiveSelectedFolderId =
+                archiveRememberCurrentLocation();
+
+                state.archiveView =
+                  'sources';
+
+                state.archiveSearch =
+                  '';
+
+                state.archiveSelectedFileId =
                   null;
+
+                state.archiveSelectedFileIds =
+                  [];
+
+                state.archivePersonFilterId =
+                  '';
+
+                state.archiveInspectorCollapsed =
+                  false;
+
+                ensureArchiveSelection();
+                renderArchive();
+
+                return;
               }
 
-              state.archiveSearch =
-                '';
+              archiveNavigateToLocation({
+                view:
+                  nextView,
 
-              state.archiveSelectedFileId =
-                null;
+                folderId:
+                  null,
 
-              state.archiveSelectedFileIds =
-                [];
+                search:
+                  '',
 
-              state.archivePersonFilterId =
-                '';
+                searchScope:
+                  'folder',
 
-              state.archiveInspectorCollapsed =
-                false;
+                personFilterId:
+                  '',
 
-              ensureArchiveSelection();
-              renderArchive();
+                selectedFileId:
+                  null,
+
+                inspectorCollapsed:
+                  false
+              });
             }
           );
         });
@@ -57265,22 +58275,38 @@
           button.addEventListener(
             'click',
             () => {
-              state.archiveSelectedFolderId =
-                button.dataset
-                  .archiveFolder;
+              archiveNavigateToLocation(
+                {
+                  view:
+                    state.archiveView
+                      === 'favorites'
+                        ? 'favorites'
+                        : 'files',
 
-              state.archiveSelectedFileId =
-                null;
+                  folderId:
+                    button.dataset
+                      .archiveFolder,
 
-              state.archiveSelectedFileIds =
-                [];
+                  search:
+                    '',
 
-              state.archiveSearch = '';
+                  searchScope:
+                    'folder',
 
-              state.archiveSearchScope =
-                'folder';
+                  personFilterId:
+                    '',
 
-              renderArchive();
+                  selectedFileId:
+                    null,
+
+                  inspectorCollapsed:
+                    false
+                },
+                {
+                  expandCurrent:
+                    true
+                }
+              );
             }
           );
         });
@@ -57288,6 +58314,8 @@
       localizeUI(
         sidebar
       );
+
+      archiveRevealPendingFolderInSidebar();
     }
 
     function ensureArchiveVisibleSelection() {
@@ -57535,68 +58563,232 @@
       return `<div class="archive-person-filterbar"><span class="filter-chip active-filter-chip"><span class="active-filter-chip-copy"><strong>Person:</strong> ${escapeHtml(label)}</span><button class="active-filter-chip-remove" type="button" data-clear-archive-person-filter aria-label="Remove ${escapeHtml(label)} filter">${icon.close}</button></span></div>`;
     }
 
-    function renderArchiveBreadcrumbs() {
-      if (
-        state.archivePersonFilterId
-      ) {
-        return '';
-      }
+    function renderArchiveLocationButton(
+      action,
+      label,
+      modifier,
+      disabled
+    ) {
+      return `
+        <button
+          class="
+            archive-location-button
+            ${modifier}
+          "
+          type="button"
+          data-archive-nav-${action}
+          aria-label="${escapeHtml(
+            label
+          )}"
+          title="${escapeHtml(
+            label
+          )}"
+          ${
+            disabled
+              ? 'disabled aria-disabled="true"'
+              : ''
+          }>
 
+          ${icon.arrow}
+        </button>
+      `;
+    }
+
+    function renderArchiveBreadcrumbs() {
       const folders =
         archiveFolderAncestors(
           state.archiveSelectedFolderId
         );
 
-      const rootLabel =
+      const favoritesView =
         state.archiveView
-          === 'favorites'
-            ? 'Favourites'
-            : 'Files';
+          === 'favorites';
+
+      const rootLabel =
+        favoritesView
+          ? 'Favourites'
+          : 'Files';
+
+      const rootCurrent =
+        !folders.length;
 
       return `
         <nav
           class="
             archive-breadcrumbs
           "
-          aria-label="Archive folder path">
+          aria-label="Folder path">
 
-          <button
-            type="button"
-            data-archive-breadcrumb-root
+          <span
+            class="
+              archive-breadcrumb-leading-icon
+            "
+            aria-hidden="true">
+
             ${
-              !folders.length
-                ? 'aria-current="page"'
-                : ''
-            }>
+              favoritesView
+                ? icon.star
+                : icon.folder
+            }
+          </span>
 
-            ${escapeHtml(
-              rootLabel
-            )}
-          </button>
+          <ol>
+            <li
+              class="
+                archive-breadcrumb-item
+                archive-breadcrumb-item--root
+              ">
 
-          ${folders
-            .map((folder, index) => `
-              ${icon.chevron}
+              ${
+                rootCurrent
+                  ? `
+                    <span
+                      class="
+                        archive-breadcrumb-current
+                      "
+                      aria-current="page"
+                      title="${escapeHtml(
+                        rootLabel
+                      )}">
 
-              <button
-                type="button"
-                data-archive-breadcrumb="${escapeHtml(
-                  folder.id
-                )}"
-                ${
+                      ${escapeHtml(
+                        rootLabel
+                      )}
+                    </span>
+                  `
+                  : `
+                    <button
+                      type="button"
+                      data-archive-breadcrumb-root
+                      aria-label="Go to ${escapeHtml(
+                        rootLabel
+                      )} root"
+                      title="${escapeHtml(
+                        rootLabel
+                      )}">
+
+                      ${escapeHtml(
+                        rootLabel
+                      )}
+                    </button>
+                  `
+              }
+            </li>
+
+            ${folders
+              .map(
+                (
+                  folder,
                   index
-                    === folders.length - 1
-                      ? 'aria-current="page"'
-                      : ''
-                }>
+                ) => {
+                  const current =
+                    index
+                      === folders.length - 1;
 
-                ${escapeHtml(
-                  folder.name
-                )}
-              </button>
-            `)
-            .join('')}
+                  return `
+                    <li
+                      class="
+                        archive-breadcrumb-item
+                        ${
+                          current
+                            ? 'archive-breadcrumb-item--current'
+                            : 'archive-breadcrumb-item--middle'
+                        }
+                      ">
+
+                      <span
+                        class="
+                          archive-breadcrumb-separator
+                        "
+                        aria-hidden="true">
+
+                        ${icon.chevron}
+                      </span>
+
+                      ${
+                        current
+                          ? `
+                            <span
+                              class="
+                                archive-breadcrumb-current
+                              "
+                              aria-current="page"
+                              title="${escapeHtml(
+                                folder.name
+                              )}">
+
+                              ${escapeHtml(
+                                folder.name
+                              )}
+                            </span>
+                          `
+                          : `
+                            <button
+                              type="button"
+                              data-archive-breadcrumb="${escapeHtml(
+                                folder.id
+                              )}"
+                              aria-label="Open ${escapeHtml(
+                                folder.name
+                              )}"
+                              title="${escapeHtml(
+                                folder.name
+                              )}">
+
+                              ${escapeHtml(
+                                folder.name
+                              )}
+                            </button>
+                          `
+                      }
+                    </li>
+                  `;
+                }
+              )
+              .join('')}
+          </ol>
         </nav>
+      `;
+    }
+
+    function renderArchiveLocationRow() {
+      return `
+        <div
+          class="
+            archive-location-row
+          ">
+
+          <div
+            class="
+              archive-location-controls
+            "
+            role="toolbar"
+            aria-label="Folder navigation">
+
+            ${renderArchiveLocationButton(
+              'back',
+              'Go back',
+              'archive-location-button--back',
+              !archiveNavigationCanGoBack()
+            )}
+
+            ${renderArchiveLocationButton(
+              'forward',
+              'Go forward',
+              'archive-location-button--forward',
+              !archiveNavigationCanGoForward()
+            )}
+
+            ${renderArchiveLocationButton(
+              'up',
+              'Go up one level',
+              'archive-location-button--up',
+              !archiveNavigationCanGoUp()
+            )}
+          </div>
+
+          ${renderArchiveBreadcrumbs()}
+        </div>
       `;
     }
 
@@ -57613,15 +58805,204 @@
       </div></div>`;
     }
 
-    function renderArchiveFolderTableRow(folder) {
-      const directFiles = archiveProjectFiles().filter(file => file.folderId === folder.id).length;
-      const children = archiveFolderChildren(folder.id).length;
-      return `<tr data-archive-folder-row="${escapeHtml(folder.id)}" tabindex="0">
-        <td></td>
-        <td><div class="archive-name-cell">${archiveFileIcon({ kind: 'folder' })}<div class="archive-name-copy"><strong title="${escapeHtml(folder.name)}">${escapeHtml(folder.name)}</strong><span>${children} ${children === 1 ? 'folder' : 'folders'} · ${directFiles} ${directFiles === 1 ? 'file' : 'files'}</span></div></div></td>
-        <td>Folder</td><td>${directFiles + children} items</td><td>${escapeHtml(archiveFormatDate(folder.updatedAt))}</td><td></td>
-        <td><button class="archive-row-icon-button" type="button" data-archive-row-actions="folder" data-archive-row-id="${escapeHtml(folder.id)}" aria-label="Folder actions">${icon.more}</button></td>
-      </tr>`;
+    function archiveSortFoldersForTable(
+      folders
+    ) {
+      const sort =
+        state.archiveSort
+        || 'updated';
+
+      return folders
+        .slice()
+        .sort((a, b) => {
+          const nameCompare =
+            String(
+              a.name || ''
+            ).localeCompare(
+              String(
+                b.name || ''
+              )
+            );
+
+          if (
+            sort === 'updated'
+          ) {
+            return (
+              archiveDateValue(
+                b.updatedAt
+                || b.createdAt
+              )
+              - archiveDateValue(
+                  a.updatedAt
+                  || a.createdAt
+                )
+              || nameCompare
+            );
+          }
+
+          if (
+            sort === 'added'
+          ) {
+            return (
+              archiveDateValue(
+                b.createdAt
+              )
+              - archiveDateValue(
+                  a.createdAt
+                )
+              || nameCompare
+            );
+          }
+
+          /*
+            Every record in this group is a Folder.
+            Name is therefore the useful secondary
+            ordering for both Name and Type sorts.
+          */
+
+          return nameCompare;
+        });
+    }
+
+    function renderArchiveTableGroupRow(
+      label
+    ) {
+      return `
+        <tr
+          class="
+            archive-table-group-row
+          ">
+
+          <th
+            scope="rowgroup"
+            colspan="7">
+
+            ${escapeHtml(
+              label
+            )}
+          </th>
+        </tr>
+      `;
+    }
+
+    function renderArchiveFolderTableRow(
+      folder
+    ) {
+      const directFiles =
+        archiveProjectFiles()
+          .filter(file =>
+            archiveFileFolderId(
+              file
+            ) === folder.id
+          )
+          .length;
+
+      const childFolders =
+        archiveFolderChildren(
+          folder.id
+        ).length;
+
+      const itemCount =
+        directFiles
+        + childFolders;
+
+      return `
+        <tr
+          class="
+            archive-table-folder-row
+          "
+          data-archive-folder-row="${escapeHtml(
+            folder.id
+          )}"
+          tabindex="0">
+
+          <td></td>
+
+          <td>
+            <div
+              class="
+                archive-name-cell
+              ">
+
+              ${archiveFileIcon({
+                kind:
+                  'folder'
+              })}
+
+              <div
+                class="
+                  archive-name-copy
+                ">
+
+                <div
+                  class="
+                    archive-folder-name-line
+                  ">
+
+                  <strong
+                    title="${escapeHtml(
+                      folder.name
+                    )}">
+
+                    ${escapeHtml(
+                      folder.name
+                    )}
+                  </strong>
+
+                  <span
+                    class="
+                      archive-folder-open-indicator
+                    "
+                    aria-hidden="true">
+
+                    ${icon.chevron}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            Folder
+          </td>
+
+          <td>
+            ${itemCount}
+            ${
+              itemCount === 1
+                ? 'item'
+                : 'items'
+            }
+          </td>
+
+          <td>
+            ${escapeHtml(
+              archiveFormatDate(
+                folder.updatedAt
+                || folder.createdAt
+              )
+            )}
+          </td>
+
+          <td></td>
+
+          <td>
+            <button
+              class="
+                archive-row-icon-button
+              "
+              type="button"
+              data-archive-row-actions="folder"
+              data-archive-row-id="${escapeHtml(
+                folder.id
+              )}"
+              aria-label="Folder actions">
+
+              ${icon.more}
+            </button>
+          </td>
+        </tr>
+      `;
     }
 
     function renderArchiveFileTableRow(file, showPath = false) {
@@ -57635,12 +59016,160 @@
       </tr>`;
     }
 
-    function renderArchiveFileTable(files, folders) {
-      const allVisibleSelected = files.length && files.every(file => state.archiveSelectedFileIds.includes(file.id));
-      return `<div class="archive-table-wrap"><table class="archive-table"><thead><tr>
-        <th class="archive-col-check"><input class="archive-checkbox" type="checkbox" data-archive-select-all ${allVisibleSelected ? 'checked' : ''} aria-label="Select all visible files"></th>
-        <th class="archive-col-name">Name</th><th class="archive-col-type">Type</th><th class="archive-col-size">Size / Items</th><th class="archive-col-modified">Modified</th><th class="archive-col-favorite" aria-label="Favourite">${icon.star}</th><th class="archive-col-actions"></th>
-      </tr></thead><tbody>${folders.map(renderArchiveFolderTableRow).join('')}${files.map(file => renderArchiveFileTableRow(file, state.archiveView === 'favorites' || state.archiveSearchScope === 'all' || Boolean(state.archiveSearch))).join('')}</tbody></table></div>`;
+    function renderArchiveFileTable(
+      files,
+      folders
+    ) {
+      const sortedFolders =
+        archiveSortFoldersForTable(
+          folders
+        );
+
+      const allVisibleSelected =
+        Boolean(
+          files.length
+        )
+        && files.every(file =>
+          state
+            .archiveSelectedFileIds
+            .includes(
+              file.id
+            )
+        );
+
+      const showGroupLabels =
+        Boolean(
+          sortedFolders.length
+          && files.length
+        );
+
+      const folderRows = `
+        ${
+          showGroupLabels
+            ? renderArchiveTableGroupRow(
+                'Folders'
+              )
+            : ''
+        }
+
+        ${sortedFolders
+          .map(
+            renderArchiveFolderTableRow
+          )
+          .join('')}
+      `;
+
+      const fileRows = `
+        ${
+          showGroupLabels
+            ? renderArchiveTableGroupRow(
+                'Files'
+              )
+            : ''
+        }
+
+        ${files
+          .map(file =>
+            renderArchiveFileTableRow(
+              file,
+
+              state.archiveView
+                === 'favorites'
+              || state.archiveSearchScope
+                === 'all'
+              || Boolean(
+                state.archiveSearch
+              )
+            )
+          )
+          .join('')}
+      `;
+
+      return `
+        <div
+          class="
+            archive-table-wrap
+          ">
+
+          <table
+            class="
+              archive-table
+            "
+            aria-label="Archive files and folders">
+
+            <thead>
+              <tr>
+                <th
+                  class="
+                    archive-col-check
+                  ">
+
+                  <input
+                    class="
+                      archive-checkbox
+                    "
+                    type="checkbox"
+                    data-archive-select-all
+                    ${
+                      allVisibleSelected
+                        ? 'checked'
+                        : ''
+                    }
+                    aria-label="Select all visible files">
+                </th>
+
+                <th
+                  class="
+                    archive-col-name
+                  ">
+                  Name
+                </th>
+
+                <th
+                  class="
+                    archive-col-type
+                  ">
+                  Type
+                </th>
+
+                <th
+                  class="
+                    archive-col-size
+                  ">
+                  Size / Items
+                </th>
+
+                <th
+                  class="
+                    archive-col-modified
+                  ">
+                  Modified
+                </th>
+
+                <th
+                  class="
+                    archive-col-favorite
+                  "
+                  aria-label="Favourite">
+
+                  ${icon.star}
+                </th>
+
+                <th
+                  class="
+                    archive-col-actions
+                  ">
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              ${folderRows}
+              ${fileRows}
+            </tbody>
+          </table>
+        </div>
+      `;
     }
 
     function renderArchiveEmpty(title, copy, action = '') {
@@ -57719,13 +59248,13 @@
               headerActions
           })}
 
-          ${renderArchivePersonFilterBar()}
+          ${renderArchiveLocationRow()}
 
           ${renderArchiveToolbar()}
 
-          ${renderArchiveActiveFilterbar()}
+          ${renderArchivePersonFilterBar()}
 
-          ${renderArchiveBreadcrumbs()}
+          ${renderArchiveActiveFilterbar()}
 
           ${renderArchiveSelectionBar(
             files
@@ -59417,29 +60946,39 @@
               updatedAt:
                 now
             });
+            closeModal();
+            archiveNavigateToLocation(
+              {
+                view:
+                  'files',
 
-          if (selectedParentId) {
-            state
-              .archiveExpandedFolders[
-                selectedParentId
-              ] = true;
-          }
+                folderId:
+                  id,
 
-          state.archiveView =
-            'files';
+                search:
+                  '',
 
-          state.archiveSelectedFolderId =
-            id;
+                searchScope:
+                  'folder',
 
-          state.archiveSelectedFileId =
-            null;
+                personFilterId:
+                  '',
 
-          closeModal();
-          renderArchive();
+                selectedFileId:
+                  null,
 
-          showToast(
-            'Folder created.'
-          );
+                inspectorCollapsed:
+                  false
+              },
+              {
+                expandCurrent:
+                  true
+              }
+            );
+
+            showToast(
+              'Folder created.'
+            );
         }
       );
     }
@@ -59767,6 +61306,10 @@
             const now =
               new Date()
                 .toISOString();
+            let nextFolderId =
+              selectedId;
+            let nextFileId =
+              null;
 
             if (movingFolder) {
               movingFolder.parentId =
@@ -59775,15 +61318,8 @@
               movingFolder.updatedAt =
                 now;
 
-              state.archiveSelectedFolderId =
+              nextFolderId =
                 movingFolder.id;
-
-              if (selectedId) {
-                state
-                  .archiveExpandedFolders[
-                    selectedId
-                  ] = true;
-              }
             } else {
               fileIds.forEach(id => {
                 const file =
@@ -59805,20 +61341,51 @@
                   'Just now';
               });
 
-              state.archiveSelectedFileIds =
-                [];
-
-              state.archiveSelectedFolderId =
-                selectedId;
-
-              state.archiveSelectedFileId =
+              nextFileId =
                 fileIds.length === 1
                   ? fileIds[0]
                   : null;
             }
 
             closeModal();
-            renderArchive();
+
+            archiveNavigateToLocation(
+              {
+                view:
+                  'files',
+
+                folderId:
+                  nextFolderId,
+
+                search:
+                  '',
+
+                searchScope:
+                  'folder',
+
+                personFilterId:
+                  '',
+
+                selectedFileId:
+                  nextFileId,
+
+                inspectorCollapsed:
+                  false
+              },
+              {
+                /*
+                  Moving an item changes the underlying
+                  hierarchy. It should not create a history
+                  entry that points to the old hierarchy.
+                */
+
+                recordHistory:
+                  false,
+
+                expandCurrent:
+                  true
+              }
+            );
 
             showToast(
               'Item moved.'
@@ -59972,19 +61539,86 @@
       }
       const impact = archiveFolderImpact(folder.id);
       openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveDeleteFolderTitle"><div class="modal-header"><div><h2 id="archiveDeleteFolderTitle">Delete folder permanently?</h2><p>${escapeHtml(folder.name)}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-delete-summary"><strong>This action cannot be undone.</strong><span>${impact.folders} nested ${impact.folders === 1 ? 'folder' : 'folders'} and ${impact.files} ${impact.files === 1 ? 'file' : 'files'} will be permanently deleted. Connections will be removed; connected genealogy records will remain.</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-archive-delete-folder-confirm>Delete permanently</button></div></div>`);
-      modalBackdrop.querySelector('[data-archive-delete-folder-confirm]')?.addEventListener('click', () => {
-        const ids = new Set(impact.folderIds);
-        deleteArchiveFilesPermanently(archiveProjectFiles().filter(file => ids.has(file.folderId)).map(file => file.id));
-        sampleData.archiveFolders = (sampleData.archiveFolders || []).filter(item => !ids.has(item.id));
-        state.archiveSelectedFolderId =
-          archiveFolderParentId(
-            folder
-          );
-        state.archiveSelectedFileId = null;
-        closeModal();
-        renderArchive();
-        showToast('Folder permanently deleted.');
-      });
+      modalBackdrop
+        .querySelector(
+          '[data-archive-delete-folder-confirm]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const parentId =
+              archiveFolderParentId(
+                folder
+              );
+
+            const ids =
+              new Set(
+                impact.folderIds
+              );
+
+            deleteArchiveFilesPermanently(
+              archiveProjectFiles()
+                .filter(file =>
+                  ids.has(
+                    archiveFileFolderId(
+                      file
+                    )
+                  )
+                )
+                .map(file =>
+                  file.id
+                )
+            );
+
+            sampleData.archiveFolders =
+              (
+                sampleData.archiveFolders
+                || []
+              ).filter(item =>
+                !ids.has(
+                  item.id
+                )
+              );
+
+            closeModal();
+
+            archiveNavigateToLocation(
+              {
+                view:
+                  'files',
+
+                folderId:
+                  parentId,
+
+                search:
+                  '',
+
+                searchScope:
+                  'folder',
+
+                personFilterId:
+                  '',
+
+                selectedFileId:
+                  null,
+
+                inspectorCollapsed:
+                  false
+              },
+              {
+                recordHistory:
+                  false,
+
+                expandCurrent:
+                  true
+              }
+            );
+
+            showToast(
+              'Folder permanently deleted.'
+            );
+          }
+        );
     }
 
     function openArchiveDeleteSourceConfirm(sourceId) {
@@ -60058,7 +61692,41 @@
           if (action === 'delete') openArchiveDeleteFileConfirm([file.id]);
         }
         if (folder) {
-          if (action === 'open') { state.archiveSelectedFolderId = folder.id; state.archiveSelectedFileId = null; renderArchive(); }
+          if (
+            action === 'open'
+          ) {
+            archiveNavigateToLocation(
+              {
+                view:
+                  state.archiveView
+                    === 'favorites'
+                      ? 'favorites'
+                      : 'files',
+
+                folderId:
+                  folder.id,
+
+                search:
+                  '',
+
+                searchScope:
+                  'folder',
+
+                personFilterId:
+                  '',
+
+                selectedFileId:
+                  null,
+
+                inspectorCollapsed:
+                  false
+              },
+              {
+                expandCurrent:
+                  true
+              }
+            );
+          }
           if (action === 'rename') openArchiveRenameModal('folder', folder.id);
           if (action === 'move') openArchiveMoveModal({ folderId: folder.id });
           if (action === 'delete') openArchiveDeleteFolderConfirm(folder.id);
@@ -60071,16 +61739,85 @@
       }));
     }
 
-    function openArchiveConnectedRecord(type, id) {
-      if (type === 'person') { openPlaceInspectorPerson(id); return; }
-      if (type === 'note') {
-        openCentralNoteFromContext(id, state.archiveView === 'sources'
-          ? { type: 'source', id: state.archiveSelectedSourceId || '' }
-          : { type: 'archiveFile', id: state.archiveSelectedFileId || '' });
+    function openArchiveConnectedRecord(
+      type,
+      id
+    ) {
+      if (
+        type === 'person'
+      ) {
+        openPlaceInspectorPerson(
+          id
+        );
+
         return;
       }
-      if (type === 'place') { state.activeModule = 'Places'; state.placesView = 'all'; state.selectedPlaceId = id; render(); return; }
-      if (type === 'source') { state.archiveView = 'sources'; state.archiveSelectedSourceId = id; state.archiveInspectorCollapsed = false; renderArchive(); return; }
+
+      if (
+        type === 'note'
+      ) {
+        openCentralNoteFromContext(
+          id,
+
+          state.archiveView
+            === 'sources'
+              ? {
+                  type:
+                    'source',
+
+                  id:
+                    state.archiveSelectedSourceId
+                    || ''
+                }
+              : {
+                  type:
+                    'archiveFile',
+
+                  id:
+                    state.archiveSelectedFileId
+                    || ''
+                }
+        );
+
+        return;
+      }
+
+      if (
+        type === 'place'
+      ) {
+        state.activeModule =
+          'Places';
+
+        state.placesView =
+          'all';
+
+        state.selectedPlaceId =
+          id;
+
+        render();
+
+        return;
+      }
+
+      if (
+        type === 'source'
+      ) {
+        archiveRememberCurrentLocation();
+
+        state.archiveView =
+          'sources';
+
+        state.archiveSelectedSourceId =
+          id;
+
+        state.archiveInspectorCollapsed =
+          false;
+
+        renderArchive();
+
+        return;
+      }
+
       if (
         type === 'file'
       ) {
@@ -60089,26 +61826,62 @@
             id
           );
 
-        state.archiveView =
-          'files';
+        archiveNavigateToLocation(
+          {
+            view:
+              'files',
 
-        state.archiveSelectedFileId =
-          file?.id
-          || null;
+            folderId:
+              archiveFileFolderId(
+                file
+              ),
 
-        state.archiveSelectedFolderId =
-          archiveNormalizeFolderId(
-            file?.folderId
-          );
+            search:
+              '',
 
-        renderArchive();
+            searchScope:
+              'folder',
+
+            personFilterId:
+              '',
+
+            selectedFileId:
+              file?.id
+              || null,
+
+            inspectorCollapsed:
+              false
+          },
+          {
+            expandCurrent:
+              true
+          }
+        );
 
         return;
       }
-      if (type === 'event') {
-        const event = archiveConnectionRecord('event', id);
-        const personId = event?.personIds?.[0];
-        if (personId) openPlaceInspectorPerson(personId); else showToast('Opening this event is simulated.');
+
+      if (
+        type === 'event'
+      ) {
+        const event =
+          archiveConnectionRecord(
+            'event',
+            id
+          );
+
+        const personId =
+          event?.personIds?.[0];
+
+        if (personId) {
+          openPlaceInspectorPerson(
+            personId
+          );
+        } else {
+          showToast(
+            'Opening this event is simulated.'
+          );
+        }
       }
     }
 
@@ -60140,6 +61913,32 @@
           'click',
           clearArchiveToolbarFilters
         );
+      root
+        .querySelector(
+          '[data-archive-nav-back]'
+        )
+        ?.addEventListener(
+          'click',
+          archiveNavigateBack
+        );
+
+      root
+        .querySelector(
+          '[data-archive-nav-forward]'
+        )
+        ?.addEventListener(
+          'click',
+          archiveNavigateForward
+        );
+
+      root
+        .querySelector(
+          '[data-archive-nav-up]'
+        )
+        ?.addEventListener(
+          'click',
+          archiveNavigateUp
+        );
       root.querySelector('[data-archive-add-files]')?.addEventListener('click', openArchiveAddFilesModal);
       root.querySelectorAll('[data-archive-create-folder]').forEach(button => button.addEventListener('click', () => openArchiveCreateFolderModal(button.dataset.archiveParentFolder || state.archiveSelectedFolderId)));
       root.querySelectorAll('[data-archive-add-source]').forEach(button => button.addEventListener('click', () => openArchiveSourceModal()));
@@ -60151,32 +61950,124 @@
         ?.addEventListener(
           'click',
           () => {
-            state.archiveSelectedFolderId =
-              null;
+            archiveNavigateToLocation({
+              folderId:
+                null,
 
-            state.archiveSelectedFileId =
-              null;
+              search:
+                '',
 
-            state.archiveSelectedFileIds =
-              [];
+              searchScope:
+                'folder',
 
-            state.archiveSearch =
-              '';
+              personFilterId:
+                '',
 
-            renderArchive();
+              selectedFileId:
+                null,
+
+              inspectorCollapsed:
+                false
+            });
           }
         );
-      root.querySelectorAll('[data-archive-breadcrumb]').forEach(button => button.addEventListener('click', () => { state.archiveSelectedFolderId = button.dataset.archiveBreadcrumb; state.archiveSelectedFileId = null; state.archiveSearch = ''; renderArchive(); }));
+
+      root
+        .querySelectorAll(
+          '[data-archive-breadcrumb]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              archiveNavigateToLocation({
+                folderId:
+                  button.dataset
+                    .archiveBreadcrumb,
+
+                search:
+                  '',
+
+                searchScope:
+                  'folder',
+
+                personFilterId:
+                  '',
+
+                selectedFileId:
+                  null,
+
+                inspectorCollapsed:
+                  false
+              });
+            }
+          );
+        });
       root.querySelectorAll('[data-archive-file-row]').forEach(row => {
         const open = () => { state.archiveSelectedFileId = row.dataset.archiveFileRow; state.archiveInspectorCollapsed = false; renderArchiveMain(); };
         row.addEventListener('click', event => { if (!event.target.closest('button,input,select,a')) open(); });
         row.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); open(); } });
       });
-      root.querySelectorAll('[data-archive-folder-row]').forEach(row => {
-        const open = () => { state.archiveSelectedFolderId = row.dataset.archiveFolderRow; state.archiveSelectedFileId = null; state.archiveSearch = ''; state.archiveExpandedFolders[row.dataset.archiveFolderRow] = true; renderArchive(); };
-        row.addEventListener('click', event => { if (!event.target.closest('button,input,select,a')) open(); });
-        row.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); open(); } });
-      });
+      root
+        .querySelectorAll(
+          '[data-archive-folder-row]'
+        )
+        .forEach(row => {
+          const open =
+            () => {
+              archiveNavigateToLocation(
+                {
+                  folderId:
+                    row.dataset
+                      .archiveFolderRow,
+
+                  search:
+                    '',
+
+                  searchScope:
+                    'folder',
+
+                  personFilterId:
+                    '',
+
+                  selectedFileId:
+                    null,
+
+                  inspectorCollapsed:
+                    false
+                },
+                {
+                  expandCurrent:
+                    true
+                }
+              );
+            };
+
+          row.addEventListener(
+            'click',
+            event => {
+              if (
+                !event.target.closest(
+                  'button,input,select,a'
+                )
+              ) {
+                open();
+              }
+            }
+          );
+
+          row.addEventListener(
+            'keydown',
+            event => {
+              if (
+                event.key === 'Enter'
+              ) {
+                event.preventDefault();
+                open();
+              }
+            }
+          );
+        });
       root.querySelectorAll('[data-archive-source-row]').forEach(row => {
         const open = () => { state.archiveSelectedSourceId = row.dataset.archiveSourceRow; state.archiveInspectorCollapsed = false; renderArchiveMain(); };
         row.addEventListener('click', event => { if (!event.target.closest('button,input,select,a')) open(); });
@@ -60243,29 +62134,69 @@
       root.querySelectorAll('[data-archive-add-connection]').forEach(button => button.addEventListener('click', () => openArchiveConnectionPicker({ ownerType: button.dataset.archiveOwnerType, ownerIds: [button.dataset.archiveOwnerId], entityType: button.dataset.archiveAddConnection })));
       root.querySelectorAll('[data-archive-unlink-id]').forEach(button => button.addEventListener('click', () => openArchiveUnlinkConfirm({ ownerType: button.dataset.archiveUnlinkOwnerType, ownerId: button.dataset.archiveUnlinkOwnerId, entityType: button.dataset.archiveUnlinkType, entityId: button.dataset.archiveUnlinkId })));
       root.querySelectorAll('[data-archive-open-connection]').forEach(button => button.addEventListener('click', () => openArchiveConnectedRecord(button.dataset.archiveOpenConnection, button.dataset.archiveConnectionId)));
+      root.addEventListener(
+        'keydown',
+        event => {
+          if (
+            !archiveIsLocationView(
+              state.archiveView
+            )
+          ) {
+            return;
+          }
+
+          if (
+            !event.altKey
+            || event.ctrlKey
+            || event.metaKey
+            || event.shiftKey
+          ) {
+            return;
+          }
+
+          if (
+            event.target.closest(
+              `
+                input,
+                textarea,
+                select,
+                [contenteditable="true"]
+              `
+            )
+          ) {
+            return;
+          }
+
+          if (
+            event.key === 'ArrowLeft'
+            && archiveNavigationCanGoBack()
+          ) {
+            event.preventDefault();
+            archiveNavigateBack();
+
+            return;
+          }
+
+          if (
+            event.key === 'ArrowRight'
+            && archiveNavigationCanGoForward()
+          ) {
+            event.preventDefault();
+            archiveNavigateForward();
+
+            return;
+          }
+
+          if (
+            event.key === 'ArrowUp'
+            && archiveNavigationCanGoUp()
+          ) {
+            event.preventDefault();
+            archiveNavigateUp();
+          }
+        }
+      );
       bindToasts(root);
-    }
-
-    // Compatibility helpers retained for other modules.
-    function effectiveArchiveSource(file) {
-      return archiveSourceById((file?.linkedSourceIds || [])[0]) || null;
-    }
-
-    function inheritedFolderSource() {
-      return null;
-    }
-
-    function renderArchiveSourceChip(file) {
-      const source = effectiveArchiveSource(file);
-      return source ? `<span class="archive-source-type-chip">${escapeHtml(source.title)}</span>` : '';
-    }
-
-    function filteredArchiveFiles() {
-      return archiveFilteredFiles();
-    }
-
-    function filteredArchiveChildFolders() {
-      return archiveVisibleChildFolders();
     }
 
     function archivePersonChoices() {
