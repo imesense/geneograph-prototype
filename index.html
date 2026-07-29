@@ -11440,45 +11440,77 @@
       padding: var(--space-3) 8px;
     }
 
-    .albums-detail-toolbar {
+    .albums-detail-toolbar,
+    .archive-inspector-toolbar {
       position: sticky;
       top: 0;
       z-index: 12;
+
       min-height: 58px;
-      padding: 10px var(--space-4);
-      border-bottom: 1px solid var(--border-default);
-      background: rgba(21, 26, 26, .94);
-      backdrop-filter: blur(14px);
+      padding:
+        10px
+        var(--space-4);
+
+      border-bottom:
+        1px solid
+        var(--border-default);
+
+      background:
+        rgba(21, 26, 26, .94);
+
+      backdrop-filter:
+        blur(14px);
+
       display: flex;
       align-items: center;
       gap: var(--space-2);
     }
 
-    .albums-detail-toolbar-spacer {
-      flex: 1 1 auto;
+    .albums-detail-toolbar-spacer,
+    .archive-inspector-toolbar-spacer {
+      flex:
+        1 1 auto;
     }
 
     .albums-detail-collapse,
-    .albums-detail-restore {
-      flex: 0 0 34px;
+    .albums-detail-restore,
+    .archive-inspector-collapse,
+    .archive-inspector-restore {
+      flex:
+        0 0 34px;
     }
 
-    .albums-detail-restore {
+    .albums-detail-restore,
+    .archive-inspector-restore {
       margin-top: 0;
     }
 
-    .albums-detail-action {
+    .albums-detail-action,
+    .archive-inspector-action {
       width: 36px;
       height: 36px;
-      flex: 0 0 36px;
+      flex:
+        0 0 36px;
+
       padding: 0;
-      border: 1px solid transparent;
-      border-radius: var(--radius-sm);
-      background: transparent;
-      color: var(--text-secondary);
+
+      border:
+        1px solid transparent;
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        transparent;
+
+      color:
+        var(--text-secondary);
+
       display: grid;
       place-items: center;
+
       cursor: pointer;
+
       transition:
         background var(--ease),
         border-color var(--ease),
@@ -11486,27 +11518,52 @@
     }
 
     .albums-detail-action:hover,
-    .albums-detail-action:focus-visible {
-      border-color: var(--border-default);
-      background: rgba(255, 255, 255, .055);
-      color: var(--text-primary);
+    .albums-detail-action:focus-visible,
+    .archive-inspector-action:hover,
+    .archive-inspector-action:focus-visible {
+      border-color:
+        var(--border-default);
+
+      background:
+        rgba(255, 255, 255, .055);
+
+      color:
+        var(--text-primary);
     }
 
-    .albums-detail-action:focus-visible {
-      outline: 2px solid var(--brand-green-400);
-      outline-offset: 1px;
+    .albums-detail-action:focus-visible,
+    .archive-inspector-action:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-400);
+
+      outline-offset:
+        1px;
     }
 
-    .albums-detail-action svg {
+    .albums-detail-action svg,
+    .archive-inspector-action svg {
       width: 19px;
       height: 19px;
+
       display: block;
     }
 
-    .albums-detail-action.active {
-      border-color: rgba(212, 170, 107, .32);
-      background: rgba(212, 170, 107, .1);
-      color: var(--amber);
+    .albums-detail-action.active,
+    .archive-inspector-action.active {
+      border-color:
+        rgba(212, 170, 107, .32);
+
+      background:
+        rgba(212, 170, 107, .1);
+
+      color:
+        var(--amber);
+    }
+
+    .archive-inspector-restore svg {
+      transform:
+        rotate(180deg);
     }
 
     .albums-detail-edit-actions {
@@ -14171,15 +14228,22 @@
     .archive-shell {
       height: 100%;
       min-width: 0;
-      min-height: 0;
+
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 392px;
+      grid-template-columns:
+        minmax(0, 1fr)
+        var(--inspector-width);
+
+      background:
+        var(--surface-main);
+
       overflow: hidden;
-      background: var(--surface-main);
     }
 
     .archive-shell.inspector-collapsed {
-      grid-template-columns: minmax(0, 1fr) 56px;
+      grid-template-columns:
+        minmax(0, 1fr)
+        var(--inspector-collapsed-width);
     }
 
     .archive-main {
@@ -14696,43 +14760,52 @@
       min-width: 0;
       min-height: 0;
       height: 100%;
-      border-left: 1px solid var(--border-default);
-      background: var(--surface-sidebar);
+
+      border-left:
+        1px solid
+        var(--border-default);
+
+      background:
+        var(--surface-sidebar);
     }
 
     .archive-inspector {
+      display: grid;
+      grid-template-rows:
+        auto
+        minmax(0, 1fr);
+
+      overflow: hidden;
+    }
+
+    .archive-inspector-scroll {
+      min-width: 0;
+      min-height: 0;
+
       overflow: auto;
     }
 
     .archive-inspector-collapsed {
-      padding: var(--space-3) 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--space-3);
-    }
+      padding:
+        var(--space-3)
+        8px;
 
-    .archive-inspector-collapsed span {
-      writing-mode: vertical-rl;
-      color: var(--text-tertiary);
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: .1em;
-      text-transform: uppercase;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+
+      overflow: hidden;
     }
 
     .archive-inspector-head {
-      position: sticky;
-      top: 0;
-      z-index: 5;
-      min-height: 58px;
-      padding: var(--space-3) var(--space-4);
-      border-bottom: 1px solid var(--border-default);
-      background: rgba(21, 26, 26, .97);
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: var(--space-3);
+      min-width: 0;
+      padding:
+        var(--space-4)
+        var(--space-4)
+        var(--space-3);
+      border-bottom:
+        1px solid
+        var(--border-default);
     }
 
     .archive-inspector-head-copy {
@@ -14741,20 +14814,31 @@
 
     .archive-inspector-head h2 {
       margin: 0;
-      color: var(--text-primary);
+
+      color:
+        var(--text-primary);
+
       font-size: 17px;
       line-height: 1.3;
-      overflow-wrap: anywhere;
+
+      overflow-wrap:
+        anywhere;
     }
 
     .archive-inspector-head p {
-      margin: 3px 0 0;
-      color: var(--text-tertiary);
+      margin:
+        3px 0 0;
+
+      color:
+        var(--text-tertiary);
+
       font-size: 12px;
+      line-height: 1.45;
     }
 
     .archive-inspector-body {
-      padding: var(--space-4);
+      padding:
+        var(--space-4);
     }
 
     .archive-preview {
@@ -14794,12 +14878,17 @@
       font-size: 12px;
       line-height: 1.45;
     }
-
+    
     .archive-inspector-primary-actions {
-      margin-bottom: var(--space-3);
+      margin-bottom:
+        var(--space-3);
+
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: var(--space-2);
+      grid-template-columns:
+        minmax(0, 1fr);
+
+      gap:
+        var(--space-2);
     }
 
     .archive-inspector-section {
@@ -58691,8 +58780,245 @@
       `;
     }
 
+    function archiveInspectorToolbarContext() {
+      if (
+        state.archiveView
+          === 'sources'
+      ) {
+        const source =
+          archiveSourceById(
+            state.archiveSelectedSourceId
+          );
+
+        return source
+          ? {
+              type:
+                'source',
+
+              id:
+                source.id,
+
+              label:
+                source.title
+                || 'Source',
+
+              favorite:
+                Boolean(
+                  source.favorite
+                ),
+
+              supportsFavourite:
+                true
+            }
+          : null;
+      }
+
+      const file =
+        archiveFileById(
+          state.archiveSelectedFileId
+        );
+
+      if (file) {
+        return {
+          type:
+            'file',
+
+          id:
+            file.id,
+
+          label:
+            file.name
+            || 'File',
+
+          favorite:
+            Boolean(
+              file.favorite
+            ),
+
+          supportsFavourite:
+            true
+        };
+      }
+
+      const folder =
+        archiveFolderById(
+          state.archiveSelectedFolderId
+        );
+
+      if (folder) {
+        return {
+          type:
+            'folder',
+
+          id:
+            folder.id,
+
+          label:
+            folder.name
+            || 'Folder',
+
+          favorite:
+            false,
+
+          supportsFavourite:
+            false
+        };
+      }
+
+      /*
+        The virtual Files root is a location, not
+        a stored record, so it has no favourite or
+        more-actions control.
+      */
+
+      return null;
+    }
+
+    function renderArchiveInspectorFavouriteButton(
+      context
+    ) {
+      if (
+        !context
+        || !context.supportsFavourite
+      ) {
+        return '';
+      }
+
+      const actionLabel =
+        context.favorite
+          ? 'Remove from favourites'
+          : 'Add to favourites';
+
+      const dataAttribute =
+        context.type
+          === 'source'
+            ? `
+              data-archive-source-favorite="${escapeHtml(
+                context.id
+              )}"
+            `
+            : `
+              data-archive-toggle-favorite="${escapeHtml(
+                context.id
+              )}"
+            `;
+
+      return `
+        <button
+          class="
+            archive-inspector-action
+            ${
+              context.favorite
+                ? 'active'
+                : ''
+            }
+          "
+          type="button"
+          ${dataAttribute}
+          aria-label="${escapeHtml(
+            actionLabel
+          )}"
+          aria-pressed="${String(
+            context.favorite
+          )}"
+          title="${escapeHtml(
+            actionLabel
+          )}">
+
+          ${icon.star}
+        </button>
+      `;
+    }
+
+    function renderArchiveInspectorToolbar() {
+      const context =
+        archiveInspectorToolbarContext();
+
+      return `
+        <div
+          class="
+            archive-inspector-toolbar
+          "
+          role="toolbar"
+          aria-label="Archive inspector actions">
+
+          <button
+            class="
+              people-collapse-button
+              people-sidebar-toggle-icon
+              archive-inspector-collapse
+            "
+            type="button"
+            data-archive-inspector-collapse="true"
+            aria-label="Collapse Archive inspector"
+            title="Collapse inspector">
+
+            ${icon.doublechevronSidebar}
+          </button>
+
+          <span
+            class="
+              archive-inspector-toolbar-spacer
+            "
+            aria-hidden="true">
+          </span>
+
+          ${renderArchiveInspectorFavouriteButton(
+            context
+          )}
+
+          ${
+            context
+              ? `
+                <button
+                  class="
+                    archive-inspector-action
+                  "
+                  type="button"
+                  data-archive-row-actions="${escapeHtml(
+                    context.type
+                  )}"
+                  data-archive-row-id="${escapeHtml(
+                    context.id
+                  )}"
+                  aria-label="More actions for ${escapeHtml(
+                    context.label
+                  )}"
+                  aria-haspopup="dialog"
+                  title="More actions">
+
+                  ${icon.more}
+                </button>
+              `
+              : ''
+          }
+        </div>
+      `;
+    }
+
     function renderArchiveInspectorCollapsed() {
-      return `<aside class="archive-inspector-collapsed" aria-label="Archive inspector collapsed"><button class="archive-row-icon-button" type="button" data-archive-inspector-collapse="false" aria-label="Open inspector">${icon.expand}</button><span>Inspector</span></aside>`;
+      return `
+        <aside
+          class="
+            archive-inspector-collapsed
+          "
+          aria-label="Archive inspector collapsed">
+
+          <button
+            class="
+              people-collapse-button
+              people-sidebar-toggle-icon
+              archive-inspector-restore
+            "
+            type="button"
+            data-archive-inspector-collapse="false"
+            aria-label="Open Archive inspector"
+            title="Open inspector">
+
+            ${icon.doublechevronSidebar}
+          </button>
+        </aside>
+      `;
     }
 
     function renderArchiveRootInspector() {
@@ -58751,8 +59077,65 @@
         : renderArchiveRootInspector();
     }
 
-    function renderArchiveInspectorShell(title, subtitle, body) {
-      return `<aside class="archive-inspector" aria-label="Archive inspector"><div class="archive-inspector-head"><div class="archive-inspector-head-copy"><h2>${escapeHtml(title)}</h2><p>${escapeHtml(subtitle || '')}</p></div><button class="archive-row-icon-button" type="button" data-archive-inspector-collapse="true" aria-label="Collapse inspector">${icon.collapse}</button></div><div class="archive-inspector-body">${body}</div></aside>`;
+    function renderArchiveInspectorShell(
+      title,
+      subtitle,
+      body
+    ) {
+      return `
+        <aside
+          class="
+            archive-inspector
+          "
+          aria-label="Archive inspector">
+
+          ${renderArchiveInspectorToolbar()}
+
+          <div
+            class="
+              archive-inspector-scroll
+            ">
+
+            <div
+              class="
+                archive-inspector-head
+              ">
+
+              <div
+                class="
+                  archive-inspector-head-copy
+                ">
+
+                <h2>
+                  ${escapeHtml(
+                    title
+                  )}
+                </h2>
+
+                ${
+                  subtitle
+                    ? `
+                      <p>
+                        ${escapeHtml(
+                          subtitle
+                        )}
+                      </p>
+                    `
+                    : ''
+                }
+              </div>
+            </div>
+
+            <div
+              class="
+                archive-inspector-body
+              ">
+
+              ${body}
+            </div>
+          </div>
+        </aside>
+      `;
     }
 
     function renderArchivePreview(file) {
@@ -58776,8 +59159,21 @@
       const folder = archiveFolderById(file.folderId);
       const body = `
         ${renderArchivePreview(file)}
-        <div class="archive-inspector-primary-actions"><button class="button secondary" type="button" data-archive-open-file="${escapeHtml(file.id)}">Open</button><button class="archive-row-icon-button ${file.favorite ? 'active' : ''}" type="button" data-archive-toggle-favorite="${escapeHtml(file.id)}" aria-label="Toggle favourite">${icon.star}</button></div>
-        <div class="archive-inspector-actions" style="margin-bottom:var(--space-3)"><button class="button ghost" type="button" data-archive-rename="file" data-archive-item-id="${escapeHtml(file.id)}">Rename</button><button class="button ghost" type="button" data-archive-move-file="${escapeHtml(file.id)}">Move</button><button class="button danger" type="button" data-archive-delete-file="${escapeHtml(file.id)}">Delete permanently</button></div>
+        <div
+          class="
+            archive-inspector-primary-actions
+          ">
+
+          <button
+            class="button secondary"
+            type="button"
+            data-archive-open-file="${escapeHtml(
+              file.id
+            )}">
+
+            Open
+          </button>
+        </div>
         <section class="archive-inspector-section"><div class="archive-inspector-section-head"><strong>File details</strong></div><div class="archive-inspector-section-body"><div class="archive-kv-list">
           <div class="archive-kv"><span>Type</span><span>${escapeHtml(archiveFileTypeLabel(file))}</span></div><div class="archive-kv"><span>Size</span><span>${escapeHtml(file.size || 'Unknown')}</span></div><div class="archive-kv"><span>Folder</span><span>${escapeHtml(
           archiveFolderPath(
@@ -58803,49 +59199,7 @@
       const directFiles = archiveProjectFiles().filter(file => file.folderId === folder.id).length;
       const body = `<div class="archive-preview"><div class="archive-preview-content">${icon.folder}<strong>${escapeHtml(folder.name)}</strong><span>${escapeHtml(archiveFolderPath(folder.id))}</span></div></div>
         <div class="archive-inspector-actions" style="margin-bottom:var(--space-3)"><button class="button secondary" type="button" data-archive-create-folder data-archive-parent-folder="${escapeHtml(folder.id)}">${icon.plus} New subfolder</button><button class="button ghost" type="button" data-archive-add-files>${icon.plus} Add file</button></div>
-        <section class="archive-inspector-section"><div class="archive-inspector-section-head"><strong>Folder details</strong></div><div class="archive-inspector-section-body"><div class="archive-kv-list"><div class="archive-kv"><span>Path</span><span>${escapeHtml(archiveFolderPath(folder.id))}</span></div><div class="archive-kv"><span>Direct folders</span><span>${directFolders}</span></div><div class="archive-kv"><span>Direct files</span><span>${directFiles}</span></div><div class="archive-kv"><span>Total nested files</span><span>${impact.files}</span></div></div></div></section>
-        <div
-          class="
-            archive-inspector-actions
-          ">
-
-          <button
-            class="
-              button ghost
-            "
-            type="button"
-            data-archive-rename="folder"
-            data-archive-item-id="${escapeHtml(
-              folder.id
-            )}">
-
-            Rename
-          </button>
-
-          <button
-            class="
-              button ghost
-            "
-            type="button"
-            data-archive-move-folder="${escapeHtml(
-              folder.id
-            )}">
-
-            Move
-          </button>
-
-          <button
-            class="
-              button danger
-            "
-            type="button"
-            data-archive-delete-folder="${escapeHtml(
-              folder.id
-            )}">
-
-            Delete permanently
-          </button>
-        </div>`;
+        <section class="archive-inspector-section"><div class="archive-inspector-section-head"><strong>Folder details</strong></div><div class="archive-inspector-section-body"><div class="archive-kv-list"><div class="archive-kv"><span>Path</span><span>${escapeHtml(archiveFolderPath(folder.id))}</span></div><div class="archive-kv"><span>Direct folders</span><span>${directFolders}</span></div><div class="archive-kv"><span>Direct files</span><span>${directFiles}</span></div><div class="archive-kv"><span>Total nested files</span><span>${impact.files}</span></div></div></div></section>`;
       return renderArchiveInspectorShell(folder.name, 'Folder', body);
     }
 
