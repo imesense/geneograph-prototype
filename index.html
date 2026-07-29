@@ -11566,13 +11566,15 @@
         rotate(180deg);
     }
 
-    .albums-detail-edit-actions {
+    .albums-detail-edit-actions,
+    .archive-inspector-edit-actions {
       display: inline-flex;
       align-items: center;
       gap: var(--space-2);
     }
 
-    .albums-detail-edit-actions .button {
+    .albums-detail-edit-actions .button,
+    .archive-inspector-edit-actions .button {
       min-height: 38px;
       height: 38px;
       padding-inline: 14px;
@@ -14343,9 +14345,6 @@
       min-width: 0;
       flex: 0 0 auto;
 
-      margin-bottom:
-        var(--space-3);
-
       display: grid;
       grid-template-columns:
         auto
@@ -14491,32 +14490,35 @@
 
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 0;
 
       overflow: hidden;
     }
 
     .archive-breadcrumb-item {
       min-width: 0;
+      max-width: 180px;
+      flex: 0 1 auto;
 
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 0;
     }
 
     .archive-breadcrumb-item--root {
+      max-width: 140px;
       flex: 0 0 auto;
     }
 
     .archive-breadcrumb-item--middle {
-      min-width: 34px;
-      max-width: 160px;
-      flex: 0 1 160px;
+      min-width: 0;
+      max-width: 180px;
+      flex: 0 1 auto;
     }
 
     .archive-breadcrumb-item--current {
       min-width: 72px;
-      max-width: 320px;
+      max-width: 280px;
       flex: 0 1 auto;
     }
 
@@ -14524,6 +14526,10 @@
       width: 14px;
       height: 14px;
       flex: 0 0 14px;
+
+      margin:
+        0
+        1px;
 
       color:
         var(--text-tertiary);
@@ -14546,7 +14552,7 @@
 
       padding:
         6px
-        8px;
+        5px;
 
       border: 0;
       border-radius: 7px;
@@ -14597,7 +14603,10 @@
     }
 
     .archive-page > .archive-toolbar,
-    .archive-page > .module-active-filterbar {
+    .archive-page > .archive-person-filterbar,
+    .archive-page > .resource-person-filterbar,
+    .archive-page > .module-active-filterbar,
+    .archive-page > .archive-location-row {
       margin-bottom:
         var(--space-3);
     }
@@ -15163,6 +15172,492 @@
         var(--space-4);
     }
 
+    .archive-file-inspector-content {
+      min-width: 0;
+    }
+
+    .archive-file-inspector-content
+    .panel-section-body {
+      padding:
+        var(--space-4)
+        var(--space-4)
+        var(--space-5);
+    }
+
+    .archive-file-hero {
+      min-width: 0;
+
+      padding:
+        var(--space-4)
+        var(--space-5)
+        var(--space-5);
+
+      border-bottom:
+        1px solid
+        var(--border-default);
+    }
+
+    .archive-file-preview {
+      width: 100%;
+      min-width: 0;
+
+      aspect-ratio:
+        16 / 10;
+
+      max-height:
+        300px;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        var(--surface-input);
+
+      overflow: hidden;
+
+      display: grid;
+      place-items: center;
+    }
+
+    .archive-file-preview-image {
+      width: 100%;
+      height: 100%;
+
+      object-fit: contain;
+
+      display: block;
+    }
+
+    .archive-file-preview-content {
+      max-width: 290px;
+
+      padding:
+        var(--space-5);
+
+      color:
+        var(--text-tertiary);
+
+      text-align: center;
+
+      display: grid;
+      justify-items: center;
+      gap: var(--space-2);
+    }
+
+    .archive-file-preview-content svg {
+      width: 40px;
+      height: 40px;
+
+      color:
+        var(--text-secondary);
+    }
+
+    .archive-file-preview-content strong {
+      color:
+        var(--text-primary);
+
+      font-size:
+        15px;
+    }
+
+    .archive-file-preview-content span {
+      font-size:
+        12px;
+
+      line-height:
+        1.5;
+    }
+
+    .archive-file-open {
+      width: 100%;
+
+      margin-top:
+        var(--space-3);
+
+      justify-content:
+        center;
+    }
+
+    .archive-file-identity {
+      min-width: 0;
+
+      margin-top:
+        var(--space-4);
+    }
+
+    .archive-file-identity h2 {
+      display:
+        -webkit-box;
+
+      margin:
+        0 0
+        var(--space-2);
+
+      overflow:
+        hidden;
+
+      color:
+        var(--text-primary);
+
+      font-size:
+        20px;
+
+      line-height:
+        1.3;
+
+      letter-spacing:
+        .01em;
+
+      overflow-wrap:
+        anywhere;
+
+      -webkit-line-clamp:
+        2;
+
+      line-clamp:
+        2;
+
+      -webkit-box-orient:
+        vertical;
+    }
+
+    .archive-file-summary {
+      margin: 0;
+
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        13px;
+
+      font-weight:
+        700;
+    }
+
+    .archive-file-title-field {
+      min-width: 0;
+
+      display: grid;
+      gap: 7px;
+    }
+
+    .archive-file-title-field span {
+      color:
+        var(--text-secondary);
+
+      font-size:
+        12px;
+
+      font-weight:
+        900;
+    }
+
+    .archive-file-title-field input {
+      width: 100%;
+      min-width: 0;
+      height:
+        var(--control-height);
+
+      padding:
+        0
+        var(--space-3);
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        var(--surface-input);
+
+      color:
+        var(--text-primary);
+
+      font:
+        inherit;
+    }
+
+    .archive-file-title-field input:focus {
+      border-color:
+        rgba(98, 217, 154, .55);
+
+      outline: 0;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(98, 217, 154, .1);
+    }
+
+    .archive-file-form-grid {
+      display: grid;
+      grid-template-columns:
+        1fr;
+
+      gap:
+        var(--space-4);
+    }
+
+    .archive-file-field {
+      min-width: 0;
+
+      display: grid;
+      gap: 7px;
+    }
+
+    .archive-file-field label {
+      color:
+        var(--text-secondary);
+
+      font-size:
+        12px;
+
+      font-weight:
+        900;
+    }
+
+    .archive-file-field textarea {
+      width: 100%;
+      min-height: 112px;
+
+      resize:
+        vertical;
+
+      padding:
+        var(--space-3);
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        var(--surface-input);
+
+      color:
+        var(--text-primary);
+
+      font:
+        inherit;
+
+      line-height:
+        1.5;
+    }
+
+    .archive-file-field textarea:focus {
+      border-color:
+        rgba(98, 217, 154, .55);
+
+      outline: 0;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(98, 217, 154, .1);
+    }
+
+    .archive-file-read-list {
+      margin: 0;
+      padding: 0;
+
+      display: grid;
+    }
+
+    .archive-file-read-row {
+      min-width: 0;
+
+      padding:
+        13px 0;
+
+      border-bottom:
+        1px solid
+        rgba(45, 54, 52, .72);
+
+      display: grid;
+      grid-template-columns:
+        100px
+        minmax(0, 1fr);
+
+      gap:
+        var(--space-3);
+
+      align-items:
+        start;
+    }
+
+    .archive-file-read-row:first-child {
+      padding-top: 2px;
+    }
+
+    .archive-file-read-row:last-child {
+      padding-bottom: 2px;
+      border-bottom: 0;
+    }
+
+    .archive-file-read-row dt,
+    .archive-file-read-row dd {
+      min-width: 0;
+      margin: 0;
+    }
+
+    .archive-file-read-row dt {
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        12px;
+
+      font-weight:
+        850;
+
+      line-height:
+        1.5;
+    }
+
+    .archive-file-read-row dd {
+      color:
+        var(--text-secondary);
+
+      font-size:
+        14px;
+
+      font-weight:
+        650;
+
+      line-height:
+        1.5;
+
+      overflow-wrap:
+        anywhere;
+    }
+
+    .archive-file-read-description {
+      white-space:
+        pre-wrap;
+    }
+
+    .archive-file-inspector-content
+    .relationship-list {
+      gap:
+        var(--space-2);
+    }
+
+    .archive-file-inspector-content
+    .relation-row {
+      min-height:
+        60px;
+    }
+
+    .archive-file-inspector-content
+    .relation-row-main {
+      min-height:
+        58px;
+
+      padding:
+        7px 8px;
+    }
+
+    .archive-file-relation-icon {
+      width: 34px;
+      height: 34px;
+      flex:
+        0 0 34px;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        50%;
+
+      background:
+        var(--surface-input);
+
+      color:
+        var(--text-secondary);
+
+      display: grid;
+      place-items: center;
+    }
+
+    .archive-file-relation-icon svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .archive-file-metadata-list {
+      display: grid;
+      gap: 0;
+    }
+
+    .archive-file-metadata-row {
+      min-width: 0;
+
+      padding:
+        8px 0;
+
+      border-bottom:
+        1px solid
+        rgba(45, 54, 52, .72);
+
+      display: grid;
+      grid-template-columns:
+        116px
+        minmax(0, 1fr);
+
+      gap:
+        var(--space-3);
+
+      align-items:
+        start;
+    }
+
+    .archive-file-metadata-row:last-child {
+      border-bottom: 0;
+    }
+
+    .archive-file-metadata-row span {
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        12px;
+    }
+
+    .archive-file-metadata-row strong {
+      min-width: 0;
+
+      color:
+        var(--text-secondary);
+
+      font-size:
+        12px;
+
+      line-height:
+        1.4;
+
+      font-weight:
+        700;
+
+      overflow-wrap:
+        anywhere;
+    }
+
+    .archive-shell.file-editing
+    .archive-main :disabled {
+      opacity:
+        .52;
+
+      cursor:
+        not-allowed;
+    }
+
     .archive-preview {
       min-height: 198px;
       margin-bottom: var(--space-3);
@@ -15272,20 +15767,6 @@
       color: var(--text-secondary);
       text-align: right;
       overflow-wrap: anywhere;
-    }
-
-    .archive-form-grid {
-      display: grid;
-      gap: var(--space-3);
-    }
-
-    .archive-form-grid .field {
-      margin: 0;
-    }
-
-    .archive-form-grid textarea {
-      min-height: 92px;
-      resize: vertical;
     }
 
     .archive-connection-list {
@@ -25111,10 +25592,6 @@
       });
     }
 
-    function archivePersonChoices() {
-      return getPeople(currentProjectId()).map(person => person.names.display);
-    }
-
     function uniquePeopleById(people) {
       const seen = new Set();
 
@@ -27866,11 +28343,24 @@
       archiveSourceTypeFilter: 'all',
       archivePersonFilterId: '',
       archiveInspectorCollapsed: false,
+      archiveFileEditing: false,
+      archiveFileEditOriginal: null,
+      archiveFileEditDraft: null,
+      archiveInspectorSections: {
+        details: true,
+        sources: true,
+        people: false,
+        events: false,
+        notes: false,
+        metadata:
+          false
+      },
       archiveExpandedFolders: {
         pawford: true,
         fond12: true,
         opis3: true,
-        documents: true
+        documents:
+          true
       },
       archiveNavigationBackStack: [],
       archiveNavigationForwardStack: [],
@@ -56985,7 +57475,7 @@
         normalizedFolderId;
     }
 
-    function archiveNavigateToLocation(
+    function archiveNavigateToLocationCommit(
       location = {},
       {
         recordHistory =
@@ -57122,7 +57612,7 @@
       );
     }
 
-    function archiveNavigateBack() {
+    function archiveNavigateBackCommit() {
       const target =
         state
           .archiveNavigationBackStack
@@ -57155,7 +57645,7 @@
       renderArchive();
     }
 
-    function archiveNavigateForward() {
+    function archiveNavigateForwardCommit() {
       const target =
         state
           .archiveNavigationForwardStack
@@ -57188,7 +57678,7 @@
       renderArchive();
     }
 
-    function archiveNavigateUp() {
+    function archiveNavigateUpCommit() {
       const currentFolder =
         archiveFolderById(
           state.archiveSelectedFolderId
@@ -57198,7 +57688,7 @@
         return;
       }
 
-      archiveNavigateToLocation({
+      archiveNavigateToLocationCommit({
         folderId:
           archiveFolderParentId(
             currentFolder
@@ -57219,6 +57709,43 @@
         inspectorCollapsed:
           false
       });
+    }
+
+    /*
+      Public navigation functions always protect
+      an active file-edit draft.
+    */
+
+    function archiveNavigateToLocation(
+      location = {},
+      options = {}
+    ) {
+      runAfterArchiveFileEditGuard(
+        () => {
+          archiveNavigateToLocationCommit(
+            location,
+            options
+          );
+        }
+      );
+    }
+
+    function archiveNavigateBack() {
+      runAfterArchiveFileEditGuard(
+        archiveNavigateBackCommit
+      );
+    }
+
+    function archiveNavigateForward() {
+      runAfterArchiveFileEditGuard(
+        archiveNavigateForwardCommit
+      );
+    }
+
+    function archiveNavigateUp() {
+      runAfterArchiveFileEditGuard(
+        archiveNavigateUpCommit
+      );
     }
 
     function archivePruneNavigationHistory() {
@@ -57537,6 +58064,686 @@
         return true;
       }
       return false;
+    }
+
+    function archiveFileEditIsActive(
+      fileId =
+        state.archiveSelectedFileId
+    ) {
+      return Boolean(
+        state.archiveFileEditing
+        && state.archiveFileEditDraft
+          ?.fileId === fileId
+      );
+    }
+
+    function archiveDocumentDateModel(
+      file
+    ) {
+      const stored =
+        file?.documentDate
+        || {};
+
+      /*
+        Canonical records already use the shared
+        genealogy-date model.
+      */
+      if (
+        stored.dateType
+        || stored.date
+        || stored.dateLabel
+        || stored.originalText
+      ) {
+        return normalizeGenealogyDateInput(
+          stored,
+          stored.dateType
+          || 'Exact date'
+        );
+      }
+
+      /*
+        Convert the existing Archive prototype's
+        { type, value } format.
+      */
+      const legacyType =
+        String(
+          stored.type || ''
+        ).trim();
+
+      const legacyValue =
+        String(
+          stored.value || ''
+        ).trim();
+
+      if (
+        !legacyValue
+        || legacyType === 'Unknown'
+      ) {
+        return emptyGenealogyDate(
+          'Exact date'
+        );
+      }
+
+      let dateType =
+        legacyType
+        || 'Exact date';
+
+      /*
+        Existing Archive data stores year-only
+        values as Exact date.
+      */
+      if (
+        dateType === 'Exact date'
+        && /^\d{4}$/.test(
+          legacyValue
+        )
+      ) {
+        dateType =
+          'Year only';
+      }
+
+      if (
+        dateType === 'Between'
+      ) {
+        const parts =
+          legacyValue
+            .split(
+              /\s+(?:-|to)\s+|[–—]/i
+            )
+            .map(value =>
+              value.trim()
+            )
+            .filter(Boolean);
+
+        if (
+          parts.length >= 2
+        ) {
+          const parsed =
+            parseGenealogyDateTextAsType(
+              parts[0],
+              'Between',
+              {
+                date2:
+                  parts[1],
+
+                date2Label:
+                  parts[1]
+              }
+            );
+
+          if (parsed.valid) {
+            return parsed.value;
+          }
+        }
+      }
+
+      const parsed =
+        parseGenealogyDateTextAsType(
+          legacyValue,
+          dateType
+        );
+
+      return parsed.valid
+        ? parsed.value
+        : {
+            ...emptyGenealogyDate(
+              dateType
+            ),
+
+            originalText:
+              legacyValue
+          };
+    }
+
+    function archiveDocumentPlace(
+      file
+    ) {
+      const placeId =
+        file?.documentPlaceId
+        || (
+          file?.linkedPlaceIds
+          || []
+        )[0]
+        || (
+          file?.placeIds
+          || []
+        )[0]
+        || '';
+
+      return {
+        placeId,
+
+        placeText:
+          String(
+            file?.documentPlaceText
+            || ''
+          ).trim()
+      };
+    }
+
+    function archiveApplyDocumentPlace(
+      file,
+      placeId,
+      placeText
+    ) {
+      const normalizedPlaceId =
+        String(
+          placeId || ''
+        ).trim();
+
+      file.documentPlaceId =
+        normalizedPlaceId
+        || null;
+
+      file.documentPlaceText =
+        String(
+          placeText || ''
+        ).trim();
+
+      /*
+        Preserve compatibility with Places and
+        Archive search while making document place
+        the single inspector concept.
+      */
+      file.linkedPlaceIds =
+        normalizedPlaceId
+          ? [
+              normalizedPlaceId
+            ]
+          : [];
+
+      file.placeIds =
+        [
+          ...file.linkedPlaceIds
+        ];
+    }
+
+    function archiveFileEditDraftFromFile(
+      file
+    ) {
+      const place =
+        archiveDocumentPlace(
+          file
+        );
+
+      return {
+        fileId:
+          file.id,
+
+        name:
+          file.name
+          || '',
+
+        description:
+          file.description
+          || '',
+
+        documentDate: {
+          ...archiveDocumentDateModel(
+            file
+          )
+        },
+
+        documentPlaceId:
+          place.placeId
+          || '',
+
+        documentPlaceText:
+          place.placeText
+          || ''
+      };
+    }
+
+    function normalizedArchiveFileEditDraft(
+      draft
+    ) {
+      return {
+        name:
+          String(
+            draft?.name || ''
+          ).trim(),
+
+        description:
+          String(
+            draft?.description || ''
+          ).trim(),
+
+        documentDate:
+          mediaDateFromGenealogyModel(
+            draft?.documentDate
+            || {}
+          ),
+
+        documentPlaceId:
+          String(
+            draft?.documentPlaceId
+            || ''
+          ),
+
+        documentPlaceText:
+          String(
+            draft?.documentPlaceText
+            || ''
+          ).trim()
+      };
+    }
+
+    function collectArchiveFileEditDraft({
+      allowInvalidDate =
+        false
+    } = {}) {
+      if (
+        !state.archiveFileEditing
+      ) {
+        return null;
+      }
+
+      const documentDate =
+        collectGenealogyDateField(
+          'archiveFileDocumentDate',
+          {
+            allowInvalid:
+              allowInvalidDate
+          }
+        );
+
+      if (!documentDate) {
+        return null;
+      }
+
+      /*
+        Draft collection must be side-effect free.
+
+        readPlaceInputValue() reads the typed value
+        without creating a new Place record.
+      */
+      const place =
+        readPlaceInputValue(
+          '#archiveFileDocumentPlace',
+          main
+        );
+
+      return {
+        fileId:
+          state.archiveSelectedFileId,
+
+        name:
+          main
+            .querySelector(
+              '#archiveFileName'
+            )
+            ?.value
+            .trim()
+          || '',
+
+        description:
+          main
+            .querySelector(
+              '#archiveFileDescription'
+            )
+            ?.value
+            .trim()
+          || '',
+
+        documentDate,
+
+        documentPlaceId:
+          place.selectedPlaceId
+          || '',
+
+        documentPlaceText:
+          place.text
+          || ''
+      };
+    }
+
+    function archiveFileEditIsDirty() {
+      if (
+        !state.archiveFileEditing
+        || !state.archiveFileEditOriginal
+      ) {
+        return false;
+      }
+
+      const current =
+        collectArchiveFileEditDraft({
+          allowInvalidDate:
+            true
+        });
+
+      /*
+        An invalid live date is still an unsaved
+        change and must trigger the discard guard.
+      */
+      if (
+        !current
+        || current.documentDate
+          ?.invalid
+      ) {
+        return true;
+      }
+
+      return JSON.stringify(
+        normalizedArchiveFileEditDraft(
+          current
+        )
+      ) !== JSON.stringify(
+        normalizedArchiveFileEditDraft(
+          state.archiveFileEditOriginal
+        )
+      );
+    }
+
+    function resetArchiveFileEditState() {
+      state.archiveFileEditing =
+        false;
+
+      state.archiveFileEditOriginal =
+        null;
+
+      state.archiveFileEditDraft =
+        null;
+    }
+
+    function beginArchiveFileEdit() {
+      const file =
+        archiveFileById(
+          state.archiveSelectedFileId
+        );
+
+      if (!file) {
+        return;
+      }
+
+      const draft =
+        archiveFileEditDraftFromFile(
+          file
+        );
+
+      state.archiveFileEditing =
+        true;
+
+      state.archiveFileEditOriginal = {
+        ...draft,
+
+        documentDate: {
+          ...draft.documentDate
+        }
+      };
+
+      state.archiveFileEditDraft = {
+        ...draft,
+
+        documentDate: {
+          ...draft.documentDate
+        }
+      };
+
+      state.archiveInspectorSections
+        .details =
+          true;
+
+      renderArchiveMain();
+    }
+
+    function cancelArchiveFileEdit() {
+      resetArchiveFileEditState();
+      renderArchiveMain();
+    }
+
+    function saveArchiveFileEdit() {
+      const file =
+        archiveFileById(
+          state.archiveSelectedFileId
+        );
+
+      if (!file) {
+        resetArchiveFileEditState();
+        renderArchiveMain();
+
+        return;
+      }
+
+      const draft =
+        collectArchiveFileEditDraft();
+
+      if (!draft) {
+        showToast(
+          'Check the historical date before saving.'
+        );
+
+        return;
+      }
+
+      if (!draft.name.trim()) {
+        showToast(
+          'Enter a file name before saving.'
+        );
+
+        main
+          .querySelector(
+            '#archiveFileName'
+          )
+          ?.focus();
+
+        return;
+      }
+
+      file.name =
+        draft.name.trim();
+
+      file.description =
+        draft.description
+        || '';
+
+      /*
+        Store the canonical genealogy-date model.
+        The old { type, value } representation is
+        no longer written.
+      */
+      file.documentDate =
+        normalizeGenealogyDateInput(
+          draft.documentDate,
+          draft.documentDate
+            ?.dateType
+          || 'Exact date'
+        );
+
+      const resolvedPlace =
+        resolvePlaceInputValue(
+          draft.documentPlaceText,
+          draft.documentPlaceId
+        );
+
+      archiveApplyDocumentPlace(
+        file,
+        resolvedPlace.placeId,
+        resolvedPlace.placeText
+      );
+
+      file.updatedAt =
+        new Date()
+          .toISOString();
+
+      file.updated =
+        'Just now';
+
+      resetArchiveFileEditState();
+      renderArchive();
+      showToast(
+        'File updated.'
+      );
+    }
+
+    function runAfterArchiveFileEditGuard(
+      action
+    ) {
+      if (
+        !state.archiveFileEditing
+      ) {
+        action();
+
+        return;
+      }
+
+      if (
+        !archiveFileEditIsDirty()
+      ) {
+        resetArchiveFileEditState();
+        action();
+
+        return;
+      }
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="discardArchiveFileEditTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2
+                id="discardArchiveFileEditTitle">
+                Discard file changes?
+              </h2>
+
+              <p>
+                Your unsaved file name and detail
+                changes will be lost.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close">
+
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+
+              Continue editing
+            </button>
+
+            <button
+              class="button danger"
+              type="button"
+              data-discard-archive-file-edit>
+
+              Discard changes
+            </button>
+          </div>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelector(
+          '[data-discard-archive-file-edit]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            closeModal();
+            resetArchiveFileEditState();
+            action();
+          }
+        );
+    }
+
+    function archiveInspectorSectionIsOpen(
+      sectionId
+    ) {
+      return state
+        .archiveInspectorSections[
+          sectionId
+        ] !== false;
+    }
+
+    function renderArchiveFileSection(
+      sectionId,
+      title,
+      content,
+      actionHtml = '',
+      meta = ''
+    ) {
+      return renderInspectorSection(
+        sectionId,
+        title,
+        meta,
+        content,
+        actionHtml,
+        {
+          inlineAction:
+            Boolean(
+              actionHtml
+            ),
+
+          alwaysShowAction:
+            true,
+
+          open:
+            archiveInspectorSectionIsOpen(
+              sectionId
+            ),
+
+          toggleAttribute:
+            'data-archive-section-toggle',
+
+          sectionId:
+            `archive-file-section-${sectionId}`
+        }
+      );
+    }
+
+    function renderArchiveFileSectionAction(
+      entityType,
+      label,
+      locked
+    ) {
+      if (locked) {
+        return '';
+      }
+
+      const attribute =
+        {
+          person:
+            'data-archive-add-file-person',
+
+          event:
+            'data-archive-add-file-event',
+
+          note:
+            'data-archive-add-file-note',
+
+          source:
+            'data-archive-add-file-source'
+        }[entityType];
+
+      if (!attribute) {
+        return '';
+      }
+
+      return `
+        <button
+          class="link"
+          type="button"
+          ${attribute}>
+
+          ${renderPanelButtonLabel(
+            icon.plus,
+            label
+          )}
+        </button>
+      `;
     }
 
     function archiveSearchText(file) {
@@ -58169,34 +59376,38 @@
                 button.dataset
                   .archiveView;
 
-              if (
-                nextView === 'sources'
-              ) {
-                archiveRememberCurrentLocation();
+            if (
+              nextView === 'sources'
+            ) {
+              runAfterArchiveFileEditGuard(
+                () => {
+                  archiveRememberCurrentLocation();
 
-                state.archiveView =
-                  'sources';
+                  state.archiveView =
+                    'sources';
 
-                state.archiveSearch =
-                  '';
+                  state.archiveSearch =
+                    '';
 
-                state.archiveSelectedFileId =
-                  null;
+                  state.archiveSelectedFileId =
+                    null;
 
-                state.archiveSelectedFileIds =
-                  [];
+                  state.archiveSelectedFileIds =
+                    [];
 
-                state.archivePersonFilterId =
-                  '';
+                  state.archivePersonFilterId =
+                    '';
 
-                state.archiveInspectorCollapsed =
-                  false;
+                  state.archiveInspectorCollapsed =
+                    false;
 
-                ensureArchiveSelection();
-                renderArchive();
+                  ensureArchiveSelection();
+                  renderArchive();
+                }
+              );
 
-                return;
-              }
+              return;
+            }
 
               archiveNavigateToLocation({
                 view:
@@ -58392,9 +59603,16 @@
         <div
           class="
             archive-shell
+
             ${
               state.archiveInspectorCollapsed
                 ? 'inspector-collapsed'
+                : ''
+            }
+
+            ${
+              archiveFileEditIsActive()
+                ? 'file-editing'
                 : ''
             }
           ">
@@ -59248,13 +60466,13 @@
               headerActions
           })}
 
-          ${renderArchiveLocationRow()}
-
           ${renderArchiveToolbar()}
 
           ${renderArchivePersonFilterBar()}
 
           ${renderArchiveActiveFilterbar()}
+
+          ${renderArchiveLocationRow()}
 
           ${renderArchiveSelectionBar(
             files
@@ -60463,6 +61681,71 @@
       const context =
         archiveInspectorToolbarContext();
 
+      const editing =
+        context?.type === 'file'
+        && archiveFileEditIsActive(
+          context.id
+        );
+
+      const collapseButton = `
+        <button
+          class="
+            people-collapse-button
+            people-sidebar-toggle-icon
+            archive-inspector-collapse
+          "
+          type="button"
+          data-archive-inspector-collapse="true"
+          aria-label="Collapse Archive inspector"
+          title="Collapse inspector">
+
+          ${icon.doublechevronSidebar}
+        </button>
+      `;
+
+      if (editing) {
+        return `
+          <div
+            class="
+              archive-inspector-toolbar
+            "
+            role="toolbar"
+            aria-label="Edit Archive file">
+
+            ${collapseButton}
+
+            <span
+              class="
+                archive-inspector-toolbar-spacer
+              "
+              aria-hidden="true">
+            </span>
+
+            <div
+              class="
+                archive-inspector-edit-actions
+              ">
+
+              <button
+                class="button secondary"
+                type="button"
+                id="archiveCancelFileEdit">
+
+                Cancel
+              </button>
+
+              <button
+                class="button primary"
+                type="button"
+                id="archiveSaveFileEdit">
+
+                Save
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
       return `
         <div
           class="
@@ -60471,19 +61754,7 @@
           role="toolbar"
           aria-label="Archive inspector actions">
 
-          <button
-            class="
-              people-collapse-button
-              people-sidebar-toggle-icon
-              archive-inspector-collapse
-            "
-            type="button"
-            data-archive-inspector-collapse="true"
-            aria-label="Collapse Archive inspector"
-            title="Collapse inspector">
-
-            ${icon.doublechevronSidebar}
-          </button>
+          ${collapseButton}
 
           <span
             class="
@@ -60491,6 +61762,24 @@
             "
             aria-hidden="true">
           </span>
+
+          ${
+            context?.type === 'file'
+              ? `
+                <button
+                  class="
+                    archive-inspector-action
+                  "
+                  type="button"
+                  id="archiveEditFile"
+                  aria-label="Edit file"
+                  title="Edit file">
+
+                  ${icon.edit}
+                </button>
+              `
+              : ''
+          }
 
           ${renderArchiveInspectorFavouriteButton(
             context
@@ -60555,24 +61844,27 @@
         state.archiveView
           === 'favorites';
 
-      return renderArchiveInspectorShell(
-        favoritesView
-          ? 'Favourites'
-          : 'Files',
+      return renderArchiveInspectorShell({
+        title:
+          favoritesView
+            ? 'Favourites'
+            : 'Files',
 
-        'No item selected',
+        subtitle:
+          'No item selected',
 
-        `
-          <div
-            class="
-              archive-section-empty
-            ">
+        content:
+          `
+            <div
+              class="
+                archive-section-empty
+              ">
 
-            Select a file or folder to view
-            its details.
-          </div>
-        `
-      );
+              Select a file or folder to view
+              its details.
+            </div>
+          `
+      });
     }
 
     function renderArchiveInspector() {
@@ -60606,15 +61898,57 @@
         : renderArchiveRootInspector();
     }
 
-    function renderArchiveInspectorShell(
+    function renderArchiveInspectorHeader(
       title,
-      subtitle,
-      body
+      subtitle = ''
     ) {
+      return `
+        <div
+          class="
+            archive-inspector-head
+          ">
+
+          <div
+            class="
+              archive-inspector-head-copy
+            ">
+
+            <h2>
+              ${escapeHtml(
+                title
+              )}
+            </h2>
+
+            ${
+              subtitle
+                ? `
+                  <p>
+                    ${escapeHtml(
+                      subtitle
+                    )}
+                  </p>
+                `
+                : ''
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    function renderArchiveInspectorShell({
+      content,
+      title = '',
+      subtitle = '',
+      showHeader = true,
+      bodyClass =
+        'archive-inspector-body',
+      className = ''
+    }) {
       return `
         <aside
           class="
             archive-inspector
+            ${className}
           "
           aria-label="Archive inspector">
 
@@ -60625,52 +61959,931 @@
               archive-inspector-scroll
             ">
 
-            <div
-              class="
-                archive-inspector-head
-              ">
-
-              <div
-                class="
-                  archive-inspector-head-copy
-                ">
-
-                <h2>
-                  ${escapeHtml(
-                    title
-                  )}
-                </h2>
-
-                ${
-                  subtitle
-                    ? `
-                      <p>
-                        ${escapeHtml(
-                          subtitle
-                        )}
-                      </p>
-                    `
-                    : ''
-                }
-              </div>
-            </div>
+            ${
+              showHeader
+                ? renderArchiveInspectorHeader(
+                    title,
+                    subtitle
+                  )
+                : ''
+            }
 
             <div
-              class="
-                archive-inspector-body
-              ">
+              class="${escapeHtml(
+                bodyClass
+              )}">
 
-              ${body}
+              ${content}
             </div>
           </div>
         </aside>
       `;
     }
 
-    function renderArchivePreview(file) {
-      const kind = archiveFileKind(file);
-      const supported = ['pdf', 'img', 'audio'].includes(kind);
-      return `<div class="archive-preview"><div class="archive-preview-content">${kind === 'img' ? icon.image : kind === 'audio' ? icon.note : icon.file}<strong>${escapeHtml(archiveFileTypeLabel(file))}</strong><span>${supported ? 'File preview is represented conceptually in this prototype.' : 'Preview is not available for this file type. Open the original file to view it.'}</span></div></div>`;
+    function renderArchivePreview(
+      file
+    ) {
+      const kind =
+        archiveFileKind(
+          file
+        );
+
+      const imageSource =
+        file.previewUrl
+        || file.thumbnailUrl
+        || file.src
+        || '';
+
+      if (
+        kind === 'img'
+        && imageSource
+      ) {
+        return `
+          <div
+            class="
+              archive-file-preview
+            ">
+
+            <img
+              class="
+                archive-file-preview-image
+              "
+              src="${escapeHtml(
+                imageSource
+              )}"
+              alt="">
+          </div>
+        `;
+      }
+
+      const previewIcon =
+        kind === 'img'
+          ? icon.image
+          : kind === 'audio'
+            ? icon.note
+            : icon.file;
+
+      const title =
+        {
+          pdf:
+            'PDF preview',
+
+          img:
+            'Image preview',
+
+          audio:
+            'Audio preview',
+
+          sheet:
+            'Spreadsheet preview',
+
+          doc:
+            'Document preview',
+
+          archive:
+            'Archive-file preview',
+
+          file:
+            'File preview'
+        }[kind]
+        || 'File preview';
+
+      const description =
+        [
+          'pdf',
+          'img',
+          'audio'
+        ].includes(
+          kind
+        )
+          ? 'The file preview is represented conceptually in this prototype.'
+          : 'Preview is not available for this file type. Open the original file to view it.';
+
+      return `
+        <div
+          class="
+            archive-file-preview
+          ">
+
+          <div
+            class="
+              archive-file-preview-content
+            ">
+
+            ${previewIcon}
+
+            <strong>
+              ${escapeHtml(
+                title
+              )}
+            </strong>
+
+            <span>
+              ${escapeHtml(
+                description
+              )}
+            </span>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderArchiveFileOpenAction(
+      file
+    ) {
+      return `
+        <button
+          class="
+            button
+            primary
+            archive-file-open
+          "
+          type="button"
+          data-archive-open-file="${escapeHtml(
+            file.id
+          )}">
+
+          Open file
+        </button>
+      `;
+    }
+
+    function renderArchiveFileIdentity(
+      file,
+      editing
+    ) {
+      const draft =
+        state.archiveFileEditDraft
+        || archiveFileEditDraftFromFile(
+          file
+        );
+
+      const summary =
+        [
+          archiveFileTypeLabel(
+            file
+          ),
+
+          file.size
+          || (
+            Number.isFinite(
+              Number(
+                file.sizeBytes
+              )
+            )
+              ? formatMediaBytes(
+                  file.sizeBytes
+                )
+              : ''
+          )
+        ]
+          .filter(Boolean)
+          .join(' · ');
+
+      return `
+        <div
+          class="
+            archive-file-identity
+          ">
+
+          ${
+            editing
+              ? `
+                <label
+                  class="
+                    archive-file-title-field
+                  ">
+
+                  <span>
+                    File name
+                  </span>
+
+                  <input
+                    id="archiveFileName"
+                    maxlength="220"
+                    value="${escapeHtml(
+                      draft.name
+                      || ''
+                    )}">
+                </label>
+              `
+              : `
+                <h2>
+                  ${escapeHtml(
+                    file.name
+                    || 'Untitled file'
+                  )}
+                </h2>
+              `
+          }
+
+          <p
+            class="
+              archive-file-summary
+            ">
+
+            ${escapeHtml(
+              summary
+              || 'File'
+            )}
+          </p>
+        </div>
+      `;
+    }
+
+    function renderArchiveFileHero(
+      file,
+      editing
+    ) {
+      return `
+        <div
+          class="
+            archive-file-hero
+          ">
+
+          ${renderArchivePreview(
+            file
+          )}
+
+          ${renderArchiveFileOpenAction(
+            file
+          )}
+
+          ${renderArchiveFileIdentity(
+            file,
+            editing
+          )}
+        </div>
+      `;
+    }
+
+    function renderArchiveFileDetails(
+      file,
+      editing
+    ) {
+      if (editing) {
+        const draft =
+          state.archiveFileEditDraft
+          || archiveFileEditDraftFromFile(
+            file
+          );
+
+        return `
+          <div
+            class="
+              archive-file-form-grid
+            ">
+
+            <div
+              class="
+                archive-file-field
+              ">
+
+              <label
+                for="archiveFileDescription">
+
+                Description
+              </label>
+
+              <textarea
+                id="archiveFileDescription"
+                maxlength="1200"
+                placeholder="Add a short description of this file">${escapeHtml(
+                  draft.description
+                  || ''
+                )}</textarea>
+            </div>
+
+            ${renderGenealogyDateField(
+              'archiveFileDocumentDate',
+              'Document date',
+              draft.documentDate,
+              {
+                inputId:
+                  'archiveFileDocumentDateInput',
+
+                typeId:
+                  'archiveFileDocumentDateType',
+
+                defaultDateType:
+                  'Exact date',
+
+                className:
+                  'genealogy-date-inline-range'
+              }
+            )}
+
+            ${renderPlaceCombobox({
+              id:
+                'archiveFileDocumentPlace',
+
+              label:
+                'Document place',
+
+              value:
+                getPlaceDisplay(
+                  draft.documentPlaceId
+                )
+                || draft.documentPlaceText
+                || '',
+
+              selectedPlaceId:
+                draft.documentPlaceId
+                || '',
+
+              showAddress:
+                false,
+
+              className:
+                'full'
+            })}
+          </div>
+        `;
+      }
+
+      const dateLabel =
+        formatGenealogyDateLabel(
+          archiveDocumentDateModel(
+            file
+          )
+        )
+        || 'Date unknown';
+
+      const place =
+        archiveDocumentPlace(
+          file
+        );
+
+      const placeLabel =
+        getPlaceDisplay(
+          place.placeId
+        )
+        || place.placeText
+        || 'Place not recorded';
+
+      const description =
+        String(
+          file.description
+          || ''
+        ).trim()
+        || 'No description';
+
+      return `
+        <dl
+          class="
+            archive-file-read-list
+          ">
+
+          <div
+            class="
+              archive-file-read-row
+            ">
+
+            <dt>
+              Description
+            </dt>
+
+            <dd
+              class="
+                archive-file-read-description
+              ">
+
+              ${escapeHtml(
+                description
+              )}
+            </dd>
+          </div>
+
+          <div
+            class="
+              archive-file-read-row
+            ">
+
+            <dt>
+              Document date
+            </dt>
+
+            <dd>
+              ${escapeHtml(
+                dateLabel
+              )}
+            </dd>
+          </div>
+
+          <div
+            class="
+              archive-file-read-row
+            ">
+
+            <dt>
+              Document place
+            </dt>
+
+            <dd>
+              ${escapeHtml(
+                placeLabel
+              )}
+            </dd>
+          </div>
+        </dl>
+      `;
+    }
+
+    function archiveFilePersonMeta(
+      person
+    ) {
+      const birth =
+        formatGenealogyDateLabel(
+          person?.birth
+        );
+
+      const death =
+        formatGenealogyDateLabel(
+          person?.death
+        );
+
+      if (
+        birth
+        && death
+      ) {
+        return `${birth} – ${death}`;
+      }
+
+      if (birth) {
+        return `Born ${birth}`;
+      }
+
+      if (death) {
+        return `Died ${death}`;
+      }
+
+      return (
+        [
+          person?.role,
+          person?.branch
+        ]
+          .filter(Boolean)
+          .join(' · ')
+        || 'Person profile'
+      );
+    }
+
+    function renderArchiveFileConnectionRow({
+      file,
+      entityType,
+      record,
+      leadingHtml,
+      readOnly = false
+    }) {
+      const config =
+        archiveEntityConfig(
+          entityType
+        );
+
+      if (
+        !config
+        || !record
+      ) {
+        return '';
+      }
+
+      const label =
+        config.label(
+          record
+        );
+
+      const meta =
+        entityType === 'person'
+          ? archiveFilePersonMeta(
+              record
+            )
+          : config.meta(
+              record
+            );
+
+      const mainContent = `
+        ${leadingHtml}
+
+        <span
+          class="
+            relation-row-copy
+          ">
+
+          <strong>
+            ${escapeHtml(
+              label
+            )}
+          </strong>
+
+          <span>
+            ${escapeHtml(
+              meta
+            )}
+          </span>
+        </span>
+      `;
+
+      return `
+        <div
+          class="
+            relation-row
+          ">
+
+          ${
+            readOnly
+              ? `
+                <div
+                  class="
+                    relation-row-main
+                  ">
+
+                  ${mainContent}
+                </div>
+              `
+              : `
+                <button
+                  class="
+                    relation-row-main
+                  "
+                  type="button"
+                  data-archive-open-connection="${escapeHtml(
+                    entityType
+                  )}"
+                  data-archive-connection-id="${escapeHtml(
+                    record.id
+                  )}"
+                  aria-label="Open ${escapeHtml(
+                    label
+                  )}">
+
+                  ${mainContent}
+                </button>
+              `
+          }
+
+          ${
+            readOnly
+              ? ''
+              : `
+                <div
+                  class="
+                    relation-actions
+                  ">
+
+                  <button
+                    class="
+                      relation-action-button
+                    "
+                    type="button"
+                    data-archive-unlink-owner-type="file"
+                    data-archive-unlink-owner-id="${escapeHtml(
+                      file.id
+                    )}"
+                    data-archive-unlink-type="${escapeHtml(
+                      entityType
+                    )}"
+                    data-archive-unlink-id="${escapeHtml(
+                      record.id
+                    )}"
+                    aria-label="Unlink ${escapeHtml(
+                      label
+                    )}"
+                    title="Unlink">
+
+                    ${icon.unlink}
+                  </button>
+                </div>
+              `
+          }
+        </div>
+      `;
+    }
+
+    function renderArchiveFilePeople(
+      file,
+      readOnly
+    ) {
+      const people =
+        (
+          file.linkedPersonIds
+          || []
+        )
+          .map(id =>
+            getPerson(
+              id
+            )
+          )
+          .filter(Boolean);
+
+      if (!people.length) {
+        return `
+          <div
+            class="
+              albums-inspector-empty
+            ">
+
+            No people linked to this file.
+          </div>
+        `;
+      }
+
+      return `
+        <div
+          class="
+            relationship-list
+          ">
+
+          ${people
+            .map(person =>
+              renderArchiveFileConnectionRow({
+                file,
+                entityType:
+                  'person',
+                record:
+                  person,
+                leadingHtml:
+                  renderPersonAvatar(
+                    person,
+                    'small-avatar',
+                    {
+                      element:
+                        'span'
+                    }
+                  ),
+                readOnly
+              })
+            )
+            .join('')}
+        </div>
+      `;
+    }
+
+    function renderArchiveFileEvents(
+      file,
+      readOnly
+    ) {
+      const events =
+        (
+          file.linkedEventIds
+          || []
+        )
+          .map(id =>
+            archiveConnectionRecord(
+              'event',
+              id
+            )
+          )
+          .filter(Boolean);
+
+      if (!events.length) {
+        return `
+          <div
+            class="
+              albums-inspector-empty
+            ">
+
+            No events linked to this file.
+          </div>
+        `;
+      }
+
+      return `
+        <div
+          class="
+            relationship-list
+          ">
+
+          ${events
+            .map(event =>
+              renderArchiveFileConnectionRow({
+                file,
+                entityType:
+                  'event',
+                record:
+                  event,
+                leadingHtml:
+                  `
+                    <span
+                      class="
+                        archive-file-relation-icon
+                      "
+                      aria-hidden="true">
+
+                      ${icon.calendar}
+                    </span>
+                  `,
+                readOnly
+              })
+            )
+            .join('')}
+        </div>
+      `;
+    }
+
+    function renderArchiveFileNotes(
+      file,
+      readOnly
+    ) {
+      const notes =
+        archiveNoteIdsForFile(
+          file
+        )
+          .map(id =>
+            archiveConnectionRecord(
+              'note',
+              id
+            )
+          )
+          .filter(Boolean);
+
+      if (!notes.length) {
+        return `
+          <div
+            class="
+              albums-inspector-empty
+            ">
+
+            No notes linked to this file.
+          </div>
+        `;
+      }
+
+      return `
+        <div
+          class="
+            relationship-list
+          ">
+
+          ${notes
+            .map(note =>
+              renderArchiveFileConnectionRow({
+                file,
+                entityType:
+                  'note',
+                record:
+                  note,
+                leadingHtml:
+                  `
+                    <span
+                      class="
+                        archive-file-relation-icon
+                      "
+                      aria-hidden="true">
+
+                      ${icon.note}
+                    </span>
+                  `,
+                readOnly
+              })
+            )
+            .join('')}
+        </div>
+      `;
+    }
+
+    function renderArchiveFileSources(
+      file,
+      readOnly
+    ) {
+      const sources =
+        (
+          file.linkedSourceIds
+          || []
+        )
+          .map(id =>
+            archiveSourceById(
+              id
+            )
+          )
+          .filter(Boolean);
+
+      if (!sources.length) {
+        return `
+          <div
+            class="
+              albums-inspector-empty
+            ">
+
+            No sources linked to this file.
+          </div>
+        `;
+      }
+
+      return `
+        <div
+          class="
+            relationship-list
+          ">
+
+          ${sources
+            .map(source =>
+              renderArchiveFileConnectionRow({
+                file,
+                entityType:
+                  'source',
+                record:
+                  source,
+                leadingHtml:
+                  `
+                    <span
+                      class="
+                        archive-file-relation-icon
+                      "
+                      aria-hidden="true">
+
+                      ${icon.archive}
+                    </span>
+                  `,
+                readOnly
+              })
+            )
+            .join('')}
+        </div>
+      `;
+    }
+
+    function renderArchiveFileMetadata(
+      file
+    ) {
+      const rows = [
+        [
+          'Folder',
+          archiveFolderPath(
+            file.folderId
+          )
+        ],
+
+        [
+          'Date added',
+          archiveFormatDate(
+            file.addedAt,
+            file.added
+          )
+        ],
+
+        [
+          'Date modified',
+          archiveFormatDate(
+            file.updatedAt,
+            file.updated
+          )
+        ],
+
+        file.originalName
+        && file.originalName
+          !== file.name
+          ? [
+              'Original filename',
+              file.originalName
+            ]
+          : null,
+
+        file.mimeType
+          ? [
+              'MIME type',
+              file.mimeType
+            ]
+          : null,
+
+        [
+          'File ID',
+          file.id
+        ]
+      ].filter(Boolean);
+
+      return `
+        <div
+          class="
+            archive-file-metadata-list
+          ">
+
+          ${rows
+            .map(([
+              label,
+              value
+            ]) => `
+              <div
+                class="
+                  archive-file-metadata-row
+                ">
+
+                <span>
+                  ${escapeHtml(
+                    label
+                  )}
+                </span>
+
+                <strong>
+                  ${escapeHtml(
+                    value
+                    || 'Unknown'
+                  )}
+                </strong>
+              </div>
+            `)
+            .join('')}
+        </div>
+      `;
     }
 
     function renderArchiveConnectionSection(ownerType, ownerId, entityType) {
@@ -60684,39 +62897,159 @@
       </div></section>`;
     }
 
-    function renderArchiveFileInspector(file) {
-      const folder = archiveFolderById(file.folderId);
-      const body = `
-        ${renderArchivePreview(file)}
-        <div
-          class="
-            archive-inspector-primary-actions
-          ">
+    function renderArchiveFileInspector(
+      file
+    ) {
+      if (
+        state.archiveFileEditing
+        && state.archiveFileEditDraft
+          ?.fileId !== file.id
+      ) {
+        resetArchiveFileEditState();
+      }
 
-          <button
-            class="button secondary"
-            type="button"
-            data-archive-open-file="${escapeHtml(
-              file.id
-            )}">
+      const editing =
+        archiveFileEditIsActive(
+          file.id
+        );
 
-            Open
-          </button>
-        </div>
-        <section class="archive-inspector-section"><div class="archive-inspector-section-head"><strong>File details</strong></div><div class="archive-inspector-section-body"><div class="archive-kv-list">
-          <div class="archive-kv"><span>Type</span><span>${escapeHtml(archiveFileTypeLabel(file))}</span></div><div class="archive-kv"><span>Size</span><span>${escapeHtml(file.size || 'Unknown')}</span></div><div class="archive-kv"><span>Folder</span><span>${escapeHtml(
-          archiveFolderPath(
-            file.folderId
+      const peopleCount =
+        (
+          file.linkedPersonIds
+          || []
+        ).length;
+
+      const eventCount =
+        (
+          file.linkedEventIds
+          || []
+        ).length;
+
+      const noteCount =
+        archiveNoteIdsForFile(
+          file
+        ).length;
+
+      const sourceCount =
+        (
+          file.linkedSourceIds
+          || []
+        ).length;
+
+      const content = `
+        ${renderArchiveFileHero(
+          file,
+          editing
+        )}
+
+        ${renderArchiveFileSection(
+          'details',
+          'Details',
+          renderArchiveFileDetails(
+            file,
+            editing
           )
-          )}</span></div><div class="archive-kv"><span>Date added</span><span>${escapeHtml(archiveFormatDate(file.addedAt, file.added))}</span></div><div class="archive-kv"><span>Date modified</span><span>${escapeHtml(archiveFormatDate(file.updatedAt, file.updated))}</span></div>
-        </div></div></section>
-        <section class="archive-inspector-section"><div class="archive-inspector-section-head"><strong>Research details</strong></div><div class="archive-inspector-section-body"><form class="archive-form-grid" data-archive-file-details-form="${escapeHtml(file.id)}"><div class="field"><label>Description</label><textarea data-archive-file-description placeholder="Add a short description of this file">${escapeHtml(file.description || '')}</textarea></div><div class="field"><label>Document date</label><div class="form-row"><select class="compact-select" data-archive-file-date-type><option ${file.documentDate?.type === 'Exact date' ? 'selected' : ''}>Exact date</option><option ${file.documentDate?.type === 'About / Circa' ? 'selected' : ''}>About / Circa</option><option ${file.documentDate?.type === 'Before' ? 'selected' : ''}>Before</option><option ${file.documentDate?.type === 'After' ? 'selected' : ''}>After</option><option ${file.documentDate?.type === 'Between' ? 'selected' : ''}>Between</option><option ${file.documentDate?.type === 'Unknown' ? 'selected' : ''}>Unknown</option></select><input data-archive-file-date-value value="${escapeHtml(file.documentDate?.value || '')}" placeholder="e.g. 12 Mar 1946"></div></div><button class="button secondary" type="submit">Save details</button></form></div></section>
-        ${renderArchiveConnectionSection('file', file.id, 'person')}
-        ${renderArchiveConnectionSection('file', file.id, 'event')}
-        ${renderArchiveConnectionSection('file', file.id, 'note')}
-        ${renderArchiveConnectionSection('file', file.id, 'place')}
-        ${renderArchiveConnectionSection('file', file.id, 'source')}`;
-      return renderArchiveInspectorShell(file.name, archiveFileTypeLabel(file), body);
+        )}
+
+        ${renderArchiveFileSection(
+          'sources',
+          'Sources',
+          renderArchiveFileSources(
+            file,
+            editing
+          ),
+          renderArchiveFileSectionAction(
+            'source',
+            'Add source',
+            editing
+          ),
+          `${sourceCount} ${
+            sourceCount === 1
+              ? 'source'
+              : 'sources'
+          }`
+        )}
+
+        ${renderArchiveFileSection(
+          'people',
+          'People',
+          renderArchiveFilePeople(
+            file,
+            editing
+          ),
+          renderArchiveFileSectionAction(
+            'person',
+            'Add person',
+            editing
+          ),
+          `${peopleCount} ${
+            peopleCount === 1
+              ? 'person'
+              : 'people'
+          }`
+        )}
+
+        ${renderArchiveFileSection(
+          'events',
+          'Events',
+          renderArchiveFileEvents(
+            file,
+            editing
+          ),
+          renderArchiveFileSectionAction(
+            'event',
+            'Add event',
+            editing
+          ),
+          `${eventCount} ${
+            eventCount === 1
+              ? 'event'
+              : 'events'
+          }`
+        )}
+
+        ${renderArchiveFileSection(
+          'notes',
+          'Notes',
+          renderArchiveFileNotes(
+            file,
+            editing
+          ),
+          renderArchiveFileSectionAction(
+            'note',
+            'Add note',
+            editing
+          ),
+          `${noteCount} ${
+            noteCount === 1
+              ? 'note'
+              : 'notes'
+          }`
+        )}
+
+        ${renderArchiveFileSection(
+          'metadata',
+          'File metadata',
+          renderArchiveFileMetadata(
+            file
+          )
+        )}
+      `;
+
+      return renderArchiveInspectorShell({
+        showHeader:
+          false,
+
+        bodyClass:
+          'archive-file-inspector-content',
+
+        className:
+          editing
+            ? 'is-editing'
+            : '',
+
+        content
+      });
     }
 
     function renderArchiveFolderInspector(folder) {
@@ -60729,12 +63062,39 @@
       const body = `<div class="archive-preview"><div class="archive-preview-content">${icon.folder}<strong>${escapeHtml(folder.name)}</strong><span>${escapeHtml(archiveFolderPath(folder.id))}</span></div></div>
         <div class="archive-inspector-actions" style="margin-bottom:var(--space-3)"><button class="button secondary" type="button" data-archive-create-folder data-archive-parent-folder="${escapeHtml(folder.id)}">${icon.plus} New subfolder</button><button class="button ghost" type="button" data-archive-add-files>${icon.plus} Add file</button></div>
         <section class="archive-inspector-section"><div class="archive-inspector-section-head"><strong>Folder details</strong></div><div class="archive-inspector-section-body"><div class="archive-kv-list"><div class="archive-kv"><span>Path</span><span>${escapeHtml(archiveFolderPath(folder.id))}</span></div><div class="archive-kv"><span>Direct folders</span><span>${directFolders}</span></div><div class="archive-kv"><span>Direct files</span><span>${directFiles}</span></div><div class="archive-kv"><span>Total nested files</span><span>${impact.files}</span></div></div></div></section>`;
-      return renderArchiveInspectorShell(folder.name, 'Folder', body);
+      return renderArchiveInspectorShell({
+        title:
+          folder.name,
+
+        subtitle:
+          'Folder',
+
+        content:
+          body
+      });
     }
 
     function renderArchiveSourceInspector() {
       const source = archiveSourceById(state.archiveSelectedSourceId) || archiveFilteredSources()[0] || null;
-      if (!source) return renderArchiveInspectorShell('Sources', 'No source selected', `<div class="archive-section-empty">Select or create a source record.</div>`);
+      if (!source) 
+      return renderArchiveInspectorShell({
+        title:
+          'Sources',
+
+        subtitle:
+          'No source selected',
+
+        content:
+          `
+            <div
+              class="
+                archive-section-empty
+              ">
+
+              Select or create a source record.
+            </div>
+          `
+      });
       const body = `<div class="archive-preview"><div class="archive-preview-content">${icon.archive}<strong>${escapeHtml(source.type || 'Source')}</strong><span>${escapeHtml(source.repositoryOwner || source.holder || source.reference || 'Genealogy source record')}</span></div></div>
         <div class="archive-inspector-primary-actions"><button class="button secondary" type="button" data-archive-edit-source="${escapeHtml(source.id)}">Edit source</button><button class="archive-row-icon-button ${source.favorite ? 'active' : ''}" type="button" data-archive-source-favorite="${escapeHtml(source.id)}" aria-label="Toggle source favourite">${icon.star}</button></div>
         <section class="archive-inspector-section"><div class="archive-inspector-section-head"><strong>Source details</strong></div><div class="archive-inspector-section-body"><div class="archive-kv-list">
@@ -60746,7 +63106,17 @@
         ${renderArchiveConnectionSection('source', source.id, 'note')}
         ${renderArchiveConnectionSection('source', source.id, 'place')}
         <button class="button danger full" type="button" data-archive-delete-source="${escapeHtml(source.id)}">Delete source permanently</button>`;
-      return renderArchiveInspectorShell(source.title, source.type || 'Source', body);
+      return renderArchiveInspectorShell({
+        title:
+          source.title,
+
+        subtitle:
+          source.type
+          || 'Source',
+
+        content:
+          body
+      });
     }
 
     function openArchiveAddFilesModal() {
@@ -61047,22 +63417,127 @@
       });
     }
 
-    function openArchiveRenameModal(type, id) {
-      const item = type === 'file' ? archiveFileById(id) : archiveFolderById(id);
-      if (!item) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveRenameTitle"><div class="modal-header"><div><h2 id="archiveRenameTitle">Rename ${escapeHtml(type)}</h2><p>Update the display name without changing links.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><form data-archive-rename-form><div class="modal-body"><div class="field"><label>Name</label><input data-archive-rename-value required value="${escapeHtml(item.name)}"></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Rename</button></div></form></div>`);
-      const form = modalBackdrop.querySelector('[data-archive-rename-form]');
-      form?.addEventListener('submit', event => {
-        event.preventDefault();
-        const value = form.querySelector('[data-archive-rename-value]').value.trim();
-        if (!value) return;
-        item.name = value;
-        item.updatedAt = new Date().toISOString();
-        item.updated = 'Just now';
-        closeModal();
-        renderArchive();
-        showToast(`${type === 'file' ? 'File' : 'Folder'} renamed.`);
-      });
+    function openArchiveRenameFolderModal(
+      folderId
+    ) {
+      const folder =
+        archiveFolderById(
+          folderId
+        );
+
+      if (!folder) {
+        return;
+      }
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="archiveRenameFolderTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2
+                id="archiveRenameFolderTitle">
+
+                Rename folder
+              </h2>
+
+              <p>
+                Update the folder name without
+                changing its contents or links.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close">
+
+              ${icon.close}
+            </button>
+          </div>
+
+          <form
+            data-archive-rename-folder-form>
+
+            <div class="modal-body">
+              <div class="field">
+                <label
+                  for="archiveRenameFolderValue">
+
+                  Name
+                </label>
+
+                <input
+                  id="archiveRenameFolderValue"
+                  required
+                  maxlength="160"
+                  value="${escapeHtml(
+                    folder.name
+                  )}">
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                class="button secondary"
+                type="button"
+                data-close>
+
+                Cancel
+              </button>
+
+              <button
+                class="button primary"
+                type="submit">
+
+                Rename
+              </button>
+            </div>
+          </form>
+        </div>
+      `);
+
+      const form =
+        modalBackdrop.querySelector(
+          '[data-archive-rename-folder-form]'
+        );
+
+      form?.addEventListener(
+        'submit',
+        event => {
+          event.preventDefault();
+
+          const value =
+            form
+              .querySelector(
+                '#archiveRenameFolderValue'
+              )
+              .value
+              .trim();
+
+          if (!value) {
+            return;
+          }
+
+          folder.name =
+            value;
+
+          folder.updatedAt =
+            new Date()
+              .toISOString();
+
+          closeModal();
+          renderArchive();
+
+          showToast(
+            'Folder renamed.'
+          );
+        }
+      );
     }
 
     function archiveFolderPickerRows(
@@ -61394,6 +63869,97 @@
         );
     }
 
+    function openArchiveFileNoteModal(
+      fileId
+    ) {
+      const file =
+        archiveFileById(
+          fileId
+        );
+
+      if (!file) {
+        return;
+      }
+
+      const existingNoteIds =
+        archiveNoteIdsForFile(
+          file
+        );
+
+      openNoteLinkPickerModal({
+        projectId:
+          file.projectId
+          || currentProjectId(),
+
+        title:
+          'Add note',
+
+        description:
+          `Link existing notes to “${
+            file.name
+            || 'this file'
+          }”.`,
+
+        existingNoteIds,
+
+        includeArchived:
+          false,
+
+        existingStatus:
+          'Already linked',
+
+        existingMetaLabel:
+          'already linked',
+
+        createLabel:
+          'Create linked note',
+
+        onCreate:
+          () =>
+            openNewNoteForContext(
+              'archiveFile',
+              file.id
+            ),
+
+        onSave:
+          selectedNoteIds => {
+            const currentFile =
+              archiveFileById(
+                file.id
+              );
+
+            if (!currentFile) {
+              return false;
+            }
+
+            selectedNoteIds.forEach(
+              noteId => {
+                archiveSetConnection(
+                  'file',
+                  currentFile.id,
+                  'note',
+                  noteId,
+                  true
+                );
+              }
+            );
+
+            return true;
+          },
+
+        afterSave:
+          renderArchive,
+
+        successMessage:
+          count =>
+            `${count} ${
+              count === 1
+                ? 'note was'
+                : 'notes were'
+            } linked to the file.`
+      });
+    }
+
     function openArchiveConnectionPicker({ ownerType, ownerIds, entityType }) {
       const config = archiveEntityConfig(entityType);
       const ids = archiveUniqueIds(ownerIds);
@@ -61636,14 +64202,57 @@
       });
     }
 
-    function openArchiveItemActionsModal(type, id) {
-      const file = type === 'file' ? archiveFileById(id) : null;
-      const folder = type === 'folder' ? archiveFolderById(id) : null;
-      const source = type === 'source' ? archiveSourceById(id) : null;
-      const label = file?.name || folder?.name || source?.title || 'Item';
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveActionsTitle"><div class="modal-header"><div><h2 id="archiveActionsTitle">Actions</h2><p>${escapeHtml(label)}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-action-grid">
-        ${file ? `<button class="button secondary" type="button" data-action="open">Open</button><button class="button secondary" type="button" data-action="rename">Rename</button><button class="button secondary" type="button" data-action="move">Move</button><button class="button secondary" type="button" data-action="favorite">${file.favorite ? 'Remove from favourites' : 'Add to favourites'}</button><button class="button danger" type="button" data-action="delete">Delete permanently</button>` : ''}
-        ${folder
+    function openArchiveItemActionsModal(
+      type,
+      id
+    ) {
+      const file =
+        type === 'file'
+          ? archiveFileById(
+              id
+            )
+          : null;
+
+      const folder =
+        type === 'folder'
+          ? archiveFolderById(
+              id
+            )
+          : null;
+
+      const source =
+        type === 'source'
+          ? archiveSourceById(
+              id
+            )
+          : null;
+
+      const label =
+        file?.name
+        || folder?.name
+        || source?.title
+        || 'Item';
+
+      const actions =
+        file
+          ? `
+            <button
+              class="button secondary"
+              type="button"
+              data-action="move">
+
+              Move
+            </button>
+
+            <button
+              class="button danger"
+              type="button"
+              data-action="delete">
+
+              Delete permanently
+            </button>
+          `
+          : folder
             ? `
               <button
                 class="button secondary"
@@ -61677,69 +64286,229 @@
                 Delete permanently
               </button>
             `
-            : ''
-        }
-        ${source ? `<button class="button secondary" type="button" data-action="edit">Edit source</button><button class="button secondary" type="button" data-action="favorite">${source.favorite ? 'Remove from favourites' : 'Add to favourites'}</button><button class="button danger" type="button" data-action="delete">Delete permanently</button>` : ''}
-      </div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Close</button></div></div>`);
-      modalBackdrop.querySelectorAll('[data-action]').forEach(button => button.addEventListener('click', () => {
-        const action = button.dataset.action;
-        closeModal();
-        if (file) {
-          if (action === 'open') showToast('Opening the original file is simulated.');
-          if (action === 'rename') openArchiveRenameModal('file', file.id);
-          if (action === 'move') openArchiveMoveModal({ fileIds: [file.id] });
-          if (action === 'favorite') { file.favorite = !file.favorite; renderArchive(); }
-          if (action === 'delete') openArchiveDeleteFileConfirm([file.id]);
-        }
-        if (folder) {
-          if (
-            action === 'open'
-          ) {
-            archiveNavigateToLocation(
-              {
-                view:
-                  state.archiveView
-                    === 'favorites'
-                      ? 'favorites'
-                      : 'files',
+            : source
+              ? `
+                <button
+                  class="button secondary"
+                  type="button"
+                  data-action="edit">
 
-                folderId:
-                  folder.id,
+                  Edit source
+                </button>
 
-                search:
-                  '',
+                <button
+                  class="button secondary"
+                  type="button"
+                  data-action="favorite">
 
-                searchScope:
-                  'folder',
+                  ${
+                    source.favorite
+                      ? 'Remove from favourites'
+                      : 'Add to favourites'
+                  }
+                </button>
 
-                personFilterId:
-                  '',
+                <button
+                  class="button danger"
+                  type="button"
+                  data-action="delete">
 
-                selectedFileId:
-                  null,
+                  Delete permanently
+                </button>
+              `
+              : '';
 
-                inspectorCollapsed:
-                  false
-              },
-              {
-                expandCurrent:
-                  true
+      if (!actions) {
+        return;
+      }
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="archiveActionsTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="archiveActionsTitle">
+                Actions
+              </h2>
+
+              <p>
+                ${escapeHtml(
+                  label
+                )}
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close">
+
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <div
+              class="
+                archive-action-grid
+              ">
+
+              ${actions}
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+
+              Close
+            </button>
+          </div>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelectorAll(
+          '[data-action]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              const action =
+                button.dataset.action;
+
+              closeModal();
+
+              if (file) {
+                if (
+                  action === 'move'
+                ) {
+                  openArchiveMoveModal({
+                    fileIds:
+                      [
+                        file.id
+                      ]
+                  });
+                }
+
+                if (
+                  action === 'delete'
+                ) {
+                  openArchiveDeleteFileConfirm(
+                    [
+                      file.id
+                    ]
+                  );
+                }
+
+                return;
               }
-            );
-          }
-          if (action === 'rename') openArchiveRenameModal('folder', folder.id);
-          if (action === 'move') openArchiveMoveModal({ folderId: folder.id });
-          if (action === 'delete') openArchiveDeleteFolderConfirm(folder.id);
-        }
-        if (source) {
-          if (action === 'edit') openArchiveSourceModal(source.id);
-          if (action === 'favorite') { source.favorite = !source.favorite; renderArchive(); }
-          if (action === 'delete') openArchiveDeleteSourceConfirm(source.id);
-        }
-      }));
+
+              if (folder) {
+                if (
+                  action === 'open'
+                ) {
+                  archiveNavigateToLocation(
+                    {
+                      view:
+                        state.archiveView
+                          === 'favorites'
+                            ? 'favorites'
+                            : 'files',
+
+                      folderId:
+                        folder.id,
+
+                      search:
+                        '',
+
+                      searchScope:
+                        'folder',
+
+                      personFilterId:
+                        '',
+
+                      selectedFileId:
+                        null,
+
+                      inspectorCollapsed:
+                        false
+                    },
+                    {
+                      expandCurrent:
+                        true
+                    }
+                  );
+                }
+
+                if (
+                  action === 'rename'
+                ) {
+                  openArchiveRenameFolderModal(
+                    folder.id
+                  );
+                }
+
+                if (
+                  action === 'move'
+                ) {
+                  openArchiveMoveModal({
+                    folderId:
+                      folder.id
+                  });
+                }
+
+                if (
+                  action === 'delete'
+                ) {
+                  openArchiveDeleteFolderConfirm(
+                    folder.id
+                  );
+                }
+
+                return;
+              }
+
+              if (source) {
+                if (
+                  action === 'edit'
+                ) {
+                  openArchiveSourceModal(
+                    source.id
+                  );
+                }
+
+                if (
+                  action === 'favorite'
+                ) {
+                  source.favorite =
+                    !source.favorite;
+
+                  renderArchive();
+                }
+
+                if (
+                  action === 'delete'
+                ) {
+                  openArchiveDeleteSourceConfirm(
+                    source.id
+                  );
+                }
+              }
+            }
+          );
+        });
     }
 
-    function openArchiveConnectedRecord(
+    function openArchiveConnectedRecordCommit(
       type,
       id
     ) {
@@ -61826,7 +64595,7 @@
             id
           );
 
-        archiveNavigateToLocation(
+        archiveNavigateToLocationCommit(
           {
             view:
               'files',
@@ -61885,10 +64654,215 @@
       }
     }
 
+    function openArchiveConnectedRecord(
+      type,
+      id
+    ) {
+      runAfterArchiveFileEditGuard(
+        () => {
+          openArchiveConnectedRecordCommit(
+            type,
+            id
+          );
+        }
+      );
+    }
+
     function bindArchiveControls() {
       const root = main.querySelector('.archive-shell');
       if (!root) return;
+      bindGenealogyDateFields(
+        root
+      );
 
+      bindPlaceComboboxes(
+        root
+      );
+      root
+        .querySelector(
+          '#archiveEditFile'
+        )
+        ?.addEventListener(
+          'click',
+          beginArchiveFileEdit
+        );
+
+      root
+        .querySelector(
+          '#archiveCancelFileEdit'
+        )
+        ?.addEventListener(
+          'click',
+          cancelArchiveFileEdit
+        );
+
+      root
+        .querySelector(
+          '#archiveSaveFileEdit'
+        )
+        ?.addEventListener(
+          'click',
+          saveArchiveFileEdit
+        );
+      root
+        .querySelectorAll(
+          '[data-archive-section-toggle]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              if (
+                event.target.closest(
+                  '.link'
+                )
+              ) {
+                return;
+              }
+
+              const sectionId =
+                button.dataset
+                  .archiveSectionToggle;
+
+              const open =
+                !archiveInspectorSectionIsOpen(
+                  sectionId
+                );
+
+              state.archiveInspectorSections[
+                sectionId
+              ] = open;
+
+              const section =
+                button.closest(
+                  '.panel-section'
+                );
+
+              const body =
+                section?.querySelector(
+                  '.panel-section-body'
+                );
+
+              section
+                ?.classList
+                .toggle(
+                  'is-open',
+                  open
+                );
+
+              button.setAttribute(
+                'aria-expanded',
+                String(
+                  open
+                )
+              );
+
+              if (body) {
+                body.hidden =
+                  !open;
+              }
+            }
+          );
+        });
+      root
+        .querySelector(
+          '[data-archive-add-file-person]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const fileId =
+              state.archiveSelectedFileId;
+
+            if (!fileId) {
+              return;
+            }
+
+            openArchiveConnectionPicker({
+              ownerType:
+                'file',
+
+              ownerIds:
+                [
+                  fileId
+                ],
+
+              entityType:
+                'person'
+            });
+          }
+        );
+
+      root
+        .querySelector(
+          '[data-archive-add-file-event]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const fileId =
+              state.archiveSelectedFileId;
+
+            if (!fileId) {
+              return;
+            }
+
+            openArchiveConnectionPicker({
+              ownerType:
+                'file',
+
+              ownerIds:
+                [
+                  fileId
+                ],
+
+              entityType:
+                'event'
+            });
+          }
+        );
+
+      root
+        .querySelector(
+          '[data-archive-add-file-note]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            openArchiveFileNoteModal(
+              state.archiveSelectedFileId
+            );
+          }
+        );
+
+      root
+        .querySelector(
+          '[data-archive-add-file-source]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const fileId =
+              state.archiveSelectedFileId;
+
+            if (!fileId) {
+              return;
+            }
+
+            openArchiveConnectionPicker({
+              ownerType:
+                'file',
+
+              ownerIds:
+                [
+                  fileId
+                ],
+
+              entityType:
+                'source'
+            });
+          }
+        );
       root.querySelector('[data-archive-search]')?.addEventListener('input', event => {
         const value = event.currentTarget.value;
         const selectionStart = event.currentTarget.selectionStart;
@@ -62003,11 +64977,52 @@
             }
           );
         });
-      root.querySelectorAll('[data-archive-file-row]').forEach(row => {
-        const open = () => { state.archiveSelectedFileId = row.dataset.archiveFileRow; state.archiveInspectorCollapsed = false; renderArchiveMain(); };
-        row.addEventListener('click', event => { if (!event.target.closest('button,input,select,a')) open(); });
-        row.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); open(); } });
-      });
+      root
+        .querySelectorAll(
+          '[data-archive-file-row]'
+        )
+        .forEach(row => {
+          const open =
+            () => {
+              runAfterArchiveFileEditGuard(
+                () => {
+                  state.archiveSelectedFileId =
+                    row.dataset
+                      .archiveFileRow;
+
+                  state.archiveInspectorCollapsed =
+                    false;
+
+                  renderArchiveMain();
+                }
+              );
+            };
+
+          row.addEventListener(
+            'click',
+            event => {
+              if (
+                !event.target.closest(
+                  'button,input,select,a'
+                )
+              ) {
+                open();
+              }
+            }
+          );
+
+          row.addEventListener(
+            'keydown',
+            event => {
+              if (
+                event.key === 'Enter'
+              ) {
+                event.preventDefault();
+                open();
+              }
+            }
+          );
+        });
       root
         .querySelectorAll(
           '[data-archive-folder-row]'
@@ -62110,27 +65125,33 @@
         }
         if (button.dataset.archiveSelectionAction === 'delete') openArchiveDeleteFileConfirm(ids);
       }));
-      root.querySelectorAll('[data-archive-inspector-collapse]').forEach(button => button.addEventListener('click', () => { state.archiveInspectorCollapsed = button.dataset.archiveInspectorCollapse === 'true'; renderArchiveMain(); }));
+      root
+        .querySelectorAll(
+          '[data-archive-inspector-collapse]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              const collapsed =
+                button.dataset
+                  .archiveInspectorCollapse
+                === 'true';
+
+              runAfterArchiveFileEditGuard(
+                () => {
+                  state.archiveInspectorCollapsed =
+                    collapsed;
+
+                  renderArchiveMain();
+                }
+              );
+            }
+          );
+        });
       root.querySelectorAll('[data-archive-open-file]').forEach(button => button.addEventListener('click', () => showToast('Opening the original file is simulated.')));
-      root.querySelectorAll('[data-archive-rename]').forEach(button => button.addEventListener('click', () => openArchiveRenameModal(button.dataset.archiveRename, button.dataset.archiveItemId)));
-      root.querySelectorAll('[data-archive-move-file]').forEach(button => button.addEventListener('click', () => openArchiveMoveModal({ fileIds: [button.dataset.archiveMoveFile] })));
-      root.querySelectorAll('[data-archive-move-folder]').forEach(button => button.addEventListener('click', () => openArchiveMoveModal({ folderId: button.dataset.archiveMoveFolder })));
-      root.querySelectorAll('[data-archive-delete-file]').forEach(button => button.addEventListener('click', () => openArchiveDeleteFileConfirm([button.dataset.archiveDeleteFile])));
-      root.querySelectorAll('[data-archive-delete-folder]').forEach(button => button.addEventListener('click', () => openArchiveDeleteFolderConfirm(button.dataset.archiveDeleteFolder)));
       root.querySelectorAll('[data-archive-delete-source]').forEach(button => button.addEventListener('click', () => openArchiveDeleteSourceConfirm(button.dataset.archiveDeleteSource)));
       root.querySelectorAll('[data-archive-edit-source]').forEach(button => button.addEventListener('click', () => openArchiveSourceModal(button.dataset.archiveEditSource)));
-      root.querySelector('[data-archive-file-details-form]')?.addEventListener('submit', event => {
-        event.preventDefault();
-        const form = event.currentTarget;
-        const file = archiveFileById(form.dataset.archiveFileDetailsForm);
-        if (!file) return;
-        file.description = form.querySelector('[data-archive-file-description]').value.trim();
-        file.documentDate = { type: form.querySelector('[data-archive-file-date-type]').value, value: form.querySelector('[data-archive-file-date-value]').value.trim() };
-        file.updatedAt = new Date().toISOString();
-        file.updated = 'Just now';
-        renderArchive();
-        showToast('File details saved.');
-      });
       root.querySelectorAll('[data-archive-add-connection]').forEach(button => button.addEventListener('click', () => openArchiveConnectionPicker({ ownerType: button.dataset.archiveOwnerType, ownerIds: [button.dataset.archiveOwnerId], entityType: button.dataset.archiveAddConnection })));
       root.querySelectorAll('[data-archive-unlink-id]').forEach(button => button.addEventListener('click', () => openArchiveUnlinkConfirm({ ownerType: button.dataset.archiveUnlinkOwnerType, ownerId: button.dataset.archiveUnlinkOwnerId, entityType: button.dataset.archiveUnlinkType, entityId: button.dataset.archiveUnlinkId })));
       root.querySelectorAll('[data-archive-open-connection]').forEach(button => button.addEventListener('click', () => openArchiveConnectedRecord(button.dataset.archiveOpenConnection, button.dataset.archiveConnectionId)));
@@ -62196,11 +65217,41 @@
           }
         }
       );
+      lockArchiveWorkspaceDuringFileEdit(
+        root
+      );
       bindToasts(root);
     }
 
-    function archivePersonChoices() {
-      return (sampleData.people || []).filter(person => !person.deleted).map(person => person.names?.display || person.name).filter(Boolean);
+    function lockArchiveWorkspaceDuringFileEdit(
+      root
+    ) {
+      if (
+        !archiveFileEditIsActive()
+      ) {
+        return;
+      }
+
+      root
+        .querySelectorAll(`
+          .archive-main
+          button,
+
+          .archive-main
+          input,
+
+          .archive-main
+          select
+        `)
+        .forEach(control => {
+          control.disabled =
+            true;
+
+          control.setAttribute(
+            'aria-disabled',
+            'true'
+          );
+        });
     }
 
     function openArchiveCreateSourceModal(prefill = '') {
@@ -89951,7 +93002,7 @@
       }`;
     }
 
-    function navigateToProjectModule(projectId, moduleName = 'Projects') {
+    function navigateToProjectModuleCommit(projectId, moduleName = 'Projects') {
       const project = sampleData.projects.find(item => item.id === projectId && !item.deleted && item.available !== false);
       const nextModule = moduleName === 'Projects' || modules.includes(moduleName) ? moduleName : 'Projects';
       if (!project) {
@@ -90040,6 +93091,46 @@
       persistProjectContinuation({ projectId: project.id, module: nextModule, openedAt: new Date().toISOString() });
       render();
       return true;
+    }
+
+    function navigateToProjectModule(
+      projectId,
+      moduleName = 'Projects'
+    ) {
+      const leavingCurrentArchive =
+        state.activeModule
+          === 'Archive'
+        && state.archiveFileEditing
+        && (
+          projectId
+            !== currentProjectId()
+          || moduleName
+            !== 'Archive'
+        );
+
+      if (
+        leavingCurrentArchive
+      ) {
+        runAfterArchiveFileEditGuard(
+          () => {
+            navigateToProjectModuleCommit(
+              projectId,
+              moduleName
+            );
+          }
+        );
+
+        /*
+          Navigation may be deferred until the user
+          confirms the discard dialog.
+        */
+        return true;
+      }
+
+      return navigateToProjectModuleCommit(
+        projectId,
+        moduleName
+      );
     }
 
     function filteredProjects() {
