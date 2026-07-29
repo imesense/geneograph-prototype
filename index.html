@@ -11699,58 +11699,97 @@
         var(--space-5);
     }
 
-    .albums-detail-read-list {
+    .albums-detail-read-list,
+    .archive-file-read-list {
       margin: 0;
       padding: 0;
+
       display: grid;
     }
 
-    .albums-detail-read-row {
+    .albums-detail-read-row,
+    .archive-file-read-row {
       min-width: 0;
-      padding: 13px 0;
+
+      padding:
+        13px 0;
+
       border-bottom:
-        1px solid rgba(45, 54, 52, .72);
+        1px solid
+        rgba(45, 54, 52, .72);
+
       display: grid;
       grid-template-columns:
         88px
         minmax(0, 1fr);
-      gap: var(--space-3);
-      align-items: start;
+
+      gap:
+        var(--space-3);
+
+      align-items:
+        start;
     }
 
-    .albums-detail-read-row:first-child {
+    .albums-detail-read-row:first-child,
+    .archive-file-read-row:first-child {
       padding-top: 2px;
     }
 
-    .albums-detail-read-row:last-child {
+    .albums-detail-read-row:last-child,
+    .archive-file-read-row:last-child {
       padding-bottom: 2px;
+
       border-bottom: 0;
     }
 
     .albums-detail-read-row dt,
-    .albums-detail-read-row dd {
+    .albums-detail-read-row dd,
+    .archive-file-read-row dt,
+    .archive-file-read-row dd {
       min-width: 0;
       margin: 0;
     }
 
-    .albums-detail-read-row dt {
-      color: var(--text-tertiary);
-      font-size: 12px;
-      font-weight: 850;
-      line-height: 1.5;
+    .albums-detail-read-row dt,
+    .archive-file-read-row dt {
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        12px;
+
+      font-weight:
+        850;
+
+      line-height:
+        1.5;
     }
 
-    .albums-detail-read-row dd {
-      color: var(--text-secondary);
-      font-size: 14px;
-      font-weight: 650;
-      line-height: 1.5;
-      overflow-wrap: anywhere;
+    .albums-detail-read-row dd,
+    .archive-file-read-row dd {
+      color:
+        var(--text-secondary);
+
+      font-size:
+        14px;
+
+      font-weight:
+        650;
+
+      line-height:
+        1.5;
+
+      overflow-wrap:
+        anywhere;
     }
 
-    .albums-detail-read-caption {
-      white-space: pre-wrap;
-      text-align: left;
+    .albums-detail-read-caption,
+    .archive-file-read-description {
+      white-space:
+        pre-wrap;
+
+      text-align:
+        left;
     }
 
     .albums-form-grid {
@@ -14213,9 +14252,13 @@
         aspect-ratio: 4 / 3;
       }
 
-      .albums-detail-read-row {
-        grid-template-columns: 1fr;
-        gap: 4px;
+      .albums-detail-read-row,
+      .archive-file-read-row {
+        grid-template-columns:
+          1fr;
+
+        gap:
+          4px;
       }
     }
 
@@ -15460,86 +15503,6 @@
       box-shadow:
         0 0 0 3px
         rgba(98, 217, 154, .1);
-    }
-
-    .archive-file-read-list {
-      margin: 0;
-      padding: 0;
-
-      display: grid;
-    }
-
-    .archive-file-read-row {
-      min-width: 0;
-
-      padding:
-        13px 0;
-
-      border-bottom:
-        1px solid
-        rgba(45, 54, 52, .72);
-
-      display: grid;
-      grid-template-columns:
-        100px
-        minmax(0, 1fr);
-
-      gap:
-        var(--space-3);
-
-      align-items:
-        start;
-    }
-
-    .archive-file-read-row:first-child {
-      padding-top: 2px;
-    }
-
-    .archive-file-read-row:last-child {
-      padding-bottom: 2px;
-      border-bottom: 0;
-    }
-
-    .archive-file-read-row dt,
-    .archive-file-read-row dd {
-      min-width: 0;
-      margin: 0;
-    }
-
-    .archive-file-read-row dt {
-      color:
-        var(--text-tertiary);
-
-      font-size:
-        12px;
-
-      font-weight:
-        850;
-
-      line-height:
-        1.5;
-    }
-
-    .archive-file-read-row dd {
-      color:
-        var(--text-secondary);
-
-      font-size:
-        14px;
-
-      font-weight:
-        650;
-
-      line-height:
-        1.5;
-
-      overflow-wrap:
-        anywhere;
-    }
-
-    .archive-file-read-description {
-      white-space:
-        pre-wrap;
     }
 
     .archive-file-inspector-content
@@ -62234,29 +62197,9 @@
               archive-file-form-grid
             ">
 
-            <div
-              class="
-                archive-file-field
-              ">
-
-              <label
-                for="archiveFileDescription">
-
-                Description
-              </label>
-
-              <textarea
-                id="archiveFileDescription"
-                maxlength="1200"
-                placeholder="Add a short description of this file">${escapeHtml(
-                  draft.description
-                  || ''
-                )}</textarea>
-            </div>
-
             ${renderGenealogyDateField(
               'archiveFileDocumentDate',
-              'Document date',
+              'Date',
               draft.documentDate,
               {
                 inputId:
@@ -62278,7 +62221,7 @@
                 'archiveFileDocumentPlace',
 
               label:
-                'Document place',
+                'Place',
 
               value:
                 getPlaceDisplay(
@@ -62297,6 +62240,26 @@
               className:
                 'full'
             })}
+
+            <div
+              class="
+                archive-file-field
+              ">
+
+              <label
+                for="archiveFileDescription">
+
+                Description
+              </label>
+
+              <textarea
+                id="archiveFileDescription"
+                maxlength="1200"
+                placeholder="Add a description of this file">${escapeHtml(
+                  draft.description
+                  || ''
+                )}</textarea>
+            </div>
           </div>
         `;
       }
@@ -62340,27 +62303,7 @@
             ">
 
             <dt>
-              Description
-            </dt>
-
-            <dd
-              class="
-                archive-file-read-description
-              ">
-
-              ${escapeHtml(
-                description
-              )}
-            </dd>
-          </div>
-
-          <div
-            class="
-              archive-file-read-row
-            ">
-
-            <dt>
-              Document date
+              Date
             </dt>
 
             <dd>
@@ -62376,7 +62319,7 @@
             ">
 
             <dt>
-              Document place
+              Place
             </dt>
 
             <dd>
@@ -62384,6 +62327,19 @@
                 placeLabel
               )}
             </dd>
+          </div>
+
+          <div
+            class="
+              archive-file-read-row
+            ">
+
+            <dt>
+              Description
+            </dt>
+            <dd class="archive-file-read-description">${escapeHtml(
+              description
+            )}</dd>
           </div>
         </dl>
       `;
@@ -62618,22 +62574,36 @@
       `;
     }
 
+    function archiveFileEventRecords(
+      file
+    ) {
+      return (
+        file?.linkedEventIds
+        || []
+      )
+        .map(id =>
+          archiveConnectionRecord(
+            'event',
+            id
+          )
+        )
+        .filter(event =>
+          Boolean(
+            eventRelationItemModel(
+              event
+            )
+          )
+        );
+    }
+
     function renderArchiveFileEvents(
       file,
       readOnly
     ) {
       const events =
-        (
-          file.linkedEventIds
-          || []
-        )
-          .map(id =>
-            archiveConnectionRecord(
-              'event',
-              id
-            )
-          )
-          .filter(Boolean);
+        archiveFileEventRecords(
+          file
+        );
 
       if (!events.length) {
         return `
@@ -62651,27 +62621,37 @@
         <div
           class="
             relationship-list
+            notes-event-list
           ">
 
           ${events
             .map(event =>
-              renderArchiveFileConnectionRow({
-                file,
-                entityType:
-                  'event',
-                record:
-                  event,
-                leadingHtml:
-                  `
-                    <span
-                      class="
-                        archive-file-relation-icon
-                      "
-                      aria-hidden="true">
+              renderEventRelationItem({
+                event,
 
-                      ${icon.calendar}
-                    </span>
+                openAttributes:
+                  `
+                    data-archive-open-connection="event"
+                    data-archive-connection-id="${escapeHtml(
+                      event.id
+                    )}"
                   `,
+
+                removeAttributes:
+                  `
+                    data-archive-unlink-owner-type="file"
+                    data-archive-unlink-owner-id="${escapeHtml(
+                      file.id
+                    )}"
+                    data-archive-unlink-type="event"
+                    data-archive-unlink-id="${escapeHtml(
+                      event.id
+                    )}"
+                  `,
+
+                removeContextLabel:
+                  'file',
+
                 readOnly
               })
             )
@@ -62680,21 +62660,29 @@
       `;
     }
 
+    function archiveFileNoteRecords(
+      file
+    ) {
+      return archiveNoteIdsForFile(
+        file
+      )
+        .map(id =>
+          archiveConnectionRecord(
+            'note',
+            id
+          )
+        )
+        .filter(Boolean);
+    }
+
     function renderArchiveFileNotes(
       file,
       readOnly
     ) {
       const notes =
-        archiveNoteIdsForFile(
+        archiveFileNoteRecords(
           file
-        )
-          .map(id =>
-            archiveConnectionRecord(
-              'note',
-              id
-            )
-          )
-          .filter(Boolean);
+        );
 
       if (!notes.length) {
         return `
@@ -62712,27 +62700,37 @@
         <div
           class="
             relationship-list
+            notes-related-list
           ">
 
           ${notes
             .map(note =>
-              renderArchiveFileConnectionRow({
-                file,
-                entityType:
-                  'note',
-                record:
-                  note,
-                leadingHtml:
-                  `
-                    <span
-                      class="
-                        archive-file-relation-icon
-                      "
-                      aria-hidden="true">
+              renderRelatedNoteRelationItem({
+                note,
 
-                      ${icon.note}
-                    </span>
+                openAttributes:
+                  `
+                    data-archive-open-connection="note"
+                    data-archive-connection-id="${escapeHtml(
+                      note.id
+                    )}"
                   `,
+
+                removeAttributes:
+                  `
+                    data-archive-unlink-owner-type="file"
+                    data-archive-unlink-owner-id="${escapeHtml(
+                      file.id
+                    )}"
+                    data-archive-unlink-type="note"
+                    data-archive-unlink-id="${escapeHtml(
+                      note.id
+                    )}"
+                  `,
+
+                removeContextLabel:
+                  'file',
+
                 readOnly
               })
             )
@@ -62920,13 +62918,12 @@
         ).length;
 
       const eventCount =
-        (
-          file.linkedEventIds
-          || []
+        archiveFileEventRecords(
+          file
         ).length;
 
       const noteCount =
-        archiveNoteIdsForFile(
+        archiveFileNoteRecords(
           file
         ).length;
 
@@ -64066,7 +64063,7 @@
       const config = archiveEntityConfig(entityType);
       const record = archiveConnectionRecord(entityType, entityId);
       if (!config || !record) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveUnlinkTitle"><div class="modal-header"><div><h2 id="archiveUnlinkTitle">Unlink ${escapeHtml(config.singular)}?</h2><p>${escapeHtml(config.label(record))}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="unlink-relationship-warning"><strong>The linked record will not be deleted.</strong><span>Only this connection will be removed. The file, source, and genealogy record will remain available.</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-archive-unlink-confirm>Unlink</button></div></div>`);
+      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveUnlinkTitle"><div class="modal-header"><div><h2 id="archiveUnlinkTitle">Unlink ${escapeHtml(config.singular)}?</h2><p>${escapeHtml(config.label(record))}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="unlink-relationship-warning"><strong>The linked record will not be deleted. </strong><span>Only this connection will be removed. The file, source, and genealogy record will remain available.</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-archive-unlink-confirm>Unlink</button></div></div>`);
       modalBackdrop.querySelector('[data-archive-unlink-confirm]')?.addEventListener('click', () => {
         archiveSetConnection(ownerType, ownerId, entityType, entityId, false);
         closeModal();
@@ -64771,28 +64768,11 @@
         ?.addEventListener(
           'click',
           () => {
-            const fileId =
-              state.archiveSelectedFileId;
-
-            if (!fileId) {
-              return;
-            }
-
-            openArchiveConnectionPicker({
-              ownerType:
-                'file',
-
-              ownerIds:
-                [
-                  fileId
-                ],
-
-              entityType:
-                'person'
-            });
+            openArchiveFilePeopleModal(
+              state.archiveSelectedFileId
+            );
           }
         );
-
       root
         .querySelector(
           '[data-archive-add-file-event]'
@@ -64800,25 +64780,9 @@
         ?.addEventListener(
           'click',
           () => {
-            const fileId =
-              state.archiveSelectedFileId;
-
-            if (!fileId) {
-              return;
-            }
-
-            openArchiveConnectionPicker({
-              ownerType:
-                'file',
-
-              ownerIds:
-                [
-                  fileId
-                ],
-
-              entityType:
-                'event'
-            });
+            openArchiveFileEventsModal(
+              state.archiveSelectedFileId
+            );
           }
         );
 
@@ -71106,6 +71070,321 @@
       });
     }
 
+    function eventRelationItemModel(
+      event
+    ) {
+      if (!event) {
+        return null;
+      }
+
+      const owner =
+        placeInspectorEventOwnerIds(
+          event
+        )
+          .map(personId =>
+            getPerson(
+              personId
+            )
+          )
+          .find(person =>
+            person
+            && !person.deleted
+            && (
+              !event.projectId
+              || person.projectId
+                === event.projectId
+            )
+          );
+
+      /*
+        Events without a valid owner cannot use
+        the Notes event-row presentation.
+      */
+      if (!owner) {
+        return null;
+      }
+
+      const ownerName =
+        personResourceDisplayName(
+          owner
+        )
+        || owner.names?.display
+        || 'Unnamed person';
+
+      const presentation =
+        placeInspectorEventPresentation(
+          event,
+          owner.id
+        );
+
+      const eventTitle =
+        presentation.title
+        || placeInspectorEventLabel(
+          event
+        )
+        || 'Event';
+
+      const eventDate =
+        presentation.date
+        || 'Date unknown';
+
+      const eventPlace =
+        timelinePlaceLabel(
+          event
+        );
+
+      const datePlaceLabel =
+        [
+          eventDate,
+          eventPlace
+        ]
+          .filter(Boolean)
+          .join(' · ');
+
+      const relatedPeople =
+        placeInspectorEventRelatedPeople(
+          event,
+          owner.id
+        );
+
+      let relationshipLabel =
+        '';
+
+      if (
+        event.type
+          === 'childBirth'
+      ) {
+        relationshipLabel =
+          presentation.relationship
+          || '';
+      } else if (
+        relatedPeople.length === 1
+      ) {
+        relationshipLabel =
+          `With ${
+            personResourceDisplayName(
+              relatedPeople[0]
+            )
+            || relatedPeople[0]
+              .names?.display
+            || 'another person'
+          }`;
+      } else if (
+        relatedPeople.length > 1
+      ) {
+        const firstName =
+          personResourceDisplayName(
+            relatedPeople[0]
+          )
+          || relatedPeople[0]
+            .names?.display
+          || 'another person';
+
+        relationshipLabel =
+          `With ${firstName} + ${
+            relatedPeople.length - 1
+          } ${
+            relatedPeople.length === 2
+              ? 'person'
+              : 'people'
+          }`;
+      } else {
+        relationshipLabel =
+          presentation.relationship
+          || '';
+      }
+
+      return {
+        owner,
+        ownerName,
+        eventTitle,
+        datePlaceLabel,
+        relationshipLabel
+      };
+    }
+
+    function renderEventRelationItem({
+      event,
+      openAttributes =
+        '',
+      removeAttributes =
+        '',
+      removeContextLabel =
+        'item',
+      readOnly =
+        false
+    } = {}) {
+      const model =
+        eventRelationItemModel(
+          event
+        );
+
+      if (!model) {
+        return '';
+      }
+
+      const {
+        owner,
+        ownerName,
+        eventTitle,
+        datePlaceLabel,
+        relationshipLabel
+      } = model;
+
+      const content = `
+        <span
+          class="
+            notes-event-avatar
+          "
+          aria-hidden="true">
+
+          ${renderPersonAvatar(
+            owner,
+            'small-avatar notes-event-owner-avatar',
+            {
+              element:
+                'span',
+
+              attrs:
+                'aria-hidden="true"'
+            }
+          )}
+
+          <span
+            class="
+              notes-event-avatar-badge
+            ">
+
+            ${timelineEventIcon(
+              event
+            )}
+          </span>
+        </span>
+
+        <span
+          class="
+            notes-event-copy
+          ">
+
+          <span
+            class="
+              notes-event-owner
+            ">
+
+            ${escapeHtml(
+              ownerName
+            )}
+          </span>
+
+          <strong
+            class="
+              notes-event-title
+            ">
+
+            ${escapeHtml(
+              eventTitle
+            )}
+          </strong>
+
+          <span
+            class="
+              notes-event-date-place
+            ">
+
+            ${escapeHtml(
+              datePlaceLabel
+            )}
+          </span>
+
+          ${
+            relationshipLabel
+              ? `
+                <span
+                  class="
+                    notes-event-relationship
+                  ">
+
+                  ${escapeHtml(
+                    relationshipLabel
+                  )}
+                </span>
+              `
+              : ''
+          }
+        </span>
+      `;
+
+      return `
+        <div
+          class="
+            relation-row
+            notes-event-item
+          ">
+
+          ${
+            readOnly
+              ? `
+                <div
+                  class="
+                    relation-row-main
+                    notes-event-main
+                  ">
+
+                  ${content}
+                </div>
+              `
+              : `
+                <button
+                  class="
+                    relation-row-main
+                    notes-event-main
+                  "
+                  type="button"
+                  ${openAttributes}
+                  aria-label="Open ${escapeHtml(
+                    eventTitle
+                  )} for ${escapeHtml(
+                    ownerName
+                  )}">
+
+                  ${content}
+                </button>
+              `
+          }
+
+          ${
+            !readOnly
+            && removeAttributes
+              ? `
+                <div
+                  class="
+                    relation-actions
+                  ">
+
+                  <button
+                    class="
+                      relation-action-button
+                      danger
+                    "
+                    type="button"
+                    ${removeAttributes}
+                    aria-label="Remove ${escapeHtml(
+                      eventTitle
+                    )} from ${escapeHtml(
+                      removeContextLabel
+                    )}"
+                    title="Remove link">
+
+                    ${icon.close}
+                  </button>
+                </div>
+              `
+              : ''
+          }
+        </div>
+      `;
+    }
+
     function renderNoteLinkedRecordRows(
       type,
       config,
@@ -71332,7 +71611,9 @@
         `;
       }
       
-      if (type === 'event') {
+      if (
+        type === 'event'
+      ) {
         return `
           <div
             class="
@@ -71341,233 +71622,32 @@
             ">
 
             ${records
-              .map(event => {
-                const owner =
-                  placeInspectorEventOwnerIds(
-                    event
-                  )
-                    .map(personId =>
-                      getPerson(
-                        personId
-                      )
-                    )
-                    .find(person =>
-                      person
-                      && !person.deleted
-                      && (
-                        !event.projectId
-                        || person.projectId
-                          === event.projectId
-                      )
-                    );
+              .map(event =>
+                renderEventRelationItem({
+                  event,
 
-                /*
-                  Events without a valid Person owner
-                  are invalid and are not displayed.
-                */
-                if (!owner) {
-                  return '';
-                }
-
-                const ownerName =
-                  personResourceDisplayName(
-                    owner
-                  )
-                  || owner.names?.display
-                  || 'Unnamed person';
-
-                const presentation =
-                  placeInspectorEventPresentation(
-                    event,
-                    owner.id
-                  );
-
-                const eventTitle =
-                  presentation.title
-                  || placeInspectorEventLabel(
-                    event
-                  )
-                  || 'Event';
-
-                const eventDate =
-                  presentation.date
-                  || 'Date unknown';
-
-                const eventPlace =
-                  timelinePlaceLabel(
-                    event
-                  );
-
-                const datePlaceLabel =
-                  [
-                    eventDate,
-                    eventPlace
-                  ]
-                    .filter(Boolean)
-                    .join(' · ');
-
-                const relatedPeople =
-                  placeInspectorEventRelatedPeople(
-                    event,
-                    owner.id
-                  );
-
-                let relationshipLabel = '';
-
-                if (
-                  event.type
-                    === 'childBirth'
-                ) {
-                  relationshipLabel =
-                    presentation.relationship
-                    || '';
-                } else if (
-                  relatedPeople.length === 1
-                ) {
-                  relationshipLabel =
-                    `With ${
-                      personResourceDisplayName(
-                        relatedPeople[0]
-                      )
-                      || relatedPeople[0]
-                        .names?.display
-                      || 'another person'
-                    }`;
-                } else if (
-                  relatedPeople.length > 1
-                ) {
-                  const firstName =
-                    personResourceDisplayName(
-                      relatedPeople[0]
-                    )
-                    || relatedPeople[0]
-                      .names?.display
-                    || 'another person';
-
-                  relationshipLabel =
-                    `With ${firstName} + ${
-                      relatedPeople.length - 1
-                    } ${
-                      relatedPeople.length === 2
-                        ? 'person'
-                        : 'people'
-                    }`;
-                } else {
-                  relationshipLabel =
-                    presentation.relationship
-                    || '';
-                }
-
-                return `
-                  <div
-                    class="
-                      relation-row
-                      notes-event-item
-                    ">
-
-                    <button
-                      class="
-                        relation-row-main
-                        notes-event-main
-                      "
-                      type="button"
+                  openAttributes:
+                    `
                       data-note-linked-open
                       data-note-linked-type="event"
                       data-note-linked-id="${escapeHtml(
                         event.id
                       )}"
-                      aria-label="Open ${escapeHtml(
-                        eventTitle
-                      )} for ${escapeHtml(
-                        ownerName
-                      )}">
+                    `,
 
-                      <span
-                        class="notes-event-avatar"
-                        aria-hidden="true">
+                  removeAttributes:
+                    `
+                      data-note-linked-remove
+                      data-note-linked-type="event"
+                      data-note-linked-id="${escapeHtml(
+                        event.id
+                      )}"
+                    `,
 
-                        ${renderPersonAvatar(
-                          owner,
-                          'small-avatar notes-event-owner-avatar',
-                          {
-                            element:
-                              'span',
-
-                            attrs:
-                              'aria-hidden="true"'
-                          }
-                        )}
-
-                        <span
-                          class="notes-event-avatar-badge">
-
-                          ${timelineEventIcon(
-                            event
-                          )}
-                        </span>
-                      </span>
-
-                      <span class="notes-event-copy">
-
-                        <span class="notes-event-owner">
-                          ${escapeHtml(
-                            ownerName
-                          )}
-                        </span>
-
-                        <strong class="notes-event-title">
-                          ${escapeHtml(
-                            eventTitle
-                          )}
-                        </strong>
-
-                        <span class="notes-event-date-place">
-                          ${escapeHtml(
-                            datePlaceLabel
-                          )}
-                        </span>
-
-                        ${
-                          relationshipLabel
-                            ? `
-                              <span
-                                class="
-                                  notes-event-relationship
-                                ">
-
-                                ${escapeHtml(
-                                  relationshipLabel
-                                )}
-                              </span>
-                            `
-                            : ''
-                        }
-                      </span>
-                    </button>
-
-                    <div class="relation-actions">
-                      <button
-                        class="
-                          relation-action-button
-                          danger
-                        "
-                        type="button"
-                        data-note-linked-remove
-                        data-note-linked-type="event"
-                        data-note-linked-id="${escapeHtml(
-                          event.id
-                        )}"
-                        aria-label="Remove ${escapeHtml(
-                          eventTitle
-                        )} from note"
-                        title="Remove link">
-
-                        ${icon.close}
-                      </button>
-                    </div>
-                  </div>
-                `;
-              })
+                  removeContextLabel:
+                    'note'
+                })
+              )
               .join('')}
           </div>
         `;
@@ -71816,6 +71896,166 @@
       `;
     }
 
+    function renderRelatedNoteRelationItem({
+      note,
+      openAttributes =
+        '',
+      removeAttributes =
+        '',
+      removeContextLabel =
+        'item',
+      readOnly =
+        false
+    } = {}) {
+      if (!note) {
+        return '';
+      }
+
+      const title =
+        note.title
+        || 'Untitled note';
+
+      const excerpt =
+        noteExcerpt(
+          note,
+          120
+        )
+        || 'No note content';
+
+      const metadata =
+        relatedNotePermanentMetadata(
+          note
+        );
+
+      const content = `
+        ${renderRelatedNoteIcon()}
+
+        <span
+          class="
+            notes-related-copy
+          ">
+
+          <span
+            class="
+              notes-related-title-line
+            ">
+
+            <strong
+              class="
+                notes-related-title
+              ">
+
+              ${escapeHtml(
+                title
+              )}
+            </strong>
+
+            ${
+              note.archived
+                ? `
+                  <span
+                    class="
+                      notes-related-archived-badge
+                    ">
+
+                    Archived
+                  </span>
+                `
+                : ''
+            }
+          </span>
+
+          <span
+            class="
+              notes-related-excerpt
+            ">
+
+            ${escapeHtml(
+              excerpt
+            )}
+          </span>
+
+          <span
+            class="
+              notes-related-meta
+            ">
+
+            ${escapeHtml(
+              metadata
+            )}
+          </span>
+        </span>
+      `;
+
+      return `
+        <div
+          class="
+            relation-row
+            notes-related-item
+          ">
+
+          ${
+            readOnly
+              ? `
+                <div
+                  class="
+                    relation-row-main
+                    notes-related-main
+                  ">
+
+                  ${content}
+                </div>
+              `
+              : `
+                <button
+                  class="
+                    relation-row-main
+                    notes-related-main
+                  "
+                  type="button"
+                  ${openAttributes}
+                  aria-label="Open ${escapeHtml(
+                    title
+                  )}">
+
+                  ${content}
+                </button>
+              `
+          }
+
+          ${
+            !readOnly
+            && removeAttributes
+              ? `
+                <div
+                  class="
+                    relation-actions
+                  ">
+
+                  <button
+                    class="
+                      relation-action-button
+                      danger
+                    "
+                    type="button"
+                    ${removeAttributes}
+                    aria-label="Remove ${escapeHtml(
+                      title
+                    )} from ${escapeHtml(
+                      removeContextLabel
+                    )}"
+                    title="Remove link">
+
+                    ${icon.close}
+                  </button>
+                </div>
+              `
+              : ''
+          }
+        </div>
+      `;
+    }
+
     function renderRelatedNoteCollectionChips(
       note,
       limit = 2
@@ -71947,104 +72187,30 @@
                 relationship-list
                 notes-related-list
               ">
-
               ${related
-                .map(item => {
-                  const title =
-                    item.title
-                    || 'Untitled note';
-
-                  const excerpt =
-                    noteExcerpt(
+                .map(item =>
+                  renderRelatedNoteRelationItem({
+                    note:
                       item,
-                      120
-                    )
-                    || 'No note content';
 
-                  const metadata =
-                    relatedNotePermanentMetadata(
-                      item
-                    );
-
-                  return `
-                    <div
-                      class="
-                        relation-row
-                        notes-related-item
-                      ">
-
-                      <button
-                        class="
-                          relation-row-main
-                          notes-related-main
-                        "
-                        type="button"
+                    openAttributes:
+                      `
                         data-note-related-open="${escapeHtml(
                           item.id
                         )}"
-                        aria-label="Open ${escapeHtml(
-                          title
-                        )}">
+                      `,
 
-                        ${renderRelatedNoteIcon()}
+                    removeAttributes:
+                      `
+                        data-note-related-remove="${escapeHtml(
+                          item.id
+                        )}"
+                      `,
 
-                        <span class="notes-related-copy">
-                          <span class="notes-related-title-line">
-                            <strong class="notes-related-title">
-                              ${escapeHtml(
-                                title
-                              )}
-                            </strong>
-
-                            ${
-                              item.archived
-                                ? `
-                                  <span
-                                    class="
-                                      notes-related-archived-badge
-                                    ">
-                                    Archived
-                                  </span>
-                                `
-                                : ''
-                            }
-                          </span>
-
-                          <span class="notes-related-excerpt">
-                            ${escapeHtml(
-                              excerpt
-                            )}
-                          </span>
-
-                          <span class="notes-related-meta">
-                            ${escapeHtml(
-                              metadata
-                            )}
-                          </span>
-                        </span>
-                      </button>
-
-                      <div class="relation-actions">
-                        <button
-                          class="
-                            relation-action-button
-                            danger
-                          "
-                          type="button"
-                          data-note-related-remove="${escapeHtml(
-                            item.id
-                          )}"
-                          aria-label="Remove relationship with ${escapeHtml(
-                            title
-                          )}"
-                          title="Remove relationship">
-
-                          ${icon.close}
-                        </button>
-                      </div>
-                    </div>
-                  `;
-                })
+                    removeContextLabel:
+                      'note'
+                  })
+                )
                 .join('')}
             </div>
           `
@@ -73328,27 +73494,155 @@
       return placeIds;
     }
 
-    function openNotesPeopleModal() {
-      const note =
-        selectedNote();
+    function setArchiveFileConnectionIds(
+      fileId,
+      entityType,
+      nextIds
+    ) {
+      const file =
+        archiveFileById(
+          fileId
+        );
 
-      if (!note) {
+      if (!file) {
+        return false;
+      }
+
+      const currentIds =
+        new Set(
+          archiveConnectionIds(
+            'file',
+            file.id,
+            entityType
+          )
+        );
+
+      const normalizedNextIds =
+        new Set(
+          archiveUniqueIds(
+            nextIds
+          )
+        );
+
+      currentIds.forEach(
+        recordId => {
+          if (
+            !normalizedNextIds.has(
+              recordId
+            )
+          ) {
+            archiveSetConnection(
+              'file',
+              file.id,
+              entityType,
+              recordId,
+              false
+            );
+          }
+        }
+      );
+
+      normalizedNextIds.forEach(
+        recordId => {
+          if (
+            !currentIds.has(
+              recordId
+            )
+          ) {
+            archiveSetConnection(
+              'file',
+              file.id,
+              entityType,
+              recordId,
+              true
+            );
+          }
+        }
+      );
+
+      return true;
+    }
+
+    function archiveFileSuggestedPersonIds(
+      file
+    ) {
+      if (!file) {
+        return [];
+      }
+
+      const eventPersonIds =
+        (
+          file.linkedEventIds
+          || []
+        ).flatMap(eventId => {
+          const event =
+            archiveConnectionRecord(
+              'event',
+              eventId
+            );
+
+          return placeInspectorEventOwnerIds(
+            event
+          );
+        });
+
+      const sourcePersonIds =
+        (
+          file.linkedSourceIds
+          || []
+        ).flatMap(sourceId =>
+          archiveSourceById(
+            sourceId
+          )?.linkedPersonIds
+          || []
+        );
+
+      return archiveUniqueIds([
+        ...eventPersonIds,
+        ...sourcePersonIds
+      ]);
+    }
+
+    function openPeopleLinkModal({
+      projectId,
+      title =
+        'Add people',
+      subtitle =
+        '',
+      initialPersonIds =
+        [],
+      suggestedPersonIds =
+        [],
+      onSave,
+      afterSave =
+        () => {},
+      successMessage =
+        'People links updated.'
+    } = {}) {
+      if (
+        !projectId
+        || typeof onSave
+          !== 'function'
+      ) {
         return;
       }
 
       const initialSelectedIds =
         new Set(
           (
-            note.linkedPersonIds || []
+            initialPersonIds
+            || []
           ).filter(personId => {
             const person =
-              getPerson(personId);
+              getPerson(
+                personId
+              );
 
             return (
               person
               && !person.deleted
               && person.projectId
-                === note.projectId
+                === projectId
             );
           })
         );
@@ -73419,18 +73713,10 @@
         People appearing in photos already
         linked to this Note are suggested first.
       */
-      const linkedPhotoPersonIds =
+      const suggestedPersonIdSet =
         new Set(
-          getPhotosForNote(
-            note.id,
-            {
-              projectId:
-                note.projectId
-            }
-          ).flatMap(
-            photo =>
-              photo.personIds || []
-          )
+          suggestedPersonIds
+          || []
         );
 
       const getCandidates = () => {
@@ -73441,7 +73727,7 @@
 
         const ranked =
           getPeople(
-            note.projectId
+            projectId
           )
             .filter(person =>
               person?.id
@@ -73511,7 +73797,7 @@
                   score = 100;
                 }
               } else if (
-                linkedPhotoPersonIds.has(
+                suggestedPersonIdSet.has(
                   person.id
                 )
               ) {
@@ -73568,7 +73854,7 @@
             person
             && !person.deleted
             && person.projectId
-              === note.projectId
+              === projectId
           );
 
         if (!people.length) {
@@ -73738,15 +74024,22 @@
           <div class="modal-header">
             <div>
               <h2 id="notesPeopleTitle">
-                Add people
+                ${escapeHtml(
+                  title
+                )}
               </h2>
 
-              <p>
-                ${escapeHtml(
-                  note.title
-                  || 'Untitled note'
-                )}
-              </p>
+              ${
+                subtitle
+                  ? `
+                    <p>
+                      ${escapeHtml(
+                        subtitle
+                      )}
+                    </p>
+                  `
+                  : ''
+              }
             </div>
 
             <button
@@ -74005,24 +74298,33 @@
               return;
             }
 
-            setNoteEntityLinks(
-              note.id,
-              'person',
+            const nextIds =
               [
                 ...selectedIds
-              ],
-              {
-                projectId:
-                  note.projectId
-              }
-            );
+              ];
+
+            const saved =
+              onSave(
+                nextIds
+              );
+
+            if (
+              saved === false
+            ) {
+              return;
+            }
 
             closeModal();
 
-            renderNotesPreservingInteraction();
+            afterSave();
 
             showToast(
-              'People links updated.'
+              typeof successMessage
+                === 'function'
+                  ? successMessage(
+                      nextIds.length
+                    )
+                  : successMessage
             );
           }
         }
@@ -74037,6 +74339,149 @@
         ?.focus({
           preventScroll: true
         });
+    }
+
+    function openNotesPeopleModal() {
+      const note =
+        selectedNote();
+
+      if (!note) {
+        return;
+      }
+
+      const suggestedPersonIds =
+        getPhotosForNote(
+          note.id,
+          {
+            projectId:
+              note.projectId
+          }
+        ).flatMap(photo =>
+          photo.personIds
+          || []
+        );
+
+      openPeopleLinkModal({
+        projectId:
+          note.projectId,
+
+        title:
+          'Add people',
+
+        subtitle:
+          note.title
+          || 'Untitled note',
+
+        initialPersonIds:
+          note.linkedPersonIds
+          || [],
+
+        suggestedPersonIds,
+
+        onSave:
+          nextPersonIds => {
+            const currentNote =
+              getNote(
+                note.id,
+                {
+                  projectId:
+                    note.projectId,
+
+                  includeArchived:
+                    true
+                }
+              );
+
+            if (!currentNote) {
+              showToast(
+                'The note is no longer available.'
+              );
+
+              return false;
+            }
+
+            setNoteEntityLinks(
+              currentNote.id,
+              'person',
+              nextPersonIds,
+              {
+                projectId:
+                  currentNote.projectId
+              }
+            );
+
+            return true;
+          },
+
+        afterSave:
+          renderNotesPreservingInteraction,
+
+        successMessage:
+          'People links updated.'
+      });
+    }
+
+    function openArchiveFilePeopleModal(
+      fileId
+    ) {
+      const file =
+        archiveFileById(
+          fileId
+        );
+
+      if (!file) {
+        return;
+      }
+
+      openPeopleLinkModal({
+        projectId:
+          file.projectId
+          || currentProjectId(),
+
+        title:
+          'Add people',
+
+        subtitle:
+          file.name
+          || 'Untitled file',
+
+        initialPersonIds:
+          file.linkedPersonIds
+          || [],
+
+        suggestedPersonIds:
+          archiveFileSuggestedPersonIds(
+            file
+          ),
+
+        onSave:
+          nextPersonIds => {
+            const currentFile =
+              archiveFileById(
+                file.id
+              );
+
+            if (!currentFile) {
+              showToast(
+                'The file is no longer available.'
+              );
+
+              return false;
+            }
+
+            return setArchiveFileConnectionIds(
+              currentFile.id,
+              'person',
+              nextPersonIds
+            );
+          },
+
+        afterSave:
+          renderArchive,
+
+        successMessage:
+          'People links updated.'
+      });
     }
 
     function openNotesPhotosModal() {
@@ -76463,11 +76908,36 @@
       );
     }
 
-    function openNotesEventsModal() {
-      const note =
-        selectedNote();
-
-      if (!note) {
+    function openEventLinkModal({
+      projectId,
+      title =
+        'Add events',
+      subtitle =
+        '',
+      initiallyLinkedEventIds =
+        [],
+      primaryPersonIds =
+        [],
+      secondaryPersonIds =
+        [],
+      alreadyLinkedTarget =
+        'this item',
+      onSave,
+      afterSave =
+        () => {},
+      successMessage =
+        count =>
+          `${count} ${
+            count === 1
+              ? 'event'
+              : 'events'
+          } added.`
+    } = {}) {
+      if (
+        !projectId
+        || typeof onSave
+          !== 'function'
+      ) {
         return;
       }
 
@@ -76489,13 +76959,13 @@
 
       const people =
         getPeople(
-          note.projectId
+          projectId
         )
           .filter(person =>
             person?.id
             && !person.deleted
             && person.projectId
-              === note.projectId
+              === projectId
           )
           .slice();
 
@@ -76519,7 +76989,7 @@
 
       noteEntityRecords(
         'event',
-        note.projectId
+        projectId
       ).forEach(event => {
         if (!event?.id) {
           return;
@@ -76588,7 +77058,7 @@
       const initiallyLinkedIds =
         new Set(
           (
-            note.linkedEventIds
+            initiallyLinkedEventIds
             || []
           ).filter(eventId =>
             eventsById.has(
@@ -76687,10 +77157,10 @@
             .join(' '));
         };
 
-      const linkedNotePersonIds =
+      const primaryPersonIdSet =
         new Set(
           (
-            note.linkedPersonIds
+            primaryPersonIds
             || []
           ).filter(personId =>
             peopleById.has(
@@ -76699,23 +77169,16 @@
           )
         );
 
-      const linkedPhotoPersonIds =
+      const secondaryPersonIdSet =
         new Set(
-          getPhotosForNote(
-            note.id,
-            {
-              projectId:
-                note.projectId
-            }
+          (
+            secondaryPersonIds
+            || []
+          ).filter(personId =>
+            peopleById.has(
+              personId
+            )
           )
-            .flatMap(photo =>
-              photo.personIds || []
-            )
-            .filter(personId =>
-              peopleById.has(
-                personId
-              )
-            )
         );
 
       const linkedEventOwnerIds =
@@ -76747,7 +77210,7 @@
       const personPriority =
         personId => {
           if (
-            linkedNotePersonIds.has(
+            primaryPersonIdSet.has(
               personId
             )
           ) {
@@ -76755,7 +77218,7 @@
           }
 
           if (
-            linkedPhotoPersonIds.has(
+            secondaryPersonIdSet.has(
               personId
             )
           ) {
@@ -76925,8 +77388,8 @@
         Person when the Note has no context.
       */
       const preferredPersonIds = [
-        ...linkedNotePersonIds,
-        ...linkedPhotoPersonIds,
+        ...primaryPersonIdSet,
+        ...secondaryPersonIdSet,
         ...linkedEventOwnerIds
       ];
 
@@ -77106,7 +77569,9 @@
             alreadyLinked
               ? `${
                   presentation.title
-                } is already linked to this note`
+                } is already linked to ${
+                  alreadyLinkedTarget
+                }`
               : `${
                   selected
                     ? 'Remove'
@@ -77570,15 +78035,22 @@
           <div class="modal-header">
             <div>
               <h2 id="notesEventsTitle">
-                Add events
+                ${escapeHtml(
+                  title
+                )}
               </h2>
 
-              <p>
-                ${escapeHtml(
-                  note.title
-                  || 'Untitled note'
-                )}
-              </p>
+              ${
+                subtitle
+                  ? `
+                    <p>
+                      ${escapeHtml(
+                        subtitle
+                      )}
+                    </p>
+                  `
+                  : ''
+              }
             </div>
 
             <button
@@ -78007,68 +78479,36 @@
             if (!selectedIds.size) {
               return;
             }
+            const nextIds =
+              [
+                ...selectedIds
+              ];
 
-            const currentNote =
-              getNote(
-                note.id,
-                {
-                  projectId:
-                    note.projectId,
-
-                  includeArchived:
-                    true
-                }
+            const saved =
+              onSave(
+                nextIds
               );
 
-            if (!currentNote) {
-              closeModal();
-
-              showToast(
-                'The note is no longer available.'
-              );
-
+            if (
+              saved === false
+            ) {
               return;
             }
 
-            const currentLinkedIds =
-              new Set(
-                currentNote
-                  .linkedEventIds
-                || []
-              );
-
-            selectedIds.forEach(
-              eventId =>
-                currentLinkedIds.add(
-                  eventId
-                )
-            );
-
             const addedCount =
-              selectedIds.size;
-
-            setNoteEntityLinks(
-              note.id,
-              'event',
-              [
-                ...currentLinkedIds
-              ],
-              {
-                projectId:
-                  note.projectId
-              }
-            );
+              nextIds.length;
 
             closeModal();
 
-            renderNotesPreservingInteraction();
+            afterSave();
 
             showToast(
-              `${addedCount} ${
-                addedCount === 1
-                  ? 'event'
-                  : 'events'
-              } added to note.`
+              typeof successMessage
+                === 'function'
+                  ? successMessage(
+                      addedCount
+                    )
+                  : successMessage
             );
           }
         }
@@ -78089,6 +78529,199 @@
           }
         }
       );
+    }
+
+    function openNotesEventsModal() {
+      const note =
+        selectedNote();
+
+      if (!note) {
+        return;
+      }
+
+      const secondaryPersonIds =
+        getPhotosForNote(
+          note.id,
+          {
+            projectId:
+              note.projectId
+          }
+        )
+          .flatMap(photo =>
+            photo.personIds
+            || []
+          );
+
+      openEventLinkModal({
+        projectId:
+          note.projectId,
+
+        title:
+          'Add events',
+
+        subtitle:
+          note.title
+          || 'Untitled note',
+
+        initiallyLinkedEventIds:
+          note.linkedEventIds
+          || [],
+
+        primaryPersonIds:
+          note.linkedPersonIds
+          || [],
+
+        secondaryPersonIds,
+
+        alreadyLinkedTarget:
+          'this note',
+
+        onSave:
+          selectedEventIds => {
+            const currentNote =
+              getNote(
+                note.id,
+                {
+                  projectId:
+                    note.projectId,
+
+                  includeArchived:
+                    true
+                }
+              );
+
+            if (!currentNote) {
+              showToast(
+                'The note is no longer available.'
+              );
+
+              return false;
+            }
+
+            const nextEventIds =
+              archiveUniqueIds([
+                ...(
+                  currentNote.linkedEventIds
+                  || []
+                ),
+
+                ...selectedEventIds
+              ]);
+
+            setNoteEntityLinks(
+              currentNote.id,
+              'event',
+              nextEventIds,
+              {
+                projectId:
+                  currentNote.projectId
+              }
+            );
+
+            return true;
+          },
+
+        afterSave:
+          renderNotesPreservingInteraction,
+
+        successMessage:
+          count =>
+            `${count} ${
+              count === 1
+                ? 'event'
+                : 'events'
+            } added to note.`
+      });
+    }
+
+    function openArchiveFileEventsModal(
+      fileId
+    ) {
+      const file =
+        archiveFileById(
+          fileId
+        );
+
+      if (!file) {
+        return;
+      }
+
+      const secondaryPersonIds =
+        (
+          file.linkedSourceIds
+          || []
+        ).flatMap(sourceId =>
+          archiveSourceById(
+            sourceId
+          )?.linkedPersonIds
+          || []
+        );
+
+      openEventLinkModal({
+        projectId:
+          file.projectId
+          || currentProjectId(),
+
+        title:
+          'Add events',
+
+        subtitle:
+          file.name
+          || 'Untitled file',
+
+        initiallyLinkedEventIds:
+          file.linkedEventIds
+          || [],
+
+        primaryPersonIds:
+          file.linkedPersonIds
+          || [],
+
+        secondaryPersonIds,
+
+        alreadyLinkedTarget:
+          'this file',
+
+        onSave:
+          selectedEventIds => {
+            const currentFile =
+              archiveFileById(
+                file.id
+              );
+
+            if (!currentFile) {
+              showToast(
+                'The file is no longer available.'
+              );
+
+              return false;
+            }
+
+            return setArchiveFileConnectionIds(
+              currentFile.id,
+              'event',
+              [
+                ...(
+                  currentFile.linkedEventIds
+                  || []
+                ),
+
+                ...selectedEventIds
+              ]
+            );
+          },
+
+        afterSave:
+          renderArchive,
+
+        successMessage:
+          count =>
+            `${count} ${
+              count === 1
+                ? 'event'
+                : 'events'
+            } added to file.`
+      });
     }
 
     function openNotesLinkEntityModal(
