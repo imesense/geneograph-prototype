@@ -14821,16 +14821,43 @@
     }
 
     .archive-table tbody tr:hover {
-      background: rgba(255, 255, 255, .025);
+      background:
+        rgba(255, 255, 255, .025);
     }
 
-    .archive-table tbody tr.selected {
-      background: rgba(22, 58, 42, .48);
-      box-shadow: inset 3px 0 var(--brand-green-500);
+    /*
+      Batch selection matches Albums list view:
+      selected rows use the shared selected surface,
+      without the Archive-specific left border.
+    */
+    .archive-table tbody tr.is-checked,
+    .archive-table tbody tr.is-checked:hover {
+      background:
+        var(--surface-selected);
     }
 
-    .archive-table tbody tr:focus-within {
-      background: rgba(255, 255, 255, .04);
+    /*
+      The file currently displayed in the inspector
+      is visually separate from batch selection,
+      matching Albums' selected-detail state.
+    */
+    .archive-table tbody tr.selected-detail {
+      box-shadow:
+        inset 0 0 0 1px
+        rgba(98, 217, 154, .2);
+    }
+
+    /*
+      Match Albums' focus treatment instead of
+      replacing the row's selection background.
+    */
+    .archive-table tbody tr:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-400);
+
+      outline-offset:
+        -2px;
     }
 
     .archive-table tbody tr:last-child td {
@@ -14943,6 +14970,14 @@
     }
 
     .archive-col-check { width: 44px; }
+    .archive-table
+    .albums-select-checkbox {
+      display:
+        block;
+
+      margin-inline:
+        auto;
+    }
     .archive-col-name { width: auto; }
     .archive-col-type { width: 132px; }
     .archive-col-size { width: 118px; }
@@ -15009,36 +15044,6 @@
     .archive-file-icon.doc { color: #7ec5ff; background: rgba(93, 173, 236, .11); }
     .archive-file-icon.sheet { color: var(--brand-green-300); background: rgba(47, 174, 116, .1); }
     .archive-file-icon.archive { color: var(--text-secondary); }
-
-    .archive-checkbox {
-      appearance: none;
-      width: 18px;
-      height: 18px;
-      margin: 0;
-      border: 1px solid var(--border-strong);
-      border-radius: 5px;
-      background: var(--surface-input);
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-    }
-
-    .archive-checkbox:checked {
-      border-color: var(--brand-green-300);
-      background: var(--brand-green-500);
-    }
-
-    .archive-checkbox:checked::after {
-      content: "✓";
-      color: #07120d;
-      font-size: 12px;
-      font-weight: 950;
-    }
-
-    .archive-checkbox:focus-visible {
-      outline: 2px solid var(--brand-green-300);
-      outline-offset: 2px;
-    }
 
     .archive-row-icon-button {
       width: 34px;
@@ -15187,7 +15192,7 @@
       width: 15px;
       height: 15px;
       flex: 0 0 auto;
-      color: #e0bb5f;
+      display: block;
     }
 
     .archive-folder-main span {
@@ -15470,15 +15475,19 @@
 
     .archive-file-summary {
       margin: 0;
-
       color:
         var(--text-tertiary);
-
       font-size:
         13px;
-
       font-weight:
         700;
+    }
+
+    .archive-inspector.is-editing
+    .archive-file-title-field
+    + .archive-file-summary {
+      padding-top:
+        var(--space-2);
     }
 
     .archive-file-title-field {
@@ -24151,6 +24160,7 @@
       file: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/><path d="M14 3v6h6"/></svg>',
       focus: '<svg width="512" height="512" viewBox="0 0 512 512" fill="none" ><path d="M30 421.929L30.0049 422.704C30.417 455.226 56.7031 481.511 89.2246 481.923L90 481.929H184.496C192.78 481.929 199.496 488.644 199.496 496.929C199.496 505.213 192.78 511.929 184.496 511.929H90C40.2945 511.929 0.000263889 471.634 0 421.929V327.456C0 319.172 6.71573 312.456 15 312.456C23.2843 312.456 30 319.172 30 327.456V421.929Z" fill="currentColor"/><path d="M511.991 421.929C511.991 471.634 471.697 511.929 421.991 511.929H327.494C319.21 511.929 312.494 505.213 312.494 496.929C312.494 488.644 319.21 481.929 327.494 481.929H421.991C454.869 481.929 481.571 455.484 481.986 422.704L481.991 421.929V327.456C481.991 319.172 488.707 312.456 496.991 312.456C505.275 312.456 511.991 319.172 511.991 327.456V421.929Z" fill="currentColor"/><path d="M199.496 15C199.496 23.2843 192.78 30 184.496 30H90C56.863 30 30.0002 56.8631 30 90V184.474C30 192.758 23.2843 199.474 15 199.474C6.71573 199.474 0 192.758 0 184.474V90C0.000191733 40.2945 40.2945 0 90 0H184.496C192.78 0 199.496 6.71573 199.496 15Z" fill="currentColor"/><path d="M421.991 0C471.697 3.29903e-05 511.991 40.2946 511.991 90V184.474C511.991 192.758 505.275 199.474 496.991 199.474C488.707 199.474 481.991 192.758 481.991 184.474V90C481.991 57.1219 455.546 30.4201 422.767 30.0049L421.991 30H327.494C319.21 30 312.494 23.2843 312.494 15C312.494 6.71573 319.21 0 327.494 0H421.991Z" fill="currentColor"/><path d="M256.435 269.927C322.84 269.927 378.178 319.907 390.479 386.148C393.302 401.352 380.443 413.999 364.979 413.999H147.968C132.504 413.999 119.567 401.352 122.39 386.148C134.69 319.907 190.029 269.927 256.435 269.927Z" fill="currentColor"/><path d="M334.469 174.5C334.469 216.75 299.771 251 256.969 251C214.167 251 179.469 216.75 179.469 174.5C179.469 132.25 214.167 98 256.969 98C299.771 98 334.469 132.25 334.469 174.5Z" fill="currentColor"/></svg>',
       folder: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h7l2 2h9v9.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5Z"/></svg>',
+      folderyellow: '<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M152 80H468C492.301 80 512 99.6995 512 124V136H248C239.511 136 231.37 132.629 225.368 126.627L184.971 86.2304C180.468 81.7274 174.362 79.1973 168 79.1973H152V80Z" fill="#FDB524" /> <path d="M0 100C0 75.6995 19.6995 56 44 56H160.206C173.205 56 185.672 61.1611 194.863 70.352L237.648 113.137C243.65 119.139 251.791 122.51 260.279 122.51H468C492.301 122.51 512 142.21 512 166.51V413C512 437.301 492.301 457 468 457H44C19.6995 457 0 437.301 0 413V100Z" fill="#F0CC54"/></svg>',
       filter: '<svg width="512" height="512" viewBox="0 0 24 24"><path fill="currentColor" d="M14 12v7.88c.04.3-.06.62-.29.83a.996.996 0 0 1-1.41 0l-2.01-2.01a.99.99 0 0 1-.29-.83V12h-.03L4.21 4.62a1 1 0 0 1 .17-1.4c.19-.14.4-.22.62-.22h14c.22 0 .43.08.62.22a1 1 0 0 1 .17 1.4L14.03 12z"/></svg>',
       filterclear: '<svg width="512" height="512" viewBox="0 0 24 24"><path fill="currentColor" d="M2.39 1.73L1.11 3l8.39 8.37l.47.63H10v5.87c-.04.29.06.6.29.83l2.01 2.01c.39.39 1.02.39 1.41 0c.23-.21.33-.53.29-.83v-3.99l6.84 6.84l1.27-1.27L14 13.35L9.41 8.76L4.15 3.5zM6.21 3l8.33 8.34l5.25-6.72a1 1 0 0 0-.17-1.4c-.19-.14-.4-.22-.62-.22z"/></svg>',
       grid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>',
@@ -60009,7 +60019,7 @@
                     folder.name
                   )}">
 
-                  ${icon.folder}
+                  ${icon.folderyellow}
 
                   <span>
                     ${escapeHtml(
@@ -60628,7 +60638,7 @@
             ${
               favoritesView
                 ? icon.star
-                : icon.folder
+                : icon.folderyellow
             }
           </span>
 
@@ -61005,15 +61015,318 @@
       `;
     }
 
-    function renderArchiveFileTableRow(file, showPath = false) {
-      const selected = state.archiveSelectedFileId === file.id || state.archiveSelectedFileIds.includes(file.id);
-      return `<tr class="${selected ? 'selected' : ''}" data-archive-file-row="${escapeHtml(file.id)}" tabindex="0">
-        <td><input class="archive-checkbox" type="checkbox" data-archive-file-checkbox="${escapeHtml(file.id)}" ${state.archiveSelectedFileIds.includes(file.id) ? 'checked' : ''} aria-label="Select ${escapeHtml(file.name)}"></td>
-        <td><div class="archive-name-cell">${archiveFileIcon(file)}<div class="archive-name-copy"><strong title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</strong><span>${escapeHtml(showPath ? archiveFolderPath(file.folderId) : (file.description || archiveFolderPath(file.folderId)))}</span></div></div></td>
-        <td>${escapeHtml(archiveFileTypeLabel(file))}</td><td>${escapeHtml(file.size || '—')}</td><td>${escapeHtml(archiveFormatDate(file.updatedAt, file.updated || 'Unknown'))}</td>
-        <td style="text-align:center"><button class="archive-row-icon-button ${file.favorite ? 'active' : ''}" type="button" data-archive-toggle-favorite="${escapeHtml(file.id)}" aria-label="${file.favorite ? 'Remove from favourites' : 'Add to favourites'}">${icon.star}</button></td>
-        <td><button class="archive-row-icon-button" type="button" data-archive-row-actions="file" data-archive-row-id="${escapeHtml(file.id)}" aria-label="File actions">${icon.more}</button></td>
-      </tr>`;
+    function archiveVisibleSelectionState(
+      files =
+        archiveFilteredFiles()
+    ) {
+      const visibleIds =
+        (
+          Array.isArray(
+            files
+          )
+            ? files
+            : []
+        )
+          .map(file =>
+            file?.id
+          )
+          .filter(Boolean);
+
+      const selectedIds =
+        new Set(
+          state.archiveSelectedFileIds
+          || []
+        );
+
+      const selectedVisibleIds =
+        visibleIds.filter(id =>
+          selectedIds.has(
+            id
+          )
+        );
+
+      return {
+        visibleIds,
+
+        selectedVisibleIds,
+
+        allVisibleSelected:
+          visibleIds.length > 0
+          && selectedVisibleIds.length
+            === visibleIds.length,
+
+        someVisibleSelected:
+          selectedVisibleIds.length > 0
+      };
+    }
+
+    function toggleAllVisibleArchiveFiles(
+      files =
+        archiveFilteredFiles()
+    ) {
+      const selection =
+        archiveVisibleSelectionState(
+          files
+        );
+
+      const selectedIds =
+        new Set(
+          state.archiveSelectedFileIds
+          || []
+        );
+
+      selection.visibleIds
+        .forEach(id => {
+          if (
+            selection.allVisibleSelected
+          ) {
+            selectedIds.delete(
+              id
+            );
+          } else {
+            selectedIds.add(
+              id
+            );
+          }
+        });
+
+      state.archiveSelectedFileIds = [
+        ...selectedIds
+      ];
+
+      renderArchiveMain();
+    }
+
+    function toggleArchiveFileSelection(
+      fileId
+    ) {
+      const file =
+        archiveFileById(
+          fileId
+        );
+
+      if (!file) {
+        return;
+      }
+
+      const selectedIds =
+        new Set(
+          state.archiveSelectedFileIds
+          || []
+        );
+
+      if (
+        selectedIds.has(
+          file.id
+        )
+      ) {
+        selectedIds.delete(
+          file.id
+        );
+      } else {
+        selectedIds.add(
+          file.id
+        );
+      }
+
+      state.archiveSelectedFileIds = [
+        ...selectedIds
+      ];
+
+      /*
+        Match Albums: selecting through the checkbox
+        also makes that record the inspector item.
+      */
+      state.archiveSelectedFileId =
+        file.id;
+
+      state.archiveInspectorCollapsed =
+        false;
+
+      renderArchiveMain();
+    }
+
+    function renderArchiveFileTableRow(
+      file,
+      showPath = false
+    ) {
+      const detailSelected =
+        state.archiveSelectedFileId
+          === file.id;
+
+      const checked =
+        state.archiveSelectedFileIds
+          .includes(
+            file.id
+          );
+
+      const secondaryLabel =
+        showPath
+          ? archiveFolderPath(
+              file.folderId
+            )
+          : (
+              file.description
+              || archiveFolderPath(
+                file.folderId
+              )
+            );
+
+      return `
+        <tr
+          class="
+            ${
+              detailSelected
+                ? 'selected-detail'
+                : ''
+            }
+
+            ${
+              checked
+                ? 'is-checked'
+                : ''
+            }
+          "
+          data-archive-file-row="${escapeHtml(
+            file.id
+          )}"
+          tabindex="0"
+          aria-selected="${String(
+            checked
+          )}">
+
+          <td
+            class="
+              archive-col-check
+            ">
+
+            <input
+              class="
+                albums-select-checkbox
+              "
+              type="checkbox"
+              data-archive-file-checkbox="${escapeHtml(
+                file.id
+              )}"
+              ${
+                checked
+                  ? 'checked'
+                  : ''
+              }
+              aria-label="${escapeHtml(
+                `${
+                  checked
+                    ? 'Deselect'
+                    : 'Select'
+                } ${file.name}`
+              )}">
+          </td>
+
+          <td>
+            <div
+              class="
+                archive-name-cell
+              ">
+
+              ${archiveFileIcon(
+                file
+              )}
+
+              <div
+                class="
+                  archive-name-copy
+                ">
+
+                <strong
+                  title="${escapeHtml(
+                    file.name
+                  )}">
+
+                  ${escapeHtml(
+                    file.name
+                  )}
+                </strong>
+
+                <span>
+                  ${escapeHtml(
+                    secondaryLabel
+                  )}
+                </span>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            ${escapeHtml(
+              archiveFileTypeLabel(
+                file
+              )
+            )}
+          </td>
+
+          <td>
+            ${escapeHtml(
+              file.size
+              || '—'
+            )}
+          </td>
+
+          <td>
+            ${escapeHtml(
+              archiveFormatDate(
+                file.updatedAt,
+                file.updated
+                || 'Unknown'
+              )
+            )}
+          </td>
+
+          <td
+            style="
+              text-align:
+                center;
+            ">
+
+            <button
+              class="
+                archive-row-icon-button
+                ${
+                  file.favorite
+                    ? 'active'
+                    : ''
+                }
+              "
+              type="button"
+              data-archive-toggle-favorite="${escapeHtml(
+                file.id
+              )}"
+              aria-label="${
+                file.favorite
+                  ? 'Remove from favourites'
+                  : 'Add to favourites'
+              }">
+
+              ${icon.star}
+            </button>
+          </td>
+
+          <td>
+            <button
+              class="
+                archive-row-icon-button
+              "
+              type="button"
+              data-archive-row-actions="file"
+              data-archive-row-id="${escapeHtml(
+                file.id
+              )}"
+              aria-label="File actions">
+
+              ${icon.more}
+            </button>
+          </td>
+        </tr>
+      `;
     }
 
     function renderArchiveFileTable(
@@ -61023,18 +61336,6 @@
       const sortedFolders =
         archiveSortFoldersForTable(
           folders
-        );
-
-      const allVisibleSelected =
-        Boolean(
-          files.length
-        )
-        && files.every(file =>
-          state
-            .archiveSelectedFileIds
-            .includes(
-              file.id
-            )
         );
 
       const showGroupLabels =
@@ -61104,18 +61405,13 @@
                     archive-col-check
                   ">
 
-                  <input
-                    class="
-                      archive-checkbox
-                    "
-                    type="checkbox"
-                    data-archive-select-all
-                    ${
-                      allVisibleSelected
-                        ? 'checked'
-                        : ''
-                    }
-                    aria-label="Select all visible files">
+                <input
+                  class="
+                    albums-select-checkbox
+                  "
+                  type="checkbox"
+                  data-archive-select-all
+                  aria-label="Select all visible files">
                 </th>
 
                 <th
@@ -67684,19 +67980,68 @@
         row.addEventListener('click', event => { if (!event.target.closest('button,input,select,a')) open(); });
         row.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); open(); } });
       });
-      root.querySelectorAll('[data-archive-file-checkbox]').forEach(input => input.addEventListener('change', () => {
-        const ids = new Set(state.archiveSelectedFileIds || []);
-        if (input.checked) ids.add(input.dataset.archiveFileCheckbox); else ids.delete(input.dataset.archiveFileCheckbox);
-        state.archiveSelectedFileIds = [...ids];
-        renderArchiveMain();
-      }));
-      root.querySelector('[data-archive-select-all]')?.addEventListener('change', event => {
-        const visibleIds = archiveFilteredFiles().map(file => file.id);
-        const ids = new Set(state.archiveSelectedFileIds || []);
-        visibleIds.forEach(id => event.currentTarget.checked ? ids.add(id) : ids.delete(id));
-        state.archiveSelectedFileIds = [...ids];
-        renderArchiveMain();
-      });
+      root
+        .querySelectorAll(
+          '[data-archive-file-checkbox]'
+        )
+        .forEach(input => {
+          /*
+            Prevent checkbox interaction from also
+            activating the table row.
+          */
+          input.addEventListener(
+            'click',
+            event => {
+              event.stopPropagation();
+            }
+          );
+
+          input.addEventListener(
+            'change',
+            () => {
+              toggleArchiveFileSelection(
+                input.dataset
+                  .archiveFileCheckbox
+              );
+            }
+          );
+        });
+      const visibleSelection =
+        archiveVisibleSelectionState();
+
+      const selectVisibleCheckbox =
+        root.querySelector(
+          '[data-archive-select-all]'
+        );
+
+      if (
+        selectVisibleCheckbox
+      ) {
+        selectVisibleCheckbox.checked =
+          visibleSelection
+            .allVisibleSelected;
+
+        selectVisibleCheckbox.indeterminate =
+          visibleSelection
+            .someVisibleSelected
+          && !visibleSelection
+            .allVisibleSelected;
+
+        selectVisibleCheckbox.disabled =
+          visibleSelection
+            .visibleIds
+            .length === 0;
+
+        selectVisibleCheckbox
+          .addEventListener(
+            'click',
+            event => {
+              event.stopPropagation();
+
+              toggleAllVisibleArchiveFiles();
+            }
+          );
+      }
       root.querySelectorAll('[data-archive-toggle-favorite]').forEach(button => button.addEventListener('click', event => {
         event.stopPropagation();
         const file = archiveFileById(button.dataset.archiveToggleFavorite);
