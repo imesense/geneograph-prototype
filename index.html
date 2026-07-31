@@ -16403,6 +16403,116 @@
         rgba(255, 255, 255, .012);
     }
 
+    .archive-create-folder-modal {
+      width:
+        min(
+          720px,
+          calc(100vw - 32px)
+        );
+
+      max-width:
+        720px;
+
+      height:
+        min(
+          82vh,
+          720px
+        );
+
+      max-height:
+        min(
+          82vh,
+          720px
+        );
+
+      overflow:
+        hidden;
+
+      display:
+        grid;
+
+      grid-template-rows:
+        auto
+        minmax(0, 1fr);
+    }
+
+    .archive-create-folder-form {
+      min-height:
+        0;
+
+      display:
+        grid;
+
+      grid-template-rows:
+        minmax(0, 1fr)
+        auto;
+    }
+
+    .archive-create-folder-body {
+      min-height:
+        0;
+
+      overflow:
+        hidden;
+
+      display:
+        flex;
+
+      flex-direction:
+        column;
+
+      gap:
+        var(--space-3);
+    }
+
+    .archive-create-folder-name-field {
+      flex:
+        0 0 auto;
+    }
+
+    .archive-create-folder-parent-picker {
+      min-width:
+        0;
+
+      min-height:
+        0;
+
+      flex:
+        1 1 auto;
+
+      display:
+        flex;
+
+      flex-direction:
+        column;
+
+      gap:
+        var(--space-3);
+    }
+
+    .archive-create-folder-search {
+      width:
+        100%;
+
+      max-width:
+        none;
+
+      flex:
+        0 0 auto;
+    }
+
+    .archive-create-folder-modal
+    .archive-move-picker {
+      min-height:
+        180px;
+
+      max-height:
+        none;
+
+      flex:
+        1 1 auto;
+    }
+
     .archive-move-tree,
     .archive-move-search-results {
       display: grid;
@@ -60096,6 +60206,23 @@
         <div class="archive-source-filter-list">${ARCHIVE_SOURCE_TYPES.map(type => button(type, type)).join('')}</div>`;
     }
 
+    function openArchiveCreateFolderFromTrigger(
+      button
+    ) {
+      const parentId =
+        button?.dataset
+          .archiveParentFolder
+        || state.archiveSelectedFolderId;
+
+      runAfterArchiveFileEditGuard(
+        () => {
+          openArchiveCreateFolderModal(
+            parentId
+          );
+        }
+      );
+    }
+
     function renderArchiveSidebar() {
       const sourceView =
         state.archiveView
@@ -60129,11 +60256,41 @@
         </div>
 
         <div class="archive-sidebar-tree-section">
-          <div class="side-section-title">
+          <div
+            class="
+              side-section-title
+
+              ${
+                sourceView
+                  ? ''
+                  : 'with-add'
+              }
+            ">
+
+            <span>
+              ${
+                sourceView
+                  ? 'Sources'
+                  : 'Folders'
+              }
+            </span>
+
             ${
               sourceView
-                ? 'Sources'
-                : 'Folders'
+                ? ''
+                : `
+                  <button
+                    class="
+                      side-add-button
+                    "
+                    type="button"
+                    data-archive-create-folder
+                    aria-label="Create folder"
+                    title="Create folder">
+
+                    ${icon.plus}
+                  </button>
+                `
             }
           </div>
 
@@ -60246,6 +60403,21 @@
             }
           );
         });
+
+    sidebar
+      .querySelector(
+        '[data-archive-create-folder]'
+      )
+      ?.addEventListener(
+        'click',
+        event => {
+          event.stopPropagation();
+
+          openArchiveCreateFolderFromTrigger(
+            event.currentTarget
+          );
+        }
+      );
 
       sidebar
         .querySelectorAll(
@@ -62699,6 +62871,50 @@
       return null;
     }
 
+    function renderArchiveInspectorMoveButton(
+      context
+    ) {
+      if (
+        !context
+        || ![
+          'file',
+          'folder'
+        ].includes(
+          context.type
+        )
+      ) {
+        return '';
+      }
+
+      const itemLabel =
+        context.type === 'file'
+          ? 'file'
+          : 'folder';
+
+      return `
+        <button
+          class="
+            archive-inspector-action
+          "
+          type="button"
+          data-archive-inspector-move="${escapeHtml(
+            context.type
+          )}"
+          data-archive-inspector-move-id="${escapeHtml(
+            context.id
+          )}"
+          aria-label="Move ${escapeHtml(
+            itemLabel
+          )}"
+          title="Move ${escapeHtml(
+            itemLabel
+          )}">
+
+          ${icon.movefolder}
+        </button>
+      `;
+    }
+
     function renderArchiveInspectorFavouriteButton(
       context
     ) {
@@ -62840,7 +63056,6 @@
             "
             aria-hidden="true">
           </span>
-
           ${
             context?.type === 'file'
               ? `
@@ -62859,10 +63074,13 @@
               : ''
           }
 
-          ${renderArchiveInspectorFavouriteButton(
+          ${renderArchiveInspectorMoveButton(
             context
           )}
 
+          ${renderArchiveInspectorFavouriteButton(
+            context
+          )}
           ${
             context
               ? `
@@ -64325,52 +64543,41 @@
           parentId
         );
 
-      const options = [
-        `
-          <option
-            value="${ARCHIVE_ROOT_PICKER_VALUE}"
-            ${
-              archiveIsRootLocation(
-                initialParentId
-              )
-                ? 'selected'
-                : ''
-            }>
+      let selectedParentId =
+        initialParentId;
 
-            Files — top level
-          </option>
-        `,
+      let query =
+        '';
 
-        ...archiveFlattenFolders()
-          .map(({
-            folder,
-            depth
-          }) => `
-            <option
-              value="${escapeHtml(
-                folder.id
-              )}"
-              ${
-                folder.id
-                  === initialParentId
-                    ? 'selected'
-                    : ''
-              }>
+      const expandedIds =
+        new Set([
+          null
+        ]);
 
-              ${escapeHtml(
-                `${
-                  '— '.repeat(
-                    depth + 1
-                  )
-                }${folder.name}`
-              )}
-            </option>
-          `)
-      ].join('');
+      /*
+        Reveal the initially selected parent and
+        all of its ancestors.
+      */
+      archiveFolderAncestors(
+        initialParentId
+      ).forEach(folder => {
+        expandedIds.add(
+          folder.id
+        );
+      });
+
+      if (initialParentId) {
+        expandedIds.add(
+          initialParentId
+        );
+      }
 
       openModal(`
         <div
-          class="modal"
+          class="
+            modal
+            archive-create-folder-modal
+          "
           role="dialog"
           aria-modal="true"
           aria-labelledby="archiveNewFolderTitle">
@@ -64384,8 +64591,8 @@
               </h2>
 
               <p>
-                Create a top-level folder or place
-                it inside an existing folder.
+                Enter a folder name and choose
+                where it should be created.
               </p>
             </div>
 
@@ -64400,37 +64607,42 @@
           </div>
 
           <form
+            class="
+              archive-create-folder-form
+            "
             data-archive-create-folder-form>
 
             <div
               class="
                 modal-body
-                form-grid
+                archive-create-folder-body
               ">
 
-              <div class="field">
-                <label>
+              <div
+                class="
+                  field
+                  archive-create-folder-name-field
+                ">
+
+                <label
+                  for="archiveCreateFolderName">
+
                   Folder name
                 </label>
 
                 <input
+                  id="archiveCreateFolderName"
                   data-archive-folder-name
                   required
-                  autofocus
+                  maxlength="160"
                   placeholder="e.g. Civil records">
               </div>
 
-              <div class="field">
-                <label>
-                  Parent folder
-                </label>
-
-                <select
-                  class="compact-select"
-                  data-archive-parent-folder>
-
-                  ${options}
-                </select>
+              <div
+                class="
+                  archive-create-folder-parent-picker
+                "
+                data-archive-create-folder-parent-picker>
               </div>
             </div>
 
@@ -64454,10 +64666,255 @@
         </div>
       `);
 
-      const form =
+      const modal =
         modalBackdrop.querySelector(
+          '.archive-create-folder-modal'
+        );
+
+      const form =
+        modal?.querySelector(
           '[data-archive-create-folder-form]'
         );
+
+      const nameInput =
+        form?.querySelector(
+          '[data-archive-folder-name]'
+        );
+
+      const parentPickerRoot =
+        form?.querySelector(
+          '[data-archive-create-folder-parent-picker]'
+        );
+
+      const renderParentPicker =
+        ({
+          focusSearch =
+            false
+        } = {}) => {
+          if (!parentPickerRoot) {
+            return;
+          }
+
+          const parentPath =
+            archiveMoveFolderPath(
+              selectedParentId
+            );
+
+          parentPickerRoot.innerHTML = `
+            <label
+              class="
+                app-search-field
+                archive-create-folder-search
+              "
+              aria-label="Search folders">
+
+              ${icon.search}
+
+              <input
+                type="search"
+                data-archive-create-folder-search
+                placeholder="Search folders"
+                value="${escapeHtml(
+                  query
+                )}">
+            </label>
+
+            <div
+              class="
+                archive-move-destination
+              "
+              aria-live="polite">
+
+              <span
+                class="
+                  archive-move-destination-label
+                ">
+
+                Parent folder
+              </span>
+
+              <strong
+                class="
+                  archive-move-destination-value
+                ">
+
+                ${escapeHtml(
+                  parentPath
+                )}
+              </strong>
+            </div>
+
+            <div
+              class="
+                archive-move-section-label
+              ">
+
+              Folders
+            </div>
+
+            ${renderArchiveMovePicker({
+              query,
+
+              selectedId:
+                selectedParentId,
+
+              expandedIds,
+
+              /*
+                The Create modal has no unavailable
+                moving/current folder. Every folder
+                is a valid parent destination.
+              */
+              movingFolder:
+                null,
+
+              /*
+                This argument is used by the latest
+                shared picker implementation. Older
+                signatures safely ignore it.
+              */
+              currentFolderState:
+                null
+            })}
+          `;
+
+          requestAnimationFrame(
+            () => {
+              if (!focusSearch) {
+                return;
+              }
+
+              const searchInput =
+                parentPickerRoot
+                  .querySelector(
+                    '[data-archive-create-folder-search]'
+                  );
+
+              searchInput?.focus();
+
+              const end =
+                searchInput?.value
+                  .length
+                || 0;
+
+              searchInput
+                ?.setSelectionRange(
+                  end,
+                  end
+                );
+            }
+          );
+        };
+
+      /*
+        Search is delegated because the picker
+        content is rerendered after every query.
+      */
+      modal?.addEventListener(
+        'input',
+        event => {
+          const searchInput =
+            event.target.closest(
+              '[data-archive-create-folder-search]'
+            );
+
+          if (!searchInput) {
+            return;
+          }
+
+          query =
+            searchInput.value;
+
+          renderParentPicker({
+            focusSearch:
+              true
+          });
+        }
+      );
+
+      /*
+        Reuse the Move picker expand and select
+        controls inside this modal only.
+      */
+      modal?.addEventListener(
+        'click',
+        event => {
+          const toggle =
+            event.target.closest(
+              '[data-archive-move-toggle]'
+            );
+
+          if (toggle) {
+            const folderId =
+              archiveFolderIdFromChoice(
+                toggle.dataset
+                  .archiveMoveToggle
+              );
+
+            if (
+              expandedIds.has(
+                folderId
+              )
+            ) {
+              expandedIds.delete(
+                folderId
+              );
+            } else {
+              expandedIds.add(
+                folderId
+              );
+            }
+
+            renderParentPicker();
+
+            return;
+          }
+
+          const destination =
+            event.target.closest(
+              '[data-archive-move-select]'
+            );
+
+          if (!destination) {
+            return;
+          }
+
+          if (
+            destination.disabled
+            || destination.getAttribute(
+              'aria-disabled'
+            ) === 'true'
+          ) {
+            return;
+          }
+
+          selectedParentId =
+            archiveFolderIdFromChoice(
+              destination.dataset
+                .archiveMoveSelect
+            );
+
+          /*
+            Ensure a parent selected through search
+            is revealed when the search is cleared.
+          */
+          archiveFolderAncestors(
+            selectedParentId
+          ).forEach(folder => {
+            expandedIds.add(
+              folder.id
+            );
+          });
+
+          if (selectedParentId) {
+            expandedIds.add(
+              selectedParentId
+            );
+          }
+
+          renderParentPicker();
+        }
+      );
 
       form?.addEventListener(
         'submit',
@@ -64465,23 +64922,16 @@
           event.preventDefault();
 
           const name =
-            form
-              .querySelector(
-                '[data-archive-folder-name]'
-              )
+            nameInput
               ?.value
               .trim()
             || '';
 
-          const selectedParentId =
-            archiveFolderIdFromChoice(
-              form
-                .querySelector(
-                  '[data-archive-parent-folder]'
-                )
-                ?.value
-              || ARCHIVE_ROOT_PICKER_VALUE
-            );
+          if (!name) {
+            nameInput?.focus();
+
+            return;
+          }
 
           const folder =
             createArchiveFolderRecord(
@@ -64490,6 +64940,8 @@
             );
 
           if (!folder) {
+            nameInput?.focus();
+
             return;
           }
 
@@ -64527,6 +64979,14 @@
           showToast(
             'Folder created.'
           );
+        }
+      );
+
+      renderParentPicker();
+
+      requestAnimationFrame(
+        () => {
+          nameInput?.focus();
         }
       );
     }
@@ -67603,14 +68063,53 @@
       bindPlaceComboboxes(
         root
       );
-      root
-        .querySelector(
-          '#archiveEditFile'
-        )
-        ?.addEventListener(
-          'click',
-          beginArchiveFileEdit
-        );
+    root
+      .querySelector(
+        '[data-archive-inspector-move]'
+      )
+      ?.addEventListener(
+        'click',
+        event => {
+          const button =
+            event.currentTarget;
+
+          const type =
+            button.dataset
+              .archiveInspectorMove;
+
+          const id =
+            button.dataset
+              .archiveInspectorMoveId;
+
+          if (
+            !type
+            || !id
+          ) {
+            return;
+          }
+
+          if (
+            type === 'file'
+          ) {
+            openArchiveMoveModal({
+              fileIds: [
+                id
+              ]
+            });
+
+            return;
+          }
+
+          if (
+            type === 'folder'
+          ) {
+            openArchiveMoveModal({
+              folderId:
+                id
+            });
+          }
+        }
+      );
 
       root
         .querySelector(
@@ -67806,7 +68305,20 @@
           archiveNavigateUp
         );
       root.querySelector('[data-archive-add-files]')?.addEventListener('click', openArchiveAddFilesModal);
-      root.querySelectorAll('[data-archive-create-folder]').forEach(button => button.addEventListener('click', () => openArchiveCreateFolderModal(button.dataset.archiveParentFolder || state.archiveSelectedFolderId)));
+      root
+        .querySelectorAll(
+          '[data-archive-create-folder]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              openArchiveCreateFolderFromTrigger(
+                button
+              );
+            }
+          );
+        });
       root.querySelectorAll('[data-archive-add-source]').forEach(button => button.addEventListener('click', () => openArchiveSourceModal()));
       root.querySelector('[data-clear-archive-person-filter]')?.addEventListener('click', () => { state.archivePersonFilterId = ''; state.archiveSearch = ''; state.archiveSelectedFileId = null; renderArchive(); });
       root
