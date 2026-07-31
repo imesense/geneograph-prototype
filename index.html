@@ -13015,6 +13015,25 @@
       outline-offset: -2px;
     }
 
+    .photo-people-result.is-already-linked {
+      cursor:
+        default;
+
+      opacity:
+        .68;
+    }
+
+    .photo-people-result.is-already-linked:hover {
+      background:
+        transparent;
+    }
+
+    .photo-people-result.is-already-linked
+    input {
+      cursor:
+        default;
+    }
+
     .photo-people-result-avatar {
       --person-avatar-width: 44px;
       --person-avatar-radius: 9px;
@@ -15988,6 +16007,30 @@
       overflow: auto;
     }
 
+    .archive-link-picker-modal {
+      width: min(720px, calc(100vw - 32px));
+      max-width: 720px;
+    }
+
+    .archive-link-picker-toolbar {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .archive-link-picker-search {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .archive-link-picker-status {
+      color: var(--text-tertiary);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.4;
+    }
+
     .archive-modal-choice {
       min-height: 50px;
       padding: 8px 12px;
@@ -16007,7 +16050,25 @@
     }
 
     .archive-modal-choice input {
+      width: 18px;
+      height: 18px;
+      margin: 0;
       accent-color: var(--brand-green-500);
+    }
+
+    .archive-modal-choice:has(input:checked) {
+      border-color: rgba(70, 190, 134, .45);
+      background: var(--surface-selected);
+    }
+
+    .archive-modal-choice:has(input:focus-visible) {
+      outline: 2px solid var(--brand-green-300);
+      outline-offset: 2px;
+    }
+
+    .archive-modal-choice:has(input:disabled) {
+      cursor: default;
+      opacity: .68;
     }
 
     .archive-modal-choice-copy {
@@ -16032,6 +16093,30 @@
     .archive-modal-choice > span:last-child {
       color: var(--text-tertiary);
       font-size: 11px;
+    }
+
+    @media (max-width: 720px) {
+      .archive-link-picker-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .archive-link-picker-toolbar .button {
+        width: 100%;
+      }
+
+      .archive-link-picker-modal .modal-footer {
+        align-items: stretch;
+        gap: var(--space-3);
+      }
+
+      .archive-link-picker-modal .archive-modal-actions {
+        width: 100%;
+      }
+
+      .archive-link-picker-modal .archive-modal-actions .button {
+        flex: 1 1 0;
+      }
     }
 
     .archive-move-modal {
@@ -28928,6 +29013,161 @@
         'notifications',
         'activity'
       ].forEach(seen);
+
+      const archiveFileLinkDefinitions = [
+        {
+          field: 'linkedPersonIds',
+          label: 'person',
+          records: personById
+        },
+        {
+          field: 'linkedEventIds',
+          label: 'event',
+          records: eventById
+        },
+        {
+          field: 'linkedNoteIds',
+          label: 'note',
+          records: noteById
+        },
+        {
+          field: 'linkedSourceIds',
+          label: 'source',
+          records: sourceById
+        },
+        {
+          field: 'linkedPlaceIds',
+          label: 'place',
+          records: placeById
+        },
+        {
+          field: 'placeIds',
+          label: 'place',
+          records: placeById
+        }
+      ];
+
+      (sampleData.archiveFiles || []).forEach(file => {
+        if (!projectIds.has(file.projectId)) {
+          warn(
+            `Archive file ${file.id} points to missing project ${file.projectId}`
+          );
+        }
+
+        archiveFileLinkDefinitions.forEach(definition => {
+          const values =
+            Array.isArray(file[definition.field])
+              ? file[definition.field]
+              : [];
+
+          if (
+            file[definition.field] != null
+            && !Array.isArray(file[definition.field])
+          ) {
+            warn(
+              `Archive file ${file.id} ${definition.field} must be an array`
+            );
+          }
+
+          if (new Set(values).size !== values.length) {
+            warn(
+              `Archive file ${file.id} has duplicate IDs in ${definition.field}`
+            );
+          }
+
+          values.forEach(recordId => {
+            const record =
+              definition.records.get(recordId);
+
+            if (!record) {
+              warn(
+                `Archive file ${file.id} points to missing ${definition.label} ${recordId}`
+              );
+            } else if (
+              record.projectId
+              && file.projectId
+              && record.projectId !== file.projectId
+            ) {
+              warn(
+                `Archive file ${file.id} and ${definition.label} ${recordId} are in different projects`
+              );
+            }
+          });
+        });
+
+        const linkedPlaceIds =
+          archiveUniqueIds(
+            file.linkedPlaceIds
+          );
+
+        const compatibilityPlaceIds =
+          archiveUniqueIds(
+            file.placeIds
+          );
+
+        const documentPlaceId =
+          String(
+            file.documentPlaceId || ''
+          ).trim();
+
+        if (
+          linkedPlaceIds.length > 1
+          || compatibilityPlaceIds.length > 1
+        ) {
+          warn(
+            `Archive file ${file.id} has more than one linked place`
+          );
+        }
+
+        if (documentPlaceId) {
+          const place =
+            placeById.get(
+              documentPlaceId
+            );
+
+          if (!place) {
+            warn(
+              `Archive file ${file.id} points to missing place ${documentPlaceId}`
+            );
+          } else if (
+            place.projectId
+            && file.projectId
+            && place.projectId !== file.projectId
+          ) {
+            warn(
+              `Archive file ${file.id} and place ${documentPlaceId} are in different projects`
+            );
+          }
+        }
+
+        const documentPlaceIds =
+          documentPlaceId
+            ? [documentPlaceId]
+            : [];
+
+        const samePlaceIds =
+          (first, second) =>
+            first.length === second.length
+            && first.every(
+              (placeId, index) =>
+                placeId === second[index]
+            );
+
+        if (
+          !samePlaceIds(
+            documentPlaceIds,
+            linkedPlaceIds
+          )
+          || !samePlaceIds(
+            documentPlaceIds,
+            compatibilityPlaceIds
+          )
+        ) {
+          warn(
+            `Archive file ${file.id} has inconsistent documentPlaceId, linkedPlaceIds, and placeIds`
+          );
+        }
+      });
 
       (sampleData.places || []).forEach(place => {
         if (!projectIds.has(place.projectId)) warn(`Place ${place.id} points to missing project ${place.projectId}`);
@@ -57725,6 +57965,19 @@
       }
     ];
 
+    sampleData.archiveFiles.forEach(file => {
+      const place =
+        archiveDocumentPlace(
+          file
+        );
+
+      archiveApplyDocumentPlace(
+        file,
+        place.placeId,
+        place.placeText
+      );
+    });
+
     sampleData.archiveImports = [];
     sampleData.archiveIssues = [];
 
@@ -58802,6 +59055,51 @@
       return [...new Set((values || []).filter(Boolean))];
     }
 
+    function restoreModalChoiceFocus({
+      modal,
+      selector,
+      value,
+      index = 0,
+      fallbackSelector = 'input[type="search"]'
+    }) {
+      requestAnimationFrame(() => {
+        const choices = [
+          ...(
+            modal?.querySelectorAll(
+              selector
+            ) || []
+          )
+        ].filter(choice =>
+          !choice.disabled
+        );
+
+        const matchingChoice =
+          choices.find(choice =>
+            choice.value === value
+          );
+
+        const nextChoice =
+          matchingChoice
+          || choices[
+            Math.min(
+              Math.max(index, 0),
+              Math.max(choices.length - 1, 0)
+            )
+          ];
+
+        if (nextChoice) {
+          nextChoice.focus();
+          return;
+        }
+
+        modal
+          ?.querySelector(
+            fallbackSelector
+          )
+          ?.focus();
+      });
+    }
+
     function archiveEventLabel(event) {
       if (!event) return 'Event';
       const people = (event.personIds || []).map(id => getPerson(id)?.names?.display).filter(Boolean);
@@ -58839,7 +59137,10 @@
         if (entityType === 'person') return file.linkedPersonIds || [];
         if (entityType === 'event') return file.linkedEventIds || [];
         if (entityType === 'note') return archiveNoteIdsForFile(file);
-        if (entityType === 'place') return file.linkedPlaceIds || file.placeIds || [];
+        if (entityType === 'place') {
+          const placeId = archiveDocumentPlace(file).placeId;
+          return placeId ? [placeId] : [];
+        }
         if (entityType === 'source') return file.linkedSourceIds || [];
       }
 
@@ -58924,24 +59225,54 @@
     }
 
     function archiveSetConnection(ownerType, ownerId, entityType, entityId, shouldLink) {
+      const record = archiveConnectionRecord(entityType, entityId);
+
+      if (shouldLink && !record) return false;
+
       if (ownerType === 'file') {
         const file = archiveFileById(ownerId);
         if (!file) return false;
-        const field = ({ person: 'linkedPersonIds', event: 'linkedEventIds', note: 'linkedNoteIds', place: 'linkedPlaceIds', source: 'linkedSourceIds' })[entityType];
-        if (!field) return false;
-        const ids = new Set(file[field] || []);
-        if (shouldLink) ids.add(entityId); else ids.delete(entityId);
-        file[field] = [...ids];
-        if (entityType === 'place') file.placeIds = [...ids];
-        if (entityType === 'note') archiveSyncNoteLink(entityId, 'file', file.id, shouldLink);
+        if (record?.projectId && file.projectId && record.projectId !== file.projectId) return false;
+
+        if (entityType === 'place') {
+          const currentPlaceId = archiveDocumentPlace(file).placeId;
+          if (shouldLink) {
+            archiveApplyDocumentPlace(file, entityId, '');
+          } else if (currentPlaceId === entityId) {
+            archiveApplyDocumentPlace(file, '', '');
+          } else {
+            return false;
+          }
+        } else {
+          const field = ({
+            person: 'linkedPersonIds',
+            event: 'linkedEventIds',
+            note: 'linkedNoteIds',
+            source: 'linkedSourceIds'
+          })[entityType];
+
+          if (!field) return false;
+
+          const ids = new Set(file[field] || []);
+          if (shouldLink) ids.add(entityId); else ids.delete(entityId);
+          file[field] = [...ids];
+
+          if (entityType === 'note') {
+            archiveSyncNoteLink(entityId, 'file', file.id, shouldLink);
+          }
+        }
+
         file.updatedAt = new Date().toISOString();
         file.updated = 'Just now';
-        return true;
+        return shouldLink
+          ? archiveConnectionIds('file', file.id, entityType).includes(entityId)
+          : !archiveConnectionIds('file', file.id, entityType).includes(entityId);
       }
 
       if (ownerType === 'source') {
         const source = archiveSourceById(ownerId);
         if (!source) return false;
+        if (record?.projectId && source.projectId && record.projectId !== source.projectId) return false;
         if (entityType === 'file') {
           const file = archiveFileById(entityId);
           if (!file) return false;
@@ -58959,13 +59290,179 @@
         const ids = new Set(source[field] || []);
         if (shouldLink) ids.add(entityId); else ids.delete(entityId);
         source[field] = [...ids];
-        if (entityType === 'place') source.placeIds = [...ids];
         if (entityType === 'note') archiveSyncNoteLink(entityId, 'source', source.id, shouldLink);
         source.updatedAt = new Date().toISOString();
         source.updated = 'Just now';
-        return true;
+        return shouldLink
+          ? archiveConnectionIds('source', source.id, entityType).includes(entityId)
+          : !archiveConnectionIds('source', source.id, entityType).includes(entityId);
       }
       return false;
+    }
+
+    function archiveSetConnectionsAtomically(
+      writes = []
+    ) {
+      const normalizedWrites =
+        writes.map(write => ({
+          ownerType:
+            write?.ownerType || '',
+
+          ownerId:
+            String(write?.ownerId || '').trim(),
+
+          entityType:
+            write?.entityType || '',
+
+          entityId:
+            String(write?.entityId || '').trim(),
+
+          shouldLink:
+            write?.shouldLink !== false
+        }));
+
+      const valid =
+        normalizedWrites.every(write => {
+          const owner =
+            archiveConnectionRecord(
+              write.ownerType,
+              write.ownerId
+            );
+
+          const record =
+            archiveConnectionRecord(
+              write.entityType,
+              write.entityId
+            );
+
+          if (
+            !owner
+            || !write.entityType
+            || !write.entityId
+          ) {
+            return false;
+          }
+
+          if (
+            write.shouldLink
+            && !record
+          ) {
+            return false;
+          }
+
+          return !(
+            write.shouldLink
+            && owner.projectId
+            && record?.projectId
+            && owner.projectId
+              !== record.projectId
+          );
+        });
+
+      if (!valid) {
+        return {
+          ok: false,
+          changedCount: 0
+        };
+      }
+
+      const applied =
+        [];
+
+      for (const write of normalizedWrites) {
+        const previousPlace =
+          write.ownerType === 'file'
+          && write.entityType === 'place'
+            ? archiveDocumentPlace(
+                archiveFileById(
+                  write.ownerId
+                )
+              )
+            : null;
+
+        const wasLinked =
+          archiveConnectionIds(
+            write.ownerType,
+            write.ownerId,
+            write.entityType
+          ).includes(
+            write.entityId
+          );
+
+        if (
+          wasLinked
+            === write.shouldLink
+        ) {
+          continue;
+        }
+
+        if (
+          !archiveSetConnection(
+            write.ownerType,
+            write.ownerId,
+            write.entityType,
+            write.entityId,
+            write.shouldLink
+          )
+        ) {
+          applied
+            .slice()
+            .reverse()
+            .forEach(previous => {
+              if (
+                previous.ownerType === 'file'
+                && previous.entityType === 'place'
+              ) {
+                const file =
+                  archiveFileById(
+                    previous.ownerId
+                  );
+
+                if (file) {
+                  archiveApplyDocumentPlace(
+                    file,
+                    previous.previousPlace?.placeId
+                      || '',
+
+                    previous.previousPlace?.placeText
+                      || ''
+                  );
+
+                  file.updatedAt =
+                    new Date().toISOString();
+
+                  file.updated =
+                    'Just now';
+                }
+              } else {
+                archiveSetConnection(
+                  previous.ownerType,
+                  previous.ownerId,
+                  previous.entityType,
+                  previous.entityId,
+                  previous.wasLinked
+                );
+              }
+            });
+
+          return {
+            ok: false,
+            changedCount: 0
+          };
+        }
+
+        applied.push({
+          ...write,
+          wasLinked,
+          previousPlace
+        });
+      }
+
+      return {
+        ok: true,
+        changedCount:
+          applied.length
+      };
     }
 
     function archiveFileEditIsActive(
@@ -67137,36 +67634,362 @@
       renderMoveContent();
     }
 
-    function openArchiveFileNoteModal(
-      fileId
+    function archiveFilesForLinkAction(
+      fileIds
     ) {
-      const file =
-        archiveFileById(
-          fileId
+      const files =
+        archiveUniqueIds(
+          fileIds
+        )
+          .map(id =>
+            archiveFileById(
+              id
+            )
+          )
+          .filter(Boolean);
+
+      if (!files.length) {
+        return [];
+      }
+
+      const projectId =
+        files[0].projectId
+        || currentProjectId();
+
+      return files.filter(file =>
+        (
+          file.projectId
+          || currentProjectId()
+        ) === projectId
+      );
+    }
+
+    function archiveCommonFileConnectionIds(
+      files,
+      entityType
+    ) {
+      if (!files.length) {
+        return [];
+      }
+
+      const remainingSets =
+        files
+          .slice(1)
+          .map(file =>
+            new Set(
+              archiveConnectionIds(
+                'file',
+                file.id,
+                entityType
+              )
+            )
+          );
+
+      return archiveUniqueIds(
+        archiveConnectionIds(
+          'file',
+          files[0].id,
+          entityType
+        )
+      ).filter(recordId =>
+        remainingSets.every(set =>
+          set.has(
+            recordId
+          )
+        )
+      );
+    }
+
+    function archiveCommitFileConnections({
+      fileIds =
+        [],
+
+      entityType =
+        '',
+
+      recordIds =
+        []
+    } = {}) {
+      const normalizedFileIds =
+        archiveUniqueIds(
+          fileIds
         );
 
-      if (!file) {
+      const normalizedRecordIds =
+        archiveUniqueIds(
+          recordIds
+        );
+
+      const result = {
+        ok:
+          false,
+
+        fileCount:
+          normalizedFileIds.length,
+
+        recordCount:
+          normalizedRecordIds.length,
+
+        changedFileCount:
+          0,
+
+        addedLinkCount:
+          0,
+
+        failedWrites:
+          []
+      };
+
+      if (
+        !normalizedFileIds.length
+        || !normalizedRecordIds.length
+      ) {
+        return result;
+      }
+
+      if (
+        entityType === 'place'
+        && normalizedRecordIds.length > 1
+      ) {
+        result.failedWrites.push({
+          fileId: '',
+          recordId: '',
+          reason: 'Archive files support one place'
+        });
+
+        return result;
+      }
+
+      const files =
+        normalizedFileIds.map(fileId =>
+          archiveFileById(fileId)
+        );
+
+      const records =
+        normalizedRecordIds.map(recordId =>
+          archiveConnectionRecord(
+            entityType,
+            recordId
+          )
+        );
+
+      files.forEach((file, index) => {
+        if (!file) {
+          result.failedWrites.push({
+            fileId:
+              normalizedFileIds[index],
+
+            recordId: '',
+            reason: 'File not found'
+          });
+        }
+      });
+
+      records.forEach((record, index) => {
+        if (!record) {
+          result.failedWrites.push({
+            fileId: '',
+            recordId:
+              normalizedRecordIds[index],
+
+            reason: 'Linked record not found'
+          });
+        }
+      });
+
+      files.filter(Boolean).forEach(file => {
+        records.filter(Boolean).forEach(record => {
+          if (
+            file.projectId
+            && record.projectId
+            && file.projectId
+              !== record.projectId
+          ) {
+            result.failedWrites.push({
+              fileId:
+                file.id,
+
+              recordId:
+                record.id,
+
+              reason:
+                'Records belong to different projects'
+            });
+          }
+        });
+      });
+
+      if (result.failedWrites.length) {
+        console.warn(
+          '[Archive bulk links]',
+          result.failedWrites
+        );
+
+        return result;
+      }
+
+      const writes =
+        files.flatMap(file =>
+          normalizedRecordIds
+            .filter(recordId =>
+              !archiveConnectionIds(
+                'file',
+                file.id,
+                entityType
+              ).includes(recordId)
+            )
+            .map(recordId => ({
+              ownerType: 'file',
+              ownerId: file.id,
+              entityType,
+              entityId: recordId,
+              shouldLink: true
+            }))
+        );
+
+      if (!writes.length) {
+        return result;
+      }
+
+      const committed =
+        archiveSetConnectionsAtomically(
+          writes
+        );
+
+      if (!committed.ok) {
+        result.failedWrites.push({
+          fileId: '',
+          recordId: '',
+          reason: 'Relationships were not written'
+        });
+
+        console.warn(
+          '[Archive bulk links]',
+          result.failedWrites
+        );
+
+        return result;
+      }
+
+      result.addedLinkCount =
+        committed.changedCount;
+
+      result.changedFileCount =
+        new Set(
+          writes.map(write =>
+            write.ownerId
+          )
+        ).size;
+
+      result.ok =
+        result.addedLinkCount > 0;
+
+      if (
+        result.failedWrites.length
+      ) {
+        console.warn(
+          '[Archive bulk links]',
+          result.failedWrites
+        );
+      }
+
+      return result;
+    }
+
+    function archiveBulkLinkSubtitle(
+      files
+    ) {
+      if (
+        files.length === 1
+      ) {
+        return files[0].name
+          || 'Untitled file';
+      }
+
+      return `${files.length} selected files`;
+    }
+
+    function finishArchiveBulkLinkAction(
+      fileIds
+    ) {
+      const normalizedFileIds =
+        archiveUniqueIds(
+          fileIds
+        );
+
+      const firstFile =
+        normalizedFileIds
+          .map(fileId =>
+            archiveFileById(
+              fileId
+            )
+          )
+          .find(Boolean);
+
+      state.archiveSelectedFileIds =
+        [];
+
+      state.archiveSelectedFileId =
+        firstFile?.id
+        || state.archiveSelectedFileId;
+
+      state.archiveInspectorCollapsed =
+        false;
+
+      renderArchive();
+    }
+
+    function openArchiveFilesNoteModal(
+      fileIds
+    ) {
+      const files =
+        archiveFilesForLinkAction(
+          fileIds
+        );
+
+      const ids =
+        files.map(file =>
+          file.id
+        );
+
+      if (!files.length) {
         return;
       }
 
+      const singleFile =
+        files.length === 1
+          ? files[0]
+          : null;
+
       const existingNoteIds =
-        archiveNoteIdsForFile(
-          file
-        );
+        singleFile
+          ? archiveNoteIdsForFile(
+              singleFile
+            )
+          : archiveCommonFileConnectionIds(
+              files,
+              'note'
+            );
 
       openNoteLinkPickerModal({
         projectId:
-          file.projectId
+          files[0].projectId
           || currentProjectId(),
 
         title:
-          'Add note',
+          singleFile
+            ? 'Add note'
+            : 'Add notes',
 
         description:
-          `Link existing notes to “${
-            file.name
-            || 'this file'
-          }”.`,
+          singleFile
+            ? `Link existing notes to “${
+                singleFile.name
+                || 'this file'
+              }”.`
+            : `Link existing notes to ${
+                files.length
+              } selected files.`,
 
         existingNoteIds,
 
@@ -67177,55 +68000,438 @@
           'Already linked',
 
         existingMetaLabel:
-          'already linked',
+          singleFile
+            ? 'already linked'
+            : 'linked to all selected files',
 
         createLabel:
           'Create linked note',
 
+        /*
+          Creating a Note from an Archive context
+          currently accepts one owner only. Preserve
+          it for one file and hide it in bulk mode.
+        */
         onCreate:
-          () =>
-            openNewNoteForContext(
-              'archiveFile',
-              file.id
-            ),
+          singleFile
+            ? () =>
+                openNewNoteForContext(
+                  'archiveFile',
+                  singleFile.id
+                )
+            : null,
 
         onSave:
           selectedNoteIds => {
-            const currentFile =
-              archiveFileById(
-                file.id
+            if (singleFile) {
+              const currentFile =
+                archiveFileById(
+                  singleFile.id
+                );
+
+              if (!currentFile) {
+                return false;
+              }
+
+              const result =
+                archiveCommitFileConnections({
+                  fileIds: [
+                    currentFile.id
+                  ],
+
+                  entityType:
+                    'note',
+
+                  recordIds:
+                    selectedNoteIds
+                });
+
+              return result.ok
+                ? result
+                : false;
+            }
+
+            const result =
+              archiveCommitFileConnections({
+                fileIds:
+                  ids,
+
+                entityType:
+                  'note',
+
+                recordIds:
+                  selectedNoteIds
+              });
+
+            if (!result.ok) {
+              showToast(
+                'No notes were linked.'
               );
 
-            if (!currentFile) {
               return false;
             }
 
-            selectedNoteIds.forEach(
-              noteId => {
-                archiveSetConnection(
-                  'file',
-                  currentFile.id,
-                  'note',
-                  noteId,
-                  true
-                );
-              }
-            );
-
-            return true;
+            return result;
           },
 
         afterSave:
-          renderArchive,
+          singleFile
+            ? renderArchive
+            : () => {
+                finishArchiveBulkLinkAction(
+                  ids
+                );
+              },
 
         successMessage:
-          count =>
-            `${count} ${
-              count === 1
-                ? 'note was'
-                : 'notes were'
-            } linked to the file.`
+          singleFile
+            ? count =>
+                `${count} ${
+                  count === 1
+                    ? 'note was'
+                    : 'notes were'
+                } linked to the file.`
+            : count =>
+                `${count} ${
+                  count === 1
+                    ? 'link was'
+                    : 'links were'
+                } added to ${files.length} files.`
       });
+    }
+
+    function openArchiveFileNoteModal(
+      fileId
+    ) {
+      openArchiveFilesNoteModal(
+        [
+          fileId
+        ]
+      );
+    }
+
+    function openArchiveFilesPlaceModal(
+      fileIds
+    ) {
+      const files =
+        archiveFilesForLinkAction(
+          fileIds
+        );
+
+      if (!files.length) {
+        return;
+      }
+
+      const config =
+        archiveEntityConfig(
+          'place'
+        );
+
+      const records =
+        config.records();
+
+      const currentPlaceIds =
+        files.map(file =>
+          archiveDocumentPlace(
+            file
+          ).placeId
+          || ''
+        );
+
+      const commonPlaceId =
+        currentPlaceIds.length
+        && currentPlaceIds.every(id =>
+          id === currentPlaceIds[0]
+        )
+          ? currentPlaceIds[0]
+          : '';
+
+      let query =
+        '';
+
+      let selectedPlaceId =
+        commonPlaceId;
+
+      openModal(`
+        <div
+          class="modal notes-related-modal archive-link-picker-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="archivePlacePickerTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="archivePlacePickerTitle">
+                ${files.length === 1 ? 'Set file place' : 'Set place for files'}
+              </h2>
+              <p>
+                Choose one project place. It will replace the current place in File details${files.length === 1 ? '.' : ' for every selected file.'}
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close">
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body form-grid">
+            <label
+              class="app-search-field archive-link-picker-search"
+              aria-label="Search places">
+              ${icon.search}
+              <input
+                type="search"
+                data-archive-place-search
+                placeholder="Search places..."
+                autocomplete="off"
+                aria-label="Search places">
+            </label>
+
+            <div
+              class="archive-modal-list"
+              data-archive-place-results
+              role="radiogroup"
+              aria-label="Project places">
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <span
+              class="archive-link-picker-status"
+              data-archive-place-status
+              aria-live="polite">
+            </span>
+
+            <div class="archive-modal-actions">
+              <button
+                class="button secondary"
+                type="button"
+                data-close>
+                Cancel
+              </button>
+
+              <button
+                class="button primary"
+                type="button"
+                data-archive-place-save>
+                Save place
+              </button>
+            </div>
+          </div>
+        </div>
+      `);
+
+      const modal =
+        modalBackdrop.querySelector(
+          '.archive-link-picker-modal'
+        );
+
+      const results =
+        modal.querySelector(
+          '[data-archive-place-results]'
+        );
+
+      const status =
+        modal.querySelector(
+          '[data-archive-place-status]'
+        );
+
+      const save =
+        modal.querySelector(
+          '[data-archive-place-save]'
+        );
+
+      const updateStatus = () => {
+        const changedFiles =
+          selectedPlaceId
+            ? currentPlaceIds.filter(id =>
+                id !== selectedPlaceId
+              ).length
+            : 0;
+
+        status.textContent =
+          selectedPlaceId
+            ? changedFiles
+              ? `${changedFiles} ${changedFiles === 1 ? 'file' : 'files'} will be updated`
+              : 'This place is already linked'
+            : 'Select one place';
+
+        save.disabled =
+          !selectedPlaceId
+          || changedFiles === 0;
+      };
+
+      const refresh = () => {
+        const normalizedQuery =
+          query.trim().toLowerCase();
+
+        const visible =
+          records.filter(record =>
+            [
+              config.label(record),
+              config.meta(record),
+              ...(record.alternativeNames || [])
+            ]
+              .join(' ')
+              .toLowerCase()
+              .includes(normalizedQuery)
+          );
+
+        results.innerHTML =
+          visible.length
+            ? visible.map(record => {
+                const selected =
+                  record.id === selectedPlaceId;
+
+                const current =
+                  currentPlaceIds.includes(
+                    record.id
+                  );
+
+                return `
+                  <label class="archive-modal-choice">
+                    <input
+                      type="radio"
+                      name="archiveFilePlace"
+                      data-archive-place-choice
+                      value="${escapeHtml(record.id)}"
+                      ${selected ? 'checked' : ''}>
+
+                    <span class="archive-modal-choice-copy">
+                      <strong>${escapeHtml(config.label(record))}</strong>
+                      <span>${escapeHtml(config.meta(record))}</span>
+                    </span>
+
+                    <span>${current ? 'Current' : ''}</span>
+                  </label>
+                `;
+              }).join('')
+            : '<div class="archive-section-empty">No matching places.</div>';
+
+        updateStatus();
+      };
+
+      modal
+        .querySelector(
+          '[data-archive-place-search]'
+        )
+        ?.addEventListener(
+          'input',
+          event => {
+            query =
+              event.currentTarget.value;
+
+            refresh();
+          }
+        );
+
+      modal.addEventListener(
+        'change',
+        event => {
+          const input =
+            event.target.closest(
+              '[data-archive-place-choice]'
+            );
+
+          if (!input) {
+            return;
+          }
+
+          selectedPlaceId =
+            input.value;
+
+          updateStatus();
+        }
+      );
+
+      save.addEventListener(
+        'click',
+        () => {
+          if (
+            !selectedPlaceId
+            || save.disabled
+          ) {
+            return;
+          }
+
+          const changedFiles =
+            files.filter(file =>
+              archiveDocumentPlace(file).placeId
+                !== selectedPlaceId
+            );
+
+          const writes =
+            changedFiles.flatMap(file => {
+              const currentPlaceId =
+                archiveDocumentPlace(
+                  file
+                ).placeId;
+
+              return [
+                ...(currentPlaceId
+                  ? [{
+                      ownerType: 'file',
+                      ownerId: file.id,
+                      entityType: 'place',
+                      entityId: currentPlaceId,
+                      shouldLink: false
+                    }]
+                  : []),
+
+                {
+                  ownerType: 'file',
+                  ownerId: file.id,
+                  entityType: 'place',
+                  entityId: selectedPlaceId,
+                  shouldLink: true
+                }
+              ];
+            });
+
+          const committed =
+            archiveSetConnectionsAtomically(
+              writes
+            );
+
+          if (!committed.ok) {
+            showToast(
+              'The place could not be linked to every file.'
+            );
+
+            return;
+          }
+
+          const changedCount =
+            changedFiles.length;
+
+          closeModal();
+          finishArchiveBulkLinkAction(
+            files.map(file =>
+              file.id
+            )
+          );
+
+          showToast(
+            changedCount === 1
+              ? 'File place updated.'
+              : `${changedCount} file places updated.`
+          );
+        }
+      );
+
+      refresh();
+
+      requestAnimationFrame(() =>
+        modal
+          .querySelector(
+            '[data-archive-place-search]'
+          )
+          ?.focus()
+      );
     }
 
     function openArchiveConnectionPicker({ ownerType, ownerIds, entityType }) {
@@ -67237,26 +68443,29 @@
       const linkedToAll = recordId => existingSets.every(set => set.has(recordId));
       let query = '';
       const selected = new Set();
-      openModal(`<div class="modal notes-related-modal" role="dialog" aria-modal="true" aria-labelledby="archiveLinkPickerTitle"><div class="modal-header"><div><h2 id="archiveLinkPickerTitle">${escapeHtml(config.addLabel)}</h2><p>Choose existing ${escapeHtml(config.title.toLowerCase())} to link. Linking does not move or duplicate records.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body form-grid"><div class="archive-toolbar" style="position:static;margin:0"><label class="app-search-field">${icon.search}<input type="search" data-archive-link-search placeholder="Search ${escapeHtml(config.title.toLowerCase())}..."></label>${entityType === 'source' ? `<button class="button secondary" type="button" data-archive-create-source-from-picker>${icon.plus} Create source</button>` : ''}</div><div class="archive-modal-list" data-archive-link-results></div></div><div class="modal-footer"><span data-archive-link-count>0 selected</span><div class="archive-modal-actions"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-archive-link-save disabled>Add links</button></div></div></div>`);
+      openModal(`<div class="modal notes-related-modal archive-link-picker-modal" role="dialog" aria-modal="true" aria-labelledby="archiveLinkPickerTitle"><div class="modal-header"><div><h2 id="archiveLinkPickerTitle">${escapeHtml(config.addLabel)}</h2><p>Choose existing ${escapeHtml(config.title.toLowerCase())} to link. Linking does not move or duplicate records.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body form-grid"><div class="archive-link-picker-toolbar"><label class="app-search-field archive-link-picker-search" aria-label="Search ${escapeHtml(config.title.toLowerCase())}">${icon.search}<input type="search" data-archive-link-search placeholder="Search ${escapeHtml(config.title.toLowerCase())}..." aria-label="Search ${escapeHtml(config.title.toLowerCase())}" autocomplete="off"></label>${entityType === 'source' ? `<button class="button secondary" type="button" data-archive-create-source-from-picker>${icon.plus} Create source</button>` : ''}</div><div class="archive-modal-list" data-archive-link-results></div></div><div class="modal-footer"><span class="archive-link-picker-status" data-archive-link-count aria-live="polite">0 selected</span><div class="archive-modal-actions"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-archive-link-save disabled>Add links</button></div></div></div>`);
       const modal = modalBackdrop.querySelector('.modal');
       const results = modal.querySelector('[data-archive-link-results]');
       const count = modal.querySelector('[data-archive-link-count]');
       const save = modal.querySelector('[data-archive-link-save]');
+      const updateSelectionStatus = () => {
+        count.textContent = `${selected.size} selected`;
+        save.disabled = selected.size === 0;
+      };
       const refresh = () => {
         const visible = records.filter(record => [config.label(record), config.meta(record)].join(' ').toLowerCase().includes(query.toLowerCase()));
         results.innerHTML = visible.length ? visible.map(record => {
           const existing = linkedToAll(record.id);
           return `<label class="archive-modal-choice"><input type="checkbox" data-archive-link-choice value="${escapeHtml(record.id)}" ${existing ? 'checked disabled' : selected.has(record.id) ? 'checked' : ''}><span class="archive-modal-choice-copy"><strong>${escapeHtml(config.label(record))}</strong><span>${escapeHtml(config.meta(record))}</span></span><span>${existing ? 'Already linked' : ''}</span></label>`;
         }).join('') : `<div class="archive-section-empty">No matching ${escapeHtml(config.title.toLowerCase())}.</div>`;
-        count.textContent = `${selected.size} selected`;
-        save.disabled = selected.size === 0;
+        updateSelectionStatus();
       };
       modal.querySelector('[data-archive-link-search]')?.addEventListener('input', event => { query = event.currentTarget.value; refresh(); });
       modal.addEventListener('change', event => {
         const input = event.target.closest('[data-archive-link-choice]');
         if (!input || input.disabled) return;
         if (input.checked) selected.add(input.value); else selected.delete(input.value);
-        refresh();
+        updateSelectionStatus();
       });
       modal
         .querySelector(
@@ -67272,17 +68481,28 @@
               {
                 onCreated:
                   createdSource => {
-                    ids.forEach(
-                      ownerId => {
-                        archiveSetConnection(
+                    const committed =
+                      archiveSetConnectionsAtomically(
+                        ids.map(ownerId => ({
                           ownerType,
                           ownerId,
-                          'source',
-                          createdSource.id,
-                          true
-                        );
-                      }
-                    );
+                          entityType: 'source',
+                          entityId: createdSource.id,
+                          shouldLink: true
+                        }))
+                      );
+
+                    if (
+                      !committed.ok
+                      || committed.changedCount
+                        !== ids.length
+                    ) {
+                      showToast(
+                        'Source created, but it could not be linked.'
+                      );
+
+                      return;
+                    }
 
                     state.archiveSelectedFileIds =
                       [];
@@ -67308,26 +68528,358 @@
             );
           }
         );
-      save.addEventListener('click', () => {
-        ids.forEach(ownerId => selected.forEach(entityId => archiveSetConnection(ownerType, ownerId, entityType, entityId, true)));
-        closeModal();
-        state.archiveSelectedFileIds = [];
-        renderArchive();
-        showToast(`${selected.size} ${selected.size === 1 ? config.singular : config.title.toLowerCase()} linked.`);
-      });
+      save.addEventListener(
+        'click',
+        () => {
+          if (!selected.size) {
+            return;
+          }
+
+          /*
+            File bulk relationships use the verified
+            Archive commit path.
+          */
+          if (
+            ownerType === 'file'
+          ) {
+            const result =
+              archiveCommitFileConnections({
+                fileIds:
+                  ids,
+
+                entityType,
+
+                recordIds: [
+                  ...selected
+                ]
+              });
+
+            if (!result.ok) {
+              showToast(
+                `No ${
+                  config.title.toLowerCase()
+                } were linked.`
+              );
+
+              return;
+            }
+
+            closeModal();
+
+            finishArchiveBulkLinkAction(
+              ids
+            );
+
+            showToast(
+              `${result.addedLinkCount} ${
+                result.addedLinkCount === 1
+                  ? 'link was'
+                  : 'links were'
+              } added to ${
+                result.changedFileCount
+              } ${
+                result.changedFileCount === 1
+                  ? 'file'
+                  : 'files'
+              }.`
+            );
+
+            return;
+          }
+
+          /*
+            Preserve the existing Source-inspector
+            relationship workflow.
+          */
+          const writes =
+            ids.flatMap(ownerId =>
+              [...selected]
+                .filter(recordId =>
+                  !archiveConnectionIds(
+                    ownerType,
+                    ownerId,
+                    entityType
+                  ).includes(recordId)
+                )
+                .map(recordId => ({
+                  ownerType,
+                  ownerId,
+                  entityType,
+                  entityId: recordId,
+                  shouldLink: true
+                }))
+            );
+
+          const committed =
+            archiveSetConnectionsAtomically(
+              writes
+            );
+
+          const addedCount =
+            committed.ok
+              ? committed.changedCount
+              : 0;
+
+          if (!addedCount) {
+            showToast(
+              'No links were added.'
+            );
+
+            return;
+          }
+
+          closeModal();
+
+          renderArchive();
+
+          showToast(
+            `${addedCount} ${
+              addedCount === 1
+                ? 'link was'
+                : 'links were'
+            } added.`
+          );
+        }
+      );
       refresh();
       requestAnimationFrame(() => modal.querySelector('[data-archive-link-search]')?.focus());
     }
 
-    function openArchiveAddLinksMenu(fileIds) {
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveAddLinksTitle"><div class="modal-header"><div><h2 id="archiveAddLinksTitle">Add links</h2><p>Connect the selected ${fileIds.length === 1 ? 'file' : 'files'} to genealogy records.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-action-grid">
-        <button class="button secondary" type="button" data-archive-link-menu="person">${icon.profile} People</button><button class="button secondary" type="button" data-archive-link-menu="event">${icon.calendar} Events</button><button class="button secondary" type="button" data-archive-link-menu="note">${icon.note} Notes</button><button class="button secondary" type="button" data-archive-link-menu="place">${icon.mapPin} Places</button><button class="button secondary" type="button" data-archive-link-menu="source">${icon.archive} Sources</button>
-      </div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button></div></div>`);
-      modalBackdrop.querySelectorAll('[data-archive-link-menu]').forEach(button => button.addEventListener('click', () => {
-        const type = button.dataset.archiveLinkMenu;
-        closeModal();
-        openArchiveConnectionPicker({ ownerType: 'file', ownerIds: fileIds, entityType: type });
-      }));
+    function openArchiveFilesSourceModal(
+      fileIds
+    ) {
+      const files =
+        archiveFilesForLinkAction(
+          fileIds
+        );
+
+      if (!files.length) {
+        return;
+      }
+
+      /*
+        The Archive right panel already uses
+        openArchiveConnectionPicker() for Sources.
+        It natively supports multiple owner IDs and
+        records linked to all selected owners.
+      */
+      openArchiveConnectionPicker({
+        ownerType:
+          'file',
+
+        ownerIds:
+          files.map(file =>
+            file.id
+          ),
+
+        entityType:
+          'source'
+      });
+    }
+
+    function openArchiveBulkLinkModal(
+      fileIds,
+      entityType
+    ) {
+      const ids =
+        archiveFilesForLinkAction(
+          fileIds
+        ).map(file =>
+          file.id
+        );
+
+      if (!ids.length) {
+        return;
+      }
+
+      if (
+        entityType === 'person'
+      ) {
+        openArchiveFilesPeopleModal(
+          ids
+        );
+
+        return;
+      }
+
+      if (
+        entityType === 'event'
+      ) {
+        openArchiveFilesEventsModal(
+          ids
+        );
+
+        return;
+      }
+
+      if (
+        entityType === 'note'
+      ) {
+        openArchiveFilesNoteModal(
+          ids
+        );
+
+        return;
+      }
+
+      if (
+        entityType === 'source'
+      ) {
+        openArchiveFilesSourceModal(
+          ids
+        );
+
+        return;
+      }
+
+      if (
+        entityType === 'place'
+      ) {
+        openArchiveFilesPlaceModal(
+          ids
+        );
+
+        return;
+      }
+    }
+
+    function openArchiveAddLinksMenu(
+      fileIds
+    ) {
+      const files =
+        archiveFilesForLinkAction(
+          fileIds
+        );
+
+      if (!files.length) {
+        return;
+      }
+
+      const ids =
+        files.map(file =>
+          file.id
+        );
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="archiveAddLinksTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2
+                id="archiveAddLinksTitle">
+
+                Add links
+              </h2>
+
+              <p>
+                Connect the selected ${
+                  ids.length === 1
+                    ? 'file'
+                    : 'files'
+                } to genealogy records.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close">
+
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <div
+              class="
+                archive-action-grid
+              ">
+
+              <button
+                class="button secondary"
+                type="button"
+                data-archive-link-menu="person">
+
+                ${icon.profile}
+                People
+              </button>
+
+              <button
+                class="button secondary"
+                type="button"
+                data-archive-link-menu="event">
+
+                ${icon.calendar}
+                Events
+              </button>
+
+              <button
+                class="button secondary"
+                type="button"
+                data-archive-link-menu="note">
+
+                ${icon.note}
+                Notes
+              </button>
+
+              <button
+                class="button secondary"
+                type="button"
+                data-archive-link-menu="place">
+
+                ${icon.mapPin}
+                Places
+              </button>
+
+              <button
+                class="button secondary"
+                type="button"
+                data-archive-link-menu="source">
+
+                ${icon.archive}
+                Sources
+              </button>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+
+              Cancel
+            </button>
+          </div>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelectorAll(
+          '[data-archive-link-menu]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              const entityType =
+                button.dataset
+                  .archiveLinkMenu;
+
+              closeModal();
+
+              openArchiveBulkLinkModal(
+                ids,
+                entityType
+              );
+            }
+          );
+        });
     }
 
     function openArchiveUnlinkConfirm({ ownerType, ownerId, entityType, entityId }) {
@@ -67336,7 +68888,22 @@
       if (!config || !record) return;
       openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveUnlinkTitle"><div class="modal-header"><div><h2 id="archiveUnlinkTitle">Unlink ${escapeHtml(config.singular)}?</h2><p>${escapeHtml(config.label(record))}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="unlink-relationship-warning"><strong>The linked record will not be deleted. </strong><span>Only this connection will be removed. The file, source, and genealogy record will remain available.</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-archive-unlink-confirm>Unlink</button></div></div>`);
       modalBackdrop.querySelector('[data-archive-unlink-confirm]')?.addEventListener('click', () => {
-        archiveSetConnection(ownerType, ownerId, entityType, entityId, false);
+        if (
+          !archiveSetConnection(
+            ownerType,
+            ownerId,
+            entityType,
+            entityId,
+            false
+          )
+        ) {
+          showToast(
+            'The link could not be removed.'
+          );
+
+          return;
+        }
+
         closeModal();
         renderArchive();
         showToast('Link removed.');
@@ -77018,6 +78585,18 @@
         return false;
       }
 
+      if (
+        ![
+          'person',
+          'event',
+          'note',
+          'source',
+          'place'
+        ].includes(entityType)
+      ) {
+        return false;
+      }
+
       const currentIds =
         new Set(
           archiveConnectionIds(
@@ -77027,50 +78606,98 @@
           )
         );
 
-      const normalizedNextIds =
-        new Set(
-          archiveUniqueIds(
-            nextIds
+      const normalizedNextIdList =
+        archiveUniqueIds(
+          nextIds
+        );
+
+      const nextRecords =
+        normalizedNextIdList.map(id =>
+          archiveConnectionRecord(
+            entityType,
+            id
           )
         );
 
-      currentIds.forEach(
-        recordId => {
-          if (
+      if (
+        nextRecords.some(record =>
+          !record
+          || (
+            file.projectId
+            && record.projectId
+            && file.projectId
+              !== record.projectId
+          )
+        )
+      ) {
+        return false;
+      }
+
+      const normalizedNextIds =
+        new Set(
+          normalizedNextIdList
+        );
+
+      if (
+        entityType === 'place'
+        && normalizedNextIds.size > 1
+      ) {
+        return false;
+      }
+
+      const writes = [
+        ...[...currentIds]
+          .filter(recordId =>
             !normalizedNextIds.has(
               recordId
             )
-          ) {
-            archiveSetConnection(
-              'file',
-              file.id,
-              entityType,
-              recordId,
-              false
-            );
-          }
-        }
-      );
+          )
+          .map(recordId => ({
+            ownerType: 'file',
+            ownerId: file.id,
+            entityType,
+            entityId: recordId,
+            shouldLink: false
+          })),
 
-      normalizedNextIds.forEach(
-        recordId => {
-          if (
+        ...[...normalizedNextIds]
+          .filter(recordId =>
             !currentIds.has(
               recordId
             )
-          ) {
-            archiveSetConnection(
-              'file',
-              file.id,
-              entityType,
-              recordId,
-              true
-            );
-          }
-        }
-      );
+          )
+          .map(recordId => ({
+            ownerType: 'file',
+            ownerId: file.id,
+            entityType,
+            entityId: recordId,
+            shouldLink: true
+          }))
+      ];
 
-      return true;
+      const committed =
+        archiveSetConnectionsAtomically(
+          writes
+        );
+
+      if (!committed.ok) {
+        return false;
+      }
+
+      const savedIds =
+        new Set(
+          archiveConnectionIds(
+            'file',
+            file.id,
+            entityType
+          )
+        );
+
+      const saved =
+        savedIds.size === normalizedNextIds.size
+        && [...normalizedNextIds].every(id => savedIds.has(id));
+
+      return saved;
     }
 
     function archiveFileSuggestedPersonIds(
@@ -77121,8 +78748,24 @@
         '',
       initialPersonIds =
         [],
+      /*
+        Used by additive workflows such as Archive
+        bulk linking. These People are linked to
+        every selected owner and cannot be removed
+        from this modal.
+      */
+      existingPersonIds =
+        [],
+
       suggestedPersonIds =
         [],
+
+      selectedHeading =
+        'Linked people',
+
+      saveLabel =
+        'Save people',
+
       onSave,
       afterSave =
         () => {},
@@ -77156,6 +78799,26 @@
             );
           })
         );
+
+    const existingPersonIdSet =
+      new Set(
+        (
+          existingPersonIds
+          || []
+        ).filter(personId => {
+          const person =
+            getPerson(
+              personId
+            );
+
+          return (
+            person
+            && !person.deleted
+            && person.projectId
+              === projectId
+          );
+        })
+      );
 
       const selectedIds =
         new Set(
@@ -77248,6 +78911,20 @@
                 person.id
               )
             )
+            /*
+              Existing links stay out of the default
+              suggestions, but remain discoverable through
+              an explicit search.
+            */
+            .filter(person =>
+              !existingPersonIdSet.has(
+                person.id
+              )
+              || Boolean(
+                normalizedQuery
+              )
+            )
+
             .filter(person =>
               !normalizedQuery
               || personSearchText(
@@ -77374,7 +79051,9 @@
         return `
           <div class="photo-people-selected-head">
             <strong>
-              Linked people
+              ${escapeHtml(
+                selectedHeading
+              )}
             </strong>
 
             <span>
@@ -77455,7 +79134,14 @@
           return candidates.people
             .map(person => {
               const name =
-                personName(person);
+                personName(
+                  person
+                );
+
+              const alreadyLinked =
+                existingPersonIdSet.has(
+                  person.id
+                );
 
               const dates =
                 albumPhotoPersonDates(
@@ -77469,7 +79155,27 @@
                 );
 
               return `
-                <label class="photo-people-result">
+                <label
+                  class="
+                    photo-people-result
+
+                    ${
+                      alreadyLinked
+                        ? 'is-already-linked'
+                        : ''
+                    }
+                  "
+                  ${
+                    alreadyLinked
+                      ? `
+                        title="
+                          Already linked to all
+                          selected files
+                        "
+                      `
+                      : ''
+                  }>
+
                   ${renderPersonAvatar(
                     person,
                     'photo-people-result-avatar',
@@ -77479,7 +79185,11 @@
                     }
                   )}
 
-                  <span class="photo-people-result-copy">
+                  <span
+                    class="
+                      photo-people-result-copy
+                    ">
+
                     <strong>
                       ${escapeHtml(
                         name
@@ -77511,8 +79221,15 @@
                       person.id
                     )}"
                     data-notes-people-choice
+                    ${
+                      alreadyLinked
+                        ? 'checked disabled'
+                        : ''
+                    }
                     aria-label="${escapeHtml(
-                      `Add ${name}`
+                      alreadyLinked
+                        ? `${name} is already linked`
+                        : `Add ${name}`
                     )}">
                 </label>
               `;
@@ -77619,7 +79336,8 @@
 
             <span
               class="photo-people-selection-count"
-              data-notes-people-selection-count>
+              data-notes-people-selection-count
+              aria-live="polite">
             </span>
 
             <div class="photo-people-footer-actions">
@@ -77640,8 +79358,9 @@
                 type="button"
                 data-notes-people-save
                 disabled>
-
-                Save people
+                  ${escapeHtml(
+                    saveLabel
+                  )}
               </button>
             </div>
           </div>
@@ -77767,15 +79486,36 @@
               '[data-notes-people-choice]'
             );
 
-          if (!input) {
+          if (
+            !input
+            || input.disabled
+          ) {
             return;
           }
+
+          const choiceIndex = [
+            ...modal.querySelectorAll(
+              '[data-notes-people-choice]'
+            )
+          ].indexOf(input);
 
           selectedIds.add(
             input.value
           );
 
           refresh();
+
+          restoreModalChoiceFocus({
+            modal,
+            selector:
+              '[data-notes-people-choice]',
+            value:
+              input.value,
+            index:
+              choiceIndex,
+            fallbackSelector:
+              '[data-notes-people-search]'
+          });
         }
       );
 
@@ -77828,11 +79568,18 @@
 
             afterSave();
 
+            const savedCount =
+              Number.isFinite(
+                saved?.addedLinkCount
+              )
+                ? saved.addedLinkCount
+                : nextIds.length;
+
             showToast(
               typeof successMessage
                 === 'function'
                   ? successMessage(
-                      nextIds.length
+                      savedCount
                     )
                   : successMessage
             );
@@ -77931,67 +79678,160 @@
       });
     }
 
-    function openArchiveFilePeopleModal(
-      fileId
+    function openArchiveFilesPeopleModal(
+      fileIds
     ) {
-      const file =
-        archiveFileById(
-          fileId
+      const files =
+        archiveFilesForLinkAction(
+          fileIds
         );
 
-      if (!file) {
+      if (!files.length) {
         return;
       }
 
+      const ids =
+        files.map(file =>
+          file.id
+        );
+
+      const singleFile =
+        files.length === 1
+          ? files[0]
+          : null;
+
+      const projectId =
+        files[0].projectId
+        || currentProjectId();
+
+      const suggestedPersonIds =
+        archiveUniqueIds(
+          files.flatMap(file =>
+            archiveFileSuggestedPersonIds(
+              file
+            )
+          )
+        );
+
+      const commonPersonIds =
+        singleFile
+          ? []
+          : archiveCommonFileConnectionIds(
+              files,
+              'person'
+            );
+
       openPeopleLinkModal({
-        projectId:
-          file.projectId
-          || currentProjectId(),
+        projectId,
 
         title:
           'Add people',
 
         subtitle:
-          file.name
-          || 'Untitled file',
-
-        initialPersonIds:
-          file.linkedPersonIds
-          || [],
-
-        suggestedPersonIds:
-          archiveFileSuggestedPersonIds(
-            file
+          archiveBulkLinkSubtitle(
+            files
           ),
+
+        /*
+          Preserve the right-panel single-file
+          behavior. Bulk mode is additive only.
+        */
+        initialPersonIds:
+          singleFile
+            ? singleFile.linkedPersonIds
+              || []
+            : [],
+
+        existingPersonIds:
+          commonPersonIds,
+
+        suggestedPersonIds,
+
+        selectedHeading:
+          singleFile
+            ? 'Linked people'
+            : 'People to add',
+
+        saveLabel:
+          singleFile
+            ? 'Save people'
+            : 'Add people',
 
         onSave:
           nextPersonIds => {
-            const currentFile =
-              archiveFileById(
-                file.id
-              );
+            if (singleFile) {
+              const currentFile =
+                archiveFileById(
+                  singleFile.id
+                );
 
-            if (!currentFile) {
+              if (!currentFile) {
+                showToast(
+                  'The file is no longer available.'
+                );
+
+                return false;
+              }
+
+              return setArchiveFileConnectionIds(
+                currentFile.id,
+                'person',
+                nextPersonIds
+              );
+            }
+
+            const result =
+              archiveCommitFileConnections({
+                fileIds:
+                  ids,
+
+                entityType:
+                  'person',
+
+                recordIds:
+                  nextPersonIds
+              });
+
+            if (!result.ok) {
               showToast(
-                'The file is no longer available.'
+                'No people were linked.'
               );
 
               return false;
             }
 
-            return setArchiveFileConnectionIds(
-              currentFile.id,
-              'person',
-              nextPersonIds
-            );
+            return result;
           },
 
         afterSave:
-          renderArchive,
+          singleFile
+            ? renderArchive
+            : () => {
+                finishArchiveBulkLinkAction(
+                  ids
+                );
+              },
 
         successMessage:
-          'People links updated.'
+          singleFile
+            ? 'People links updated.'
+            : count =>
+                `${count} ${
+                  count === 1
+                    ? 'link was'
+                    : 'links were'
+                } added to ${files.length} files.`
       });
+    }
+
+    function openArchiveFilePeopleModal(
+      fileId
+    ) {
+      openArchiveFilesPeopleModal(
+        [
+          fileId
+        ]
+      );
     }
 
     function openNotesPhotosModal() {
@@ -81640,7 +83480,8 @@
 
             <span
               class="notes-event-selection-count"
-              data-notes-event-count>
+              data-notes-event-count
+              aria-live="polite">
               0 events selected
             </span>
 
@@ -81868,6 +83709,12 @@
           const eventId =
             input.value;
 
+          const choiceIndex = [
+            ...modal.querySelectorAll(
+              '[data-notes-event-choice]'
+            )
+          ].indexOf(input);
+
           if (input.checked) {
             selectedIds.add(
               eventId
@@ -81890,6 +83737,18 @@
           }
 
           refresh();
+
+          restoreModalChoiceFocus({
+            modal,
+            selector:
+              '[data-notes-event-choice]',
+            value:
+              eventId,
+            index:
+              choiceIndex,
+            fallbackSelector:
+              '[data-notes-event-search]'
+          });
         }
       );
 
@@ -82006,7 +83865,11 @@
             }
 
             const addedCount =
-              nextIds.length;
+              Number.isFinite(
+                saved?.addedLinkCount
+              )
+                ? saved.addedLinkCount
+                : nextIds.length;
 
             closeModal();
 
@@ -82144,94 +84007,175 @@
       });
     }
 
-    function openArchiveFileEventsModal(
-      fileId
+    function openArchiveFilesEventsModal(
+      fileIds
     ) {
-      const file =
-        archiveFileById(
-          fileId
+      const files =
+        archiveFilesForLinkAction(
+          fileIds
         );
 
-      if (!file) {
+      if (!files.length) {
         return;
       }
 
-      const secondaryPersonIds =
-        (
-          file.linkedSourceIds
-          || []
-        ).flatMap(sourceId =>
-          archiveSourceById(
-            sourceId
-          )?.linkedPersonIds
-          || []
+      const ids =
+        files.map(file =>
+          file.id
         );
+
+      const singleFile =
+        files.length === 1
+          ? files[0]
+          : null;
+
+      const primaryPersonIds =
+        archiveUniqueIds(
+          files.flatMap(file =>
+            file.linkedPersonIds
+            || []
+          )
+        );
+
+      const secondaryPersonIds =
+        archiveUniqueIds(
+          files.flatMap(file =>
+            (
+              file.linkedSourceIds
+              || []
+            ).flatMap(sourceId =>
+              archiveSourceById(
+                sourceId
+              )?.linkedPersonIds
+              || []
+            )
+          )
+        );
+
+      const initiallyLinkedEventIds =
+        singleFile
+          ? singleFile.linkedEventIds
+            || []
+          : archiveCommonFileConnectionIds(
+              files,
+              'event'
+            );
 
       openEventLinkModal({
         projectId:
-          file.projectId
+          files[0].projectId
           || currentProjectId(),
 
         title:
           'Add events',
 
         subtitle:
-          file.name
-          || 'Untitled file',
+          archiveBulkLinkSubtitle(
+            files
+          ),
 
-        initiallyLinkedEventIds:
-          file.linkedEventIds
-          || [],
+        /*
+          Events linked to all selected files are
+          displayed as already linked. Events linked
+          to only some files remain selectable.
+        */
+        initiallyLinkedEventIds,
 
-        primaryPersonIds:
-          file.linkedPersonIds
-          || [],
+        primaryPersonIds,
 
         secondaryPersonIds,
 
         alreadyLinkedTarget:
-          'this file',
+          singleFile
+            ? 'this file'
+            : 'all selected files',
 
         onSave:
           selectedEventIds => {
-            const currentFile =
-              archiveFileById(
-                file.id
-              );
+            if (singleFile) {
+              const currentFile =
+                archiveFileById(
+                  singleFile.id
+                );
 
-            if (!currentFile) {
+              if (!currentFile) {
+                showToast(
+                  'The file is no longer available.'
+                );
+
+                return false;
+              }
+
+              return setArchiveFileConnectionIds(
+                currentFile.id,
+                'event',
+                [
+                  ...(
+                    currentFile.linkedEventIds
+                    || []
+                  ),
+
+                  ...selectedEventIds
+                ]
+              );
+            }
+            const result =
+              archiveCommitFileConnections({
+                fileIds:
+                  ids,
+
+                entityType:
+                  'event',
+
+                recordIds:
+                  selectedEventIds
+              });
+
+            if (!result.ok) {
               showToast(
-                'The file is no longer available.'
+                'No events were linked.'
               );
 
               return false;
             }
 
-            return setArchiveFileConnectionIds(
-              currentFile.id,
-              'event',
-              [
-                ...(
-                  currentFile.linkedEventIds
-                  || []
-                ),
-
-                ...selectedEventIds
-              ]
-            );
+            return result;
           },
 
         afterSave:
-          renderArchive,
+          singleFile
+            ? renderArchive
+            : () => {
+                finishArchiveBulkLinkAction(
+                  ids
+                );
+              },
 
         successMessage:
-          count =>
-            `${count} ${
-              count === 1
-                ? 'event'
-                : 'events'
-            } added to file.`
+          singleFile
+            ? count =>
+                `${count} ${
+                  count === 1
+                    ? 'event'
+                    : 'events'
+                } added to file.`
+            : count =>
+                `${count} ${
+                  count === 1
+                    ? 'link was'
+                    : 'links were'
+                } added to ${files.length} files.`
       });
+    }
+
+    function openArchiveFileEventsModal(
+      fileId
+    ) {
+      openArchiveFilesEventsModal(
+        [
+          fileId
+        ]
+      );
     }
 
     function openNotesLinkEntityModal(
@@ -83245,7 +85189,8 @@
               class="
                 notes-related-selection-count
               "
-              data-note-picker-count>
+              data-note-picker-count
+              aria-live="polite">
               0 notes selected
             </span>
 
@@ -83428,6 +85373,12 @@
             return;
           }
 
+          const choiceIndex = [
+            ...modal.querySelectorAll(
+              '[data-note-picker-choice]'
+            )
+          ].indexOf(input);
+
           if (input.checked) {
             selectedIds.add(
               input.value
@@ -83439,6 +85390,18 @@
           }
 
           refresh();
+
+          restoreModalChoiceFocus({
+            modal,
+            selector:
+              '[data-note-picker-choice]',
+            value:
+              input.value,
+            index:
+              choiceIndex,
+            fallbackSelector:
+              '[data-note-picker-search]'
+          });
         }
       );
 
@@ -83520,8 +85483,12 @@
             const message =
               typeof successMessage
                 === 'function'
-                ? successMessage(
-                    noteIds.length
+                  ? successMessage(
+                    Number.isFinite(
+                      saved?.addedLinkCount
+                    )
+                      ? saved.addedLinkCount
+                      : noteIds.length
                   )
                 : successMessage;
 
