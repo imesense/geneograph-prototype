@@ -2435,18 +2435,118 @@
       right: var(--space-6);
       bottom: var(--space-6);
       z-index: 200;
-      border: 1px solid var(--border-strong);
-      background: var(--surface-card);
-      color: var(--text-secondary);
-      border-radius: var(--radius-sm);
-      padding: var(--space-3) var(--space-4);
-      box-shadow: var(--shadow-soft);
+      max-width:
+        min(
+          560px,
+          calc(100vw - 32px)
+        );
+      min-height: 44px;
+      padding:
+        var(--space-3)
+        var(--space-4);
+      border:
+        1px solid
+        var(--border-strong);
+      border-radius:
+        var(--radius-sm);
+      background:
+        var(--surface-card);
+      color:
+        var(--text-secondary);
+      box-shadow:
+        var(--shadow-soft);
       opacity: 0;
-      transform: translateY(12px);
+      transform:
+        translateY(12px);
       pointer-events: none;
-      transition: opacity var(--ease), transform var(--ease);
+      transition:
+        opacity
+        var(--ease),
+        transform
+        var(--ease);
+      display: flex;
+      align-items: center;
+      gap:
+        var(--space-4);
     }
-    .toast.show { opacity: 1; transform: translateY(0); }
+
+    .toast.show {
+      opacity:
+        1;
+      transform:
+        translateY(0);
+      pointer-events:
+        auto;
+    }
+
+    .toast-message {
+      min-width:
+        0;
+      flex:
+        1 1 auto;
+      line-height:
+        1.45;
+    }
+
+    .toast-actions {
+      flex:
+        0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .toast-action {
+      min-height: 30px;
+      padding: 0 9px;
+      border:
+        1px solid
+        transparent;
+      border-radius: 7px;
+      background: transparent;
+      color:
+        var(--brand-green-300);
+      font: inherit;
+
+      font-size:
+        12px;
+
+      font-weight:
+        850;
+
+      white-space:
+        nowrap;
+    }
+
+    .toast-action:hover {
+      border-color:
+        var(--border-default);
+
+      background:
+        var(--surface-card-hover);
+    }
+
+    @media (max-width: 620px) {
+      .toast {
+        right:
+          var(--space-4);
+
+        bottom:
+          var(--space-4);
+
+        left:
+          var(--space-4);
+
+        align-items:
+          flex-start;
+
+        flex-direction:
+          column;
+
+        gap:
+          var(--space-2);
+      }
+    }
 
     .placeholder {
       height: 100%;
@@ -15925,33 +16025,742 @@
       font-size: 11px;
     }
 
-    .archive-folder-picker {
-      max-height: 360px;
+    .archive-move-modal {
+      width:
+        min(
+          720px,
+          calc(100vw - 32px)
+        );
+
+      max-width:
+        720px;
+
+      height:
+        min(
+          86vh,
+          780px
+        );
+
+      max-height:
+        min(
+          86vh,
+          780px
+        );
+
+      overflow:
+        hidden;
+
+      display:
+        grid;
+
+      grid-template-rows:
+        auto
+        minmax(0, 1fr)
+        auto;
+    }
+
+    .archive-move-modal
+    .modal-body {
+      min-height:
+        0;
+
+      overflow:
+        hidden;
+
+      padding-block:
+        var(--space-4);
+
+      display:
+        grid;
+
+      grid-template-rows:
+        auto
+        minmax(0, 1fr);
+
+      gap:
+        var(--space-3);
+    }
+
+    .archive-move-content {
+      min-width:
+        0;
+
+      min-height:
+        0;
+
+      display:
+        flex;
+
+      flex-direction:
+        column;
+
+      gap:
+        var(--space-3);
+    }
+
+    .archive-move-item-summary {
+      min-width:
+        0;
+
+      padding:
+        0 2px;
+
+      border:
+        0;
+
+      background:
+        transparent;
+
+      display:
+        grid;
+
+      gap:
+        var(--space-2);
+    }
+
+    .archive-move-context-label {
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        11px;
+
+      font-weight:
+        850;
+
+      line-height:
+        1;
+
+      letter-spacing:
+        .05em;
+
+      text-transform:
+        uppercase;
+    }
+
+    .archive-move-item-row {
+      min-width: 0;
+      display: grid;
+      grid-template-columns:
+        32px
+        minmax(0, 1fr)
+        auto;
+      gap:
+        var(--space-3);
+      align-items:
+        center;
+    }
+
+    .archive-move-item-action {
+      min-height:
+        38px;
+
+      height:
+        38px;
+
+      padding-inline:
+        12px;
+
+      align-self:
+        center;
+
+      white-space:
+        nowrap;
+    }
+
+    .archive-move-item-icon {
+      width:
+        32px;
+
+      height:
+        32px;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        var(--surface-input);
+
+      color:
+        var(--text-secondary);
+
+      display:
+        grid;
+
+      place-items:
+        center;
+    }
+
+    .archive-move-item-icon svg {
+      width:
+        17px;
+
+      height:
+        17px;
+    }
+
+    .archive-move-item-copy {
+      min-width:
+        0;
+
+      display:
+        grid;
+
+      gap:
+        2px;
+    }
+
+    .archive-move-item-copy strong,
+    .archive-move-item-copy > span {
+      min-width:
+        0;
+
+      overflow:
+        hidden;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
+    }
+
+    .archive-move-item-copy strong {
+      color:
+        var(--text-primary);
+
+      font-size:
+        14px;
+
+      line-height:
+        1.35;
+    }
+
+    .archive-move-item-copy > span {
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        12px;
+
+      line-height:
+        1.4;
+    }
+
+    .archive-move-search-field {
+      width:
+        100%;
+
+      max-width:
+        none;
+
+      flex:
+        0 0 auto;
+    }
+
+    .archive-move-new-folder-form {
+      padding:
+        var(--space-3);
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        rgba(255, 255, 255, .022);
+
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .archive-move-new-folder-context {
+      min-width: 0;
+
+      display: grid;
+      gap: 3px;
+    }
+
+    .archive-move-new-folder-context span {
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        11px;
+
+      font-weight:
+        800;
+
+      text-transform:
+        uppercase;
+
+      letter-spacing:
+        .04em;
+    }
+
+    .archive-move-new-folder-context strong {
+      min-width: 0;
+
+      color:
+        var(--text-secondary);
+
+      font-size:
+        13px;
+
+      overflow:
+        hidden;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
+    }
+
+    .archive-move-new-folder-fields {
+      display: grid;
+      grid-template-columns:
+        minmax(0, 1fr)
+        auto
+        auto;
+
+      gap:
+        var(--space-2);
+    }
+
+    .archive-move-new-folder-fields input {
+      min-width: 0;
+      height:
+        var(--control-height);
+
+      padding:
+        0
+        var(--space-3);
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        var(--surface-input);
+
+      color:
+        var(--text-primary);
+
+      font:
+        inherit;
+    }
+
+    .archive-move-section-label {
+      margin:
+        1px 0 -4px;
+      color:
+        var(--text-tertiary);
+      font-size:
+        11px;
+      font-weight:
+        850;
+      line-height:
+        1;
+      letter-spacing:
+        .05em;
+      text-transform:
+        uppercase;
+    }
+
+    .archive-move-picker {
+      min-width: 0;
+      min-height: 160px;
+      flex:
+        1 1 auto;
       overflow: auto;
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-sm);
-      padding: var(--space-2);
+      padding:
+        var(--space-2);
+      border:
+        1px solid
+        var(--border-default);
+      border-radius:
+        var(--radius-sm);
+      background:
+        rgba(255, 255, 255, .012);
     }
 
-    .archive-folder-picker button {
+    .archive-move-tree,
+    .archive-move-search-results {
+      display: grid;
+      gap: 2px;
+    }
+
+    .archive-move-tree-row {
+      min-width: 0;
+
+      padding-left:
+        calc(
+          var(--archive-move-depth, 0)
+          * 16px
+        );
+
+      display: grid;
+      grid-template-columns:
+        32px
+        minmax(0, 1fr);
+
+      align-items:
+        stretch;
+    }
+
+    .archive-move-tree-toggle {
+      width: 32px;
+      min-height: 42px;
+
+      padding: 0;
+
+      border: 0;
+
+      background:
+        transparent;
+
+      color:
+        var(--text-tertiary);
+
+      display: grid;
+      place-items: center;
+    }
+
+    .archive-move-tree-toggle:hover {
+      color:
+        var(--text-primary);
+    }
+
+    .archive-move-tree-toggle svg {
+      width: 14px;
+      height: 14px;
+
+      transition:
+        transform
+        var(--ease);
+    }
+
+    .archive-move-tree-toggle.is-expanded svg {
+      transform:
+        rotate(90deg);
+    }
+
+    .archive-move-tree-toggle.is-placeholder {
+      visibility:
+        hidden;
+    }
+
+    .archive-move-tree-main,
+    .archive-move-search-result {
       width: 100%;
-      min-height: 38px;
-      padding: 0 10px;
-      border: 1px solid transparent;
-      border-radius: 8px;
-      background: transparent;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      text-align: left;
+      min-width: 0;
+      min-height: 42px;
+
+      padding:
+        6px
+        var(--space-2);
+
+      border:
+        1px solid
+        transparent;
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        transparent;
+
+      color:
+        var(--text-secondary);
+
+      text-align:
+        left;
+
+      display: grid;
+      grid-template-columns:
+        auto
+        minmax(0, 1fr)
+        auto;
+
+      gap:
+        var(--space-2);
+
+      align-items:
+        center;
     }
 
-    .archive-folder-picker button:hover,
-    .archive-folder-picker button.selected {
-      border-color: rgba(98, 217, 154, .2);
-      background: var(--surface-selected);
-      color: var(--text-primary);
+    .archive-move-tree-main:hover:not(:disabled),
+    .archive-move-search-result:hover:not(:disabled) {
+      border-color:
+        var(--border-strong);
+
+      background:
+        var(--surface-card-hover);
+
+      color:
+        var(--text-primary);
+    }
+
+    .archive-move-tree-main.is-selected,
+    .archive-move-search-result.is-selected {
+      border-color:
+        rgba(98, 217, 154, .28);
+
+      background:
+        var(--surface-selected);
+
+      color:
+        var(--text-primary);
+    }
+
+    .archive-move-tree-main:disabled,
+    .archive-move-search-result:disabled {
+      opacity:
+        .55;
+
+      cursor:
+        not-allowed;
+    }
+
+    .archive-move-tree-main.is-current-folder:disabled,
+    .archive-move-search-result.is-current-folder:disabled {
+      opacity:
+        1;
+
+      cursor:
+        default;
+
+      border-color:
+        transparent;
+
+      background:
+        rgba(255, 255, 255, .018);
+
+      color:
+        var(--text-secondary);
+    }
+
+    .archive-move-tree-main.is-current-folder:disabled
+    .archive-move-folder-copy strong,
+    .archive-move-search-result.is-current-folder:disabled
+    .archive-move-folder-copy strong {
+      color:
+        var(--text-secondary);
+    }
+
+    .archive-move-tree-main.is-current-folder:disabled
+    .archive-move-folder-copy span,
+    .archive-move-search-result.is-current-folder:disabled
+    .archive-move-folder-copy span {
+      color:
+        var(--text-tertiary);
+    }
+
+    .archive-move-tree-main > svg,
+    .archive-move-search-result > svg {
+      width: 17px;
+      height: 17px;
+
+      color:
+        var(--text-tertiary);
+    }
+
+    .archive-move-folder-copy {
+      min-width: 0;
+
+      display: grid;
+      gap: 2px;
+    }
+
+    .archive-move-folder-copy strong,
+    .archive-move-folder-copy span {
+      min-width: 0;
+
+      overflow:
+        hidden;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
+    }
+
+    .archive-move-folder-copy strong {
+      color:
+        inherit;
+
+      font-size:
+        13px;
+    }
+
+    .archive-move-folder-copy span {
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        11px;
+    }
+
+    .archive-move-selected-mark {
+      width:
+        18px;
+      height:
+        18px;
+      color:
+        var(--brand-green-300);
+      display:
+        grid;
+      place-items:
+        center;
+    }
+
+    .archive-move-selected-mark svg {
+      width:
+        15px;
+      height:
+        15px;
+    }
+
+    .archive-move-search-result mark {
+      padding: 0;
+
+      background:
+        transparent;
+
+      color:
+        var(--brand-green-300);
+    }
+
+    .archive-move-empty {
+      padding:
+        var(--space-6);
+
+      color:
+        var(--text-tertiary);
+
+      text-align:
+        center;
+
+      font-size:
+        13px;
+    }
+
+    .archive-move-destination {
+      min-width:
+        0;
+
+      min-height:
+        54px;
+
+      padding:
+        0
+        var(--space-3);
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        rgba(255, 255, 255, .022);
+
+      display:
+        grid;
+
+      grid-template-columns:
+        112px
+        minmax(0, 1fr);
+
+      gap:
+        var(--space-3);
+
+      align-items:
+        center;
+    }
+
+    .archive-move-destination-label {
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        11px;
+
+      font-weight:
+        850;
+
+      line-height:
+        1;
+
+      letter-spacing:
+        .05em;
+
+      text-transform:
+        uppercase;
+    }
+
+    .archive-move-destination-value {
+      min-width:
+        0;
+
+      color:
+        var(--text-primary);
+
+      font-size:
+        13px;
+
+      line-height:
+        1.45;
+
+      font-weight:
+        750;
+
+      overflow-wrap:
+        anywhere;
+    }
+
+    .archive-move-destination-value.is-placeholder {
+      color:
+        var(--text-tertiary);
+
+      font-weight:
+        650;
+    }
+
+    @media (max-width: 620px) {
+      .archive-move-item-row {
+        grid-template-columns:
+          32px
+          minmax(0, 1fr);
+      }
+
+      .archive-move-item-action {
+        grid-column:
+          2;
+
+        justify-self:
+          start;
+
+        margin-top:
+          2px;
+      }
+
+      .archive-move-new-folder-fields {
+        grid-template-columns:
+          1fr;
+      }
     }
 
     .archive-delete-summary {
@@ -56814,6 +57623,16 @@
     const ARCHIVE_ROOT_PICKER_VALUE =
       '__archive_root__';
 
+    const ARCHIVE_MOVE_NO_DESTINATION =
+      '__archive_move_no_destination__';
+
+    function archiveMoveHasDestination(
+      folderId
+    ) {
+      return folderId
+        !== ARCHIVE_MOVE_NO_DESTINATION;
+    }
+
     function archiveIsRootLocation(
       folderId
     ) {
@@ -61765,7 +62584,8 @@
                   aria-label="More actions for ${escapeHtml(
                     context.label
                   )}"
-                  aria-haspopup="dialog"
+                  aria-haspopup="menu"
+                  aria-expanded="false"
                   title="More actions">
 
                   ${icon.more}
@@ -63120,6 +63940,86 @@
       showToast('File adding will be available in the working MVP.');
     }
 
+    function createArchiveFolderRecord(
+      name,
+      parentId = null
+    ) {
+      const normalizedName =
+        String(
+          name || ''
+        ).trim();
+
+      if (!normalizedName) {
+        return null;
+      }
+
+      const normalizedParentId =
+        archiveNormalizeFolderId(
+          parentId
+        );
+
+      let id =
+        `folder-${Date.now()}`;
+
+      let suffix =
+        1;
+
+      while (
+        archiveFolderById(
+          id
+        )
+      ) {
+        id =
+          `folder-${Date.now()}-${suffix}`;
+
+        suffix +=
+          1;
+      }
+
+      const now =
+        new Date()
+          .toISOString();
+
+      const folder = {
+        id,
+
+        projectId:
+          currentProjectId(),
+
+        parentId:
+          normalizedParentId,
+
+        name:
+          normalizedName,
+
+        createdAt:
+          now,
+
+        updatedAt:
+          now
+      };
+
+      sampleData.archiveFolders =
+        sampleData.archiveFolders
+        || [];
+
+      sampleData
+        .archiveFolders
+        .push(
+          folder
+        );
+
+      if (
+        normalizedParentId
+      ) {
+        state.archiveExpandedFolders[
+          normalizedParentId
+        ] = true;
+      }
+
+      return folder;
+    }
+
     function openArchiveCreateFolderModal(
       parentId =
         state.archiveSelectedFolderId
@@ -63141,7 +64041,7 @@
                 : ''
             }>
 
-            Top level
+            Files — top level
           </option>
         `,
 
@@ -63181,7 +64081,9 @@
 
           <div class="modal-header">
             <div>
-              <h2 id="archiveNewFolderTitle">
+              <h2
+                id="archiveNewFolderTitle">
+
                 New folder
               </h2>
 
@@ -63271,12 +64173,9 @@
               .querySelector(
                 '[data-archive-folder-name]'
               )
-              .value
-              .trim();
-
-          if (!name) {
-            return;
-          }
+              ?.value
+              .trim()
+            || '';
 
           const selectedParentId =
             archiveFolderIdFromChoice(
@@ -63284,68 +64183,54 @@
                 .querySelector(
                   '[data-archive-parent-folder]'
                 )
-                .value
+                ?.value
+              || ARCHIVE_ROOT_PICKER_VALUE
             );
 
-          const id =
-            `folder-${Date.now()}`;
-
-          const now =
-            new Date()
-              .toISOString();
-
-          sampleData
-            .archiveFolders
-            .push({
-              id,
-
-              projectId:
-                currentProjectId(),
-
-              parentId:
-                selectedParentId,
-
+          const folder =
+            createArchiveFolderRecord(
               name,
-
-              createdAt:
-                now,
-
-              updatedAt:
-                now
-            });
-            closeModal();
-            archiveNavigateToLocation(
-              {
-                view:
-                  'files',
-
-                folderId:
-                  id,
-
-                search:
-                  '',
-
-                searchScope:
-                  'folder',
-
-                personFilterId:
-                  '',
-
-                selectedFileId:
-                  null,
-
-                inspectorCollapsed:
-                  false
-              },
-              {
-                expandCurrent:
-                  true
-              }
+              selectedParentId
             );
 
-            showToast(
-              'Folder created.'
-            );
+          if (!folder) {
+            return;
+          }
+
+          closeModal();
+
+          archiveNavigateToLocation(
+            {
+              view:
+                'files',
+
+              folderId:
+                folder.id,
+
+              search:
+                '',
+
+              searchScope:
+                'folder',
+
+              personFilterId:
+                '',
+
+              selectedFileId:
+                null,
+
+              inspectorCollapsed:
+                false
+            },
+            {
+              expandCurrent:
+                true
+            }
+          );
+
+          showToast(
+            'Folder created.'
+          );
         }
       );
     }
@@ -63414,36 +64299,73 @@
       });
     }
 
-    function openArchiveRenameFolderModal(
-      folderId
+    function openArchiveRenameItemModal(
+      type,
+      id
     ) {
-      const folder =
-        archiveFolderById(
-          folderId
-        );
+      const file =
+        type === 'file'
+          ? archiveFileById(
+              id
+            )
+          : null;
 
-      if (!folder) {
+      const folder =
+        type === 'folder'
+          ? archiveFolderById(
+              id
+            )
+          : null;
+
+      const item =
+        file
+        || folder;
+
+      if (!item) {
         return;
       }
+
+      const itemType =
+        file
+          ? 'file'
+          : 'folder';
+
+      const currentName =
+        file?.name
+        || folder?.name
+        || '';
+
+      const title =
+        file
+          ? 'Rename file'
+          : 'Rename folder';
+
+      const description =
+        file
+          ? 'Update the file name without changing its contents, folder, or links.'
+          : 'Update the folder name without changing its contents or location.';
 
       openModal(`
         <div
           class="modal"
           role="dialog"
           aria-modal="true"
-          aria-labelledby="archiveRenameFolderTitle">
+          aria-labelledby="archiveRenameItemTitle">
 
           <div class="modal-header">
             <div>
               <h2
-                id="archiveRenameFolderTitle">
+                id="archiveRenameItemTitle">
 
-                Rename folder
+                ${escapeHtml(
+                  title
+                )}
               </h2>
 
               <p>
-                Update the folder name without
-                changing its contents or links.
+                ${escapeHtml(
+                  description
+                )}
               </p>
             </div>
 
@@ -63458,22 +64380,22 @@
           </div>
 
           <form
-            data-archive-rename-folder-form>
+            data-archive-rename-item-form>
 
             <div class="modal-body">
               <div class="field">
                 <label
-                  for="archiveRenameFolderValue">
+                  for="archiveRenameItemValue">
 
                   Name
                 </label>
 
                 <input
-                  id="archiveRenameFolderValue"
+                  id="archiveRenameItemValue"
                   required
-                  maxlength="160"
+                  maxlength="220"
                   value="${escapeHtml(
-                    folder.name
+                    currentName
                   )}">
               </div>
             </div>
@@ -63500,7 +64422,12 @@
 
       const form =
         modalBackdrop.querySelector(
-          '[data-archive-rename-folder-form]'
+          '[data-archive-rename-item-form]'
+        );
+
+      const input =
+        form?.querySelector(
+          '#archiveRenameItemValue'
         );
 
       form?.addEventListener(
@@ -63509,108 +64436,1114 @@
           event.preventDefault();
 
           const value =
-            form
-              .querySelector(
-                '#archiveRenameFolderValue'
-              )
-              .value
-              .trim();
+            input
+              ?.value
+              .trim()
+            || '';
 
           if (!value) {
+            input?.focus();
+
             return;
           }
 
-          folder.name =
-            value;
-
-          folder.updatedAt =
+          const now =
             new Date()
               .toISOString();
+
+          if (file) {
+            file.name =
+              value;
+
+            file.updatedAt =
+              now;
+
+            file.updated =
+              'Just now';
+          }
+
+          if (folder) {
+            folder.name =
+              value;
+
+            folder.updatedAt =
+              now;
+          }
 
           closeModal();
           renderArchive();
 
           showToast(
-            'Folder renamed.'
+            `${
+              itemType === 'file'
+                ? 'File'
+                : 'Folder'
+            } renamed.`
           );
+        }
+      );
+
+      requestAnimationFrame(
+        () => {
+          input?.focus();
+          input?.select();
         }
       );
     }
 
-    function archiveFolderPickerRows(
-      selectedId,
-      excludedIds =
-        new Set()
+    function archiveMoveFolderPath(
+      folderId
     ) {
-      const normalizedSelectedId =
-        archiveNormalizeFolderId(
+      const folders =
+        archiveFolderAncestors(
+          folderId
+        );
+
+      return [
+        'Files',
+
+        ...folders.map(
+          folder =>
+            folder.name
+        )
+      ].join(
+        ' / '
+      );
+    }
+
+    function archiveMoveCurrentFolderState({
+      movingFolder,
+      files
+    }) {
+      /*
+        When moving a folder, the folder itself is
+        the unavailable "Current folder" row.
+      */
+      if (movingFolder) {
+        return {
+          hasCurrentFolder:
+            true,
+
+          folderId:
+            movingFolder.id
+        };
+      }
+
+      /*
+        A single current folder exists only when
+        all selected files share the same folder.
+      */
+      const folderIds =
+        [
+          ...new Set(
+            files.map(file =>
+              archiveFileFolderId(
+                file
+              )
+            )
+          )
+        ];
+
+      return {
+        hasCurrentFolder:
+          folderIds.length === 1,
+
+        folderId:
+          folderIds.length === 1
+            ? folderIds[0]
+            : null
+      };
+    }
+
+    function archiveMoveNewFolderParentId({
+      movingFolder,
+      selectedId,
+      currentFolderState
+    }) {
+      /*
+        Create inside the explicitly selected
+        destination whenever one exists.
+      */
+      if (
+        archiveMoveHasDestination(
+          selectedId
+        )
+      ) {
+        return selectedId;
+      }
+
+      /*
+        A new destination for a moving folder
+        must not be created inside that folder.
+        Default to its existing parent.
+      */
+      if (movingFolder) {
+        return archiveFolderParentId(
+          movingFolder
+        );
+      }
+
+      /*
+        For files from one location, creating a
+        subfolder inside their current folder is
+        a useful default.
+      */
+      if (
+        currentFolderState
+          .hasCurrentFolder
+      ) {
+        return currentFolderState
+          .folderId;
+      }
+
+      /*
+        Mixed-origin bulk selection defaults to
+        the Files root.
+      */
+      return null;
+    }
+
+    function archiveMoveInitialRevealFolderId({
+      movingFolder,
+      files,
+      currentFolderState
+    }) {
+      if (movingFolder) {
+        return movingFolder.id;
+      }
+
+      if (
+        currentFolderState
+          .hasCurrentFolder
+      ) {
+        return currentFolderState
+          .folderId;
+      }
+
+      return archiveFileFolderId(
+        files[0]
+      );
+    }
+
+    function renderArchiveMoveItemSummary({
+      movingFolder,
+      files
+    }) {
+      let itemIcon =
+        icon.file;
+
+      let itemName =
+        '';
+
+      let itemMeta =
+        '';
+
+      if (movingFolder) {
+        const impact =
+          archiveFolderImpact(
+            movingFolder.id
+          );
+
+        itemIcon =
+          icon.folder;
+
+        itemName =
+          movingFolder.name
+          || 'Untitled folder';
+
+        itemMeta =
+          `${impact.files} ${
+            impact.files === 1
+              ? 'file'
+              : 'files'
+          } · ${impact.folders} ${
+            impact.folders === 1
+              ? 'subfolder'
+              : 'subfolders'
+          }`;
+      } else if (
+        files.length === 1
+      ) {
+        const file =
+          files[0];
+
+        itemName =
+          file.name
+          || 'Untitled file';
+
+        itemMeta =
+          [
+            archiveFileTypeLabel(
+              file
+            ),
+
+            file.size
+            || ''
+          ]
+            .filter(Boolean)
+            .join(' · ');
+      } else {
+        itemName =
+          `${files.length} files`;
+
+        itemMeta =
+          'Selected files';
+      }
+
+      return `
+        <div
+          class="
+            archive-move-item-summary
+          ">
+
+          <span
+            class="
+              archive-move-context-label
+            ">
+
+            Moving
+          </span>
+
+          <div
+            class="
+              archive-move-item-row
+            ">
+
+            <span
+              class="
+                archive-move-item-icon
+              "
+              aria-hidden="true">
+
+              ${itemIcon}
+            </span>
+
+            <span
+              class="
+                archive-move-item-copy
+              ">
+
+              <strong>
+                ${escapeHtml(
+                  itemName
+                )}
+              </strong>
+
+              ${
+                itemMeta
+                  ? `
+                    <span>
+                      ${escapeHtml(
+                        itemMeta
+                      )}
+                    </span>
+                  `
+                  : ''
+              }
+            </span>
+
+            <button
+              class="
+                button
+                secondary
+                archive-move-item-action
+              "
+              type="button"
+              data-archive-move-new-folder
+              aria-label="Create a new destination folder"
+              title="New folder">
+
+              ${icon.plus}
+
+              New folder
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function archiveMoveSelectionStats({
+      movingFolder,
+      files,
+      selectedId
+    }) {
+      if (
+        !archiveMoveHasDestination(
+          selectedId
+        )
+      ) {
+        return {
+          canMove:
+            false,
+
+          movableFiles:
+            [],
+
+          movableCount:
+            0,
+
+          alreadyThere:
+            0
+        };
+      }
+
+      if (movingFolder) {
+        const currentParentId =
+          archiveFolderParentId(
+            movingFolder
+          );
+
+        const canMove =
+          currentParentId
+            !== selectedId;
+
+        return {
+          canMove,
+
+          movableFiles:
+            [],
+
+          movableCount:
+            canMove
+              ? 1
+              : 0,
+
+          alreadyThere:
+            canMove
+              ? 0
+              : 1
+        };
+      }
+
+      const movableFiles =
+        files.filter(file =>
+          archiveFileFolderId(
+            file
+          ) !== selectedId
+        );
+
+      return {
+        canMove:
+          movableFiles.length > 0,
+
+        movableFiles,
+
+        movableCount:
+          movableFiles.length,
+
+        alreadyThere:
+          files.length
+          - movableFiles.length
+      };
+    }
+
+    function archiveMoveHighlightMatch(
+      label,
+      query
+    ) {
+      const normalizedLabel =
+        String(
+          label || ''
+        );
+
+      const normalizedQuery =
+        String(
+          query || ''
+        )
+          .trim();
+
+      if (!normalizedQuery) {
+        return escapeHtml(
+          normalizedLabel
+        );
+      }
+
+      const index =
+        normalizedLabel
+          .toLowerCase()
+          .indexOf(
+            normalizedQuery
+              .toLowerCase()
+          );
+
+      if (index < 0) {
+        return escapeHtml(
+          normalizedLabel
+        );
+      }
+
+      const before =
+        normalizedLabel.slice(
+          0,
+          index
+        );
+
+      const match =
+        normalizedLabel.slice(
+          index,
+          index
+            + normalizedQuery.length
+        );
+
+      const after =
+        normalizedLabel.slice(
+          index
+            + normalizedQuery.length
+        );
+
+      return `
+        ${escapeHtml(
+          before
+        )}<mark>${escapeHtml(
+          match
+        )}</mark>${escapeHtml(
+          after
+        )}
+      `;
+    }
+
+    function renderArchiveMoveSelectedMark() {
+      return `
+        <span
+          class="
+            archive-move-selected-mark
+          "
+          aria-hidden="true">
+
+          ${icon.check}
+        </span>
+      `;
+    }
+
+    function renderArchiveMoveTreeFolderRows({
+      parentId,
+      depth,
+      selectedId,
+      expandedIds,
+      movingFolderId,
+      currentFolderState
+    }) {
+      return archiveFolderChildren(
+        parentId
+      )
+        .map(folder => {
+          const isMovingFolder =
+            folder.id
+              === movingFolderId;
+
+          const isCurrentFolder =
+            Boolean(
+              currentFolderState
+                ?.hasCurrentFolder
+              && folder.id
+                === currentFolderState
+                  .folderId
+            );
+
+          const children =
+            archiveFolderChildren(
+              folder.id
+            );
+
+          const hasChildren =
+            children.length > 0;
+
+          const expanded =
+            expandedIds.has(
+              folder.id
+            );
+
+          const selected =
+            archiveMoveHasDestination(
+              selectedId
+            )
+            && selectedId
+              === folder.id;
+
+          return `
+            <div
+              class="
+                archive-move-tree-row
+              "
+              style="
+                --archive-move-depth:
+                  ${depth};
+              ">
+
+              ${
+                hasChildren
+                && !isMovingFolder
+                  ? `
+                    <button
+                      class="
+                        archive-move-tree-toggle
+                        ${
+                          expanded
+                            ? 'is-expanded'
+                            : ''
+                        }
+                      "
+                      type="button"
+                      data-archive-move-toggle="${escapeHtml(
+                        folder.id
+                      )}"
+                      aria-label="${
+                        expanded
+                          ? 'Collapse'
+                          : 'Expand'
+                      } ${escapeHtml(
+                        folder.name
+                      )}"
+                      aria-expanded="${String(
+                        expanded
+                      )}">
+
+                      ${icon.chevron}
+                    </button>
+                  `
+                  : `
+                    <span
+                      class="
+                        archive-move-tree-toggle
+                        is-placeholder
+                      "
+                      aria-hidden="true">
+                    </span>
+                  `
+              }
+
+              <button
+                class="
+                  archive-move-tree-main
+
+                  ${
+                    selected
+                      ? 'is-selected'
+                      : ''
+                  }
+
+                  ${
+                    isCurrentFolder
+                      ? 'is-current-folder'
+                      : ''
+                  }
+                "
+                type="button"
+                data-archive-move-select="${escapeHtml(
+                  folder.id
+                )}"
+                aria-pressed="${String(
+                  selected
+                )}"
+                ${
+                  isCurrentFolder
+                    ? 'disabled aria-disabled="true"'
+                    : ''
+                }>
+
+                ${icon.folder}
+
+                <span
+                  class="
+                    archive-move-folder-copy
+                  ">
+
+                  <strong>
+                    ${escapeHtml(
+                      folder.name
+                    )}
+                  </strong>
+
+                  ${
+                    isCurrentFolder
+                      ? `
+                        <span>
+                          Current folder
+                        </span>
+                      `
+                      : ''
+                  }
+                </span>
+
+                ${
+                  selected
+                    ? renderArchiveMoveSelectedMark()
+                    : ''
+                }
+              </button>
+            </div>
+
+            ${
+              hasChildren
+              && expanded
+              && !isMovingFolder
+                ? renderArchiveMoveTreeFolderRows({
+                    parentId:
+                      folder.id,
+
+                    depth:
+                      depth + 1,
+
+                    selectedId,
+
+                    expandedIds,
+
+                    movingFolderId,
+
+                    currentFolderState
+                  })
+                : ''
+            }
+          `;
+        })
+        .join('');
+    }
+
+    function renderArchiveMoveTree({
+      selectedId,
+      expandedIds,
+      movingFolderId,
+      currentFolderState
+    }) {
+      const rootExpanded =
+        expandedIds.has(
+          null
+        );
+
+      const rootCurrent =
+        Boolean(
+          currentFolderState
+            ?.hasCurrentFolder
+          && archiveIsRootLocation(
+            currentFolderState
+              .folderId
+          )
+        );
+
+      const rootSelected =
+        archiveMoveHasDestination(
+          selectedId
+        )
+        && archiveIsRootLocation(
           selectedId
         );
 
-      const rootRow = `
-        <button
-          class="${
-            archiveIsRootLocation(
-              normalizedSelectedId
-            )
-              ? 'selected'
-              : ''
-          }"
-          type="button"
-          data-archive-folder-choice="${ARCHIVE_ROOT_PICKER_VALUE}"
-          style="padding-left:10px">
+      const rootHasChildren =
+        archiveFolderChildren(
+          null
+        ).length > 0;
 
-          ${icon.folder}
+      return `
+        <div
+          class="
+            archive-move-tree
+          ">
 
-          <span>
-            Top level
-          </span>
-        </button>
-      `;
+          <div
+            class="
+              archive-move-tree-row
+            "
+            style="
+              --archive-move-depth:
+                0;
+            ">
 
-      const folderRows =
-        archiveFlattenFolders()
-          .filter(({
-            folder
-          }) =>
-            !excludedIds.has(
-              folder.id
-            )
-          )
-          .map(({
-            folder,
-            depth
-          }) => `
+            ${
+              rootHasChildren
+                ? `
+                  <button
+                    class="
+                      archive-move-tree-toggle
+                      ${
+                        rootExpanded
+                          ? 'is-expanded'
+                          : ''
+                      }
+                    "
+                    type="button"
+                    data-archive-move-toggle="${ARCHIVE_ROOT_PICKER_VALUE}"
+                    aria-label="${
+                      rootExpanded
+                        ? 'Collapse Files'
+                        : 'Expand Files'
+                    }"
+                    aria-expanded="${String(
+                      rootExpanded
+                    )}">
+
+                    ${icon.chevron}
+                  </button>
+                `
+                : `
+                  <span
+                    class="
+                      archive-move-tree-toggle
+                      is-placeholder
+                    "
+                    aria-hidden="true">
+                  </span>
+                `
+            }
+
             <button
-              class="${
-                normalizedSelectedId
-                  === folder.id
-                    ? 'selected'
+              class="
+                archive-move-tree-main
+
+                ${
+                  rootSelected
+                    ? 'is-selected'
                     : ''
-              }"
+                }
+
+                ${
+                  rootCurrent
+                    ? 'is-current-folder'
+                    : ''
+                }
+              "
               type="button"
-              data-archive-folder-choice="${escapeHtml(
-                folder.id
+              data-archive-move-select="${ARCHIVE_ROOT_PICKER_VALUE}"
+              aria-pressed="${String(
+                rootSelected
               )}"
-              style="padding-left:${
-                26 + depth * 16
-              }px">
+              ${
+                rootCurrent
+                  ? 'disabled aria-disabled="true"'
+                  : ''
+              }>
 
               ${icon.folder}
 
-              <span>
-                ${escapeHtml(
-                  folder.name
-                )}
-              </span>
-            </button>
-          `)
-          .join('');
+              <span
+                class="
+                  archive-move-folder-copy
+                ">
 
-      return (
-        rootRow
-        + folderRows
-      );
+                <strong>
+                  Files
+                </strong>
+
+                <span>
+                  ${
+                    rootCurrent
+                      ? 'Current folder'
+                      : 'Top level'
+                  }
+                </span>
+              </span>
+
+              ${
+                rootSelected
+                  ? renderArchiveMoveSelectedMark()
+                  : ''
+              }
+            </button>
+          </div>
+
+          ${
+            rootExpanded
+              ? renderArchiveMoveTreeFolderRows({
+                  parentId:
+                    null,
+
+                  depth:
+                    1,
+
+                  selectedId,
+
+                  expandedIds,
+
+                  movingFolderId,
+
+                  currentFolderState
+                })
+              : ''
+          }
+        </div>
+      `;
+    }
+
+    function renderArchiveMoveSearchResults({
+      query,
+      selectedId,
+      movingFolder,
+      currentFolderState
+    }) {
+      const normalizedQuery =
+        String(
+          query || ''
+        )
+          .trim()
+          .toLowerCase();
+
+      const blockedDescendantIds =
+        new Set(
+          movingFolder
+            ? archiveFolderDescendantIds(
+                movingFolder.id,
+                {
+                  includeSelf:
+                    false
+                }
+              )
+            : []
+        );
+
+      const rootMatches =
+        'files top level'
+          .includes(
+            normalizedQuery
+          );
+
+      const rootCurrent =
+        Boolean(
+          currentFolderState
+            ?.hasCurrentFolder
+          && archiveIsRootLocation(
+            currentFolderState
+              .folderId
+          )
+        );
+
+      const rootSelected =
+        archiveMoveHasDestination(
+          selectedId
+        )
+        && archiveIsRootLocation(
+          selectedId
+        );
+
+      const folders =
+        archiveFlattenFolders()
+          .map(item =>
+            item.folder
+          )
+          .filter(folder =>
+            !blockedDescendantIds.has(
+              folder.id
+            )
+            && String(
+              folder.name || ''
+            )
+              .toLowerCase()
+              .includes(
+                normalizedQuery
+              )
+          );
+
+      if (
+        !rootMatches
+        && !folders.length
+      ) {
+        return `
+          <div
+            class="
+              archive-move-empty
+            ">
+
+            No folders match “${escapeHtml(
+              query
+            )}”.
+          </div>
+        `;
+      }
+
+      return `
+        <div
+          class="
+            archive-move-search-results
+          ">
+
+          ${
+            rootMatches
+              ? `
+                <button
+                  class="
+                    archive-move-search-result
+
+                    ${
+                      rootSelected
+                        ? 'is-selected'
+                        : ''
+                    }
+
+                    ${
+                      rootCurrent
+                        ? 'is-current-folder'
+                        : ''
+                    }
+                  "
+                  type="button"
+                  data-archive-move-select="${ARCHIVE_ROOT_PICKER_VALUE}"
+                  aria-pressed="${String(
+                    rootSelected
+                  )}"
+                  ${
+                    rootCurrent
+                      ? 'disabled aria-disabled="true"'
+                      : ''
+                  }>
+
+                  ${icon.folder}
+
+                  <span
+                    class="
+                      archive-move-folder-copy
+                    ">
+
+                    <strong>
+                      ${archiveMoveHighlightMatch(
+                        'Files',
+                        query
+                      )}
+                    </strong>
+
+                    <span>
+                      ${
+                        rootCurrent
+                          ? 'Current folder'
+                          : 'Top level'
+                      }
+                    </span>
+                  </span>
+
+                  ${
+                    rootSelected
+                      ? renderArchiveMoveSelectedMark()
+                      : ''
+                  }
+                </button>
+              `
+              : ''
+          }
+
+          ${folders
+            .map(folder => {
+              const isCurrentFolder =
+                Boolean(
+                  currentFolderState
+                    ?.hasCurrentFolder
+                  && folder.id
+                    === currentFolderState
+                      .folderId
+                );
+
+              const selected =
+                archiveMoveHasDestination(
+                  selectedId
+                )
+                && selectedId
+                  === folder.id;
+
+              return `
+                <button
+                  class="
+                    archive-move-search-result
+
+                    ${
+                      selected
+                        ? 'is-selected'
+                        : ''
+                    }
+
+                    ${
+                      isCurrentFolder
+                        ? 'is-current-folder'
+                        : ''
+                    }
+                  "
+                  type="button"
+                  data-archive-move-select="${escapeHtml(
+                    folder.id
+                  )}"
+                  aria-pressed="${String(
+                    selected
+                  )}"
+                  ${
+                    isCurrentFolder
+                      ? 'disabled aria-disabled="true"'
+                      : ''
+                  }>
+
+                  ${icon.folder}
+
+                  <span
+                    class="
+                      archive-move-folder-copy
+                    ">
+
+                    <strong>
+                      ${archiveMoveHighlightMatch(
+                        folder.name,
+                        query
+                      )}
+                    </strong>
+
+                    <span>
+                      ${
+                        isCurrentFolder
+                          ? 'Current folder'
+                          : escapeHtml(
+                              archiveMoveFolderPath(
+                                archiveFolderParentId(
+                                  folder
+                                )
+                              )
+                            )
+                      }
+                    </span>
+                  </span>
+
+                  ${
+                    selected
+                      ? renderArchiveMoveSelectedMark()
+                      : ''
+                  }
+                </button>
+              `;
+            })
+            .join('')}
+        </div>
+      `;
+    }
+
+    function renderArchiveMovePicker({
+      query,
+      selectedId,
+      expandedIds,
+      movingFolder,
+      currentFolderState
+    }) {
+      return `
+        <div
+          class="
+            archive-move-picker
+          "
+          data-archive-move-picker>
+
+          ${
+            String(
+              query || ''
+            ).trim()
+              ? renderArchiveMoveSearchResults({
+                  query,
+                  selectedId,
+                  movingFolder,
+                  currentFolderState
+                })
+              : renderArchiveMoveTree({
+                  selectedId,
+                  expandedIds,
+
+                  movingFolderId:
+                    movingFolder?.id
+                    || '',
+
+                  currentFolderState
+                })
+          }
+        </div>
+      `;
     }
 
     function openArchiveMoveModal({
@@ -63624,58 +65557,96 @@
             )
           : null;
 
-      const excluded =
-        movingFolder
-          ? new Set(
-              archiveFolderDescendantIds(
-                movingFolder.id
-              )
+      const files =
+        [
+          ...new Set(
+            fileIds
+          )
+        ]
+          .map(id =>
+            archiveFileById(
+              id
             )
-          : new Set();
-
-      let selectedId =
-        movingFolder
-          ? archiveFolderParentId(
-              movingFolder
-            )
-          : archiveFileFolderId(
-              archiveFileById(
-                fileIds[0]
-              )
-            );
+          )
+          .filter(Boolean);
 
       if (
         !movingFolder
-        && !fileIds.length
+        && !files.length
       ) {
-        selectedId =
-          archiveNormalizeFolderId(
-            state.archiveSelectedFolderId
-          );
+        return;
       }
+
+      const currentFolderState =
+        archiveMoveCurrentFolderState({
+          movingFolder,
+          files
+        });
+
+      let selectedId =
+        ARCHIVE_MOVE_NO_DESTINATION;
+
+      let query =
+        '';
+
+      let creatingFolder =
+        false;
+
+      const expandedIds =
+        new Set([
+          null
+        ]);
+
+      const revealFolderId =
+        archiveMoveInitialRevealFolderId({
+          movingFolder,
+          files,
+          currentFolderState
+        });
+
+      archiveFolderAncestors(
+        revealFolderId
+      ).forEach(folder => {
+        expandedIds.add(
+          folder.id
+        );
+      });
+
+      if (revealFolderId) {
+        expandedIds.add(
+          revealFolderId
+        );
+      }
+
+      const title =
+        movingFolder
+          ? 'Move folder'
+          : files.length === 1
+            ? 'Move file'
+            : `Move ${files.length} files`;
 
       openModal(`
         <div
-          class="modal"
+          class="
+            modal
+            archive-move-modal
+          "
           role="dialog"
           aria-modal="true"
           aria-labelledby="archiveMoveTitle">
 
           <div class="modal-header">
             <div>
-              <h2 id="archiveMoveTitle">
-                Move ${
-                  movingFolder
-                    ? 'folder'
-                    : fileIds.length === 1
-                      ? 'file'
-                      : `${fileIds.length} files`
-                }
+              <h2
+                id="archiveMoveTitle">
+
+                ${escapeHtml(
+                  title
+                )}
               </h2>
 
               <p>
-                Choose Top level or an existing
-                destination folder.
+                Choose a destination folder.
               </p>
             </div>
 
@@ -63689,120 +65660,385 @@
             </button>
           </div>
 
-          <div class="modal-body">
+          <div
+            class="
+              modal-body
+            ">
+
+            ${renderArchiveMoveItemSummary({
+              movingFolder,
+              files
+            })}
+
             <div
               class="
-                archive-folder-picker
+                archive-move-content
               "
-              data-archive-folder-picker>
-
-              ${archiveFolderPickerRows(
-                selectedId,
-                excluded
-              )}
+              data-archive-move-content>
             </div>
           </div>
 
-          <div class="modal-footer">
-            <button
-              class="button secondary"
-              type="button"
-              data-close>
-
-              Cancel
-            </button>
-
-            <button
-              class="button primary"
-              type="button"
-              data-archive-move-confirm>
-
-              Move
-            </button>
+          <div
+            class="
+              modal-footer
+            "
+            data-archive-move-footer>
           </div>
         </div>
       `);
 
-      const picker =
+      const modal =
         modalBackdrop.querySelector(
-          '[data-archive-folder-picker]'
+          '.archive-move-modal'
         );
 
-      picker?.addEventListener(
-        'click',
-        event => {
-          const button =
-            event.target.closest(
-              '[data-archive-folder-choice]'
-            );
+      const contentRoot =
+        modal?.querySelector(
+          '[data-archive-move-content]'
+        );
 
-          if (!button) {
+      const footerRoot =
+        modal?.querySelector(
+          '[data-archive-move-footer]'
+        );
+
+      const getNewFolderParentId =
+        () =>
+          archiveMoveNewFolderParentId({
+            movingFolder,
+            selectedId,
+            currentFolderState
+          });
+
+      const renderMoveContent =
+        ({
+          focusSearch =
+            false,
+
+          focusFolderName =
+            false
+        } = {}) => {
+          const stats =
+            archiveMoveSelectionStats({
+              movingFolder,
+              files,
+              selectedId
+            });
+
+      const hasDestination =
+        archiveMoveHasDestination(
+          selectedId
+        );
+
+      const destinationPath =
+        hasDestination
+          ? archiveMoveFolderPath(
+              selectedId
+            )
+          : 'Choose a folder';
+
+      const newFolderParentId =
+        getNewFolderParentId();
+
+      const newFolderParentPath =
+        archiveMoveFolderPath(
+          newFolderParentId
+        );
+
+          if (contentRoot) {
+            contentRoot.innerHTML = `
+              <label
+                class="
+                  app-search-field
+                  archive-move-search-field
+                "
+                aria-label="Search folders">
+
+                ${icon.search}
+
+                <input
+                  type="search"
+                  data-archive-move-search
+                  placeholder="Search folders"
+                  value="${escapeHtml(
+                    query
+                  )}">
+              </label>
+
+              <div
+                class="
+                  archive-move-destination
+                "
+                aria-live="polite">
+
+                <span
+                  class="
+                    archive-move-destination-label
+                  ">
+
+                  Destination
+                </span>
+
+                <strong
+                  class="
+                    archive-move-destination-value
+
+                    ${
+                      hasDestination
+                        ? ''
+                        : 'is-placeholder'
+                    }
+                  ">
+
+                  ${escapeHtml(
+                    destinationPath
+                  )}
+                </strong>
+              </div>
+
+              ${
+                creatingFolder
+                  ? `
+                    <form
+                      class="
+                        archive-move-new-folder-form
+                      "
+                      data-archive-move-new-folder-form>
+
+                      <div
+                        class="
+                          archive-move-new-folder-context
+                        ">
+
+                        <span>
+                          Create inside
+                        </span>
+
+                        <strong>
+                          ${escapeHtml(
+                            newFolderParentPath
+                          )}
+                        </strong>
+                      </div>
+
+                      <div
+                        class="
+                          archive-move-new-folder-fields
+                        ">
+
+                        <input
+                          data-archive-move-new-folder-name
+                          required
+                          maxlength="160"
+                          placeholder="Folder name">
+
+                        <button
+                          class="
+                            button
+                            secondary
+                          "
+                          type="button"
+                          data-archive-move-cancel-new-folder>
+
+                          Cancel
+                        </button>
+
+                        <button
+                          class="
+                            button
+                            primary
+                          "
+                          type="submit">
+
+                          Create
+                        </button>
+                      </div>
+                    </form>
+                  `
+                  : ''
+              }
+
+              <div
+                class="
+                  archive-move-section-label
+                ">
+
+                Folders
+              </div>
+
+              ${renderArchiveMovePicker({
+                query,
+                selectedId,
+                expandedIds,
+                movingFolder,
+                currentFolderState
+              })}
+            `;
+          }
+
+          if (footerRoot) {
+            const buttonLabel =
+              !archiveMoveHasDestination(
+                selectedId
+              )
+              || movingFolder
+              || files.length === 1
+                ? 'Move here'
+                : `Move ${
+                    stats.movableCount
+                  } files`;
+
+            footerRoot.innerHTML = `
+              <button
+                class="
+                  button
+                  secondary
+                "
+                type="button"
+                data-close>
+
+                Cancel
+              </button>
+
+              <button
+                class="
+                  button
+                  primary
+                "
+                type="button"
+                data-archive-move-confirm
+                ${
+                  stats.canMove
+                    ? ''
+                    : 'disabled aria-disabled="true"'
+                }>
+
+                ${escapeHtml(
+                  buttonLabel
+                )}
+              </button>
+            `;
+          }
+
+          requestAnimationFrame(
+            () => {
+              if (focusSearch) {
+                const searchInput =
+                  modal?.querySelector(
+                    '[data-archive-move-search]'
+                  );
+
+                searchInput?.focus();
+
+                const end =
+                  searchInput?.value
+                    .length
+                  || 0;
+
+                searchInput?.setSelectionRange(
+                  end,
+                  end
+                );
+              }
+
+              if (focusFolderName) {
+                modal
+                  ?.querySelector(
+                    '[data-archive-move-new-folder-name]'
+                  )
+                  ?.focus();
+              }
+            }
+          );
+        };
+
+      const commitMove =
+        () => {
+          if (
+            !archiveMoveHasDestination(
+              selectedId
+            )
+          ) {
+            return;
+          }
+          if (
+            selectedId
+            && !archiveFolderById(
+              selectedId
+            )
+          ) {
             return;
           }
 
-          selectedId =
-            archiveFolderIdFromChoice(
-              button.dataset
-                .archiveFolderChoice
-            );
-
-          picker
-            .querySelectorAll(
-              '[data-archive-folder-choice]'
-            )
-            .forEach(item =>
-              item.classList.toggle(
-                'selected',
-                item === button
-              )
-            );
-        }
-      );
-
-      modalBackdrop
-        .querySelector(
-          '[data-archive-move-confirm]'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            if (
+          const stats =
+            archiveMoveSelectionStats({
+              movingFolder,
+              files,
               selectedId
-              && !archiveFolderById(
-                selectedId
-              )
-            ) {
-              return;
-            }
+            });
 
-            const now =
-              new Date()
-                .toISOString();
-            let nextFolderId =
-              selectedId;
-            let nextFileId =
-              null;
+          if (!stats.canMove) {
+            return;
+          }
 
-            if (movingFolder) {
-              movingFolder.parentId =
-                selectedId;
+          const destinationPath =
+            archiveMoveFolderPath(
+              selectedId
+            );
 
-              movingFolder.updatedAt =
-                now;
+          const now =
+            new Date()
+              .toISOString();
 
-              nextFolderId =
-                movingFolder.id;
-            } else {
-              fileIds.forEach(id => {
-                const file =
-                  archiveFileById(
-                    id
-                  );
+          const folderSnapshot =
+            movingFolder
+              ? {
+                  id:
+                    movingFolder.id,
 
-                if (!file) {
-                  return;
+                  parentId:
+                    archiveFolderParentId(
+                      movingFolder
+                    ),
+
+                  updatedAt:
+                    movingFolder.updatedAt
                 }
+              : null;
 
+          const fileSnapshots =
+            stats.movableFiles
+              .map(file => ({
+                id:
+                  file.id,
+
+                folderId:
+                  archiveFileFolderId(
+                    file
+                  ),
+
+                updatedAt:
+                  file.updatedAt,
+
+                updated:
+                  file.updated
+              }));
+
+          if (movingFolder) {
+            movingFolder.parentId =
+              selectedId;
+
+            movingFolder.updatedAt =
+              now;
+
+            if (selectedId) {
+              state.archiveExpandedFolders[
+                selectedId
+              ] = true;
+            }
+          } else {
+            stats.movableFiles
+              .forEach(file => {
                 file.folderId =
                   selectedId;
 
@@ -63813,57 +66049,336 @@
                   'Just now';
               });
 
-              nextFileId =
-                fileIds.length === 1
-                  ? fileIds[0]
-                  : null;
+            state.archiveSelectedFileIds =
+              [];
+
+            if (
+              stats.movableFiles
+                .some(file =>
+                  file.id
+                    === state.archiveSelectedFileId
+                )
+            ) {
+              state.archiveSelectedFileId =
+                null;
+            }
+          }
+
+          const movedCount =
+            movingFolder
+              ? 1
+              : stats.movableCount;
+
+          const movedMessage =
+            movingFolder
+              ? `${
+                  movingFolder.name
+                  || 'Folder'
+                } moved to ${destinationPath}.`
+              : movedCount === 1
+                ? `${
+                    stats.movableFiles[0]
+                      ?.name
+                    || 'File'
+                  } moved to ${destinationPath}.`
+                : `${movedCount} files moved to ${destinationPath}.`;
+
+          const openFolderId =
+            movingFolder
+              ? movingFolder.id
+              : selectedId;
+
+          closeModal();
+          renderArchive();
+
+          showActionToast({
+            message:
+              movedMessage,
+
+            actions: [
+              {
+                label:
+                  'Undo',
+
+                onClick:
+                  () => {
+                    if (folderSnapshot) {
+                      const folder =
+                        archiveFolderById(
+                          folderSnapshot.id
+                        );
+
+                      if (folder) {
+                        folder.parentId =
+                          folderSnapshot.parentId;
+
+                        folder.updatedAt =
+                          folderSnapshot.updatedAt;
+                      }
+                    }
+
+                    fileSnapshots
+                      .forEach(snapshot => {
+                        const file =
+                          archiveFileById(
+                            snapshot.id
+                          );
+
+                        if (!file) {
+                          return;
+                        }
+
+                        file.folderId =
+                          snapshot.folderId;
+
+                        file.updatedAt =
+                          snapshot.updatedAt;
+
+                        file.updated =
+                          snapshot.updated;
+                      });
+
+                    renderArchive();
+
+                    showToast(
+                      'Move undone.'
+                    );
+                  }
+              },
+
+              {
+                label:
+                  'Open folder',
+
+                onClick:
+                  () => {
+                    archiveNavigateToLocation(
+                      {
+                        view:
+                          'files',
+
+                        folderId:
+                          openFolderId,
+
+                        search:
+                          '',
+
+                        searchScope:
+                          'folder',
+
+                        personFilterId:
+                          '',
+
+                        selectedFileId:
+                          null,
+
+                        inspectorCollapsed:
+                          false
+                      },
+                      {
+                        expandCurrent:
+                          true
+                      }
+                    );
+                  }
+              }
+            ]
+          });
+        };
+
+      modal?.addEventListener(
+        'input',
+        event => {
+          const searchInput =
+            event.target.closest(
+              '[data-archive-move-search]'
+            );
+
+          if (!searchInput) {
+            return;
+          }
+
+          query =
+            searchInput.value;
+
+          renderMoveContent({
+            focusSearch:
+              true
+          });
+        }
+      );
+
+      modal?.addEventListener(
+        'submit',
+        event => {
+          const form =
+            event.target.closest(
+              '[data-archive-move-new-folder-form]'
+            );
+
+          if (!form) {
+            return;
+          }
+
+          event.preventDefault();
+
+          const name =
+            form
+              .querySelector(
+                '[data-archive-move-new-folder-name]'
+              )
+              ?.value
+              .trim()
+            || '';
+
+          const parentId =
+            getNewFolderParentId();
+
+          const folder =
+            createArchiveFolderRecord(
+              name,
+              parentId
+            );
+
+          if (!folder) {
+            form
+              .querySelector(
+                '[data-archive-move-new-folder-name]'
+              )
+              ?.focus();
+
+            return;
+          }
+
+          expandedIds.add(
+            parentId
+          );
+
+          selectedId =
+            folder.id;
+
+          query =
+            '';
+
+          creatingFolder =
+            false;
+
+          renderMoveContent();
+        }
+      );
+
+      modal?.addEventListener(
+        'click',
+        event => {
+          const toggle =
+            event.target.closest(
+              '[data-archive-move-toggle]'
+            );
+
+          if (toggle) {
+            const folderId =
+              archiveFolderIdFromChoice(
+                toggle.dataset
+                  .archiveMoveToggle
+              );
+
+            if (
+              expandedIds.has(
+                folderId
+              )
+            ) {
+              expandedIds.delete(
+                folderId
+              );
+            } else {
+              expandedIds.add(
+                folderId
+              );
             }
 
-            closeModal();
+            renderMoveContent();
 
-            archiveNavigateToLocation(
-              {
-                view:
-                  'files',
-
-                folderId:
-                  nextFolderId,
-
-                search:
-                  '',
-
-                searchScope:
-                  'folder',
-
-                personFilterId:
-                  '',
-
-                selectedFileId:
-                  nextFileId,
-
-                inspectorCollapsed:
-                  false
-              },
-              {
-                /*
-                  Moving an item changes the underlying
-                  hierarchy. It should not create a history
-                  entry that points to the old hierarchy.
-                */
-
-                recordHistory:
-                  false,
-
-                expandCurrent:
-                  true
-              }
-            );
-
-            showToast(
-              'Item moved.'
-            );
+            return;
           }
-        );
+
+          const destination =
+            event.target.closest(
+              '[data-archive-move-select]'
+            );
+
+          if (destination) {
+            if (
+              destination.disabled
+              || destination.getAttribute(
+                'aria-disabled'
+              ) === 'true'
+            ) {
+              return;
+            }
+
+            selectedId =
+              archiveFolderIdFromChoice(
+                destination.dataset
+                  .archiveMoveSelect
+              );
+
+            renderMoveContent();
+
+            return;
+          }
+
+          if (
+            event.target.closest(
+              '[data-archive-move-new-folder]'
+            )
+          ) {
+            if (
+              creatingFolder
+            ) {
+              modal
+                ?.querySelector(
+                  '[data-archive-move-new-folder-name]'
+                )
+                ?.focus();
+
+              return;
+            }
+
+            creatingFolder =
+              true;
+
+            renderMoveContent({
+              focusFolderName:
+                true
+            });
+
+            return;
+          }
+
+          if (
+            event.target.closest(
+              '[data-archive-move-cancel-new-folder]'
+            )
+          ) {
+            creatingFolder =
+              false;
+
+            renderMoveContent();
+
+            return;
+          }
+
+          if (
+            event.target.closest(
+              '[data-archive-move-confirm]'
+            )
+          ) {
+            commitMove();
+          }
+        }
+      );
+
+      renderMoveContent();
     }
 
     function openArchiveFileNoteModal(
@@ -64199,10 +66714,17 @@
       });
     }
 
-    function openArchiveItemActionsModal(
+    function openArchiveItemActionsPopover(
       type,
-      id
+      id,
+      anchor
     ) {
+      if (
+        !(anchor instanceof HTMLElement)
+      ) {
+        return;
+      }
+
       const file =
         type === 'file'
           ? archiveFileById(
@@ -64224,285 +66746,395 @@
             )
           : null;
 
+      const item =
+        file
+        || folder
+        || source;
+
+      if (!item) {
+        return;
+      }
+
+      /*
+        Clicking the active More button again
+        closes its menu instead of reopening it.
+      */
+      const alreadyOpen =
+        anchor.getAttribute(
+          'aria-expanded'
+        ) === 'true'
+        && Boolean(
+          document.getElementById(
+            'projectMenu'
+          )
+        );
+
+      closeMenu();
+
+      if (alreadyOpen) {
+        return;
+      }
+
       const label =
         file?.name
         || folder?.name
         || source?.title
         || 'Item';
 
-      const actions =
-        file
-          ? `
-            <button
-              class="button secondary"
-              type="button"
-              data-action="move">
+      const menu =
+        document.createElement(
+          'div'
+        );
 
-              Move
-            </button>
+      menu.className =
+        'menu-popover';
 
-            <button
-              class="button danger"
-              type="button"
-              data-action="delete">
+      menu.id =
+        'projectMenu';
 
-              Delete permanently
-            </button>
-          `
-          : folder
-            ? `
-              <button
-                class="button secondary"
-                type="button"
-                data-action="open">
+      menu.setAttribute(
+        'role',
+        'menu'
+      );
 
-                Open folder
-              </button>
+      menu.setAttribute(
+        'aria-label',
+        `More actions for ${label}`
+      );
 
-              <button
-                class="button secondary"
-                type="button"
-                data-action="rename">
+      if (file) {
+        menu.innerHTML = `
+          <button
+            type="button"
+            role="menuitem"
+            data-archive-item-action="rename">
 
-                Rename
-              </button>
+            Rename
+          </button>
 
-              <button
-                class="button secondary"
-                type="button"
-                data-action="move">
+          <button
+            type="button"
+            role="menuitem"
+            data-archive-item-action="move">
 
-                Move
-              </button>
+            Move
+          </button>
 
-              <button
-                class="button danger"
-                type="button"
-                data-action="delete">
+          <button
+            class="danger"
+            type="button"
+            role="menuitem"
+            data-archive-item-action="delete">
 
-                Delete permanently
-              </button>
-            `
-            : source
-              ? `
-                <button
-                  class="button secondary"
-                  type="button"
-                  data-action="edit">
-
-                  Edit source
-                </button>
-
-                <button
-                  class="button secondary"
-                  type="button"
-                  data-action="favorite">
-
-                  ${
-                    source.favorite
-                      ? 'Remove from favourites'
-                      : 'Add to favourites'
-                  }
-                </button>
-
-                <button
-                  class="button danger"
-                  type="button"
-                  data-action="delete">
-
-                  Delete permanently
-                </button>
-              `
-              : '';
-
-      if (!actions) {
-        return;
+            Delete permanently
+          </button>
+        `;
       }
 
-      openModal(`
-        <div
-          class="modal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="archiveActionsTitle">
+      if (folder) {
+        menu.innerHTML = `
+          <button
+            type="button"
+            role="menuitem"
+            data-archive-item-action="open">
 
-          <div class="modal-header">
-            <div>
-              <h2 id="archiveActionsTitle">
-                Actions
-              </h2>
+            Open folder
+          </button>
 
-              <p>
-                ${escapeHtml(
-                  label
-                )}
-              </p>
-            </div>
+          <button
+            type="button"
+            role="menuitem"
+            data-archive-item-action="rename">
 
-            <button
-              class="close-button"
-              type="button"
-              data-close
-              aria-label="Close">
+            Rename
+          </button>
 
-              ${icon.close}
-            </button>
-          </div>
+          <button
+            type="button"
+            role="menuitem"
+            data-archive-item-action="move">
 
-          <div class="modal-body">
-            <div
-              class="
-                archive-action-grid
-              ">
+            Move
+          </button>
 
-              ${actions}
-            </div>
-          </div>
+          <button
+            class="danger"
+            type="button"
+            role="menuitem"
+            data-archive-item-action="delete">
 
-          <div class="modal-footer">
-            <button
-              class="button secondary"
-              type="button"
-              data-close>
+            Delete permanently
+          </button>
+        `;
+      }
 
-              Close
-            </button>
-          </div>
-        </div>
-      `);
+      if (source) {
+        menu.innerHTML = `
+          <button
+            type="button"
+            role="menuitem"
+            data-archive-item-action="edit">
 
-      modalBackdrop
-        .querySelectorAll(
-          '[data-action]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              const action =
-                button.dataset.action;
+            Edit source
+          </button>
 
-              closeModal();
+          <button
+            type="button"
+            role="menuitem"
+            data-archive-item-action="favorite">
 
-              if (file) {
-                if (
-                  action === 'move'
-                ) {
-                  openArchiveMoveModal({
-                    fileIds:
-                      [
-                        file.id
-                      ]
-                  });
-                }
-
-                if (
-                  action === 'delete'
-                ) {
-                  openArchiveDeleteFileConfirm(
-                    [
-                      file.id
-                    ]
-                  );
-                }
-
-                return;
-              }
-
-              if (folder) {
-                if (
-                  action === 'open'
-                ) {
-                  archiveNavigateToLocation(
-                    {
-                      view:
-                        state.archiveView
-                          === 'favorites'
-                            ? 'favorites'
-                            : 'files',
-
-                      folderId:
-                        folder.id,
-
-                      search:
-                        '',
-
-                      searchScope:
-                        'folder',
-
-                      personFilterId:
-                        '',
-
-                      selectedFileId:
-                        null,
-
-                      inspectorCollapsed:
-                        false
-                    },
-                    {
-                      expandCurrent:
-                        true
-                    }
-                  );
-                }
-
-                if (
-                  action === 'rename'
-                ) {
-                  openArchiveRenameFolderModal(
-                    folder.id
-                  );
-                }
-
-                if (
-                  action === 'move'
-                ) {
-                  openArchiveMoveModal({
-                    folderId:
-                      folder.id
-                  });
-                }
-
-                if (
-                  action === 'delete'
-                ) {
-                  openArchiveDeleteFolderConfirm(
-                    folder.id
-                  );
-                }
-
-                return;
-              }
-
-              if (source) {
-                if (
-                  action === 'edit'
-                ) {
-                  openArchiveSourceModal(
-                    source.id
-                  );
-                }
-
-                if (
-                  action === 'favorite'
-                ) {
-                  source.favorite =
-                    !source.favorite;
-
-                  renderArchive();
-                }
-
-                if (
-                  action === 'delete'
-                ) {
-                  openArchiveDeleteSourceConfirm(
-                    source.id
-                  );
-                }
-              }
+            ${
+              source.favorite
+                ? 'Remove from favourites'
+                : 'Add to favourites'
             }
-          );
-        });
+          </button>
+
+          <button
+            class="danger"
+            type="button"
+            role="menuitem"
+            data-archive-item-action="delete">
+
+            Delete permanently
+          </button>
+        `;
+      }
+
+      document.body.appendChild(
+        menu
+      );
+
+      /*
+        Position after mounting so the actual
+        menu dimensions are available.
+      */
+      const rect =
+        anchor.getBoundingClientRect();
+
+      const viewportMargin =
+        12;
+
+      const gap =
+        6;
+
+      const left =
+        Math.min(
+          Math.max(
+            viewportMargin,
+            rect.right
+              - menu.offsetWidth
+          ),
+          Math.max(
+            viewportMargin,
+            window.innerWidth
+              - menu.offsetWidth
+              - viewportMargin
+          )
+        );
+
+      const belowTop =
+        rect.bottom
+        + gap;
+
+      const top =
+        belowTop
+          + menu.offsetHeight
+          <= window.innerHeight
+            - viewportMargin
+          ? belowTop
+          : Math.max(
+              viewportMargin,
+              rect.top
+                - menu.offsetHeight
+                - gap
+            );
+
+      menu.style.left =
+        `${left}px`;
+
+      menu.style.top =
+        `${top}px`;
+
+      anchor.setAttribute(
+        'aria-expanded',
+        'true'
+      );
+
+      menu.addEventListener(
+        'click',
+        event => {
+          const actionButton =
+            event.target.closest(
+              '[data-archive-item-action]'
+            );
+
+          if (!actionButton) {
+            return;
+          }
+
+          const action =
+            actionButton.dataset
+              .archiveItemAction;
+
+          closeMenu();
+
+          if (file) {
+            if (
+              action === 'rename'
+            ) {
+              openArchiveRenameItemModal(
+                'file',
+                file.id
+              );
+
+              return;
+            }
+
+            if (
+              action === 'move'
+            ) {
+              openArchiveMoveModal({
+                fileIds:
+                  [
+                    file.id
+                  ]
+              });
+
+              return;
+            }
+
+            if (
+              action === 'delete'
+            ) {
+              openArchiveDeleteFileConfirm(
+                [
+                  file.id
+                ]
+              );
+            }
+
+            return;
+          }
+
+          if (folder) {
+            if (
+              action === 'open'
+            ) {
+              archiveNavigateToLocation(
+                {
+                  view:
+                    state.archiveView
+                      === 'favorites'
+                        ? 'favorites'
+                        : 'files',
+
+                  folderId:
+                    folder.id,
+
+                  search:
+                    '',
+
+                  searchScope:
+                    'folder',
+
+                  personFilterId:
+                    '',
+
+                  selectedFileId:
+                    null,
+
+                  inspectorCollapsed:
+                    false
+                },
+                {
+                  expandCurrent:
+                    true
+                }
+              );
+
+              return;
+            }
+
+            if (
+              action === 'rename'
+            ) {
+              openArchiveRenameItemModal(
+                'folder',
+                folder.id
+              );
+
+              return;
+            }
+
+            if (
+              action === 'move'
+            ) {
+              openArchiveMoveModal({
+                folderId:
+                  folder.id
+              });
+
+              return;
+            }
+
+            if (
+              action === 'delete'
+            ) {
+              openArchiveDeleteFolderConfirm(
+                folder.id
+              );
+            }
+
+            return;
+          }
+
+          if (source) {
+            if (
+              action === 'edit'
+            ) {
+              openArchiveSourceModal(
+                source.id
+              );
+
+              return;
+            }
+
+            if (
+              action === 'favorite'
+            ) {
+              source.favorite =
+                !source.favorite;
+
+              renderArchive();
+
+              return;
+            }
+
+            if (
+              action === 'delete'
+            ) {
+              openArchiveDeleteSourceConfirm(
+                source.id
+              );
+            }
+          }
+        }
+      );
+
+      bindMenuLifecycle(
+        anchor
+      );
+
+      requestAnimationFrame(
+        () => {
+          menu
+            .querySelector(
+              '[role="menuitem"]'
+            )
+            ?.focus();
+        }
+      );
     }
 
     function openArchiveConnectedRecordCommit(
@@ -65075,7 +67707,28 @@
         const source = archiveSourceById(button.dataset.archiveSourceFavorite);
         if (source) { source.favorite = !source.favorite; renderArchive(); }
       }));
-      root.querySelectorAll('[data-archive-row-actions]').forEach(button => button.addEventListener('click', event => { event.stopPropagation(); openArchiveItemActionsModal(button.dataset.archiveRowActions, button.dataset.archiveRowId); }));
+      root
+        .querySelectorAll(
+          '[data-archive-row-actions]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              event.stopPropagation();
+
+              openArchiveItemActionsPopover(
+                button.dataset
+                  .archiveRowActions,
+
+                button.dataset
+                  .archiveRowId,
+
+                button
+              );
+            }
+          );
+        });
       root.querySelectorAll('[data-archive-selection-action]').forEach(button => button.addEventListener('click', () => {
         const ids = state.archiveSelectedFileIds.slice();
         if (button.dataset.archiveSelectionAction === 'clear') { state.archiveSelectedFileIds = []; renderArchiveMain(); }
@@ -94505,8 +97158,18 @@
 
     function closeMenu() {
       menuLifecycleController?.abort();
-      menuLifecycleController = null;
-      menuLifecycleAnchor = null;
+
+      menuLifecycleController =
+        null;
+
+      menuLifecycleAnchor
+        ?.setAttribute(
+          'aria-expanded',
+          'false'
+        );
+
+      menuLifecycleAnchor =
+        null;
       document.getElementById('placesRouteMenu')?.setAttribute('aria-expanded', 'false');
       document.getElementById('projectMenu')?.remove();
       document.getElementById('relativePopover')?.remove();
@@ -95068,8 +97731,134 @@
     }
     function backdropClose(e) { if (e.target === modalBackdrop) closeModal(); }
 
-    function bindToasts(root) { root.querySelectorAll('[data-toast]').forEach(button => button.addEventListener('click', () => showToast(button.dataset.toast))); }
-    function showToast(message) { toast.textContent = translateAttributeValue(message); toast.classList.add('show'); clearTimeout(showToast.timer); showToast.timer = setTimeout(() => toast.classList.remove('show'), 2600); }
+    function bindToasts(
+      root
+    ) {
+      root
+        .querySelectorAll(
+          '[data-toast]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              showToast(
+                button.dataset
+                  .toast
+              );
+            }
+          );
+        });
+    }
+
+    function hideToast() {
+      clearTimeout(
+        showToast.timer
+      );
+
+      toast.classList.remove(
+        'show'
+      );
+
+      toast.innerHTML =
+        '';
+    }
+
+    function showActionToast({
+      message,
+      actions = [],
+      duration = 6200
+    } = {}) {
+      clearTimeout(
+        showToast.timer
+      );
+
+      const translatedMessage =
+        translateAttributeValue(
+          message
+        );
+
+      toast.innerHTML = `
+        <span
+          class="
+            toast-message
+          ">
+
+          ${escapeHtml(
+            translatedMessage
+          )}
+        </span>
+
+        ${
+          actions.length
+            ? `
+              <span
+                class="
+                  toast-actions
+                "
+                aria-label="Notification actions">
+              </span>
+            `
+            : ''
+        }
+      `;
+
+      const actionsRoot =
+        toast.querySelector(
+          '.toast-actions'
+        );
+
+      actions.forEach(action => {
+        const button =
+          document.createElement(
+            'button'
+          );
+
+        button.className =
+          'toast-action';
+
+        button.type =
+          'button';
+
+        button.textContent =
+          translateAttributeValue(
+            action.label
+          );
+
+        button.addEventListener(
+          'click',
+          () => {
+            hideToast();
+
+            action.onClick?.();
+          }
+        );
+
+        actionsRoot?.appendChild(
+          button
+        );
+      });
+
+      toast.classList.add(
+        'show'
+      );
+
+      showToast.timer =
+        setTimeout(
+          hideToast,
+          duration
+        );
+    }
+
+    function showToast(
+      message
+    ) {
+      showActionToast({
+        message,
+        duration:
+          2600
+      });
+    }
     function escapeHtml(value) { return String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
     function capitalize(value) { return value.charAt(0).toUpperCase() + value.slice(1); }
 
