@@ -11617,6 +11617,26 @@
         color var(--ease);
     }
 
+    .archive-inspector-action-text {
+      width:
+        auto;
+
+      min-width:
+        54px;
+
+      flex:
+        0 0 auto;
+
+      padding:
+        0 var(--space-3);
+
+      font-size:
+        13px;
+
+      font-weight:
+        750;
+    }
+
     .albums-detail-action:hover,
     .albums-detail-action:focus-visible,
     .archive-inspector-action:hover,
@@ -14949,45 +14969,6 @@
       flex: 0 1 auto;
     }
 
-    .archive-folder-open-indicator {
-      width: 15px;
-      height: 15px;
-      flex: 0 0 15px;
-
-      color:
-        var(--text-tertiary);
-
-      display: grid;
-      place-items: center;
-
-      opacity:
-        .68;
-
-      transition:
-        color var(--ease),
-        transform var(--ease),
-        opacity var(--ease);
-    }
-
-    .archive-folder-open-indicator svg {
-      width: 14px;
-      height: 14px;
-
-      display: block;
-    }
-
-    .archive-table-folder-row:hover
-    .archive-folder-open-indicator {
-      color:
-        var(--text-primary);
-
-      opacity:
-        1;
-
-      transform:
-        translateX(2px);
-    }
-
     .archive-col-check { width: 44px; }
     .archive-table
     .albums-select-checkbox {
@@ -15118,6 +15099,124 @@
     .archive-empty p {
       margin: 0 0 var(--space-4);
       line-height: 1.55;
+    }
+
+    .archive-empty-dropzone {
+      width:
+        100%;
+
+      appearance:
+        none;
+
+      font:
+        inherit;
+
+      cursor:
+        pointer;
+
+      transition:
+        border-color var(--ease),
+        background var(--ease),
+        color var(--ease);
+    }
+
+    .archive-empty-dropzone:hover,
+    .archive-empty-dropzone.is-drag-over {
+      border-color:
+        var(--brand-green-500);
+
+      background:
+        rgba(47, 174, 116, .06);
+    }
+
+    .archive-empty-dropzone:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-400);
+
+      outline-offset:
+        2px;
+    }
+
+    .archive-empty-dropzone-content {
+      width:
+        min(
+          100%,
+          460px
+        );
+
+      display:
+        flex;
+
+      flex-direction:
+        column;
+
+      align-items:
+        center;
+
+      gap:
+        var(--space-2);
+    }
+
+    .archive-empty-dropzone-icon {
+      width:
+        44px;
+
+      height:
+        44px;
+
+      margin-bottom:
+        var(--space-2);
+
+      display:
+        grid;
+
+      place-items:
+        center;
+
+      color:
+        var(--text-secondary);
+    }
+
+    .archive-empty-dropzone-icon svg {
+      width:
+        28px;
+
+      height:
+        28px;
+    }
+
+    .archive-empty-dropzone-title {
+      color:
+        var(--text-primary);
+
+      font-size:
+        20px;
+
+      line-height:
+        1.25;
+    }
+
+    .archive-empty-dropzone-copy {
+      color:
+        var(--text-secondary);
+
+      line-height:
+        1.55;
+    }
+
+    .archive-empty-dropzone-action {
+      margin-top:
+        var(--space-2);
+
+      color:
+        var(--brand-green-300);
+
+      font-size:
+        13px;
+
+      font-weight:
+        750;
     }
 
     .archive-sidebar-tree-section {
@@ -15337,6 +15436,20 @@
     .archive-inspector-body {
       padding:
         var(--space-4);
+    }
+
+    .archive-folder-inspector-actions {
+      margin-bottom:
+        var(--space-3);
+    }
+
+    .archive-folder-inspector-actions
+    .button {
+      min-width:
+        0;
+
+      flex:
+        1 1 0;
     }
 
     .archive-file-inspector-content {
@@ -24584,6 +24697,7 @@
       'Photos': '----', 'Photo details': '------ ----', 'Select a photo': '-------- ----', 'Select a photo to view details, albums, people, date, place and caption.': '-------- ----, ----- ------- ------, -------, -----, ----, ----- - -------.', 'Grid view': '------', 'List view': '------', 'Search photos-': '----- ----', 'Search photos...': '----- ----...', ' Filename': '----------: --- -----', ' Photo date': '----------: ---- ----', 'Date precision': '-------- ----', 'Caption / story': '------- / -------', 'Add to album': '-------- - ------', 'Delete photo?': '------- ----?', 'This photo will be moved to Recently deleted. You can restore it later from the Albums sidebar.': '---- ----- ---------- - ------- --------. --- ----- ----- ------------ -- ------ --------.', 'No photos yet': '---- ---- ---', 'No deleted photos': '-------- ---- ---', 'No favourite photos yet': '--------- ---- ---- ---', 'Every photo is in an album': '--- ---- --- - --------', 'Open photo': '------- ----',
 
       // Archive
+      'All Files': 'Все файлы',
       'Archive workspace': 'Архивное рабочее пространство',
       'Navigation': 'Навигация',
       'Files': 'Файлы',
@@ -29464,6 +29578,7 @@
       },
       archiveView: 'files',
       archiveSelectedFolderId: null,
+      archiveSelectedFolderItemId: null,
       archiveSelectedFileId: null,
       archiveSelectedSourceId: 'as1',
       archiveSelectedFileIds: [],
@@ -57996,6 +58111,9 @@
     const ARCHIVE_ROOT_PICKER_VALUE =
       '__archive_root__';
 
+    const ARCHIVE_ROOT_LABEL =
+      'All Files';
+
     const ARCHIVE_MOVE_NO_DESTINATION =
       '__archive_move_no_destination__';
 
@@ -58151,7 +58269,7 @@
         );
 
       if (!folders.length) {
-        return 'Files';
+        return ARCHIVE_ROOT_LABEL;
       }
 
       return folders
@@ -58578,6 +58696,9 @@
       state.archiveSelectedFileId =
         normalized.selectedFileId;
 
+      state.archiveSelectedFolderItemId =
+        null;
+
       state.archiveSelectedFileIds =
         [];
 
@@ -58900,6 +59021,83 @@
     function archiveNavigateUp() {
       runAfterArchiveFileEditGuard(
         archiveNavigateUpCommit
+      );
+    }
+
+    function selectArchiveFolderItem(
+      folderId
+    ) {
+      const folder =
+        archiveFolderById(
+          folderId
+        );
+
+      if (!folder) {
+        return;
+      }
+
+      runAfterArchiveFileEditGuard(
+        () => {
+          state.archiveSelectedFolderItemId =
+            folder.id;
+
+          /*
+            File and folder detail selection are
+            mutually exclusive.
+          */
+          state.archiveSelectedFileId =
+            null;
+
+          state.archiveInspectorCollapsed =
+            false;
+
+          renderArchiveMain();
+        }
+      );
+    }
+
+    function archiveOpenFolder(
+      folderId
+    ) {
+      const folder =
+        archiveFolderById(
+          folderId
+        );
+
+      if (!folder) {
+        return;
+      }
+
+      archiveNavigateToLocation(
+        {
+          view:
+            state.archiveView
+              === 'favorites'
+                ? 'favorites'
+                : 'files',
+
+          folderId:
+            folder.id,
+
+          search:
+            '',
+
+          searchScope:
+            'folder',
+
+          personFilterId:
+            '',
+
+          selectedFileId:
+            null,
+
+          inspectorCollapsed:
+            false
+        },
+        {
+          expandCurrent:
+            true
+        }
       );
     }
 
@@ -60479,6 +60677,38 @@
           null;
       }
 
+      /*
+        A selected folder item is valid only when
+        it is a direct child of the current Files
+        location and folders are actually visible.
+      */
+      const selectedFolderItem =
+        archiveFolderById(
+          state.archiveSelectedFolderItemId
+        );
+
+      const currentFolderId =
+        archiveNormalizeFolderId(
+          state.archiveSelectedFolderId
+        );
+
+      const folderItemVisible =
+        state.archiveView === 'files'
+        && !state.archiveSearch
+        && !state.archivePersonFilterId
+        && selectedFolderItem
+        && archiveFolderParentId(
+          selectedFolderItem
+        ) === currentFolderId;
+
+      if (
+        !folderItemVisible
+        || state.archiveSelectedFileId
+      ) {
+        state.archiveSelectedFolderItemId =
+          null;
+      }
+
       if (
         state.archiveView
           === 'sources'
@@ -60488,6 +60718,14 @@
         )
       ) {
         state.archiveSelectedSourceId =
+          null;
+      }
+
+      if (
+        state.archiveView
+          === 'sources'
+      ) {
+        state.archiveSelectedFolderItemId =
           null;
       }
 
@@ -60515,7 +60753,15 @@
     }
 
     function renderArchiveSidebarNavItem(id, label, svg) {
-      return `<button class="side-link ${state.archiveView === id ? 'active' : ''}" type="button" data-archive-view="${id}">${svg}<span>${escapeHtml(label)}</span></button>`;
+      const active =
+        id === 'files'
+          ? state.archiveView === 'files'
+            && archiveIsRootLocation(
+              state.archiveSelectedFolderId
+            )
+          : state.archiveView === id;
+
+      return `<button class="side-link ${active ? 'active' : ''}" type="button" data-archive-view="${id}">${svg}<span>${escapeHtml(label)}</span></button>`;
     }
 
     function renderArchiveFolderTree(
@@ -60734,7 +60980,7 @@
           <div class="side-nav">
             ${renderArchiveSidebarNavItem(
               'files',
-              'Files',
+              ARCHIVE_ROOT_LABEL,
               icon.folder
             )}
 
@@ -61286,7 +61532,7 @@
       const rootLabel =
         favoritesView
           ? 'Favourites'
-          : 'Files';
+          : ARCHIVE_ROOT_LABEL;
 
       const rootCurrent =
         !folders.length;
@@ -61585,10 +61831,20 @@
         directFiles
         + childFolders;
 
+      const detailSelected =
+        state.archiveSelectedFolderItemId
+          === folder.id;
+
       return `
         <tr
           class="
             archive-table-folder-row
+
+            ${
+              detailSelected
+                ? 'selected-detail'
+                : ''
+            }
           "
           data-archive-folder-row="${escapeHtml(
             folder.id
@@ -61612,7 +61868,6 @@
                 class="
                   archive-name-copy
                 ">
-
                 <div
                   class="
                     archive-folder-name-line
@@ -61627,15 +61882,6 @@
                       folder.name
                     )}
                   </strong>
-
-                  <span
-                    class="
-                      archive-folder-open-indicator
-                    "
-                    aria-hidden="true">
-
-                    ${icon.chevron}
-                  </span>
                 </div>
               </div>
             </div>
@@ -61806,6 +62052,8 @@
         Match Albums: selecting through the checkbox
         also makes that record the inspector item.
       */
+      
+      state.archiveSelectedFolderItemId = null;
       state.archiveSelectedFileId =
         file.id;
 
@@ -62137,8 +62385,95 @@
       `;
     }
 
-    function renderArchiveEmpty(title, copy, action = '') {
-      return `<div class="archive-empty"><div><h2>${escapeHtml(title)}</h2><p>${escapeHtml(copy)}</p>${action}</div></div>`;
+    function renderArchiveEmpty(
+      title,
+      copy,
+      action = ''
+    ) {
+      return `
+        <div class="archive-empty">
+          <div>
+            <h2>
+              ${escapeHtml(
+                title
+              )}
+            </h2>
+
+            <p>
+              ${escapeHtml(
+                copy
+              )}
+            </p>
+
+            ${action}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderArchiveFileDropzone(
+      folder = null
+    ) {
+      const folderName =
+        folder?.name
+        || 'Files';
+
+      return `
+        <button
+          class="
+            archive-empty
+            archive-empty-dropzone
+          "
+          type="button"
+          data-archive-empty-add-files
+          aria-label="${escapeHtml(
+            `Add files to ${folderName}`
+          )}">
+
+          <span
+            class="
+              archive-empty-dropzone-content
+            ">
+
+            <span
+              class="
+                archive-empty-dropzone-icon
+              "
+              aria-hidden="true">
+
+              ${icon.import}
+            </span>
+
+            <strong
+              class="
+                archive-empty-dropzone-title
+              ">
+
+              Drop files here
+            </strong>
+
+            <span
+              class="
+                archive-empty-dropzone-copy
+              ">
+
+              ${escapeHtml(
+                folder
+                  ? `Drop files here to add them to “${folder.name}”, or click to choose files.`
+                  : 'Drop files here to add them to Archive, or click to choose files.'
+              )}
+            </span>
+
+            <span
+              class="
+                archive-empty-dropzone-action
+              ">
+
+              Click to choose files
+            </span>
+          </span>
+        </button>
+      `;
     }
 
     function renderArchiveFilesView() {
@@ -62162,7 +62497,9 @@
         state.archiveView
           === 'favorites'
             ? 'Favourites'
-            : 'Files';
+            : currentFolder
+              ? 'Files'
+              : ARCHIVE_ROOT_LABEL;
 
       const subtitle =
         archiveFilesViewSubtitle(
@@ -62177,28 +62514,24 @@
         files.length
         || folders.length;
 
-      const rootLocation =
-        !currentFolder;
+      const showingInformationalEmpty =
+        state.archiveView
+          === 'favorites'
+        || Boolean(
+          state.archiveSearch
+        );
 
       const emptyTitle =
         state.archiveView
           === 'favorites'
-            ? 'No favourite files'
-            : state.archiveSearch
-              ? 'No files match this search'
-              : rootLocation
-                ? 'No files or folders yet'
-                : 'This folder is empty';
+          ? 'No favourite files'
+          : 'No files match this search';
 
       const emptyCopy =
         state.archiveView
           === 'favorites'
-            ? 'Mark frequently used files as favourites to find them here.'
-            : state.archiveSearch
-              ? 'Try a different search term or clear the active filters.'
-              : rootLocation
-                ? 'Add files or create a top-level folder to begin organizing your research.'
-                : 'Add files or create a subfolder here.';
+          ? 'Mark frequently used files as favourites to find them here.'
+          : 'Try a different search term or clear the active filters.';
 
       return `
         <div
@@ -62231,10 +62564,14 @@
                   files,
                   folders
                 )
-              : renderArchiveEmpty(
-                  emptyTitle,
-                  emptyCopy
-                )
+              : showingInformationalEmpty
+                ? renderArchiveEmpty(
+                    emptyTitle,
+                    emptyCopy
+                  )
+                : renderArchiveFileDropzone(
+                    currentFolder
+                  )
           }
         </div>
       `;
@@ -63334,22 +63671,53 @@
         };
       }
 
-      const folder =
+      const selectedFolder =
         archiveFolderById(
-          state.archiveSelectedFolderId
+          state.archiveSelectedFolderItemId
         );
 
-      if (folder) {
+      if (selectedFolder) {
         return {
           type:
             'folder',
 
           id:
-            folder.id,
+            selectedFolder.id,
 
           label:
-            folder.name
+            selectedFolder.name
             || 'Folder',
+
+          folderMode:
+            'selected',
+
+          favorite:
+            false,
+
+          supportsFavourite:
+            false
+        };
+      }
+
+      const currentFolder =
+        archiveFolderById(
+          state.archiveSelectedFolderId
+        );
+
+      if (currentFolder) {
+        return {
+          type:
+            'folder',
+
+          id:
+            currentFolder.id,
+
+          label:
+            currentFolder.name
+            || 'Folder',
+
+          folderMode:
+            'current',
 
           favorite:
             false,
@@ -63366,6 +63734,61 @@
       */
 
       return null;
+    }
+
+    function renderArchiveInspectorFolderOpenButton(
+      context
+    ) {
+      if (
+        context?.type !== 'folder'
+        || context.folderMode
+          !== 'selected'
+      ) {
+        return '';
+      }
+
+      return `
+        <button
+          class="
+            archive-inspector-action
+            archive-inspector-action-text
+          "
+          type="button"
+          data-archive-inspector-open-folder="${escapeHtml(
+            context.id
+          )}"
+          aria-label="Open folder"
+          title="Open folder">
+
+          Open
+        </button>
+      `;
+    }
+
+    function renderArchiveInspectorRenameButton(
+      context
+    ) {
+      if (
+        context?.type !== 'folder'
+      ) {
+        return '';
+      }
+
+      return `
+        <button
+          class="
+            archive-inspector-action
+          "
+          type="button"
+          data-archive-inspector-rename-folder="${escapeHtml(
+            context.id
+          )}"
+          aria-label="Rename folder"
+          title="Rename folder">
+
+          ${icon.edit}
+        </button>
+      `;
     }
 
     function renderArchiveInspectorMoveButton(
@@ -63571,6 +63994,14 @@
               : ''
           }
 
+          ${renderArchiveInspectorFolderOpenButton(
+            context
+          )}
+
+          ${renderArchiveInspectorRenameButton(
+            context
+          )}
+
           ${renderArchiveInspectorMoveButton(
             context
           )}
@@ -63642,7 +64073,7 @@
         title:
           favoritesView
             ? 'Favourites'
-            : 'Files',
+            : ARCHIVE_ROOT_LABEL,
 
         subtitle:
           'No item selected',
@@ -63680,14 +64111,33 @@
         );
       }
 
-      const folder =
+      const selectedFolder =
+        archiveFolderById(
+          state.archiveSelectedFolderItemId
+        );
+
+      if (selectedFolder) {
+        return renderArchiveFolderInspector(
+          selectedFolder,
+          {
+            mode:
+              'selected'
+          }
+        );
+      }
+
+      const currentFolder =
         archiveFolderById(
           state.archiveSelectedFolderId
         );
 
-      return folder
+      return currentFolder
         ? renderArchiveFolderInspector(
-            folder
+            currentFolder,
+            {
+              mode:
+                'current'
+            }
           )
         : renderArchiveRootInspector();
     }
@@ -64880,22 +65330,217 @@
       });
     }
 
-    function renderArchiveFolderInspector(folder) {
+    function archiveFolderInspectorPath(
+      folder
+    ) {
+      if (!folder) {
+        return 'Files';
+      }
+
+      const names =
+        archiveFolderAncestors(
+          folder.id
+        )
+          .map(item =>
+            item?.name
+          )
+          .filter(Boolean);
+
+      return [
+        'Files',
+        ...names
+      ].join(
+        ' / '
+      );
+    }
+
+    function renderArchiveFolderInspector(
+      folder,
+      {
+        mode =
+          'current'
+      } = {}
+    ) {
       if (!folder) {
         return renderArchiveRootInspector();
       }
-      const impact = archiveFolderImpact(folder.id);
-      const directFolders = archiveFolderChildren(folder.id).length;
-      const directFiles = archiveProjectFiles().filter(file => file.folderId === folder.id).length;
-      const body = `<div class="archive-preview"><div class="archive-preview-content">${icon.folder}<strong>${escapeHtml(folder.name)}</strong><span>${escapeHtml(archiveFolderPath(folder.id))}</span></div></div>
-        <div class="archive-inspector-actions" style="margin-bottom:var(--space-3)"><button class="button secondary" type="button" data-archive-create-folder data-archive-parent-folder="${escapeHtml(folder.id)}">${icon.plus} New subfolder</button><button class="button ghost" type="button" data-archive-add-files>${icon.plus} Add file</button></div>
-        <section class="archive-inspector-section"><div class="archive-inspector-section-head"><strong>Folder details</strong></div><div class="archive-inspector-section-body"><div class="archive-kv-list"><div class="archive-kv"><span>Path</span><span>${escapeHtml(archiveFolderPath(folder.id))}</span></div><div class="archive-kv"><span>Direct folders</span><span>${directFolders}</span></div><div class="archive-kv"><span>Direct files</span><span>${directFiles}</span></div><div class="archive-kv"><span>Total nested files</span><span>${impact.files}</span></div></div></div></section>`;
+
+      const selectedFolder =
+        mode === 'selected';
+
+      const impact =
+        archiveFolderImpact(
+          folder.id
+        );
+
+      const directFolders =
+        archiveFolderChildren(
+          folder.id
+        ).length;
+
+      const directFiles =
+        archiveProjectFiles()
+          .filter(file =>
+            archiveFileFolderId(
+              file
+            ) === folder.id
+          )
+          .length;
+
+      const location =
+        archiveFolderInspectorPath(
+          folder
+        );
+
+      const body = `
+        <div
+          class="
+            archive-inspector-actions
+            archive-folder-inspector-actions
+          ">
+
+          <button
+            class="
+              button secondary
+            "
+            type="button"
+            data-archive-create-folder
+            data-archive-parent-folder="${escapeHtml(
+              folder.id
+            )}">
+
+            ${icon.plus}
+            New subfolder
+          </button>
+
+          <button
+            class="
+              button secondary
+            "
+            type="button"
+            data-archive-add-files
+            data-archive-parent-folder="${escapeHtml(
+              folder.id
+            )}">
+
+            ${icon.plus}
+            Add file
+          </button>
+        </div>
+
+        <section
+          class="
+            archive-inspector-section
+          ">
+
+          <div
+            class="
+              archive-inspector-section-head
+            ">
+
+            <strong>
+              Folder details
+            </strong>
+          </div>
+
+          <div
+            class="
+              archive-inspector-section-body
+            ">
+            
+          <div
+            class="
+              archive-kv-list
+            ">
+
+            <div
+              class="
+                archive-kv
+              ">
+
+              <span>
+                Location
+              </span>
+
+              <span>
+                ${escapeHtml(
+                  location
+                )}
+              </span>
+            </div>
+
+            <div
+              class="
+                archive-kv
+              ">
+
+              <span>
+                Created
+              </span>
+
+              <span>
+                ${escapeHtml(
+                  archiveFormatDate(
+                    folder.createdAt
+                  )
+                )}
+              </span>
+            </div>
+
+              <div
+                class="
+                  archive-kv
+                ">
+
+                <span>
+                  Folders
+                </span>
+
+                <span>
+                  ${directFolders}
+                </span>
+              </div>
+
+              <div
+                class="
+                  archive-kv
+                ">
+
+                <span>
+                  Files
+                </span>
+
+                <span>
+                  ${directFiles}
+                </span>
+              </div>
+
+              <div
+                class="
+                  archive-kv
+                ">
+
+                <span>
+                  Nested files
+                </span>
+
+                <span>
+                  ${impact.files}
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+      `;
+
       return renderArchiveInspectorShell({
         title:
           folder.name,
 
         subtitle:
-          'Folder',
+          selectedFolder
+            ? 'Selected folder'
+            : 'Current folder',
 
         content:
           body
@@ -65753,7 +66398,7 @@
         );
 
       return [
-        'Files',
+        ARCHIVE_ROOT_LABEL,
 
         ...folders.map(
           folder =>
@@ -65854,6 +66499,50 @@
         the Files root.
       */
       return null;
+    }
+
+    const ARCHIVE_FOLDER_DOUBLE_CLICK_MS =
+      420;
+
+    let archiveLastFolderRowClick = {
+      folderId:
+        null,
+
+      at:
+        0
+    };
+
+    function archiveFolderRowWasDoubleClick(
+      folderId
+    ) {
+      const now =
+        performance.now();
+
+      const repeated =
+        archiveLastFolderRowClick
+          .folderId === folderId
+        && now
+          - archiveLastFolderRowClick.at
+          <= ARCHIVE_FOLDER_DOUBLE_CLICK_MS;
+
+      archiveLastFolderRowClick = {
+        folderId,
+
+        at:
+          now
+      };
+
+      return repeated;
+    }
+
+    function resetArchiveFolderRowClick() {
+      archiveLastFolderRowClick = {
+        folderId:
+          null,
+
+        at:
+          0
+      };
     }
 
     function archiveMoveInitialRevealFolderId({
@@ -66417,8 +67106,8 @@
                     data-archive-move-toggle="${ARCHIVE_ROOT_PICKER_VALUE}"
                     aria-label="${
                       rootExpanded
-                        ? 'Collapse Files'
-                        : 'Expand Files'
+                        ? `Collapse ${ARCHIVE_ROOT_LABEL}`
+                        : `Expand ${ARCHIVE_ROOT_LABEL}`
                     }"
                     aria-expanded="${String(
                       rootExpanded
@@ -66473,7 +67162,7 @@
                 ">
 
                 <strong>
-                  Files
+                  ${ARCHIVE_ROOT_LABEL}
                 </strong>
 
                 <span>
@@ -66543,7 +67232,8 @@
         );
 
       const rootMatches =
-        'files top level'
+        `${ARCHIVE_ROOT_LABEL} files top level`
+          .toLowerCase()
           .includes(
             normalizedQuery
           );
@@ -66646,7 +67336,7 @@
 
                     <strong>
                       ${archiveMoveHighlightMatch(
-                        'Files',
+                        ARCHIVE_ROOT_LABEL,
                         query
                       )}
                     </strong>
@@ -69061,7 +69751,14 @@
               id
             )
           : null;
-
+      const folderIsCurrentLocation =
+        Boolean(
+          folder
+          && folder.id
+            === archiveNormalizeFolderId(
+              state.archiveSelectedFolderId
+            )
+        );
       const source =
         type === 'source'
           ? archiveSourceById(
@@ -69156,13 +69853,19 @@
 
       if (folder) {
         menu.innerHTML = `
-          <button
-            type="button"
-            role="menuitem"
-            data-archive-item-action="open">
+          ${
+            folderIsCurrentLocation
+              ? ''
+              : `
+                <button
+                  type="button"
+                  role="menuitem"
+                  data-archive-item-action="open">
 
-            Open folder
-          </button>
+                  Open folder
+                </button>
+              `
+          }
 
           <button
             type="button"
@@ -69344,36 +70047,8 @@
             if (
               action === 'open'
             ) {
-              archiveNavigateToLocation(
-                {
-                  view:
-                    state.archiveView
-                      === 'favorites'
-                        ? 'favorites'
-                        : 'files',
-
-                  folderId:
-                    folder.id,
-
-                  search:
-                    '',
-
-                  searchScope:
-                    'folder',
-
-                  personFilterId:
-                    '',
-
-                  selectedFileId:
-                    null,
-
-                  inspectorCollapsed:
-                    false
-                },
-                {
-                  expandCurrent:
-                    true
-                }
+              archiveOpenFolder(
+                folder.id
               );
 
               return;
@@ -69632,6 +70307,43 @@
       );
     root
       .querySelector(
+        '[data-archive-inspector-open-folder]'
+      )
+      ?.addEventListener(
+        'click',
+        event => {
+          archiveOpenFolder(
+            event.currentTarget
+              .dataset
+              .archiveInspectorOpenFolder
+          );
+        }
+      );
+
+    root
+      .querySelector(
+        '[data-archive-inspector-rename-folder]'
+      )
+      ?.addEventListener(
+        'click',
+        event => {
+          const folderId =
+            event.currentTarget
+              .dataset
+              .archiveInspectorRenameFolder;
+
+          if (!folderId) {
+            return;
+          }
+
+          openArchiveRenameItemModal(
+            'folder',
+            folderId
+          );
+        }
+      );
+    root
+      .querySelector(
         '[data-archive-inspector-move]'
       )
       ?.addEventListener(
@@ -69872,6 +70584,84 @@
           archiveNavigateUp
         );
       root.querySelector('[data-archive-add-files]')?.addEventListener('click', openArchiveAddFilesModal);
+      const emptyFileDropzone =
+        root.querySelector(
+          '[data-archive-empty-add-files]'
+        );
+
+      emptyFileDropzone
+        ?.addEventListener(
+          'click',
+          openArchiveAddFilesModal
+        );
+      if (
+        emptyFileDropzone
+      ) {
+        emptyFileDropzone
+          .addEventListener(
+            'dragenter',
+            event => {
+              event.preventDefault();
+
+              emptyFileDropzone
+                .classList
+                .add(
+                  'is-drag-over'
+                );
+            }
+          );
+
+        emptyFileDropzone
+          .addEventListener(
+            'dragover',
+            event => {
+              event.preventDefault();
+
+              emptyFileDropzone
+                .classList
+                .add(
+                  'is-drag-over'
+                );
+            }
+          );
+
+        emptyFileDropzone
+          .addEventListener(
+            'dragleave',
+            event => {
+              if (
+                emptyFileDropzone
+                  .contains(
+                    event.relatedTarget
+                  )
+              ) {
+                return;
+              }
+
+              emptyFileDropzone
+                .classList
+                .remove(
+                  'is-drag-over'
+                );
+            }
+          );
+
+        emptyFileDropzone
+          .addEventListener(
+            'drop',
+            event => {
+              event.preventDefault();
+
+              emptyFileDropzone
+                .classList
+                .remove(
+                  'is-drag-over'
+                );
+
+              openArchiveAddFilesModal();
+            }
+          );
+      }
       root
         .querySelectorAll(
           '[data-archive-create-folder]'
@@ -69957,10 +70747,11 @@
             () => {
               runAfterArchiveFileEditGuard(
                 () => {
+                  state.archiveSelectedFolderItemId =
+                    null;
                   state.archiveSelectedFileId =
                     row.dataset
                       .archiveFileRow;
-
                   state.archiveInspectorCollapsed =
                     false;
 
@@ -69999,46 +70790,45 @@
           '[data-archive-folder-row]'
         )
         .forEach(row => {
-          const open =
-            () => {
-              archiveNavigateToLocation(
-                {
-                  folderId:
-                    row.dataset
-                      .archiveFolderRow,
-
-                  search:
-                    '',
-
-                  searchScope:
-                    'folder',
-
-                  personFilterId:
-                    '',
-
-                  selectedFileId:
-                    null,
-
-                  inspectorCollapsed:
-                    false
-                },
-                {
-                  expandCurrent:
-                    true
-                }
-              );
-            };
+          const folderId =
+            row.dataset
+              .archiveFolderRow;
 
           row.addEventListener(
             'click',
             event => {
               if (
-                !event.target.closest(
+                event.target.closest(
                   'button,input,select,a'
                 )
               ) {
-                open();
+                return;
               }
+
+              /*
+                First click:
+                select and inspect.
+
+                Second quick click on the same folder:
+                open the folder.
+              */
+              if (
+                archiveFolderRowWasDoubleClick(
+                  folderId
+                )
+              ) {
+                resetArchiveFolderRowClick();
+
+                archiveOpenFolder(
+                  folderId
+                );
+
+                return;
+              }
+
+              selectArchiveFolderItem(
+                folderId
+              );
             }
           );
 
@@ -70049,7 +70839,28 @@
                 event.key === 'Enter'
               ) {
                 event.preventDefault();
-                open();
+
+                resetArchiveFolderRowClick();
+
+                archiveOpenFolder(
+                  folderId
+                );
+
+                return;
+              }
+
+              if (
+                event.key === ' '
+                || event.key
+                  === 'Spacebar'
+              ) {
+                event.preventDefault();
+
+                resetArchiveFolderRowClick();
+
+                selectArchiveFolderItem(
+                  folderId
+                );
               }
             }
           );
