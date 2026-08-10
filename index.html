@@ -4382,26 +4382,53 @@
     }
 
     .connected-file-item {
+      position:
+        relative;
+
       min-width:
         0;
 
-      display:
-        grid;
+      min-height:
+        64px;
 
-      grid-template-columns:
-        minmax(0, 1fr);
+      border:
+        1px solid
+        transparent;
 
-      align-items:
-        center;
+      border-radius:
+        var(--radius-sm);
 
-      gap:
-        var(--space-2);
+      background:
+        transparent;
+
+      transition:
+        background var(--ease),
+        border-color var(--ease);
     }
 
-    .connected-file-item.can-unlink {
-      grid-template-columns:
-        minmax(0, 1fr)
-        34px;
+    .connected-file-item:hover,
+    .connected-file-item:focus-within {
+      border-color:
+        var(--border-default);
+
+      background:
+        rgba(
+          255,
+          255,
+          255,
+          .04
+        );
+    }
+
+    .connected-file-item.can-unlink
+    .connected-file-main {
+      /*
+        Match Connected Notes:
+        reserve room for the hover unlink action
+        without shrinking the main content column.
+      */
+      padding-right:
+        50px;
     }
 
     .connected-file-main {
@@ -4412,21 +4439,20 @@
         0;
 
       min-height:
-        60px;
+        62px;
 
       padding:
-        9px
+        8px
         10px;
 
       border:
-        1px solid
-        var(--border-default);
+        0;
 
       border-radius:
-        var(--radius-sm);
+        inherit;
 
       background:
-        var(--surface-card);
+        transparent;
 
       color:
         var(--text-secondary);
@@ -4435,9 +4461,8 @@
         grid;
 
       grid-template-columns:
-        34px
-        minmax(0, 1fr)
-        auto;
+        42px
+        minmax(0, 1fr);
 
       align-items:
         center;
@@ -4445,35 +4470,23 @@
       gap:
         var(--space-3);
 
+      font:
+        inherit;
+
       text-align:
         left;
 
-      transition:
-        border-color var(--ease),
-        background var(--ease);
-    }
-
-    .connected-file-main:hover {
-      border-color:
-        var(--border-strong);
-
-      background:
-        var(--surface-card-hover);
+      cursor:
+        pointer;
     }
 
     .connected-file-main:focus-visible {
       outline:
         2px solid
-        var(--brand-green-300);
+        var(--brand-green-400);
 
       outline-offset:
-        2px;
-
-      border-color:
-        var(--border-strong);
-
-      background:
-        var(--surface-card-hover);
+        -2px;
     }
 
     .connected-file-copy {
@@ -4484,7 +4497,7 @@
         grid;
 
       gap:
-        3px;
+        4px;
     }
 
     .connected-file-title {
@@ -4501,7 +4514,7 @@
         13px;
 
       font-weight:
-        850;
+        900;
 
       line-height:
         1.35;
@@ -4539,55 +4552,24 @@
         nowrap;
     }
 
-    .connected-file-arrow {
-      width:
-        18px;
-
-      height:
-        18px;
-
-      color:
-        var(--text-tertiary);
-
-      display:
-        grid;
-
-      place-items:
-        center;
-
-      opacity:
-        .5;
-
-      transition:
-        opacity var(--ease),
-        color var(--ease);
-    }
-
-    .connected-file-arrow svg {
-      width:
-        16px;
-
-      height:
-        16px;
-    }
-
-    .connected-file-main:hover
-    .connected-file-arrow,
-    .connected-file-main:focus-visible
-    .connected-file-arrow {
-      color:
-        var(--text-secondary);
-
-      opacity:
-        1;
-    }
-
     .connected-file-unlink {
+      position:
+        absolute;
+
+      z-index:
+        1;
+
+      top:
+        50%;
+
+      right:
+        8px;
+
       width:
-        34px;
+        32px;
 
       height:
-        34px;
+        32px;
 
       padding:
         0;
@@ -4600,7 +4582,12 @@
         var(--radius-sm);
 
       background:
-        transparent;
+        rgba(
+          15,
+          20,
+          19,
+          .9
+        );
 
       color:
         var(--text-tertiary);
@@ -4614,14 +4601,26 @@
       opacity:
         0;
 
+      visibility:
+        hidden;
+
       pointer-events:
         none;
 
+      transform:
+        translateY(-50%)
+        scale(.96);
+
       transition:
         opacity var(--ease),
-        border-color var(--ease),
+        visibility var(--ease),
+        transform var(--ease),
         background var(--ease),
+        border-color var(--ease),
         color var(--ease);
+
+      cursor:
+        pointer;
     }
 
     .connected-file-unlink svg {
@@ -4639,17 +4638,34 @@
       opacity:
         1;
 
+      visibility:
+        visible;
+
       pointer-events:
         auto;
+
+      transform:
+        translateY(-50%)
+        scale(1);
     }
 
     .connected-file-unlink:hover,
     .connected-file-unlink:focus-visible {
       border-color:
-        rgba(212, 107, 107, .32);
+        rgba(
+          212,
+          107,
+          107,
+          .32
+        );
 
       background:
-        rgba(212, 107, 107, .12);
+        rgba(
+          212,
+          107,
+          107,
+          .12
+        );
 
       color:
         var(--red);
@@ -4678,14 +4694,43 @@
         1.45;
     }
 
+    .connected-file-unlink-warning {
+      display:
+        grid;
+
+      gap:
+        var(--space-2);
+    }
+
+    .connected-file-unlink-warning strong {
+      color:
+        var(--text-primary);
+    }
+
+    .connected-file-unlink-warning span {
+      color:
+        var(--text-secondary);
+    }
+
+    /*
+      Hover is unavailable on touch-only devices,
+      so keep the quick action visible.
+    */
     @media (hover: none) {
       .connected-file-item.can-unlink
       .connected-file-unlink {
         opacity:
           1;
 
+        visibility:
+          visible;
+
         pointer-events:
           auto;
+
+        transform:
+          translateY(-50%)
+          scale(1);
       }
     }
 
@@ -33077,27 +33122,6 @@
       return person && getPerson(person.id) ? person.id : null;
     }
 
-    function familyArchiveLinks(person) {
-      const links = {
-        silver: [
-          { type: 'PDF', name: 'Meowbridge marriage record', meta: 'Added May 7 2026', fileId: 'af5' },
-          { type: 'JPG', name: 'Silver kitten portrait', meta: 'Added Feb 20 2021', fileId: null },
-          { type: 'PDF', name: 'Pawford household register', meta: 'Added Mar 03 2016', fileId: 'af1' }
-        ],
-        barnaby: [
-          { type: 'PDF', name: 'Pawford household register', meta: 'Added May 7 2026', fileId: 'af5' },
-          { type: 'JPG', name: 'Fishmarket Row census extract', meta: 'Added Today', fileId: 'af2' }
-        ],
-        daisy: [
-          { type: 'PDF', name: 'Meowbridge marriage record', meta: 'Added Today', fileId: 'af1' }
-        ],
-        luna: [
-          { type: 'PDF', name: 'Meowbridge marriage record', meta: 'Added May 19 2026', fileId: 'af5' }
-        ]
-      };
-      return links[person?.id] || [{ type: 'PDF', name: 'Linked archive file.pdf', meta: 'Added recently', fileId: null }];
-    }
-
     const PERSON_PANEL_PREVIEW_LIMITS =
       Object.freeze({
         photos: 3,
@@ -33130,41 +33154,44 @@
     function getArchiveFilesForPerson(
       personId,
       {
-        includeDeleted = false
+        includeDeleted =
+          false
       } = {}
     ) {
       const person =
-        getPerson(personId);
-
-      if (!person) return [];
-
-      /*
-      * The current prototype still has some
-      * inspector-specific link IDs. Include
-      * those while also supporting the Archive
-      * module's linkedPersonIds and linkedTo
-      * fields.
-      */
-      const inspectorFileIds =
-        new Set(
-          familyArchiveLinks(person)
-            .map(item => item.fileId)
-            .filter(Boolean)
+        getPerson(
+          personId
         );
 
-      return sampleData.archiveFiles
+      if (!person) {
+        return [];
+      }
+
+      const projectId =
+        person.projectId
+        || currentProjectId();
+
+      return (
+        sampleData.archiveFiles
+        || []
+      )
         .filter(file =>
-          includeDeleted
-          || !file.deleted
+          (
+            includeDeleted
+            || !file.deleted
+          )
+          && (
+            !file.projectId
+            || file.projectId
+              === projectId
+          )
         )
         .filter(file =>
-          inspectorFileIds.has(file.id)
-          || (
-            file.linkedPersonIds || []
-          ).includes(person.id)
-          || resourceLabelsIncludePerson(
-            file.linkedTo,
-            person
+          (
+            file.linkedPersonIds
+            || []
+          ).includes(
+            person.id
           )
         );
     }
@@ -33358,12 +33385,12 @@
       return renderConnectedFileList({
         files,
 
-        openAttributes:
-          file => `
-            data-family-archive="${escapeHtml(
-              file.id
-            )}"
-          `,
+        contextType:
+          'person',
+
+        contextId:
+          person?.id
+          || '',
 
         emptyText:
           'No archive files linked to this person.'
@@ -42768,19 +42795,18 @@
       const body =
         preview.length
           ? renderConnectedFileList({
-              files:
-                preview,
+            files:
+              preview,
 
-              openAttributes:
-                file => `
-                  data-profile-archive="${escapeHtml(
-                    file.id
-                  )}"
-                `,
+            contextType:
+              'person',
 
-              emptyText:
-                'No archive files linked'
-            })
+            contextId:
+              person.id,
+
+            emptyText:
+              'No archive files linked'
+          })
           : renderProfileResourceEmpty(
               'No archive files linked'
             );
@@ -44066,6 +44092,24 @@
       bindConnectedNoteLinks(
         main
       );
+      bindConnectedFileLinks(
+        main,
+        {
+          onUnlinked:
+            ({
+              contextType
+            }) => {
+              if (
+                contextType
+                !== 'person'
+              ) {
+                return;
+              }
+
+              renderAfterPersonConnectedResourcesChanged();
+            }
+        }
+      );
       const profileCard = main.querySelector(
         '[data-profile-card-root]'
       );
@@ -44198,7 +44242,6 @@
           );
         });
       main.querySelector('[data-profile-add-fact]')?.addEventListener('click', () => openAddFactOverlay(person));
-      main.querySelectorAll('[data-profile-archive]').forEach(button => button.addEventListener('click', () => openProfileArchiveFile(button.dataset.profileArchive)));
       main.querySelectorAll('[data-profile-partner-id]').forEach(button => {
         button.addEventListener('click', () => openProfileFamilyMember(button.dataset.profilePartnerId));
         button.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openProfileFamilyMember(button.dataset.profilePartnerId); } });
@@ -45832,7 +45875,6 @@
             }
           );
         });
-      root.querySelectorAll('[data-family-archive]').forEach(button => button.addEventListener('click', () => openFamilyArchiveItem(button.dataset.familyArchive)));
       const addNoteButton =
         root.querySelector(
           '[data-person-add-note]'
@@ -45850,6 +45892,36 @@
             );
           }
         );
+      bindConnectedFileLinks(
+        root,
+        {
+          onUnlinked:
+            ({
+              contextType
+            }) => {
+              if (
+                contextType
+                !== 'person'
+              ) {
+                return;
+              }
+
+              state.inspectorSections
+                .archive = true;
+
+              rerenderPersonSidebarContext(
+                context,
+                {
+                  preserveScroll:
+                    true,
+
+                  focusSectionId:
+                    'archive'
+                }
+              );
+            }
+        }
+      );
       bindConnectedNoteLinks(
         root,
         {
@@ -60115,17 +60187,198 @@
         || 'Archive file';
     }
 
+    function connectedFileContextConfig(
+      contextType
+    ) {
+      return {
+        person: {
+          noun:
+            'person',
+
+          record:
+            contextId =>
+              getPerson(
+                contextId
+              ),
+
+          label:
+            record =>
+              record?.names?.display
+              || record?.name
+              || 'this person',
+
+          isLinked:
+            (
+              file,
+              contextId
+            ) =>
+              archiveConnectionIds(
+                'file',
+                file.id,
+                'person'
+              ).includes(
+                contextId
+              ),
+
+          unlink:
+            (
+              file,
+              contextId
+            ) =>
+              archiveSetConnection(
+                'file',
+                file.id,
+                'person',
+                contextId,
+                false
+              )
+        },
+
+        note: {
+          noun:
+            'note',
+
+          record:
+            contextId =>
+              getNote(
+                contextId,
+                {
+                  includeArchived:
+                    true
+                }
+              ),
+
+          label:
+            record =>
+              record?.title
+              || 'Untitled note',
+
+          isLinked:
+            (
+              file,
+              contextId
+            ) =>
+              archiveConnectionIds(
+                'file',
+                file.id,
+                'note'
+              ).includes(
+                contextId
+              ),
+
+          unlink:
+            (
+              file,
+              contextId
+            ) =>
+              archiveSetConnection(
+                'file',
+                file.id,
+                'note',
+                contextId,
+                false
+              )
+        },
+
+        place: {
+          noun:
+            'place',
+
+          record:
+            contextId =>
+              getPlace(
+                contextId
+              ),
+
+          label:
+            record =>
+              record?.name
+              || 'this place',
+
+          isLinked:
+            (
+              file,
+              contextId
+            ) =>
+              archiveConnectionIds(
+                'file',
+                file.id,
+                'place'
+              ).includes(
+                contextId
+              ),
+
+          unlink:
+            (
+              file,
+              contextId
+            ) =>
+              archiveSetConnection(
+                'file',
+                file.id,
+                'place',
+                contextId,
+                false
+              )
+        },
+
+        source: {
+          noun:
+            'source',
+
+          record:
+            contextId =>
+              archiveSourceById(
+                contextId
+              ),
+
+          label:
+            record =>
+              record?.title
+              || 'Untitled source',
+
+          isLinked:
+            (
+              file,
+              contextId
+            ) =>
+              archiveConnectionIds(
+                'source',
+                contextId,
+                'file'
+              ).includes(
+                file.id
+              ),
+
+          unlink:
+            (
+              file,
+              contextId
+            ) =>
+              archiveSetConnection(
+                'source',
+                contextId,
+                'file',
+                file.id,
+                false
+              )
+        }
+      }[
+        contextType
+      ] || null;
+    }
+
     function renderConnectedFileItem({
       file,
 
-      openAttributes =
+      contextType =
         '',
 
-      unlinkAttributes =
+      contextId =
         '',
 
-      unlinkContextLabel =
-        'file'
+      allowUnlink =
+        true
     } = {}) {
       if (!file) {
         return '';
@@ -60141,19 +60394,25 @@
           file
         );
 
-      const canUnlink =
+      const contextConfig =
+        connectedFileContextConfig(
+          contextType
+        );
+
+      const unlinkSupported =
         Boolean(
-          String(
-            unlinkAttributes || ''
-          ).trim()
+          allowUnlink
+          && contextId
+          && contextConfig
         );
 
       return `
         <div
           class="
             connected-file-item
+
             ${
-              canUnlink
+              unlinkSupported
                 ? 'can-unlink'
                 : ''
             }
@@ -60164,9 +60423,8 @@
               connected-file-main
             "
             type="button"
-            ${openAttributes}
-            title="${escapeHtml(
-              title
+            data-connected-file-id="${escapeHtml(
+              file.id
             )}"
             aria-label="Open ${escapeHtml(
               title
@@ -60184,7 +60442,10 @@
               <strong
                 class="
                   connected-file-title
-                ">
+                "
+                title="${escapeHtml(
+                  title
+                )}">
 
                 ${escapeHtml(
                   title
@@ -60194,39 +60455,41 @@
               <span
                 class="
                   connected-file-meta
-                ">
+                "
+                title="${escapeHtml(
+                  meta
+                )}">
 
                 ${escapeHtml(
                   meta
                 )}
               </span>
             </span>
-
-            <span
-              class="
-                connected-file-arrow
-              "
-              aria-hidden="true">
-
-              ${icon.chevron}
-            </span>
           </button>
 
           ${
-            canUnlink
+            unlinkSupported
               ? `
                 <button
                   class="
                     connected-file-unlink
                   "
                   type="button"
-                  ${unlinkAttributes}
+                  data-connected-file-unlink="${escapeHtml(
+                    file.id
+                  )}"
+                  data-connected-file-context-type="${escapeHtml(
+                    contextType
+                  )}"
+                  data-connected-file-context-id="${escapeHtml(
+                    contextId
+                  )}"
                   aria-label="Unlink ${escapeHtml(
                     title
-                  )} from ${escapeHtml(
-                    unlinkContextLabel
+                  )} from this ${escapeHtml(
+                    contextConfig.noun
                   )}"
-                  title="Unlink">
+                  title="Unlink file">
 
                   ${icon.unlink}
                 </button>
@@ -60247,14 +60510,14 @@
       emptyText =
         'No files linked.',
 
-      openAttributes =
-        () => '',
+      contextType =
+        '',
 
-      unlinkAttributes =
-        null,
+      contextId =
+        '',
 
-      unlinkContextLabel =
-        'record'
+      allowUnlink =
+        true
     } = {}) {
       const validFiles =
         (
@@ -60280,6 +60543,10 @@
         `;
       }
 
+      /*
+        null means "no extra limit".
+        Do not convert null to Number(null) === 0.
+      */
       const hasLimit =
         limit !== null
         && limit !== undefined
@@ -60313,34 +60580,363 @@
               renderConnectedFileItem({
                 file,
 
-                openAttributes:
-                  typeof openAttributes
-                    === 'function'
-                      ? openAttributes(
-                          file
-                        )
-                      : String(
-                          openAttributes
-                          || ''
-                        ),
+                contextType,
 
-                unlinkAttributes:
-                  typeof unlinkAttributes
-                    === 'function'
-                      ? unlinkAttributes(
-                          file
-                        )
-                      : String(
-                          unlinkAttributes
-                          || ''
-                        ),
+                contextId,
 
-                unlinkContextLabel
+                allowUnlink
               })
             )
             .join('')}
         </div>
       `;
+    }
+
+    function connectedFileRelationshipExists({
+      fileId,
+      contextType,
+      contextId
+    }) {
+      const file =
+        archiveFileById(
+          fileId
+        );
+
+      const config =
+        connectedFileContextConfig(
+          contextType
+        );
+
+      if (
+        !file
+        || !config
+        || !contextId
+      ) {
+        return false;
+      }
+
+      return Boolean(
+        config.isLinked(
+          file,
+          contextId
+        )
+      );
+    }
+
+    function unlinkConnectedFileRelationship({
+      fileId,
+      contextType,
+      contextId
+    }) {
+      const file =
+        archiveFileById(
+          fileId
+        );
+
+      const config =
+        connectedFileContextConfig(
+          contextType
+        );
+
+      if (
+        !file
+        || !config
+        || !contextId
+      ) {
+        return false;
+      }
+
+      if (
+        !config.isLinked(
+          file,
+          contextId
+        )
+      ) {
+        return false;
+      }
+
+      return Boolean(
+        config.unlink(
+          file,
+          contextId
+        )
+      );
+    }
+
+    function openConnectedFileUnlinkConfirm({
+      fileId,
+      contextType,
+      contextId,
+      onUnlinked =
+        null
+    } = {}) {
+      const file =
+        archiveFileById(
+          fileId
+        );
+
+      const config =
+        connectedFileContextConfig(
+          contextType
+        );
+
+      if (
+        !file
+        || !config
+        || !contextId
+      ) {
+        return;
+      }
+
+      if (
+        !connectedFileRelationshipExists({
+          fileId,
+          contextType,
+          contextId
+        })
+      ) {
+        showToast(
+          'This file is no longer linked.'
+        );
+
+        return;
+      }
+
+      const contextRecord =
+        config.record(
+          contextId
+        );
+
+      if (!contextRecord) {
+        showToast(
+          'Linked record not found.'
+        );
+
+        return;
+      }
+
+      const fileName =
+        file.name
+        || file.title
+        || 'Untitled file';
+
+      const contextName =
+        config.label(
+          contextRecord
+        );
+
+      openModal(`
+        <div
+          class="
+            modal
+            connected-file-unlink-modal
+          "
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="connectedFileUnlinkTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2
+                id="connectedFileUnlinkTitle">
+
+                Unlink file from
+                ${escapeHtml(
+                  config.noun
+                )}?
+              </h2>
+
+              <p>
+                ${escapeHtml(
+                  fileName
+                )}
+              </p>
+            </div>
+
+            <button
+              class="
+                close-button
+              "
+              type="button"
+              data-close
+              aria-label="Close unlink confirmation">
+
+              ${icon.close}
+            </button>
+          </div>
+
+          <div
+            class="
+              modal-body
+              unlink-relationship-body
+            ">
+
+            <div
+              class="
+                unlink-relationship-warning
+                connected-file-unlink-warning
+              ">
+
+              <strong>
+                The file will not be deleted.
+              </strong>
+
+              <span>
+                Only the connection between
+                “${escapeHtml(
+                  fileName
+                )}” and
+                “${escapeHtml(
+                  contextName
+                )}” will be removed.
+                The file will remain available
+                in Archive and keep all its
+                other connections.
+              </span>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="
+                button
+                secondary
+              "
+              type="button"
+              data-close>
+
+              Cancel
+            </button>
+
+            <button
+              class="
+                button
+                danger
+              "
+              type="button"
+              data-confirm-connected-file-unlink>
+
+              Unlink file
+            </button>
+          </div>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelector(
+          '[data-confirm-connected-file-unlink]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const unlinked =
+              unlinkConnectedFileRelationship({
+                fileId:
+                  file.id,
+
+                contextType,
+
+                contextId
+              });
+
+            /*
+              Match the Connected Note flow:
+              close before rerendering the source
+              inspector.
+            */
+            closeModal();
+
+            if (!unlinked) {
+              showToast(
+                'The file could not be unlinked.'
+              );
+
+              return;
+            }
+
+            if (
+              typeof onUnlinked
+              === 'function'
+            ) {
+              onUnlinked({
+                fileId:
+                  file.id,
+
+                contextType,
+
+                contextId
+              });
+            } else {
+              render();
+            }
+
+            showToast(
+              `File unlinked from ${
+                config.noun
+              }.`
+            );
+          }
+        );
+    }
+
+    function bindConnectedFileLinks(
+      root,
+      {
+        onUnlinked =
+          null
+      } = {}
+    ) {
+      if (!root) {
+        return;
+      }
+
+      root
+        .querySelectorAll(
+          '[data-connected-file-id]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              openFamilyArchiveItem(
+                button.dataset
+                  .connectedFileId
+              );
+            }
+          );
+        });
+
+      root
+        .querySelectorAll(
+          '[data-connected-file-unlink]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              event.preventDefault();
+              event.stopPropagation();
+
+              openConnectedFileUnlinkConfirm({
+                fileId:
+                  button.dataset
+                    .connectedFileUnlink,
+
+                contextType:
+                  button.dataset
+                    .connectedFileContextType
+                  || '',
+
+                contextId:
+                  button.dataset
+                    .connectedFileContextId
+                  || '',
+
+                onUnlinked
+              });
+            }
+          );
+        });
     }
 
     function archiveDateValue(value) {
@@ -61533,21 +62129,9 @@
           );
       }
 
-      if (personId) {
-        const person =
-          getPerson(
-            personId
-          );
-
-        const manuallyLinkedIds =
-          new Set(
-            familyArchiveLinks(
-              person
-            ).map(item =>
-              item.fileId
-            )
-          );
-
+      if (
+        personId
+      ) {
         files =
           files.filter(file =>
             (
@@ -61556,12 +62140,8 @@
             ).includes(
               personId
             )
-            || manuallyLinkedIds.has(
-              file.id
-            )
           );
       }
-
       /*
         "All files" bypasses the selected folder
         only while an actual search query exists.
@@ -66314,35 +66894,17 @@
             class="
               archive-inspector-section-body
             ">
-
             ${renderConnectedFileList({
               files,
 
               limit:
                 4,
 
-              openAttributes:
-                file => `
-                  data-archive-open-connection="file"
-                  data-archive-connection-id="${escapeHtml(
-                    file.id
-                  )}"
-                `,
-
-              unlinkAttributes:
-                file => `
-                  data-archive-unlink-owner-type="source"
-                  data-archive-unlink-owner-id="${escapeHtml(
-                    source.id
-                  )}"
-                  data-archive-unlink-type="file"
-                  data-archive-unlink-id="${escapeHtml(
-                    file.id
-                  )}"
-                `,
-
-              unlinkContextLabel:
+              contextType:
                 'source',
+
+              contextId:
+                source.id,
 
               emptyText:
                 'No files linked.'
@@ -72713,6 +73275,24 @@
     function bindArchiveControls() {
       const root = main.querySelector('.archive-shell');
       if (!root) return;
+      bindConnectedFileLinks(
+        root,
+        {
+          onUnlinked:
+            ({
+              contextType
+            }) => {
+              if (
+                contextType
+                !== 'source'
+              ) {
+                return;
+              }
+
+              renderArchiveMain();
+            }
+        }
+      );
       bindGenealogyDateFields(
         root
       );
@@ -79746,7 +80326,9 @@
     function renderNoteLinkedRecordRows(
       type,
       config,
-      records
+      records,
+      noteId =
+        ''
     ) {
       if (type === 'person') {
         return `
@@ -80018,26 +80600,11 @@
           files:
             records,
 
-          openAttributes:
-            file => `
-              data-note-linked-open
-              data-note-linked-type="archiveFile"
-              data-note-linked-id="${escapeHtml(
-                file.id
-              )}"
-            `,
-
-          unlinkAttributes:
-            file => `
-              data-note-linked-remove
-              data-note-linked-type="archiveFile"
-              data-note-linked-id="${escapeHtml(
-                file.id
-              )}"
-            `,
-
-          unlinkContextLabel:
+          contextType:
             'note',
+
+          contextId:
+            noteId,
 
           emptyText:
             'No files linked to this note.'
@@ -80223,7 +80790,8 @@
                 : renderNoteLinkedRecordRows(
                     type,
                     config,
-                    records
+                    records,
+                    note.id
                   )
             )
           : `
@@ -90328,6 +90896,25 @@
         return;
       }
 
+      bindConnectedFileLinks(
+        main,
+        {
+          onUnlinked:
+            ({
+              contextType
+            }) => {
+              if (
+                contextType
+                !== 'note'
+              ) {
+                return;
+              }
+
+              renderNotesPreservingInteraction();
+            }
+        }
+      );
+
       const titleInput =
         main.querySelector(
           '#notesTitleInput'
@@ -97538,7 +98125,9 @@
     }
 
     function renderPlaceInspectorFiles(
-      files
+      files,
+      placeId =
+        ''
     ) {
       if (!files.length) {
         return `
@@ -97564,12 +98153,11 @@
           files:
             visible,
 
-          openAttributes:
-            file => `
-              data-place-connected-file="${escapeHtml(
-                file.id
-              )}"
-            `,
+          contextType:
+            'place',
+
+          contextId:
+            placeId,
 
           emptyText:
             'No connected files.'
@@ -98210,7 +98798,8 @@
 
             content:
               renderPlaceInspectorFiles(
-                files
+                files,
+                place.id
               )
           })}
 
@@ -98241,6 +98830,27 @@
     ) {
       bindConnectedNoteLinks(
         root
+      );
+      bindConnectedFileLinks(
+        root,
+        {
+          onUnlinked:
+            ({
+              contextType
+            }) => {
+              if (
+                contextType
+                !== 'place'
+              ) {
+                return;
+              }
+
+              rerenderPlacesInspector({
+                preserveScroll:
+                  true
+              });
+            }
+        }
       );
       root
         .querySelector(
@@ -98406,22 +99016,6 @@
               openAlbumsForPhoto(
                 button.dataset
                   .placeConnectedPhoto
-              );
-            }
-          );
-        });
-
-      root
-        .querySelectorAll(
-          '[data-place-connected-file]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              openPlaceInspectorArchiveFile(
-                button.dataset
-                  .placeConnectedFile
               );
             }
           );
