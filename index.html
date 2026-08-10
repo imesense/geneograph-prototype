@@ -4365,28 +4365,58 @@
     
     .archive-list, .note-list { display: grid; gap: var(--space-3); }
     .archive-row { display: flex; align-items: center; gap: var(--space-3); color: var(--text-secondary); }
-    .file-badge { width: 34px; height: 40px; border-radius: 4px; background: #e9eeee; color: #b32626; display: grid; place-items: end center; padding-bottom: 3px; font-size: 10px; font-weight: 900; }
     .note-card { border: 1px solid var(--border-default); background: var(--surface-card); border-radius: var(--radius-sm); padding: var(--space-3); color: var(--text-secondary); }
     .note-card strong { color: var(--text-primary); display: block; }
 
-    .family-archive-list {
-      display: grid;
-      gap: var(--space-2);
+    /* Shared connected Archive file item */
+
+    .connected-file-list {
+      min-width:
+        0;
+
+      display:
+        grid;
+
+      gap:
+        var(--space-2);
     }
 
-    .family-archive-row {
-      width: 100%;
-      min-height: 62px;
-      padding: 10px;
+    .connected-file-item {
+      min-width:
+        0;
 
-      display: grid;
+      display:
+        grid;
+
       grid-template-columns:
-        34px
-        minmax(0, 1fr)
-        auto;
+        minmax(0, 1fr);
 
-      align-items: center;
-      gap: var(--space-3);
+      align-items:
+        center;
+
+      gap:
+        var(--space-2);
+    }
+
+    .connected-file-item.can-unlink {
+      grid-template-columns:
+        minmax(0, 1fr)
+        34px;
+    }
+
+    .connected-file-main {
+      width:
+        100%;
+
+      min-width:
+        0;
+
+      min-height:
+        60px;
+
+      padding:
+        9px
+        10px;
 
       border:
         1px solid
@@ -4401,39 +4431,784 @@
       color:
         var(--text-secondary);
 
-      text-align: left;
+      display:
+        grid;
+
+      grid-template-columns:
+        34px
+        minmax(0, 1fr)
+        auto;
+
+      align-items:
+        center;
+
+      gap:
+        var(--space-3);
+
+      text-align:
+        left;
 
       transition:
-        background var(--ease),
         border-color var(--ease),
-        transform var(--ease);
+        background var(--ease);
     }
 
-    .family-archive-row:hover,
-    .family-archive-row:focus-visible {
+    .connected-file-main:hover {
       border-color:
         var(--border-strong);
 
       background:
         var(--surface-card-hover);
-
-      transform:
-        translateY(-1px);
     }
 
-    .family-archive-copy {
-      min-width: 0;
+    .connected-file-main:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset:
+        2px;
+
+      border-color:
+        var(--border-strong);
+
+      background:
+        var(--surface-card-hover);
     }
 
-    .family-archive-copy strong,
-    .family-archive-copy span {
-      overflow: hidden;
+    .connected-file-copy {
+      min-width:
+        0;
+
+      display:
+        grid;
+
+      gap:
+        3px;
+    }
+
+    .connected-file-title {
+      min-width:
+        0;
+
+      overflow:
+        hidden;
+
+      color:
+        var(--text-primary);
+
+      font-size:
+        13px;
+
+      font-weight:
+        850;
+
+      line-height:
+        1.35;
 
       text-overflow:
         ellipsis;
 
       white-space:
         nowrap;
+    }
+
+    .connected-file-meta {
+      min-width:
+        0;
+
+      overflow:
+        hidden;
+
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        11.5px;
+
+      font-weight:
+        650;
+
+      line-height:
+        1.35;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
+    }
+
+    .connected-file-arrow {
+      width:
+        18px;
+
+      height:
+        18px;
+
+      color:
+        var(--text-tertiary);
+
+      display:
+        grid;
+
+      place-items:
+        center;
+
+      opacity:
+        .5;
+
+      transition:
+        opacity var(--ease),
+        color var(--ease);
+    }
+
+    .connected-file-arrow svg {
+      width:
+        16px;
+
+      height:
+        16px;
+    }
+
+    .connected-file-main:hover
+    .connected-file-arrow,
+    .connected-file-main:focus-visible
+    .connected-file-arrow {
+      color:
+        var(--text-secondary);
+
+      opacity:
+        1;
+    }
+
+    .connected-file-unlink {
+      width:
+        34px;
+
+      height:
+        34px;
+
+      padding:
+        0;
+
+      border:
+        1px solid
+        transparent;
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        transparent;
+
+      color:
+        var(--text-tertiary);
+
+      display:
+        grid;
+
+      place-items:
+        center;
+
+      opacity:
+        0;
+
+      pointer-events:
+        none;
+
+      transition:
+        opacity var(--ease),
+        border-color var(--ease),
+        background var(--ease),
+        color var(--ease);
+    }
+
+    .connected-file-unlink svg {
+      width:
+        17px;
+
+      height:
+        17px;
+    }
+
+    .connected-file-item:hover
+    .connected-file-unlink,
+    .connected-file-item:focus-within
+    .connected-file-unlink {
+      opacity:
+        1;
+
+      pointer-events:
+        auto;
+    }
+
+    .connected-file-unlink:hover,
+    .connected-file-unlink:focus-visible {
+      border-color:
+        rgba(212, 107, 107, .32);
+
+      background:
+        rgba(212, 107, 107, .12);
+
+      color:
+        var(--red);
+    }
+
+    .connected-file-unlink:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset:
+        2px;
+    }
+
+    .connected-file-empty {
+      padding:
+        var(--space-3);
+
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        13px;
+
+      line-height:
+        1.45;
+    }
+
+    @media (hover: none) {
+      .connected-file-item.can-unlink
+      .connected-file-unlink {
+        opacity:
+          1;
+
+        pointer-events:
+          auto;
+      }
+    }
+
+    /* Shared Add Archive files modal */
+
+    .connected-files-modal {
+      width:
+        min(
+          760px,
+          calc(100vw - 32px)
+        );
+
+      max-width:
+        760px;
+
+      height:
+        min(
+          82vh,
+          760px
+        );
+
+      max-height:
+        min(
+          82vh,
+          760px
+        );
+
+      overflow:
+        hidden;
+
+      display:
+        grid;
+
+      grid-template-rows:
+        auto
+        minmax(0, 1fr)
+        auto;
+    }
+
+    .connected-files-modal-body {
+      min-height:
+        0;
+
+      overflow:
+        hidden;
+
+      display:
+        grid;
+
+      grid-template-rows:
+        auto
+        minmax(0, 1fr);
+
+      gap:
+        var(--space-3);
+    }
+
+    .connected-files-tabs {
+      display:
+        flex;
+
+      gap:
+        var(--space-1);
+
+      border-bottom:
+        1px solid
+        var(--border-default);
+    }
+
+    .connected-files-tab {
+      min-height:
+        42px;
+
+      padding:
+        0 var(--space-3);
+
+      border:
+        0;
+
+      border-bottom:
+        2px solid
+        transparent;
+
+      background:
+        transparent;
+
+      color:
+        var(--text-tertiary);
+
+      font:
+        inherit;
+
+      font-size:
+        13px;
+
+      font-weight:
+        800;
+    }
+
+    .connected-files-tab:hover {
+      color:
+        var(--text-primary);
+    }
+
+    .connected-files-tab[aria-selected="true"] {
+      border-bottom-color:
+        var(--brand-green-400);
+
+      color:
+        var(--brand-green-300);
+    }
+
+    .connected-files-tab:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset:
+        -2px;
+    }
+
+    .connected-files-panel {
+      min-height:
+        0;
+    }
+
+    .connected-files-panel[hidden] {
+      display:
+        none;
+    }
+
+    .connected-files-archive-panel {
+      height:
+        100%;
+
+      min-height:
+        0;
+
+      display:
+        grid;
+
+      grid-template-rows:
+        auto
+        minmax(0, 1fr);
+
+      gap:
+        var(--space-3);
+    }
+
+    .connected-files-search {
+      width:
+        100%;
+
+      max-width:
+        none;
+
+      flex:
+        0 0 auto;
+    }
+
+    .connected-files-results {
+      min-height:
+        0;
+
+      overflow-y:
+        auto;
+
+      overscroll-behavior:
+        contain;
+
+      padding-right:
+        2px;
+    }
+
+    .connected-files-choice-list {
+      display:
+        grid;
+
+      gap:
+        var(--space-2);
+    }
+
+    .connected-files-choice {
+      min-width:
+        0;
+
+      min-height:
+        64px;
+
+      padding:
+        9px
+        10px;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        var(--surface-card);
+
+      display:
+        grid;
+
+      grid-template-columns:
+        18px
+        34px
+        minmax(0, 1fr)
+        auto;
+
+      align-items:
+        center;
+
+      gap:
+        var(--space-3);
+
+      cursor:
+        pointer;
+
+      transition:
+        border-color var(--ease),
+        background var(--ease);
+    }
+
+    .connected-files-choice:hover {
+      border-color:
+        var(--border-strong);
+
+      background:
+        var(--surface-card-hover);
+    }
+
+    .connected-files-choice.is-selected {
+      border-color:
+        rgba(98, 217, 154, .35);
+
+      background:
+        var(--surface-selected);
+    }
+
+    .connected-files-choice.is-existing {
+      cursor:
+        default;
+
+      opacity:
+        .68;
+    }
+
+    .connected-files-choice.is-existing:hover {
+      border-color:
+        var(--border-default);
+
+      background:
+        var(--surface-card);
+    }
+
+    .connected-files-choice-copy {
+      min-width:
+        0;
+
+      display:
+        grid;
+
+      gap:
+        2px;
+    }
+
+    .connected-files-choice-copy strong,
+    .connected-files-choice-copy span {
+      min-width:
+        0;
+
+      overflow:
+        hidden;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
+    }
+
+    .connected-files-choice-copy strong {
+      color:
+        var(--text-primary);
+
+      font-size:
+        13px;
+
+      font-weight:
+        850;
+    }
+
+    .connected-files-choice-meta {
+      color:
+        var(--text-secondary);
+
+      font-size:
+        11.5px;
+    }
+
+    .connected-files-choice-path {
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        11px;
+    }
+
+    .connected-files-choice-status {
+      min-width:
+        82px;
+
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        11px;
+
+      font-weight:
+        750;
+
+      text-align:
+        right;
+    }
+
+    .connected-files-choice-status svg {
+      width:
+        17px;
+
+      height:
+        17px;
+
+      color:
+        var(--brand-green-300);
+    }
+
+    .connected-files-empty {
+      min-height:
+        220px;
+
+      padding:
+        var(--space-5);
+
+      display:
+        grid;
+
+      place-items:
+        center;
+
+      text-align:
+        center;
+    }
+
+    .connected-files-empty-content {
+      max-width:
+        430px;
+
+      display:
+        grid;
+
+      justify-items:
+        center;
+
+      gap:
+        var(--space-3);
+    }
+
+    .connected-files-empty-content strong {
+      color:
+        var(--text-primary);
+    }
+
+    .connected-files-empty-content p {
+      margin:
+        0;
+
+      color:
+        var(--text-secondary);
+
+      line-height:
+        1.5;
+    }
+
+    .connected-files-empty-actions {
+      display:
+        flex;
+
+      justify-content:
+        center;
+
+      gap:
+        var(--space-2);
+
+      flex-wrap:
+        wrap;
+    }
+
+    .connected-files-add-new-panel {
+      height:
+        100%;
+
+      min-height:
+        0;
+    }
+
+    .connected-files-dropzone {
+      height:
+        100%;
+
+      min-height:
+        280px;
+
+      padding:
+        var(--space-5);
+
+      border:
+        1px dashed
+        var(--border-strong);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        rgba(255, 255, 255, .018);
+
+      display:
+        grid;
+
+      place-items:
+        center;
+
+      text-align:
+        center;
+
+      cursor:
+        pointer;
+
+      transition:
+        border-color var(--ease),
+        background var(--ease);
+    }
+
+    .connected-files-dropzone:hover,
+    .connected-files-dropzone.is-dragging,
+    .connected-files-dropzone:focus-visible {
+      border-color:
+        var(--brand-green-500);
+
+      background:
+        rgba(47, 174, 116, .08);
+    }
+
+    .connected-files-dropzone:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset:
+        2px;
+    }
+
+    .connected-files-dropzone-content {
+      max-width:
+        440px;
+
+      display:
+        grid;
+
+      justify-items:
+        center;
+
+      gap:
+        var(--space-2);
+    }
+
+    .connected-files-dropzone-content > svg {
+      width:
+        34px;
+
+      height:
+        34px;
+
+      margin-bottom:
+        var(--space-2);
+
+      color:
+        var(--brand-green-300);
+    }
+
+    .connected-files-dropzone-content strong {
+      color:
+        var(--text-primary);
+
+      font-size:
+        16px;
+    }
+
+    .connected-files-dropzone-content p {
+      margin:
+        0 0 var(--space-2);
+
+      color:
+        var(--text-secondary);
+
+      line-height:
+        1.5;
+    }
+
+    .connected-files-footer-count {
+      margin-right:
+        auto;
+
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        13px;
+
+      font-weight:
+        700;
     }
 
     .family-item-arrow {
@@ -8975,25 +9750,6 @@
       grid-template-columns: 38px minmax(0, 1fr);
       align-items: center;
       gap: var(--space-3);
-    }
-
-    .profile-resource-file-badge {
-      width: 30px;
-      height: 36px;
-      flex: 0 0 30px;
-    }
-
-    .profile-file-row-copy {
-      min-width: 0;
-      display: grid;
-      gap: 3px;
-    }
-
-    .profile-file-row-copy strong,
-    .profile-file-row-copy small {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     /* Places */
@@ -32413,6 +33169,109 @@
         );
     }
 
+    function openPersonFilesModal(
+      personId
+    ) {
+      const person =
+        getPerson(
+          personId
+        );
+
+      if (!person) {
+        showToast(
+          'Person record not found.'
+        );
+
+        return;
+      }
+
+      const name =
+        person.names?.display
+        || person.name
+        || 'this person';
+
+      const existingFileIds =
+        getArchiveFilesForPerson(
+          person.id
+        ).map(file =>
+          file.id
+        );
+
+      openConnectedFilesModal({
+        projectId:
+          person.projectId
+          || currentProjectId(),
+
+        title:
+          `Add files to ${name}`,
+
+        subtitle:
+          'Connect existing Archive files or add new files.',
+
+        existingFileIds,
+
+        onSave:
+          fileIds => {
+            const currentPerson =
+              getPerson(
+                person.id
+              );
+
+            if (!currentPerson) {
+              return {
+                ok:
+                  false
+              };
+            }
+
+            const writes =
+              fileIds.map(fileId => ({
+                ownerType:
+                  'file',
+
+                ownerId:
+                  fileId,
+
+                entityType:
+                  'person',
+
+                entityId:
+                  currentPerson.id,
+
+                shouldLink:
+                  true
+              }));
+
+            const committed =
+              archiveSetConnectionsAtomically(
+                writes
+              );
+
+            return {
+              ...committed,
+
+              ok:
+                committed.ok
+                && committed.changedCount
+                  === writes.length
+            };
+          },
+
+        afterSave:
+          () => {
+            renderAfterPersonConnectedResourcesChanged();
+          },
+
+        successMessage:
+          count =>
+            `${count} ${
+              count === 1
+                ? 'file'
+                : 'files'
+            } added to ${name}.`
+      });
+    }
+
     function getNotesForPerson(
       personId,
       options = {}
@@ -32476,7 +33335,9 @@
       `;
     }
 
-    function renderFamilyArchiveItems(person) {
+    function renderFamilyArchiveItems(
+      person
+    ) {
       const files =
         getArchiveFilesForPerson(
           person?.id
@@ -32494,63 +33355,19 @@
         `;
       }
 
-      return `
-        <div
-          class="
-            archive-list
-            family-archive-list
-          ">
-          ${files
-            .map(file => `
-              <button
-                class="family-archive-row"
-                type="button"
-                data-family-archive="${
-                  escapeHtml(file.id)
-                }">
+      return renderConnectedFileList({
+        files,
 
-                <span class="file-badge">
-                  ${escapeHtml(
-                    file.type
-                    || file.kind
-                    || 'FILE'
-                  )}
-                </span>
+        openAttributes:
+          file => `
+            data-family-archive="${escapeHtml(
+              file.id
+            )}"
+          `,
 
-                <span
-                  class="
-                    family-archive-copy
-                  ">
-                  <strong>
-                    ${escapeHtml(
-                      file.name
-                      || 'Untitled file'
-                    )}
-                  </strong>
-
-                  <span>
-                    ${escapeHtml(
-                      file.added
-                        ? `Added ${file.added}`
-                        : file.updated
-                          ? `Updated ${file.updated}`
-                          : 'Linked file'
-                    )}
-                  </span>
-                </span>
-
-                <span
-                  class="
-                    family-item-arrow
-                  "
-                  aria-hidden="true">
-                  ${icon.chevron}
-                </span>
-              </button>
-            `)
-            .join('')}
-        </div>
-      `;
+        emptyText:
+          'No archive files linked to this person.'
+      });
     }
 
     function renderFamilyNotes(
@@ -33221,10 +34038,10 @@
             <button
               class="link"
               type="button"
-              data-toast="
-                Archive linking will be added
-                in the Archive tab.
-              ">
+              data-person-add-files="${escapeHtml(
+                person.id
+              )}">
+
               ${renderPanelButtonLabel(
                 icon.plus,
                 'Add file'
@@ -41934,57 +42751,65 @@
       });
     }
 
-    function renderProfileConnectedFiles(person) {
-      const files = peopleProfileAssets(person).archive;
-      const preview = files.slice(0, 3);
+    function renderProfileConnectedFiles(
+      person
+    ) {
+      const files =
+        getArchiveFilesForPerson(
+          person.id
+        );
 
-      const body = preview.length
-        ? `
-          <div class="profile-resource-list">
-            ${preview.map(item => `
-              <button
-                class="profile-resource-row profile-file-row"
-                type="button"
-                data-profile-archive="${escapeHtml(
-                  item.fileId || ''
-                )}"
-                title="${escapeHtml(item.name)}"
-                aria-label="Open ${escapeHtml(item.name)}">
+      const preview =
+        files.slice(
+          0,
+          3
+        );
 
-                <span
-                  class="
-                    file-badge
-                    profile-resource-file-badge
-                  ">
-                  ${escapeHtml(item.type || 'FILE')}
-                </span>
+      const body =
+        preview.length
+          ? renderConnectedFileList({
+              files:
+                preview,
 
-                <span class="profile-file-row-copy">
-                  <strong>${escapeHtml(item.name)}</strong>
+              openAttributes:
+                file => `
+                  data-profile-archive="${escapeHtml(
+                    file.id
+                  )}"
+                `,
 
-                  <small>
-                    ${escapeHtml(
-                      profileArchiveAddedLabel(item)
-                    )}
-                  </small>
-                </span>
-              </button>
-            `).join('')}
-          </div>
-        `
-        : renderProfileResourceEmpty(
-            'No archive files linked'
-          );
+              emptyText:
+                'No archive files linked'
+            })
+          : renderProfileResourceEmpty(
+              'No archive files linked'
+            );
 
       return renderProfileResourceCard({
-        type: 'archive',
-        iconSvg: icon.file,
-        title: 'Archive',
-        count: files.length,
-        singular: 'file',
-        plural: 'files',
-        addLabel: 'Add file',
-        addToast: 'Add file simulated.',
+        type:
+          'archive',
+
+        iconSvg:
+          icon.file,
+
+        title:
+          'Archive',
+
+        count:
+          files.length,
+
+        singular:
+          'file',
+
+        plural:
+          'files',
+
+        addLabel:
+          'Add file',
+
+        addAction:
+          'add-files',
+
         body
       });
     }
@@ -43380,6 +44205,18 @@
       });
       main.querySelectorAll('[data-profile-photo]').forEach(button => button.addEventListener('click', () => openProfilePhoto(button.dataset.profilePhoto)));
       main.querySelector('[data-profile-resource-action="add-photos"]') ?.addEventListener('click', () => openAddPhotosToPersonModal(person.id));
+      main
+        .querySelector(
+          '[data-profile-resource-action="add-files"]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            openPersonFilesModal(
+              person.id
+            );
+          }
+        );
       main
         .querySelector(
           '[data-profile-resource-action="add-note"]'
@@ -44968,6 +45805,28 @@
               }
 
               openAddPhotosToPersonModal(
+                personId
+              );
+            }
+          );
+        });
+      root
+        .querySelectorAll(
+          '[data-person-add-files]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              const personId =
+                button.dataset
+                  .personAddFiles;
+
+              if (!personId) {
+                return;
+              }
+
+              openPersonFilesModal(
                 personId
               );
             }
@@ -47549,7 +48408,7 @@
       renderPersonPhotosAdderModal();
     }
 
-    function renderAfterPersonPhotosAdded() {
+    function renderAfterPersonConnectedResourcesChanged() {
       if (
         state.activeModule
         === 'Family Tree'
@@ -47712,7 +48571,7 @@
         force: true
       });
 
-      renderAfterPersonPhotosAdded();
+      renderAfterPersonConnectedResourcesChanged();
 
       showToast(
         `${totalAdded} ${
@@ -59235,6 +60094,255 @@
       return `<span class="archive-file-icon ${kind}" aria-hidden="true">${escapeHtml(label)}</span>`;
     }
 
+    function connectedFileMeta(
+      file
+    ) {
+      if (!file) {
+        return 'Archive file';
+      }
+
+      return [
+        archiveFileTypeLabel(
+          file
+        ),
+
+        String(
+          file.size || ''
+        ).trim()
+      ]
+        .filter(Boolean)
+        .join(' · ')
+        || 'Archive file';
+    }
+
+    function renderConnectedFileItem({
+      file,
+
+      openAttributes =
+        '',
+
+      unlinkAttributes =
+        '',
+
+      unlinkContextLabel =
+        'file'
+    } = {}) {
+      if (!file) {
+        return '';
+      }
+
+      const title =
+        file.name
+        || file.title
+        || 'Untitled file';
+
+      const meta =
+        connectedFileMeta(
+          file
+        );
+
+      const canUnlink =
+        Boolean(
+          String(
+            unlinkAttributes || ''
+          ).trim()
+        );
+
+      return `
+        <div
+          class="
+            connected-file-item
+            ${
+              canUnlink
+                ? 'can-unlink'
+                : ''
+            }
+          ">
+
+          <button
+            class="
+              connected-file-main
+            "
+            type="button"
+            ${openAttributes}
+            title="${escapeHtml(
+              title
+            )}"
+            aria-label="Open ${escapeHtml(
+              title
+            )} in Archive">
+
+            ${archiveFileIcon(
+              file
+            )}
+
+            <span
+              class="
+                connected-file-copy
+              ">
+
+              <strong
+                class="
+                  connected-file-title
+                ">
+
+                ${escapeHtml(
+                  title
+                )}
+              </strong>
+
+              <span
+                class="
+                  connected-file-meta
+                ">
+
+                ${escapeHtml(
+                  meta
+                )}
+              </span>
+            </span>
+
+            <span
+              class="
+                connected-file-arrow
+              "
+              aria-hidden="true">
+
+              ${icon.chevron}
+            </span>
+          </button>
+
+          ${
+            canUnlink
+              ? `
+                <button
+                  class="
+                    connected-file-unlink
+                  "
+                  type="button"
+                  ${unlinkAttributes}
+                  aria-label="Unlink ${escapeHtml(
+                    title
+                  )} from ${escapeHtml(
+                    unlinkContextLabel
+                  )}"
+                  title="Unlink">
+
+                  ${icon.unlink}
+                </button>
+              `
+              : ''
+          }
+        </div>
+      `;
+    }
+
+    function renderConnectedFileList({
+      files =
+        [],
+
+      limit =
+        null,
+
+      emptyText =
+        'No files linked.',
+
+      openAttributes =
+        () => '',
+
+      unlinkAttributes =
+        null,
+
+      unlinkContextLabel =
+        'record'
+    } = {}) {
+      const validFiles =
+        (
+          Array.isArray(
+            files
+          )
+            ? files
+            : []
+        )
+          .filter(Boolean);
+
+      if (!validFiles.length) {
+        return `
+          <div
+            class="
+              connected-file-empty
+            ">
+
+            ${escapeHtml(
+              emptyText
+            )}
+          </div>
+        `;
+      }
+
+      const hasLimit =
+        limit !== null
+        && limit !== undefined
+        && Number.isFinite(
+          Number(
+            limit
+          )
+        )
+        && Number(
+          limit
+        ) >= 0;
+
+      const visibleFiles =
+        hasLimit
+          ? validFiles.slice(
+              0,
+              Number(
+                limit
+              )
+            )
+          : validFiles;
+
+      return `
+        <div
+          class="
+            connected-file-list
+          ">
+
+          ${visibleFiles
+            .map(file =>
+              renderConnectedFileItem({
+                file,
+
+                openAttributes:
+                  typeof openAttributes
+                    === 'function'
+                      ? openAttributes(
+                          file
+                        )
+                      : String(
+                          openAttributes
+                          || ''
+                        ),
+
+                unlinkAttributes:
+                  typeof unlinkAttributes
+                    === 'function'
+                      ? unlinkAttributes(
+                          file
+                        )
+                      : String(
+                          unlinkAttributes
+                          || ''
+                        ),
+
+                unlinkContextLabel
+              })
+            )
+            .join('')}
+        </div>
+      `;
+    }
+
     function archiveDateValue(value) {
       if (!value) return 0;
       const parsed = Date.parse(value);
@@ -65165,7 +66273,208 @@
       `;
     }
 
+    function renderArchiveSourceFileSection(
+      sourceId
+    ) {
+      const source =
+        archiveSourceById(
+          sourceId
+        );
+
+      if (!source) {
+        return '';
+      }
+
+      const files =
+        archiveFilesForSource(
+          source.id
+        );
+
+      return `
+        <section
+          class="
+            archive-inspector-section
+          ">
+
+          <div
+            class="
+              archive-inspector-section-head
+            ">
+
+            <strong>
+              Files
+            </strong>
+
+            <span>
+              ${files.length}
+            </span>
+          </div>
+
+          <div
+            class="
+              archive-inspector-section-body
+            ">
+
+            ${renderConnectedFileList({
+              files,
+
+              limit:
+                4,
+
+              openAttributes:
+                file => `
+                  data-archive-open-connection="file"
+                  data-archive-connection-id="${escapeHtml(
+                    file.id
+                  )}"
+                `,
+
+              unlinkAttributes:
+                file => `
+                  data-archive-unlink-owner-type="source"
+                  data-archive-unlink-owner-id="${escapeHtml(
+                    source.id
+                  )}"
+                  data-archive-unlink-type="file"
+                  data-archive-unlink-id="${escapeHtml(
+                    file.id
+                  )}"
+                `,
+
+              unlinkContextLabel:
+                'source',
+
+              emptyText:
+                'No files linked.'
+            })}
+
+            <button
+              class="
+                button
+                ghost
+                archive-link-section-action
+              "
+              type="button"
+              data-archive-add-connection="file"
+              data-archive-owner-type="source"
+              data-archive-owner-id="${escapeHtml(
+                source.id
+              )}">
+
+              ${icon.plus}
+              Add files
+            </button>
+          </div>
+        </section>
+      `;
+    }
+
+    function openArchiveSourceFilesModal(
+      sourceId
+    ) {
+      const source =
+        archiveSourceById(
+          sourceId
+        );
+
+      if (!source) {
+        return;
+      }
+
+      const existingFileIds =
+        archiveFilesForSource(
+          source.id
+        ).map(file =>
+          file.id
+        );
+
+      openConnectedFilesModal({
+        projectId:
+          source.projectId
+          || currentProjectId(),
+
+        title:
+          'Add files',
+
+        subtitle:
+          `Connect Archive files to “${
+            source.title
+            || 'this source'
+          }”.`,
+
+        existingFileIds,
+
+        onSave:
+          fileIds => {
+            const currentSource =
+              archiveSourceById(
+                source.id
+              );
+
+            if (!currentSource) {
+              return {
+                ok:
+                  false
+              };
+            }
+
+            const writes =
+              fileIds.map(fileId => ({
+                ownerType:
+                  'source',
+
+                ownerId:
+                  currentSource.id,
+
+                entityType:
+                  'file',
+
+                entityId:
+                  fileId,
+
+                shouldLink:
+                  true
+              }));
+
+            const committed =
+              archiveSetConnectionsAtomically(
+                writes
+              );
+
+            return {
+              ...committed,
+
+              ok:
+                committed.ok
+                && committed.changedCount
+                  === writes.length
+            };
+          },
+
+        afterSave:
+          () => {
+            renderArchive();
+          },
+
+        successMessage:
+          count =>
+            `${count} ${
+              count === 1
+                ? 'file'
+                : 'files'
+            } added to source.`
+      });
+    }
+
     function renderArchiveConnectionSection(ownerType, ownerId, entityType) {
+      if (
+        ownerType === 'source'
+        && entityType === 'file'
+      ) {
+        return renderArchiveSourceFileSection(
+          ownerId
+        );
+      }
       const config = archiveEntityConfig(entityType);
       if (!config) return '';
       const ids = archiveConnectionIds(ownerType, ownerId, entityType);
@@ -65447,7 +66756,7 @@
             class="
               archive-inspector-section-body
             ">
-            
+
           <div
             class="
               archive-kv-list
@@ -65594,6 +66903,1112 @@
 
     function openArchiveAddFilesModal() {
       showToast('File adding will be available in the working MVP.');
+    }
+
+    function connectedFilesForProject(
+      projectId =
+        currentProjectId()
+    ) {
+      return (
+        sampleData.archiveFiles
+        || []
+      )
+        .filter(file =>
+          !file.deleted
+          && (
+            !file.projectId
+            || file.projectId
+              === projectId
+          )
+        );
+    }
+
+    function connectedFilePickerSearchText(
+      file
+    ) {
+      if (!file) {
+        return '';
+      }
+
+      return [
+        archiveSearchText(
+          file
+        ),
+
+        archiveFileTypeLabel(
+          file
+        ),
+
+        archiveFolderPath(
+          file.folderId
+        ),
+
+        file.size
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+    }
+
+    function connectedFilesSelectionLabel(
+      count
+    ) {
+      return `${count} ${
+        count === 1
+          ? 'file'
+          : 'files'
+      } selected`;
+    }
+
+    function connectedFilesActionLabel(
+      count
+    ) {
+      if (!count) {
+        return 'Add files';
+      }
+
+      return `Add ${count} ${
+        count === 1
+          ? 'file'
+          : 'files'
+      }`;
+    }
+
+    function openConnectedFilesModal({
+      projectId =
+        currentProjectId(),
+
+      title =
+        'Add files',
+
+      subtitle =
+        'Connect existing Archive files or add new files.',
+
+      existingFileIds =
+        [],
+
+      onSave =
+        null,
+
+      afterSave =
+        null,
+
+      successMessage =
+        null
+    } = {}) {
+      const allFiles =
+        connectedFilesForProject(
+          projectId
+        );
+
+      const validFileIds =
+        new Set(
+          allFiles.map(file =>
+            file.id
+          )
+        );
+
+      const existingIds =
+        new Set(
+          archiveUniqueIds(
+            existingFileIds
+          ).filter(id =>
+            validFileIds.has(
+              id
+            )
+          )
+        );
+
+      const selectedIds =
+        new Set();
+
+      let query =
+        '';
+
+      let sourceTab =
+        allFiles.length
+          ? 'archive'
+          : 'new';
+
+      openModal(`
+        <div
+          class="
+            modal
+            connected-files-modal
+          "
+          data-connected-files-modal
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="connectedFilesTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2
+                id="connectedFilesTitle">
+
+                ${escapeHtml(
+                  title
+                )}
+              </h2>
+
+              <p>
+                ${escapeHtml(
+                  subtitle
+                )}
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close">
+
+              ${icon.close}
+            </button>
+          </div>
+
+          <div
+            class="
+              modal-body
+              connected-files-modal-body
+            ">
+
+            <div
+              class="
+                connected-files-tabs
+              "
+              role="tablist"
+              aria-label="File source">
+
+              <button
+                class="
+                  connected-files-tab
+                "
+                type="button"
+                role="tab"
+                data-connected-files-tab="archive"
+                aria-selected="${
+                  sourceTab === 'archive'
+                }">
+
+                Archive files
+              </button>
+
+              <button
+                class="
+                  connected-files-tab
+                "
+                type="button"
+                role="tab"
+                data-connected-files-tab="new"
+                aria-selected="${
+                  sourceTab === 'new'
+                }">
+
+                Add new
+              </button>
+            </div>
+
+            <section
+              class="
+                connected-files-panel
+                connected-files-archive-panel
+              "
+              data-connected-files-panel="archive"
+              ${
+                sourceTab === 'archive'
+                  ? ''
+                  : 'hidden'
+              }>
+
+              <label
+                class="
+                  app-search-field
+                  connected-files-search
+                "
+                aria-label="Search Archive files">
+
+                ${icon.search}
+
+                <input
+                  type="search"
+                  data-connected-files-search
+                  placeholder="Search files"
+                  autocomplete="off">
+              </label>
+
+              <div
+                class="
+                  connected-files-results
+                "
+                data-connected-files-results>
+              </div>
+            </section>
+
+            <section
+              class="
+                connected-files-panel
+                connected-files-add-new-panel
+              "
+              data-connected-files-panel="new"
+              ${
+                sourceTab === 'new'
+                  ? ''
+                  : 'hidden'
+              }>
+
+              <div
+                class="
+                  connected-files-dropzone
+                "
+                data-connected-files-dropzone
+                role="button"
+                tabindex="0"
+                aria-label="Add new files">
+
+                <div
+                  class="
+                    connected-files-dropzone-content
+                  ">
+
+                  ${icon.import}
+
+                  <strong>
+                    Drop files here
+                  </strong>
+
+                  <p>
+                    Add new files to Archive,
+                    then connect them to this
+                    record. File upload is
+                    simulated in this prototype.
+                  </p>
+
+                  <button
+                    class="
+                      button
+                      primary
+                    "
+                    type="button"
+                    data-connected-files-add-new>
+
+                    Add files
+                  </button>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div
+            class="
+              modal-footer
+              connected-files-footer
+            ">
+
+            <span
+              class="
+                connected-files-footer-count
+              "
+              data-connected-files-count>
+
+              0 files selected
+            </span>
+
+            <button
+              class="
+                button
+                secondary
+              "
+              type="button"
+              data-close>
+
+              Cancel
+            </button>
+
+            <button
+              class="
+                button
+                primary
+              "
+              type="button"
+              data-connected-files-save
+              disabled>
+
+              Add files
+            </button>
+          </div>
+        </div>
+      `);
+
+      const modal =
+        modalBackdrop.querySelector(
+          '[data-connected-files-modal]'
+        );
+
+      if (!modal) {
+        return;
+      }
+
+      const resultsHost =
+        modal.querySelector(
+          '[data-connected-files-results]'
+        );
+
+      const searchInput =
+        modal.querySelector(
+          '[data-connected-files-search]'
+        );
+
+      const countElement =
+        modal.querySelector(
+          '[data-connected-files-count]'
+        );
+
+      const saveButton =
+        modal.querySelector(
+          '[data-connected-files-save]'
+        );
+
+      const dropzone =
+        modal.querySelector(
+          '[data-connected-files-dropzone]'
+        );
+
+      const visibleFiles =
+        () => {
+          const normalizedQuery =
+            query
+              .trim()
+              .toLowerCase();
+
+          return allFiles
+            .filter(file =>
+              !normalizedQuery
+              || connectedFilePickerSearchText(
+                file
+              ).includes(
+                normalizedQuery
+              )
+            )
+            .slice()
+            .sort(
+              (
+                first,
+                second
+              ) =>
+                Number(
+                  existingIds.has(
+                    first.id
+                  )
+                )
+                - Number(
+                    existingIds.has(
+                      second.id
+                    )
+                  )
+                || String(
+                    first.name
+                    || ''
+                  ).localeCompare(
+                    String(
+                      second.name
+                      || ''
+                    )
+                  )
+            );
+        };
+
+      const renderChoice =
+        file => {
+          const alreadyLinked =
+            existingIds.has(
+              file.id
+            );
+
+          const selected =
+            selectedIds.has(
+              file.id
+            );
+
+          const title =
+            file.name
+            || file.title
+            || 'Untitled file';
+
+          const path =
+            archiveFolderPath(
+              file.folderId
+            );
+
+          return `
+            <label
+              class="
+                connected-files-choice
+
+                ${
+                  selected
+                    ? 'is-selected'
+                    : ''
+                }
+
+                ${
+                  alreadyLinked
+                    ? 'is-existing'
+                    : ''
+                }
+              ">
+
+              <input
+                class="
+                  albums-select-checkbox
+                "
+                type="checkbox"
+                data-connected-files-choice
+                value="${escapeHtml(
+                  file.id
+                )}"
+                ${
+                  alreadyLinked
+                    ? 'checked disabled'
+                    : selected
+                      ? 'checked'
+                      : ''
+                }
+                aria-label="${escapeHtml(
+                  alreadyLinked
+                    ? `${title} is already linked`
+                    : `${
+                        selected
+                          ? 'Deselect'
+                          : 'Select'
+                      } ${title}`
+                )}">
+
+              ${archiveFileIcon(
+                file
+              )}
+
+              <span
+                class="
+                  connected-files-choice-copy
+                ">
+
+                <strong>
+                  ${escapeHtml(
+                    title
+                  )}
+                </strong>
+
+                <span
+                  class="
+                    connected-files-choice-meta
+                  ">
+
+                  ${escapeHtml(
+                    connectedFileMeta(
+                      file
+                    )
+                  )}
+                </span>
+
+                <span
+                  class="
+                    connected-files-choice-path
+                  ">
+
+                  ${escapeHtml(
+                    path
+                  )}
+                </span>
+              </span>
+
+              <span
+                class="
+                  connected-files-choice-status
+                ">
+
+                ${
+                  alreadyLinked
+                    ? 'Already linked'
+                    : selected
+                      ? icon.check
+                      : ''
+                }
+              </span>
+            </label>
+          `;
+        };
+
+      const renderResults =
+        () => {
+          if (!resultsHost) {
+            return;
+          }
+
+          const files =
+            visibleFiles();
+
+          if (!allFiles.length) {
+            resultsHost.innerHTML = `
+              <div
+                class="
+                  connected-files-empty
+                ">
+
+                <div
+                  class="
+                    connected-files-empty-content
+                  ">
+
+                  <strong>
+                    No Archive files yet
+                  </strong>
+
+                  <p>
+                    Add a file to Archive before
+                    linking it to this record.
+                  </p>
+
+                  <button
+                    class="
+                      button
+                      primary
+                    "
+                    type="button"
+                    data-connected-files-show-new>
+
+                    Add new file
+                  </button>
+                </div>
+              </div>
+            `;
+
+            return;
+          }
+
+          if (!files.length) {
+            resultsHost.innerHTML = `
+              <div
+                class="
+                  connected-files-empty
+                ">
+
+                <div
+                  class="
+                    connected-files-empty-content
+                  ">
+
+                  <strong>
+                    No files match this search.
+                  </strong>
+
+                  <div
+                    class="
+                      connected-files-empty-actions
+                    ">
+
+                    <button
+                      class="
+                        button
+                        secondary
+                      "
+                      type="button"
+                      data-connected-files-clear-search>
+
+                      Clear search
+                    </button>
+
+                    <button
+                      class="
+                        button
+                        primary
+                      "
+                      type="button"
+                      data-connected-files-show-new>
+
+                      Add new file
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+
+            return;
+          }
+
+          resultsHost.innerHTML = `
+            <div
+              class="
+                connected-files-choice-list
+              ">
+
+              ${files
+                .map(
+                  renderChoice
+                )
+                .join('')}
+            </div>
+          `;
+
+          localizeUI(
+            resultsHost
+          );
+        };
+
+      const refreshFooter =
+        () => {
+          const count =
+            selectedIds.size;
+
+          if (countElement) {
+            countElement.textContent =
+              connectedFilesSelectionLabel(
+                count
+              );
+          }
+
+          if (saveButton) {
+            saveButton.disabled =
+              count === 0;
+
+            saveButton.textContent =
+              connectedFilesActionLabel(
+                count
+              );
+          }
+        };
+
+      const refreshSelection =
+        () => {
+          renderResults();
+          refreshFooter();
+        };
+
+      const setTab =
+        (
+          nextTab,
+          {
+            focus =
+              true
+          } = {}
+        ) => {
+          if (
+            ![
+              'archive',
+              'new'
+            ].includes(
+              nextTab
+            )
+          ) {
+            return;
+          }
+
+          sourceTab =
+            nextTab;
+
+          modal
+            .querySelectorAll(
+              '[data-connected-files-tab]'
+            )
+            .forEach(button => {
+              const selected =
+                button.dataset
+                  .connectedFilesTab
+                  === sourceTab;
+
+              button.setAttribute(
+                'aria-selected',
+                String(
+                  selected
+                )
+              );
+            });
+
+          modal
+            .querySelectorAll(
+              '[data-connected-files-panel]'
+            )
+            .forEach(panel => {
+              panel.hidden =
+                panel.dataset
+                  .connectedFilesPanel
+                  !== sourceTab;
+            });
+
+          if (!focus) {
+            return;
+          }
+
+          requestAnimationFrame(
+            () => {
+              if (
+                sourceTab === 'archive'
+              ) {
+                searchInput?.focus({
+                  preventScroll:
+                    true
+                });
+
+                return;
+              }
+
+              dropzone?.focus({
+                preventScroll:
+                  true
+              });
+            }
+          );
+        };
+
+      modal
+        .querySelectorAll(
+          '[data-connected-files-tab]'
+        )
+        .forEach(
+          (
+            tab,
+            index,
+            tabs
+          ) => {
+            tab.addEventListener(
+              'click',
+              () => {
+                setTab(
+                  tab.dataset
+                    .connectedFilesTab
+                );
+              }
+            );
+
+            tab.addEventListener(
+              'keydown',
+              event => {
+                if (
+                  ![
+                    'ArrowLeft',
+                    'ArrowRight'
+                  ].includes(
+                    event.key
+                  )
+                ) {
+                  return;
+                }
+
+                event.preventDefault();
+
+                const direction =
+                  event.key
+                    === 'ArrowRight'
+                      ? 1
+                      : -1;
+
+                const nextIndex =
+                  (
+                    index
+                    + direction
+                    + tabs.length
+                  )
+                  % tabs.length;
+
+                const next =
+                  tabs[
+                    nextIndex
+                  ];
+
+                setTab(
+                  next.dataset
+                    .connectedFilesTab,
+                  {
+                    focus:
+                      false
+                  }
+                );
+
+                next.focus();
+              }
+            );
+          }
+        );
+
+      searchInput
+        ?.addEventListener(
+          'input',
+          event => {
+            query =
+              event.currentTarget
+                .value;
+
+            renderResults();
+          }
+        );
+
+      modal.addEventListener(
+        'change',
+        event => {
+          const input =
+            event.target.closest(
+              '[data-connected-files-choice]'
+            );
+
+          if (
+            !input
+            || input.disabled
+          ) {
+            return;
+          }
+
+          if (
+            input.checked
+          ) {
+            selectedIds.add(
+              input.value
+            );
+          } else {
+            selectedIds.delete(
+              input.value
+            );
+          }
+
+          refreshSelection();
+        }
+      );
+
+      modal.addEventListener(
+        'click',
+        event => {
+          if (
+            event.target.closest(
+              '[data-connected-files-clear-search]'
+            )
+          ) {
+            query =
+              '';
+
+            if (searchInput) {
+              searchInput.value =
+                '';
+            }
+
+            renderResults();
+
+            searchInput?.focus({
+              preventScroll:
+                true
+            });
+
+            return;
+          }
+
+          if (
+            event.target.closest(
+              '[data-connected-files-show-new]'
+            )
+          ) {
+            setTab(
+              'new'
+            );
+
+            return;
+          }
+
+          if (
+            event.target.closest(
+              '[data-connected-files-add-new]'
+            )
+          ) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            openArchiveAddFilesModal();
+
+            return;
+          }
+        }
+      );
+
+      if (dropzone) {
+        dropzone.addEventListener(
+          'click',
+          event => {
+            if (
+              event.target.closest(
+                '[data-connected-files-add-new]'
+              )
+            ) {
+              return;
+            }
+
+            openArchiveAddFilesModal();
+          }
+        );
+
+        dropzone.addEventListener(
+          'keydown',
+          event => {
+            if (
+              ![
+                'Enter',
+                ' '
+              ].includes(
+                event.key
+              )
+            ) {
+              return;
+            }
+
+            if (
+              event.target.closest(
+                'button'
+              )
+            ) {
+              return;
+            }
+
+            event.preventDefault();
+
+            openArchiveAddFilesModal();
+          }
+        );
+
+        [
+          'dragenter',
+          'dragover'
+        ].forEach(type => {
+          dropzone.addEventListener(
+            type,
+            event => {
+              event.preventDefault();
+
+              dropzone
+                .classList
+                .add(
+                  'is-dragging'
+                );
+            }
+          );
+        });
+
+        [
+          'dragleave',
+          'drop'
+        ].forEach(type => {
+          dropzone.addEventListener(
+            type,
+            event => {
+              event.preventDefault();
+
+              dropzone
+                .classList
+                .remove(
+                  'is-dragging'
+                );
+            }
+          );
+        });
+
+        dropzone.addEventListener(
+          'drop',
+          () => {
+            openArchiveAddFilesModal();
+          }
+        );
+      }
+
+      saveButton
+        ?.addEventListener(
+          'click',
+          () => {
+            const fileIds = [
+              ...selectedIds
+            ];
+
+            if (
+              !fileIds.length
+            ) {
+              return;
+            }
+
+            const result =
+              typeof onSave
+                === 'function'
+                  ? onSave(
+                      fileIds
+                    )
+                  : false;
+
+            const saved =
+              result === true
+              || (
+                result
+                && typeof result
+                  === 'object'
+                && result.ok
+                  !== false
+              );
+
+            if (!saved) {
+              showToast(
+                'No file links were added.'
+              );
+
+              return;
+            }
+
+            closeModal();
+
+            if (
+              typeof afterSave
+                === 'function'
+            ) {
+              afterSave(
+                fileIds,
+                result
+              );
+            }
+
+            const message =
+              typeof successMessage
+                === 'function'
+                  ? successMessage(
+                      fileIds.length,
+                      result
+                    )
+                  : String(
+                      successMessage
+                      || ''
+                    );
+
+            if (message) {
+              showToast(
+                message
+              );
+            }
+          }
+        );
+
+      renderResults();
+      refreshFooter();
+      setTab(
+        sourceTab,
+        {
+          focus:
+            false
+        }
+      );
+
+      requestAnimationFrame(
+        () => {
+          if (
+            sourceTab === 'archive'
+          ) {
+            searchInput?.focus({
+              preventScroll:
+                true
+            });
+          }
+        }
+      );
     }
 
     function createArchiveFolderRecord(
@@ -70583,7 +72998,16 @@
           'click',
           archiveNavigateUp
         );
-      root.querySelector('[data-archive-add-files]')?.addEventListener('click', openArchiveAddFilesModal);
+      root
+        .querySelectorAll(
+          '[data-archive-add-files]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            openArchiveAddFilesModal
+          );
+        });
       const emptyFileDropzone =
         root.querySelector(
           '[data-archive-empty-add-files]'
@@ -71004,7 +73428,53 @@
       root.querySelectorAll('[data-archive-open-file]').forEach(button => button.addEventListener('click', () => showToast('Opening the original file is simulated.')));
       root.querySelectorAll('[data-archive-delete-source]').forEach(button => button.addEventListener('click', () => openArchiveDeleteSourceConfirm(button.dataset.archiveDeleteSource)));
       root.querySelectorAll('[data-archive-edit-source]').forEach(button => button.addEventListener('click', () => openArchiveSourceModal(button.dataset.archiveEditSource)));
-      root.querySelectorAll('[data-archive-add-connection]').forEach(button => button.addEventListener('click', () => openArchiveConnectionPicker({ ownerType: button.dataset.archiveOwnerType, ownerIds: [button.dataset.archiveOwnerId], entityType: button.dataset.archiveAddConnection })));
+      root
+        .querySelectorAll(
+          '[data-archive-add-connection]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              const ownerType =
+                button.dataset
+                  .archiveOwnerType;
+
+              const ownerId =
+                button.dataset
+                  .archiveOwnerId;
+
+              const entityType =
+                button.dataset
+                  .archiveAddConnection;
+
+              /*
+                Source → Files now uses the shared
+                Add Files relationship modal.
+              */
+              if (
+                ownerType === 'source'
+                && entityType === 'file'
+              ) {
+                openArchiveSourceFilesModal(
+                  ownerId
+                );
+
+                return;
+              }
+
+              openArchiveConnectionPicker({
+                ownerType,
+
+                ownerIds: [
+                  ownerId
+                ],
+
+                entityType
+              });
+            }
+          );
+        });
       root.querySelectorAll('[data-archive-unlink-id]').forEach(button => button.addEventListener('click', () => openArchiveUnlinkConfirm({ ownerType: button.dataset.archiveUnlinkOwnerType, ownerId: button.dataset.archiveUnlinkOwnerId, entityType: button.dataset.archiveUnlinkType, entityId: button.dataset.archiveUnlinkId })));
       root.querySelectorAll('[data-archive-open-connection]').forEach(button => button.addEventListener('click', () => openArchiveConnectedRecord(button.dataset.archiveOpenConnection, button.dataset.archiveConnectionId)));
       root.addEventListener(
@@ -77539,6 +80009,39 @@
               .join('')}
           </div>
         `;
+      }
+
+      if (
+        type === 'archiveFile'
+      ) {
+        return renderConnectedFileList({
+          files:
+            records,
+
+          openAttributes:
+            file => `
+              data-note-linked-open
+              data-note-linked-type="archiveFile"
+              data-note-linked-id="${escapeHtml(
+                file.id
+              )}"
+            `,
+
+          unlinkAttributes:
+            file => `
+              data-note-linked-remove
+              data-note-linked-type="archiveFile"
+              data-note-linked-id="${escapeHtml(
+                file.id
+              )}"
+            `,
+
+          unlinkContextLabel:
+            'note',
+
+          emptyText:
+            'No files linked to this note.'
+        });
       }
 
       return `
@@ -84989,9 +87492,131 @@
       );
     }
 
+    function openNoteFilesModal(
+      noteId =
+        state.selectedNoteId
+    ) {
+      const note =
+        getNote(
+          noteId,
+          {
+            includeArchived:
+              true
+          }
+        );
+
+      if (!note) {
+        return;
+      }
+
+      const title =
+        note.title
+        || 'Untitled note';
+
+      openConnectedFilesModal({
+        projectId:
+          note.projectId
+          || currentProjectId(),
+
+        title:
+          'Add files',
+
+        subtitle:
+          `Connect Archive files to “${title}”.`,
+
+        existingFileIds:
+          note.linkedArchiveFileIds
+          || [],
+
+        onSave:
+          fileIds => {
+            const currentNote =
+              getNote(
+                note.id,
+                {
+                  projectId:
+                    note.projectId,
+
+                  includeArchived:
+                    true
+                }
+              );
+
+            if (!currentNote) {
+              return {
+                ok:
+                  false
+              };
+            }
+
+            const nextIds =
+              archiveUniqueIds([
+                ...(
+                  currentNote
+                    .linkedArchiveFileIds
+                  || []
+                ),
+
+                ...fileIds
+              ]);
+
+            setNoteEntityLinks(
+              currentNote.id,
+              'archiveFile',
+              nextIds,
+              {
+                projectId:
+                  currentNote.projectId
+              }
+            );
+
+            const saved =
+              fileIds.every(fileId =>
+                (
+                  currentNote
+                    .linkedArchiveFileIds
+                  || []
+                ).includes(
+                  fileId
+                )
+              );
+
+            return {
+              ok:
+                saved,
+
+              changedCount:
+                saved
+                  ? fileIds.length
+                  : 0
+            };
+          },
+
+        afterSave:
+          () => {
+            renderNotesPreservingInteraction();
+          },
+
+        successMessage:
+          count =>
+            `${count} ${
+              count === 1
+                ? 'file'
+                : 'files'
+            } added to note.`
+      });
+    }
+
     function openNotesLinkEntityModal(
       type
     ) {
+      if (
+        type === 'archiveFile'
+      ) {
+        openNoteFilesModal();
+
+        return;
+      }
       if (type === 'photo') {
         openNotesPhotosModal();
         return;
@@ -94921,6 +97546,7 @@
             class="
               places-inspector-section-empty
             ">
+
             No connected files.
           </div>
         `;
@@ -94929,73 +97555,25 @@
       const visible =
         files.slice(
           0,
-          PLACE_INSPECTOR_LIMITS.files
+          PLACE_INSPECTOR_LIMITS
+            .files
         );
 
       return `
-        <div
-          class="
-            archive-list
-            family-archive-list
-            places-inspector-file-list
-          ">
+        ${renderConnectedFileList({
+          files:
+            visible,
 
-          ${visible
-            .map(file => `
-              <button
-                class="
-                  family-archive-row
-                "
-                type="button"
-                data-place-connected-file="${
-                  escapeHtml(file.id)
-                }">
+          openAttributes:
+            file => `
+              data-place-connected-file="${escapeHtml(
+                file.id
+              )}"
+            `,
 
-                <span class="file-badge">
-                  ${escapeHtml(
-                    file.type
-                    || file.kind
-                    || 'FILE'
-                  )}
-                </span>
-
-                <span
-                  class="
-                    family-archive-copy
-                  ">
-
-                  <strong>
-                    ${escapeHtml(
-                      file.name
-                      || 'Untitled file'
-                    )}
-                  </strong>
-
-                  <span>
-                    ${escapeHtml(
-                      file.datePlace
-                      || (
-                        file.updated
-                          ? `Updated ${
-                              file.updated
-                            }`
-                          : 'Linked file'
-                      )
-                    )}
-                  </span>
-                </span>
-
-                <span
-                  class="
-                    family-item-arrow
-                  "
-                  aria-hidden="true">
-                  ${icon.chevron}
-                </span>
-              </button>
-            `)
-            .join('')}
-        </div>
+          emptyText:
+            'No connected files.'
+        })}
 
         <button
           class="
@@ -95003,8 +97581,19 @@
           "
           type="button"
           data-place-view-all-files>
-          <span>Open in Archive</span>
-          <span class="panel-section-view-all-icon" aria-hidden="true">${icon.chevron}</span>
+
+          <span>
+            Open in Archive
+          </span>
+
+          <span
+            class="
+              panel-section-view-all-icon
+            "
+            aria-hidden="true">
+
+            ${icon.chevron}
+          </span>
         </button>
       `;
     }
