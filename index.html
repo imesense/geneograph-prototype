@@ -10086,129 +10086,929 @@
     }
     .geneo-board-toolbar-left,
     .geneo-board-toolbar-right { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
-    .geneo-board-section { margin-bottom: var(--space-8); }
+    .geneo-board-section {
+      width:
+        100%;
+
+      min-width:
+        0;
+
+      margin-bottom:
+        var(--space-8);
+    }
     .geneo-board-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(230px, 1fr));
-      gap: var(--space-4);
+      display:
+        grid;
+
+      grid-template-columns:
+        repeat(
+          5,
+          minmax(0, 1fr)
+        );
+
+      align-items:
+        stretch;
+
+      gap:
+        var(--space-3);
     }
-    .geneo-board-list { display: grid; gap: var(--space-3); }
+    .geneo-board-list {
+      display:
+        grid;
+
+      gap:
+        var(--space-3);
+    }
+
     .geneo-board-card {
-      border: 1px solid var(--border-default);
-      background: var(--surface-card);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-      text-align: left;
-      min-width: 0;
-      transition: transform var(--ease), background var(--ease), border-color var(--ease), box-shadow var(--ease);
-    }
-    .geneo-board-card:hover { transform: translateY(-1px); background: var(--surface-card-hover); border-color: var(--border-strong); }
-    .geneo-board-card.selected { border-color: rgba(98,217,154,.5); box-shadow: 0 0 0 1px rgba(47,174,116,.12); }
-    .geneo-thumb {
-      height: 96px;
-      border-bottom: 1px solid var(--border-default);
-      background: radial-gradient(circle at 20% 20%, rgba(98,217,154,.14), transparent 22%), #101615;
-      position: relative;
-      overflow: hidden;
-    }
-    .geneo-thumb::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      opacity: .72;
-      background-image:
-        linear-gradient(90deg, rgba(98,217,154,.08) 1px, transparent 1px),
-        linear-gradient(rgba(98,217,154,.08) 1px, transparent 1px);
-      background-size: 22px 22px;
-    }
-    .geneo-thumb::after {
-      content: "";
-      position: absolute;
-      left: 20px;
-      right: 20px;
-      top: 22px;
-      bottom: 18px;
-      opacity: .92;
+      position:
+        relative;
+
+      min-width:
+        0;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
       background:
-        linear-gradient(90deg, transparent 0 7%, rgba(212,170,107,.72) 7% 8%, transparent 8% 36%, rgba(141,108,232,.65) 36% 37%, transparent 37% 70%, rgba(47,174,116,.66) 70% 71%, transparent 71%),
-        radial-gradient(circle at 10% 34%, #273337 0 12px, transparent 13px),
-        radial-gradient(circle at 40% 62%, #243827 0 14px, transparent 15px),
-        radial-gradient(circle at 73% 38%, #3a2f21 0 14px, transparent 15px),
-        radial-gradient(circle at 91% 67%, #2d2847 0 12px, transparent 13px);
+        var(--surface-card);
+
+      overflow:
+        hidden;
+
+      text-align:
+        left;
+
+      cursor:
+        pointer;
+
+      transition:
+        transform var(--ease),
+        background var(--ease),
+        border-color var(--ease),
+        box-shadow var(--ease);
     }
+
+    .geneo-board-card:hover {
+      transform:
+        translateY(-1px);
+
+      border-color:
+        var(--border-strong);
+
+      background:
+        var(--surface-card-hover);
+    }
+
+    .geneo-board-card:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-500);
+
+      outline-offset:
+        2px;
+    }
+
+    /* Grid card */
+
+    .geneo-board-grid
+    .geneo-board-card {
+      min-height:
+        238px;
+
+      display:
+        flex;
+
+      flex-direction:
+        column;
+    }
+
+    .geneo-thumb {
+      height:
+        92px;
+
+      flex:
+        0 0 92px;
+
+      border-bottom:
+        1px solid
+        var(--border-default);
+
+      background:
+        radial-gradient(
+          circle at 20% 20%,
+          rgba(98, 217, 154, .14),
+          transparent 22%
+        ),
+        #101615;
+
+      position:
+        relative;
+
+      overflow:
+        hidden;
+    }
+
+    .geneo-thumb::before {
+      content:
+        "";
+
+      position:
+        absolute;
+
+      inset:
+        0;
+
+      opacity:
+        .72;
+
+      background-image:
+        linear-gradient(
+          90deg,
+          rgba(98, 217, 154, .08) 1px,
+          transparent 1px
+        ),
+        linear-gradient(
+          rgba(98, 217, 154, .08) 1px,
+          transparent 1px
+        );
+
+      background-size:
+        22px 22px;
+    }
+
+    .geneo-thumb::after {
+      content:
+        "";
+
+      position:
+        absolute;
+
+      left:
+        20px;
+
+      right:
+        20px;
+
+      top:
+        22px;
+
+      bottom:
+        18px;
+
+      opacity:
+        .92;
+
+      background:
+        linear-gradient(
+          90deg,
+          transparent 0 7%,
+          rgba(212, 170, 107, .72) 7% 8%,
+          transparent 8% 36%,
+          rgba(141, 108, 232, .65) 36% 37%,
+          transparent 37% 70%,
+          rgba(47, 174, 116, .66) 70% 71%,
+          transparent 71%
+        ),
+        radial-gradient(
+          circle at 10% 34%,
+          #273337 0 12px,
+          transparent 13px
+        ),
+        radial-gradient(
+          circle at 40% 62%,
+          #243827 0 14px,
+          transparent 15px
+        ),
+        radial-gradient(
+          circle at 73% 38%,
+          #3a2f21 0 14px,
+          transparent 15px
+        ),
+        radial-gradient(
+          circle at 91% 67%,
+          #2d2847 0 12px,
+          transparent 13px
+        );
+    }
+
     .geneo-thumb.map::after {
       background:
-        radial-gradient(circle at 26% 34%, rgba(93,173,236,.55) 0 18px, transparent 19px),
-        radial-gradient(circle at 62% 52%, rgba(212,170,107,.55) 0 15px, transparent 16px),
-        linear-gradient(130deg, transparent 0 30%, rgba(93,173,236,.35) 31% 33%, transparent 34% 60%, rgba(47,174,116,.35) 61% 62%, transparent 63%);
+        radial-gradient(
+          circle at 26% 34%,
+          rgba(93, 173, 236, .55) 0 18px,
+          transparent 19px
+        ),
+        radial-gradient(
+          circle at 62% 52%,
+          rgba(212, 170, 107, .55) 0 15px,
+          transparent 16px
+        ),
+        linear-gradient(
+          130deg,
+          transparent 0 30%,
+          rgba(93, 173, 236, .35) 31% 33%,
+          transparent 34% 60%,
+          rgba(47, 174, 116, .35) 61% 62%,
+          transparent 63%
+        );
     }
-    .geneo-board-body { padding: var(--space-4); }
-    .geneo-board-title-row { display: flex; gap: var(--space-3); justify-content: space-between; align-items: flex-start; }
-    .geneo-board-body h3 { margin: 0 0 var(--space-3); font-size: 16px; line-height: 1.25; }
+
+    .geneo-board-body {
+      min-width:
+        0;
+
+      padding:
+        var(--space-3);
+    }
+
+    .geneo-board-grid
+    .geneo-board-body {
+      flex:
+        1;
+
+      display:
+        flex;
+
+      flex-direction:
+        column;
+    }
+
+    .geneo-board-body h3 {
+      min-height:
+        38px;
+
+      margin:
+        0 0
+        var(--space-2);
+
+      overflow:
+        hidden;
+
+      display:
+        -webkit-box;
+
+      color:
+        var(--text-primary);
+
+      font-size:
+        15px;
+
+      line-height:
+        1.28;
+
+      line-clamp:
+        2;
+
+      -webkit-line-clamp:
+        2;
+
+      -webkit-box-orient:
+        vertical;
+    }
+
+    .geneo-board-type {
+      margin-bottom:
+        var(--space-2);
+
+      color:
+        var(--brand-green-300);
+
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      align-self:
+        flex-start;
+
+      gap:
+        6px;
+
+      font-size:
+        12px;
+
+      font-weight:
+        700;
+    }
+
+    .geneo-board-type::before {
+      content:
+        "";
+
+      width:
+        6px;
+
+      height:
+        6px;
+
+      flex:
+        0 0 6px;
+
+      border-radius:
+        50%;
+
+      background:
+        currentColor;
+    }
+
+    .geneo-board-type.purple {
+      color:
+        #b99aff;
+    }
+
+    .geneo-board-type.blue {
+      color:
+        #7ec5ff;
+    }
+
+    .geneo-board-type.amber {
+      color:
+        var(--amber);
+    }
+
     .geneo-board-meta {
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: var(--space-3);
-      font-size: 13px;
+      margin-bottom:
+        var(--space-2);
+
+      color:
+        var(--text-tertiary);
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      flex-wrap:
+        wrap;
+
+      gap:
+        var(--space-2);
+
+      font-size:
+        12px;
     }
+
     .geneo-board-meta-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      min-width: 0;
+      min-width:
+        0;
+
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      gap:
+        5px;
     }
 
     .geneo-board-meta-item svg {
-      width: 15px;
-      height: 15px;
-      display: block;
-      flex: 0 0 15px;
+      width:
+        14px;
+
+      height:
+        14px;
+
+      flex:
+        0 0 14px;
+
+      display:
+        block;
     }
 
-    .geneo-star {
-      display: inline-grid;
-      place-items: center;
+    .geneo-board-modified {
+      min-width:
+        0;
+
+      color:
+        var(--text-secondary);
+
+      font-size:
+        12px;
+
+      line-height:
+        1.35;
+    }
+
+    .geneo-board-grid
+    .geneo-board-modified {
+      margin-top:
+        auto;
+    }
+
+    .geneo-board-footer {
+      padding:
+        0
+        var(--space-3)
+        var(--space-3);
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      gap:
+        var(--space-2);
+    }
+
+    .geneo-board-footer-actions {
+      margin-left:
+        auto;
+
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      gap:
+        2px;
+    }
+
+    .geneo-star,
+    .geneo-more {
+      width:
+        34px;
+
+      height:
+        34px;
+
+      min-width:
+        34px;
+
+      padding:
+        0;
+
+      border:
+        1px solid
+        transparent;
+
+      border-radius:
+        8px;
+
+      background:
+        transparent;
+
+      color:
+        var(--text-secondary);
+
+      display:
+        inline-grid;
+
+      place-items:
+        center;
+
+      transition:
+        opacity var(--ease),
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease);
     }
 
     .geneo-star svg {
-      width: 16px;
-      height: 16px;
-      display: block;
+      width:
+        16px;
+
+      height:
+        16px;
+
+      display:
+        block;
     }
-    .geneo-board-type {
-      color: var(--brand-green-300);
-      font-size: 13px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 700;
+
+    .geneo-more svg {
+      width:
+        18px;
+
+      height:
+        18px;
+
+      display:
+        block;
     }
-    .geneo-board-type::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-    .geneo-board-type.purple { color: #b99aff; }
-    .geneo-board-type.blue { color: #7ec5ff; }
-    .geneo-board-type.amber { color: var(--amber); }
-    .geneo-board-footer { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); color: var(--text-tertiary); font-size: 13px; }
-    .geneo-star,
-    .geneo-more,
-    .geneo-mini-action {
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--text-secondary);
-      border-radius: 8px;
-      min-width: 30px;
-      height: 30px;
-      display: inline-grid;
-      place-items: center;
-      padding: 0 8px;
-      font-weight: 800;
-    }
+
     .geneo-star:hover,
-    .geneo-more:hover,
-    .geneo-mini-action:hover { background: rgba(255,255,255,.05); border-color: var(--border-default); color: var(--text-primary); }
-    .geneo-star.active { color: var(--amber); }
+    .geneo-more:hover {
+      border-color:
+        var(--border-default);
+
+      background:
+        rgba(255, 255, 255, .05);
+
+      color:
+        var(--text-primary);
+    }
+
+    .geneo-star:focus-visible,
+    .geneo-more:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-500);
+
+      outline-offset:
+        2px;
+    }
+
+    .geneo-star.active {
+      color:
+        var(--amber);
+    }
+
+    /*
+      Non-favourite stars stay quiet until
+      the card is being interacted with.
+    */
+    .geneo-board-card
+    .geneo-star:not(.active) {
+      opacity:
+        0;
+
+      pointer-events:
+        none;
+    }
+
+    .geneo-board-card:hover
+    .geneo-star,
+    .geneo-board-card:focus-within
+    .geneo-star {
+      opacity:
+        1;
+
+      pointer-events:
+        auto;
+    }
+
+    /* Dedicated list presentation */
+
+    .geneo-board-list
+    .geneo-board-card {
+      min-height:
+        104px;
+
+      display:
+        grid;
+
+      grid-template-columns:
+        104px
+        minmax(0, 1fr)
+        auto;
+
+      align-items:
+        stretch;
+    }
+
+    .geneo-board-list
+    .geneo-thumb {
+      width:
+        104px;
+
+      height:
+        100%;
+
+      min-height:
+        104px;
+
+      border-right:
+        1px solid
+        var(--border-default);
+
+      border-bottom:
+        0;
+    }
+
+    .geneo-board-list
+    .geneo-board-body {
+      padding:
+        var(--space-3);
+    }
+
+    .geneo-board-list
+    .geneo-board-body h3 {
+      min-height:
+        0;
+
+      margin-bottom:
+        4px;
+
+      line-clamp:
+        1;
+
+      -webkit-line-clamp:
+        1;
+    }
+
+    .geneo-board-list
+    .geneo-board-type {
+      margin-bottom:
+        4px;
+    }
+
+    .geneo-board-list
+    .geneo-board-meta {
+      margin-bottom:
+        4px;
+    }
+
+    .geneo-board-list
+    .geneo-board-footer {
+      min-width:
+        182px;
+
+      padding:
+        var(--space-3);
+
+      justify-content:
+        flex-end;
+
+      align-self:
+        center;
+    }
+
+    /* Create / import peer tile */
+
+    .geneo-board-action-tile {
+      min-width:
+        0;
+
+      min-height:
+        238px;
+
+      padding:
+        var(--space-4);
+
+      border:
+        1px dashed
+        var(--border-strong);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        rgba(
+          255,
+          255,
+          255,
+          .012
+        );
+
+      color:
+        var(--text-primary);
+
+      display:
+        flex;
+
+      flex-direction:
+        column;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      gap:
+        var(--space-3);
+
+      text-align:
+        center;
+
+      font:
+        inherit;
+
+      cursor:
+        pointer;
+
+      transition:
+        transform var(--ease),
+        background var(--ease),
+        border-color var(--ease),
+        box-shadow var(--ease);
+    }
+
+    .geneo-board-action-tile:hover {
+      transform:
+        translateY(-1px);
+
+      border-color:
+        rgba(
+          98,
+          217,
+          154,
+          .42
+        );
+
+      background:
+        rgba(
+          47,
+          174,
+          116,
+          .035
+        );
+    }
+
+    .geneo-board-action-tile:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-500);
+
+      outline-offset:
+        2px;
+    }
+
+    .geneo-board-action-tile-icon {
+      width:
+        42px;
+
+      height:
+        42px;
+
+      border:
+        1px solid
+        rgba(98, 217, 154, .2);
+
+      border-radius:
+        10px;
+
+      background:
+        rgba(47, 174, 116, .1);
+
+      color:
+        var(--brand-green-300);
+
+      display:
+        grid;
+
+      place-items:
+        center;
+    }
+
+    .geneo-board-action-tile-icon svg {
+      width:
+        21px;
+
+      height:
+        21px;
+
+      display:
+        block;
+    }
+
+    .geneo-board-action-copy {
+      min-width:
+        0;
+
+      display:
+        grid;
+
+      justify-items:
+        center;
+
+      gap:
+        4px;
+    }
+
+    .geneo-board-action-copy strong {
+      color:
+        var(--text-primary);
+
+      font-size:
+        15px;
+
+      line-height:
+        1.3;
+    }
+
+    .geneo-board-action-copy span {
+      max-width:
+        260px;
+
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        12px;
+
+      line-height:
+        1.4;
+    }
+
+    .geneo-board-list
+    .geneo-board-action-tile {
+      min-height:
+        104px;
+
+      padding:
+        var(--space-3);
+
+      display:
+        grid;
+
+      grid-template-columns:
+        44px
+        minmax(0, 1fr);
+
+      align-items:
+        center;
+
+      justify-items:
+        start;
+
+      gap:
+        var(--space-3);
+
+      text-align:
+        left;
+    }
+
+    .geneo-board-list
+    .geneo-board-action-tile-icon {
+      width:
+        44px;
+
+      height:
+        44px;
+    }
+
+    .geneo-board-list
+    .geneo-board-action-copy {
+      justify-items:
+        start;
+
+      text-align:
+        left;
+    }
+
+    .geneo-board-empty {
+      color:
+        var(--text-tertiary);
+    }
+
+    /*
+      Preserve the Geneograph editor's existing
+      compact mini-action component.
+    */
+    .geneo-mini-action {
+      min-width:
+        30px;
+
+      height:
+        30px;
+
+      padding:
+        0 8px;
+
+      border:
+        1px solid
+        transparent;
+
+      border-radius:
+        8px;
+
+      background:
+        transparent;
+
+      color:
+        var(--text-secondary);
+
+      display:
+        inline-grid;
+
+      place-items:
+        center;
+
+      font-weight:
+        800;
+    }
+
+    .geneo-mini-action:hover {
+      border-color:
+        var(--border-default);
+
+      background:
+        rgba(255, 255, 255, .05);
+
+      color:
+        var(--text-primary);
+    }
+
+    @media (hover: none) {
+      .geneo-board-card
+      .geneo-star:not(.active) {
+        opacity:
+          1;
+
+        pointer-events:
+          auto;
+      }
+    }
 
     .geneo-editor {
       height: calc(100vh - var(--topbar-h));
@@ -15101,13 +15901,29 @@
     .albums-lightbox-photo { width: 100%; height: min(64vh, 720px); border-radius: var(--radius-sm); }
 
     @media (max-width: 1600px) { .geneo-toolbar-button span.optional { display: none; } }
+    @media (max-width: 1500px) {
+      .geneo-board-grid {
+        grid-template-columns:
+          repeat(
+            4,
+            minmax(0, 1fr)
+          );
+      }
+    }
     @media (max-width: 1380px) {
-      .geneo-board-grid { grid-template-columns: repeat(3, minmax(220px, 1fr)); }
       .geneo-editor-main { grid-template-columns: minmax(0,1fr) 300px; }
       .geneo-toolbar-button[data-geneo-templates] { display: none; }
     }
+    @media (max-width: 1260px) {
+      .geneo-board-grid {
+        grid-template-columns:
+          repeat(
+            3,
+            minmax(0, 1fr)
+          );
+      }
+    }
     @media (max-width: 1080px) {
-      .geneo-board-grid { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
       .geneo-editor-main { grid-template-columns: 1fr; }
       .geneo-inspector { display: none; }
       .geneo-editor-toolbar { grid-template-columns: 1fr; overflow: visible; }
@@ -15120,7 +15936,55 @@
       .albums-shell, .albums-shell.detail-collapsed { grid-template-columns: minmax(0,1fr); }
       .albums-detail { display: none; }
     }
+    @media (max-width: 900px) {
+      .geneo-board-list
+      .geneo-board-card {
+        grid-template-columns:
+          1fr;
+      }
+
+      .geneo-board-list
+      .geneo-thumb {
+        width:
+          100%;
+
+        height:
+          92px;
+
+        min-height:
+          92px;
+
+        border-right:
+          0;
+
+        border-bottom:
+          1px solid
+          var(--border-default);
+      }
+
+      .geneo-board-list
+      .geneo-board-footer {
+        min-width:
+          0;
+
+        padding:
+          0
+          var(--space-3)
+          var(--space-3);
+      }
+
+      .geneo-board-list
+      .geneo-board-action-tile {
+        grid-template-columns:
+          44px
+          minmax(0, 1fr);
+      }
+    }
     @media (max-width: 720px) {
+      .geneo-board-grid {
+        grid-template-columns:
+          1fr;
+      }
       .albums-main {
         padding: var(--space-4);
       }
@@ -25407,7 +26271,7 @@
       'About GeneoGraph': '- GeneoGraph', 'Prototype information and reference links.': '---------- - --------- - ------.', 'GeneoGraph prototype': '-------- GeneoGraph', 'Version 0.1 prototype - local-first genealogy workspace': '-------- 0.1 - --------- ------- ------------ ----------', 'Active': '-------', 'Help Center would open here.': '----- -------- -- ----- ------.', 'Release notes': '------- - -------', 'Product updates and prototype changes.': '---------- -------- - --------- ---------.', 'View': '--------', 'Privacy policy': '-------- ------------------', 'Privacy documentation placeholder.': '-------- ------------ - ------------------.',
       'Create family tree': '------- -------- ------', 'Import GEDCOM': '------------- GEDCOM', 'Open project': '------- ------', 'Tip of the day': '----- ---', 'You can drag and drop a GEDCOM file anywhere to import it.': '---------- GEDCOM----- - ----- -----, ----- ------------- ---.', 'Learn more': '--------- ?', 'Search projects...': '----- --------', 'Date modified': '----------: ---- ---------', ' Updated': '----------: ------- ---------', ' Name': '----------: ---', ' People count': '----------: ----- -----', 'All projects': '--- -------', 'Search results': '---------- ------', 'Continue where you left off': '---------- - -----, --- -- ----------', 'Last opened': '--------- -------', 'No projects yet': '------- ---- ---', 'No projects match': '------- -- ----------', 'Try another project name or clear the search.': '---------- ------- ----- ------- --- ------- -----.', 'Clear search': '------- -----', 'Welcome back! Here you can create, open, and manage your family-history projects.': '----------, ---------- - ----------- --------- -------- -------.', 'Drop a GeneoGraph or GEDCOM file here to open or import': '---------- ---- GeneoGraph --- GEDCOM --- -------- --- -------', 'Supports .ggproj and .ged files': '-------------- .ggproj - .ged', 'Recent activity': '-------- --------', 'Insights': '-------', 'Sync status': '-------------', 'Project': '------', 'Project overview': '----- -------', 'Project settings': '--------- -------', 'Back to all projects': '----- -- ---- --------', 'Go to Family Tree': '------- - ------', 'Export': '-------', 'Delete project': '------- ------', 'Manage backups': '--------- -------', 'Open': '-------',
       'Navigation': '---------', 'Saved filters': '---------- ----', 'Review center': '----- --------', 'Statistics': '----------', 'Profile': '-------', 'Search people...': '----- -----...', 'Columns': '-------', 'Filter': '------', 'Add person': '-------- --------', ' Birth date': '----------: ---- --------', 'Name': '---', 'Living': '---', 'Deceased': '----', 'Unknown': '----------', 'Living status': '------ -----', 'Birth date': '---- --------', 'Birth place': '----- --------', 'Death date': '---- ------', 'Death place': '----- ------', 'Updated': '---------', 'Actions': '--------', 'Record Info': '---------- - ------', 'Facts': '-----', 'Relationships': '-----', 'Photos': '----', 'Files': '-----', 'Full profile': '------ -------', 'Open profile': '------- -------', 'Add relative': '-------- ------------', 'Connect relative': '------- ------------', 'More actions': '--- --------', 'Back to people': '----- - -----', 'Edit profile': '------------- -------', 'Save changes': '--------- ---------', 'Cancel': '------', 'Locked': '-------------', 'Editing': '--------------', 'Main information': '-------- ----------', 'Education': '-----------', 'Work': '------', 'Other': '------', 'First name': '---', 'Last name': '-------', 'Patronym': '--------', 'Maiden name': '------- -------', 'Prefix': '-------', 'Suffix': '-------', 'Exact date': '------ ----', 'Before': '--', 'After': '-----', 'Between': '-----', 'About / Circa': '-----', 'Cause of Death': '------- ------', 'Death reason': '------- ------', 'Burial place': '----- -----------', 'Record info': '---------- - ------', 'Profile ID': 'ID -------', 'Created': '-------', 'Review issues': '-------- --------', 'Source status': '------ ----------', 'Partly sourced': '-------- ------------', 'Living protected': '------- --------', 'Immediate Family': '--------- -----', 'Parents': '--------', 'Children': '----', 'Siblings': '------ - -----', 'Grandparents': '------- - -------', 'Partners': '-------', 'Partner': '------', 'Spouse': '------(-)', 'Father': '----', 'Mother': '----', 'Brother': '----', 'Sister': '------', 'Grandmother': '-------', 'Grandfather': '-------', 'Cat': '---', 'Timeline': '----------', 'Add fact': '-------- ----', 'Birth': '--------', 'Wedding': '-------', 'Education start': '------ --------', 'Education finish': '--------- --------', 'Archive': '-----', 'Add': '--------', 'Open ?': '------- ?',
-      'Create new board': '------- -----', 'Import board': '------------- -----', 'Board type': '---------', 'Categories': '---------', 'All Boards': '--- -----', 'Recently viewed': '--------', 'Favourites': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'DNA': '---', 'Publication': '----------', 'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '---- ------------ --- ------------, ------------ - ----------.', 'Search boards...': '----- -----', ' Board type': '----------: --- -----', 'All boards': '--- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Note': '-------', 'Image': '-----------', 'Place': '-----', 'Case': '------', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '-----------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Appearance': '------- ---', 'Layout': '-----', 'Linked to person': '------- - ---------', 'Visual only': '------ ---------',
+      'New board': '------- -----', 'Import board': '------------- -----', 'Board type': '---------', 'Categories': '---------', 'All Boards': '--- -----', 'Recently viewed': '--------', 'Favourites': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'DNA': '---', 'Publication': '----------', 'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '---- ------------ --- ------------, ------------ - ----------.', 'Search boards...': '----- -----', ' Board type': '----------: --- -----', 'All boards': '--- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Note': '-------', 'Image': '-----------', 'Place': '-----', 'Case': '------', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '-----------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Appearance': '------- ---', 'Layout': '-----', 'Linked to person': '------- - ---------', 'Visual only': '------ ---------',
       'Add photos': '-------- ----', 'New album': '----- ------', 'All photos': '--- ----', 'Not in Album': '--- -------', 'Recently deleted': '------- --------', 'Search photos...': '----- ----...', ' Filename': '----------: --- -----', ' Photo date': '----------: ---- ----', 'People in this photo': '---- -- ----', 'Date': '----', 'Caption / story': '------- / -------', 'Source': '--------', 'Delete photo': '------- ----', 'Make favourite': '-------- - ---------', 'Remove favourite': '------ -- ----------', 'Tag people': '-------- -----', 'Open photo': '------- ----', 'No people tagged': '---- -- --------', 'Unknown date': '---- ----------', 'Unknown place': '----- ----------',
       'Add files': '-------- -----', 'Create source': '------- --------', 'Sources': '---------', 'Imports': '-------', 'Review': '--------', 'Folders': '-----', 'Search this folder...': '----- - ---- -----...', 'Create folder': '------- -----', ' Updated': '----------: ---------', ' Source status': '----------: ------ ---------', 'Source / provenance': '--------', 'Linked to': '------- -', 'Date / place': '---- / -----', 'OCR': 'OCR', 'File info': '---------- - -----', 'Linked evidence': '--------- --------------', 'Assign source': '--------- --------', 'Run OCR': '--------- OCR', 'Restore': '------------', 'Reviewed': '---------', 'Needs review': '----- --------', 'Missing source': '--- ---------', 'Not linked': '-- -------',
       'Add note': '----- -------', 'New collection': '----- ---------', 'All notes': '--- -------', 'Collections': '---------', 'Search notes...': '----- -------...', 'Cards': '--------', 'List': '------', 'Saved': '---------', 'Linked people': '--------- ----', 'Linked sources': '--------- ---------', 'Linked places': '--------- -----', 'Related notes': '--------- -------', 'Tasks': '------', 'Note type': '--- -------',
@@ -25495,7 +26359,7 @@
       'Navigation': '---------', 'Review center': '----- --------', 'Statistics': '----------', 'Saved filters': '---------- ----', 'Columns': '-------', 'Filter': '------', ' Date modified': '----------: ---- ---------', ' Name': '----------: ---', ' Birth date': '----------: ---- --------', 'Name': '---', 'Birth date': '---- --------', 'Birth Date': '---- --------', 'Birth place': '----- --------', 'Birth Place': '----- --------', 'Death date': '---- ------', 'Death Date': '---- ------', 'Death place': '----- ------', 'Death Place': '----- ------', 'Updated': '---------', 'Rows per page': '----- -- --------', 'Record Info': '---------- - ------', 'Record info': '---------- - ------', 'Facts': '-----', 'Relationships': '-----', 'Record ID': 'ID ------', 'Created': '-------', 'Updated': '---------', 'Review issues': '-------- --------', 'Privacy': '------------------', 'Source status': '------ ----------', 'Partly sourced': '-------- ------------', 'Living protected': '------- ------- -------', 'Main information': '-------- ----------', 'First name': '---', 'Last name': '-------', 'Patronym': '--------', 'Maiden name': '------- -------', 'Maiden Name': '------- -------', 'Prefix': '-------', 'Suffix': '-------', 'Gender': '---', 'Living status': '------ -----', 'Death reason': '------- ------', 'Cause of Death': '------- ------', 'Burial place': '----- -----------', 'Burial Place': '----- -----------', 'Education': '-----------', 'Work': '------', 'Other': '------', 'Education place': '----- --------', 'Company name': '--------', 'Religion': '-------', 'Baptism place': '----- --------', 'Baptism date': '---- --------', 'Immediate Family': '--------- -----', 'Family': '-----',
 
       // Geneograph
-      'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '------ ------------ --- ------------, ------------ - ----------.', 'Create new board': '------- -----', 'Import board': '------------- -----', 'All Boards': '--- -----', 'Recently viewed': '------- -------------', 'Favourites': '---------', 'Categories': '---------', 'Board type': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'Publication': '----------', 'DNA': '---', 'Search boards...': '----- -----', ' Board type': '----------: --- -----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '--------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Case': '----', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Object palette': '------- --------', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Display name': '------------ ---', 'Life dates': '---- -----', 'Metadata': '----------', 'Short note': '-------- -------', 'Body / description': '----- / --------', 'Delete object': '------- ------', 'Appearance': '------- ---', 'Layout': '-----', 'Card style': '----- --------', 'Show dates': '---------- ----', 'Show place': '---------- -----', 'Show badge': '---------- -----', 'Locked': '-------------', 'Layer': '----', 'Zoom controls': '-------', 'Zoom out': '---------', 'Zoom in': '---------', 'Fit board': '------- -----', 'Fit': '-------',
+      'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '------ ------------ --- ------------, ------------ - ----------.', 'New board': '------- -----', 'Import board': '------------- -----', 'All Boards': '--- -----', 'Recently viewed': '------- -------------', 'Favourites': '---------', 'Categories': '---------', 'Board type': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'Publication': '----------', 'DNA': '---', 'Search boards...': '----- -----', ' Board type': '----------: --- -----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '--------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Case': '----', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Object palette': '------- --------', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Display name': '------------ ---', 'Life dates': '---- -----', 'Metadata': '----------', 'Short note': '-------- -------', 'Body / description': '----- / --------', 'Delete object': '------- ------', 'Appearance': '------- ---', 'Layout': '-----', 'Card style': '----- --------', 'Show dates': '---------- ----', 'Show place': '---------- -----', 'Show badge': '---------- -----', 'Locked': '-------------', 'Layer': '----', 'Zoom controls': '-------', 'Zoom out': '---------', 'Zoom in': '---------', 'Fit board': '------- -----', 'Fit': '-------',
 
       // Albums
       'Photos': '----', 'Photo details': '------ ----', 'Select a photo': '-------- ----', 'Select a photo to view details, albums, people, date, place and caption.': '-------- ----, ----- ------- ------, -------, -----, ----, ----- - -------.', 'Grid view': '------', 'List view': '------', 'Search photos-': '----- ----', 'Search photos...': '----- ----...', ' Filename': '----------: --- -----', ' Photo date': '----------: ---- ----', 'Date precision': '-------- ----', 'Caption / story': '------- / -------', 'Add to album': '-------- - ------', 'Delete photo?': '------- ----?', 'This photo will be moved to Recently deleted. You can restore it later from the Albums sidebar.': '---- ----- ---------- - ------- --------. --- ----- ----- ------------ -- ------ --------.', 'No photos yet': '---- ---- ---', 'No deleted photos': '-------- ---- ---', 'No favourite photos yet': '--------- ---- ---- ---', 'Every photo is in an album': '--- ---- --- - --------', 'Open photo': '------- ----',
@@ -57272,7 +58136,36 @@
           </div>
         </div>
         <div class="sidebar-spacer"></div>
-        <div class="tip-card"><div class="tip-title">${icon.tip} Tip of the day</div><p>Use Geneograph boards to collect hypotheses before adding relationships to the structured Family Tree.</p><button class="link" type="button" data-toast="Geneograph learning center will be added later.">Learn more ${icon.chevron}</button></div>
+        <div class="tip-card"><div class="tip-title">${icon.tip} Tip of the day</div><p>Use Geneograph boards to collect hypotheses before adding relationships to the structured Family Tree.</p>
+        <button
+          class="
+            link
+            tip-link
+          "
+          type="button"
+          data-toast="
+            Geneograph learning center
+            will be added later.
+          ">
+
+          <span
+            class="
+              tip-link-text
+            ">
+
+            Learn more
+          </span>
+
+          <span
+            class="
+              tip-link-icon
+            "
+            aria-hidden="true">
+
+            ${icon.openlink}
+          </span>
+        </button>
+        </div>
       `;
       main.innerHTML = `
         <section class="geneo-home-page">
@@ -57306,7 +58199,7 @@
                 data-geneo-create>
 
                 ${icon.plus}
-                Create new board
+                New board
               </button>
             `
           })}
@@ -57414,64 +58307,433 @@
       );
     }
 
-    function renderGeneographBoardCollection(list) {
-      if (!list.length) return `<div class="panel"><div class="panel-body" style="color:var(--text-tertiary)">No boards match this view.</div></div>`;
-      const cls = state.geneoBoardViewMode === 'list' ? 'geneo-board-list' : 'geneo-board-grid';
-      return `<div class="${cls}">${list.map(renderGeneographBoardCard).join('')}</div>`;
+    function openGeneographImportBoardModal() {
+      openSimpleModal(
+        'Import board',
+        'Board import is a placeholder in this iteration. Real .ggboard import can be added later.'
+      );
     }
 
-    function renderGeneographBoardCard(board) {
-      const selected = state.selectedGeneoBoardId === board.id;
-      const typeClass = board.type === 'Research theory' ? 'purple' : board.type === 'Tree design' ? 'blue' : board.type === 'Publication' ? 'amber' : '';
+    function renderGeneographNewBoardTile() {
       return `
-        <article class="geneo-board-card ${selected ? 'selected' : ''}" tabindex="0" data-geneo-board-id="${board.id}">
-          <div class="geneo-thumb ${board.thumb === 'map' ? 'map' : ''}" aria-hidden="true"></div>
-          <div class="geneo-board-body">
-            <div class="geneo-board-title-row">
-              <h3>${escapeHtml(board.title)}</h3>
-              <button class="geneo-star ${board.favorite ? 'active' : ''}" type="button" data-geneo-fav="${board.id}" aria-label="Favourite ${escapeHtml(board.title)}">${icon.star}</button>
-            </div>
-            <div class="geneo-board-meta">
-              <span class="geneo-board-meta-item">${icon.profile}<span>${board.people} people</span></span>
-              <span class="geneo-board-meta-item">${icon.file}<span>${board.evidence} evidence</span></span>
-              <span class="geneo-board-meta-item">${icon.help}<span>${board.questions} questions</span></span>
-            </div>
-            <div class="geneo-board-type ${typeClass}">${escapeHtml(board.type)}</div>
-            <div class="geneo-board-footer"><span>Modified ${escapeHtml(board.modified)}</span><button class="geneo-more" type="button" data-geneo-board-menu="${board.id}" aria-label="More actions" aria-haspopup="menu" aria-expanded="false">${icon.more}</button></div>
+        <button
+          class="
+            geneo-board-action-tile
+          "
+          type="button"
+          data-geneo-create
+          aria-label="Create a new Geneograph board">
+
+          <span
+            class="
+              geneo-board-action-tile-icon
+            "
+            aria-hidden="true">
+
+            ${icon.plus}
+          </span>
+
+          <span
+            class="
+              geneo-board-action-copy
+            ">
+
+            <strong>
+              New board
+            </strong>
+
+            <span>
+              Create a visual workspace for
+              research, evidence, tree design,
+              or publication.
+            </span>
+          </span>
+        </button>
+      `;
+    }
+
+    function renderGeneographBoardEmptyState() {
+      const query =
+        state.geneoBoardSearch
+          .trim();
+
+      let message =
+        'No boards match this view.';
+
+      if (query) {
+        message =
+          'No boards match this search.';
+      } else if (
+        state.geneoBoardFilter
+          === 'Favourites'
+      ) {
+        message =
+          'No favourite boards yet.';
+      } else if (
+        state.geneoBoardFilter
+          !== 'All Boards'
+      ) {
+        message =
+          `No ${
+            state.geneoBoardFilter
+              .toLowerCase()
+          } boards yet.`;
+      }
+
+      return `
+        <div class="panel">
+          <div
+            class="
+              panel-body
+              geneo-board-empty
+            ">
+
+            ${escapeHtml(
+              message
+            )}
           </div>
-        </article>`;
+        </div>
+      `;
+    }
+
+    function renderGeneographBoardCollection(
+      list
+    ) {
+      const viewClass =
+        state.geneoBoardViewMode
+          === 'list'
+            ? 'geneo-board-list'
+            : 'geneo-board-grid';
+
+      /*
+        New Board is a library action,
+        not a search/category result.
+      */
+      const showNewBoardTile =
+        state.geneoBoardFilter
+          === 'All Boards'
+        && !state.geneoBoardSearch
+          .trim();
+
+      if (
+        !list.length
+        && !showNewBoardTile
+      ) {
+        return renderGeneographBoardEmptyState();
+      }
+
+      return `
+        <div
+          class="${viewClass}">
+
+          ${list
+            .map(
+              renderGeneographBoardCard
+            )
+            .join('')}
+
+          ${
+            showNewBoardTile
+              ? renderGeneographNewBoardTile()
+              : ''
+          }
+        </div>
+      `;
+    }
+
+    function renderGeneographBoardCard(
+      board
+    ) {
+      const typeClass =
+        board.type
+          === 'Research theory'
+            ? 'purple'
+            : board.type
+              === 'Tree design'
+                ? 'blue'
+                : board.type
+                  === 'Publication'
+                    ? 'amber'
+                    : '';
+
+      const favouriteLabel =
+        board.favorite
+          ? `Remove ${board.title} from favourites`
+          : `Add ${board.title} to favourites`;
+
+      return `
+        <article
+          class="
+            geneo-board-card
+          "
+          tabindex="0"
+          role="button"
+          data-geneo-board-id="${escapeHtml(
+            board.id
+          )}"
+          aria-label="Open ${escapeHtml(
+            board.title
+          )}">
+
+          <div
+            class="
+              geneo-thumb
+              ${
+                board.thumb === 'map'
+                  ? 'map'
+                  : ''
+              }
+            "
+            aria-hidden="true">
+          </div>
+
+          <div
+            class="
+              geneo-board-body
+            ">
+
+            <h3>
+              ${escapeHtml(
+                board.title
+              )}
+            </h3>
+
+            <div
+              class="
+                geneo-board-type
+                ${typeClass}
+              ">
+
+              ${escapeHtml(
+                board.type
+              )}
+            </div>
+
+            <div
+              class="
+                geneo-board-meta
+              ">
+
+              <span
+                class="
+                  geneo-board-meta-item
+                ">
+
+                ${icon.peoplegroup}
+
+                <span>
+                  ${board.people}
+                  people
+                </span>
+              </span>
+
+              <span
+                class="
+                  geneo-board-meta-item
+                ">
+
+                ${icon.file}
+
+                <span>
+                  ${board.evidence}
+                  evidence
+                </span>
+              </span>
+
+              <span
+                class="
+                  geneo-board-meta-item
+                ">
+
+                ${icon.help}
+
+                <span>
+                  ${board.questions}
+                  questions
+                </span>
+              </span>
+            </div>
+
+            <div
+              class="
+                geneo-board-modified
+              ">
+
+              Modified
+              ${escapeHtml(
+                board.modified
+              )}
+            </div>
+          </div>
+
+          <div
+            class="
+              geneo-board-footer
+            ">
+
+            <button
+              class="
+                small-open
+              "
+              type="button"
+              data-geneo-open-board="${escapeHtml(
+                board.id
+              )}">
+
+              Open
+            </button>
+
+            <div
+              class="
+                geneo-board-footer-actions
+              ">
+
+              <button
+                class="
+                  geneo-star
+                  ${
+                    board.favorite
+                      ? 'active'
+                      : ''
+                  }
+                "
+                type="button"
+                data-geneo-fav="${escapeHtml(
+                  board.id
+                )}"
+                aria-label="${escapeHtml(
+                  favouriteLabel
+                )}"
+                aria-pressed="${
+                  board.favorite
+                    ? 'true'
+                    : 'false'
+                }"
+                title="${escapeHtml(
+                  favouriteLabel
+                )}">
+
+                ${icon.star}
+              </button>
+
+              <button
+                class="
+                  geneo-more
+                "
+                type="button"
+                data-geneo-board-menu="${escapeHtml(
+                  board.id
+                )}"
+                aria-label="More actions"
+                aria-haspopup="menu"
+                aria-expanded="false">
+
+                ${icon.more}
+              </button>
+            </div>
+          </div>
+        </article>
+      `;
     }
 
     function bindGeneographHome() {
       main
-        .querySelector(
+        .querySelectorAll(
           '[data-geneo-create]'
         )
-        ?.addEventListener(
-          'click',
-          openCreateGeneographBoardModal
-        );
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            openCreateGeneographBoardModal
+          );
+        });
 
       main
-        .querySelector(
+        .querySelectorAll(
           '[data-geneo-import]'
         )
-        ?.addEventListener(
-          'click',
-          () => {
-            openSimpleModal(
-              'Import board',
-              'Board import is a placeholder in this iteration. Real .ggboard import can be added later.'
-            );
-          }
-        );
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            openGeneographImportBoardModal
+          );
+        });
       sidebar.querySelectorAll('[data-geneo-filter]').forEach(button => button.addEventListener('click', () => { state.geneoBoardFilter = button.dataset.geneoFilter; renderGeneographHome(); }));
       bindSearchInput(main, '#geneoBoardSearch', 'geneoBoardSearch', renderGeneographHome);
       main.querySelectorAll('[data-geneo-board-view]').forEach(button => button.addEventListener('click', () => { state.geneoBoardViewMode = button.dataset.geneoBoardView; renderGeneographHome(); }));
-      main.querySelectorAll('[data-geneo-board-id]').forEach(card => {
-        card.addEventListener('click', e => { if (!e.target.closest('button')) openGeneographBoard(card.dataset.geneoBoardId); });
-        card.addEventListener('keydown', e => { if (e.key === 'Enter') openGeneographBoard(card.dataset.geneoBoardId); });
-      });
+      main
+        .querySelectorAll(
+          '[data-geneo-open-board]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              event.stopPropagation();
+
+              openGeneographBoard(
+                button.dataset
+                  .geneoOpenBoard
+              );
+            }
+          );
+        });
+      main
+        .querySelectorAll(
+          '[data-geneo-board-id]'
+        )
+        .forEach(card => {
+          card.addEventListener(
+            'click',
+            event => {
+              if (
+                event.target.closest(
+                  'button'
+                )
+              ) {
+                return;
+              }
+
+              openGeneographBoard(
+                card.dataset
+                  .geneoBoardId
+              );
+            }
+          );
+
+          card.addEventListener(
+            'keydown',
+            event => {
+              /*
+                Do not react to keyboard events
+                bubbling from Favourite, Open,
+                or More.
+              */
+              if (
+                event.target
+                !== card
+              ) {
+                return;
+              }
+
+              if (
+                event.key
+                  !== 'Enter'
+                && event.key
+                  !== ' '
+              ) {
+                return;
+              }
+
+              event.preventDefault();
+
+              openGeneographBoard(
+                card.dataset
+                  .geneoBoardId
+              );
+            }
+          );
+        });
       main.querySelectorAll('[data-geneo-fav]').forEach(button => button.addEventListener('click', e => {
         e.stopPropagation();
         const board = sampleData.boards.find(b => b.id === button.dataset.geneoFav);
@@ -58920,7 +60182,7 @@
     }
 
     function openCreateGeneographBoardModal() {
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="createBoardTitle"><div class="modal-header"><div><h2 id="createBoardTitle">Create new board</h2><p>Create a visual workspace for a research theory, evidence map, tree design, or publication layout.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="createGeneoBoardForm"><div class="modal-body form-grid"><div class="field"><label for="geneoBoardName">Board name</label><input id="geneoBoardName" required placeholder="e.g. Unknown father theory"></div><div class="field"><label for="geneoBoardType">Board type</label><select id="geneoBoardType" class="compact-select"><option>Research theory</option><option>Evidence map</option><option>Tree design</option><option>Publication</option><option>DNA</option></select></div><div class="field"><label for="geneoBoardDesc">Description</label><textarea id="geneoBoardDesc" placeholder="Research question or intended output"></textarea></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create board</button></div></form></div>`);
+      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="createBoardTitle"><div class="modal-header"><div><h2 id="createBoardTitle">New board</h2><p>Create a visual workspace for a research theory, evidence map, tree design, or publication layout.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="createGeneoBoardForm"><div class="modal-body form-grid"><div class="field"><label for="geneoBoardName">Board name</label><input id="geneoBoardName" required placeholder="e.g. Unknown father theory"></div><div class="field"><label for="geneoBoardType">Board type</label><select id="geneoBoardType" class="compact-select"><option>Research theory</option><option>Evidence map</option><option>Tree design</option><option>Publication</option><option>DNA</option></select></div><div class="field"><label for="geneoBoardDesc">Description</label><textarea id="geneoBoardDesc" placeholder="Research question or intended output"></textarea></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create board</button></div></form></div>`);
       document.getElementById('geneoBoardName')?.focus();
       document.getElementById('createGeneoBoardForm')?.addEventListener('submit', e => {
         e.preventDefault();
