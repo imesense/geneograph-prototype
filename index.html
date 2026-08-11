@@ -10050,14 +10050,17 @@
 
     /* Geneograph module */
     .geneo-home-page {
-      height: 100%;
-      min-width: 0;
-      overflow: auto;
-      padding: var(--space-8);
-      background: var(--surface-main);
+      height:
+        100%;
+      min-width:
+        0;
+      overflow:
+        auto;
+      padding:
+        var(--space-6);
+      background:
+        var(--surface-main);
     }
-    .geneo-sidebar-actions { display: grid; gap: var(--space-3); }
-    .geneo-sidebar-actions .button { min-height: 48px; justify-content: flex-start; }
     .geneo-type-count {
       margin-left: auto;
       min-width: 24px;
@@ -57251,15 +57254,10 @@
     function renderGeneographHome() {
       const filtered = filteredGeneographBoards();
       sidebar.innerHTML = `
-        <div class="geneo-sidebar-actions">
-          <button class="button primary full" type="button" data-geneo-create>${icon.plus} Create new board</button>
-          <button class="button secondary full" type="button" data-geneo-import>${icon.import} Import board</button>
-        </div>
         <div>
           <div class="side-section-title">Navigation</div>
           <div class="side-nav">
             ${renderGeneoSideButton('All Boards', icon.whiteboard, null)}
-            ${renderGeneoSideButton('Recently viewed', icon.clock, null)}
             ${renderGeneoSideButton('Favourites', icon.star, null)}
           </div>
         </div>
@@ -57278,9 +57276,40 @@
       `;
       main.innerHTML = `
         <section class="geneo-home-page">
-          <div class="header-row">
-            <div class="title"><h1>Geneograph Visual Boards <span style="font-size:20px;color:var(--text-secondary)"></span></h1><p>Your personal space for research, visualizations and publications.</p></div>
-          </div>
+
+          ${renderArchivePageHead({
+            title:
+              'Geneograph Visual Boards',
+
+            subtitle:
+              'Your personal space for research, visualizations and publications.',
+
+            actions: `
+              <button
+                class="
+                  button
+                  secondary
+                "
+                type="button"
+                data-geneo-import>
+
+                ${icon.import}
+                Import board
+              </button>
+
+              <button
+                class="
+                  button
+                  primary
+                "
+                type="button"
+                data-geneo-create>
+
+                ${icon.plus}
+                Create new board
+              </button>
+            `
+          })}
           <div class="geneo-board-toolbar">
             <div class="geneo-board-toolbar-left">
               <label class="app-search-field" aria-label="Search boards">${icon.search}<input id="geneoBoardSearch" type="search" placeholder="Search boards..." value="${escapeHtml(state.geneoBoardSearch)}"></label>
@@ -57328,10 +57357,6 @@
             </div>
           </div>
           <div class="geneo-board-section">
-            <h2 class="section-heading">${icon.clock} Recently viewed</h2>
-            ${renderGeneographBoardCollection(filtered.slice(0, 4))}
-          </div>
-          <div class="geneo-board-section">
             <h2 class="section-heading">${icon.whiteboard} All boards (${filtered.length})</h2>
             ${renderGeneographBoardCollection(filtered)}
           </div>
@@ -57350,13 +57375,43 @@
     }
 
     function filteredGeneographBoards() {
-      const q = state.geneoBoardSearch.trim().toLowerCase();
-      return sampleData.boards.filter(board => {
-        const textMatch = !q || `${board.title} ${board.type}`.toLowerCase().includes(q);
-        const filter = state.geneoBoardFilter;
-        const filterMatch = filter === 'All Boards' || filter === 'Recently viewed' || (filter === 'Favourites' ? board.favorite : board.type === filter);
-        return textMatch && filterMatch;
-      });
+      const q =
+        state.geneoBoardSearch
+          .trim()
+          .toLowerCase();
+
+      return sampleData.boards.filter(
+        board => {
+          const textMatch =
+            !q
+            || `${
+              board.title
+            } ${
+              board.type
+            }`
+              .toLowerCase()
+              .includes(
+                q
+              );
+
+          const filter =
+            state.geneoBoardFilter;
+
+          const filterMatch =
+            filter === 'All Boards'
+            || (
+              filter === 'Favourites'
+                ? board.favorite
+                : board.type
+                  === filter
+            );
+
+          return (
+            textMatch
+            && filterMatch
+          );
+        }
+      );
     }
 
     function renderGeneographBoardCollection(list) {
@@ -57388,8 +57443,28 @@
     }
 
     function bindGeneographHome() {
-      sidebar.querySelector('[data-geneo-create]')?.addEventListener('click', openCreateGeneographBoardModal);
-      sidebar.querySelector('[data-geneo-import]')?.addEventListener('click', () => openSimpleModal('Import board', 'Board import is a placeholder in this iteration. Real .ggboard import can be added later.'));
+      main
+        .querySelector(
+          '[data-geneo-create]'
+        )
+        ?.addEventListener(
+          'click',
+          openCreateGeneographBoardModal
+        );
+
+      main
+        .querySelector(
+          '[data-geneo-import]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            openSimpleModal(
+              'Import board',
+              'Board import is a placeholder in this iteration. Real .ggboard import can be added later.'
+            );
+          }
+        );
       sidebar.querySelectorAll('[data-geneo-filter]').forEach(button => button.addEventListener('click', () => { state.geneoBoardFilter = button.dataset.geneoFilter; renderGeneographHome(); }));
       bindSearchInput(main, '#geneoBoardSearch', 'geneoBoardSearch', renderGeneographHome);
       main.querySelectorAll('[data-geneo-board-view]').forEach(button => button.addEventListener('click', () => { state.geneoBoardViewMode = button.dataset.geneoBoardView; renderGeneographHome(); }));
