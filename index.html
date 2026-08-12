@@ -61519,23 +61519,133 @@
       render();
     }
 
-    function openGeneographBoardMenu(id, anchor) {
+    function openGeneographBoardMenu(
+      id,
+      anchor
+    ) {
       closeMenu();
-      const rect = anchor.getBoundingClientRect();
-      const menu = document.createElement('div');
-      menu.className = 'menu-popover';
-      menu.id = 'projectMenu';
-      menu.style.top = `${rect.bottom + 6}px`;
-      menu.style.left = `${Math.max(12, rect.right - 190)}px`;
-      menu.innerHTML = `<button type="button" data-action="rename">Rename</button><button type="button" data-action="duplicate">Duplicate</button><button type="button" data-action="archive">Archive</button><button type="button" class="danger" data-action="delete">Delete</button>`;
-      document.body.appendChild(menu);
-      menu.addEventListener('click', e => {
-        const action = e.target.closest('[data-action]')?.dataset.action;
-        if (!action) return;
-        showToast(`${capitalize(action)} board action simulated.`);
-        closeMenu();
-      });
-      bindMenuLifecycle(anchor);
+
+      const board =
+        getGeneographBoard(
+          id
+        );
+
+      if (
+        !board
+        || !anchor
+      ) {
+        return;
+      }
+
+      const rect =
+        anchor
+          .getBoundingClientRect();
+
+      const menu =
+        document
+          .createElement(
+            'div'
+          );
+
+      menu.className =
+        'menu-popover';
+
+      menu.id =
+        'projectMenu';
+
+      menu.style.top =
+        `${rect.bottom + 6}px`;
+
+      menu.style.left =
+        `${
+          Math.max(
+            12,
+            rect.right - 190
+          )
+        }px`;
+
+      menu.innerHTML = `
+        <button
+          type="button"
+          data-action="edit">
+
+          Edit
+        </button>
+
+        <button
+          type="button"
+          data-action="duplicate">
+
+          Duplicate
+        </button>
+
+        <button
+          type="button"
+          data-action="archive">
+
+          Archive
+        </button>
+
+        <button
+          type="button"
+          class="danger"
+          data-action="delete">
+
+          Delete
+        </button>
+      `;
+
+      document.body.appendChild(
+        menu
+      );
+
+      menu.addEventListener(
+        'click',
+        event => {
+          const action =
+            event.target
+              .closest(
+                '[data-action]'
+              )
+              ?.dataset.action;
+
+          if (!action) {
+            return;
+          }
+
+          /*
+            Close the popover before opening
+            another modal surface.
+          */
+          closeMenu();
+
+          if (
+            action === 'edit'
+          ) {
+            openEditGeneographBoardModal(
+              board.id
+            );
+
+            return;
+          }
+
+          /*
+            Keep the remaining actions at their
+            current prototype behavior.
+          */
+          showToast(
+            `${
+              capitalize(
+                action
+              )
+            } board action simulated.`
+          );
+        }
+      );
+
+      bindMenuLifecycle(
+        anchor
+      );
     }
 
     function renderGeneographEditor() {
@@ -63269,46 +63379,101 @@
       );
     }
 
-    function openCreateGeneographBoardModal() {
+    function openGeneographBoardDetailsModal({
+      boardId =
+        null
+    } = {}) {
+      const editing =
+        Boolean(
+          boardId
+        );
+
+      const board =
+        editing
+          ? getGeneographBoard(
+              boardId
+            )
+          : null;
+
+      if (
+        editing
+        && !board
+      ) {
+        showToast(
+          'Board not found.'
+        );
+
+        return;
+      }
+
       const projectId =
-        currentProjectId();
+        board?.projectId
+        || currentProjectId();
 
       const inheritedCollection =
-        state.geneoLibraryView
+        !editing
+        && state.geneoLibraryView
           === 'collection'
           ? activeGeneographCollection()
           : null;
 
       const selectedCollectionIds =
         new Set(
-          inheritedCollection
-            ? [
-                inheritedCollection.id
-              ]
-            : []
+          editing
+            ? (
+                board.collectionIds
+                || []
+              )
+            : inheritedCollection
+              ? [
+                  inheritedCollection.id
+                ]
+              : []
         );
+
+      const modalTitle =
+        editing
+          ? 'Edit board'
+          : 'New board';
+
+      const modalDescription =
+        editing
+          ? 'Update the board name, description and collections.'
+          : 'Create a visual workspace for research, evidence and visual exploration.';
+
+      const submitLabel =
+        editing
+          ? 'Save changes'
+          : 'Create board';
 
       openModal(`
         <div
           class="
-          modal
-          geneo-board-create-modal"
+            modal
+            geneo-board-create-modal
+          "
           role="dialog"
           aria-modal="true"
-          aria-labelledby="createBoardTitle">
+          aria-labelledby="geneographBoardDetailsTitle">
 
-          <div class="modal-header">
+          <div
+            class="
+              modal-header
+            ">
+
             <div>
               <h2
-                id="createBoardTitle">
+                id="geneographBoardDetailsTitle">
 
-                New board
+                ${escapeHtml(
+                  modalTitle
+                )}
               </h2>
 
               <p>
-                Create a visual workspace for
-                research, evidence and visual
-                exploration.
+                ${escapeHtml(
+                  modalDescription
+                )}
               </p>
             </div>
 
@@ -63325,7 +63490,7 @@
           </div>
 
           <form
-            id="createGeneoBoardForm">
+            data-geneo-board-details-form>
 
             <div
               class="
@@ -63333,41 +63498,62 @@
                 form-grid
               ">
 
-          <div class="field">
-            <label
-              for="geneoBoardName">
+              <div
+                class="
+                  field
+                ">
 
-              Board name
-            </label>
+                <label
+                  for="geneoBoardDetailsName">
 
-            <input
-              id="geneoBoardName"
-              required
-              maxlength="160"
-              autocomplete="off"
-              placeholder="e.g. Unknown father theory">
-          </div>
+                  Board name
+                </label>
 
-          <div class="field">
-            <label
-              for="geneoBoardDesc">
+                <input
+                  id="geneoBoardDetailsName"
+                  type="text"
+                  required
+                  maxlength="160"
+                  autocomplete="off"
+                  value="${escapeHtml(
+                    board?.title
+                    || ''
+                  )}"
+                  placeholder="e.g. Unknown father theory">
+              </div>
 
-              Description
-            </label>
+              <div
+                class="
+                  field
+                ">
 
-            <textarea
-              id="geneoBoardDesc"
-              rows="3"
-              maxlength="500"
-              placeholder="Research question or intended output"></textarea>
-          </div>
+                <label
+                  for="geneoBoardDetailsDescription">
 
-          ${renderGeneographCollectionChooser({
-            projectId,
-            selectedCollectionIds
-          })}
+                  Description
+                </label>
 
-            <div class="modal-footer">
+                <textarea
+                  id="geneoBoardDetailsDescription"
+                  rows="3"
+                  maxlength="500"
+                  placeholder="Research question or intended output">${escapeHtml(
+                    board?.description
+                    || ''
+                  )}</textarea>
+              </div>
+
+              ${renderGeneographCollectionChooser({
+                projectId,
+                selectedCollectionIds
+              })}
+            </div>
+
+            <div
+              class="
+                modal-footer
+              ">
+
               <button
                 class="
                   button
@@ -63386,7 +63572,9 @@
                 "
                 type="submit">
 
-                Create board
+                ${escapeHtml(
+                  submitLabel
+                )}
               </button>
             </div>
           </form>
@@ -63395,8 +63583,12 @@
 
       const modal =
         modalBackdrop.querySelector(
-          '.modal'
+          '.geneo-board-create-modal'
         );
+
+      if (!modal) {
+        return;
+      }
 
       bindGeneographCollectionChooser(
         modal,
@@ -63406,15 +63598,22 @@
         }
       );
 
-      const nameInput =
-        modalBackdrop.querySelector(
-          '#geneoBoardName'
+      const form =
+        modal.querySelector(
+          '[data-geneo-board-details-form]'
         );
 
-      document
-        .getElementById(
-          'createGeneoBoardForm'
-        )
+      const nameInput =
+        modal.querySelector(
+          '#geneoBoardDetailsName'
+        );
+
+      const descriptionInput =
+        modal.querySelector(
+          '#geneoBoardDetailsDescription'
+        );
+
+      form
         ?.addEventListener(
           'submit',
           event => {
@@ -63424,18 +63623,60 @@
               nameInput
                 ?.value
                 .trim()
-              || 'Untitled board';
+              || '';
+
+            if (!title) {
+              nameInput?.focus();
+
+              showToast(
+                'Enter a board name.'
+              );
+
+              return;
+            }
 
             const description =
-              document
-                .getElementById(
-                  'geneoBoardDesc'
-                )
+              descriptionInput
                 ?.value
                 .trim()
               || '';
 
-            const board = {
+            if (editing) {
+              board.title =
+                title;
+
+              board.description =
+                description;
+
+              setBoardCollections(
+                board.id,
+                [
+                  ...selectedCollectionIds
+                ],
+                {
+                  projectId:
+                    board.projectId,
+
+                  touchModified:
+                    false
+                }
+              );
+
+              board.modified =
+                'Just now';
+
+              closeModal();
+
+              renderGeneographHome();
+
+              showToast(
+                'Board updated.'
+              );
+
+              return;
+            }
+
+            const newBoard = {
               id:
                 createRuntimeId(
                   'board'
@@ -63467,19 +63708,19 @@
                 false,
 
               /*
-                Preview appearance is independent
-                from collections.
+                Preview appearance remains
+                independent from collections.
               */
               thumb:
                 'theory'
             };
 
             sampleData.boards.unshift(
-              board
+              newBoard
             );
 
             state.selectedGeneoBoardId =
-              board.id;
+              newBoard.id;
 
             if (
               state.geneoLibraryView
@@ -63503,9 +63744,26 @@
         );
 
       requestAnimationFrame(
-        () =>
-          nameInput?.focus()
+        () => {
+          nameInput?.focus();
+
+          if (editing) {
+            nameInput?.select();
+          }
+        }
       );
+    }
+
+    function openCreateGeneographBoardModal() {
+      openGeneographBoardDetailsModal();
+    }
+
+    function openEditGeneographBoardModal(
+      boardId
+    ) {
+      openGeneographBoardDetailsModal({
+        boardId
+      });
     }
 
     function openGeneographSettingsModal() {
