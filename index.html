@@ -475,24 +475,6 @@
       background: rgba(212,170,107,.18);
       color: var(--amber);
     }
-    .geneo-nav-icon {
-      width: 19px;
-      height: 19px;
-      flex: 0 0 19px;
-      display: inline-grid;
-      place-items: center;
-      color: var(--text-tertiary);
-    }
-
-    .geneo-nav-icon svg {
-      width: 18px;
-      height: 18px;
-      display: block;
-    }
-
-    .side-link.active .geneo-nav-icon {
-      color: var(--brand-green-300);
-    }
     .sidebar-spacer { flex: 1 1 auto; min-height: var(--space-6); }
     .tip-card {
       border: 1px solid rgba(47,174,116,.22);
@@ -10061,22 +10043,6 @@
       background:
         var(--surface-main);
     }
-    .geneo-type-count {
-      margin-left: auto;
-      min-width: 24px;
-      height: 24px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 8px;
-      border-radius: 999px;
-      font-size: 12px;
-      color: var(--brand-green-300);
-      background: rgba(47,174,116,.13);
-    }
-    .geneo-type-count.purple { color: #b99aff; background: rgba(141,108,232,.18); }
-    .geneo-type-count.blue { color: #7ec5ff; background: rgba(93,173,236,.18); }
-    .geneo-type-count.amber { color: var(--amber); background: rgba(212,170,107,.18); }
     .geneo-board-toolbar {
       display: flex;
       align-items: center;
@@ -10340,43 +10306,101 @@
 
     .geneo-board-body h3 {
       min-height:
-        38px;
-
+        0;
       margin:
         0 0
-        var(--space-2);
-
+        6px;
       overflow:
         hidden;
-
       display:
         -webkit-box;
-
       color:
         var(--text-primary);
-
       font-size:
         15px;
-
       line-height:
         1.28;
-
       line-clamp:
         2;
-
       -webkit-line-clamp:
         2;
-
       -webkit-box-orient:
         vertical;
     }
 
-    .geneo-board-type {
-      margin-bottom:
-        var(--space-2);
+    .geneo-collection-sidebar-empty {
+      padding:
+        var(--space-3);
 
       color:
-        var(--brand-green-300);
+        var(--text-tertiary);
+
+      font-size:
+        12px;
+
+      line-height:
+        1.4;
+    }
+
+    .geneo-board-section-description {
+      max-width:
+        760px;
+
+      margin:
+        calc(
+          -1 * var(--space-2)
+        )
+        0
+        var(--space-4);
+
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        13px;
+
+      line-height:
+        1.5;
+    }
+
+    .geneo-board-collections {
+      min-height:
+        24px;
+      margin-bottom:
+        10px;
+      display:
+        flex;
+      align-items:
+        center;
+      flex-wrap:
+        wrap;
+      gap:
+        6px;
+    }
+
+    .geneo-board-collection-chip {
+      max-width:
+        150px;
+
+      min-height:
+        24px;
+
+      padding:
+        0 8px;
+
+      border-radius:
+        5px;
+
+      background:
+        rgba(
+          255,
+          255,
+          255,
+          .055
+        );
+
+      color:
+        var(--text-secondary);
 
       display:
         inline-flex;
@@ -10384,60 +10408,110 @@
       align-items:
         center;
 
-      align-self:
-        flex-start;
-
-      gap:
-        6px;
+      overflow:
+        hidden;
 
       font-size:
-        12px;
+        11px;
+
+      font-weight:
+        750;
+
+      line-height:
+        1;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
+    }
+
+    .geneo-board-collection-chip.no-collection {
+      background:
+        rgba(
+          255,
+          255,
+          255,
+          .03
+        );
+
+      color:
+        var(--text-tertiary);
 
       font-weight:
         700;
     }
 
-    .geneo-board-type::before {
-      content:
-        "";
-
-      width:
-        6px;
-
-      height:
-        6px;
-
+    .geneo-board-collection-chip.count {
       flex:
-        0 0 6px;
-
-      border-radius:
-        50%;
-
-      background:
-        currentColor;
-    }
-
-    .geneo-board-type.purple {
-      color:
-        #b99aff;
-    }
-
-    .geneo-board-type.blue {
-      color:
-        #7ec5ff;
-    }
-
-    .geneo-board-type.amber {
-      color:
-        var(--amber);
-    }
-
-    .geneo-board-meta {
-      margin-bottom:
-        var(--space-2);
+        0 0 auto;
 
       color:
         var(--text-tertiary);
+    }
+
+    .geneo-board-create-modal {
+      width:
+        min(
+          720px,
+          calc(
+            100vw - 32px
+          )
+        );
+
+      max-height:
+        calc(
+          100vh - 48px
+        );
+
+      overflow:
+        hidden;
+
+      display:
+        grid;
+
+      grid-template-rows:
+        auto
+        minmax(0, 1fr);
+    }
+
+    .geneo-board-create-modal
+    > form {
+      min-height:
+        0;
+
+      display:
+        grid;
+
+      grid-template-rows:
+        minmax(0, 1fr)
+        auto;
+    }
+
+    .geneo-board-create-modal
+    .modal-body {
+      min-height:
+        0;
+
+      overflow-y:
+        auto;
+    }
+
+    .geneo-collection-chooser {
+      min-width:
+        0;
+
+      display:
+        grid;
+
+      gap:
+        var(--space-3);
+    }
+
+    .geneo-collection-chooser-head {
+      min-width:
+        0;
 
       display:
         flex;
@@ -10445,12 +10519,164 @@
       align-items:
         center;
 
-      flex-wrap:
-        wrap;
+      justify-content:
+        space-between;
 
       gap:
-        var(--space-2);
+        var(--space-3);
+    }
 
+    .geneo-collection-chooser-head
+    > label {
+      margin:
+        0;
+
+      color:
+        var(--text-secondary);
+
+      font-weight:
+        800;
+    }
+
+    .geneo-collection-chooser-head
+    > span {
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        11px;
+
+      font-weight:
+        700;
+    }
+
+    .geneo-collection-browse {
+      min-width:
+        0;
+
+      gap:
+        var(--space-3);
+    }
+
+    .geneo-collection-results {
+      height:
+        min(
+          280px,
+          34vh
+        );
+
+      min-height:
+        164px;
+    }
+
+    /*
+      Important:
+      collection checkboxes are choice controls,
+      not standard .field text inputs.
+    */
+    .geneo-collection-chooser
+    .album-picker-result
+    input[type="checkbox"] {
+      width:
+        18px;
+
+      min-width:
+        18px;
+
+      max-width:
+        18px;
+
+      height:
+        18px;
+
+      min-height:
+        18px;
+
+      max-height:
+        18px;
+
+      padding:
+        0;
+
+      margin:
+        0;
+
+      accent-color:
+        var(--brand-green-500);
+    }
+
+    .geneo-collection-create-panel {
+      padding:
+        var(--space-4);
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        rgba(
+          255,
+          255,
+          255,
+          .018
+        );
+    }
+
+    .geneo-inline-collection-actions {
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        flex-end;
+
+      gap:
+        var(--space-3);
+    }
+
+    @media (max-width: 620px) {
+      .geneo-board-create-modal {
+        width:
+          min(
+            100%,
+            calc(
+              100vw - 24px
+            )
+          );
+
+        max-height:
+          calc(
+            100vh - 24px
+          );
+      }
+
+      .geneo-collection-results {
+        height:
+          min(
+            260px,
+            32vh
+          );
+      }
+    }
+    
+    .geneo-board-meta {
+      margin-bottom:
+        10px;
+      color:
+        var(--text-tertiary);
+      display:
+        flex;
+      align-items:
+        center;
+      flex-wrap:
+        wrap;
+      gap:
+        var(--space-2);
       font-size:
         12px;
     }
@@ -10706,13 +10932,13 @@
     }
 
     .geneo-board-list
-    .geneo-board-type {
+    .geneo-board-meta {
       margin-bottom:
         4px;
     }
 
     .geneo-board-list
-    .geneo-board-meta {
+    .geneo-board-collections {
       margin-bottom:
         4px;
     }
@@ -13726,32 +13952,49 @@
     }
 
     .albums-sidebar,
-    .notes-sidebar {
-      height: 100%;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-5);
-      box-sizing: border-box;
+    .notes-sidebar,
+    .geneo-sidebar {
+      height:
+        100%;
+      min-height:
+        0;
+      display:
+        flex;
+      flex-direction:
+        column;
+      gap:
+        var(--space-5);
+      box-sizing:
+        border-box;
     }
 
     .notes-sidebar {
       padding-bottom: var(--space-4);
     }
 
-    .albums-sidebar {
-      padding-bottom: 0;
+    .albums-sidebar,
+    .geneo-sidebar {
+      padding-bottom:
+        0;
     }
 
     .albums-sidebar > div:not(
       .albums-sidebar-tip
+    ),
+    .geneo-sidebar > div:not(
+      .geneo-sidebar-tip
     ) {
-      flex: 0 0 auto;
+      flex:
+        0 0 auto;
     }
 
-    .albums-sidebar-tip {
-      flex: 0 0 auto;
-      margin-top: auto;
+    .albums-sidebar-tip,
+    .geneo-sidebar-tip {
+      flex:
+        0 0 auto;
+
+      margin-top:
+        auto;
     }
 
     .sidebar-entity-row {
@@ -26271,7 +26514,7 @@
       'About GeneoGraph': '- GeneoGraph', 'Prototype information and reference links.': '---------- - --------- - ------.', 'GeneoGraph prototype': '-------- GeneoGraph', 'Version 0.1 prototype - local-first genealogy workspace': '-------- 0.1 - --------- ------- ------------ ----------', 'Active': '-------', 'Help Center would open here.': '----- -------- -- ----- ------.', 'Release notes': '------- - -------', 'Product updates and prototype changes.': '---------- -------- - --------- ---------.', 'View': '--------', 'Privacy policy': '-------- ------------------', 'Privacy documentation placeholder.': '-------- ------------ - ------------------.',
       'Create family tree': '------- -------- ------', 'Import GEDCOM': '------------- GEDCOM', 'Open project': '------- ------', 'Tip of the day': '----- ---', 'You can drag and drop a GEDCOM file anywhere to import it.': '---------- GEDCOM----- - ----- -----, ----- ------------- ---.', 'Learn more': '--------- ?', 'Search projects...': '----- --------', 'Date modified': '----------: ---- ---------', ' Updated': '----------: ------- ---------', ' Name': '----------: ---', ' People count': '----------: ----- -----', 'All projects': '--- -------', 'Search results': '---------- ------', 'Continue where you left off': '---------- - -----, --- -- ----------', 'Last opened': '--------- -------', 'No projects yet': '------- ---- ---', 'No projects match': '------- -- ----------', 'Try another project name or clear the search.': '---------- ------- ----- ------- --- ------- -----.', 'Clear search': '------- -----', 'Welcome back! Here you can create, open, and manage your family-history projects.': '----------, ---------- - ----------- --------- -------- -------.', 'Drop a GeneoGraph or GEDCOM file here to open or import': '---------- ---- GeneoGraph --- GEDCOM --- -------- --- -------', 'Supports .ggproj and .ged files': '-------------- .ggproj - .ged', 'Recent activity': '-------- --------', 'Insights': '-------', 'Sync status': '-------------', 'Project': '------', 'Project overview': '----- -------', 'Project settings': '--------- -------', 'Back to all projects': '----- -- ---- --------', 'Go to Family Tree': '------- - ------', 'Export': '-------', 'Delete project': '------- ------', 'Manage backups': '--------- -------', 'Open': '-------',
       'Navigation': '---------', 'Saved filters': '---------- ----', 'Review center': '----- --------', 'Statistics': '----------', 'Profile': '-------', 'Search people...': '----- -----...', 'Columns': '-------', 'Filter': '------', 'Add person': '-------- --------', ' Birth date': '----------: ---- --------', 'Name': '---', 'Living': '---', 'Deceased': '----', 'Unknown': '----------', 'Living status': '------ -----', 'Birth date': '---- --------', 'Birth place': '----- --------', 'Death date': '---- ------', 'Death place': '----- ------', 'Updated': '---------', 'Actions': '--------', 'Record Info': '---------- - ------', 'Facts': '-----', 'Relationships': '-----', 'Photos': '----', 'Files': '-----', 'Full profile': '------ -------', 'Open profile': '------- -------', 'Add relative': '-------- ------------', 'Connect relative': '------- ------------', 'More actions': '--- --------', 'Back to people': '----- - -----', 'Edit profile': '------------- -------', 'Save changes': '--------- ---------', 'Cancel': '------', 'Locked': '-------------', 'Editing': '--------------', 'Main information': '-------- ----------', 'Education': '-----------', 'Work': '------', 'Other': '------', 'First name': '---', 'Last name': '-------', 'Patronym': '--------', 'Maiden name': '------- -------', 'Prefix': '-------', 'Suffix': '-------', 'Exact date': '------ ----', 'Before': '--', 'After': '-----', 'Between': '-----', 'About / Circa': '-----', 'Cause of Death': '------- ------', 'Death reason': '------- ------', 'Burial place': '----- -----------', 'Record info': '---------- - ------', 'Profile ID': 'ID -------', 'Created': '-------', 'Review issues': '-------- --------', 'Source status': '------ ----------', 'Partly sourced': '-------- ------------', 'Living protected': '------- --------', 'Immediate Family': '--------- -----', 'Parents': '--------', 'Children': '----', 'Siblings': '------ - -----', 'Grandparents': '------- - -------', 'Partners': '-------', 'Partner': '------', 'Spouse': '------(-)', 'Father': '----', 'Mother': '----', 'Brother': '----', 'Sister': '------', 'Grandmother': '-------', 'Grandfather': '-------', 'Cat': '---', 'Timeline': '----------', 'Add fact': '-------- ----', 'Birth': '--------', 'Wedding': '-------', 'Education start': '------ --------', 'Education finish': '--------- --------', 'Archive': '-----', 'Add': '--------', 'Open ?': '------- ?',
-      'New board': '------- -----', 'Import board': '------------- -----', 'Board type': '---------', 'Categories': '---------', 'All Boards': '--- -----', 'Recently viewed': '--------', 'Favourites': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'DNA': '---', 'Publication': '----------', 'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '---- ------------ --- ------------, ------------ - ----------.', 'Search boards...': '----- -----', ' Board type': '----------: --- -----', 'All boards': '--- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Note': '-------', 'Image': '-----------', 'Place': '-----', 'Case': '------', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '-----------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Appearance': '------- ---', 'Layout': '-----', 'Linked to person': '------- - ---------', 'Visual only': '------ ---------',
+      'New board': '------- -----', 'Import board': '------------- -----', 'Board type': '---------', 'Categories': '---------', 'All boards': '--- -----', 'Recently viewed': '--------', 'Favourites': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'DNA': '---', 'Publication': '----------', 'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '---- ------------ --- ------------, ------------ - ----------.', 'Search boards...': '----- -----', ' Board type': '----------: --- -----', 'All boards': '--- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Note': '-------', 'Image': '-----------', 'Place': '-----', 'Case': '------', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '-----------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Appearance': '------- ---', 'Layout': '-----', 'Linked to person': '------- - ---------', 'Visual only': '------ ---------',
       'Add photos': '-------- ----', 'New album': '----- ------', 'All photos': '--- ----', 'Not in Album': '--- -------', 'Recently deleted': '------- --------', 'Search photos...': '----- ----...', ' Filename': '----------: --- -----', ' Photo date': '----------: ---- ----', 'People in this photo': '---- -- ----', 'Date': '----', 'Caption / story': '------- / -------', 'Source': '--------', 'Delete photo': '------- ----', 'Make favourite': '-------- - ---------', 'Remove favourite': '------ -- ----------', 'Tag people': '-------- -----', 'Open photo': '------- ----', 'No people tagged': '---- -- --------', 'Unknown date': '---- ----------', 'Unknown place': '----- ----------',
       'Add files': '-------- -----', 'Create source': '------- --------', 'Sources': '---------', 'Imports': '-------', 'Review': '--------', 'Folders': '-----', 'Search this folder...': '----- - ---- -----...', 'Create folder': '------- -----', ' Updated': '----------: ---------', ' Source status': '----------: ------ ---------', 'Source / provenance': '--------', 'Linked to': '------- -', 'Date / place': '---- / -----', 'OCR': 'OCR', 'File info': '---------- - -----', 'Linked evidence': '--------- --------------', 'Assign source': '--------- --------', 'Run OCR': '--------- OCR', 'Restore': '------------', 'Reviewed': '---------', 'Needs review': '----- --------', 'Missing source': '--- ---------', 'Not linked': '-- -------',
       'Add note': '----- -------', 'New collection': '----- ---------', 'All notes': '--- -------', 'Collections': '---------', 'Search notes...': '----- -------...', 'Cards': '--------', 'List': '------', 'Saved': '---------', 'Linked people': '--------- ----', 'Linked sources': '--------- ---------', 'Linked places': '--------- -----', 'Related notes': '--------- -------', 'Tasks': '------', 'Note type': '--- -------',
@@ -26359,7 +26602,7 @@
       'Navigation': '---------', 'Review center': '----- --------', 'Statistics': '----------', 'Saved filters': '---------- ----', 'Columns': '-------', 'Filter': '------', ' Date modified': '----------: ---- ---------', ' Name': '----------: ---', ' Birth date': '----------: ---- --------', 'Name': '---', 'Birth date': '---- --------', 'Birth Date': '---- --------', 'Birth place': '----- --------', 'Birth Place': '----- --------', 'Death date': '---- ------', 'Death Date': '---- ------', 'Death place': '----- ------', 'Death Place': '----- ------', 'Updated': '---------', 'Rows per page': '----- -- --------', 'Record Info': '---------- - ------', 'Record info': '---------- - ------', 'Facts': '-----', 'Relationships': '-----', 'Record ID': 'ID ------', 'Created': '-------', 'Updated': '---------', 'Review issues': '-------- --------', 'Privacy': '------------------', 'Source status': '------ ----------', 'Partly sourced': '-------- ------------', 'Living protected': '------- ------- -------', 'Main information': '-------- ----------', 'First name': '---', 'Last name': '-------', 'Patronym': '--------', 'Maiden name': '------- -------', 'Maiden Name': '------- -------', 'Prefix': '-------', 'Suffix': '-------', 'Gender': '---', 'Living status': '------ -----', 'Death reason': '------- ------', 'Cause of Death': '------- ------', 'Burial place': '----- -----------', 'Burial Place': '----- -----------', 'Education': '-----------', 'Work': '------', 'Other': '------', 'Education place': '----- --------', 'Company name': '--------', 'Religion': '-------', 'Baptism place': '----- --------', 'Baptism date': '---- --------', 'Immediate Family': '--------- -----', 'Family': '-----',
 
       // Geneograph
-      'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '------ ------------ --- ------------, ------------ - ----------.', 'New board': '------- -----', 'Import board': '------------- -----', 'All Boards': '--- -----', 'Recently viewed': '------- -------------', 'Favourites': '---------', 'Categories': '---------', 'Board type': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'Publication': '----------', 'DNA': '---', 'Search boards...': '----- -----', ' Board type': '----------: --- -----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '--------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Case': '----', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Object palette': '------- --------', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Display name': '------------ ---', 'Life dates': '---- -----', 'Metadata': '----------', 'Short note': '-------- -------', 'Body / description': '----- / --------', 'Delete object': '------- ------', 'Appearance': '------- ---', 'Layout': '-----', 'Card style': '----- --------', 'Show dates': '---------- ----', 'Show place': '---------- -----', 'Show badge': '---------- -----', 'Locked': '-------------', 'Layer': '----', 'Zoom controls': '-------', 'Zoom out': '---------', 'Zoom in': '---------', 'Fit board': '------- -----', 'Fit': '-------',
+      'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '------ ------------ --- ------------, ------------ - ----------.', 'New board': '------- -----', 'Import board': '------------- -----', 'All boards': '--- -----', 'Recently viewed': '------- -------------', 'Favourites': '---------', 'Categories': '---------', 'Board type': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'Publication': '----------', 'DNA': '---', 'Search boards...': '----- -----', ' Board type': '----------: --- -----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '--------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Case': '----', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Object palette': '------- --------', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Display name': '------------ ---', 'Life dates': '---- -----', 'Metadata': '----------', 'Short note': '-------- -------', 'Body / description': '----- / --------', 'Delete object': '------- ------', 'Appearance': '------- ---', 'Layout': '-----', 'Card style': '----- --------', 'Show dates': '---------- ----', 'Show place': '---------- -----', 'Show badge': '---------- -----', 'Locked': '-------------', 'Layer': '----', 'Zoom controls': '-------', 'Zoom out': '---------', 'Zoom in': '---------', 'Fit board': '------- -----', 'Fit': '-------',
 
       // Albums
       'Photos': '----', 'Photo details': '------ ----', 'Select a photo': '-------- ----', 'Select a photo to view details, albums, people, date, place and caption.': '-------- ----, ----- ------- ------, -------, -----, ----, ----- - -------.', 'Grid view': '------', 'List view': '------', 'Search photos-': '----- ----', 'Search photos...': '----- ----...', ' Filename': '----------: --- -----', ' Photo date': '----------: ---- ----', 'Date precision': '-------- ----', 'Caption / story': '------- / -------', 'Add to album': '-------- - ------', 'Delete photo?': '------- ----?', 'This photo will be moved to Recently deleted. You can restore it later from the Albums sidebar.': '---- ----- ---------- - ------- --------. --- ----- ----- ------------ -- ------ --------.', 'No photos yet': '---- ---- ---', 'No deleted photos': '-------- ---- ---', 'No favourite photos yet': '--------- ---- ---- ---', 'Every photo is in an album': '--- ---- --- - --------', 'Open photo': '------- ----',
@@ -30123,6 +30366,11 @@
 
       validateSampleNotesFixture(warn);
 
+      validateSampleGeneographCollections(
+        warn,
+        projectIds
+      );
+
       sampleData.noteCollections.forEach(
         collection => {
           if (
@@ -31185,8 +31433,10 @@
       peopleProfileEditing: false,
       peopleProfileEditTab: 'main',
       geneoView: 'home',
+      geneoLibraryView: 'all',
+      geneoActiveCollectionId: null,
       geneoBoardSearch: '',
-      geneoBoardFilter: 'All Boards',
+      geneoBoardSort: 'modified',
       geneoBoardViewMode: 'grid',
       selectedGeneoBoardId: 'gb1',
       selectedGeneoObjectId: 'go-unknown',
@@ -50231,10 +50481,10 @@
       const contexts = {
         favorites: {
           title:
-            'Favorites',
+            'Favourites',
 
           subtitle:
-            'Photos marked as favorites.',
+            'Photos marked as favourites.',
 
           empty:
             'No favorite photos yet.'
@@ -51155,7 +51405,7 @@
                 data-albums-view="favorites">
 
                 ${icon.star}
-                <span>Favorites</span>
+                <span>Favourites</span>
               </button>
 
               <button
@@ -51600,7 +51850,7 @@
             aria-pressed="${photo.favorite}"
             aria-label="${
               photo.favorite
-                ? 'Remove from favorites'
+                ? 'Remove from favourites'
                 : 'Mark as favorite'
             }">
 
@@ -51730,8 +51980,8 @@
 
           const favoriteLabel =
             photo.favorite
-              ? 'Remove from favorites'
-              : 'Mark as favorite';
+              ? 'Remove from favourites'
+              : 'Mark as favourite';
 
           const favoriteControl = `
             <button
@@ -52461,13 +52711,13 @@
             )}"
             aria-label="${
               photo.favorite
-                ? 'Remove from favorites'
+                ? 'Remove from favourites'
                 : 'Mark as favorite'
             }"
             aria-pressed="${photo.favorite}"
             title="${
               photo.favorite
-                ? 'Remove from favorites'
+                ? 'Remove from favourites'
                 : 'Mark as favorite'
             }">
 
@@ -53335,7 +53585,7 @@
       if (filters.favouriteOnly) {
         chips.push([
           'favouriteOnly',
-          'Favorites only'
+          'Favourites only'
         ]);
       }
 
@@ -53394,7 +53644,7 @@
       menu.className = 'albums-filter-popover';
       menu.id = 'projectMenu';
       const filters = state.albumsFilters || defaultAlbumFilters;
-      menu.innerHTML = `<div class="albums-filter-popover-head"><strong>Filter photos</strong><span>Use filters to narrow down the view.</span></div><div class="albums-filter-popover-body"><label class="albums-filter-field">Person<select data-albums-filter="personId"><option value="">All people</option><option value="none" ${filters.personId === 'none' ? 'selected' : ''}>No people tagged</option>${people.map(person => `<option value="${escapeHtml(person.id)}" ${filters.personId === person.id ? 'selected' : ''}>${escapeHtml(person.names?.display || 'Unnamed person')}</option>`).join('')}</select></label><label class="albums-filter-field">Place<select data-albums-filter="placeId"><option value="">All places</option><option value="none" ${filters.placeId === 'none' ? 'selected' : ''}>No known place</option>${[...placeIds].map(id => `<option value="${escapeHtml(id)}" ${filters.placeId === id ? 'selected' : ''}>${escapeHtml(getPlaceDisplay(id))}</option>`).join('')}</select></label><label class="albums-filter-field">Date<select data-albums-filter="dateRange"><option value="">Any date</option><option value="dated" ${filters.dateRange === 'dated' ? 'selected' : ''}>Known date</option><option value="unknown" ${filters.dateRange === 'unknown' ? 'selected' : ''}>Unknown date</option></select></label><label class="albums-filter-check"><input type="checkbox" data-albums-filter-favorite ${filters.favouriteOnly ? 'checked' : ''}> Favorites only</label></div><div class="albums-filter-popover-footer"><button class="button secondary" type="button" data-albums-filter-clear>Reset</button><button class="button primary" type="button" data-albums-filter-apply>Apply filters</button></div>`;
+      menu.innerHTML = `<div class="albums-filter-popover-head"><strong>Filter photos</strong><span>Use filters to narrow down the view.</span></div><div class="albums-filter-popover-body"><label class="albums-filter-field">Person<select data-albums-filter="personId"><option value="">All people</option><option value="none" ${filters.personId === 'none' ? 'selected' : ''}>No people tagged</option>${people.map(person => `<option value="${escapeHtml(person.id)}" ${filters.personId === person.id ? 'selected' : ''}>${escapeHtml(person.names?.display || 'Unnamed person')}</option>`).join('')}</select></label><label class="albums-filter-field">Place<select data-albums-filter="placeId"><option value="">All places</option><option value="none" ${filters.placeId === 'none' ? 'selected' : ''}>No known place</option>${[...placeIds].map(id => `<option value="${escapeHtml(id)}" ${filters.placeId === id ? 'selected' : ''}>${escapeHtml(getPlaceDisplay(id))}</option>`).join('')}</select></label><label class="albums-filter-field">Date<select data-albums-filter="dateRange"><option value="">Any date</option><option value="dated" ${filters.dateRange === 'dated' ? 'selected' : ''}>Known date</option><option value="unknown" ${filters.dateRange === 'unknown' ? 'selected' : ''}>Unknown date</option></select></label><label class="albums-filter-check"><input type="checkbox" data-albums-filter-favorite ${filters.favouriteOnly ? 'checked' : ''}> Favourites only</label></div><div class="albums-filter-popover-footer"><button class="button secondary" type="button" data-albums-filter-clear>Reset</button><button class="button primary" type="button" data-albums-filter-apply>Apply filters</button></div>`;
       document.body.appendChild(menu);
       const margin = 12;
       const left = Math.min(
@@ -55483,8 +55733,8 @@
 
       const favoriteLabel =
         photo.favorite
-          ? 'Remove from favorites'
-          : 'Mark as favorite';
+          ? 'Remove from favourites'
+          : 'Mark as favourite';
 
       menu.innerHTML = `
         <button
@@ -57948,11 +58198,222 @@
     const GENEO_BOARD_W = 2400;
     const GENEO_BOARD_H = 1400;
 
+    sampleData.boardCollections = [
+      {
+        id:
+          'board-col-research-theory',
+
+        projectId:
+          'p1',
+
+        name:
+          'Research theory',
+
+        description:
+          'Boards for hypotheses, theories and unresolved research questions.'
+      },
+
+      {
+        id:
+          'board-col-tree-design',
+
+        projectId:
+          'p1',
+
+        name:
+          'Tree design',
+
+        description:
+          'Visual family-tree layouts and structural explorations.'
+      },
+
+      {
+        id:
+          'board-col-evidence-map',
+
+        projectId:
+          'p1',
+
+        name:
+          'Evidence map',
+
+        description:
+          'Boards connecting sources, evidence and research conclusions.'
+      },
+
+      {
+        id:
+          'board-col-dna',
+
+        projectId:
+          'p1',
+
+        name:
+          'DNA',
+
+        description:
+          'DNA research, matches and relationship hypotheses.'
+      },
+
+      {
+        id:
+          'board-col-publication',
+
+        projectId:
+          'p1',
+
+        name:
+          'Publication',
+
+        description:
+          'Layouts and visual material prepared for publication.'
+      }
+    ];
+
     sampleData.boards = [
-      { id: 'gb1', title: 'Whiskerfield paternal branch', type: 'Research theory', people: 106, evidence: 71, questions: 18, modified: 'May 24, 2026', favorite: true, thumb: 'theory' },
-      { id: 'gb2', title: 'Whiskerfield Family Tree', type: 'Tree design', people: 835, evidence: 147, questions: 18, modified: 'May 9, 2026', favorite: false, thumb: 'tree' },
-      { id: 'gb3', title: 'Map of evidence for Whiskerfields', type: 'Evidence map', people: 9, evidence: 1, questions: 3, modified: 'Apr 17, 2026', favorite: false, thumb: 'map' },
-      { id: 'gb4', title: 'Full Family Tree', type: 'Tree design', people: 5071, evidence: 12345, questions: 973, modified: 'Jun 2, 2025', favorite: false, thumb: 'tree' }
+      {
+        id:
+          'gb1',
+
+        projectId:
+          'p1',
+
+        title:
+          'Whiskerfield paternal branch',
+
+        description:
+          'Working board for the Whiskerfield paternal branch hypothesis.',
+
+        collectionIds: [
+          'board-col-research-theory'
+        ],
+
+        people:
+          106,
+
+        evidence:
+          71,
+
+        questions:
+          18,
+
+        modified:
+          'May 24, 2026',
+
+        favorite:
+          true,
+
+        thumb:
+          'theory'
+      },
+
+      {
+        id:
+          'gb2',
+
+        projectId:
+          'p1',
+
+        title:
+          'Whiskerfield Family Tree',
+
+        description:
+          'Visual exploration of the Whiskerfield family structure.',
+
+        collectionIds: [
+          'board-col-tree-design'
+        ],
+
+        people:
+          835,
+
+        evidence:
+          147,
+
+        questions:
+          18,
+
+        modified:
+          'May 9, 2026',
+
+        favorite:
+          false,
+
+        thumb:
+          'tree'
+      },
+
+      {
+        id:
+          'gb3',
+
+        projectId:
+          'p1',
+
+        title:
+          'Map of evidence for Whiskerfields',
+
+        description:
+          'Evidence relationships and open research questions.',
+
+        collectionIds: [
+          'board-col-evidence-map'
+        ],
+
+        people:
+          9,
+
+        evidence:
+          1,
+
+        questions:
+          3,
+
+        modified:
+          'Apr 17, 2026',
+
+        favorite:
+          false,
+
+        thumb:
+          'map'
+      },
+
+      {
+        id:
+          'gb4',
+
+        projectId:
+          'p1',
+
+        title:
+          'Full Family Tree',
+
+        description:
+          'Full visual family-tree layout.',
+
+        collectionIds: [
+          'board-col-tree-design'
+        ],
+
+        people:
+          5071,
+
+        evidence:
+          12345,
+
+        questions:
+          973,
+
+        modified:
+          'Jun 2, 2025',
+
+        favorite:
+          false,
+
+        thumb:
+          'tree'
+      }
     ];
 
     sampleData.boardObjects = [
@@ -58115,60 +58576,554 @@
       return sampleData.boardObjects.find(object => object.id === state.selectedGeneoObjectId) || sampleData.boardObjects.find(object => object.type !== 'frame') || sampleData.boardObjects[0];
     }
 
-    function renderGeneographHome() {
-      const filtered = filteredGeneographBoards();
-      sidebar.innerHTML = `
-        <div>
-          <div class="side-section-title">Navigation</div>
-          <div class="side-nav">
-            ${renderGeneoSideButton('All Boards', icon.whiteboard, null)}
-            ${renderGeneoSideButton('Favourites', icon.star, null)}
-          </div>
-        </div>
-        <div>
-          <div class="side-section-title">Categories</div>
-          <div class="side-nav">
-            ${renderGeneoSideButton('Research theory', icon.whiteboard, 1, 'purple')}
-            ${renderGeneoSideButton('Tree design', icon.whiteboard, 2, 'blue')}
-            ${renderGeneoSideButton('Evidence map', icon.whiteboard, 1)}
-            ${renderGeneoSideButton('DNA', icon.whiteboard, 0)}
-            ${renderGeneoSideButton('Publication', icon.whiteboard, 0, 'amber')}
-          </div>
-        </div>
-        <div class="sidebar-spacer"></div>
-        <div class="tip-card"><div class="tip-title">${icon.tip} Tip of the day</div><p>Use Geneograph boards to collect hypotheses before adding relationships to the structured Family Tree.</p>
-        <button
-          class="
-            link
-            tip-link
-          "
-          type="button"
-          data-toast="
-            Geneograph learning center
-            will be added later.
-          ">
+    function normalizeGeneographIdArray(
+      value
+    ) {
+      if (!Array.isArray(value)) {
+        return [];
+      }
 
-          <span
+      return [
+        ...new Set(
+          value
+            .map(item =>
+              String(
+                item || ''
+              ).trim()
+            )
+            .filter(Boolean)
+        )
+      ];
+    }
+
+    function getProjectBoards(
+      projectId =
+        currentProjectId()
+    ) {
+      return (
+        sampleData.boards
+        || []
+      ).filter(board =>
+        board.projectId
+          === projectId
+      );
+    }
+
+    function getGeneographBoard(
+      boardId,
+      {
+        projectId =
+          currentProjectId()
+      } = {}
+    ) {
+      const board =
+        (
+          sampleData.boards
+          || []
+        ).find(item =>
+          item.id === boardId
+        )
+        || null;
+
+      if (
+        !board
+        || (
+          projectId
+          && board.projectId
+            !== projectId
+        )
+      ) {
+        return null;
+      }
+
+      return board;
+    }
+
+    function getProjectBoardCollections(
+      projectId =
+        currentProjectId()
+    ) {
+      return (
+        sampleData.boardCollections
+        || []
+      ).filter(collection =>
+        collection.projectId
+          === projectId
+      );
+    }
+
+    function getBoardCollection(
+      collectionId,
+      {
+        projectId =
+          currentProjectId()
+      } = {}
+    ) {
+      const collection =
+        (
+          sampleData.boardCollections
+          || []
+        ).find(item =>
+          item.id === collectionId
+        )
+        || null;
+
+      if (
+        !collection
+        || (
+          projectId
+          && collection.projectId
+            !== projectId
+        )
+      ) {
+        return null;
+      }
+
+      return collection;
+    }
+
+    function getCollectionsForBoard(
+      boardId,
+      {
+        projectId =
+          currentProjectId()
+      } = {}
+    ) {
+      const board =
+        getGeneographBoard(
+          boardId,
+          {
+            projectId
+          }
+        );
+
+      if (!board) {
+        return [];
+      }
+
+      return (
+        board.collectionIds
+        || []
+      )
+        .map(collectionId =>
+          getBoardCollection(
+            collectionId,
+            {
+              projectId:
+                board.projectId
+            }
+          )
+        )
+        .filter(Boolean);
+    }
+
+    function getBoardsForCollection(
+      collectionId,
+      {
+        projectId =
+          currentProjectId()
+      } = {}
+    ) {
+      const collection =
+        getBoardCollection(
+          collectionId,
+          {
+            projectId
+          }
+        );
+
+      if (!collection) {
+        return [];
+      }
+
+      return getProjectBoards(
+        collection.projectId
+      ).filter(board =>
+        (
+          board.collectionIds
+          || []
+        ).includes(
+          collection.id
+        )
+      );
+    }
+
+    function setBoardCollections(
+      boardId,
+      collectionIds,
+      {
+        projectId =
+          currentProjectId(),
+
+        touchModified =
+          true
+      } = {}
+    ) {
+      const board =
+        getGeneographBoard(
+          boardId,
+          {
+            projectId
+          }
+        );
+
+      if (!board) {
+        return null;
+      }
+
+      const validCollectionIds =
+        new Set(
+          getProjectBoardCollections(
+            board.projectId
+          ).map(collection =>
+            collection.id
+          )
+        );
+
+      const nextCollectionIds =
+        normalizeGeneographIdArray(
+          collectionIds
+        ).filter(collectionId =>
+          validCollectionIds.has(
+            collectionId
+          )
+        );
+
+      const unchanged =
+        nextCollectionIds.length
+          === board.collectionIds.length
+        && nextCollectionIds.every(
+          (
+            collectionId,
+            index
+          ) =>
+            collectionId
+              === board.collectionIds[
+                index
+              ]
+        );
+
+      if (unchanged) {
+        return board;
+      }
+
+      board.collectionIds =
+        nextCollectionIds;
+
+      if (touchModified) {
+        board.modified =
+          'Just now';
+      }
+
+      return board;
+    }
+
+    function addBoardToCollection(
+      boardId,
+      collectionId,
+      options = {}
+    ) {
+      const board =
+        getGeneographBoard(
+          boardId,
+          {
+            projectId:
+              options.projectId
+              || currentProjectId()
+          }
+        );
+
+      if (!board) {
+        return null;
+      }
+
+      return setBoardCollections(
+        board.id,
+        [
+          ...board.collectionIds,
+          collectionId
+        ],
+        options
+      );
+    }
+
+    function removeBoardFromCollection(
+      boardId,
+      collectionId,
+      options = {}
+    ) {
+      const board =
+        getGeneographBoard(
+          boardId,
+          {
+            projectId:
+              options.projectId
+              || currentProjectId()
+          }
+        );
+
+      if (!board) {
+        return null;
+      }
+
+      return setBoardCollections(
+        board.id,
+        board.collectionIds.filter(
+          id =>
+            id !== collectionId
+        ),
+        options
+      );
+    }
+
+    function createGeneographCollection({
+      name,
+      description = '',
+      projectId =
+        currentProjectId()
+    } = {}) {
+      const normalizedName =
+        String(
+          name || ''
+        ).trim();
+
+      if (!normalizedName) {
+        return null;
+      }
+
+      const collection = {
+        id:
+          createRuntimeId(
+            'board-col'
+          ),
+
+        projectId,
+
+        name:
+          normalizedName,
+
+        description:
+          String(
+            description || ''
+          ).trim()
+      };
+
+      sampleData.boardCollections.push(
+        collection
+      );
+
+      return collection;
+    }
+
+    function activeGeneographCollection() {
+      if (
+        state.geneoLibraryView
+          !== 'collection'
+        || !state
+          .geneoActiveCollectionId
+      ) {
+        return null;
+      }
+
+      return getBoardCollection(
+        state.geneoActiveCollectionId
+      );
+    }
+
+    function geneographBoardSearchText(
+      board
+    ) {
+      const collections =
+        getCollectionsForBoard(
+          board.id,
+          {
+            projectId:
+              board.projectId
+          }
+        )
+          .map(collection =>
+            `
+              ${collection.name || ''}
+              ${collection.description || ''}
+            `
+          )
+          .join(' ');
+
+      return `
+        ${board.title || ''}
+        ${board.description || ''}
+        ${collections}
+      `
+        .trim()
+        .toLowerCase();
+    }
+
+    function geneographBoardModifiedTime(
+      board
+    ) {
+      if (
+        board.modified
+          === 'Just now'
+      ) {
+        return Number
+          .POSITIVE_INFINITY;
+      }
+
+      const timestamp =
+        Date.parse(
+          board.modified || ''
+        );
+
+      return Number.isFinite(
+        timestamp
+      )
+        ? timestamp
+        : 0;
+    }
+
+    function renderGeneographHome() {
+      const filtered =
+        filteredGeneographBoards();
+
+      const activeCollection =
+        activeGeneographCollection();
+
+      const sectionTitle =
+        activeCollection
+          ? activeCollection.name
+          : state.geneoLibraryView
+              === 'favorites'
+            ? 'Favourites'
+            : 'All boards';
+
+      const sectionIcon =
+        activeCollection
+          ? icon.folder
+          : state.geneoLibraryView
+              === 'favorites'
+            ? icon.star
+            : icon.whiteboard;
+
+      const sectionDescription =
+        activeCollection
+          ?.description
+        || '';
+
+      sidebar.innerHTML = `
+        <nav
+          class="
+            geneo-sidebar
+          "
+          aria-label="Geneograph navigation">
+
+          <div>
+            <div
+              class="
+                side-section-title
+              ">
+
+              Navigation
+            </div>
+
+            <div class="side-nav">
+              ${renderGeneoLibraryViewButton(
+                'all',
+                'All Boards',
+                icon.whiteboard
+              )}
+
+              ${renderGeneoLibraryViewButton(
+                'favorites',
+                'Favourites',
+                icon.star
+              )}
+            </div>
+          </div>
+
+          <div>
+            <div
+              class="
+                side-section-title
+                with-add
+              ">
+
+              <span>
+                Collections
+              </span>
+
+              <button
+                class="
+                  side-add-button
+                "
+                type="button"
+                data-geneo-add-collection
+                aria-label="Create collection"
+                title="Create collection">
+
+                ${icon.plus}
+              </button>
+            </div>
+
+            <div class="side-nav">
+              ${renderGeneographCollectionSidebarRows()}
+            </div>
+          </div>
+
+          <div
             class="
-              tip-link-text
+              geneo-sidebar-tip
             ">
 
-            Learn more
-          </span>
+            <div class="tip-card">
+              <div class="tip-title">
+                ${icon.tip}
+                Tip of the day
+              </div>
 
-          <span
-            class="
-              tip-link-icon
-            "
-            aria-hidden="true">
+              <p>
+                Use Geneograph boards to collect
+                hypotheses before adding relationships
+                to the structured Family Tree.
+              </p>
 
-            ${icon.openlink}
-          </span>
-        </button>
-        </div>
+              <button
+                class="
+                  link
+                  tip-link
+                "
+                type="button"
+                data-toast="
+                  Geneograph learning center
+                  will be added later.
+                ">
+
+                <span
+                  class="
+                    tip-link-text
+                  ">
+
+                  Learn more
+                </span>
+
+                <span
+                  class="
+                    tip-link-icon
+                  "
+                  aria-hidden="true">
+
+                  ${icon.openlink}
+                </span>
+              </button>
+            </div>
+          </div>
+        </nav>
       `;
+
       main.innerHTML = `
-        <section class="geneo-home-page">
+        <section
+          class="
+            geneo-home-page
+          ">
 
           ${renderArchivePageHead({
             title:
@@ -58203,17 +59158,46 @@
               </button>
             `
           })}
-          <div class="geneo-board-toolbar">
-            <div class="geneo-board-toolbar-left">
-              <label class="app-search-field" aria-label="Search boards">${icon.search}<input id="geneoBoardSearch" type="search" placeholder="Search boards..." value="${escapeHtml(state.geneoBoardSearch)}"></label>
+
+          <div
+            class="
+              geneo-board-toolbar
+            ">
+
+            <div
+              class="
+                geneo-board-toolbar-left
+              ">
+
+              <label
+                class="
+                  app-search-field
+                "
+                aria-label="Search boards">
+
+                ${icon.search}
+
+                <input
+                  id="geneoBoardSearch"
+                  type="search"
+                  placeholder="Search boards..."
+                  value="${escapeHtml(
+                    state.geneoBoardSearch
+                  )}">
+              </label>
             </div>
-            <div class="geneo-board-toolbar-right">
+
+            <div
+              class="
+                geneo-board-toolbar-right
+              ">
+
               ${renderAppSortSelect({
                 id:
                   'geneoBoardSort',
 
                 value:
-                  'modified',
+                  state.geneoBoardSort,
 
                 ariaLabel:
                   'Sort boards',
@@ -58229,82 +59213,299 @@
                     label:
                       'Date modified'
                   },
+
                   {
                     value:
                       'name',
 
                     label:
                       'Name'
-                  },
-                  {
-                    value:
-                      'type',
-
-                    label:
-                      'Board type'
                   }
                 ]
               })}
-              <button class="toolbar-button ${state.geneoBoardViewMode === 'grid' ? 'active' : ''}" type="button" data-geneo-board-view="grid" aria-label="Grid view">${icon.grid}</button>
-              <button class="toolbar-button ${state.geneoBoardViewMode === 'list' ? 'active' : ''}" type="button" data-geneo-board-view="list" aria-label="List view">${icon.list}</button>
+
+              <button
+                class="
+                  toolbar-button
+                  ${
+                    state.geneoBoardViewMode
+                      === 'grid'
+                      ? 'active'
+                      : ''
+                  }
+                "
+                type="button"
+                data-geneo-board-view="grid"
+                aria-label="Grid view">
+
+                ${icon.grid}
+              </button>
+
+              <button
+                class="
+                  toolbar-button
+                  ${
+                    state.geneoBoardViewMode
+                      === 'list'
+                      ? 'active'
+                      : ''
+                  }
+                "
+                type="button"
+                data-geneo-board-view="list"
+                aria-label="List view">
+
+                ${icon.list}
+              </button>
             </div>
           </div>
-          <div class="geneo-board-section">
-            <h2 class="section-heading">${icon.whiteboard} All boards (${filtered.length})</h2>
-            ${renderGeneographBoardCollection(filtered)}
+
+          <div
+            class="
+              geneo-board-section
+            ">
+
+            <h2
+              class="
+                section-heading
+              ">
+
+              ${sectionIcon}
+
+              ${escapeHtml(
+                sectionTitle
+              )}
+
+              (${filtered.length})
+            </h2>
+
+            ${
+              sectionDescription
+                ? `
+                  <p
+                    class="
+                      geneo-board-section-description
+                    ">
+
+                    ${escapeHtml(
+                      sectionDescription
+                    )}
+                  </p>
+                `
+                : ''
+            }
+
+            ${renderGeneographBoardCollection(
+              filtered
+            )}
           </div>
         </section>
       `;
+
       bindGeneographHome();
     }
 
-    function renderGeneoSideButton(label, iconHtml, count, cls = '') {
-      const active = state.geneoBoardFilter === label;
-      return `<button class="side-link ${active ? 'active' : ''}" type="button" data-geneo-filter="${escapeHtml(label)}">
-        <span class="geneo-nav-icon" aria-hidden="true">${iconHtml}</span>
-        <span>${label}</span>
-        ${count !== null && count !== undefined ? `<span class="geneo-type-count ${cls}">${count}</span>` : ''}
-      </button>`;
+    function renderGeneoLibraryViewButton(
+      view,
+      label,
+      iconHtml
+    ) {
+      const active =
+        state.geneoLibraryView
+          === view;
+
+      return `
+        <button
+          class="
+            side-link
+            ${active ? 'active' : ''}
+          "
+          type="button"
+          data-geneo-library-view="${escapeHtml(
+            view
+          )}">
+
+          ${iconHtml}
+
+          <span>
+            ${escapeHtml(
+              label
+            )}
+          </span>
+        </button>
+      `;
+    }
+
+    function renderGeneographCollectionSidebarRows() {
+      const collections =
+        getProjectBoardCollections();
+
+      if (!collections.length) {
+        return `
+          <div
+            class="
+              geneo-collection-sidebar-empty
+            ">
+
+            No collections yet.
+          </div>
+        `;
+      }
+
+      return collections
+        .map(collection => {
+          const active =
+            state.geneoLibraryView
+              === 'collection'
+            && state
+              .geneoActiveCollectionId
+              === collection.id;
+
+          return `
+            <div
+              class="
+                sidebar-entity-row
+                ${active ? 'active' : ''}
+              ">
+
+              <button
+                class="
+                  sidebar-entity-main
+                "
+                type="button"
+                data-geneo-collection="${escapeHtml(
+                  collection.id
+                )}"
+                title="${escapeHtml(
+                  collection.name
+                )}">
+
+                ${icon.folder}
+
+                <span
+                  class="
+                    sidebar-entity-name
+                  ">
+
+                  ${escapeHtml(
+                    collection.name
+                  )}
+                </span>
+              </button>
+
+              <button
+                class="
+                  more-button
+                  sidebar-entity-more
+                "
+                type="button"
+                data-geneo-collection-menu="${escapeHtml(
+                  collection.id
+                )}"
+                aria-label="Actions for ${escapeHtml(
+                  collection.name
+                )}"
+                aria-haspopup="menu">
+
+                ${icon.more}
+              </button>
+            </div>
+          `;
+        })
+        .join('');
     }
 
     function filteredGeneographBoards() {
-      const q =
+      const projectId =
+        currentProjectId();
+
+      const query =
         state.geneoBoardSearch
           .trim()
           .toLowerCase();
 
-      return sampleData.boards.filter(
-        board => {
-          const textMatch =
-            !q
-            || `${
-              board.title
-            } ${
-              board.type
-            }`
-              .toLowerCase()
-              .includes(
-                q
-              );
+      let list =
+        getProjectBoards(
+          projectId
+        );
 
-          const filter =
-            state.geneoBoardFilter;
-
-          const filterMatch =
-            filter === 'All Boards'
-            || (
-              filter === 'Favourites'
-                ? board.favorite
-                : board.type
-                  === filter
-            );
-
-          return (
-            textMatch
-            && filterMatch
+      if (
+        state.geneoLibraryView
+          === 'favorites'
+      ) {
+        list =
+          list.filter(board =>
+            board.favorite
           );
-        }
-      );
+      }
+
+      if (
+        state.geneoLibraryView
+          === 'collection'
+      ) {
+        const collection =
+          activeGeneographCollection();
+
+        list =
+          collection
+            ? list.filter(board =>
+                (
+                  board.collectionIds
+                  || []
+                ).includes(
+                  collection.id
+                )
+              )
+            : [];
+      }
+
+      if (query) {
+        list =
+          list.filter(board =>
+            geneographBoardSearchText(
+              board
+            ).includes(
+              query
+            )
+          );
+      }
+
+      list =
+        list.slice();
+
+      if (
+        state.geneoBoardSort
+          === 'name'
+      ) {
+        list.sort(
+          (
+            first,
+            second
+          ) =>
+            String(
+              first.title || ''
+            ).localeCompare(
+              String(
+                second.title || ''
+              )
+            )
+        );
+      } else {
+        list.sort(
+          (
+            first,
+            second
+          ) =>
+            geneographBoardModifiedTime(
+              second
+            )
+            - geneographBoardModifiedTime(
+                first
+              )
+        );
+      }
+
+      return list;
     }
 
     function openGeneographImportBoardModal() {
@@ -58364,20 +59565,17 @@
         message =
           'No boards match this search.';
       } else if (
-        state.geneoBoardFilter
-          === 'Favourites'
+        state.geneoLibraryView
+          === 'favorites'
       ) {
         message =
           'No favourite boards yet.';
       } else if (
-        state.geneoBoardFilter
-          !== 'All Boards'
+        state.geneoLibraryView
+          === 'collection'
       ) {
         message =
-          `No ${
-            state.geneoBoardFilter
-              .toLowerCase()
-          } boards yet.`;
+          'No boards in this collection yet.';
       }
 
       return `
@@ -58405,15 +59603,15 @@
             ? 'geneo-board-list'
             : 'geneo-board-grid';
 
-      /*
-        New Board is a library action,
-        not a search/category result.
-      */
       const showNewBoardTile =
-        state.geneoBoardFilter
-          === 'All Boards'
-        && !state.geneoBoardSearch
-          .trim();
+        !state.geneoBoardSearch
+          .trim()
+        && (
+          state.geneoLibraryView
+            === 'all'
+          || state.geneoLibraryView
+            === 'collection'
+        );
 
       if (
         !list.length
@@ -58441,21 +59639,86 @@
       `;
     }
 
+    function renderGeneographBoardCollectionChips(
+      board,
+      limit = 2
+    ) {
+      const collections =
+        getCollectionsForBoard(
+          board.id,
+          {
+            projectId:
+              board.projectId
+          }
+        );
+
+      if (!collections.length) {
+        return `
+          <div
+            class="
+              geneo-board-collections
+              is-empty
+            "
+            aria-hidden="true">
+          </div>
+        `;
+      }
+
+      const visible =
+        collections.slice(
+          0,
+          limit
+        );
+
+      const hiddenCount =
+        collections.length
+        - visible.length;
+
+      return `
+        <div
+          class="
+            geneo-board-collections
+          ">
+
+          ${visible
+            .map(collection => `
+              <span
+                class="
+                  geneo-board-collection-chip
+                "
+                title="${escapeHtml(
+                  collection.name
+                )}">
+
+                ${escapeHtml(
+                  collection.name
+                )}
+              </span>
+            `)
+            .join('')}
+
+          ${
+            hiddenCount > 0
+              ? `
+                <span
+                  class="
+                    geneo-board-collection-chip
+                    count
+                  "
+                  title="${hiddenCount} more collections">
+
+                  +${hiddenCount}
+                </span>
+              `
+              : ''
+          }
+        </div>
+      `;
+    }
+
     function renderGeneographBoardCard(
       board
     ) {
-      const typeClass =
-        board.type
-          === 'Research theory'
-            ? 'purple'
-            : board.type
-              === 'Tree design'
-                ? 'blue'
-                : board.type
-                  === 'Publication'
-                    ? 'amber'
-                    : '';
-
       const favouriteLabel =
         board.favorite
           ? `Remove ${board.title} from favourites`
@@ -58491,68 +59754,60 @@
             class="
               geneo-board-body
             ">
+          <h3>
+            ${escapeHtml(
+              board.title
+            )}
+          </h3>
 
-            <h3>
-              ${escapeHtml(
-                board.title
-              )}
-            </h3>
+          <div
+            class="
+              geneo-board-meta
+            ">
 
-            <div
+            <span
               class="
-                geneo-board-type
-                ${typeClass}
+                geneo-board-meta-item
               ">
 
-              ${escapeHtml(
-                board.type
-              )}
-            </div>
+              ${icon.peoplegroup}
 
-            <div
+              <span>
+                ${board.people}
+                people
+              </span>
+            </span>
+
+            <span
               class="
-                geneo-board-meta
+                geneo-board-meta-item
               ">
 
-              <span
-                class="
-                  geneo-board-meta-item
-                ">
+              ${icon.file}
 
-                ${icon.peoplegroup}
-
-                <span>
-                  ${board.people}
-                  people
-                </span>
+              <span>
+                ${board.evidence}
+                evidence
               </span>
+            </span>
 
-              <span
-                class="
-                  geneo-board-meta-item
-                ">
+            <span
+              class="
+                geneo-board-meta-item
+              ">
 
-                ${icon.file}
+              ${icon.help}
 
-                <span>
-                  ${board.evidence}
-                  evidence
-                </span>
+              <span>
+                ${board.questions}
+                questions
               </span>
+            </span>
+          </div>
 
-              <span
-                class="
-                  geneo-board-meta-item
-                ">
-
-                ${icon.help}
-
-                <span>
-                  ${board.questions}
-                  questions
-                </span>
-              </span>
-            </div>
+          ${renderGeneographBoardCollectionChips(
+            board
+          )}
 
             <div
               class="
@@ -58608,10 +59863,7 @@
                   board.favorite
                     ? 'true'
                     : 'false'
-                }"
-                title="${escapeHtml(
-                  favouriteLabel
-                )}">
+                }">
 
                 ${icon.star}
               </button>
@@ -58636,6 +59888,1412 @@
       `;
     }
 
+    function renderGeneographCollectionChoiceRows(
+      projectId,
+      selectedCollectionIds,
+      query = ''
+    ) {
+      const normalizedQuery =
+        String(
+          query || ''
+        )
+          .trim()
+          .toLowerCase();
+
+      const collections =
+        getProjectBoardCollections(
+          projectId
+        )
+          .filter(collection => {
+            if (!normalizedQuery) {
+              return true;
+            }
+
+            return `
+              ${collection.name || ''}
+              ${collection.description || ''}
+            `
+              .toLowerCase()
+              .includes(
+                normalizedQuery
+              );
+          });
+
+      if (!collections.length) {
+        if (normalizedQuery) {
+          return `
+            <div
+              class="
+                album-picker-empty
+              ">
+
+              <div
+                class="
+                  album-picker-empty-card
+                ">
+
+                <strong>
+                  No collections match this search
+                </strong>
+
+                <p>
+                  Try another collection name
+                  or description.
+                </p>
+
+                <button
+                  class="
+                    button
+                    secondary
+                  "
+                  type="button"
+                  data-geneo-collection-clear-search>
+
+                  Clear search
+                </button>
+              </div>
+            </div>
+          `;
+        }
+
+        return `
+          <div
+            class="
+              album-picker-empty
+            ">
+
+            <div
+              class="
+                album-picker-empty-card
+              ">
+
+              <strong>
+                No collections yet
+              </strong>
+
+              <p>
+                Create a collection to organize
+                this board.
+              </p>
+
+              <button
+                class="
+                  button
+                  primary
+                "
+                type="button"
+                data-geneo-inline-collection-toggle>
+
+                Create collection
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      return collections
+        .map(collection => {
+          const selected =
+            selectedCollectionIds.has(
+              collection.id
+            );
+
+          const boardCount =
+            getBoardsForCollection(
+              collection.id,
+              {
+                projectId
+              }
+            ).length;
+
+          return `
+            <label
+              class="
+                album-picker-result
+                ${
+                  selected
+                    ? 'is-selected'
+                    : ''
+                }
+              "
+              data-geneo-collection-row="${escapeHtml(
+                collection.id
+              )}">
+
+              <span
+                class="
+                  album-picker-cover
+                "
+                aria-hidden="true">
+
+                ${icon.folder}
+              </span>
+
+              <span
+                class="
+                  album-picker-copy
+                ">
+
+                <strong>
+                  ${escapeHtml(
+                    collection.name
+                    || 'Untitled collection'
+                  )}
+                </strong>
+
+                <span
+                  class="
+                    album-picker-description
+                  ">
+
+                  ${escapeHtml(
+                    collection.description
+                    || 'No description'
+                  )}
+                </span>
+
+                <span
+                  class="
+                    album-picker-meta
+                  ">
+
+                  ${boardCount}
+                  ${
+                    boardCount === 1
+                      ? 'board'
+                      : 'boards'
+                  }
+                </span>
+              </span>
+
+              <input
+                type="checkbox"
+                value="${escapeHtml(
+                  collection.id
+                )}"
+                data-geneo-collection-choice
+                ${
+                  selected
+                    ? 'checked'
+                    : ''
+                }
+                aria-label="${escapeHtml(
+                  `${
+                    selected
+                      ? 'Remove'
+                      : 'Add'
+                  } ${
+                    collection.name
+                  }`
+                )}">
+            </label>
+          `;
+        })
+        .join('');
+    }
+
+    function renderGeneographCollectionChooser({
+      projectId =
+        currentProjectId(),
+
+      selectedCollectionIds =
+        new Set()
+    } = {}) {
+      const collections =
+        getProjectBoardCollections(
+          projectId
+        );
+
+      return `
+        <section
+          class="
+            geneo-collection-chooser
+          "
+          aria-labelledby="geneoCollectionChooserLabel">
+
+          <div
+            class="
+              geneo-collection-chooser-head
+            ">
+
+            <label
+              id="geneoCollectionChooserLabel">
+
+              Collections
+            </label>
+
+            <span>
+              Optional
+            </span>
+          </div>
+
+          <div
+            class="
+              album-picker-browse
+              geneo-collection-browse
+            "
+            data-geneo-collection-browse>
+
+            <div
+              class="
+                field
+                photo-people-search-field
+                album-picker-search
+              ">
+
+              <label
+                for="geneoCollectionSearch">
+
+                Find collections
+              </label>
+
+              <div
+                class="
+                  search-input
+                ">
+
+                ${icon.search}
+
+                <input
+                  id="geneoCollectionSearch"
+                  type="search"
+                  data-geneo-collection-search
+                  placeholder="Search collections"
+                  autocomplete="off">
+              </div>
+            </div>
+
+            <section
+              class="
+                album-picker-results-panel
+              ">
+
+              <div
+                class="
+                  album-picker-results-head
+                ">
+
+                <div
+                  class="
+                    album-picker-results-heading
+                  ">
+
+                  <strong
+                    data-geneo-collection-results-title>
+
+                    All collections
+                  </strong>
+
+                  <span
+                    data-geneo-collection-results-meta>
+
+                    ${collections.length}
+                    ${
+                      collections.length === 1
+                        ? 'collection'
+                        : 'collections'
+                    }
+                  </span>
+                </div>
+
+                <button
+                  class="
+                    button
+                    secondary
+                    compact
+                    album-picker-new-button
+                  "
+                  type="button"
+                  data-geneo-inline-collection-toggle>
+
+                  ${icon.plus}
+                  New collection
+                </button>
+              </div>
+
+              <div
+                class="
+                  photo-people-results
+                  album-picker-results
+                  geneo-collection-results
+                "
+                data-geneo-collection-choice-list>
+
+                ${renderGeneographCollectionChoiceRows(
+                  projectId,
+                  selectedCollectionIds
+                )}
+              </div>
+            </section>
+          </div>
+
+          <div
+            class="
+              album-picker-create
+              geneo-collection-create-panel
+            "
+            data-geneo-inline-collection-panel
+            hidden>
+
+            <div
+              class="
+                album-picker-create-copy
+              ">
+
+              <strong>
+                Create a new collection
+              </strong>
+
+              <span>
+                The new collection will be
+                selected automatically.
+              </span>
+            </div>
+
+            <div
+              class="
+                album-picker-create-fields
+              ">
+
+              <div class="field">
+                <label
+                  for="geneoInlineCollectionName">
+
+                  Collection name
+                </label>
+
+                <input
+                  id="geneoInlineCollectionName"
+                  type="text"
+                  maxlength="120"
+                  data-geneo-inline-collection-name
+                  autocomplete="off"
+                  placeholder="e.g. Pawford research">
+              </div>
+
+              <div class="field">
+                <label
+                  for="geneoInlineCollectionDescription">
+
+                  Description
+                </label>
+
+                <textarea
+                  id="geneoInlineCollectionDescription"
+                  rows="3"
+                  maxlength="500"
+                  data-geneo-inline-collection-description
+                  placeholder="Optional description"></textarea>
+              </div>
+            </div>
+
+            <div
+              class="
+                geneo-inline-collection-actions
+              ">
+
+              <button
+                class="
+                  button
+                  secondary
+                "
+                type="button"
+                data-geneo-inline-collection-cancel>
+
+                Back
+              </button>
+
+              <button
+                class="
+                  button
+                  primary
+                "
+                type="button"
+                data-geneo-inline-collection-create>
+
+                Create and select
+              </button>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function bindGeneographCollectionChooser(
+      root,
+      {
+        projectId =
+          currentProjectId(),
+
+        selectedCollectionIds
+      }
+    ) {
+      if (
+        !root
+        || !selectedCollectionIds
+      ) {
+        return;
+      }
+
+      let query =
+        '';
+
+      const browsePanel =
+        root.querySelector(
+          '[data-geneo-collection-browse]'
+        );
+
+      const createPanel =
+        root.querySelector(
+          '[data-geneo-inline-collection-panel]'
+        );
+
+      const resultsHost =
+        root.querySelector(
+          '[data-geneo-collection-choice-list]'
+        );
+
+      const resultsTitle =
+        root.querySelector(
+          '[data-geneo-collection-results-title]'
+        );
+
+      const resultsMeta =
+        root.querySelector(
+          '[data-geneo-collection-results-meta]'
+        );
+
+      const searchInput =
+        root.querySelector(
+          '[data-geneo-collection-search]'
+        );
+
+      const nameInput =
+        root.querySelector(
+          '[data-geneo-inline-collection-name]'
+        );
+
+      const descriptionInput =
+        root.querySelector(
+          '[data-geneo-inline-collection-description]'
+        );
+
+      const visibleCollections =
+        () => {
+          const normalizedQuery =
+            query
+              .trim()
+              .toLowerCase();
+
+          return getProjectBoardCollections(
+            projectId
+          ).filter(collection => {
+            if (!normalizedQuery) {
+              return true;
+            }
+
+            return `
+              ${collection.name || ''}
+              ${collection.description || ''}
+            `
+              .toLowerCase()
+              .includes(
+                normalizedQuery
+              );
+          });
+        };
+
+      const updateResultsMeta =
+        () => {
+          const visible =
+            visibleCollections();
+
+          if (resultsTitle) {
+            resultsTitle.textContent =
+              query.trim()
+                ? 'Search results'
+                : 'All collections';
+          }
+
+          if (resultsMeta) {
+            resultsMeta.textContent =
+              `${
+                visible.length
+              } ${
+                visible.length === 1
+                  ? 'collection'
+                  : 'collections'
+              } · ${
+                selectedCollectionIds.size
+              } selected`;
+          }
+        };
+
+      const renderResults =
+        () => {
+          if (!resultsHost) {
+            return;
+          }
+
+          resultsHost.innerHTML =
+            renderGeneographCollectionChoiceRows(
+              projectId,
+              selectedCollectionIds,
+              query
+            );
+
+          updateResultsMeta();
+        };
+
+      const showBrowse =
+        () => {
+          if (browsePanel) {
+            browsePanel.hidden =
+              false;
+          }
+
+          if (createPanel) {
+            createPanel.hidden =
+              true;
+          }
+        };
+
+      const showCreate =
+        () => {
+          if (browsePanel) {
+            browsePanel.hidden =
+              true;
+          }
+
+          if (createPanel) {
+            createPanel.hidden =
+              false;
+          }
+
+          requestAnimationFrame(
+            () =>
+              nameInput?.focus()
+          );
+        };
+
+      searchInput
+        ?.addEventListener(
+          'input',
+          event => {
+            query =
+              event.currentTarget
+                .value;
+
+            renderResults();
+          }
+        );
+
+      root.addEventListener(
+        'change',
+        event => {
+          const checkbox =
+            event.target.closest(
+              '[data-geneo-collection-choice]'
+            );
+
+          if (!checkbox) {
+            return;
+          }
+
+          const collectionId =
+            checkbox.value;
+
+          if (checkbox.checked) {
+            selectedCollectionIds.add(
+              collectionId
+            );
+          } else {
+            selectedCollectionIds.delete(
+              collectionId
+            );
+          }
+
+          checkbox
+            .closest(
+              '[data-geneo-collection-row]'
+            )
+            ?.classList.toggle(
+              'is-selected',
+              checkbox.checked
+            );
+
+          updateResultsMeta();
+        }
+      );
+
+      root.addEventListener(
+        'click',
+        event => {
+          if (
+            event.target.closest(
+              '[data-geneo-inline-collection-toggle]'
+            )
+          ) {
+            event.preventDefault();
+
+            showCreate();
+
+            return;
+          }
+
+          if (
+            event.target.closest(
+              '[data-geneo-inline-collection-cancel]'
+            )
+          ) {
+            event.preventDefault();
+
+            showBrowse();
+
+            searchInput?.focus();
+
+            return;
+          }
+
+          if (
+            event.target.closest(
+              '[data-geneo-collection-clear-search]'
+            )
+          ) {
+            event.preventDefault();
+
+            query =
+              '';
+
+            if (searchInput) {
+              searchInput.value =
+                '';
+            }
+
+            renderResults();
+
+            searchInput?.focus();
+
+            return;
+          }
+
+          if (
+            !event.target.closest(
+              '[data-geneo-inline-collection-create]'
+            )
+          ) {
+            return;
+          }
+
+          event.preventDefault();
+
+          const name =
+            nameInput
+              ?.value
+              .trim()
+            || '';
+
+          const description =
+            descriptionInput
+              ?.value
+              .trim()
+            || '';
+
+          if (!name) {
+            nameInput?.focus();
+
+            showToast(
+              'Enter a collection name.'
+            );
+
+            return;
+          }
+
+          const collection =
+            createGeneographCollection({
+              name,
+              description,
+              projectId
+            });
+
+          if (!collection) {
+            return;
+          }
+
+          selectedCollectionIds.add(
+            collection.id
+          );
+
+          if (nameInput) {
+            nameInput.value =
+              '';
+          }
+
+          if (descriptionInput) {
+            descriptionInput.value =
+              '';
+          }
+
+          query =
+            '';
+
+          if (searchInput) {
+            searchInput.value =
+              '';
+          }
+
+          showBrowse();
+
+          renderResults();
+
+          requestAnimationFrame(
+            () => {
+              root
+                .querySelector(
+                  `[data-geneo-collection-row="${
+                    CSS.escape(
+                      collection.id
+                    )
+                  }"]`
+                )
+                ?.scrollIntoView({
+                  block:
+                    'nearest'
+                });
+            }
+          );
+
+          showToast(
+            'Collection created.'
+          );
+        }
+      );
+
+      renderResults();
+    }
+
+    function renderGeneographCollectionModal({
+      titleId,
+      title,
+      intro,
+      formId,
+      nameId,
+      descriptionId,
+      name = '',
+      description = '',
+      submitLabel
+    }) {
+      return `
+        <div
+          class="
+            modal
+            geneo-collection-modal
+          "
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="${escapeHtml(
+            titleId
+          )}">
+
+          <div class="modal-header">
+            <div>
+              <h2
+                id="${escapeHtml(
+                  titleId
+                )}">
+
+                ${escapeHtml(
+                  title
+                )}
+              </h2>
+
+              <p>
+                ${escapeHtml(
+                  intro
+                )}
+              </p>
+            </div>
+
+            <button
+              class="
+                close-button
+              "
+              type="button"
+              data-close
+              aria-label="Close">
+
+              ${icon.close}
+            </button>
+          </div>
+
+          <form
+            class="
+              geneo-collection-form
+            "
+            id="${escapeHtml(
+              formId
+            )}">
+
+            <div
+              class="
+                modal-body
+                form-grid
+              ">
+
+              <div class="field">
+                <label
+                  for="${escapeHtml(
+                    nameId
+                  )}">
+
+                  Collection name
+                </label>
+
+                <input
+                  id="${escapeHtml(
+                    nameId
+                  )}"
+                  type="text"
+                  required
+                  maxlength="120"
+                  autocomplete="off"
+                  value="${escapeHtml(
+                    name
+                  )}"
+                  placeholder="e.g. Pawford research">
+              </div>
+
+              <div class="field">
+                <label
+                  for="${escapeHtml(
+                    descriptionId
+                  )}">
+
+                  Description
+                </label>
+
+                <textarea
+                  id="${escapeHtml(
+                    descriptionId
+                  )}"
+                  rows="4"
+                  maxlength="500"
+                  placeholder="Optional description">${escapeHtml(
+                    description
+                  )}</textarea>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                class="
+                  button
+                  secondary
+                "
+                type="button"
+                data-close>
+
+                Cancel
+              </button>
+
+              <button
+                class="
+                  button
+                  primary
+                "
+                type="submit">
+
+                ${escapeHtml(
+                  submitLabel
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      `;
+    }
+
+    function openNewGeneographCollectionModal() {
+      openModal(
+        renderGeneographCollectionModal({
+          titleId:
+            'newGeneographCollectionTitle',
+
+          title:
+            'Create collection',
+
+          intro:
+            'Collections keep related boards together.',
+
+          formId:
+            'geneographCollectionForm',
+
+          nameId:
+            'geneographCollectionName',
+
+          descriptionId:
+            'geneographCollectionDescription',
+
+          submitLabel:
+            'Create collection'
+        })
+      );
+
+      const form =
+        modalBackdrop.querySelector(
+          '#geneographCollectionForm'
+        );
+
+      const nameInput =
+        modalBackdrop.querySelector(
+          '#geneographCollectionName'
+        );
+
+      const descriptionInput =
+        modalBackdrop.querySelector(
+          '#geneographCollectionDescription'
+        );
+
+      form?.addEventListener(
+        'submit',
+        event => {
+          event.preventDefault();
+
+          const name =
+            nameInput
+              ?.value
+              .trim()
+            || '';
+
+          const description =
+            descriptionInput
+              ?.value
+              .trim()
+            || '';
+
+          if (!name) {
+            nameInput?.focus();
+
+            showToast(
+              'Enter a collection name.'
+            );
+
+            return;
+          }
+
+          const collection =
+            createGeneographCollection({
+              name,
+              description
+            });
+
+          if (!collection) {
+            return;
+          }
+
+          state.geneoLibraryView =
+            'collection';
+
+          state.geneoActiveCollectionId =
+            collection.id;
+
+          closeModal();
+
+          renderGeneographHome();
+
+          showToast(
+            'Collection created.'
+          );
+        }
+      );
+
+      requestAnimationFrame(
+        () =>
+          nameInput?.focus()
+      );
+    }
+
+    function openEditGeneographCollectionModal(
+      collectionId
+    ) {
+      const collection =
+        getBoardCollection(
+          collectionId
+        );
+
+      if (!collection) {
+        return;
+      }
+
+      openModal(
+        renderGeneographCollectionModal({
+          titleId:
+            'editGeneographCollectionTitle',
+
+          title:
+            'Edit collection',
+
+          intro:
+            'Update the collection name and description. Boards stay in this collection.',
+
+          formId:
+            'geneographEditCollectionForm',
+
+          nameId:
+            'geneographEditCollectionName',
+
+          descriptionId:
+            'geneographEditCollectionDescription',
+
+          name:
+            collection.name,
+
+          description:
+            collection.description,
+
+          submitLabel:
+            'Save changes'
+        })
+      );
+
+      const form =
+        modalBackdrop.querySelector(
+          '#geneographEditCollectionForm'
+        );
+
+      const nameInput =
+        modalBackdrop.querySelector(
+          '#geneographEditCollectionName'
+        );
+
+      const descriptionInput =
+        modalBackdrop.querySelector(
+          '#geneographEditCollectionDescription'
+        );
+
+      form?.addEventListener(
+        'submit',
+        event => {
+          event.preventDefault();
+
+          const name =
+            nameInput
+              ?.value
+              .trim()
+            || '';
+
+          if (!name) {
+            nameInput?.focus();
+
+            showToast(
+              'Enter a collection name.'
+            );
+
+            return;
+          }
+
+          collection.name =
+            name;
+
+          collection.description =
+            descriptionInput
+              ?.value
+              .trim()
+            || '';
+
+          closeModal();
+
+          renderGeneographHome();
+
+          showToast(
+            'Collection updated.'
+          );
+        }
+      );
+
+      requestAnimationFrame(
+        () => {
+          nameInput?.focus();
+          nameInput?.select();
+        }
+      );
+    }
+
+    function openDeleteGeneographCollectionModal(
+      collectionId
+    ) {
+      const collection =
+        getBoardCollection(
+          collectionId
+        );
+
+      if (!collection) {
+        return;
+      }
+
+      const affectedBoards =
+        getBoardsForCollection(
+          collection.id,
+          {
+            projectId:
+              collection.projectId
+          }
+        );
+
+      const boardLabel =
+        affectedBoards.length === 1
+          ? 'board'
+          : 'boards';
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="deleteGeneographCollectionTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2
+                id="deleteGeneographCollectionTitle">
+
+                Delete collection?
+              </h2>
+
+              <p>
+                The collection will be removed.
+                Boards and their other collection
+                memberships will remain.
+              </p>
+            </div>
+
+            <button
+              class="
+                close-button
+              "
+              type="button"
+              data-close
+              aria-label="Close">
+
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <div
+              class="
+                notes-evidence-card
+              ">
+
+              <strong>
+                ${escapeHtml(
+                  collection.name
+                )}
+              </strong>
+
+              <span>
+                ${affectedBoards.length}
+                ${boardLabel} will remain
+                available in All boards.
+              </span>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="
+                button
+                secondary
+              "
+              type="button"
+              data-close>
+
+              Cancel
+            </button>
+
+            <button
+              class="
+                button
+                danger
+              "
+              type="button"
+              id="geneographConfirmDeleteCollection">
+
+              Delete collection
+            </button>
+          </div>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelector(
+          '#geneographConfirmDeleteCollection'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            affectedBoards.forEach(
+              board => {
+                removeBoardFromCollection(
+                  board.id,
+                  collection.id,
+                  {
+                    projectId:
+                      collection.projectId,
+
+                    touchModified:
+                      false
+                  }
+                );
+              }
+            );
+
+            const index =
+              sampleData
+                .boardCollections
+                .findIndex(item =>
+                  item.id
+                    === collection.id
+                );
+
+            if (index >= 0) {
+              sampleData
+                .boardCollections
+                .splice(
+                  index,
+                  1
+                );
+            }
+
+            if (
+              state.geneoActiveCollectionId
+                === collection.id
+            ) {
+              state.geneoLibraryView =
+                'all';
+
+              state.geneoActiveCollectionId =
+                null;
+            }
+
+            closeModal();
+
+            renderGeneographHome();
+
+            showToast(
+              'Collection deleted. Boards kept.'
+            );
+          }
+        );
+    }
+
+    function openGeneographCollectionMenu(
+      collectionId,
+      anchor
+    ) {
+      closeMenu();
+
+      const collection =
+        getBoardCollection(
+          collectionId
+        );
+
+      if (
+        !collection
+        || !anchor
+      ) {
+        return;
+      }
+
+      const rect =
+        anchor
+          .getBoundingClientRect();
+
+      const menu =
+        document
+          .createElement(
+            'div'
+          );
+
+      menu.className =
+        'menu-popover';
+
+      menu.id =
+        'projectMenu';
+
+      menu.style.top =
+        `${rect.bottom + 6}px`;
+
+      menu.style.left =
+        `${
+          Math.max(
+            12,
+            rect.right - 200
+          )
+        }px`;
+
+      menu.innerHTML = `
+        <button
+          type="button"
+          data-action="edit">
+
+          Edit collection
+        </button>
+
+        <button
+          type="button"
+          data-action="delete"
+          class="danger">
+
+          Delete collection
+        </button>
+      `;
+
+      document.body.appendChild(
+        menu
+      );
+
+      menu.addEventListener(
+        'click',
+        event => {
+          const action =
+            event.target
+              .closest(
+                '[data-action]'
+              )
+              ?.dataset.action;
+
+          if (!action) {
+            return;
+          }
+
+          closeMenu();
+
+          if (
+            action === 'edit'
+          ) {
+            openEditGeneographCollectionModal(
+              collection.id
+            );
+
+            return;
+          }
+
+          if (
+            action === 'delete'
+          ) {
+            openDeleteGeneographCollectionModal(
+              collection.id
+            );
+          }
+        }
+      );
+
+      bindMenuLifecycle(
+        anchor
+      );
+    }
+
     function bindGeneographHome() {
       main
         .querySelectorAll(
@@ -58658,9 +61316,113 @@
             openGeneographImportBoardModal
           );
         });
-      sidebar.querySelectorAll('[data-geneo-filter]').forEach(button => button.addEventListener('click', () => { state.geneoBoardFilter = button.dataset.geneoFilter; renderGeneographHome(); }));
-      bindSearchInput(main, '#geneoBoardSearch', 'geneoBoardSearch', renderGeneographHome);
-      main.querySelectorAll('[data-geneo-board-view]').forEach(button => button.addEventListener('click', () => { state.geneoBoardViewMode = button.dataset.geneoBoardView; renderGeneographHome(); }));
+
+      sidebar
+        .querySelectorAll(
+          '[data-geneo-library-view]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              state.geneoLibraryView =
+                button.dataset
+                  .geneoLibraryView;
+
+              state.geneoActiveCollectionId =
+                null;
+
+              renderGeneographHome();
+            }
+          );
+        });
+
+      sidebar
+        .querySelectorAll(
+          '[data-geneo-collection]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              state.geneoLibraryView =
+                'collection';
+
+              state.geneoActiveCollectionId =
+                button.dataset
+                  .geneoCollection;
+
+              renderGeneographHome();
+            }
+          );
+        });
+
+      sidebar
+        .querySelector(
+          '[data-geneo-add-collection]'
+        )
+        ?.addEventListener(
+          'click',
+          openNewGeneographCollectionModal
+        );
+
+      sidebar
+        .querySelectorAll(
+          '[data-geneo-collection-menu]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              event.stopPropagation();
+
+              openGeneographCollectionMenu(
+                button.dataset
+                  .geneoCollectionMenu,
+                button
+              );
+            }
+          );
+        });
+
+      bindSearchInput(
+        main,
+        '#geneoBoardSearch',
+        'geneoBoardSearch',
+        renderGeneographHome
+      );
+
+      main
+        .querySelector(
+          '#geneoBoardSort'
+        )
+        ?.addEventListener(
+          'change',
+          event => {
+            state.geneoBoardSort =
+              event.target.value;
+
+            renderGeneographHome();
+          }
+        );
+
+      main
+        .querySelectorAll(
+          '[data-geneo-board-view]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              state.geneoBoardViewMode =
+                button.dataset
+                  .geneoBoardView;
+
+              renderGeneographHome();
+            }
+          );
+        });
+
       main
         .querySelectorAll(
           '[data-geneo-open-board]'
@@ -58678,6 +61440,7 @@
             }
           );
         });
+
       main
         .querySelectorAll(
           '[data-geneo-board-id]'
@@ -58704,14 +61467,9 @@
           card.addEventListener(
             'keydown',
             event => {
-              /*
-                Do not react to keyboard events
-                bubbling from Favourite, Open,
-                or More.
-              */
               if (
                 event.target
-                !== card
+                  !== card
               ) {
                 return;
               }
@@ -58734,14 +61492,58 @@
             }
           );
         });
-      main.querySelectorAll('[data-geneo-fav]').forEach(button => button.addEventListener('click', e => {
-        e.stopPropagation();
-        const board = sampleData.boards.find(b => b.id === button.dataset.geneoFav);
-        if (board) board.favorite = !board.favorite;
-        renderGeneographHome();
-      }));
-      main.querySelectorAll('[data-geneo-board-menu]').forEach(button => button.addEventListener('click', e => { e.stopPropagation(); openGeneographBoardMenu(button.dataset.geneoBoardMenu, button); }));
-      bindToasts(sidebar);
+
+      main
+        .querySelectorAll(
+          '[data-geneo-fav]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              event.stopPropagation();
+
+              const board =
+                getGeneographBoard(
+                  button.dataset
+                    .geneoFav
+                );
+
+              if (board) {
+                board.favorite =
+                  !board.favorite;
+
+                board.modified =
+                  'Just now';
+              }
+
+              renderGeneographHome();
+            }
+          );
+        });
+
+      main
+        .querySelectorAll(
+          '[data-geneo-board-menu]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              event.stopPropagation();
+
+              openGeneographBoardMenu(
+                button.dataset
+                  .geneoBoardMenu,
+                button
+              );
+            }
+          );
+        });
+
+      bindToasts(
+        sidebar
+      );
     }
 
     function openGeneographBoard(id) {
@@ -58864,6 +61666,327 @@
         </button>`;
     }
 
+    function renderGeneographEditorCollectionMeta(
+      board
+    ) {
+      const collections =
+        getCollectionsForBoard(
+          board.id,
+          {
+            projectId:
+              board.projectId
+          }
+        );
+
+      if (!collections.length) {
+        return '';
+      }
+
+      const label =
+        collections.length === 1
+          ? collections[0].name
+          : `${
+              collections[0].name
+            } +${
+              collections.length - 1
+            }`;
+
+      return `
+        <span
+          title="${escapeHtml(
+            collections
+              .map(collection =>
+                collection.name
+              )
+              .join(', ')
+          )}">
+
+          ${icon.folder}
+
+          <span>
+            ${escapeHtml(
+              label
+            )}
+          </span>
+        </span>
+      `;
+    }
+
+    function validateSampleGeneographCollections(
+      warn,
+      projectIds
+    ) {
+      const collectionIds =
+        new Set();
+
+      (
+        sampleData.boardCollections
+        || []
+      ).forEach(collection => {
+        if (!collection.id) {
+          warn(
+            'Board collection is missing an ID'
+          );
+
+          return;
+        }
+
+        if (
+          collectionIds.has(
+            collection.id
+          )
+        ) {
+          warn(
+            `Duplicate board collection ID: ${
+              collection.id
+            }`
+          );
+        }
+
+        collectionIds.add(
+          collection.id
+        );
+
+        if (
+          !projectIds.has(
+            collection.projectId
+          )
+        ) {
+          warn(
+            `Board collection ${
+              collection.id
+            } points to missing project ${
+              collection.projectId
+            }`
+          );
+        }
+
+        if (
+          !String(
+            collection.name || ''
+          ).trim()
+        ) {
+          warn(
+            `Board collection ${
+              collection.id
+            } has no name`
+          );
+        }
+      });
+
+      (
+        sampleData.boards
+        || []
+      ).forEach(board => {
+        if (
+          !projectIds.has(
+            board.projectId
+          )
+        ) {
+          warn(
+            `Board ${
+              board.id
+            } points to missing project ${
+              board.projectId
+            }`
+          );
+        }
+
+        (
+          board.collectionIds
+          || []
+        ).forEach(collectionId => {
+          const collection =
+            getBoardCollection(
+              collectionId,
+              {
+                projectId:
+                  board.projectId
+              }
+            );
+
+          if (!collection) {
+            warn(
+              `Board ${
+                board.id
+              } points to invalid collection ${
+                collectionId
+              }`
+            );
+          }
+        });
+      });
+    }
+
+    function normalizeGeneographRuntimeData() {
+      sampleData.boardCollections =
+        (
+          sampleData.boardCollections
+          || []
+        )
+          .filter(collection =>
+            collection
+            && typeof collection
+              === 'object'
+          )
+          .map(collection => {
+            collection.id =
+              String(
+                collection.id || ''
+              ).trim();
+
+            collection.projectId =
+              String(
+                collection.projectId
+                || sampleData
+                  .projects[0]
+                  ?.id
+                || 'p1'
+              ).trim();
+
+            collection.name =
+              String(
+                collection.name || ''
+              ).trim();
+
+            collection.description =
+              typeof collection
+                .description
+                === 'string'
+                  ? collection
+                      .description
+                      .trim()
+                  : '';
+
+            return collection;
+          });
+
+      const collectionsByProject =
+        new Map();
+
+      sampleData
+        .boardCollections
+        .forEach(collection => {
+          if (
+            !collectionsByProject
+              .has(
+                collection.projectId
+              )
+          ) {
+            collectionsByProject
+              .set(
+                collection.projectId,
+                new Set()
+              );
+          }
+
+          collectionsByProject
+            .get(
+              collection.projectId
+            )
+            .add(
+              collection.id
+            );
+        });
+
+      sampleData.boards =
+        (
+          sampleData.boards
+          || []
+        )
+          .filter(board =>
+            board
+            && typeof board
+              === 'object'
+          )
+          .map(board => {
+            board.id =
+              String(
+                board.id || ''
+              ).trim();
+
+            board.projectId =
+              String(
+                board.projectId
+                || sampleData
+                  .projects[0]
+                  ?.id
+                || 'p1'
+              ).trim();
+
+            board.title =
+              String(
+                board.title
+                || 'Untitled board'
+              ).trim()
+              || 'Untitled board';
+
+            board.description =
+              typeof board.description
+                === 'string'
+                  ? board
+                      .description
+                      .trim()
+                  : '';
+
+            const validCollectionIds =
+              collectionsByProject
+                .get(
+                  board.projectId
+                )
+              || new Set();
+
+            board.collectionIds =
+              normalizeGeneographIdArray(
+                board.collectionIds
+              ).filter(collectionId =>
+                validCollectionIds.has(
+                  collectionId
+                )
+              );
+
+            board.favorite =
+              Boolean(
+                board.favorite
+              );
+
+            board.people =
+              Number(
+                board.people
+              ) || 0;
+
+            board.evidence =
+              Number(
+                board.evidence
+              ) || 0;
+
+            board.questions =
+              Number(
+                board.questions
+              ) || 0;
+
+            board.modified =
+              String(
+                board.modified
+                || 'Just now'
+              );
+
+            board.thumb =
+              String(
+                board.thumb
+                || 'theory'
+              );
+
+            /*
+              Board type is no longer
+              canonical data.
+            */
+            delete board.type;
+
+            return board;
+          });
+    }
+
     function renderGeneographEditorSidebar(board) {
       const objectGroups = groupGeneographObjects();
       const stats = {
@@ -58880,10 +62003,9 @@
                 <div class="side-section-title">Current board</div>
                 <h2>${escapeHtml(board.title)}</h2>
                 <div class="meta">
-                  <span>
-                    ${icon.whiteboard}
-                    <span>${escapeHtml(board.type)}</span>
-                  </span>
+                  ${renderGeneographEditorCollectionMeta(
+                    board
+                  )}
 
                   <span class="saved">
                     ${icon.check}
@@ -60182,24 +63304,448 @@
     }
 
     function openCreateGeneographBoardModal() {
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="createBoardTitle"><div class="modal-header"><div><h2 id="createBoardTitle">New board</h2><p>Create a visual workspace for a research theory, evidence map, tree design, or publication layout.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="createGeneoBoardForm"><div class="modal-body form-grid"><div class="field"><label for="geneoBoardName">Board name</label><input id="geneoBoardName" required placeholder="e.g. Unknown father theory"></div><div class="field"><label for="geneoBoardType">Board type</label><select id="geneoBoardType" class="compact-select"><option>Research theory</option><option>Evidence map</option><option>Tree design</option><option>Publication</option><option>DNA</option></select></div><div class="field"><label for="geneoBoardDesc">Description</label><textarea id="geneoBoardDesc" placeholder="Research question or intended output"></textarea></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create board</button></div></form></div>`);
-      document.getElementById('geneoBoardName')?.focus();
-      document.getElementById('createGeneoBoardForm')?.addEventListener('submit', e => {
-        e.preventDefault();
-        const title = document.getElementById('geneoBoardName').value.trim() || 'Untitled board';
-        const type = document.getElementById('geneoBoardType').value;
-        const board = { id: `gb-${Date.now()}`, title, type, people: 0, evidence: 0, questions: 0, modified: 'Just now', favorite: false, thumb: type === 'Evidence map' ? 'map' : 'theory' };
-        sampleData.boards.unshift(board);
-        state.selectedGeneoBoardId = board.id;
-        closeModal();
-        renderGeneographHome();
-        showToast('Board created.');
-      });
+      const projectId =
+        currentProjectId();
+
+      const inheritedCollection =
+        state.geneoLibraryView
+          === 'collection'
+          ? activeGeneographCollection()
+          : null;
+
+      const selectedCollectionIds =
+        new Set(
+          inheritedCollection
+            ? [
+                inheritedCollection.id
+              ]
+            : []
+        );
+
+      openModal(`
+        <div
+          class="
+          modal
+          geneo-board-create-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="createBoardTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2
+                id="createBoardTitle">
+
+                New board
+              </h2>
+
+              <p>
+                Create a visual workspace for
+                research, evidence and visual
+                exploration.
+              </p>
+            </div>
+
+            <button
+              class="
+                close-button
+              "
+              type="button"
+              data-close
+              aria-label="Close">
+
+              ${icon.close}
+            </button>
+          </div>
+
+          <form
+            id="createGeneoBoardForm">
+
+            <div
+              class="
+                modal-body
+                form-grid
+              ">
+
+          <div class="field">
+            <label
+              for="geneoBoardName">
+
+              Board name
+            </label>
+
+            <input
+              id="geneoBoardName"
+              required
+              maxlength="160"
+              autocomplete="off"
+              placeholder="e.g. Unknown father theory">
+          </div>
+
+          <div class="field">
+            <label
+              for="geneoBoardDesc">
+
+              Description
+            </label>
+
+            <textarea
+              id="geneoBoardDesc"
+              rows="3"
+              maxlength="500"
+              placeholder="Research question or intended output"></textarea>
+          </div>
+
+          ${renderGeneographCollectionChooser({
+            projectId,
+            selectedCollectionIds
+          })}
+
+            <div class="modal-footer">
+              <button
+                class="
+                  button
+                  secondary
+                "
+                type="button"
+                data-close>
+
+                Cancel
+              </button>
+
+              <button
+                class="
+                  button
+                  primary
+                "
+                type="submit">
+
+                Create board
+              </button>
+            </div>
+          </form>
+        </div>
+      `);
+
+      const modal =
+        modalBackdrop.querySelector(
+          '.modal'
+        );
+
+      bindGeneographCollectionChooser(
+        modal,
+        {
+          projectId,
+          selectedCollectionIds
+        }
+      );
+
+      const nameInput =
+        modalBackdrop.querySelector(
+          '#geneoBoardName'
+        );
+
+      document
+        .getElementById(
+          'createGeneoBoardForm'
+        )
+        ?.addEventListener(
+          'submit',
+          event => {
+            event.preventDefault();
+
+            const title =
+              nameInput
+                ?.value
+                .trim()
+              || 'Untitled board';
+
+            const description =
+              document
+                .getElementById(
+                  'geneoBoardDesc'
+                )
+                ?.value
+                .trim()
+              || '';
+
+            const board = {
+              id:
+                createRuntimeId(
+                  'board'
+                ),
+
+              projectId,
+
+              title,
+
+              description,
+
+              collectionIds: [
+                ...selectedCollectionIds
+              ],
+
+              people:
+                0,
+
+              evidence:
+                0,
+
+              questions:
+                0,
+
+              modified:
+                'Just now',
+
+              favorite:
+                false,
+
+              /*
+                Preview appearance is independent
+                from collections.
+              */
+              thumb:
+                'theory'
+            };
+
+            sampleData.boards.unshift(
+              board
+            );
+
+            state.selectedGeneoBoardId =
+              board.id;
+
+            if (
+              state.geneoLibraryView
+                === 'favorites'
+            ) {
+              state.geneoLibraryView =
+                'all';
+
+              state.geneoActiveCollectionId =
+                null;
+            }
+
+            closeModal();
+
+            renderGeneographHome();
+
+            showToast(
+              'Board created.'
+            );
+          }
+        );
+
+      requestAnimationFrame(
+        () =>
+          nameInput?.focus()
+      );
     }
 
     function openGeneographSettingsModal() {
-      const board = selectedGeneographBoard();
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="boardSettingsTitle"><div class="modal-header"><div><h2 id="boardSettingsTitle">Board settings</h2><p>Basic settings are simulated for this prototype.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body form-grid"><div class="field"><label>Board name</label><input value="${escapeHtml(board.title)}"></div><div class="field"><label>Board type</label><select class="compact-select"><option selected>${escapeHtml(board.type)}</option><option>Research theory</option><option>Evidence map</option><option>Tree design</option></select></div><div class="field"><label>Description</label><textarea>Visual reasoning workspace for the Whiskerfield paternal branch.</textarea></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-close>Save settings</button></div></div>`);
+      const board =
+        selectedGeneographBoard();
+
+      if (!board) {
+        return;
+      }
+
+      const selectedCollectionIds =
+        new Set(
+          board.collectionIds
+          || []
+        );
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="boardSettingsTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2
+                id="boardSettingsTitle">
+
+                Board settings
+              </h2>
+
+              <p>
+                Update board details and
+                collection memberships.
+              </p>
+            </div>
+
+            <button
+              class="
+                close-button
+              "
+              type="button"
+              data-close
+              aria-label="Close">
+
+              ${icon.close}
+            </button>
+          </div>
+
+          <form
+            id="geneographBoardSettingsForm">
+
+            <div
+              class="
+                modal-body
+                form-grid
+              ">
+
+              <div class="field">
+                <label
+                  for="geneographSettingsName">
+
+                  Board name
+                </label>
+
+                <input
+                  id="geneographSettingsName"
+                  type="text"
+                  required
+                  maxlength="160"
+                  value="${escapeHtml(
+                    board.title
+                  )}">
+              </div>
+
+              ${renderGeneographCollectionChooser({
+                projectId:
+                  board.projectId,
+
+                selectedCollectionIds
+              })}
+
+              <div class="field">
+                <label
+                  for="geneographSettingsDescription">
+
+                  Description
+                </label>
+
+                <textarea
+                  id="geneographSettingsDescription"
+                  maxlength="500"
+                  rows="4">${escapeHtml(
+                    board.description
+                    || ''
+                  )}</textarea>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                class="
+                  button
+                  secondary
+                "
+                type="button"
+                data-close>
+
+                Cancel
+              </button>
+
+              <button
+                class="
+                  button
+                  primary
+                "
+                type="submit">
+
+                Save settings
+              </button>
+            </div>
+          </form>
+        </div>
+      `);
+
+      const modal =
+        modalBackdrop.querySelector(
+          '.modal'
+        );
+
+      bindGeneographCollectionChooser(
+        modal,
+        {
+          projectId:
+            board.projectId,
+
+          selectedCollectionIds
+        }
+      );
+
+      modalBackdrop
+        .querySelector(
+          '#geneographBoardSettingsForm'
+        )
+        ?.addEventListener(
+          'submit',
+          event => {
+            event.preventDefault();
+
+            const name =
+              modalBackdrop
+                .querySelector(
+                  '#geneographSettingsName'
+                )
+                ?.value
+                .trim()
+              || '';
+
+            if (!name) {
+              modalBackdrop
+                .querySelector(
+                  '#geneographSettingsName'
+                )
+                ?.focus();
+
+              return;
+            }
+
+            board.title =
+              name;
+
+            board.description =
+              modalBackdrop
+                .querySelector(
+                  '#geneographSettingsDescription'
+                )
+                ?.value
+                .trim()
+              || '';
+
+            setBoardCollections(
+              board.id,
+              [
+                ...selectedCollectionIds
+              ],
+              {
+                projectId:
+                  board.projectId,
+
+                touchModified:
+                  false
+              }
+            );
+
+            board.modified =
+              'Just now';
+
+            closeModal();
+
+            renderGeneographEditorPreserveScroll();
+
+            showToast(
+              'Board settings updated.'
+            );
+          }
+        );
     }
 
     function openSimpleModal(title, message) {
@@ -79415,9 +82961,21 @@
 
       if (!collections.length) {
         return `
-          <span class="notes-row-collection-chip">
-            No collection
-          </span>
+          <div
+            class="
+              geneo-board-collections
+            ">
+
+            <span
+              class="
+                geneo-board-collection-chip
+                no-collection
+              "
+              title="No collection assigned">
+
+              No collection
+            </span>
+          </div>
         `;
       }
 
@@ -106761,7 +110319,21 @@
           : [];
 
       normalizeCentralNotes();
-      sampleData.boards = Array.isArray(sampleData.boards) ? sampleData.boards : [];
+      sampleData.boardCollections =
+        Array.isArray(
+          sampleData.boardCollections
+        )
+          ? sampleData.boardCollections
+          : [];
+
+      sampleData.boards =
+        Array.isArray(
+          sampleData.boards
+        )
+          ? sampleData.boards
+          : [];
+
+      normalizeGeneographRuntimeData();
       sampleData.boardObjects = Array.isArray(sampleData.boardObjects) ? sampleData.boardObjects : [];
       sampleData.boardConnectors = Array.isArray(sampleData.boardConnectors) ? sampleData.boardConnectors : [];
       sampleData.publishDrafts = Array.isArray(sampleData.publishDrafts) ? sampleData.publishDrafts : [];
