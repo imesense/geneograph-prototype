@@ -517,18 +517,42 @@
       flex: 0 0 14px;
     }
 
+    /* Canonical module page title */
+
+    .app-page-title {
+      min-width:
+        0;
+      margin:
+        0 0 1px;
+      /*
+        Keep enough paint area for descenders
+        such as g, p, q, y and j while retaining
+        ellipsis clipping.
+      */
+      padding-bottom:
+        2px;
+      overflow:
+        hidden;
+      color:
+        var(--text-primary);
+      font-size:
+        30px;
+      line-height:
+        1.12;
+      letter-spacing:
+        0;
+      text-overflow:
+        ellipsis;
+      white-space:
+        nowrap;
+    }
+
     .header-row {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
       gap: var(--space-5);
       margin-bottom: var(--space-8);
-    }
-    .title h1 {
-      margin: 0 0 2px;
-      font-size: 32px;
-      line-height: 1.1;
-      letter-spacing: -.025em;
     }
     .title p {
       margin: 0;
@@ -11829,19 +11853,6 @@
       min-width: 0;
     }
 
-    .albums-title h1,
-    .notes-browser-title h1 {
-      min-width: 0;
-      margin: 0 0 3px;
-      overflow: hidden;
-      color: var(--text-primary);
-      font-size: 30px;
-      line-height: 1.12;
-      letter-spacing: 0;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
     .albums-title p,
     .notes-browser-subtitle {
       margin: 0;
@@ -16373,33 +16384,6 @@
 
     .archive-page-head-copy {
       min-width: 0;
-    }
-
-    .archive-page-head h1 {
-      min-width: 0;
-      margin:
-        0 0 3px;
-
-      overflow:
-        hidden;
-
-      color:
-        var(--text-primary);
-
-      font-size:
-        30px;
-
-      line-height:
-        1.12;
-
-      letter-spacing:
-        0;
-
-      text-overflow:
-        ellipsis;
-
-      white-space:
-        nowrap;
     }
 
     .archive-page-head p {
@@ -22357,17 +22341,6 @@
       min-width: 0;
     }
 
-    .places-title h1 {
-      margin:
-        0
-        0
-        3px;
-
-      font-size: 30px;
-      line-height: 1.12;
-      letter-spacing: 0;
-    }
-
     .places-title p {
       margin: 0;
 
@@ -25044,13 +25017,6 @@
       margin-bottom: var(--space-5);
     }
 
-    .publish-page-head h1 {
-      margin: 0 0 6px;
-      font-size: 30px;
-      line-height: 1.05;
-      letter-spacing: -.035em;
-    }
-
     .publish-page-head p {
       margin: 0;
       color: var(--text-secondary);
@@ -26608,7 +26574,7 @@
       'Photos': '----', 'Photo details': '------ ----', 'Select a photo': '-------- ----', 'Select a photo to view details, albums, people, date, place and caption.': '-------- ----, ----- ------- ------, -------, -----, ----, ----- - -------.', 'Grid view': '------', 'List view': '------', 'Search photos-': '----- ----', 'Search photos...': '----- ----...', ' Filename': '----------: --- -----', ' Photo date': '----------: ---- ----', 'Date precision': '-------- ----', 'Caption / story': '------- / -------', 'Add to album': '-------- - ------', 'Delete photo?': '------- ----?', 'This photo will be moved to Recently deleted. You can restore it later from the Albums sidebar.': '---- ----- ---------- - ------- --------. --- ----- ----- ------------ -- ------ --------.', 'No photos yet': '---- ---- ---', 'No deleted photos': '-------- ---- ---', 'No favourite photos yet': '--------- ---- ---- ---', 'Every photo is in an album': '--- ---- --- - --------', 'Open photo': '------- ----',
 
       // Archive
-      'All Files': 'Все файлы',
+      'All files': 'Все файлы',
       'Archive workspace': 'Архивное рабочее пространство',
       'Navigation': 'Навигация',
       'Files': 'Файлы',
@@ -32297,7 +32263,7 @@
         <div class="page-grid startup-page">
           <section class="main-column">
             <div class="header-row">
-              <div class="title"><h1>${escapeHtml(t('Welcome back!'))}</h1><p>${escapeHtml(t('Here you can create, open, and manage your family-history projects.'))}</p></div>
+              <div class="title"><h1 class="app-page-title">${escapeHtml(t('Welcome back!'))}</h1><p>${escapeHtml(t('Here you can create, open, and manage your family-history projects.'))}</p></div>
             </div>
             <div class="toolbar">
               <div class="toolbar-left">
@@ -51558,7 +51524,7 @@
           ? listPage.photos
           : photos;
       return `<header class="albums-header">
-        <div class="albums-title"><h1>${escapeHtml(context.title)}</h1><p>${escapeHtml(context.subtitle)}</p></div>
+        <div class="albums-title"><h1 class="app-page-title">${escapeHtml(context.title)}</h1><p>${escapeHtml(context.subtitle)}</p></div>
         <div class="albums-header-actions">
           <button
             class="button primary"
@@ -63926,7 +63892,7 @@
       '__archive_root__';
 
     const ARCHIVE_ROOT_LABEL =
-      'All Files';
+      'All files';
 
     const ARCHIVE_MOVE_NO_DESTINATION =
       '__archive_move_no_destination__';
@@ -67935,7 +67901,7 @@
               archive-page-head-copy
             ">
 
-            <h1>
+            <h1 class="app-page-title">
               ${escapeHtml(
                 title
               )}
@@ -82558,19 +82524,8 @@
     function renderNotesBrowserPane(
       list
     ) {
-    const collectionDescription =
-      notesBrowserCollectionDescription();
-
-    const browserSubtitle = [
-      notesBrowserSubtitle(
-        list
-      ),
-
-      collectionDescription
-    ]
-      .filter(Boolean)
-      .join(' · ');
-
+    const browserSubtitle =
+      notesBrowserSubtitle();
     const filterCount =
       notesFilterCount();
 
@@ -82582,7 +82537,7 @@
           <header class="notes-browser-header">
             <div class="notes-browser-top">
               <div class="notes-browser-title">
-                <h1>
+                <h1 class="app-page-title">
                   ${escapeHtml(
                     notesTitle()
                   )}
@@ -82730,30 +82685,8 @@
       `;
     }
 
-    function notesBrowserSubtitle(
-      list
-    ) {
-      return `${list.length} ${
-        list.length === 1
-          ? 'note'
-          : 'notes'
-      }`;
-    }
-
-    function notesBrowserCollectionDescription() {
-      if (
-        state.notesView
-          !== 'collection'
-      ) {
-        return '';
-      }
-
-      return (
-        getNoteCollection(
-          state.notesActiveCollectionId
-        )?.description
-        || ''
-      );
+    function notesBrowserSubtitle() {
+      return 'Capture, organize and connect research notes across your family history.';
     }
 
     function formatNoteCollectionSummary(
@@ -101248,7 +101181,7 @@
       main.innerHTML = `<div class="${placesInspectorShellClasses()}">
         <section class="places-main"><div class="places-review-shell">
           <header class="places-page-head places-review-head">
-            <div class="places-title"><h1>Needs review</h1><p>Places with details that may need your attention.</p></div>
+            <div class="places-title"><h1 class="app-page-title">Needs review</h1><p>Places with details that may need your attention.</p></div>
             <strong class="places-review-total">${allReviewPlaces.length} ${allReviewPlaces.length === 1 ? 'place' : 'places'}</strong>
           </header>
           <div class="places-review-controls">
@@ -101321,7 +101254,7 @@
             <div class="places-page">
               <header class="places-page-head">
                 <div class="places-title">
-                  <h1>
+                  <h1 class="app-page-title">
                     ${escapeHtml(placesPageTitle())}
                   </h1>
 
@@ -107232,7 +107165,7 @@
       main.innerHTML = `
         <div class="publish-main">
           <div class="publish-page-head">
-            <div><h1>Publish</h1><p>Create reports, charts, and export packages from your family history research.</p></div>
+            <div><h1 class="app-page-title">Publish</h1><p>Create reports, charts, and export packages from your family history research.</p></div>
           </div>
           <div class="publish-toolbar">
             <div class="publish-toolbar-left">
@@ -107344,7 +107277,7 @@
       main.innerHTML = `
         <div class="publish-main">
           <div class="publish-page-head">
-            <div><h1>Create ${escapeHtml(type.title.toLowerCase())}</h1><p>Choose scope, content, privacy settings, and preview the output before exporting.</p></div>
+            <div><h1 class="app-page-title">Create ${escapeHtml(type.title.toLowerCase())}</h1><p>Choose scope, content, privacy settings, and preview the output before exporting.</p></div>
             <button class="button secondary" type="button" id="publishBackHome">Back to Publish</button>
           </div>
           <div class="publish-stepper" aria-label="Publish steps">
