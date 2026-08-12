@@ -58268,7 +58268,8 @@
 
         favorite:
           true,
-
+        archived:
+          false,
         thumb:
           'theory'
       },
@@ -58304,7 +58305,8 @@
 
         favorite:
           false,
-
+        archived:
+          false,
         thumb:
           'tree'
       },
@@ -58339,6 +58341,8 @@
           'Apr 17, 2026',
 
         favorite:
+          false,
+        archived:
           false,
 
         thumb:
@@ -58375,6 +58379,8 @@
           'Jun 2, 2025',
 
         favorite:
+          false,
+        archived:
           false,
 
         thumb:
@@ -58564,7 +58570,11 @@
 
     function getProjectBoards(
       projectId =
-        currentProjectId()
+        currentProjectId(),
+      {
+        includeArchived =
+          false
+      } = {}
     ) {
       return (
         sampleData.boards
@@ -58572,6 +58582,10 @@
       ).filter(board =>
         board.projectId
           === projectId
+        && (
+          includeArchived
+          || !board.archived
+        )
       );
     }
 
@@ -58687,7 +58701,10 @@
       collectionId,
       {
         projectId =
-          currentProjectId()
+          currentProjectId(),
+
+        includeArchived =
+          false
       } = {}
     ) {
       const collection =
@@ -58703,7 +58720,10 @@
       }
 
       return getProjectBoards(
-        collection.projectId
+        collection.projectId,
+        {
+          includeArchived
+        }
       ).filter(board =>
         (
           board.collectionIds
@@ -58842,6 +58862,52 @@
       );
     }
 
+    function setGeneographBoardArchived(
+      boardId,
+      archived,
+      {
+        projectId =
+          currentProjectId(),
+
+        touchModified =
+          true
+      } = {}
+    ) {
+      const board =
+        getGeneographBoard(
+          boardId,
+          {
+            projectId
+          }
+        );
+
+      if (!board) {
+        return null;
+      }
+
+      const nextArchived =
+        Boolean(
+          archived
+        );
+
+      if (
+        board.archived
+          === nextArchived
+      ) {
+        return board;
+      }
+
+      board.archived =
+        nextArchived;
+
+      if (touchModified) {
+        board.modified =
+          'Just now';
+      }
+
+      return board;
+    }
+
     function createGeneographCollection({
       name,
       description = '',
@@ -58893,6 +58959,108 @@
 
       return getBoardCollection(
         state.geneoActiveCollectionId
+      );
+    }
+
+    function geneographLibraryContext() {
+      const activeCollection =
+        activeGeneographCollection();
+
+      if (activeCollection) {
+        return {
+          title:
+            activeCollection.name,
+
+          icon:
+            icon.folder,
+
+          description:
+            activeCollection
+              .description
+            || '',
+
+          emptyMessage:
+            'No boards in this collection yet.'
+        };
+      }
+
+      const contexts = {
+        all: {
+          title:
+            'All boards',
+
+          icon:
+            icon.whiteboard,
+
+          description:
+            '',
+
+          emptyMessage:
+            'No boards yet.'
+        },
+
+        favorites: {
+          title:
+            'Favourites',
+
+          icon:
+            icon.star,
+
+          description:
+            '',
+
+          emptyMessage:
+            'No favourite boards yet.'
+        },
+
+        unassigned: {
+          title:
+            'Not in collection',
+
+          icon:
+            icon.folder,
+
+          description:
+            'Boards waiting to be organized.',
+
+          emptyMessage:
+            'Every active board belongs to a collection.'
+        },
+
+        archived: {
+          title:
+            'Archived',
+
+          icon:
+            icon.archive,
+
+          description:
+            'Boards kept outside your active Geneograph workspace.',
+
+          emptyMessage:
+            'No archived boards. Archived boards will appear here.'
+        },
+
+        collection: {
+          title:
+            'Collection',
+
+          icon:
+            icon.folder,
+
+          description:
+            '',
+
+          emptyMessage:
+            'No boards in this collection yet.'
+        }
+      };
+
+      return (
+        contexts[
+          state.geneoLibraryView
+        ]
+        || contexts.all
       );
     }
 
@@ -58951,29 +59119,17 @@
       const filtered =
         filteredGeneographBoards();
 
-      const activeCollection =
-        activeGeneographCollection();
+      const libraryContext =
+        geneographLibraryContext();
 
       const sectionTitle =
-        activeCollection
-          ? activeCollection.name
-          : state.geneoLibraryView
-              === 'favorites'
-            ? 'Favourites'
-            : 'All boards';
+        libraryContext.title;
 
       const sectionIcon =
-        activeCollection
-          ? icon.folder
-          : state.geneoLibraryView
-              === 'favorites'
-            ? icon.star
-            : icon.whiteboard;
+        libraryContext.icon;
 
       const sectionDescription =
-        activeCollection
-          ?.description
-        || '';
+        libraryContext.description;
 
       sidebar.innerHTML = `
         <nav
@@ -59002,6 +59158,17 @@
                 'favorites',
                 'Favourites',
                 icon.star
+              )}
+              ${renderGeneoLibraryViewButton(
+                'unassigned',
+                'Not in collection',
+                icon.folder
+              )}
+
+              ${renderGeneoLibraryViewButton(
+                'archived',
+                'Archived',
+                icon.archive
               )}
             </div>
           </div>
@@ -59390,22 +59557,23 @@
           .trim()
           .toLowerCase();
 
-      let list =
-        getProjectBoards(
-          projectId
-        );
+      let list;
 
       if (
         state.geneoLibraryView
-          === 'favorites'
+          === 'archived'
       ) {
         list =
-          list.filter(board =>
-            board.favorite
+          getProjectBoards(
+            projectId,
+            {
+              includeArchived:
+                true
+            }
+          ).filter(board =>
+            board.archived
           );
-      }
-
-      if (
+      } else if (
         state.geneoLibraryView
           === 'collection'
       ) {
@@ -59414,15 +59582,41 @@
 
         list =
           collection
-            ? list.filter(board =>
-                (
-                  board.collectionIds
-                  || []
-                ).includes(
-                  collection.id
-                )
+            ? getBoardsForCollection(
+                collection.id,
+                {
+                  projectId
+                }
               )
             : [];
+      } else {
+        list =
+          getProjectBoards(
+            projectId
+          );
+
+        if (
+          state.geneoLibraryView
+            === 'favorites'
+        ) {
+          list =
+            list.filter(board =>
+              board.favorite
+            );
+        }
+
+        if (
+          state.geneoLibraryView
+            === 'unassigned'
+        ) {
+          list =
+            list.filter(board =>
+              !(
+                board.collectionIds
+                || []
+              ).length
+            );
+        }
       }
 
       if (query) {
@@ -59524,25 +59718,13 @@
         state.geneoBoardSearch
           .trim();
 
-      let message =
-        'No boards match this view.';
+      const context =
+        geneographLibraryContext();
 
-      if (query) {
-        message =
-          'No boards match this search.';
-      } else if (
-        state.geneoLibraryView
-          === 'favorites'
-      ) {
-        message =
-          'No favourite boards yet.';
-      } else if (
-        state.geneoLibraryView
-          === 'collection'
-      ) {
-        message =
-          'No boards in this collection yet.';
-      }
+      const message =
+        query
+          ? 'No boards match this search.'
+          : context.emptyMessage;
 
       return `
         <div class="panel">
@@ -59572,11 +59754,12 @@
       const showNewBoardTile =
         !state.geneoBoardSearch
           .trim()
-        && (
+        && [
+          'all',
+          'collection',
+          'unassigned'
+        ].includes(
           state.geneoLibraryView
-            === 'all'
-          || state.geneoLibraryView
-            === 'collection'
         );
 
       if (
@@ -59623,9 +59806,17 @@
           <div
             class="
               geneo-board-collections
-              is-empty
-            "
-            aria-hidden="true">
+            ">
+
+            <span
+              class="
+                geneo-board-collection-chip
+                no-collection
+              "
+              title="No collection assigned">
+
+              No collection
+            </span>
           </div>
         `;
       }
@@ -61002,7 +61193,10 @@
           collection.id,
           {
             projectId:
-              collection.projectId
+              collection.projectId,
+
+            includeArchived:
+              true
           }
         );
 
@@ -61059,8 +61253,9 @@
 
               <span>
                 ${affectedBoards.length}
-                ${boardLabel} will remain
-                available in All boards.
+                ${boardLabel} will keep their
+                board data; only this collection
+                membership will be removed.
               </span>
             </div>
           </div>
@@ -61583,7 +61778,11 @@
           type="button"
           data-action="archive">
 
-          Archive
+          ${
+            board.archived
+              ? 'Unarchive'
+              : 'Archive'
+          }
         </button>
 
         <button
@@ -61613,10 +61812,6 @@
             return;
           }
 
-          /*
-            Close the popover before opening
-            another modal surface.
-          */
           closeMenu();
 
           if (
@@ -61629,10 +61824,45 @@
             return;
           }
 
-          /*
-            Keep the remaining actions at their
-            current prototype behavior.
-          */
+          if (
+            action === 'archive'
+          ) {
+            const nextArchived =
+              !board.archived;
+
+            const updatedBoard =
+              setGeneographBoardArchived(
+                board.id,
+                nextArchived,
+                {
+                  projectId:
+                    board.projectId
+                }
+              );
+
+            if (!updatedBoard) {
+              return;
+            }
+
+            state.geneoLibraryView =
+              nextArchived
+                ? 'archived'
+                : 'all';
+
+            state.geneoActiveCollectionId =
+              null;
+
+            renderGeneographHome();
+
+            showToast(
+              nextArchived
+                ? 'Board archived.'
+                : 'Board unarchived.'
+            );
+
+            return;
+          }
+
           showToast(
             `${
               capitalize(
@@ -61867,7 +62097,16 @@
             }`
           );
         }
-
+        if (
+          typeof board.archived
+            !== 'boolean'
+        ) {
+          warn(
+            `Board ${
+              board.id
+            } has an invalid archived state`
+          );
+        }
         (
           board.collectionIds
           || []
@@ -62025,7 +62264,10 @@
               Boolean(
                 board.favorite
               );
-
+            board.archived =
+              Boolean(
+                board.archived
+              );
             board.people =
               Number(
                 board.people
@@ -63694,23 +63936,16 @@
 
               people:
                 0,
-
               evidence:
                 0,
-
               questions:
                 0,
-
               modified:
                 'Just now',
-
               favorite:
                 false,
-
-              /*
-                Preview appearance remains
-                independent from collections.
-              */
+              archived:
+                false,
               thumb:
                 'theory'
             };
@@ -63722,9 +63957,20 @@
             state.selectedGeneoBoardId =
               newBoard.id;
 
+            const createdWithCollections =
+              selectedCollectionIds.size
+                > 0;
+
             if (
               state.geneoLibraryView
                 === 'favorites'
+              || state.geneoLibraryView
+                === 'archived'
+              || (
+                state.geneoLibraryView
+                  === 'unassigned'
+                && createdWithCollections
+              )
             ) {
               state.geneoLibraryView =
                 'all';
