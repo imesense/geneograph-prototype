@@ -11334,6 +11334,17 @@
     .geneo-editor-toolbar .geneo-toolbar-button:focus-visible,
     .geneo-editor-toolbar .geneo-tool:focus-visible { outline: 2px solid var(--brand-green-300); outline-offset: 2px; }
     .geneo-editor-toolbar .geneo-toolbar-button:disabled { opacity: .45; cursor: not-allowed; }
+    .geneo-editor-toolbar .geneo-toolbar-button svg,
+    .geneo-editor-toolbar .geneo-tool svg,
+    .geneo-editor-toolbar .geneo-toolbar-object svg {
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      max-width: 18px;
+      display: block;
+      flex: 0 0 18px;
+      color: currentColor;
+    }
     .geneo-tool-group { height: 40px; display: inline-flex; align-items: center; gap: 2px; padding: 2px; border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: rgba(255,255,255,.018); flex: 0 0 auto; }
     .geneo-tool-group .geneo-tool { height: 34px; padding: 0 12px; border-color: transparent; background: transparent; }
     .geneo-tool.active { background: var(--surface-selected); color: var(--text-primary); border-color: rgba(98,217,154,.24); }
@@ -11345,9 +11356,9 @@
       min-height: 0;
       min-width: 0;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 330px;
+      grid-template-columns: minmax(0, 1fr) var(--inspector-width);
     }
-    .geneo-editor-main.inspector-collapsed { grid-template-columns: minmax(0, 1fr) 48px; }
+    .geneo-editor-main.inspector-collapsed { grid-template-columns: minmax(0, 1fr) var(--inspector-collapsed-width); }
     .geneo-canvas-viewport {
       position: relative;
       min-width: 0;
@@ -11386,7 +11397,7 @@
     .tool-split-main:focus-visible,
     .tool-split-trigger:focus-visible { position:relative; z-index:1; outline:2px solid var(--brand-green-300); outline-offset:1px; }
     .tool-split svg { width:18px; height:18px; display:block; }
-    .tool-split-trigger svg { width:14px; height:14px; }
+    .tool-split-trigger svg { width:14px; height:14px; transform:rotate(90deg); }
     .tool-options-menu { min-width: 180px; }
     .tool-options-menu button { min-height: 38px; display: flex; align-items: center; gap: 9px; font-weight: 750; }
     .tool-options-menu button[aria-checked="true"] { background: var(--surface-selected); color: var(--text-primary); }
@@ -11449,8 +11460,8 @@
       background: rgba(255,255,255,.04);
     }
 
-    .geneo-board-panel { display: flex; flex-direction: column; gap: var(--space-5); min-height: 0; }
-    .geneo-sidebar-section { display: grid; gap: var(--space-2); min-width: 0; }
+    .geneo-board-panel { display: flex; flex-direction: column; gap: var(--space-5); height: auto; min-height: 100%; overflow: visible; }
+    .geneo-sidebar-section { position: relative; display: flex; flex: 0 0 auto; flex-direction: column; gap: var(--space-2); min-width: 0; }
     .geneo-current-board-summary { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-2); min-width: 0; }
     .geneo-current-board-copy { display: grid; gap: 5px; min-width: 0; }
     .geneo-current-board-copy strong { color: var(--text-primary); font-size: 15px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -11474,10 +11485,10 @@
     .geneo-sidebar-disclosure:hover { color: var(--text-primary); }
     .geneo-sidebar-disclosure:focus-visible { outline: 2px solid var(--brand-green-300); outline-offset: 2px; border-radius: 5px; }
     .geneo-sidebar-disclosure-meta { display: inline-flex; align-items: center; gap: 7px; color: var(--text-tertiary); font-size: 12px; }
-    .geneo-sidebar-disclosure-meta svg { width: 14px; height: 14px; transition: transform var(--ease); }
-    .geneo-sidebar-disclosure[aria-expanded="true"] .geneo-sidebar-disclosure-meta svg { transform: rotate(180deg); }
-    .geneo-sidebar-section-body { display: grid; gap: var(--space-2); min-width: 0; }
-    .geneo-layers { min-height: 0; }
+    .geneo-sidebar-disclosure-meta svg { width: 14px; height: 14px; transform: rotate(90deg); transition: transform var(--ease); }
+    .geneo-sidebar-disclosure[aria-expanded="true"] .geneo-sidebar-disclosure-meta svg { transform: rotate(-90deg); }
+    .geneo-sidebar-section-body { position: relative; display: grid; gap: var(--space-2); min-width: 0; overflow: visible; }
+    .geneo-layers { min-height: auto; }
     .geneo-layer-tools { display: flex; gap: var(--space-2); align-items: center; }
     .geneo-object-search { height: 34px; min-width: 0; flex: 1 1 auto; border: 1px solid var(--border-default); background: #111817; border-radius: 8px; color: var(--text-primary); padding: 0 var(--space-3); outline: none; }
     .geneo-layer-list { display: grid; gap: 2px; }
@@ -11521,23 +11532,21 @@
     .geneo-inspector {
       border-left: 1px solid var(--border-default);
       background: var(--surface-sidebar);
-      min-width: 0;
+      width: var(--inspector-width);
+      min-width: var(--inspector-width);
       overflow-y: auto;
     }
-    .geneo-inspector.collapsed { overflow: hidden; display: grid; place-items: start center; padding-top: var(--space-4); }
-    .geneo-inspector-rail-button {
-      width: 34px;
-      height: 34px;
-      border: 1px solid var(--border-default);
-      background: var(--surface-card);
-      color: var(--text-secondary);
-      border-radius: 8px;
+    .geneo-inspector.collapsed {
+      width: var(--inspector-collapsed-width);
+      min-width: var(--inspector-collapsed-width);
+      overflow: hidden;
       display: grid;
-      place-items: center;
-      font-weight: 900;
+      place-items: start center;
+      padding-top: var(--space-4);
     }
     .geneo-inspector-body { padding: var(--space-4); display: grid; gap: var(--space-4); }
     .geneo-inspector-header { display: flex; gap: var(--space-3); align-items: flex-start; }
+    .geneo-inspector-header > .people-collapse-button { flex: 0 0 34px; }
     .geneo-inspector-title { flex: 1 1 auto; min-width: 0; }
     .geneo-inspector-title h2 { margin: 0 0 2px; font-size: 16px; }
     .geneo-inspector-title span { color: var(--text-tertiary); font-size: 12px; }
@@ -11664,6 +11673,7 @@
     .geneo-node:hover .geneo-port,
     .geneo-node:focus-within .geneo-port,
     .geneo-node.selected .geneo-port,
+    .geneo-canvas-stage.connection-tool .geneo-port,
     .geneo-canvas-stage.is-connecting .geneo-port,
     .geneo-canvas-stage.show-sockets .geneo-port {
       opacity:1;
@@ -11739,8 +11749,8 @@
     .geneo-layer-panel-head { display:grid; grid-template-columns:24px minmax(0,1fr); align-items:center; }
     .geneo-layer-panel-head .geneo-layer-row { min-width:0; }
     .geneo-layer-disclosure { width:24px; height:28px; padding:0; border:0; background:transparent; color:var(--text-tertiary); display:grid; place-items:center; }
-    .geneo-layer-disclosure svg { width:14px; height:14px; transition:transform var(--ease); }
-    .geneo-layer-disclosure[aria-expanded="false"] svg { transform:rotate(-90deg); }
+    .geneo-layer-disclosure svg { width:14px; height:14px; transform:rotate(-90deg); transition:transform var(--ease); }
+    .geneo-layer-disclosure[aria-expanded="false"] svg { transform:rotate(90deg); }
     .geneo-layer-row { padding-left:calc(7px + var(--layer-depth, 0) * 18px); }
     .geneo-image-picker,
     .geneo-person-picker { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; max-height:480px; overflow:auto; }
@@ -11754,8 +11764,8 @@
     @media (max-width: 900px) {
       .geneo-editor-main,
       .geneo-editor-main.inspector-collapsed { grid-template-columns:minmax(0,1fr); }
-      .geneo-inspector { position:absolute; z-index:50; right:0; top:0; bottom:0; width:min(330px,90vw); box-shadow:-14px 0 36px rgba(0,0,0,.35); }
-      .geneo-inspector.collapsed { width:48px; }
+      .geneo-inspector { position:absolute; z-index:50; right:0; top:0; bottom:0; width:min(var(--inspector-width),90vw); min-width:0; box-shadow:-14px 0 36px rgba(0,0,0,.35); }
+      .geneo-inspector.collapsed { width:var(--inspector-collapsed-width); min-width:var(--inspector-collapsed-width); }
     }
 
     /* Albums module */
@@ -16106,7 +16116,6 @@
       }
     }
     @media (max-width: 1380px) {
-      .geneo-editor-main { grid-template-columns: minmax(0,1fr) 300px; }
       .geneo-toolbar-button[data-geneo-templates] { display: none; }
     }
     @media (max-width: 1260px) {
@@ -16127,10 +16136,11 @@
         top: 0;
         right: 0;
         bottom: 0;
-        width: min(330px, 90vw);
+        width: min(var(--inspector-width), 90vw);
+        min-width: 0;
         box-shadow: -14px 0 36px rgba(0,0,0,.35);
       }
-      .geneo-inspector.collapsed { width: 48px; }
+      .geneo-inspector.collapsed { width: var(--inspector-collapsed-width); min-width: var(--inspector-collapsed-width); }
       .geneo-editor-toolbar { grid-template-columns: 1fr; overflow: visible; }
       .geneo-editor-toolbar-right { justify-content: flex-start; flex-wrap: wrap; }
     }
@@ -25964,7 +25974,7 @@
       doublechevronSidebar: '<svg width="14" height="12" viewBox="0 0 14 12" fill="none" ><path opacity="0.8" d="M8 11L13 6L8 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path opacity="0.8" d="M1 11L6 6L1 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
       edit: '<svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
       education: '<svg  viewBox="0 0 52 52" enable-background="new 0 0 52 52" xml:space="preserve" fill="currentColor" stroke="currentColor"><g display="none"> <path display="inline" opacity="0.2" enable-background="new" d="M0,0v52h52V0H0z M49.9,49.9H2.1V2.1h47.8 C49.9,2.1,49.9,49.9,49.9,49.9z"></path> </g> <g display="none"> <rect x="2" y="2" display="inline" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="48"></rect> </g> <g display="none"> <g display="inline" opacity="0.5"> <line fill="none" stroke-width="0.25" stroke-miterlimit="10" x1="50" y1="2" x2="2" y2="50"></line> <line fill="none" stroke-width="0.25" stroke-miterlimit="10" x1="2" y1="2" x2="49.9" y2="50"></line> <rect x="2" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="4" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="6" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="8" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="10" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="12" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="14" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="16" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="18" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="20" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="22" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="24" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="26" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="28" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="30" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="32" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="34" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="36" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="38" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="40" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="42" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="44" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="46" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="48" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="2" height="48"></rect> <rect x="2" y="48" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="46" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="44" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="42" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="40" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="38" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="36" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="34" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="32" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="30" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="28" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="26" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="24" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="22" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="20" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="18" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="16" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="14" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="12" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="10" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="8" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="6" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="4" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> <rect x="2" y="2" fill="none" stroke-width="0.25" stroke-miterlimit="10" width="48" height="2"></rect> </g> </g> <g> <path d="M25.8,26.7c-1.2,0.1-2.3-0.4-3.5-0.8c-6.3-2.1-12.7-4.2-19-6.3c-0.4-0.2-0.7-0.3-1-0.6 c-0.4-0.3-0.4-0.7,0-1c0.3-0.2,0.7-0.5,1.1-0.6c6.8-2,13.5-4,20.3-6.1c1.5-0.5,3.1-0.5,4.7,0c6.7,2,13.4,4,20.1,6 c0.4,0.2,0.8,0.3,1.2,0.6c0.5,0.3,0.5,0.8,0,1.1c-0.3,0.2-0.6,0.4-1,0.5C42,21.7,35.3,24,28.5,26.2C27.6,26.6,26.8,26.7,25.8,26.7z "></path> <path d="M12.5,27c-1-0.2-1.2,0.4-1.2,0.9c0,2.6,0,5.1,0,7.6c0,0.9,0.3,1.4,0.9,2c0.2,0.2,0.5,0.4,0.7,0.6 c1.6,1.1,3.5,1.8,5.4,2.3c3.8,1,7.6,1.2,11.5,0.7c2.5-0.3,5-1,7.3-2c1-0.5,2-1,2.7-1.8c0.5-0.5,0.7-1,0.6-1.7 c0.1-2.4,0.1-4.9,0.1-7.4c0-1.4-1-1.2-1.4-1.1c-3.5,1.2-7.2,2.3-10.7,3.5c-1.8,0.6-3.5,0.6-5.2,0L12.5,27z"></path> <path d="M45.9,24.7c-0.3,0.1-0.4,0.2-0.4,0.6c0,2.3,0,4.5,0,6.8c0,0.2-0.1,0.5-0.2,0.7c-0.5,1.2-1,2.4-1.4,3.6 c-0.4,1.1-0.2,2.3,0.6,3.1c0.2,0.3,0.6,0.6,0.9,0.8c0.3,0.3,0.8,0.4,1.2,0.5c0.7,0.1,1.3-0.3,1.8-0.7c0.2-0.2,0.5-0.4,0.7-0.7 c0.6-0.8,0.7-1.8,0.5-2.7c-0.3-1.4-0.9-2.6-1.5-3.8c-0.2-0.2-0.2-0.6-0.2-0.8c0-2.5,0-4.9,0-7.4c0-0.5-0.4-0.4-0.6-0.3L45.9,24.7z"></path> </g> </g></svg>',
-      export: '<svg fill="currentColor" viewBox="0 0 24 24" ><path d="M8.71,7.71,11,5.41V15a1,1,0,0,0,2,0V5.41l2.29,2.3a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42l-4-4a1,1,0,0,0-.33-.21,1,1,0,0,0-.76,0,1,1,0,0,0-.33.21l-4,4A1,1,0,1,0,8.71,7.71ZM21,14a1,1,0,0,0-1,1v4a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V15a1,1,0,0,0-2,0v4a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V15A1,1,0,0,0,21,14Z"></path></g></svg>',
+      export: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8.71 7.71 11 5.41V15a1 1 0 0 0 2 0V5.41l2.29 2.3a1 1 0 0 0 1.42-1.42l-4-4a1 1 0 0 0-1.42 0l-4 4a1 1 0 1 0 1.42 1.42ZM21 14a1 1 0 0 0-1 1v4a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-4a1 1 0 0 0-2 0v4a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-4a1 1 0 0 0-1-1Z"/></svg>',
       file: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/><path d="M14 3v6h6"/></svg>',
       focus: '<svg width="512" height="512" viewBox="0 0 512 512" fill="none" ><path d="M30 421.929L30.0049 422.704C30.417 455.226 56.7031 481.511 89.2246 481.923L90 481.929H184.496C192.78 481.929 199.496 488.644 199.496 496.929C199.496 505.213 192.78 511.929 184.496 511.929H90C40.2945 511.929 0.000263889 471.634 0 421.929V327.456C0 319.172 6.71573 312.456 15 312.456C23.2843 312.456 30 319.172 30 327.456V421.929Z" fill="currentColor"/><path d="M511.991 421.929C511.991 471.634 471.697 511.929 421.991 511.929H327.494C319.21 511.929 312.494 505.213 312.494 496.929C312.494 488.644 319.21 481.929 327.494 481.929H421.991C454.869 481.929 481.571 455.484 481.986 422.704L481.991 421.929V327.456C481.991 319.172 488.707 312.456 496.991 312.456C505.275 312.456 511.991 319.172 511.991 327.456V421.929Z" fill="currentColor"/><path d="M199.496 15C199.496 23.2843 192.78 30 184.496 30H90C56.863 30 30.0002 56.8631 30 90V184.474C30 192.758 23.2843 199.474 15 199.474C6.71573 199.474 0 192.758 0 184.474V90C0.000191733 40.2945 40.2945 0 90 0H184.496C192.78 0 199.496 6.71573 199.496 15Z" fill="currentColor"/><path d="M421.991 0C471.697 3.29903e-05 511.991 40.2946 511.991 90V184.474C511.991 192.758 505.275 199.474 496.991 199.474C488.707 199.474 481.991 192.758 481.991 184.474V90C481.991 57.1219 455.546 30.4201 422.767 30.0049L421.991 30H327.494C319.21 30 312.494 23.2843 312.494 15C312.494 6.71573 319.21 0 327.494 0H421.991Z" fill="currentColor"/><path d="M256.435 269.927C322.84 269.927 378.178 319.907 390.479 386.148C393.302 401.352 380.443 413.999 364.979 413.999H147.968C132.504 413.999 119.567 401.352 122.39 386.148C134.69 319.907 190.029 269.927 256.435 269.927Z" fill="currentColor"/><path d="M334.469 174.5C334.469 216.75 299.771 251 256.969 251C214.167 251 179.469 216.75 179.469 174.5C179.469 132.25 214.167 98 256.969 98C299.771 98 334.469 132.25 334.469 174.5Z" fill="currentColor"/></svg>',
       folder: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h7l2 2h9v9.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5Z"/></svg>',
@@ -25975,7 +25985,7 @@
       help: '<svg viewBox="0 0 24 24" fill="none" ><path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2"></path> <path d="M10.5 8.67709C10.8665 8.26188 11.4027 8 12 8C13.1046 8 14 8.89543 14 10C14 10.9337 13.3601 11.718 12.4949 11.9383C12.2273 12.0064 12 12.2239 12 12.5V12.5V13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M12 16H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>',
       home: '<svg width="512" height="512" viewBox="0 0 512 512" fill="none" ><path d="M244.338 1.18588C231.329 4.79163 234.931 1.48636 119.647 116.67C59.8028 176.565 9.46586 227.547 7.86469 229.95C-4.54441 248.48 -2.04258 273.32 13.769 289.245C22.9758 298.36 34.6843 303.167 48.0942 303.167H54.8992V383.295C54.8992 437.481 55.2995 465.025 56 468.631C59.8028 486.86 74.5136 503.386 92.7269 509.696C99.3318 512 99.8321 512 148.168 512C195.803 512 196.903 512 199.605 509.897C201.106 508.795 203.308 506.591 204.409 505.089C206.51 502.385 206.51 501.083 207.011 435.478L207.511 368.571L210.513 363.664C214.316 357.554 222.022 352.646 229.427 351.745C232.229 351.344 246.239 351.244 260.55 351.444L286.569 351.745L291.873 354.649C296.877 357.454 300.079 360.759 303.181 366.268C304.282 368.371 304.682 380.691 305.083 435.578C305.583 501.083 305.583 502.385 307.685 505.089C308.785 506.591 310.987 508.795 312.488 509.897C315.19 512 316.291 512 363.926 512C412.261 512 412.762 512 419.366 509.696C437.58 503.386 452.291 486.86 456.093 468.631C456.794 465.025 457.194 437.481 457.194 383.295V303.167H463.999C488.017 303.167 507.431 286.841 511.434 263.304C512.935 254.089 511.434 244.273 507.131 235.059C504.229 229.049 495.522 220.035 395.249 119.575C335.505 59.6791 284.467 9.29883 281.866 7.5961C279.264 5.8934 274.76 3.58972 271.858 2.48798C264.853 -0.21637 251.443 -0.817322 244.338 1.18588Z" fill="currentColor"/></svg>',
       image: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8" cy="10" r="2"/><path d="m21 15-4.5-4.5L8 19"/></svg>',
-      import: '<svg fill="currentColor" viewBox="0 0 24 24" ><path d="M21,14a1,1,0,0,0-1,1v4a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V15a1,1,0,0,0-2,0v4a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V15A1,1,0,0,0,21,14Zm-9.71,1.71a1,1,0,0,0,.33.21.94.94,0,0,0,.76,0,1,1,0,0,0,.33-.21l4-4a1,1,0,0,0-1.42-1.42L13,12.59V3a1,1,0,0,0-2,0v9.59l-2.29-2.3a1,1,0,1,0-1.42,1.42Z"></path></g></svg>',
+      import: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 14a1 1 0 0 0-1 1v4a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-4a1 1 0 0 0-2 0v4a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-4a1 1 0 0 0-1-1Zm-9.71 1.71a1 1 0 0 0 1.42 0l4-4a1 1 0 0 0-1.42-1.42L13 12.59V3a1 1 0 0 0-2 0v9.59l-2.29-2.3a1 1 0 1 0-1.42 1.42Z"/></svg>',
       link: '<svg viewBox="0 0 24 24" fill="none" ><path d="M16.4437 2.00021C14.9719 1.98733 13.5552 2.55719 12.4986 3.58488L12.4883 3.59504L11.6962 4.38801C11.3059 4.77876 11.3063 5.41192 11.697 5.80222C12.0878 6.19252 12.721 6.19216 13.1113 5.80141L13.8979 5.01386C14.5777 4.35511 15.4855 3.99191 16.4262 4.00014C17.3692 4.00839 18.2727 4.38923 18.9416 5.06286C19.6108 5.73671 19.9916 6.64971 19.9998 7.6056C20.008 8.55874 19.6452 9.47581 18.9912 10.1607L16.2346 12.9367C15.8688 13.3052 15.429 13.5897 14.9453 13.7714C14.4616 13.9531 13.945 14.0279 13.4304 13.9907C12.9159 13.9536 12.4149 13.8055 11.9616 13.5561C11.5083 13.3067 11.1129 12.9617 10.8027 12.5441C10.4734 12.1007 9.847 12.0083 9.40364 12.3376C8.96029 12.6669 8.86785 13.2933 9.19718 13.7367C9.67803 14.384 10.2919 14.9202 10.9975 15.3084C11.7032 15.6966 12.4838 15.9277 13.2866 15.9856C14.0893 16.0435 14.8949 15.9268 15.6486 15.6437C16.4022 15.3606 17.0861 14.9177 17.654 14.3457L20.4168 11.5635L20.429 11.551C21.4491 10.4874 22.0125 9.0642 21.9997 7.58834C21.987 6.11247 21.3992 4.69931 20.3607 3.65359C19.3221 2.60764 17.9155 2.01309 16.4437 2.00021Z" fill="currentColor"></path> <path d="M10.7134 8.01444C9.91064 7.95655 9.10506 8.0732 8.35137 8.35632C7.59775 8.63941 6.91382 9.08232 6.34597 9.65431L3.5831 12.4365L3.57097 12.449C2.5508 13.5126 1.98748 14.9358 2.00021 16.4117C2.01295 17.8875 2.60076 19.3007 3.6392 20.3464C4.67787 21.3924 6.08439 21.9869 7.55623 21.9998C9.02807 22.0127 10.4447 21.4428 11.5014 20.4151L11.5137 20.4029L12.3012 19.6099C12.6903 19.218 12.6881 18.5849 12.2962 18.1957C11.9043 17.8066 11.2712 17.8088 10.882 18.2007L10.1011 18.9871C9.42133 19.6452 8.51402 20.0081 7.57373 19.9999C6.63074 19.9916 5.72728 19.6108 5.05834 18.9371C4.38918 18.2633 4.00839 17.3503 4.00014 16.3944C3.99191 15.4412 4.35479 14.5242 5.00874 13.8393L7.76537 11.0633C8.13118 10.6948 8.57097 10.4103 9.05467 10.2286C9.53836 10.0469 10.0549 9.97215 10.5695 10.0093C11.0841 10.0464 11.585 10.1945 12.0383 10.4439C12.4917 10.6933 12.887 11.0383 13.1972 11.4559C13.5266 11.8993 14.1529 11.9917 14.5963 11.6624C15.0397 11.3331 15.1321 10.7067 14.8028 10.2633C14.3219 9.61599 13.708 9.07982 13.0024 8.69161C12.2968 8.30338 11.5161 8.07233 10.7134 8.01444Z" fill="currentColor"></path> </g></svg>',
       list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>',
       logo: `<svg class="app-logo" aria-hidden="true" width="412" height="368" viewBox="0 0 412 368" fill="none" ><path fill-rule="evenodd" clip-rule="evenodd" d="M215.98 5.57987C158.387 20.2852 112.419 61.9959 93.8161 116.431C86.0485 139.163 81.0306 179.218 84.3407 192.07C86.1043 198.914 86.6765 199.063 101.622 196.592C116.037 194.207 143.515 195.393 159.015 199.071C165.629 200.639 165.706 200.378 163.813 182.375C160.365 149.584 173.856 114.148 197.816 93.051C217.694 75.5488 231.357 70.3638 260.873 69.1284C291.94 67.8243 312.796 73.5698 336.023 89.8336C343.925 95.3642 351.018 99.8913 351.784 99.8913C354.19 99.8913 397.328 48.3402 397.328 45.4632C397.328 41.8484 375.906 26.7541 358.462 18.0802C322.633 0.263432 258.757 -5.34187 215.98 5.57987ZM262.34 179.967V211.426H300.488H338.637V235.405C338.637 257.137 338.018 259.774 332.035 263.529C324.382 268.333 306.357 274.716 306.357 272.62C306.357 268.433 315.863 254.226 320.273 251.821C323.084 250.288 324.666 248.332 323.789 247.479C322.911 246.624 309.392 244.391 293.745 242.518C258.751 238.325 237.874 241.8 226.43 253.717C216.743 263.803 214.475 271.719 214.868 294.092C215.229 314.826 219.513 322.865 222.366 308.16C225.218 293.435 233.807 282.146 247.949 274.53L260.873 267.57L247.154 280.65C235.817 291.459 232.349 297.384 227.172 314.78C223.727 326.357 219.898 339.02 218.656 342.921L216.406 350.01L211.91 342.921C209.436 339.02 202.687 327.464 196.912 317.24C178.95 285.436 161.48 271.047 126.24 259.039C103.345 251.237 103.78 248.269 127.352 251.457C158.147 255.624 180.684 268.771 195.154 291.007L203.649 304.062V292.585C203.649 261.533 193.118 232.036 177.442 219.182C162.862 207.225 150.505 204.797 112.941 206.504C80.9631 207.96 41.7904 216.23 8.65386 228.525L0 231.736L14.5581 239.838C30.4338 248.675 50.4766 267.698 67.4821 290.072C95.9758 327.555 109.288 335.551 143.492 335.714C156.403 335.777 172.414 334.779 179.07 333.492L191.169 331.158L201.237 349.035C206.772 358.867 212.746 367.381 214.513 367.956C216.279 368.53 219.901 363.449 222.559 356.662L227.395 344.325L258.807 345.366C309.415 347.042 357.752 332.683 397.706 304.099L412 293.875V221.192V148.509H337.17H262.34V179.967Z" fill="#2FAE74"/></svg>`,
@@ -58633,11 +58643,7 @@
             </div>
 
             <div class="side-nav">
-              ${renderGeneoLibraryViewButton(
-                'all',
-                'All Boards',
-                icon.whiteboard
-              )}
+              ${renderGeneoAllBoardsNavigationButton()}
 
               ${renderGeneoLibraryViewButton(
                 'favorites',
@@ -58950,6 +58956,19 @@
               label
             )}
           </span>
+        </button>
+      `;
+    }
+
+    function renderGeneoAllBoardsNavigationButton({ editor = false } = {}) {
+      const active = !editor && state.geneoLibraryView === 'all';
+      return `
+        <button
+          class="side-link ${active ? 'active' : ''}"
+          type="button"
+          ${editor ? 'data-geneo-all-boards' : 'data-geneo-library-view="all"'}>
+          ${icon.whiteboard}
+          <span>All Boards</span>
         </button>
       `;
     }
@@ -62468,6 +62487,21 @@
       return Number.isFinite(number) ? Math.min(max, Math.max(min, number)) : fallback;
     }
 
+    function snapGeneographCoordinate(value) {
+      const number = geneoNumber(value, 0, -GENEO_WORLD_LIMIT, GENEO_WORLD_LIMIT);
+      return selectedGeneographDiagram()?.canvas.snapToGrid
+        ? Math.round(number / GENEO_GRID_SIZE) * GENEO_GRID_SIZE
+        : number;
+    }
+
+    function snapGeneographPoint(point) {
+      if (!point) return null;
+      return {
+        x: snapGeneographCoordinate(point.x),
+        y: snapGeneographCoordinate(point.y)
+      };
+    }
+
     function geneoAppearance(value, defaults = {}) {
       const source = value && typeof value === 'object' ? value : {};
       return {
@@ -62715,6 +62749,40 @@
       if (!node) return true;
       const parent = getGeneographNode(node.parentPanelId);
       return node.locked || (parent ? geneoNodeEffectiveLocked(parent) : false);
+    }
+
+    function geneoNodeFullyInsidePanel(node, panel) {
+      return Boolean(node && panel && panel.type === 'panel' && node.id !== panel.id
+        && node.x >= panel.x
+        && node.y >= panel.y
+        && node.x + node.width <= panel.x + panel.width
+        && node.y + node.height <= panel.y + panel.height);
+    }
+
+    function geneoContainingPanelForNode(node) {
+      return selectedGeneographDiagram().nodes
+        .filter(item => item.type === 'panel' && item.id !== node?.id && geneoNodeEffectiveVisible(item))
+        .sort((a, b) => b.order - a.order)
+        .find(panel => geneoNodeFullyInsidePanel(node, panel)) || null;
+    }
+
+    function reconcileGeneographPanelMembership(panelId) {
+      const diagram = selectedGeneographDiagram();
+      const panel = getGeneographNode(panelId);
+      if (!diagram || panel?.type !== 'panel') return false;
+      let changed = false;
+      diagram.nodes.forEach(node => {
+        if (node.id === panel.id || node.type === 'panel') return;
+        const inside = geneoNodeEffectiveVisible(node) && geneoNodeFullyInsidePanel(node, panel);
+        if (inside && node.parentPanelId !== panel.id) {
+          node.parentPanelId = panel.id;
+          changed = true;
+        } else if (!inside && node.parentPanelId === panel.id) {
+          node.parentPanelId = null;
+          changed = true;
+        }
+      });
+      return changed;
     }
 
     function geneoNodeTitle(node) {
@@ -63021,9 +63089,11 @@
         }
       });
       if (!insertionPoint || points.some(existing => Math.hypot(existing.x - insertionPoint.x, existing.y - insertionPoint.y) < 3)) return false;
+      insertionPoint = snapGeneographPoint(insertionPoint);
+      if (points.some(existing => Math.hypot(existing.x - insertionPoint.x, existing.y - insertionPoint.y) < 3)) return false;
       const waypoints = connection.route?.mode === 'manual'
         ? connection.route.waypoints.map(existing => ({ ...existing }))
-        : points.slice(1, -1).map(existing => ({ ...existing }));
+        : points.slice(1, -1).map(existing => snapGeneographPoint(existing));
       const insertAt = Math.max(0, Math.min(segmentIndex, waypoints.length));
       geneoPushHistory();
       waypoints.splice(insertAt, 0, insertionPoint);
@@ -63132,8 +63202,8 @@
       const layersExpanded = state.geneoSidebarSections?.layers !== false;
       const connectionsExpanded = state.geneoSidebarSections?.connections !== false;
       const row = (node, depth = 0) => `<div class="geneo-layer-row ${selectedIds.has(node.id) ? 'selected' : ''}" style="--layer-depth:${depth}" data-geneo-layer="${escapeHtml(node.id)}" draggable="true" tabindex="0"><span class="geneo-layer-icon">${geneoNodeIcon(node.type)}</span><span class="name">${escapeHtml(geneoNodeTitle(node))}</span><button class="geneo-layer-toggle" type="button" data-geneo-toggle-visible="${escapeHtml(node.id)}" aria-label="${node.visible ? 'Hide' : 'Show'} ${escapeHtml(geneoNodeTitle(node))}">${node.visible ? icon.eye : icon.eyeOff}</button><button class="geneo-layer-toggle" type="button" data-geneo-toggle-lock="${escapeHtml(node.id)}" aria-label="${node.locked ? 'Unlock' : 'Lock'} ${escapeHtml(geneoNodeTitle(node))}">${node.locked ? icon.lock : icon.unlock}</button></div>`;
-      sidebar.innerHTML = `<nav class="geneo-board-panel" aria-label="Geneograph board navigation">
-        <section class="geneo-sidebar-section"><div class="side-section-title">Navigation</div><div class="side-nav"><button class="side-link" type="button" data-geneo-all-boards>${icon.whiteboard}<span>All boards</span></button></div></section>
+      sidebar.innerHTML = `<nav class="geneo-sidebar geneo-board-panel" aria-label="Geneograph board navigation">
+        <section class="geneo-sidebar-section"><div class="side-section-title">Navigation</div><div class="side-nav">${renderGeneoAllBoardsNavigationButton({ editor: true })}</div></section>
         <section class="geneo-sidebar-section"><div class="side-section-title">Current board</div><div class="geneo-current-board-summary"><div class="geneo-current-board-copy"><strong title="${escapeHtml(board.title)}">${escapeHtml(board.title)}</strong><span title="${escapeHtml(collectionMeta.title)}">${icon.folder}<span>${escapeHtml(collectionMeta.label)}</span></span></div><button class="geneo-board-square-action" type="button" data-geneo-settings aria-label="Edit ${escapeHtml(board.title)}">${icon.edit}</button></div></section>
         <section class="geneo-sidebar-section geneo-layers"><button class="geneo-sidebar-disclosure" type="button" data-geneo-sidebar-section="layers" aria-expanded="${layersExpanded}"><span>Layers</span><span class="geneo-sidebar-disclosure-meta"><span>${diagram.nodes.length}</span>${icon.chevron}</span></button>${layersExpanded ? `<div class="geneo-sidebar-section-body"><div class="geneo-layer-tools"><input class="geneo-object-search" id="geneoLayerSearch" placeholder="Search layers" value="${escapeHtml(state.geneoLayerSearch)}"><button class="geneo-mini-action" type="button" data-geneo-add="person" aria-label="Add person">${icon.plus}</button></div><div class="geneo-layer-list">${panels.map(panel => { const collapsed = Boolean(state.geneoCollapsedPanels[panel.id]); const children = diagram.nodes.filter(node => node.parentPanelId === panel.id && matches(node)).sort((a, b) => b.order - a.order); return `<div class="geneo-layer-panel"><div class="geneo-layer-panel-head"><button class="geneo-layer-disclosure" type="button" data-geneo-collapse-panel="${escapeHtml(panel.id)}" aria-expanded="${!collapsed}">${icon.chevron}</button>${row(panel)}</div>${collapsed ? '' : children.map(node => row(node, 1)).join('')}</div>`; }).join('')}${rootNodes.map(node => row(node)).join('')}</div></div>` : ''}</section>
         <section class="geneo-sidebar-section"><button class="geneo-sidebar-disclosure" type="button" data-geneo-sidebar-section="connections" aria-expanded="${connectionsExpanded}"><span>Connections</span><span class="geneo-sidebar-disclosure-meta"><span>${diagram.connections.length}</span>${icon.chevron}</span></button>${connectionsExpanded ? `<div class="geneo-sidebar-section-body"><div class="geneo-layer-list">${diagram.connections.map(connection => `<div class="geneo-layer-row ${state.selectedGeneoConnectionId === connection.id ? 'selected' : ''}" data-geneo-layer-connection="${escapeHtml(connection.id)}" tabindex="0"><span class="geneo-layer-icon">${icon.link}</span><span class="name">${escapeHtml(geneoConnectionLabel(connection))}</span></div>`).join('')}</div></div>` : ''}</section>
@@ -63174,8 +63244,12 @@
       return `<g class="geneo-relationship-date" transform="translate(${midpoint.x} ${midpoint.y - 18})" aria-label="Relationship date ${escapeHtml(label)}"><rect x="${-width / 2}" y="-13" width="${width}" height="24" rx="4"></rect><text text-anchor="middle" dominant-baseline="middle">${escapeHtml(label)}</text></g>`;
     }
 
+    function renderGeneographInspectorHeader(title, subtitle, iconHtml = '') {
+      return `<div class="geneo-inspector-header"><button class="people-collapse-button people-sidebar-toggle-icon" type="button" data-geneo-inspector-toggle aria-label="Collapse inspector" aria-expanded="true">${icon.doublechevronSidebar}</button>${iconHtml ? `<span class="geneo-layer-icon">${iconHtml}</span>` : ''}<div class="geneo-inspector-title"><h2>${escapeHtml(title)}</h2><span>${escapeHtml(subtitle)}</span></div></div>`;
+    }
+
     function renderGeneographInspector() {
-      if (state.geneoInspectorCollapsed) return `<aside class="geneo-inspector collapsed"><button class="geneo-inspector-rail-button" type="button" data-geneo-inspector-toggle aria-label="Open inspector">${icon.chevron}</button></aside>`;
+      if (state.geneoInspectorCollapsed) return `<aside class="geneo-inspector collapsed"><button class="people-collapse-button person-sidebar-restore-button sidebar-toggle-icon sidebar-toggle-icon-restore" type="button" data-geneo-inspector-toggle aria-label="Open inspector" aria-expanded="false">${icon.doublechevronSidebar}</button></aside>`;
       const selectedNodes = selectedGeneographNodes();
       if (selectedNodes.length > 1) return renderGeneographMultiSelectionInspector(selectedNodes);
       const node = selectedGeneographNode();
@@ -63183,20 +63257,20 @@
       if (connection) return renderGeneographConnectionInspector(connection);
       if (node) return renderGeneographNodeInspector(node);
       const canvas = selectedGeneographDiagram().canvas;
-      return `<aside class="geneo-inspector"><div class="geneo-inspector-body"><div class="geneo-inspector-header"><div class="geneo-inspector-title"><h2>Canvas</h2><span>Board appearance and behavior</span></div><button class="geneo-inspector-rail-button" type="button" data-geneo-inspector-toggle aria-label="Collapse inspector">${icon.chevron}</button></div><section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body"><div class="geneo-field"><label for="geneoCanvasColor">Background</label><input id="geneoCanvasColor" class="geneo-input" type="color" data-geneo-canvas-color value="${escapeHtml(canvas.backgroundColor)}"></div><div class="geneo-color-presets">${['#0F1413','#111827','#251c2b','#2a2418','#f3f1e9'].map(color => `<button type="button" data-geneo-canvas-preset="${color}" style="--swatch:${color}" aria-label="Use ${color}"></button>`).join('')}</div><label class="geneo-check"><input type="checkbox" data-geneo-grid ${canvas.gridVisible ? 'checked' : ''}> Show grid</label><label class="geneo-check"><input type="checkbox" data-geneo-sockets ${canvas.alwaysShowSockets ? 'checked' : ''}> Always show sockets</label><label class="geneo-check"><input type="checkbox" data-geneo-snap ${canvas.snapToGrid ? 'checked' : ''}> Snap to grid</label></div></section></div></aside>`;
+      return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader('Canvas', 'Board appearance and behavior')}<section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body"><div class="geneo-field"><label for="geneoCanvasColor">Background</label><input id="geneoCanvasColor" class="geneo-input" type="color" data-geneo-canvas-color value="${escapeHtml(canvas.backgroundColor)}"></div><div class="geneo-color-presets">${['#0F1413','#111827','#251c2b','#2a2418','#f3f1e9'].map(color => `<button type="button" data-geneo-canvas-preset="${color}" style="--swatch:${color}" aria-label="Use ${color}"></button>`).join('')}</div><label class="geneo-check"><input type="checkbox" data-geneo-grid ${canvas.gridVisible ? 'checked' : ''}> Show grid</label><label class="geneo-check"><input type="checkbox" data-geneo-sockets ${canvas.alwaysShowSockets ? 'checked' : ''}> Always show sockets</label><label class="geneo-check"><input type="checkbox" data-geneo-snap ${canvas.snapToGrid ? 'checked' : ''}> Snap to grid</label></div></section></div></aside>`;
     }
 
     function renderGeneographMultiSelectionInspector(nodes) {
       const visibleNames = nodes.slice(0, 6).map(node => `<li>${escapeHtml(geneoNodeTitle(node))}</li>`).join('');
       const remaining = Math.max(0, nodes.length - 6);
-      return `<aside class="geneo-inspector"><div class="geneo-inspector-body"><div class="geneo-inspector-header"><span class="geneo-layer-icon">${icon.cursorSelect}</span><div class="geneo-inspector-title"><h2>${nodes.length} objects selected</h2><span>Multiple selection</span></div><button class="geneo-inspector-rail-button" type="button" data-geneo-inspector-toggle aria-label="Collapse inspector">${icon.chevron}</button></div><section class="geneo-inspector-section"><h3>Selection</h3><div class="geneo-inspector-section-body"><ul class="geneo-selection-list">${visibleNames}</ul>${remaining ? `<p class="geneo-selection-more">and ${remaining} more</p>` : ''}<p class="geneo-selection-help">Drag any unlocked selected object to move the group.</p></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete selected</button></div></aside>`;
+      return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader(`${nodes.length} objects selected`, 'Multiple selection', icon.cursorSelect)}<section class="geneo-inspector-section"><h3>Selection</h3><div class="geneo-inspector-section-body"><ul class="geneo-selection-list">${visibleNames}</ul>${remaining ? `<p class="geneo-selection-more">and ${remaining} more</p>` : ''}<p class="geneo-selection-help">Drag any unlocked selected object to move the group.</p></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete selected</button></div></aside>`;
     }
 
     function renderGeneographNodeInspector(node) {
       const appearance = node.appearance || {};
       const person = node.type === 'person' ? getGeneographPerson(node.personId) : null;
       const content = node.type === 'person' ? `<div class="geneo-field"><label>Display name</label><input class="geneo-input" data-geneo-person-field="displayName" value="${escapeHtml(person.displayName)}"></div><div class="geneo-layout-grid"><div class="geneo-field"><label>Birth</label><input class="geneo-input" data-geneo-person-field="birth" value="${escapeHtml(person.birth)}"></div><div class="geneo-field"><label>Death</label><input class="geneo-input" data-geneo-person-field="death" value="${escapeHtml(person.death)}"></div></div><div class="geneo-link-status ${person.treePersonId ? '' : 'visual'}"><strong>${person.treePersonId ? 'Linked to Family Tree' : 'Board person'}</strong><span>${person.treePersonId ? escapeHtml(personDisplayName(person.treePersonId)) : 'This person exists only on this board.'}</span></div><button class="button secondary" type="button" data-geneo-link-person>${person.treePersonId ? 'Change link' : 'Link to Family Tree'}</button>${person.treePersonId ? `<button class="button ghost" type="button" data-geneo-unlink-person>Unlink</button>` : ''}` : node.type === 'image' ? `<div class="geneo-field"><label>Title</label><input class="geneo-input" data-geneo-node-field="title" value="${escapeHtml(node.title || '')}"></div><button class="button secondary" type="button" data-geneo-choose-image>Choose project photo</button>` : node.type === 'panel' ? `<div class="geneo-field"><label>Panel title</label><input class="geneo-input" data-geneo-node-field="title" value="${escapeHtml(node.title || '')}"></div>` : `<div class="geneo-field"><label>${node.type === 'sticky' ? 'Note' : 'Text'}</label><textarea class="geneo-textarea" data-geneo-node-field="text">${escapeHtml(node.text || '')}</textarea></div>`;
-      return `<aside class="geneo-inspector"><div class="geneo-inspector-body"><div class="geneo-inspector-header"><span class="geneo-layer-icon">${geneoNodeIcon(node.type)}</span><div class="geneo-inspector-title"><h2>${escapeHtml(geneoNodeTitle(node))}</h2><span>${capitalize(node.type)}</span></div><button class="geneo-inspector-rail-button" type="button" data-geneo-inspector-toggle aria-label="Collapse inspector">${icon.chevron}</button></div><section class="geneo-inspector-section"><h3>Content</h3><div class="geneo-inspector-section-body">${content}</div></section><section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body">${node.type !== 'text' ? `<div class="geneo-field"><label>Background</label><input class="geneo-input" type="color" data-geneo-appearance="backgroundColor" value="${escapeHtml(appearance.backgroundColor || '#18211f')}"></div><div class="geneo-field"><label>Stroke</label><input class="geneo-input" type="color" data-geneo-appearance="strokeColor" value="${escapeHtml(appearance.strokeColor || '#52615d')}"></div>` : ''}<div class="geneo-field"><label>Text</label><input class="geneo-input" type="color" data-geneo-appearance="textColor" value="${escapeHtml(appearance.textColor || '#f1f5f3')}"></div></div></section><section class="geneo-inspector-section"><h3>Layout</h3><div class="geneo-inspector-section-body"><div class="geneo-layout-grid"><div class="geneo-field"><label>X</label><input class="geneo-input" type="number" data-geneo-layout="x" value="${Math.round(node.x)}"></div><div class="geneo-field"><label>Y</label><input class="geneo-input" type="number" data-geneo-layout="y" value="${Math.round(node.y)}"></div><div class="geneo-field"><label>Width</label><input class="geneo-input" type="number" data-geneo-layout="width" value="${Math.round(node.width)}"></div><div class="geneo-field"><label>Height</label><input class="geneo-input" type="number" data-geneo-layout="height" value="${Math.round(node.height)}"></div></div><label class="geneo-check"><input type="checkbox" data-geneo-node-visible ${node.visible ? 'checked' : ''}> Visible</label><label class="geneo-check"><input type="checkbox" data-geneo-node-locked ${node.locked ? 'checked' : ''}> Locked</label></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete ${node.type}</button></div></aside>`;
+      return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader(geneoNodeTitle(node), capitalize(node.type), geneoNodeIcon(node.type))}<section class="geneo-inspector-section"><h3>Content</h3><div class="geneo-inspector-section-body">${content}</div></section><section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body">${node.type !== 'text' ? `<div class="geneo-field"><label>Background</label><input class="geneo-input" type="color" data-geneo-appearance="backgroundColor" value="${escapeHtml(appearance.backgroundColor || '#18211f')}"></div><div class="geneo-field"><label>Stroke</label><input class="geneo-input" type="color" data-geneo-appearance="strokeColor" value="${escapeHtml(appearance.strokeColor || '#52615d')}"></div>` : ''}<div class="geneo-field"><label>Text</label><input class="geneo-input" type="color" data-geneo-appearance="textColor" value="${escapeHtml(appearance.textColor || '#f1f5f3')}"></div></div></section><section class="geneo-inspector-section"><h3>Layout</h3><div class="geneo-inspector-section-body"><div class="geneo-layout-grid"><div class="geneo-field"><label>X</label><input class="geneo-input" type="number" data-geneo-layout="x" value="${Math.round(node.x)}"></div><div class="geneo-field"><label>Y</label><input class="geneo-input" type="number" data-geneo-layout="y" value="${Math.round(node.y)}"></div><div class="geneo-field"><label>Width</label><input class="geneo-input" type="number" data-geneo-layout="width" value="${Math.round(node.width)}"></div><div class="geneo-field"><label>Height</label><input class="geneo-input" type="number" data-geneo-layout="height" value="${Math.round(node.height)}"></div></div><label class="geneo-check"><input type="checkbox" data-geneo-node-visible ${node.visible ? 'checked' : ''}> Visible</label><label class="geneo-check"><input type="checkbox" data-geneo-node-locked ${node.locked ? 'checked' : ''}> Locked</label></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete ${node.type}</button></div></aside>`;
     }
 
     function renderGeneographConnectionInspector(connection) {
@@ -63207,7 +63281,7 @@
       const startEvent = relationship ? partnerRelationshipStartEvent(relationship, relationshipType) : null;
       const marriageType = startEvent?.typeLabel || relationship?.marriageType || 'Civil';
       const relationshipSection = family ? `<section class="geneo-inspector-section"><h3>Relationship details</h3><div class="geneo-inspector-section-body geneo-relationship-editor" data-geneo-relationship-editor><div class="geneo-field"><label for="geneoRelationshipType">Relationship type</label><select class="geneo-select" id="geneoRelationshipType" data-geneo-relationship-type>${addPersonRelationshipTypeOptions(relationshipType)}</select></div>${renderPartnerRelationshipDateFields({ prefix: 'geneoRelationship', relationshipType, family: relationship })}<div class="geneo-field" data-add-person-marriage-type-field ${addPersonRelationshipShowsMarriageType(relationshipType) ? '' : 'hidden'}><label for="geneoRelationshipMarriageType">Marriage type</label><select class="geneo-select" id="geneoRelationshipMarriageType" data-geneo-marriage-type>${addPersonMarriageTypeOptions(marriageType)}</select></div><label class="geneo-check"><input type="checkbox" data-geneo-show-relationship-dates ${connection.showRelationshipDates !== false ? 'checked' : ''}> Show relationship date on board</label><p class="geneo-relationship-storage">${resolved.central ? 'Linked Family Tree relationship' : 'Board-only relationship'}</p><button class="button primary" type="button" data-geneo-save-relationship>Save relationship details</button></div></section>` : '';
-      return `<aside class="geneo-inspector"><div class="geneo-inspector-body"><div class="geneo-inspector-header"><span class="geneo-layer-icon">${icon.link}</span><div class="geneo-inspector-title"><h2>${escapeHtml(geneoConnectionLabel(connection))}</h2><span>Connection</span></div><button class="geneo-inspector-rail-button" type="button" data-geneo-inspector-toggle aria-label="Collapse inspector">${icon.chevron}</button></div>${relationshipSection}<section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body"><div class="geneo-field"><label>Color</label><input class="geneo-input" type="color" data-geneo-connection-style="color" value="${escapeHtml(connection.style.color)}"></div><div class="geneo-field"><label>Width</label><input class="geneo-input" type="number" min="1" max="8" data-geneo-connection-style="width" value="${connection.style.width}"></div><div class="geneo-field"><label>Pattern</label><select class="geneo-select" data-geneo-connection-style="pattern"><option value="solid" ${connection.style.pattern === 'solid' ? 'selected' : ''}>Solid</option><option value="dashed" ${connection.style.pattern === 'dashed' ? 'selected' : ''}>Dashed</option></select></div><div class="geneo-field"><label>Routing</label><select class="geneo-select" data-geneo-connection-routing><option value="auto" ${connection.route.mode === 'auto' ? 'selected' : ''}>Automatic</option><option value="manual" ${connection.route.mode === 'manual' ? 'selected' : ''}>Manual</option></select></div><button class="button secondary" type="button" data-geneo-reset-route>Reset route</button></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete connection</button></div></aside>`;
+      return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader(geneoConnectionLabel(connection), 'Connection', icon.link)}${relationshipSection}<section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body"><div class="geneo-field"><label>Color</label><input class="geneo-input" type="color" data-geneo-connection-style="color" value="${escapeHtml(connection.style.color)}"></div><div class="geneo-field"><label>Width</label><input class="geneo-input" type="number" min="1" max="8" data-geneo-connection-style="width" value="${connection.style.width}"></div><div class="geneo-field"><label>Pattern</label><select class="geneo-select" data-geneo-connection-style="pattern"><option value="solid" ${connection.style.pattern === 'solid' ? 'selected' : ''}>Solid</option><option value="dashed" ${connection.style.pattern === 'dashed' ? 'selected' : ''}>Dashed</option></select></div><div class="geneo-field"><label>Routing</label><select class="geneo-select" data-geneo-connection-routing><option value="auto" ${connection.route.mode === 'auto' ? 'selected' : ''}>Automatic</option><option value="manual" ${connection.route.mode === 'manual' ? 'selected' : ''}>Manual</option></select></div><button class="button secondary" type="button" data-geneo-reset-route>Reset route</button></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete connection</button></div></aside>`;
     }
 
     function renderGeneographEditor() {
@@ -63325,7 +63399,9 @@
       if (type === 'sticky') node.text = 'New research note';
       if (type === 'text') node.text = 'New text';
       if (type === 'panel') node.title = 'New panel';
-      diagram.nodes.push(node); selectGeneographNode(node.id); touchGeneographBoard();
+      diagram.nodes.push(node);
+      if (type === 'panel') reconcileGeneographPanelMembership(node.id);
+      selectGeneographNode(node.id); touchGeneographBoard();
       if (type === 'sticky' || type === 'text' || type === 'panel') {
         beginGeneographInlineEdit(node.id, { selectAll: type === 'sticky' || type === 'text' });
         return;
@@ -63446,7 +63522,7 @@
     }
 
     function geneoCreateConnection(kind, source, target, familyId = null) {
-      return { id: createRuntimeId('geneo-connection'), kind, familyId, source: { ...source }, target: { ...target }, showRelationshipDates: true, style: { pattern: kind === 'visual' ? state.geneoConnectorPattern : 'solid', color: kind === 'visual' ? '#d4aa6b' : '#8ecdb2', width: 2 }, route: { mode: 'auto', waypoints: [] } };
+      return { id: createRuntimeId('geneo-connection'), kind, familyId, source: { ...source }, target: { ...target }, showRelationshipDates: true, style: { pattern: state.geneoConnectorPattern === 'dashed' ? 'dashed' : 'solid', color: kind === 'visual' ? '#d4aa6b' : '#8ecdb2', width: 2 }, route: { mode: 'auto', waypoints: [] } };
     }
 
     function commitGeneographConnection(source, target) {
@@ -63593,7 +63669,7 @@
       }
       if (geneoPointerState.kind === 'waypoint') {
         const connection = getGeneographConnection(geneoPointerState.connectionId);
-        const point = geneoPointerToCanvas(event);
+        const point = snapGeneographPoint(geneoPointerToCanvas(event));
         const waypoint = connection?.route.waypoints[geneoPointerState.index];
         if (waypoint) { waypoint.x = geneoNumber(point.x, waypoint.x, -GENEO_WORLD_LIMIT, GENEO_WORLD_LIMIT); waypoint.y = geneoNumber(point.y, waypoint.y, -GENEO_WORLD_LIMIT, GENEO_WORLD_LIMIT); geneoPointerState.moved = true; const svg = main.querySelector('.geneo-connections'); if (svg) svg.outerHTML = renderGeneographConnectors(); }
         return;
@@ -63606,8 +63682,8 @@
         const first = connection?.route.waypoints[geneoPointerState.firstWaypoint];
         const second = connection?.route.waypoints[geneoPointerState.secondWaypoint];
         if (first && second) {
-          if (geneoPointerState.vertical) { first.x = geneoNumber(geneoPointerState.first.x + dx, first.x, -GENEO_WORLD_LIMIT, GENEO_WORLD_LIMIT); second.x = geneoNumber(geneoPointerState.second.x + dx, second.x, -GENEO_WORLD_LIMIT, GENEO_WORLD_LIMIT); }
-          else { first.y = geneoNumber(geneoPointerState.first.y + dy, first.y, -GENEO_WORLD_LIMIT, GENEO_WORLD_LIMIT); second.y = geneoNumber(geneoPointerState.second.y + dy, second.y, -GENEO_WORLD_LIMIT, GENEO_WORLD_LIMIT); }
+          if (geneoPointerState.vertical) { const x = snapGeneographCoordinate(geneoPointerState.first.x + dx); first.x = x; second.x = x; }
+          else { const y = snapGeneographCoordinate(geneoPointerState.first.y + dy); first.y = y; second.y = y; }
           geneoPointerState.moved = true;
           const svg = main.querySelector('.geneo-connections'); if (svg) svg.outerHTML = renderGeneographConnectors();
         }
@@ -63673,10 +63749,8 @@
       geneoCanvasRuntime.suppressNodeClick = true;
       requestAnimationFrame(() => { geneoCanvasRuntime.suppressNodeClick = false; });
       const node = getGeneographNode(stateBefore.nodeId);
-      if (node && node.type !== 'panel' && stateBefore.kind === 'move-group' && stateBefore.nodes.length === 1) {
-        const panel = selectedGeneographDiagram().nodes.filter(item => item.type === 'panel' && item.id !== node.id && geneoNodeEffectiveVisible(item)).sort((a,b) => b.order - a.order).find(item => node.x >= item.x && node.y >= item.y && node.x + node.width <= item.x + item.width && node.y + node.height <= item.y + item.height);
-        node.parentPanelId = panel?.id || null;
-      }
+      if (node?.type === 'panel' && ['move-group', 'resize'].includes(stateBefore.kind)) reconcileGeneographPanelMembership(node.id);
+      else if (node && stateBefore.kind === 'move-group' && stateBefore.nodes.length === 1) node.parentPanelId = geneoContainingPanelForNode(node)?.id || null;
       touchGeneographBoard(); renderGeneographEditorPreserveScroll();
     }
 
@@ -63764,7 +63838,7 @@
         const connection = getGeneographConnection(segment.dataset.geneoConnection); if (!connection) return; const index = Number(segment.dataset.geneoSegment); const points = geneoConnectionPoints(connection);
         if (index < 1 || index >= points.length - 2) return;
         geneoPushHistory();
-        if (connection.route.mode !== 'manual') connection.route = { mode: 'manual', waypoints: points.slice(1, -1) };
+        if (connection.route.mode !== 'manual') connection.route = { mode: 'manual', waypoints: points.slice(1, -1).map(snapGeneographPoint) };
         const firstWaypoint = index - 1, secondWaypoint = index; const first = connection.route.waypoints[firstWaypoint], second = connection.route.waypoints[secondWaypoint]; if (!first || !second) return;
         geneoPointerState = { kind: 'segment', connectionId: connection.id, start: geneoPointerToCanvas(event), firstWaypoint, secondWaypoint, first: { ...first }, second: { ...second }, vertical: Math.abs(first.x - second.x) < Math.abs(first.y - second.y), moved: false };
       }));
@@ -63794,7 +63868,7 @@
       main.querySelectorAll('[data-geneo-node-field]').forEach(input => input.addEventListener('change', () => { const node = selectedGeneographNode(); if (!node) return; geneoPushHistory(); node[input.dataset.geneoNodeField] = input.value; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); }));
       main.querySelectorAll('[data-geneo-person-field]').forEach(input => input.addEventListener('change', () => { const node = selectedGeneographNode(); const person = getGeneographPerson(node?.personId); if (!person) return; geneoPushHistory(); person[input.dataset.geneoPersonField] = input.value.trim(); if (person.treePersonId) person.syncState = 'modified'; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); }));
       main.querySelectorAll('[data-geneo-appearance]').forEach(input => input.addEventListener('change', () => { const node = selectedGeneographNode(); if (!node) return; geneoPushHistory(); node.appearance[input.dataset.geneoAppearance] = input.value; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); }));
-      main.querySelectorAll('[data-geneo-layout]').forEach(input => input.addEventListener('change', () => { const node = selectedGeneographNode(); if (!node) return; geneoPushHistory(); const field = input.dataset.geneoLayout; const defaults = geneoNodeDefaults(node.type); const minimum = field === 'width' ? defaults.minWidth : field === 'height' ? defaults.minHeight : -GENEO_WORLD_LIMIT; const maximum = field === 'width' || field === 'height' ? 10000 : GENEO_WORLD_LIMIT; node[field] = geneoNumber(input.value, node[field], minimum, maximum); touchGeneographBoard(); renderGeneographEditorPreserveScroll(); }));
+      main.querySelectorAll('[data-geneo-layout]').forEach(input => input.addEventListener('change', () => { const node = selectedGeneographNode(); if (!node) return; geneoPushHistory(); const field = input.dataset.geneoLayout; const defaults = geneoNodeDefaults(node.type); const minimum = field === 'width' ? defaults.minWidth : field === 'height' ? defaults.minHeight : -GENEO_WORLD_LIMIT; const maximum = field === 'width' || field === 'height' ? 10000 : GENEO_WORLD_LIMIT; node[field] = geneoNumber(input.value, node[field], minimum, maximum); if (node.type === 'panel') reconcileGeneographPanelMembership(node.id); touchGeneographBoard(); renderGeneographEditorPreserveScroll(); }));
       main.querySelector('[data-geneo-node-visible]')?.addEventListener('change', event => { const node = selectedGeneographNode(); if (node) { geneoPushHistory(); node.visible = event.target.checked; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); } });
       main.querySelector('[data-geneo-node-locked]')?.addEventListener('change', event => { const node = selectedGeneographNode(); if (node) { geneoPushHistory(); node.locked = event.target.checked; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); } });
       main.querySelector('[data-geneo-link-person]')?.addEventListener('click', openGeneographTreePersonPicker);
@@ -63810,7 +63884,7 @@
         relationshipEditor.querySelector('[data-geneo-save-relationship]')?.addEventListener('click', saveGeneographPartnerRelationship);
       }
       main.querySelectorAll('[data-geneo-connection-style]').forEach(input => input.addEventListener('change', () => { const connection = selectedGeneographConnection(); if (!connection) return; geneoPushHistory(); const field = input.dataset.geneoConnectionStyle; connection.style[field] = field === 'width' ? geneoNumber(input.value, 2, 1, 8) : input.value; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); }));
-      main.querySelector('[data-geneo-connection-routing]')?.addEventListener('change', event => { const connection = selectedGeneographConnection(); if (!connection) return; geneoPushHistory(); connection.route.mode = event.target.value; if (connection.route.mode === 'manual' && !connection.route.waypoints.length) { const points = geneoConnectionPoints({ ...connection, route: { mode: 'auto', waypoints: [] } }); connection.route.waypoints = points.slice(1, -1); } touchGeneographBoard(); renderGeneographEditorPreserveScroll(); });
+      main.querySelector('[data-geneo-connection-routing]')?.addEventListener('change', event => { const connection = selectedGeneographConnection(); if (!connection) return; geneoPushHistory(); connection.route.mode = event.target.value; if (connection.route.mode === 'manual' && !connection.route.waypoints.length) { const points = geneoConnectionPoints({ ...connection, route: { mode: 'auto', waypoints: [] } }); connection.route.waypoints = points.slice(1, -1).map(snapGeneographPoint); } touchGeneographBoard(); renderGeneographEditorPreserveScroll(); });
       main.querySelector('[data-geneo-reset-route]')?.addEventListener('click', () => { const connection = selectedGeneographConnection(); if (!connection) return; geneoPushHistory(); connection.route = { mode: 'auto', waypoints: [] }; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); });
       main.querySelector('[data-geneo-canvas-color]')?.addEventListener('change', event => updateGeneoCanvasSetting('backgroundColor', event.target.value));
       main.querySelectorAll('[data-geneo-canvas-preset]').forEach(button => button.addEventListener('click', () => updateGeneoCanvasSetting('backgroundColor', button.dataset.geneoCanvasPreset)));
