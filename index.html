@@ -11461,6 +11461,29 @@
     .geneo-layer-row:hover { background: rgba(255,255,255,.035); color: var(--text-primary); }
     .geneo-layer-row.selected { background: var(--surface-selected); border-color: rgba(98,217,154,.12); color: var(--text-primary); }
     .geneo-layer-row .name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .geneo-layer-row
+      .name[data-geneo-layer-rename-handle] {
+      cursor: text;
+    }
+
+    .geneo-layer-name-input {
+      flex: 1 1 auto;
+      min-width: 0;
+      height: 28px;
+      border: 1px solid var(--brand-green-300);
+      border-radius: 6px;
+      background: var(--surface-input);
+      color: var(--text-primary);
+      padding: 0 7px;
+      font: inherit;
+      outline: 0;
+    }
+
+    .geneo-layer-name-input:focus {
+      box-shadow:
+        0 0 0 2px
+        rgba(98, 217, 154, 0.2);
+    }    
     .geneo-layer-icon { width: 20px; height: 20px; border-radius: 5px; display: grid; place-items: center; background: rgba(255,255,255,.05); color: var(--brand-green-300); flex: 0 0 auto; }
     .geneo-layer-icon svg,
     .geneo-layer-toggle svg {
@@ -11535,6 +11558,82 @@
     .geneo-check input { accent-color: var(--brand-green-500); width: 16px; height: 16px; }
     .geneo-layout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
     
+    .geneo-image-source-card {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 86px minmax(0, 1fr);
+      gap: var(--space-3);
+      align-items: center;
+    }
+
+    .geneo-image-source-preview {
+      position: relative;
+      width: 86px;
+      height: 70px;
+      overflow: hidden;
+      border: 1px solid var(--border-default);
+      border-radius: 7px;
+      background: var(--surface-input);
+    }
+
+    .geneo-image-source-preview > .photo-thumbnail {
+      position: absolute;
+      inset: 0;
+    }
+
+    .geneo-image-source-copy {
+      min-width: 0;
+      display: grid;
+      justify-items: start;
+      gap: 4px;
+    }
+
+    .geneo-image-source-copy strong,
+    .geneo-image-source-copy > span:not(.geneo-image-source-badge) {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .geneo-image-source-copy > span:not(.geneo-image-source-badge) {
+      color: var(--text-tertiary);
+      font-size: 12px;
+    }
+
+    .geneo-image-source-badge {
+      min-height: 22px;
+      padding: 0 7px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      background: rgba(98, 217, 154, .12);
+      color: var(--brand-green-200);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .geneo-image-source-missing {
+      padding: var(--space-3);
+      border: 1px solid rgba(212, 170, 107, .26);
+      border-radius: 8px;
+      background: rgba(212, 170, 107, .08);
+      display: grid;
+      gap: 5px;
+    }
+
+    .geneo-image-source-missing span {
+      color: var(--text-secondary);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .geneo-image-source-actions {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
     .button.compact { min-height: 38px; padding-inline: 12px; }
     .button.icon-only { width: 42px; padding-inline: 0; justify-content: center; }
     .button.icon-only svg, .button.compact svg { width: 16px; height: 16px; }
@@ -11621,11 +11720,78 @@
     .geneo-person-copy > span:not(.geneo-link-badge) { color: color-mix(in srgb, currentColor 68%, transparent); font-size: 12px; }
     .geneo-link-badge { width: max-content; max-width: 100%; padding: 3px 7px; border-radius: 999px; background: rgba(255,255,255,.08); font-size: 10px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .geneo-link-badge.linked { background: rgba(98,217,154,.16); color: #8ce9b9; }
-    .geneo-node-image .geneo-node-content { display: grid; grid-template-rows: minmax(0,1fr) auto; }
-    .geneo-image-node-media { min-height: 0; overflow: hidden; background: rgba(0,0,0,.22); }
-    .geneo-image-node-media .photo-thumbnail { width: 100%; height: 100%; }
-    .geneo-image-node-media > span { width:100%; height:100%; display:grid; place-items:center; gap:6px; color:var(--text-tertiary); }
-    .geneo-image-node-title { padding: 9px 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .geneo-node-image .geneo-node-content {
+      position: relative;
+      display: block;
+    }
+
+    .geneo-image-node-media {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+      border-radius: inherit;
+      background: rgba(0, 0, 0, .22);
+    }
+
+    .geneo-image-node-media .photo-thumbnail {
+      width: 100%;
+      height: 100%;
+    }
+
+    .geneo-image-node-media .thumb-img {
+      object-fit: contain;
+      background: rgba(0, 0, 0, .18);
+    }
+
+    .geneo-image-node-media > span {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      gap: 6px;
+      color: var(--text-tertiary);
+    }
+
+    .geneo-image-node-missing svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .geneo-image-layer-label {
+      position: absolute;
+      z-index: 4;
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      min-width: 0;
+      padding: 7px 9px;
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 6px;
+      background: rgba(7, 12, 10, .82);
+      color: #f4f7f5;
+      box-shadow: 0 5px 16px rgba(0, 0, 0, .22);
+      backdrop-filter: blur(6px);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateY(3px);
+      pointer-events: none;
+      transition:
+        opacity var(--ease),
+        transform var(--ease);
+    }
+
+    .geneo-node-image:hover .geneo-image-layer-label,
+    .geneo-node-image.selected .geneo-image-layer-label,
+    .geneo-node-image:focus-within .geneo-image-layer-label {
+      opacity: 1;
+      transform: translateY(0);
+    }
     .geneo-node-sticky .geneo-node-content { padding: 18px; }
     .geneo-sticky-copy { white-space: pre-wrap; line-height: 1.5; font-size: 14px; }
     .geneo-node-text { border-color: transparent; background: transparent; box-shadow: none; }
@@ -11761,13 +11927,43 @@
     .geneo-layer-disclosure svg { width:14px; height:14px; transform:rotate(-90deg); transition:transform var(--ease); }
     .geneo-layer-disclosure[aria-expanded="false"] svg { transform:rotate(90deg); }
     .geneo-layer-row { padding-left:calc(7px + var(--layer-depth, 0) * 18px); }
-    .geneo-image-picker,
-    .geneo-person-picker { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; max-height:480px; overflow:auto; }
+    .geneo-person-picker {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+      max-height: 480px;
+      overflow: auto;
+    }
+
+    .geneo-person-picker > button {
+      min-width: 0;
+      border: 1px solid var(--border-default);
+      background: var(--surface-card);
+      color: var(--text-primary);
+      border-radius: 8px;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr);
+      align-items: center;
+      gap: 8px;
+      text-align: left;
+    }
+
+    .geneo-person-picker > button:hover {
+      border-color: var(--brand-green-300);
+      background: var(--surface-card-hover);
+    }
+
+    .geneo-person-picker small {
+      display: block;
+      margin-top: 3px;
+      color: var(--text-tertiary);
+    }
     .geneo-image-picker > button,
     .geneo-person-picker > button { min-width:0; border:1px solid var(--border-default); background:var(--surface-card); color:var(--text-primary); border-radius:8px; padding:10px; display:grid; gap:8px; text-align:left; }
     .geneo-image-picker > button:hover,
     .geneo-person-picker > button:hover { border-color:var(--brand-green-300); background:var(--surface-card-hover); }
-    .geneo-image-picker .photo-thumbnail { width:100%; aspect-ratio:4/3; }
     .geneo-person-picker > button { grid-template-columns:44px minmax(0,1fr); align-items:center; }
     .geneo-person-picker small { display:block; margin-top:3px; color:var(--text-tertiary); }
     @media (max-width: 900px) {
@@ -26446,6 +26642,13 @@
           const parent = node.parentElement;
           if (!parent || parent.closest('script, style, svg')) return NodeFilter.FILTER_REJECT;
           if (parent.closest('input, textarea, [contenteditable="true"]')) return NodeFilter.FILTER_REJECT;
+          if (
+            parent.closest(
+              '[data-user-content]'
+            )
+          ) {
+            return NodeFilter.FILTER_REJECT;
+          }
           return NodeFilter.FILTER_ACCEPT;
         }
       });
@@ -26459,6 +26662,11 @@
       root.querySelectorAll?.('[placeholder], [aria-label], [title], [data-toast]').forEach(el => {
         ['placeholder', 'aria-label', 'title', 'data-toast'].forEach(attr => {
           if (el.hasAttribute(attr)) el.setAttribute(attr, translateAttributeValue(el.getAttribute(attr)));
+          if (
+            el.closest('[data-user-content]')
+          ) {
+            return;
+          }
         });
       });
     }
@@ -31027,12 +31235,23 @@
       geneoConnectionDraft: null,
       geneoInlineEditNodeId: null,
       geneoInlineEditSelectAll: false,
+      geneoLayerRename: null,
       geneoZoom: 83,
       geneoBoardViewports: {},
       geneoInspectorCollapsed: false,
       geneoLayerSearch: '',
       geneoSidebarSections: { layers: true, connections: true },
       geneoCollapsedPanels: {},
+      geneoImagePicker: {
+        open: false,
+        mode: 'add',
+        nodeId: null,
+        sourceTab: 'project',
+        search: '',
+        selectedPhotoId: null,
+        uploadDraft: null,
+        uploadError: ''
+      },
       albumsView: 'all',
       activeAlbumId: null,
       albumsSearch: '',
@@ -57978,6 +58197,7 @@
             snapToGrid: false,
             alwaysShowSockets: false
           },
+          assets: [],
           people: [
             { id: 'gp-barnaby', treePersonId: 'barnaby', syncState: 'linked', names: { first: 'Barnaby', middle: '', last: 'Whiskerfield', maiden: '' }, gender: 'male', livingStatus: 'Deceased', birth: { ...normalizeGenealogyDateInput('14 Feb 1946'), placeId: null, placeText: '' }, death: { ...normalizeGenealogyDateInput('22 Nov 2018'), placeId: null, placeText: '' }, photoId: 'photo-barnaby-portrait' },
             { id: 'gp-daisy', treePersonId: 'daisy', syncState: 'linked', names: { first: 'Daisy', middle: '', last: 'Milkpaw', maiden: '' }, gender: 'female', livingStatus: 'Deceased', birth: { ...normalizeGenealogyDateInput('03 Jun 1949'), placeId: null, placeText: '' }, death: { ...normalizeGenealogyDateInput('04 Jan 2020'), placeId: null, placeText: '' }, photoId: 'photo-daisy-school' },
@@ -57998,7 +58218,27 @@
             { id: 'gn-iris', type: 'person', personId: 'gp-iris', x: 720, y: 500, width: 240, height: 132, parentPanelId: 'gn-panel', order: 3, visible: true, locked: false, appearance: { backgroundColor: '#302b1d', strokeColor: '#d4aa6b', strokeWidth: 3, textColor: '#fff8e8' } },
             { id: 'gn-luna', type: 'person', personId: 'gp-luna', x: 1410, y: 230, width: 240, height: 132, parentPanelId: null, order: 9, visible: true, locked: false, appearance: { backgroundColor: '#2d2437', strokeColor: '#aa8ce8', strokeWidth: 2, textColor: '#f6f1fb' } },
             { id: 'gn-theo', type: 'person', personId: 'gp-theo', x: 1420, y: 520, width: 240, height: 132, parentPanelId: null, order: 8, visible: true, locked: false, appearance: { backgroundColor: '#19302c', strokeColor: '#62d99a', strokeWidth: 2, textColor: '#f3f7f5' } },
-            { id: 'gn-image', type: 'image', x: 1850, y: 190, width: 300, height: 210, parentPanelId: null, order: 7, visible: true, locked: false, photoId: 'photo-family-table', title: 'Family table', appearance: { backgroundColor: '#101817', strokeColor: '#6f7d79', strokeWidth: 1 } },
+            {
+              id: 'gn-image',
+              type: 'image',
+              x: 1850,
+              y: 190,
+              width: 300,
+              height: 210,
+              parentPanelId: null,
+              order: 7,
+              visible: true,
+              locked: false,
+              imageRef: {
+                scope: 'project',
+                id: 'photo-family-table'
+              },
+              appearance: {
+                backgroundColor: '#101817',
+                strokeColor: '#6f7d79',
+                strokeWidth: 1
+              }
+            },
             { id: 'gn-sticky', type: 'sticky', x: 1830, y: 500, width: 260, height: 180, parentPanelId: null, order: 6, visible: true, locked: false, text: 'Compare the household register with the family album before exporting this branch.', appearance: { backgroundColor: '#6b5525', strokeColor: '#d4aa6b', strokeWidth: 1, textColor: '#fff8e8' } },
             { id: 'gn-text', type: 'text', x: 1330, y: 780, width: 420, height: 90, parentPanelId: null, order: 5, visible: true, locked: false, text: 'Possible Purrington branch', appearance: { textColor: '#dbe8e4', fontSize: 28, fontWeight: 800 } }
           ],
@@ -58032,6 +58272,7 @@
           snapToGrid: false,
           alwaysShowSockets: false
         },
+        assets: [],
         people: [],
         families: [],
         nodes: [],
@@ -61439,6 +61680,7 @@
       state.geneoTool = 'pan';
       state.geneoZoom = savedViewport?.zoom || 83;
       state.geneoInlineEditNodeId = null;
+      state.geneoLayerRename = null;
       geneoCanvasRuntime = createGeneoCanvasRuntime(id);
       geneoHistoryRuntime = {
         boardId: id,
@@ -62553,15 +62795,23 @@
     const GENEO_GRID_SIZE = 20;
     const GENEO_TOP_ROUTE_CLEARANCE = GENEO_GRID_SIZE * 4;
     const GENEO_HISTORY_LIMIT = 50;
+    const GENEO_LAYER_NAME_LIMIT = 80;
     let geneoPointerState = null;
     let geneoHistoryRuntime = { boardId: '', undo: [], redo: [] };
     let geneoCanvasRuntime = createGeneoCanvasRuntime();
     let geneoKeyboardBound = false;
     let geneoPointerBound = false;
+    let geneoImageUploadRequestId = 0;
 
     function geneoNumber(value, fallback, min = -Infinity, max = Infinity) {
       const number = Number(value);
       return Number.isFinite(number) ? Math.min(max, Math.max(min, number)) : fallback;
+    }
+    function normalizeGeneographLayerName(value) {
+      return String(value ?? '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, GENEO_LAYER_NAME_LIMIT);
     }
 
     function snapGeneographCoordinate(value) {
@@ -62585,6 +62835,307 @@
         ...defaults,
         ...source,
         strokeWidth: geneoNumber(source.strokeWidth, defaults.strokeWidth || 1, 0, 12)
+      };
+    }
+
+    function geneoFilenameStem(filename) {
+      return String(filename || '')
+        .trim()
+        .replace(/\.[^.]+$/, '')
+        || 'Image';
+    }
+
+    function geneoImageRecordName(record) {
+      return String(
+        record?.title
+        || record?.displayName
+        || record?.filename
+        || ''
+      ).trim() || 'Image';
+    }
+
+    function normalizeGeneographImageRef(node) {
+      const source = node?.imageRef;
+
+      if (
+        source
+        && ['project', 'board'].includes(source.scope)
+        && String(source.id || '').trim()
+      ) {
+        return {
+          scope: source.scope,
+          id: String(source.id).trim()
+        };
+      }
+
+      // One-time migration for the previous Geneograph image model.
+      if (String(node?.photoId || '').trim()) {
+        return {
+          scope: 'project',
+          id: String(node.photoId).trim()
+        };
+      }
+
+      return null;
+    }
+
+    function normalizeGeneographBoardAsset(asset) {
+      if (!asset || typeof asset !== 'object') return null;
+
+      const id = String(asset.id || '').trim();
+      const src = String(asset.src || '').trim();
+      const mimeType = String(asset.mimeType || '').trim();
+
+      if (
+        !id
+        || !src
+        || !PHOTO_UPLOAD_ALLOWED_TYPES.includes(mimeType)
+      ) {
+        return null;
+      }
+
+      const filename = String(
+        asset.filename || 'Uploaded image'
+      ).trim() || 'Uploaded image';
+
+      const now = new Date().toISOString();
+
+      return {
+        id,
+        kind: 'photo',
+        filename,
+        displayName:
+          String(asset.displayName || '').trim()
+          || geneoFilenameStem(filename),
+        src,
+        mimeType,
+        width: geneoNumber(asset.width, 0, 1),
+        height: geneoNumber(asset.height, 0, 1),
+        sizeBytes: geneoNumber(asset.sizeBytes, 0, 0),
+        createdAt:
+          Number.isFinite(Date.parse(asset.createdAt))
+            ? asset.createdAt
+            : now,
+        updatedAt:
+          Number.isFinite(Date.parse(asset.updatedAt))
+            ? asset.updatedAt
+            : now,
+        origin: {
+          type: 'upload',
+          label: 'Board upload'
+        }
+      };
+    }
+
+    function getGeneographBoardAsset(
+      assetId,
+      diagram = selectedGeneographDiagram()
+    ) {
+      return (
+        diagram?.assets || []
+      ).find(asset => asset.id === assetId) || null;
+    }
+
+    function resolveGeneographImageSource(
+      node,
+      {
+        board = selectedGeneographBoard(),
+        diagram = board?.diagram
+      } = {}
+    ) {
+      const ref = normalizeGeneographImageRef(node);
+
+      if (!ref) {
+        return {
+          ref: null,
+          available: false,
+          photo: null,
+          displayName: 'Image',
+          filename: '',
+          sourceLabel: 'No source'
+        };
+      }
+
+      if (ref.scope === 'project') {
+        const photo = getPhoto(ref.id, {
+          projectId: board?.projectId || ''
+        });
+
+        if (!photo || photo.deletedAt) {
+          return {
+            ref,
+            available: false,
+            photo: null,
+            displayName: 'Image',
+            filename: '',
+            sourceLabel: 'Project photo'
+          };
+        }
+
+        return {
+          ref,
+          available: true,
+          photo,
+          displayName: geneoImageRecordName(photo),
+          filename: String(photo.filename || photo.title || '').trim(),
+          sourceLabel: 'Project photo',
+          width: Number(photo.width) || 0,
+          height: Number(photo.height) || 0,
+          sizeBytes: Number(photo.sizeBytes) || 0
+        };
+      }
+
+      const asset = getGeneographBoardAsset(ref.id, diagram);
+
+      if (!asset) {
+        return {
+          ref,
+          available: false,
+          photo: null,
+          displayName: 'Image',
+          filename: '',
+          sourceLabel: 'Board upload'
+        };
+      }
+
+      return {
+        ref,
+        available: true,
+        photo: asset,
+        displayName: geneoImageRecordName(asset),
+        filename: String(asset.filename || '').trim(),
+        sourceLabel: 'Board upload',
+        width: Number(asset.width) || 0,
+        height: Number(asset.height) || 0,
+        sizeBytes: Number(asset.sizeBytes) || 0
+      };
+    }
+
+    function geneoImageSourceName(node) {
+      const source = resolveGeneographImageSource(node);
+      return source.available ? source.displayName : 'Image';
+    }
+
+    function pruneGeneographBoardAssets(
+      diagram = selectedGeneographDiagram()
+    ) {
+      if (!diagram) return false;
+
+      const referencedIds = new Set(
+        diagram.nodes
+          .filter(node =>
+            node.type === 'image'
+            && node.imageRef?.scope === 'board'
+            && node.imageRef.id
+          )
+          .map(node => node.imageRef.id)
+      );
+
+      const assets = Array.isArray(diagram.assets)
+        ? diagram.assets
+        : [];
+
+      const nextAssets = assets.filter(asset =>
+        referencedIds.has(asset.id)
+      );
+
+      if (nextAssets.length === assets.length) return false;
+
+      diagram.assets = nextAssets;
+      return true;
+    }
+
+    function uniqueGeneographBoardAssetId(
+      diagram = selectedGeneographDiagram()
+    ) {
+      let id;
+
+      do {
+        id = createRuntimeId('geneo-asset');
+      } while (
+        diagram?.assets?.some(asset => asset.id === id)
+      );
+
+      return id;
+    }
+
+    function createGeneographBoardAsset(
+      draft,
+      diagram = selectedGeneographDiagram()
+    ) {
+      if (!diagram || !photoUploadDraftIsValid(draft)) return null;
+
+      diagram.assets = Array.isArray(diagram.assets)
+        ? diagram.assets
+        : [];
+
+      const now = new Date().toISOString();
+      const filename = String(
+        draft.filename || 'Uploaded image'
+      ).trim() || 'Uploaded image';
+
+      const asset = {
+        id: uniqueGeneographBoardAssetId(diagram),
+        kind: 'photo',
+        filename,
+        displayName: geneoFilenameStem(filename),
+        src: draft.src,
+        mimeType: draft.mimeType,
+        width: draft.width,
+        height: draft.height,
+        sizeBytes: draft.sizeBytes,
+        createdAt: now,
+        updatedAt: now,
+        origin: {
+          type: 'upload',
+          label: 'Board upload'
+        }
+      };
+
+      diagram.assets.push(asset);
+      return asset;
+    }
+
+    function geneoImageNodeSize(source) {
+      const defaults = geneoNodeDefaults('image');
+      const sourceWidth = Number(source?.width);
+      const sourceHeight = Number(source?.height);
+
+      if (
+        !Number.isFinite(sourceWidth)
+        || !Number.isFinite(sourceHeight)
+        || sourceWidth <= 0
+        || sourceHeight <= 0
+      ) {
+        return {
+          width: defaults.width,
+          height: defaults.height
+        };
+      }
+
+      // Exact for normal photo ratios; extreme panoramas remain manageable
+      // and are shown uncropped through object-fit: contain.
+      const ratio = Math.min(
+        2.4,
+        Math.max(.45, sourceWidth / sourceHeight)
+      );
+
+      let width = defaults.width;
+      let height = width / ratio;
+
+      if (height < defaults.minHeight) {
+        height = defaults.minHeight;
+        width = height * ratio;
+      }
+
+      if (height > 360) {
+        height = 360;
+        width = height * ratio;
+      }
+
+      return {
+        width: Math.round(Math.max(defaults.minWidth, width)),
+        height: Math.round(Math.max(defaults.minHeight, height))
       };
     }
 
@@ -62623,8 +63174,23 @@
             snapToGrid: Boolean(canvas.snapToGrid),
             alwaysShowSockets: Boolean(canvas.alwaysShowSockets)
           },
-          people: [], families: [], nodes: [], connections: []
+          assets: [],
+          people: [],
+          families: [],
+          nodes: [],
+          connections: []
         };
+        const assetIds = new Set();
+
+        (Array.isArray(source.assets) ? source.assets : [])
+          .forEach(sourceAsset => {
+            const asset = normalizeGeneographBoardAsset(sourceAsset);
+
+            if (!asset || assetIds.has(asset.id)) return;
+
+            assetIds.add(asset.id);
+            diagram.assets.push(asset);
+          });
         const personIds = new Set();
         (Array.isArray(source.people) ? source.people : []).forEach(person => {
           if (!person || !person.id || personIds.has(person.id)) return;
@@ -62651,29 +63217,118 @@
           });
         });
         const nodeIds = new Set();
-        (Array.isArray(source.nodes) ? source.nodes : []).forEach((node, index) => {
-          if (!node || !node.id || nodeIds.has(node.id) || !GENEO_NODE_TYPES.has(node.type)) return;
-          if (node.type === 'person' && !personIds.has(node.personId)) return;
-          nodeIds.add(node.id);
-          const defaults = geneoNodeDefaults(node.type);
-          diagram.nodes.push({
-            ...node,
-            id: String(node.id), type: node.type,
-            x: geneoNumber(node.x, 120 + index * 18, -GENEO_WORLD_LIMIT, GENEO_WORLD_LIMIT),
-            y: geneoNumber(node.y, 120 + index * 18, -GENEO_WORLD_LIMIT, GENEO_WORLD_LIMIT),
-            width: geneoNumber(node.width, defaults.width, defaults.minWidth, 10000),
-            height: geneoNumber(node.height, defaults.height, defaults.minHeight, 10000),
-            parentPanelId: node.parentPanelId || null,
-            order: geneoNumber(node.order, index + 1),
-            visible: node.visible !== false,
-            locked: Boolean(node.locked),
-            appearance: geneoAppearance(node.appearance, defaults.appearance)
+
+        (Array.isArray(source.nodes) ? source.nodes : [])
+          .forEach((node, index) => {
+            if (
+              !node
+              || !node.id
+              || nodeIds.has(node.id)
+              || !GENEO_NODE_TYPES.has(node.type)
+            ) {
+              return;
+            }
+
+            if (
+              node.type === 'person'
+              && !personIds.has(node.personId)
+            ) {
+              return;
+            }
+
+            nodeIds.add(node.id);
+
+            const defaults = geneoNodeDefaults(node.type);
+
+            const normalizedNode = {
+              ...node,
+              id: String(node.id),
+              type: node.type,
+              name: String(node.name || '').trim().slice(0, 80),
+              x: geneoNumber(
+                node.x,
+                120 + index * 18,
+                -GENEO_WORLD_LIMIT,
+                GENEO_WORLD_LIMIT
+              ),
+              y: geneoNumber(
+                node.y,
+                120 + index * 18,
+                -GENEO_WORLD_LIMIT,
+                GENEO_WORLD_LIMIT
+              ),
+              width: geneoNumber(
+                node.width,
+                defaults.width,
+                defaults.minWidth,
+                10000
+              ),
+              height: geneoNumber(
+                node.height,
+                defaults.height,
+                defaults.minHeight,
+                10000
+              ),
+              parentPanelId: node.parentPanelId || null,
+              order: geneoNumber(node.order, index + 1),
+              visible: node.visible !== false,
+              locked: Boolean(node.locked),
+              appearance: geneoAppearance(
+                node.appearance,
+                defaults.appearance
+              )
+            };
+
+            if (node.type === 'image') {
+              const imageRef = normalizeGeneographImageRef(node);
+              normalizedNode.imageRef = imageRef;
+
+              // Preserve a genuinely custom legacy title as the new layer
+              // name, but do not retain duplicated media titles.
+              const legacyTitle = String(node.title || '').trim();
+
+              let referencedRecord = null;
+
+              if (imageRef?.scope === 'project') {
+                referencedRecord = getPhoto(imageRef.id, {
+                  projectId: board.projectId
+                });
+              } else if (imageRef?.scope === 'board') {
+                referencedRecord = diagram.assets.find(
+                  asset => asset.id === imageRef.id
+                ) || null;
+              }
+
+              const implicitNames = new Set(
+                [
+                  referencedRecord?.title,
+                  referencedRecord?.displayName,
+                  referencedRecord?.filename,
+                  geneoFilenameStem(referencedRecord?.filename)
+                ]
+                  .map(value => String(value || '').trim())
+                  .filter(Boolean)
+              );
+
+              if (
+                !normalizedNode.name
+                && legacyTitle
+                && !implicitNames.has(legacyTitle)
+              ) {
+                normalizedNode.name = legacyTitle.slice(0, 80);
+              }
+
+              delete normalizedNode.photoId;
+              delete normalizedNode.title;
+            }
+
+            diagram.nodes.push(normalizedNode);
           });
-        });
         diagram.nodes.forEach(node => {
           const parent = diagram.nodes.find(candidate => candidate.id === node.parentPanelId && candidate.type === 'panel');
           if (!parent || parent.id === node.id) node.parentPanelId = null;
         });
+        pruneGeneographBoardAssets(diagram);
         const familyIds = new Set();
         (Array.isArray(source.families) ? source.families : []).forEach(family => {
           if (!family || !family.id || familyIds.has(family.id)) return;
@@ -62705,6 +63360,9 @@
           diagram.connections.push({
             id: String(connection.id),
             kind: ['family-partner', 'family-child', 'family-sibling', 'visual'].includes(connection.kind) ? connection.kind : 'visual',
+            name: normalizeGeneographLayerName(
+              connection.name
+            ),
             familyId: familyIds.has(connection.familyId) ? connection.familyId : null,
             source: { ...connection.source }, target: { ...connection.target },
             style: {
@@ -62766,11 +63424,34 @@
       geneoHistoryRuntime.redo = [];
     }
 
-    function geneoRestoreSnapshot(snapshot) {
-      const board = selectedGeneographBoard();
-      if (!board || !snapshot) return false;
-      try { board.diagram = JSON.parse(snapshot); normalizeGeneographRuntimeData(); touchGeneographBoard(board); return true; }
-      catch (error) { console.warn('Unable to restore Geneograph history', error); return false; }
+    function geneoRestoreSnapshot(
+      snapshot
+    ) {
+      const board =
+        selectedGeneographBoard();
+
+      if (!board || !snapshot) {
+        return false;
+      }
+
+      try {
+        board.diagram =
+          JSON.parse(snapshot);
+
+        state.geneoLayerRename = null;
+
+        normalizeGeneographRuntimeData();
+        touchGeneographBoard(board);
+
+        return true;
+      } catch (error) {
+        console.warn(
+          'Unable to restore Geneograph history',
+          error
+        );
+
+        return false;
+      }
     }
 
     function undoGeneographChange() {
@@ -62914,12 +63595,44 @@
       return changed;
     }
 
-    function geneoNodeTitle(node) {
+    function geneoDefaultNodeTitle(node) {
       if (!node) return 'Canvas';
-      if (node.type === 'person') return geneoPersonDisplayName(getGeneographPerson(node.personId));
-      if (node.type === 'image') return node.title || getPhoto(node.photoId)?.title || 'Image';
-      if (node.type === 'panel') return node.title || 'Panel';
-      return String(node.text || (node.type === 'sticky' ? 'Sticky note' : 'Text')).split(/\r?\n/)[0] || 'Untitled';
+
+      if (node.type === 'person') {
+        return geneoPersonDisplayName(
+          getGeneographPerson(node.personId)
+        );
+      }
+
+      if (node.type === 'image') {
+        return geneoImageSourceName(node);
+      }
+
+      if (node.type === 'panel') {
+        return node.title || 'Panel';
+      }
+
+      return (
+        String(
+          node.text
+          || (
+            node.type === 'sticky'
+              ? 'Sticky note'
+              : 'Text'
+          )
+        )
+          .split(/\r?\n/)[0]
+        || 'Untitled'
+      );
+    }
+
+    function geneoNodeTitle(node) {
+      return (
+        normalizeGeneographLayerName(
+          node?.name
+        )
+        || geneoDefaultNodeTitle(node)
+      );
     }
 
     function geneoNodeIcon(type) {
@@ -63361,8 +64074,32 @@
       const editing = state.geneoInlineEditNodeId === node.id;
       if (node.type === 'person') return renderGeneographPersonNode(node);
       if (node.type === 'image') {
-        const photo = getPhoto(node.photoId);
-        return `<div class="geneo-image-node-media">${photo ? renderPhotoThumbnail(photo, { alt: node.title || photo.title }) : `<span>${icon.image}<small>Choose an image</small></span>`}</div><strong class="geneo-image-node-title">${escapeHtml(node.title || photo?.title || 'Image')}</strong>`;
+        const source = resolveGeneographImageSource(node);
+        const layerName = geneoNodeTitle(node);
+
+        return `
+          <div class="geneo-image-node-media">
+            ${
+              source.available
+                ? renderPhotoThumbnail(source.photo, {
+                    label: layerName
+                  })
+                : `
+                  <span class="geneo-image-node-missing">
+                    ${icon.image}
+                    <small>Image unavailable</small>
+                  </span>
+                `
+            }
+          </div>
+
+          <span
+            class="geneo-image-layer-label"
+            aria-hidden="true"
+            title="${escapeHtml(layerName)}">
+            ${escapeHtml(layerName)}
+          </span>
+        `;
       }
       if (node.type === 'sticky') return editing ? `<textarea class="geneo-inline-editor" data-geneo-inline-input>${escapeHtml(node.text || '')}</textarea>` : `<div class="geneo-sticky-copy">${escapeHtml(node.text || 'Double-click to edit')}</div>`;
       if (node.type === 'text') return editing ? `<textarea class="geneo-inline-editor geneo-inline-text" data-geneo-inline-input>${escapeHtml(node.text || '')}</textarea>` : `<div class="geneo-text-copy">${escapeHtml(node.text || 'Double-click to edit')}</div>`;
@@ -63399,20 +64136,429 @@
       const collectionMeta = geneographEditorCollectionMeta(board);
       const layersExpanded = state.geneoSidebarSections?.layers !== false;
       const connectionsExpanded = state.geneoSidebarSections?.connections !== false;
-      const row = (node, depth = 0) => `<div class="geneo-layer-row ${selectedIds.has(node.id) ? 'selected' : ''}" style="--layer-depth:${depth}" data-geneo-layer="${escapeHtml(node.id)}" draggable="true" tabindex="0"><span class="geneo-layer-icon">${geneoNodeIcon(node.type)}</span><span class="name">${escapeHtml(geneoNodeTitle(node))}</span><button class="geneo-layer-toggle" type="button" data-geneo-toggle-visible="${escapeHtml(node.id)}" aria-label="${node.visible ? 'Hide' : 'Show'} ${escapeHtml(geneoNodeTitle(node))}">${node.visible ? icon.eye : icon.eyeOff}</button><button class="geneo-layer-toggle" type="button" data-geneo-toggle-lock="${escapeHtml(node.id)}" aria-label="${node.locked ? 'Unlock' : 'Lock'} ${escapeHtml(geneoNodeTitle(node))}">${node.locked ? icon.lock : icon.unlock}</button></div>`;
+      const row = (
+        node,
+        depth = 0
+      ) => {
+        const displayName =
+          geneoNodeTitle(node);
+
+        const renaming =
+          geneoLayerRenameMatches(
+            'node',
+            node.id
+          );
+
+        return `
+          <div
+            class="geneo-layer-row ${
+              selectedIds.has(node.id)
+                ? 'selected'
+                : ''
+            }"
+            style="--layer-depth:${depth}"
+            data-geneo-layer="${
+              escapeHtml(node.id)
+            }"
+            draggable="${!renaming}"
+            tabindex="${renaming ? -1 : 0}">
+            <span class="geneo-layer-icon">
+              ${geneoNodeIcon(node.type)}
+            </span>
+
+            ${
+              renderGeneographLayerNameCell(
+                'node',
+                node.id,
+                displayName
+              )
+            }
+
+            <button
+              class="geneo-layer-toggle"
+              type="button"
+              data-geneo-toggle-visible="${
+                escapeHtml(node.id)
+              }"
+              aria-label="${
+                node.visible
+                  ? 'Hide'
+                  : 'Show'
+              } ${escapeHtml(displayName)}">
+              ${
+                node.visible
+                  ? icon.eye
+                  : icon.eyeOff
+              }
+            </button>
+
+            <button
+              class="geneo-layer-toggle"
+              type="button"
+              data-geneo-toggle-lock="${
+                escapeHtml(node.id)
+              }"
+              aria-label="${
+                node.locked
+                  ? 'Unlock'
+                  : 'Lock'
+              } ${escapeHtml(displayName)}">
+              ${
+                node.locked
+                  ? icon.lock
+                  : icon.unlock
+              }
+            </button>
+          </div>
+        `;
+      };
+    const connectionRow =
+      connection => {
+        const displayName =
+          geneoConnectionLabel(
+            connection
+          );
+
+        const renaming =
+          geneoLayerRenameMatches(
+            'connection',
+            connection.id
+          );
+
+        return `
+          <div
+            class="geneo-layer-row ${
+              selectedConnectionIds.has(
+                connection.id
+              )
+                ? 'selected'
+                : ''
+            }"
+            data-geneo-layer-connection="${
+              escapeHtml(connection.id)
+            }"
+            tabindex="${renaming ? -1 : 0}">
+            <span class="geneo-layer-icon">
+              ${icon.link}
+            </span>
+
+            ${
+              renderGeneographLayerNameCell(
+                'connection',
+                connection.id,
+                displayName
+              )
+            }
+          </div>
+        `;
+      };
       sidebar.innerHTML = `<nav class="geneo-sidebar geneo-board-panel" aria-label="Geneograph board navigation">
         <section class="geneo-sidebar-section navigation"><div class="side-section-title">Navigation</div><div class="side-nav">${renderGeneoAllBoardsNavigationButton({ editor: true })}</div></section>
         <section class="geneo-sidebar-section"><div class="side-section-title">Current board</div><div class="geneo-current-board-summary"><div class="geneo-current-board-copy"><strong title="${escapeHtml(board.title)}">${escapeHtml(board.title)}</strong><span title="${escapeHtml(collectionMeta.title)}">${icon.folder}<span>${escapeHtml(collectionMeta.label)}</span></span></div><button class="geneo-board-square-action" type="button" data-geneo-settings aria-label="Edit ${escapeHtml(board.title)}">${icon.edit}</button></div></section>
         <section class="geneo-sidebar-section geneo-layers"><button class="geneo-sidebar-disclosure" type="button" data-geneo-sidebar-section="layers" aria-expanded="${layersExpanded}"><span>Layers</span><span class="geneo-sidebar-disclosure-meta"><span>${diagram.nodes.length}</span>${icon.chevron}</span></button>${layersExpanded ? `<div class="geneo-sidebar-section-body"><div class="geneo-layer-tools"><input class="geneo-object-search" id="geneoLayerSearch" placeholder="Search layers" value="${escapeHtml(state.geneoLayerSearch)}"></div><div class="geneo-layer-list">${panels.map(panel => { const collapsed = Boolean(state.geneoCollapsedPanels[panel.id]); const children = diagram.nodes.filter(node => node.parentPanelId === panel.id && matches(node)).sort((a, b) => b.order - a.order); return `<div class="geneo-layer-panel"><div class="geneo-layer-panel-head"><button class="geneo-layer-disclosure" type="button" data-geneo-collapse-panel="${escapeHtml(panel.id)}" aria-expanded="${!collapsed}">${icon.chevron}</button>${row(panel)}</div>${collapsed ? '' : children.map(node => row(node, 1)).join('')}</div>`; }).join('')}${rootNodes.map(node => row(node)).join('')}</div></div>` : ''}</section>
-        <section class="geneo-sidebar-section"><button class="geneo-sidebar-disclosure" type="button" data-geneo-sidebar-section="connections" aria-expanded="${connectionsExpanded}"><span>Connections</span><span class="geneo-sidebar-disclosure-meta"><span>${diagram.connections.length}</span>${icon.chevron}</span></button>${connectionsExpanded ? `<div class="geneo-sidebar-section-body"><div class="geneo-layer-list">${diagram.connections.map(connection => `<div class="geneo-layer-row ${selectedConnectionIds.has(connection.id) ? 'selected' : ''}" data-geneo-layer-connection="${escapeHtml(connection.id)}" tabindex="0"><span class="geneo-layer-icon">${icon.link}</span><span class="name">${escapeHtml(geneoConnectionLabel(connection))}</span></div>`).join('')}</div></div>` : ''}</section>
+        <section class="geneo-sidebar-section"><button class="geneo-sidebar-disclosure" type="button" data-geneo-sidebar-section="connections" aria-expanded="${connectionsExpanded}"><span>Connections</span><span class="geneo-sidebar-disclosure-meta"><span>${diagram.connections.length}</span>${icon.chevron}</span></button>${connectionsExpanded ? `<div class="geneo-sidebar-section-body"><div class="geneo-layer-list">${diagram.connections.map(connectionRow).join('')}</div></div>` : ''}</section>
       </nav>`;
     }
 
-    function geneoConnectionLabel(connection) {
-      if (connection.kind === 'family-partner') return 'Partner relationship';
-      if (connection.kind === 'family-child') return 'Parent-child relationship';
-      if (connection.kind === 'family-sibling') return 'Sibling relationship';
-      return `${connection.style.pattern === 'dashed' ? 'Dashed' : 'Solid'} connector`;
+    function geneoDefaultConnectionLabel(
+      connection
+    ) {
+      if (
+        connection.kind
+        === 'family-partner'
+      ) {
+        return 'Partner relationship';
+      }
+
+      if (
+        connection.kind
+        === 'family-child'
+      ) {
+        return 'Parent-child relationship';
+      }
+
+      if (
+        connection.kind
+        === 'family-sibling'
+      ) {
+        return 'Sibling relationship';
+      }
+
+      return `${
+        connection.style.pattern === 'dashed'
+          ? 'Dashed'
+          : 'Solid'
+      } connector`;
+    }
+
+    function geneoConnectionLabel(
+      connection
+    ) {
+      return (
+        normalizeGeneographLayerName(
+          connection?.name
+        )
+        || geneoDefaultConnectionLabel(
+          connection
+        )
+      );
+    }
+
+    function getGeneographRenameEntity(
+      entityType,
+      entityId
+    ) {
+      if (entityType === 'node') {
+        return getGeneographNode(entityId);
+      }
+
+      if (entityType === 'connection') {
+        return getGeneographConnection(
+          entityId
+        );
+      }
+
+      return null;
+    }
+
+    function geneoRenameEntityDisplayName(
+      entityType,
+      entity
+    ) {
+      return entityType === 'node'
+        ? geneoNodeTitle(entity)
+        : geneoConnectionLabel(entity);
+    }
+
+    function geneoLayerRenameMatches(
+      entityType,
+      entityId
+    ) {
+      return Boolean(
+        state.geneoLayerRename
+        && state.geneoLayerRename.entityType
+          === entityType
+        && state.geneoLayerRename.entityId
+          === entityId
+      );
+    }
+
+    function renameGeneographEntity(
+      entityType,
+      entityId,
+      value
+    ) {
+      const entity =
+        getGeneographRenameEntity(
+          entityType,
+          entityId
+        );
+
+      if (!entity) return false;
+
+      const currentName =
+        normalizeGeneographLayerName(
+          entity.name
+        );
+
+      const nextName =
+        normalizeGeneographLayerName(
+          value
+        );
+
+      if (currentName === nextName) {
+        return false;
+      }
+
+      geneoPushHistory();
+
+      entity.name = nextName;
+
+      touchGeneographBoard();
+
+      return true;
+    }
+
+    function focusGeneographLayerRow(
+      entityType,
+      entityId
+    ) {
+      const attribute =
+        entityType === 'node'
+          ? 'data-geneo-layer'
+          : 'data-geneo-layer-connection';
+
+      const selector =
+        `[${attribute}="${
+          CSS.escape(String(entityId))
+        }"]`;
+
+      sidebar
+        .querySelector(selector)
+        ?.focus({
+          preventScroll: true
+        });
+    }
+
+    function beginGeneographLayerRename(
+      entityType,
+      entityId
+    ) {
+      const entity =
+        getGeneographRenameEntity(
+          entityType,
+          entityId
+        );
+
+      if (!entity) return;
+
+      if (entityType === 'node') {
+        selectGeneographNode(entityId);
+      } else {
+        selectGeneographConnection(
+          entityId
+        );
+      }
+
+      const originalName =
+        normalizeGeneographLayerName(
+          entity.name
+        );
+
+      const initialDisplay =
+        normalizeGeneographLayerName(
+          geneoRenameEntityDisplayName(
+            entityType,
+            entity
+          )
+        );
+
+      state.geneoLayerRename = {
+        entityType,
+        entityId,
+        originalName,
+        initialDisplay,
+        draft: initialDisplay
+      };
+
+      renderGeneographEditorPreserveScroll();
+
+      requestAnimationFrame(() => {
+        const input =
+          sidebar.querySelector(
+            '[data-geneo-layer-rename-input]'
+          );
+
+        if (!input) return;
+
+        input.focus({
+          preventScroll: true
+        });
+
+        input.select();
+      });
+    }
+
+    function finishGeneographLayerRename({
+      cancel = false,
+      value = '',
+      restoreFocus = true
+    } = {}) {
+      const rename =
+        state.geneoLayerRename;
+
+      if (!rename) return;
+
+      const {
+        entityType,
+        entityId,
+        originalName,
+        initialDisplay
+      } = rename;
+
+      state.geneoLayerRename = null;
+
+      if (!cancel) {
+        const submittedName =
+          normalizeGeneographLayerName(
+            value
+          );
+
+        /*
+        * Pressing Enter without editing an
+        * automatic fallback should not freeze
+        * that fallback as a custom name.
+        */
+        const nextName =
+          submittedName === initialDisplay
+            ? originalName
+            : submittedName;
+
+        renameGeneographEntity(
+          entityType,
+          entityId,
+          nextName
+        );
+      }
+
+      renderGeneographEditorPreserveScroll();
+
+      if (!restoreFocus) return;
+
+      requestAnimationFrame(() => {
+        focusGeneographLayerRow(
+          entityType,
+          entityId
+        );
+      });
+    }
+
+    function renderGeneographLayerNameCell(
+      entityType,
+      entityId,
+      displayName
+    ) {
+      if (
+        geneoLayerRenameMatches(
+          entityType,
+          entityId
+        )
+      ) {
+        return `
+          <input
+            class="geneo-layer-name-input"
+            type="text"
+            maxlength="${GENEO_LAYER_NAME_LIMIT}"
+            value="${
+              escapeHtml(
+                state.geneoLayerRename.draft
+              )
+            }"
+            data-geneo-layer-rename-input
+            data-geneo-rename-type="${
+              escapeHtml(entityType)
+            }"
+            data-geneo-rename-id="${
+              escapeHtml(entityId)
+            }"
+            data-user-content
+            aria-label="${
+              entityType === 'node'
+                ? 'Rename layer'
+                : 'Rename connection'
+            }">
+        `;
+      }
+
+      return `
+        <span
+          class="name"
+          data-geneo-layer-rename-handle
+          data-user-content
+          title="${escapeHtml(displayName)}">
+          ${escapeHtml(displayName)}
+        </span>
+      `;
     }
 
     function geneoCentralPartnerIdsForFamily(family) {
@@ -63483,14 +64629,234 @@
       return `<dl class="geneo-person-summary">${details.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join('')}</dl><button class="button secondary" type="button" data-geneo-edit-person>${icon.edit} Edit details</button><div class="geneo-link-status ${person?.treePersonId ? '' : 'visual'}"><strong>${person?.treePersonId ? 'Linked to Family Tree' : 'Board person'}</strong><span>${person?.treePersonId ? escapeHtml(personDisplayName(person.treePersonId)) : 'This person exists only on this board.'}</span></div><button class="button secondary" type="button" data-geneo-link-person>${person?.treePersonId ? 'Change link' : 'Link to Family Tree'}</button>${person?.treePersonId ? `<button class="button ghost" type="button" data-geneo-unlink-person>Unlink</button>` : ''}`;
     }
 
+    function renderGeneographNameSection(
+      entityType,
+      entity
+    ) {
+      const node = entityType === 'node';
+
+      const automaticName =
+        node
+          ? geneoDefaultNodeTitle(entity)
+          : geneoDefaultConnectionLabel(
+              entity
+            );
+
+      const value =
+        normalizeGeneographLayerName(
+          entity.name
+        );
+
+      const inputId =
+        node
+          ? 'geneoNodeLayerName'
+          : 'geneoConnectionName';
+
+      const descriptionId =
+        `${inputId}Description`;
+
+      return `
+        <section
+          class="geneo-inspector-section">
+          <h3>
+            ${node ? 'Layer' : 'Connection'}
+          </h3>
+
+          <div
+            class="geneo-inspector-section-body">
+            <div class="geneo-field">
+              <label for="${inputId}">
+                Name
+              </label>
+
+              <input
+                id="${inputId}"
+                class="geneo-input"
+                type="text"
+                maxlength="${
+                  GENEO_LAYER_NAME_LIMIT
+                }"
+                value="${escapeHtml(value)}"
+                placeholder="${
+                  escapeHtml(automaticName)
+                }"
+                data-geneo-entity-name="${
+                  escapeHtml(entityType)
+                }"
+                data-geneo-entity-id="${
+                  escapeHtml(entity.id)
+                }"
+                data-user-content
+                aria-describedby="${
+                  descriptionId
+                }">
+            </div>
+
+            <p
+              class="geneo-selection-help"
+              id="${descriptionId}">
+              ${
+                node
+                  ? 'Board organization only. Card content and linked records are unchanged.'
+                  : 'Leave blank to use the automatic relationship or connector name.'
+              }
+            </p>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderGeneographImageSourceSection(node) {
+      const source = resolveGeneographImageSource(node);
+
+      const dimensions =
+        source.width && source.height
+          ? `${source.width} × ${source.height}`
+          : '';
+
+      const size =
+        source.sizeBytes > 0
+          ? formatMediaBytes(source.sizeBytes)
+          : '';
+
+      const metadata = [dimensions, size]
+        .filter(Boolean)
+        .join(' · ');
+
+      return `
+        <section class="geneo-inspector-section">
+          <h3>Image source</h3>
+
+          <div class="geneo-inspector-section-body">
+            ${
+              source.available
+                ? `
+                  <div class="geneo-image-source-card">
+                    <div class="geneo-image-source-preview">
+                      ${renderPhotoThumbnail(source.photo, {
+                        label: source.displayName
+                      })}
+                    </div>
+
+                    <div class="geneo-image-source-copy">
+                      <span class="geneo-image-source-badge">
+                        ${escapeHtml(source.sourceLabel)}
+                      </span>
+
+                      <strong title="${escapeHtml(source.displayName)}">
+                        ${escapeHtml(source.displayName)}
+                      </strong>
+
+                      ${
+                        source.filename
+                          && source.filename !== source.displayName
+                            ? `
+                              <span title="${escapeHtml(source.filename)}">
+                                ${escapeHtml(source.filename)}
+                              </span>
+                            `
+                            : ''
+                      }
+
+                      ${
+                        metadata
+                          ? `<span>${escapeHtml(metadata)}</span>`
+                          : ''
+                      }
+                    </div>
+                  </div>
+                `
+                : `
+                  <div class="geneo-image-source-missing" role="status">
+                    <strong>Image unavailable</strong>
+                    <span>
+                      The original ${
+                        source.sourceLabel === 'Board upload'
+                          ? 'board upload'
+                          : 'project photo'
+                      } can no longer be found. Replace it to restore this layer.
+                    </span>
+                  </div>
+                `
+            }
+
+            <div class="geneo-image-source-actions">
+              <button
+                class="button secondary"
+                type="button"
+                data-geneo-replace-image>
+                Replace image
+              </button>
+
+              ${
+                source.available
+                && source.ref?.scope === 'project'
+                  ? `
+                    <button
+                      class="button ghost"
+                      type="button"
+                      data-geneo-open-project-photo="${escapeHtml(source.ref.id)}">
+                      Open photo
+                    </button>
+                  `
+                  : ''
+              }
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
     function renderGeneographNodeInspector(node) {
       const appearance = node.appearance || {};
+      const nameSection =
+        renderGeneographNameSection(
+          'node',
+          node
+        );
       const person = node.type === 'person' ? getGeneographPerson(node.personId) : null;
       const content = node.type === 'person' ? renderGeneographPersonInspectorContent(person) : node.type === 'image' ? `<div class="geneo-field"><label>Title</label><input class="geneo-input" data-geneo-node-field="title" value="${escapeHtml(node.title || '')}"></div><button class="button secondary" type="button" data-geneo-choose-image>Choose project photo</button>` : node.type === 'panel' ? `<div class="geneo-field"><label>Panel title</label><input class="geneo-input" data-geneo-node-field="title" value="${escapeHtml(node.title || '')}"></div>` : `<div class="geneo-field"><label>${node.type === 'sticky' ? 'Note' : 'Text'}</label><textarea class="geneo-textarea" data-geneo-node-field="text">${escapeHtml(node.text || '')}</textarea></div>`;
-      return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader(geneoNodeTitle(node), capitalize(node.type), geneoNodeIcon(node.type))}<section class="geneo-inspector-section"><h3>Content</h3><div class="geneo-inspector-section-body">${content}</div></section><section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body">${node.type !== 'text' ? `<div class="geneo-field"><label>Background</label><input class="geneo-input" type="color" data-geneo-appearance="backgroundColor" value="${escapeHtml(appearance.backgroundColor || '#18211f')}"></div><div class="geneo-field"><label>Stroke</label><input class="geneo-input" type="color" data-geneo-appearance="strokeColor" value="${escapeHtml(appearance.strokeColor || '#52615d')}"></div>` : ''}<div class="geneo-field"><label>Text</label><input class="geneo-input" type="color" data-geneo-appearance="textColor" value="${escapeHtml(appearance.textColor || '#f1f5f3')}"></div></div></section><section class="geneo-inspector-section"><h3>Layout</h3><div class="geneo-inspector-section-body"><div class="geneo-layout-grid"><div class="geneo-field"><label>X</label><input class="geneo-input" type="number" data-geneo-layout="x" value="${Math.round(node.x)}"></div><div class="geneo-field"><label>Y</label><input class="geneo-input" type="number" data-geneo-layout="y" value="${Math.round(node.y)}"></div><div class="geneo-field"><label>Width</label><input class="geneo-input" type="number" data-geneo-layout="width" value="${Math.round(node.width)}"></div><div class="geneo-field"><label>Height</label><input class="geneo-input" type="number" data-geneo-layout="height" value="${Math.round(node.height)}"></div></div><label class="geneo-check"><input type="checkbox" data-geneo-node-visible ${node.visible ? 'checked' : ''}> Visible</label><label class="geneo-check"><input type="checkbox" data-geneo-node-locked ${node.locked ? 'checked' : ''}> Locked</label></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete ${node.type}</button></div></aside>`;
+      return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader(geneoNodeTitle(node), capitalize(node.type), geneoNodeIcon(node.type))}${nameSection}
+        ${
+          node.type === 'image'
+            ? renderGeneographImageSourceSection(node)
+            : `
+              <section class="geneo-inspector-section">
+                <h3>Content</h3>
+                <div class="geneo-inspector-section-body">
+                  ${content}
+                </div>
+              </section>
+            `
+        }
+        <section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body">${node.type !== 'text' ? `
+          <div class="geneo-field"><label>Background</label><input class="geneo-input" type="color" data-geneo-appearance="backgroundColor" value="${escapeHtml(appearance.backgroundColor || '#18211f')}"></div>
+          <div class="geneo-field"><label>Stroke</label><input class="geneo-input" type="color" data-geneo-appearance="strokeColor" value="${escapeHtml(appearance.strokeColor || '#52615d')}"></div>` : ''}
+          ${
+            node.type === 'image'
+              ? ''
+              : `
+                <div class="geneo-field">
+                  <label>Text</label>
+                  <input
+                    class="geneo-input"
+                    type="color"
+                    data-geneo-appearance="textColor"
+                    value="${escapeHtml(
+                      appearance.textColor || '#f1f5f3'
+                    )}">
+                </div>
+              `
+          }
+          </div></section><section class="geneo-inspector-section"><h3>Layout</h3><div class="geneo-inspector-section-body"><div class="geneo-layout-grid"><div class="geneo-field"><label>X</label><input class="geneo-input" type="number" data-geneo-layout="x" value="${Math.round(node.x)}"></div><div class="geneo-field"><label>Y</label><input class="geneo-input" type="number" data-geneo-layout="y" value="${Math.round(node.y)}"></div><div class="geneo-field"><label>Width</label><input class="geneo-input" type="number" data-geneo-layout="width" value="${Math.round(node.width)}"></div><div class="geneo-field"><label>Height</label><input class="geneo-input" type="number" data-geneo-layout="height" value="${Math.round(node.height)}"></div></div><label class="geneo-check"><input type="checkbox" data-geneo-node-visible ${node.visible ? 'checked' : ''}> Visible</label><label class="geneo-check"><input type="checkbox" data-geneo-node-locked ${node.locked ? 'checked' : ''}> Locked</label></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete ${node.type}</button></div></aside>`;
     }
 
     function renderGeneographConnectionInspector(connection) {
+      const nameSection =
+        renderGeneographNameSection(
+          'connection',
+          connection
+        );
       const family = connection.kind === 'family-partner' ? getGeneographFamily(connection.familyId) : null;
       const resolved = family ? geneoRelationshipForFamily(family) : null;
       const relationship = resolved?.relationship;
@@ -63498,12 +64864,21 @@
       const startEvent = relationship ? partnerRelationshipStartEvent(relationship, relationshipType) : null;
       const marriageType = startEvent?.typeLabel || relationship?.marriageType || 'Civil';
       const relationshipSection = family ? `<section class="geneo-inspector-section"><h3>Relationship details</h3><div class="geneo-inspector-section-body geneo-relationship-editor" data-geneo-relationship-editor><div class="geneo-field"><label for="geneoRelationshipType">Relationship type</label><select class="geneo-select" id="geneoRelationshipType" data-geneo-relationship-type>${addPersonRelationshipTypeOptions(relationshipType)}</select></div>${renderPartnerRelationshipDateFields({ prefix: 'geneoRelationship', relationshipType, family: relationship })}<div class="geneo-field" data-add-person-marriage-type-field ${addPersonRelationshipShowsMarriageType(relationshipType) ? '' : 'hidden'}><label for="geneoRelationshipMarriageType">Marriage type</label><select class="geneo-select" id="geneoRelationshipMarriageType" data-geneo-marriage-type>${addPersonMarriageTypeOptions(marriageType)}</select></div><label class="geneo-check"><input type="checkbox" data-geneo-show-relationship-dates ${connection.showRelationshipDates !== false ? 'checked' : ''}> Show relationship date on board</label><p class="geneo-relationship-storage">${resolved.central ? 'Linked Family Tree relationship' : 'Board-only relationship'}</p><button class="button primary" type="button" data-geneo-save-relationship>Save relationship details</button></div></section>` : '';
-      return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader(geneoConnectionLabel(connection), 'Connection', icon.link)}${relationshipSection}<section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body"><div class="geneo-field"><label>Color</label><input class="geneo-input" type="color" data-geneo-connection-style="color" value="${escapeHtml(connection.style.color)}"></div><div class="geneo-field"><label>Width</label><input class="geneo-input" type="number" min="1" max="8" data-geneo-connection-style="width" value="${connection.style.width}"></div><div class="geneo-field"><label>Pattern</label><select class="geneo-select" data-geneo-connection-style="pattern"><option value="solid" ${connection.style.pattern === 'solid' ? 'selected' : ''}>Solid</option><option value="dashed" ${connection.style.pattern === 'dashed' ? 'selected' : ''}>Dashed</option></select></div><div class="geneo-field"><label>Routing</label><select class="geneo-select" data-geneo-connection-routing><option value="auto" ${connection.route.mode === 'auto' ? 'selected' : ''}>Automatic</option><option value="manual" ${connection.route.mode === 'manual' ? 'selected' : ''}>Manual</option></select></div><button class="button secondary" type="button" data-geneo-reset-route>Reset route</button></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete connection</button></div></aside>`;
+      return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader(geneoConnectionLabel(connection), 'Connection', icon.link)}${nameSection}${relationshipSection}<section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body"><div class="geneo-field"><label>Color</label><input class="geneo-input" type="color" data-geneo-connection-style="color" value="${escapeHtml(connection.style.color)}"></div><div class="geneo-field"><label>Width</label><input class="geneo-input" type="number" min="1" max="8" data-geneo-connection-style="width" value="${connection.style.width}"></div><div class="geneo-field"><label>Pattern</label><select class="geneo-select" data-geneo-connection-style="pattern"><option value="solid" ${connection.style.pattern === 'solid' ? 'selected' : ''}>Solid</option><option value="dashed" ${connection.style.pattern === 'dashed' ? 'selected' : ''}>Dashed</option></select></div><div class="geneo-field"><label>Routing</label><select class="geneo-select" data-geneo-connection-routing><option value="auto" ${connection.route.mode === 'auto' ? 'selected' : ''}>Automatic</option><option value="manual" ${connection.route.mode === 'manual' ? 'selected' : ''}>Manual</option></select></div><button class="button secondary" type="button" data-geneo-reset-route>Reset route</button></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete connection</button></div></aside>`;
     }
 
     function renderGeneographEditor() {
       normalizeGeneographRuntimeData();
       pruneGeneographSelection();
+      if (
+        state.geneoLayerRename
+        && !getGeneographRenameEntity(
+          state.geneoLayerRename.entityType,
+          state.geneoLayerRename.entityId
+        )
+      ) {
+        state.geneoLayerRename = null;
+      }
       geneoEnsureHistory();
       const board = selectedGeneographBoard();
       if (!board) { state.geneoView = 'home'; renderGeneographHome(); return; }
@@ -63538,7 +64913,16 @@
               ${renderGeneoToolbarObjectButton('panel', icon.shape, 'Panel')}
             </div>
           </div>
-          <div class="geneo-editor-toolbar-right"><button class="geneo-toolbar-button" type="button" aria-label="Import board" data-toast="Import is a prototype action.">${icon.import}<span class="optional">Import</span></button><button class="geneo-toolbar-button" type="button" aria-label="Export board" data-geneo-export>${icon.export}<span class="optional">Export</span></button><button class="geneo-toolbar-button" type="button" aria-label="Board settings" data-geneo-settings>${icon.settings}<span class="optional">Settings</span></button></div>
+          <div class="geneo-editor-toolbar-right">
+            <button
+              class="geneo-toolbar-button"
+              type="button"
+              aria-label="Export board"
+              data-geneo-export>
+              ${icon.export}
+              <span class="optional">Export</span>
+            </button>
+          </div>
         </div>
         <div class="geneo-editor-main ${state.geneoInspectorCollapsed ? 'inspector-collapsed' : ''}"><div class="geneo-canvas-viewport" data-geneo-canvas-viewport style="--geneo-canvas-background:${escapeHtml(diagram.canvas.backgroundColor)}"><div class="geneo-canvas-wrap" data-geneo-canvas-wrap><div class="geneo-board-space pattern-${escapeHtml(diagram.canvas.backgroundPattern)}" style="width:${bounds.width * zoom}px;height:${bounds.height * zoom}px;--geneo-canvas-zoom:${zoom};--geneo-grid-origin-x:${gridOriginX}px;--geneo-grid-origin-y:${gridOriginY}px"><div class="${stageClasses}" data-geneo-stage style="width:${bounds.width}px;height:${bounds.height}px;transform:scale(${zoom})">${renderGeneographConnectors()}<div class="geneo-selection-marquee" data-geneo-marquee hidden></div>${ordered.map(renderGeneographObject).join('')}</div></div></div><div class="geneo-zoom-overlay canvas-zoom"><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="out" aria-label="Zoom out">${icon.zoomOut}</button><span class="geneo-zoom-value zoom-value">${state.geneoZoom}%</span><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="in" aria-label="Zoom in">${icon.zoomIn}</button><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="fit" aria-label="Fit board">${icon.home}</button></div></div>${renderGeneographInspector()}</div>
       </section>`;
@@ -63548,10 +64932,44 @@
       else requestAnimationFrame(() => requestAnimationFrame(() => { geneoCanvasRuntime.suppressEdgeExpansion = false; }));
     }
 
-    function renderGeneographEditorPreserveScroll() {
+    function renderGeneographEditorPreserveScroll({
+      preserveInspectorScroll = false
+    } = {}) {
       const center = geneoCurrentViewportCenter();
+
+      const inspectorScrollTop = preserveInspectorScroll
+        ? (
+            main.querySelector(
+              '.geneo-inspector:not(.collapsed)'
+            )?.scrollTop ?? null
+          )
+        : null;
+
       renderGeneographEditor();
-      if (center) requestAnimationFrame(() => restoreGeneographViewportCenter(center));
+
+      requestAnimationFrame(() => {
+        if (center) {
+          restoreGeneographViewportCenter(center);
+        }
+
+        if (inspectorScrollTop === null) return;
+
+        const inspector = main.querySelector(
+          '.geneo-inspector:not(.collapsed)'
+        );
+
+        if (!inspector) return;
+
+        const maximumScrollTop = Math.max(
+          0,
+          inspector.scrollHeight - inspector.clientHeight
+        );
+
+        inspector.scrollTop = Math.min(
+          inspectorScrollTop,
+          maximumScrollTop
+        );
+      });
     }
 
     function renderGeneographEditorPreserveCenter(center = null) {
@@ -63805,12 +65223,724 @@
       openGeneographPersonModal();
     }
 
-    function openGeneographImagePicker() {
-      const photos = getProjectPhotos(currentProjectId()).filter(photo => !photo.deletedAt);
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="geneoImageTitle"><div class="modal-header"><div><h2 id="geneoImageTitle">Add image</h2><p>Choose a project photo for the board.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="geneo-image-picker">${photos.length ? photos.map(photo => `<button type="button" data-geneo-image-photo="${escapeHtml(photo.id)}">${renderPhotoThumbnail(photo, { alt: photo.title })}<span>${escapeHtml(photo.title || photo.filename)}</span></button>`).join('') : '<div class="empty-state">No project photos available.</div>'}</div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button></div></div>`);
-      modalBackdrop.querySelectorAll('[data-geneo-image-photo]').forEach(button => button.addEventListener('click', () => {
-        const photo = getPhoto(button.dataset.geneoImagePhoto); if (!photo) return; const diagram = selectedGeneographDiagram(); const defaults = geneoNodeDefaults('image'); const position = nextGeneoObjectPosition(defaults.width, defaults.height); geneoPushHistory(); const node = { id: createRuntimeId('geneo-node'), type: 'image', photoId: photo.id, title: photo.title || photo.filename, ...position, width: defaults.width, height: defaults.height, parentPanelId: null, order: Math.max(0, ...diagram.nodes.map(item => item.order || 0)) + 1, visible: true, locked: false, appearance: defaults.appearance }; diagram.nodes.push(node); selectGeneographNode(node.id); touchGeneographBoard(); closeModal(); renderGeneographEditorPreserveScroll();
-      }));
+    function resetGeneographImagePickerState() {
+      geneoImageUploadRequestId += 1;
+
+      state.geneoImagePicker = {
+        open: false,
+        mode: 'add',
+        nodeId: null,
+        sourceTab: 'project',
+        search: '',
+        selectedPhotoId: null,
+        uploadDraft: null,
+        uploadError: ''
+      };
+    }
+
+    function geneoImagePickerProjectId() {
+      return selectedGeneographBoard()?.projectId || '';
+    }
+
+    function geneoImagePickerProjectPhotos() {
+      const projectId = geneoImagePickerProjectId();
+      const query = state.geneoImagePicker.search
+        .trim()
+        .toLowerCase();
+
+      return getProjectPhotos(projectId)
+        .filter(photo => !photo.deletedAt)
+        .filter(photo =>
+          !query || photoSearchText(photo).includes(query)
+        );
+    }
+
+    function geneoImageUploadDraftAsPhoto() {
+      const draft = state.geneoImagePicker.uploadDraft;
+      if (!draft) return null;
+
+      return {
+        id: 'geneo-image-upload-draft',
+        kind: 'photo',
+        title: geneoFilenameStem(draft.filename),
+        filename: draft.filename,
+        src: draft.src,
+        mimeType: draft.mimeType,
+        width: draft.width,
+        height: draft.height,
+        sizeBytes: draft.sizeBytes,
+        placeholder: {
+          pattern: 'archive',
+          palette: 'moss',
+          seed: draft.seed || 1
+        }
+      };
+    }
+
+    function geneoImagePickerSelectedSource() {
+      if (state.geneoImagePicker.sourceTab === 'upload') {
+        const draft = state.geneoImagePicker.uploadDraft;
+
+        return photoUploadDraftIsValid(draft)
+          ? {
+              scope: 'board',
+              photo: geneoImageUploadDraftAsPhoto(),
+              draft
+            }
+          : null;
+      }
+
+      const photo = getPhoto(
+        state.geneoImagePicker.selectedPhotoId,
+        {
+          projectId: geneoImagePickerProjectId()
+        }
+      );
+
+      return photo && !photo.deletedAt
+        ? {
+            scope: 'project',
+            photo
+          }
+        : null;
+    }
+
+    function renderGeneographImageCandidate(photo) {
+      const selected =
+        state.geneoImagePicker.selectedPhotoId === photo.id;
+
+      const metadata = [
+        photo.width && photo.height
+          ? `${photo.width} × ${photo.height}`
+          : '',
+        formatPhotoDate(photo)
+      ]
+        .filter(Boolean)
+        .join(' · ');
+
+      return `
+        <button
+          class="person-photo-candidate"
+          type="button"
+          data-geneo-image-candidate="${escapeHtml(photo.id)}"
+          aria-pressed="${selected}">
+          <span class="person-photo-candidate-preview">
+            ${renderPhotoThumbnail(photo, {
+              label: geneoImageRecordName(photo)
+            })}
+          </span>
+
+          <span class="person-photo-candidate-copy">
+            <strong>${escapeHtml(geneoImageRecordName(photo))}</strong>
+            <span>${escapeHtml(metadata || 'Project photo')}</span>
+          </span>
+        </button>
+      `;
+    }
+
+    function renderGeneographImageProjectResults() {
+      const allPhotos = getProjectPhotos(
+        geneoImagePickerProjectId()
+      ).filter(photo => !photo.deletedAt);
+
+      const photos = geneoImagePickerProjectPhotos();
+      const hasSearch = Boolean(
+        state.geneoImagePicker.search.trim()
+      );
+
+      if (!allPhotos.length) {
+        return `
+          <div class="person-photo-empty">
+            <div>
+              <strong>No project photos yet.</strong>
+              <span class="muted">
+                Upload an image that will stay local to this board.
+              </span>
+              <button
+                class="button primary"
+                type="button"
+                data-geneo-image-show-upload>
+                Upload new image
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      if (!photos.length) {
+        return `
+          <div class="person-photo-empty">
+            <div>
+              <strong>No matching project photos.</strong>
+
+              <div class="person-photo-empty-actions">
+                ${
+                  hasSearch
+                    ? `
+                      <button
+                        class="button secondary"
+                        type="button"
+                        data-geneo-image-clear-search>
+                        Clear search
+                      </button>
+                    `
+                    : ''
+                }
+
+                <button
+                  class="button primary"
+                  type="button"
+                  data-geneo-image-show-upload>
+                  Upload new image
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="person-photo-candidate-grid">
+          ${photos.map(renderGeneographImageCandidate).join('')}
+        </div>
+      `;
+    }
+
+    function renderGeneographImageProjectPanel() {
+      return `
+        <div class="person-photo-project-panel">
+          <div class="person-photo-project-controls">
+            <label
+              class="search-input"
+              aria-label="Search project photos">
+              ${icon.search}
+
+              <input
+                type="search"
+                data-geneo-image-search
+                value="${escapeHtml(state.geneoImagePicker.search)}"
+                placeholder="Search project photos">
+            </label>
+          </div>
+
+          <div
+            class="person-photo-project-results"
+            data-geneo-image-project-results>
+            ${renderGeneographImageProjectResults()}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGeneographImageUploadPanel() {
+      const draftPhoto = geneoImageUploadDraftAsPhoto();
+      const maxMegabytes = Math.round(
+        PHOTO_UPLOAD_MAX_BYTES / (1024 * 1024)
+      );
+
+      return `
+        <div class="person-photo-picker-notice">
+          This upload will be stored only inside this board and will not
+          appear in Albums.
+        </div>
+
+        <div
+          class="person-photo-upload-dropzone"
+          data-geneo-image-dropzone>
+          <input
+            type="file"
+            accept="${PHOTO_UPLOAD_ALLOWED_TYPES.join(',')}"
+            data-geneo-image-file
+            hidden>
+
+          ${
+            draftPhoto
+              ? `
+                <div class="person-photo-upload-preview">
+                  <div class="person-photo-upload-thumb">
+                    ${renderPhotoThumbnail(draftPhoto, {
+                      label: draftPhoto.filename
+                    })}
+                  </div>
+
+                  <div class="person-photo-upload-copy">
+                    <strong>${escapeHtml(draftPhoto.filename)}</strong>
+
+                    <span class="muted">
+                      ${escapeHtml(
+                        `${draftPhoto.width} × ${draftPhoto.height} · ${formatMediaBytes(draftPhoto.sizeBytes)}`
+                      )}
+                    </span>
+
+                    <button
+                      class="button secondary"
+                      type="button"
+                      data-geneo-image-choose-file>
+                      Choose a different image
+                    </button>
+                  </div>
+                </div>
+              `
+              : `
+                <div class="person-photo-upload-prompt">
+                  ${icon.import}
+                  <strong>Drop an image here</strong>
+                  <p>
+                    JPEG, PNG, or WebP up to ${maxMegabytes} MB.
+                  </p>
+
+                  <button
+                    class="button primary"
+                    type="button"
+                    data-geneo-image-choose-file>
+                    Choose image
+                  </button>
+                </div>
+              `
+          }
+        </div>
+
+        ${
+          state.geneoImagePicker.uploadError
+            ? `
+              <div
+                class="person-photo-upload-error"
+                role="alert">
+                ${escapeHtml(state.geneoImagePicker.uploadError)}
+              </div>
+            `
+            : ''
+        }
+      `;
+    }
+
+    function renderGeneographImagePickerModal({
+      focusSelector = ''
+    } = {}) {
+      const picker = state.geneoImagePicker;
+      if (!picker.open) return;
+
+      const replacing = picker.mode === 'replace';
+      const hasSource = Boolean(
+        geneoImagePickerSelectedSource()
+      );
+
+      openModal(`
+        <div
+          class="modal person-photo-picker-modal geneo-image-picker-modal"
+          data-geneo-image-picker
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="geneoImagePickerTitle">
+          <div class="modal-header">
+            <div>
+              <h2 id="geneoImagePickerTitle">
+                ${replacing ? 'Replace image' : 'Add image'}
+              </h2>
+
+              <p>
+                Choose a project photo or upload an image local to this board.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close">
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body person-photo-picker-body">
+            <div
+              class="person-photo-picker-tabs"
+              role="tablist"
+              aria-label="Image source">
+              <button
+                class="person-photo-picker-tab"
+                type="button"
+                role="tab"
+                data-geneo-image-tab="project"
+                aria-selected="${picker.sourceTab === 'project'}">
+                Project photos
+              </button>
+
+              <button
+                class="person-photo-picker-tab"
+                type="button"
+                role="tab"
+                data-geneo-image-tab="upload"
+                aria-selected="${picker.sourceTab === 'upload'}">
+                Upload new
+              </button>
+            </div>
+
+            <div role="tabpanel">
+              ${
+                picker.sourceTab === 'project'
+                  ? renderGeneographImageProjectPanel()
+                  : renderGeneographImageUploadPanel()
+              }
+            </div>
+
+            <div class="modal-footer">
+              <span></span>
+
+              <div class="modal-footer-actions">
+                <button
+                  class="button secondary"
+                  type="button"
+                  data-close>
+                  Cancel
+                </button>
+
+                <button
+                  class="button primary"
+                  type="button"
+                  data-geneo-image-confirm
+                  ${hasSource ? '' : 'disabled'}>
+                  ${replacing ? 'Replace image' : 'Add image'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `);
+
+      bindGeneographImagePickerModal();
+
+      if (focusSelector) {
+        requestAnimationFrame(() => {
+          modalBackdrop.querySelector(focusSelector)?.focus();
+        });
+      }
+    }
+
+    function bindGeneographImageProjectResultActions(
+      root = modalBackdrop
+    ) {
+      root
+        .querySelectorAll('[data-geneo-image-candidate]')
+        .forEach(button => {
+          button.addEventListener('click', () => {
+            state.geneoImagePicker.selectedPhotoId =
+              button.dataset.geneoImageCandidate;
+
+            renderGeneographImagePickerModal({
+              focusSelector:
+                `[data-geneo-image-candidate="${CSS.escape(button.dataset.geneoImageCandidate)}"]`
+            });
+          });
+        });
+
+      root
+        .querySelector('[data-geneo-image-clear-search]')
+        ?.addEventListener('click', () => {
+          state.geneoImagePicker.search = '';
+
+          renderGeneographImagePickerModal({
+            focusSelector: '[data-geneo-image-search]'
+          });
+        });
+
+      root
+        .querySelectorAll('[data-geneo-image-show-upload]')
+        .forEach(button => {
+          button.addEventListener('click', () => {
+            state.geneoImagePicker.sourceTab = 'upload';
+
+            renderGeneographImagePickerModal({
+              focusSelector: '[data-geneo-image-choose-file]'
+            });
+          });
+        });
+    }
+
+    function updateGeneographImageProjectResults() {
+      const host = modalBackdrop.querySelector(
+        '[data-geneo-image-project-results]'
+      );
+
+      if (!host) return;
+
+      host.innerHTML = renderGeneographImageProjectResults();
+      bindGeneographImageProjectResultActions(host);
+    }
+
+    async function processGeneographImageUpload(file) {
+      if (!state.geneoImagePicker.open || !file) return;
+
+      const requestId = ++geneoImageUploadRequestId;
+      state.geneoImagePicker.uploadError = '';
+
+      try {
+        const draft = await createPhotoUploadDraft(file, {
+          idPrefix: 'geneo-image-upload-draft'
+        });
+
+        if (
+          requestId !== geneoImageUploadRequestId
+          || !state.geneoImagePicker.open
+        ) {
+          return;
+        }
+
+        state.geneoImagePicker.uploadDraft = draft;
+        state.geneoImagePicker.uploadError = '';
+      } catch (error) {
+        if (
+          requestId !== geneoImageUploadRequestId
+          || !state.geneoImagePicker.open
+        ) {
+          return;
+        }
+
+        state.geneoImagePicker.uploadDraft = null;
+        state.geneoImagePicker.uploadError =
+          error?.message || 'The image could not be read.';
+      }
+
+      renderGeneographImagePickerModal({
+        focusSelector: state.geneoImagePicker.uploadDraft
+          ? '[data-geneo-image-choose-file]'
+          : '[data-geneo-image-file]'
+      });
+    }
+
+    function applyGeneographImagePickerSelection() {
+      const picker = state.geneoImagePicker;
+      const selection = geneoImagePickerSelectedSource();
+      const diagram = selectedGeneographDiagram();
+
+      if (!picker.open || !selection || !diagram) return;
+
+      const replacing = picker.mode === 'replace';
+      const existingNode = replacing
+        ? getGeneographNode(picker.nodeId)
+        : null;
+
+      if (replacing && existingNode?.type !== 'image') return;
+
+      const currentRef = existingNode?.imageRef;
+
+      if (
+        replacing
+        && selection.scope === 'project'
+        && currentRef?.scope === 'project'
+        && currentRef.id === selection.photo.id
+      ) {
+        resetGeneographImagePickerState();
+        closeModal({ force: true });
+        return;
+      }
+
+      geneoPushHistory();
+
+      let imageRef;
+
+      if (selection.scope === 'board') {
+        const asset = createGeneographBoardAsset(
+          selection.draft,
+          diagram
+        );
+
+        if (!asset) return;
+
+        imageRef = {
+          scope: 'board',
+          id: asset.id
+        };
+      } else {
+        imageRef = {
+          scope: 'project',
+          id: selection.photo.id
+        };
+      }
+
+      let node = existingNode;
+
+      if (replacing) {
+        node.imageRef = imageRef;
+        delete node.photoId;
+        delete node.title;
+      } else {
+        const defaults = geneoNodeDefaults('image');
+        const size = geneoImageNodeSize(selection.photo);
+        const position = nextGeneoObjectPosition(
+          size.width,
+          size.height
+        );
+
+        node = {
+          id: createRuntimeId('geneo-node'),
+          type: 'image',
+          imageRef,
+          ...position,
+          width: size.width,
+          height: size.height,
+          parentPanelId: null,
+          order:
+            Math.max(
+              0,
+              ...diagram.nodes.map(item => item.order || 0)
+            ) + 1,
+          visible: true,
+          locked: false,
+          appearance: {
+            ...defaults.appearance
+          }
+        };
+
+        diagram.nodes.push(node);
+        selectGeneographNode(node.id);
+      }
+
+      pruneGeneographBoardAssets(diagram);
+      touchGeneographBoard();
+
+      const message = replacing
+        ? 'Image replaced.'
+        : 'Image added to the board.';
+
+      resetGeneographImagePickerState();
+      closeModal({ force: true });
+
+      renderGeneographEditorPreserveScroll({
+        preserveInspectorScroll: replacing
+      });
+
+      showToast(message);
+    }
+
+    function bindGeneographImagePickerModal() {
+      modalBackdrop
+        .querySelectorAll('[data-geneo-image-tab]')
+        .forEach(button => {
+          button.addEventListener('click', () => {
+            state.geneoImagePicker.sourceTab =
+              button.dataset.geneoImageTab;
+
+            state.geneoImagePicker.uploadError = '';
+
+            renderGeneographImagePickerModal({
+              focusSelector:
+                `[data-geneo-image-tab="${button.dataset.geneoImageTab}"]`
+            });
+          });
+
+          button.addEventListener('keydown', event => {
+            if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) {
+              return;
+            }
+
+            event.preventDefault();
+
+            state.geneoImagePicker.sourceTab =
+              state.geneoImagePicker.sourceTab === 'project'
+                ? 'upload'
+                : 'project';
+
+            renderGeneographImagePickerModal({
+              focusSelector:
+                `[data-geneo-image-tab="${state.geneoImagePicker.sourceTab}"]`
+            });
+          });
+        });
+
+      modalBackdrop
+        .querySelector('[data-geneo-image-search]')
+        ?.addEventListener('input', event => {
+          state.geneoImagePicker.search = event.target.value;
+          updateGeneographImageProjectResults();
+        });
+
+      bindGeneographImageProjectResultActions(modalBackdrop);
+
+      const fileInput = modalBackdrop.querySelector(
+        '[data-geneo-image-file]'
+      );
+
+      modalBackdrop
+        .querySelector('[data-geneo-image-choose-file]')
+        ?.addEventListener('click', () => {
+          fileInput?.click();
+        });
+
+      fileInput?.addEventListener('change', () => {
+        processGeneographImageUpload(fileInput.files?.[0]);
+      });
+
+      const dropzone = modalBackdrop.querySelector(
+        '[data-geneo-image-dropzone]'
+      );
+
+      if (dropzone) {
+        ['dragenter', 'dragover'].forEach(type => {
+          dropzone.addEventListener(type, event => {
+            event.preventDefault();
+            dropzone.classList.add('is-dragging');
+          });
+        });
+
+        ['dragleave', 'drop'].forEach(type => {
+          dropzone.addEventListener(type, event => {
+            event.preventDefault();
+            dropzone.classList.remove('is-dragging');
+          });
+        });
+
+        dropzone.addEventListener('drop', event => {
+          processGeneographImageUpload(
+            event.dataTransfer?.files?.[0]
+          );
+        });
+      }
+
+      modalBackdrop
+        .querySelector('[data-geneo-image-confirm]')
+        ?.addEventListener(
+          'click',
+          applyGeneographImagePickerSelection
+        );
+    }
+
+    function openGeneographImagePicker({
+      mode = 'add',
+      nodeId = null
+    } = {}) {
+      const replacing = mode === 'replace';
+      const node = replacing
+        ? getGeneographNode(nodeId)
+        : null;
+
+      if (replacing && node?.type !== 'image') return;
+
+      const photos = getProjectPhotos(
+        geneoImagePickerProjectId()
+      ).filter(photo => !photo.deletedAt);
+
+      const currentRef = replacing
+        ? normalizeGeneographImageRef(node)
+        : null;
+
+      resetGeneographImagePickerState();
+
+      Object.assign(state.geneoImagePicker, {
+        open: true,
+        mode: replacing ? 'replace' : 'add',
+        nodeId: replacing ? node.id : null,
+        sourceTab:
+          currentRef?.scope === 'project' || photos.length
+            ? 'project'
+            : 'upload',
+        selectedPhotoId:
+          currentRef?.scope === 'project'
+            ? currentRef.id
+            : null
+      });
+
+      renderGeneographImagePickerModal();
     }
 
     function openGeneographTreePersonPicker() {
@@ -64023,6 +66153,7 @@
       diagram.nodes.forEach(node => { if (node.parentPanelId && deletedIds.has(node.parentPanelId) && !deletedIds.has(node.id)) node.parentPanelId = null; });
       diagram.connections = diagram.connections.filter(item => !deletedIds.has(item.source.nodeId) && !deletedIds.has(item.target.nodeId));
       diagram.nodes = diagram.nodes.filter(item => !deletedIds.has(item.id));
+      pruneGeneographBoardAssets(diagram);
       siblingFamilyIds.forEach(rebuildGeneographSiblingFamily);
       selectGeneographCanvas(); touchGeneographBoard(); renderGeneographEditorPreserveScroll();
     }
@@ -64394,6 +66525,71 @@
       showToast('Relationship details updated.');
     }
 
+    function bindGeneographInspectorNameField() {
+      const input =
+        main.querySelector(
+          '[data-geneo-entity-name]'
+        );
+
+      if (!input) return;
+
+      const entityType =
+        input.dataset.geneoEntityName;
+
+      const entityId =
+        input.dataset.geneoEntityId;
+
+      input.addEventListener(
+        'keydown',
+        event => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            event.stopPropagation();
+            input.blur();
+            return;
+          }
+
+          if (event.key !== 'Escape') {
+            return;
+          }
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          const entity =
+            getGeneographRenameEntity(
+              entityType,
+              entityId
+            );
+
+          input.value =
+            normalizeGeneographLayerName(
+              entity?.name
+            );
+
+          input.blur();
+        }
+      );
+
+      input.addEventListener(
+        'change',
+        event => {
+          const changed =
+            renameGeneographEntity(
+              entityType,
+              entityId,
+              event.target.value
+            );
+
+          if (!changed) return;
+
+          renderGeneographEditorPreserveScroll({
+            preserveInspectorScroll: true
+          });
+        }
+      );
+    }
+
     function bindGeneographEditor() {
       const wrap = main.querySelector('[data-geneo-canvas-wrap]');
       if (!main.dataset.geneoConnectionClickBoundaryBound) {
@@ -64439,7 +66635,57 @@
         const firstWaypoint = index - 1, secondWaypoint = index; const first = connection.route.waypoints[firstWaypoint], second = connection.route.waypoints[secondWaypoint]; if (!first || !second) return;
         geneoPointerState = { kind: 'segment', connectionId: connection.id, start: geneoPointerToCanvas(event), firstWaypoint, secondWaypoint, first: { ...first }, second: { ...second }, vertical: Math.abs(first.x - second.x) < Math.abs(first.y - second.y), moved: false };
       }));
-      wrap?.addEventListener('click', event => { if (!geneoCanvasRuntime.suppressNodeClick && (event.target === wrap || event.target.matches('[data-geneo-stage],[data-geneo-marquee],.geneo-board-space'))) { selectGeneographCanvas(); cancelGeneographConnectionDraft(); renderGeneographEditorPreserveScroll(); } });
+      wrap?.addEventListener('click', event => {
+        if (geneoCanvasRuntime.suppressNodeClick) {
+          return;
+        }
+
+        /*
+        * Treat any non-interactive canvas layer as
+        * empty canvas. This includes the board,
+        * stage, SVG connection layer, and preview.
+        */
+        const interactiveTarget =
+          event.target.closest(
+            [
+              'button',
+              'input',
+              'textarea',
+              'select',
+              '[contenteditable="true"]',
+              '[data-geneo-node]',
+              '.geneo-connection-hit',
+              '.geneo-segment-hit',
+              '[data-geneo-waypoint]',
+              '[data-geneo-family-junction]'
+            ].join(',')
+          );
+
+        if (interactiveTarget) return;
+
+        if (state.geneoTool === 'connect') {
+          /*
+          * Keep the first click inert so the line
+          * remains active. The second click in the
+          * native double-click sequence exits to Pan.
+          */
+          if (event.detail !== 2) return;
+
+          event.preventDefault();
+
+          cancelGeneographConnectionDraft();
+          selectGeneographCanvas();
+
+          state.geneoTool = 'pan';
+
+          renderGeneographEditorPreserveScroll();
+          return;
+        }
+
+        selectGeneographCanvas();
+        cancelGeneographConnectionDraft();
+        renderGeneographEditorPreserveScroll();
+      });
       wrap?.addEventListener('pointerdown', event => {
         if (event.button !== 0 || event.target.closest('button,input,textarea,select,[data-geneo-node],[data-geneo-connection],[data-geneo-waypoint],[data-geneo-family-junction]')) return;
         if (state.geneoTool === 'pan') geneoPointerState = { kind: 'pan', wrap, clientX: event.clientX, clientY: event.clientY, left: wrap.scrollLeft, top: wrap.scrollTop, moved: false };
@@ -64461,16 +66707,166 @@
       }));
       main.querySelector('[data-geneo-inspector-toggle]')?.addEventListener('click', () => { state.geneoInspectorCollapsed = !state.geneoInspectorCollapsed; renderGeneographEditorPreserveScroll(); });
       main.querySelector('[data-geneo-export]')?.addEventListener('click', () => showToast('Export Geneograph board'));
-      main.querySelector('[data-geneo-settings]')?.addEventListener('click', openGeneographSettingsModal);
-      main.querySelectorAll('[data-geneo-node-field]').forEach(input => input.addEventListener('change', () => { const node = selectedGeneographNode(); if (!node) return; geneoPushHistory(); node[input.dataset.geneoNodeField] = input.value; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); }));
-      main.querySelectorAll('[data-geneo-appearance]').forEach(input => input.addEventListener('change', () => { const node = selectedGeneographNode(); if (!node) return; geneoPushHistory(); node.appearance[input.dataset.geneoAppearance] = input.value; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); }));
-      main.querySelectorAll('[data-geneo-layout]').forEach(input => input.addEventListener('change', () => { const node = selectedGeneographNode(); if (!node) return; geneoPushHistory(); const field = input.dataset.geneoLayout; const defaults = geneoNodeDefaults(node.type); const minimum = field === 'width' ? defaults.minWidth : field === 'height' ? defaults.minHeight : -GENEO_WORLD_LIMIT; const maximum = field === 'width' || field === 'height' ? 10000 : GENEO_WORLD_LIMIT; node[field] = geneoNumber(input.value, node[field], minimum, maximum); if (node.type === 'panel') reconcileGeneographPanelMembership(node.id); touchGeneographBoard(); renderGeneographEditorPreserveScroll(); }));
-      main.querySelector('[data-geneo-node-visible]')?.addEventListener('change', event => { const node = selectedGeneographNode(); if (node) { geneoPushHistory(); node.visible = event.target.checked; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); } });
-      main.querySelector('[data-geneo-node-locked]')?.addEventListener('change', event => { const node = selectedGeneographNode(); if (node) { geneoPushHistory(); node.locked = event.target.checked; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); } });
+      main
+        .querySelectorAll('[data-geneo-node-field]')
+        .forEach(input => {
+          input.addEventListener('change', () => {
+            const node =
+              selectedGeneographNode();
+
+            if (!node) return;
+
+            geneoPushHistory();
+
+            node[
+              input.dataset.geneoNodeField
+            ] = input.value;
+
+            touchGeneographBoard();
+
+            renderGeneographEditorPreserveScroll({
+              preserveInspectorScroll: true
+            });
+          });
+        });
+      main
+        .querySelectorAll('[data-geneo-appearance]')
+        .forEach(input => {
+          input.addEventListener('change', () => {
+            const node =
+              selectedGeneographNode();
+
+            if (!node) return;
+
+            geneoPushHistory();
+
+            node.appearance[
+              input.dataset.geneoAppearance
+            ] = input.value;
+
+            touchGeneographBoard();
+
+            renderGeneographEditorPreserveScroll({
+              preserveInspectorScroll: true
+            });
+          });
+        });
+      main
+        .querySelectorAll('[data-geneo-layout]')
+        .forEach(input => {
+          input.addEventListener('change', () => {
+            const node =
+              selectedGeneographNode();
+
+            if (!node) return;
+
+            geneoPushHistory();
+
+            const field =
+              input.dataset.geneoLayout;
+
+            const defaults =
+              geneoNodeDefaults(node.type);
+
+            const minimum =
+              field === 'width'
+                ? defaults.minWidth
+                : field === 'height'
+                  ? defaults.minHeight
+                  : -GENEO_WORLD_LIMIT;
+
+            const maximum =
+              field === 'width'
+              || field === 'height'
+                ? 10000
+                : GENEO_WORLD_LIMIT;
+
+            node[field] = geneoNumber(
+              input.value,
+              node[field],
+              minimum,
+              maximum
+            );
+
+            if (node.type === 'panel') {
+              reconcileGeneographPanelMembership(
+                node.id
+              );
+            }
+
+            touchGeneographBoard();
+
+            renderGeneographEditorPreserveScroll({
+              preserveInspectorScroll: true
+            });
+          });
+        });
+      main
+        .querySelector('[data-geneo-node-visible]')
+        ?.addEventListener('change', event => {
+          const node =
+            selectedGeneographNode();
+
+          if (!node) return;
+
+          geneoPushHistory();
+
+          node.visible =
+            event.target.checked;
+
+          touchGeneographBoard();
+
+          renderGeneographEditorPreserveScroll({
+            preserveInspectorScroll: true
+          });
+        });
+      main
+        .querySelector('[data-geneo-node-locked]')
+        ?.addEventListener('change', event => {
+          const node =
+            selectedGeneographNode();
+
+          if (!node) return;
+
+          geneoPushHistory();
+
+          node.locked =
+            event.target.checked;
+
+          touchGeneographBoard();
+
+          renderGeneographEditorPreserveScroll({
+            preserveInspectorScroll: true
+          });
+        });
       main.querySelector('[data-geneo-link-person]')?.addEventListener('click', openGeneographTreePersonPicker);
       main.querySelector('[data-geneo-edit-person]')?.addEventListener('click', () => { const person = getGeneographPerson(selectedGeneographNode()?.personId); if (person) openGeneographPersonModal(person.id); });
       main.querySelector('[data-geneo-unlink-person]')?.addEventListener('click', () => { const person = getGeneographPerson(selectedGeneographNode()?.personId); if (person) { geneoPushHistory(); person.treePersonId = null; person.syncState = 'local'; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); } });
-      main.querySelector('[data-geneo-choose-image]')?.addEventListener('click', openGeneographImagePickerForSelection);
+      main
+        .querySelector('[data-geneo-replace-image]')
+        ?.addEventListener('click', () => {
+          const node = selectedGeneographNode();
+
+          if (node?.type === 'image') {
+            openGeneographImagePicker({
+              mode: 'replace',
+              nodeId: node.id
+            });
+          }
+        });
+
+      main
+        .querySelector('[data-geneo-open-project-photo]')
+        ?.addEventListener('click', event => {
+          const photoId =
+            event.currentTarget.dataset.geneoOpenProjectPhoto;
+
+          if (getPhoto(photoId, {
+            projectId: selectedGeneographBoard()?.projectId || ''
+          })) {
+            openAlbumsForPhoto(photoId);
+          }
+        });
       main.querySelector('[data-geneo-delete-selection]')?.addEventListener('click', deleteGeneographSelection);
       const relationshipEditor = main.querySelector('[data-geneo-relationship-editor]');
       if (relationshipEditor) {
@@ -64480,14 +66876,104 @@
         relationshipEditor.querySelector('[data-geneo-show-relationship-dates]')?.addEventListener('change', event => { const connection = selectedGeneographConnection(); if (!connection) return; geneoPushHistory(); connection.showRelationshipDates = event.target.checked; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); });
         relationshipEditor.querySelector('[data-geneo-save-relationship]')?.addEventListener('click', saveGeneographPartnerRelationship);
       }
-      main.querySelectorAll('[data-geneo-connection-style]').forEach(input => input.addEventListener('change', () => { const connection = selectedGeneographConnection(); if (!connection) return; geneoPushHistory(); const field = input.dataset.geneoConnectionStyle; connection.style[field] = field === 'width' ? geneoNumber(input.value, 2, 1, 8) : input.value; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); }));
-      main.querySelector('[data-geneo-connection-routing]')?.addEventListener('change', event => { const connection = selectedGeneographConnection(); if (!connection) return; geneoPushHistory(); connection.route.mode = event.target.value; if (connection.route.mode === 'manual' && !connection.route.waypoints.length) { const points = geneoConnectionPoints({ ...connection, route: { mode: 'auto', waypoints: [] } }); connection.route.waypoints = points.slice(1, -1).map(snapGeneographPoint); } touchGeneographBoard(); renderGeneographEditorPreserveScroll(); });
-      main.querySelector('[data-geneo-reset-route]')?.addEventListener('click', () => { const connection = selectedGeneographConnection(); if (!connection) return; geneoPushHistory(); connection.route = { mode: 'auto', waypoints: [] }; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); });
+      main
+        .querySelectorAll('[data-geneo-connection-style]')
+        .forEach(input => {
+          input.addEventListener('change', () => {
+            const connection =
+              selectedGeneographConnection();
+
+            if (!connection) return;
+
+            geneoPushHistory();
+
+            const field =
+              input.dataset.geneoConnectionStyle;
+
+            connection.style[field] =
+              field === 'width'
+                ? geneoNumber(
+                    input.value,
+                    2,
+                    1,
+                    8
+                  )
+                : input.value;
+
+            touchGeneographBoard();
+
+            renderGeneographEditorPreserveScroll({
+              preserveInspectorScroll: true
+            });
+          });
+        });
+
+      main
+        .querySelector('[data-geneo-connection-routing]')
+        ?.addEventListener('change', event => {
+          const connection =
+            selectedGeneographConnection();
+
+          if (!connection) return;
+
+          geneoPushHistory();
+
+          connection.route.mode =
+            event.target.value;
+
+          if (
+            connection.route.mode === 'manual'
+            && !connection.route.waypoints.length
+          ) {
+            const points =
+              geneoConnectionPoints({
+                ...connection,
+                route: {
+                  mode: 'auto',
+                  waypoints: []
+                }
+              });
+
+            connection.route.waypoints =
+              points
+                .slice(1, -1)
+                .map(snapGeneographPoint);
+          }
+
+          touchGeneographBoard();
+
+          renderGeneographEditorPreserveScroll({
+            preserveInspectorScroll: true
+          });
+        });
+
+      main
+        .querySelector('[data-geneo-reset-route]')
+        ?.addEventListener('click', () => {
+          const connection =
+            selectedGeneographConnection();
+
+          if (!connection) return;
+
+          geneoPushHistory();
+
+          connection.route = {
+            mode: 'auto',
+            waypoints: []
+          };
+
+          touchGeneographBoard();
+
+          renderGeneographEditorPreserveScroll({
+            preserveInspectorScroll: true
+          });
+        });
       main.querySelector('[data-geneo-canvas-color]')?.addEventListener('change', event => updateGeneoCanvasSetting('backgroundColor', event.target.value));
       main.querySelectorAll('[data-geneo-canvas-preset]').forEach(button => button.addEventListener('click', () => updateGeneoCanvasSetting('backgroundColor', button.dataset.geneoCanvasPreset)));
       main.querySelectorAll('[data-geneo-background-pattern]').forEach(button => button.addEventListener('click', () => updateGeneoCanvasSetting('backgroundPattern', button.dataset.geneoBackgroundPattern)));
       main.querySelector('[data-geneo-sockets]')?.addEventListener('change', event => updateGeneoCanvasSetting('alwaysShowSockets', event.target.checked));
       main.querySelector('[data-geneo-snap]')?.addEventListener('change', event => updateGeneoCanvasSetting('snapToGrid', event.target.checked));
+      bindGeneographInspectorNameField();
       bindGeneographSidebarControls();
       bindToasts(main);
     }
@@ -64500,15 +66986,71 @@
       window.addEventListener('pointercancel', endGeneographObjectDrag);
     }
 
-    function openGeneographImagePickerForSelection() {
-      const node = selectedGeneographNode(); if (node?.type !== 'image') return; const photos = getProjectPhotos(currentProjectId());
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="geneoChooseImageTitle"><div class="modal-header"><div><h2 id="geneoChooseImageTitle">Choose image</h2></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="geneo-image-picker">${photos.map(photo => `<button type="button" data-geneo-image-choice="${escapeHtml(photo.id)}">${renderPhotoThumbnail(photo, { alt: photo.title })}<span>${escapeHtml(photo.title || photo.filename)}</span></button>`).join('')}</div></div></div>`);
-      modalBackdrop.querySelectorAll('[data-geneo-image-choice]').forEach(button => button.addEventListener('click', () => { geneoPushHistory(); node.photoId = button.dataset.geneoImageChoice; node.title = getPhoto(node.photoId)?.title || node.title; touchGeneographBoard(); closeModal(); renderGeneographEditorPreserveScroll(); }));
-    }
-
     function updateGeneoCanvasSetting(field, value) { geneoPushHistory(); selectedGeneographDiagram().canvas[field] = value; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); }
 
     function bindGeneographSidebarControls() {
+      if (
+        !sidebar.dataset
+          .geneoLayerRenameBound
+      ) {
+        sidebar.dataset
+          .geneoLayerRenameBound = 'true';
+
+        /*
+        * The sidebar contents are replaced after
+        * selection. Detect the second mouse press
+        * from the persistent sidebar element.
+        */
+        sidebar.addEventListener(
+          'mousedown',
+          event => {
+            if (
+              event.button !== 0
+              || event.detail !== 2
+            ) {
+              return;
+            }
+
+            const handle =
+              event.target.closest?.(
+                '[data-geneo-layer-rename-handle]'
+              );
+
+            if (!handle) return;
+
+            const nodeRow =
+              handle.closest(
+                '[data-geneo-layer]'
+              );
+
+            const connectionRow =
+              handle.closest(
+                '[data-geneo-layer-connection]'
+              );
+
+            if (!nodeRow && !connectionRow) {
+              return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (nodeRow) {
+              beginGeneographLayerRename(
+                'node',
+                nodeRow.dataset.geneoLayer
+              );
+            } else {
+              beginGeneographLayerRename(
+                'connection',
+                connectionRow.dataset
+                  .geneoLayerConnection
+              );
+            }
+          },
+          true
+        );
+      }
       sidebar.querySelector('[data-geneo-all-boards]')?.addEventListener('click', () => { captureGeneographViewport(); cancelGeneographConnectionDraft(); state.geneoView = 'home'; selectGeneographCanvas(); renderGeneographHome(); });
       sidebar.querySelector('[data-geneo-settings]')?.addEventListener('click', openGeneographSettingsModal);
       sidebar.querySelectorAll('[data-geneo-sidebar-section]').forEach(button => button.addEventListener('click', () => {
@@ -64518,11 +67060,315 @@
         renderGeneographEditorPreserveScroll();
       }));
       sidebar.querySelector('#geneoLayerSearch')?.addEventListener('input', event => { state.geneoLayerSearch = event.target.value; renderGeneographEditorPreserveScroll(); requestAnimationFrame(() => { const input = sidebar.querySelector('#geneoLayerSearch'); if (input) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); } }); });
-      sidebar.querySelectorAll('[data-geneo-layer]').forEach(row => { row.addEventListener('click', event => { if (!event.target.closest('button')) { selectGeneographNode(row.dataset.geneoLayer, { toggle: event.shiftKey || event.ctrlKey || event.metaKey }); renderGeneographEditorPreserveScroll(); } }); row.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectGeneographNode(row.dataset.geneoLayer, { toggle: event.shiftKey || event.ctrlKey || event.metaKey }); renderGeneographEditorPreserveScroll(); } }); row.addEventListener('dragstart', event => event.dataTransfer.setData('text/geneo-node', row.dataset.geneoLayer)); row.addEventListener('dragover', event => event.preventDefault()); row.addEventListener('drop', event => { event.preventDefault(); const moved = getGeneographNode(event.dataTransfer.getData('text/geneo-node')); const target = getGeneographNode(row.dataset.geneoLayer); if (!moved || !target || moved.id === target.id) return; geneoPushHistory(); moved.order = target.order + .5; selectedGeneographDiagram().nodes.sort((a,b) => a.order - b.order).forEach((node,index) => node.order = index + 1); touchGeneographBoard(); renderGeneographEditorPreserveScroll(); }); });
-      sidebar.querySelectorAll('[data-geneo-layer-connection]').forEach(row => row.addEventListener('click', event => { selectGeneographConnection(row.dataset.geneoLayerConnection, null, { toggle: event.shiftKey || event.ctrlKey || event.metaKey }); renderGeneographEditorPreserveScroll(); }));
+      sidebar
+        .querySelectorAll(
+          '[data-geneo-layer]'
+        )
+        .forEach(row => {
+          row.addEventListener(
+            'click',
+            event => {
+              if (
+                event.target.closest(
+                  'button,input'
+                )
+              ) {
+                return;
+              }
+
+              selectGeneographNode(
+                row.dataset.geneoLayer,
+                {
+                  toggle:
+                    event.shiftKey
+                    || event.ctrlKey
+                    || event.metaKey
+                }
+              );
+
+              renderGeneographEditorPreserveScroll();
+            }
+          );
+
+          row.addEventListener(
+            'keydown',
+            event => {
+              if (
+                event.target.closest('input')
+              ) {
+                return;
+              }
+
+              if (event.key === 'F2') {
+                event.preventDefault();
+
+                beginGeneographLayerRename(
+                  'node',
+                  row.dataset.geneoLayer
+                );
+
+                return;
+              }
+
+              if (
+                event.key !== 'Enter'
+                && event.key !== ' '
+              ) {
+                return;
+              }
+
+              event.preventDefault();
+
+              selectGeneographNode(
+                row.dataset.geneoLayer,
+                {
+                  toggle:
+                    event.shiftKey
+                    || event.ctrlKey
+                    || event.metaKey
+                }
+              );
+
+              renderGeneographEditorPreserveScroll();
+            }
+          );
+
+          row.addEventListener(
+            'dragstart',
+            event => {
+              if (
+                geneoLayerRenameMatches(
+                  'node',
+                  row.dataset.geneoLayer
+                )
+              ) {
+                event.preventDefault();
+                return;
+              }
+
+              event.dataTransfer.setData(
+                'text/geneo-node',
+                row.dataset.geneoLayer
+              );
+            }
+          );
+
+          row.addEventListener(
+            'dragover',
+            event => {
+              event.preventDefault();
+            }
+          );
+
+          row.addEventListener(
+            'drop',
+            event => {
+              event.preventDefault();
+
+              const moved =
+                getGeneographNode(
+                  event.dataTransfer.getData(
+                    'text/geneo-node'
+                  )
+                );
+
+              const target =
+                getGeneographNode(
+                  row.dataset.geneoLayer
+                );
+
+              if (
+                !moved
+                || !target
+                || moved.id === target.id
+              ) {
+                return;
+              }
+
+              geneoPushHistory();
+
+              moved.order =
+                target.order + 0.5;
+
+              selectedGeneographDiagram()
+                .nodes
+                .sort(
+                  (first, second) =>
+                    first.order
+                    - second.order
+                )
+                .forEach(
+                  (node, index) => {
+                    node.order = index + 1;
+                  }
+                );
+
+              touchGeneographBoard();
+              renderGeneographEditorPreserveScroll();
+            }
+          );
+        });
+      sidebar
+        .querySelectorAll(
+          '[data-geneo-layer-connection]'
+        )
+        .forEach(row => {
+          row.addEventListener(
+            'click',
+            event => {
+              if (
+                event.target.closest('input')
+              ) {
+                return;
+              }
+
+              selectGeneographConnection(
+                row.dataset
+                  .geneoLayerConnection,
+                null,
+                {
+                  toggle:
+                    event.shiftKey
+                    || event.ctrlKey
+                    || event.metaKey
+                }
+              );
+
+              renderGeneographEditorPreserveScroll();
+            }
+          );
+
+          row.addEventListener(
+            'keydown',
+            event => {
+              if (
+                event.target.closest('input')
+              ) {
+                return;
+              }
+
+              if (event.key === 'F2') {
+                event.preventDefault();
+
+                beginGeneographLayerRename(
+                  'connection',
+                  row.dataset
+                    .geneoLayerConnection
+                );
+
+                return;
+              }
+
+              if (
+                event.key !== 'Enter'
+                && event.key !== ' '
+              ) {
+                return;
+              }
+
+              event.preventDefault();
+
+              selectGeneographConnection(
+                row.dataset
+                  .geneoLayerConnection
+              );
+
+              renderGeneographEditorPreserveScroll();
+            }
+          );
+        });
       sidebar.querySelectorAll('[data-geneo-toggle-visible]').forEach(button => button.addEventListener('click', event => { event.stopPropagation(); const node = getGeneographNode(button.dataset.geneoToggleVisible); if (node) { geneoPushHistory(); node.visible = !node.visible; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); } }));
       sidebar.querySelectorAll('[data-geneo-toggle-lock]').forEach(button => button.addEventListener('click', event => { event.stopPropagation(); const node = getGeneographNode(button.dataset.geneoToggleLock); if (node) { geneoPushHistory(); node.locked = !node.locked; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); } }));
       sidebar.querySelectorAll('[data-geneo-collapse-panel]').forEach(button => button.addEventListener('click', () => { const id = button.dataset.geneoCollapsePanel; state.geneoCollapsedPanels[id] = !state.geneoCollapsedPanels[id]; renderGeneographEditorPreserveScroll(); }));
+      const renameInput =
+        sidebar.querySelector(
+          '[data-geneo-layer-rename-input]'
+        );
+
+      if (renameInput) {
+        renameInput.addEventListener(
+          'input',
+          event => {
+            const rename =
+              state.geneoLayerRename;
+
+            if (!rename) return;
+
+            if (
+              rename.entityType
+                !== event.target.dataset
+                  .geneoRenameType
+              || rename.entityId
+                !== event.target.dataset
+                  .geneoRenameId
+            ) {
+              return;
+            }
+
+            rename.draft =
+              event.target.value;
+          }
+        );
+
+        renameInput.addEventListener(
+          'keydown',
+          event => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              event.stopPropagation();
+
+              finishGeneographLayerRename({
+                value: event.target.value,
+                restoreFocus: true
+              });
+
+              return;
+            }
+
+            if (event.key === 'Escape') {
+              event.preventDefault();
+              event.stopPropagation();
+
+              finishGeneographLayerRename({
+                cancel: true,
+                restoreFocus: true
+              });
+            }
+          }
+        );
+
+        renameInput.addEventListener(
+          'blur',
+          event => {
+            const value =
+              event.target.value;
+
+            const entityType =
+              event.target.dataset
+                .geneoRenameType;
+
+            const entityId =
+              event.target.dataset
+                .geneoRenameId;
+
+            setTimeout(() => {
+              if (
+                !geneoLayerRenameMatches(
+                  entityType,
+                  entityId
+                )
+              ) {
+                return;
+              }
+
+              finishGeneographLayerRename({
+                value,
+                restoreFocus: false
+              });
+            }, 0);
+          }
+        );
+      }
     }
 
     function ensureGeneographKeyboardBinding() {
@@ -97447,14 +100293,12 @@
             diagram.nodes
               .filter(node =>
                 node.type === 'image'
-                && node.photoId
-                  === entityId
+                && node.imageRef?.scope === 'project'
+                && node.imageRef.id === entityId
               )
               .forEach(node => {
-                node.photoId = null;
-                affectedNodeIds.add(
-                  node.id
-                );
+                node.imageRef = null;
+                affectedNodeIds.add(node.id);
               });
           }
         });
@@ -110168,6 +113012,10 @@
             '[data-person-photos-adder]'
           )
         );
+      const closingGeneographImagePicker = Boolean(
+        state.geneoImagePicker?.open
+        && modalBackdrop.querySelector('[data-geneo-image-picker]')
+      );
       if (closingPersonPhotoPicker && state.personPhotoPicker.dirty && !force) {
         openPersonPhotoDiscardConfirm();
         return;
@@ -110175,6 +113023,9 @@
       if (closingPersonPhotoPicker) resetPersonPhotoPickerState();
       if (closingPersonPhotosAdder) {
         resetPersonPhotosAdderState();
+      }
+      if (closingGeneographImagePicker) {
+        resetGeneographImagePickerState();
       }
       if (
         closingPlaceEditor
