@@ -11553,6 +11553,25 @@
       outline: 0;
     }
     .geneo-textarea { min-height: 74px; resize: vertical; }
+    .geneo-sticky-content-field {
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    .geneo-sticky-content-input {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow-x: hidden;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      resize: vertical;
+    }
     .geneo-check {
       display: flex;
       align-items: center;
@@ -11842,8 +11861,121 @@
       opacity: 1;
       transform: translateY(0);
     }
-    .geneo-node-sticky .geneo-node-content { padding: 18px; }
-    .geneo-sticky-copy { white-space: pre-wrap; line-height: 1.5; font-size: 14px; }
+    .geneo-node-sticky {
+      border-radius: 4px;
+      box-shadow: none;
+      transition:
+        box-shadow var(--ease),
+        border-color var(--ease);
+    }
+
+    .geneo-node-sticky.has-paper-fill {
+      box-shadow:
+        0 3px 7px rgba(0,0,0,.2),
+        0 12px 18px -14px rgba(0,0,0,.7);
+    }
+
+    .geneo-node-sticky.has-paper-fill:hover {
+      box-shadow:
+        0 4px 9px rgba(0,0,0,.24),
+        0 14px 20px -14px rgba(0,0,0,.76);
+    }
+
+    .geneo-node-sticky.has-paper-fill.selected,
+    .geneo-node-sticky.has-paper-fill:focus-visible {
+      box-shadow:
+        0 0 0 2px #62D99A,
+        0 5px 12px rgba(0,0,0,.28),
+        0 16px 22px -15px rgba(0,0,0,.78);
+    }
+
+    .geneo-node-sticky .geneo-node-content {
+      position: relative;
+      isolation: isolate;
+      padding: 20px;
+    }
+
+    .geneo-node-sticky.has-paper-fill
+    .geneo-node-content::after {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      right: 0;
+      bottom: 0;
+      width: 18px;
+      height: 18px;
+      background:
+        color-mix(
+          in srgb,
+          var(--geneo-node-bg) 72%,
+          #4A3518
+        );
+      clip-path:
+        polygon(
+          0 100%,
+          100% 0,
+          100% 100%
+        );
+      box-shadow:
+        -1px -1px 0 rgba(0,0,0,.14);
+      pointer-events: none;
+    }
+
+    .geneo-sticky-copy {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      color: inherit;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+
+    .geneo-node-sticky .geneo-inline-editor {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      border: 0;
+      border-radius: 2px;
+      background: transparent;
+      color: inherit;
+      caret-color: currentColor;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .geneo-node-sticky
+    .geneo-inline-editor:focus {
+      box-shadow:
+        inset 0 0 0 1px
+        color-mix(
+          in srgb,
+          currentColor 26%,
+          transparent
+        );
+    }
+
+    .geneo-canvas-stage.sticky-tool {
+      cursor: crosshair;
+    }
+
+    .geneo-canvas-stage.sticky-tool
+    .geneo-node {
+      cursor: default;
+    }
+
+    .geneo-canvas-stage.sticky-tool
+    .geneo-node-panel {
+      cursor: crosshair;
+    }
     .geneo-node-text { border-color: transparent; background: transparent; box-shadow: none; }
     .geneo-node-text.selected { background: rgba(0,0,0,.12); }
     .geneo-text-copy { width:100%; height:100%; display:flex; align-items:center; padding:8px; white-space:pre-wrap; font-size: 26px; font-weight: 800; line-height: 1.15; }
@@ -62391,18 +62523,24 @@
       iconSvg,
       label
     ) {
-      const isPanelTool = type === 'panel';
-      const active =
-        isPanelTool
-        && state.geneoTool === 'panel';
+      const isPlacementTool =
+        type === 'panel'
+        || type === 'sticky';
 
-      const actionAttribute = isPanelTool
-        ? 'data-geneo-panel-tool'
+      const active =
+        isPlacementTool
+        && state.geneoTool === type;
+
+      const actionAttribute = isPlacementTool
+        ? `data-geneo-placement-tool="${escapeHtml(type)}"`
         : `data-geneo-add="${escapeHtml(type)}"`;
 
-      const actionLabel = isPanelTool
-        ? `Draw ${label}`
-        : `Add ${label}`;
+      const actionLabel =
+        type === 'panel'
+          ? `Draw ${label}`
+          : type === 'sticky'
+            ? `Place ${label}`
+            : `Add ${label}`;
 
       return `
         <button
@@ -62410,14 +62548,19 @@
           type="button"
           ${actionAttribute}
           ${
-            isPanelTool
+            isPlacementTool
               ? `aria-pressed="${active}"`
               : ''
           }
           title="${escapeHtml(actionLabel)}"
           aria-label="${escapeHtml(actionLabel)}">
-          <span aria-hidden="true">${iconSvg}</span>
-          <span>${escapeHtml(label)}</span>
+          <span aria-hidden="true">
+            ${iconSvg}
+          </span>
+
+          <span>
+            ${escapeHtml(label)}
+          </span>
         </button>
       `;
     }
@@ -64141,10 +64284,30 @@
       if (type === 'sticky') {
         return {
           ...common,
-          width: 240,
-          height: 170,
+          width: 220,
+          height: 200,
           minWidth: 160,
-          minHeight: 110
+          minHeight: 120,
+          appearance: {
+            ...common.appearance,
+            fill: {
+              color: '#D4AA6B',
+              opacity: 100,
+              enabled: true
+            },
+            stroke: {
+              color: '#A77C3F',
+              opacity: 100,
+              enabled: true
+            },
+            strokeWidth: 1,
+            strokePattern: 'solid',
+            text: {
+              color: '#241C10',
+              opacity: 100,
+              enabled: true
+            }
+          }
         };
       }
 
@@ -64434,15 +64597,17 @@
         return node.title || 'Panel';
       }
 
+      /*
+      * Sticky content is independent from its layer
+      * identity. Users can provide a custom layer name
+      * through the Layer section.
+      */
+      if (node.type === 'sticky') {
+        return 'Sticky note';
+      }
+
       return (
-        String(
-          node.text
-          || (
-            node.type === 'sticky'
-              ? 'Sticky note'
-              : 'Text'
-          )
-        )
+        String(node.text || 'Text')
           .split(/\r?\n/)[0]
         || 'Untitled'
       );
@@ -64490,6 +64655,62 @@
       }
       const zoom = Math.max(.25, Math.min(2, state.geneoZoom / 100));
       const wrap = main.querySelector('[data-geneo-canvas-wrap]');
+      wrap?.addEventListener(
+        'click',
+        event => {
+          if (state.geneoTool !== 'sticky') {
+            return;
+          }
+
+          /*
+          * Controls, existing non-panel objects, and
+          * connection geometry are not placement surfaces.
+          * Panel interiors are intentionally valid.
+          */
+          const blockedControl =
+            event.target.closest(
+              [
+                'button',
+                'input',
+                'textarea',
+                'select',
+                '[contenteditable="true"]',
+                '.geneo-connection-hit',
+                '.geneo-segment-hit',
+                '[data-geneo-waypoint]',
+                '[data-geneo-family-junction]'
+              ].join(',')
+            );
+
+          if (blockedControl) {
+            return;
+          }
+
+          const nodeElement =
+            event.target.closest('[data-geneo-node]');
+
+          if (nodeElement) {
+            const clickedNode =
+              getGeneographNode(
+                nodeElement.dataset.geneoNode
+              );
+
+            if (clickedNode?.type !== 'panel') {
+              return;
+            }
+          }
+
+          event.preventDefault();
+          event.stopImmediatePropagation();
+
+          createGeneographStickyAtPoint(
+            geneoPointerToCanvas(event)
+          );
+        },
+        {
+          capture: true
+        }
+      );
       const viewportWidth = Math.max(900, (wrap?.clientWidth || main.clientWidth || 1200) / zoom);
       const viewportHeight = Math.max(640, (wrap?.clientHeight || main.clientHeight || 760) / zoom);
       const content = geneoContentBounds(diagram);
@@ -65006,6 +65227,18 @@
             ${
               geneoNodeEffectiveLocked(node)
                 ? 'locked'
+                : ''
+            }
+            ${
+              node.type === 'sticky'
+              && appearance.fill?.enabled
+              && geneoNumber(
+                appearance.fill.opacity,
+                100,
+                0,
+                100
+              ) > 0
+                ? 'has-paper-fill'
                 : ''
             }
           "
@@ -65767,10 +66000,42 @@
         const node = target.entity;
         const element = main.querySelector(`[data-geneo-node="${CSS.escape(node.id)}"]`);
         if (element) {
-          element.style.setProperty('--geneo-node-bg', geneoPaintCssColor(node.appearance.fill));
-          element.style.setProperty('--geneo-node-stroke', geneoPaintCssColor(node.appearance.stroke));
-          element.style.setProperty('--geneo-node-stroke-style', node.appearance.stroke.enabled ? node.appearance.strokePattern : 'none');
-          element.style.setProperty('--geneo-node-text', geneoPaintCssColor(node.appearance.text));
+          element.style.setProperty(
+            '--geneo-node-bg',
+            geneoPaintCssColor(node.appearance.fill)
+          );
+
+          element.style.setProperty(
+            '--geneo-node-stroke',
+            geneoPaintCssColor(node.appearance.stroke)
+          );
+
+          element.style.setProperty(
+            '--geneo-node-stroke-style',
+            node.appearance.stroke.enabled
+              ? node.appearance.strokePattern
+              : 'none'
+          );
+
+          element.style.setProperty(
+            '--geneo-node-text',
+            geneoPaintCssColor(node.appearance.text)
+          );
+
+          if (node.type === 'sticky') {
+            element.classList.toggle(
+              'has-paper-fill',
+              Boolean(
+                node.appearance.fill?.enabled
+                && geneoNumber(
+                  node.appearance.fill.opacity,
+                  100,
+                  0,
+                  100
+                ) > 0
+              )
+            );
+          }
         }
       } else if (target.scope === 'connection') {
         const group = main.querySelector(`[data-geneo-connection-group="${CSS.escape(target.id)}"]`);
@@ -66608,7 +66873,38 @@
           </div>
         `
         :
-      `<div class="geneo-field"><label>${node.type === 'sticky' ? 'Note' : 'Text'}</label><textarea class="geneo-textarea" data-geneo-node-field="text">${escapeHtml(node.text || '')}</textarea></div>`;
+      node.type === 'sticky'
+        ? `
+          <div class="geneo-field geneo-sticky-content-field">
+            <label for="geneoStickyNoteContent">
+              Note content
+            </label>
+
+            <textarea
+              class="geneo-textarea geneo-sticky-content-input"
+              id="geneoStickyNoteContent"
+              rows="6"
+              wrap="soft"
+              data-geneo-node-field="text"
+              placeholder="Enter a research note…">${escapeHtml(
+                node.text || ''
+              )}</textarea>
+          </div>
+        `
+        : `
+          <div class="geneo-field">
+            <label for="geneoTextContent">
+              Text
+            </label>
+
+            <textarea
+              class="geneo-textarea"
+              id="geneoTextContent"
+              data-geneo-node-field="text">${escapeHtml(
+                node.text || ''
+              )}</textarea>
+          </div>
+        `;
       return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader(geneoNodeTitle(node), capitalize(node.type), geneoNodeIcon(node.type))}${nameSection}
         ${
           node.type === 'image'
@@ -66754,6 +67050,7 @@
         'geneo-canvas-stage',
         state.geneoTool === 'connect' ? 'connection-tool' : '',
         state.geneoTool === 'panel' ? 'panel-tool' : '',
+        state.geneoTool === 'sticky' ? 'sticky-tool' : '',
         state.geneoConnectionDraft ? 'is-connecting' : '',
         diagram.canvas.alwaysShowSockets ? 'show-sockets' : ''
       ].filter(Boolean).join(' ');
@@ -66902,8 +67199,8 @@
     function addGeneographObject(type) {
       if (!GENEO_NODE_TYPES.has(type)) return;
 
-      if (type === 'panel') {
-        activateGeneographPanelTool();
+      if (type === 'panel' || type === 'sticky') {
+        activateGeneographPlacementTool(type);
         return;
       }
 
@@ -66948,10 +67245,6 @@
         }
       };
 
-      if (type === 'sticky') {
-        node.text = 'New research note';
-      }
-
       if (type === 'text') {
         node.text = 'New text';
       }
@@ -66960,7 +67253,7 @@
       selectGeneographNode(node.id);
       touchGeneographBoard();
 
-      if (type === 'sticky' || type === 'text') {
+      if (type === 'text') {
         beginGeneographInlineEdit(node.id, {
           selectAll: true
         });
@@ -66970,23 +67263,29 @@
       renderGeneographEditorPreserveScroll();
     }
 
-    function activateGeneographPanelTool() {
+    function activateGeneographPlacementTool(type) {
+      if (!['panel', 'sticky'].includes(type)) {
+        return;
+      }
+
       cancelGeneographConnectionDraft();
 
       const activating =
-        state.geneoTool !== 'panel';
+        state.geneoTool !== type;
 
       state.geneoTool = activating
-        ? 'panel'
+        ? type
         : 'pan';
 
       renderGeneographEditorPreserveScroll();
 
-      if (activating) {
-        showToast(
-          'Drag on empty canvas to draw a panel.'
-        );
-      }
+      if (!activating) return;
+
+      showToast(
+        type === 'panel'
+          ? 'Drag on empty canvas to draw a panel.'
+          : 'Click empty canvas or a panel to place a sticky note.'
+      );
     }
 
     function geneoPanelDraftRect(start, current) {
@@ -67091,6 +67390,65 @@
       touchGeneographBoard();
 
       return panel;
+    }
+
+    function createGeneographStickyAtPoint(point) {
+      const diagram = selectedGeneographDiagram();
+
+      if (!diagram || !point) {
+        return null;
+      }
+
+      const defaults = geneoNodeDefaults('sticky');
+
+      const position = snapGeneographPoint({
+        x: point.x - defaults.width / 2,
+        y: point.y - defaults.height / 2
+      });
+
+      geneoPushHistory();
+
+      const node = {
+        id: createRuntimeId('geneo-node'),
+        type: 'sticky',
+        text: '',
+        x: position.x,
+        y: position.y,
+        width: defaults.width,
+        height: defaults.height,
+        parentPanelId: null,
+        order:
+          Math.max(
+            0,
+            ...diagram.nodes.map(
+              item => item.order || 0
+            )
+          ) + 1,
+        visible: true,
+        locked: false,
+        appearance:
+          structuredClone(defaults.appearance)
+      };
+
+      diagram.nodes.push(node);
+
+      node.parentPanelId =
+        geneoContainingPanelForNode(node)?.id
+        || null;
+
+      selectGeneographNode(node.id);
+      touchGeneographBoard();
+
+      /*
+      * Sticky placement is intentionally single-use.
+      * Render directly into inline editing while Pan
+      * becomes the active board tool.
+      */
+      state.geneoTool = 'pan';
+
+      beginGeneographInlineEdit(node.id);
+
+      return node;
     }
 
     function clearGeneographConnectionClick() {
@@ -68738,6 +69096,77 @@
       );
     }
 
+    function updateGeneographStickyContentDom(node) {
+      if (!node || node.type !== 'sticky') return;
+
+      const nodeElement =
+        main.querySelector(
+          `[data-geneo-node="${CSS.escape(node.id)}"]`
+        );
+
+      const copy =
+        nodeElement?.querySelector(
+          '.geneo-sticky-copy'
+        );
+
+      if (!copy) return;
+
+      copy.textContent =
+        node.text
+        || 'Double-click to edit';
+    }
+
+    function bindGeneographStickyContentField(
+      input,
+      nodeId
+    ) {
+      if (!input || !nodeId) return;
+
+      /*
+      * One history snapshot is created for each
+      * continuous focus session, not per keystroke.
+      */
+      let historyStarted = false;
+
+      input.addEventListener('focus', () => {
+        historyStarted = false;
+      });
+
+      input.addEventListener('input', () => {
+        const node =
+          getGeneographNode(nodeId);
+
+        if (!node || node.type !== 'sticky') {
+          return;
+        }
+
+        const nextValue = input.value;
+
+        if (node.text === nextValue) {
+          return;
+        }
+
+        if (!historyStarted) {
+          geneoPushHistory();
+          historyStarted = true;
+        }
+
+        /*
+        * Persist immediately. Canvas panning prevents
+        * the usual blur/change sequence, so the model
+        * must already contain the current field value.
+        */
+        node.text = nextValue;
+
+        touchGeneographBoard();
+        updateGeneographStickyContentDom(node);
+      });
+
+      input.addEventListener('blur', () => {
+        historyStarted = false;
+      });
+    }
+
     function bindGeneographEditor() {
       const wrap = main.querySelector('[data-geneo-canvas-wrap]');
       if (!main.dataset.geneoConnectionClickBoundaryBound) {
@@ -68758,11 +69187,14 @@
         });
 
       main
-        .querySelector('[data-geneo-panel-tool]')
-        ?.addEventListener(
-          'click',
-          activateGeneographPanelTool
-        );
+        .querySelectorAll('[data-geneo-placement-tool]')
+        .forEach(button => {
+          button.addEventListener('click', () => {
+            activateGeneographPlacementTool(
+              button.dataset.geneoPlacementTool
+            );
+          });
+        });
       main.querySelectorAll('[data-geneo-tool]').forEach(button => button.addEventListener('click', () => { cancelGeneographConnectionDraft(); state.geneoTool = button.dataset.geneoTool; renderGeneographEditorPreserveScroll(); }));
       main.querySelector('[data-geneo-connection-main]')?.addEventListener('click', () => {
         cancelGeneographConnectionDraft();
@@ -68850,7 +69282,77 @@
         renderGeneographEditorPreserveScroll();
       });
       wrap?.addEventListener('pointerdown', event => {
-        if (event.button !== 0 || event.target.closest('button,input,textarea,select,[data-geneo-node],[data-geneo-connection],[data-geneo-waypoint],[data-geneo-family-junction]')) return;
+        if (event.button !== 0 || event.isPrimary === false) {
+          return;
+        }
+
+        if (state.geneoTool === 'sticky') {
+          /*
+          * Sticky notes can be placed on empty canvas
+          * or inside a panel. Other objects, connectors,
+          * handles, and form controls block placement.
+          */
+          const blockedControl =
+            event.target.closest(
+              [
+                'button',
+                'input',
+                'textarea',
+                'select',
+                '[contenteditable="true"]',
+                '[data-geneo-connection]',
+                '.geneo-connection-hit',
+                '.geneo-segment-hit',
+                '[data-geneo-waypoint]',
+                '[data-geneo-family-junction]'
+              ].join(',')
+            );
+
+          if (blockedControl) {
+            return;
+          }
+
+          const nodeElement =
+            event.target.closest('[data-geneo-node]');
+
+          if (nodeElement) {
+            const clickedNode =
+              getGeneographNode(
+                nodeElement.dataset.geneoNode
+              );
+
+            if (clickedNode?.type !== 'panel') {
+              return;
+            }
+          }
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          createGeneographStickyAtPoint(
+            geneoPointerToCanvas(event)
+          );
+
+          return;
+        }
+
+        if (
+          event.target.closest(
+            [
+              'button',
+              'input',
+              'textarea',
+              'select',
+              '[data-geneo-node]',
+              '[data-geneo-connection]',
+              '[data-geneo-waypoint]',
+              '[data-geneo-family-junction]'
+            ].join(',')
+          )
+        ) {
+          return;
+        }
+
         if (state.geneoTool === 'pan') {
           geneoPointerState = {
             kind: 'pan',
@@ -68916,17 +69418,48 @@
       main
         .querySelectorAll('[data-geneo-node-field]')
         .forEach(input => {
+          /*
+          * Capture the node identity while binding.
+          * Do not resolve through the current selection
+          * after the user starts interacting elsewhere.
+          */
+          const nodeId =
+            state.selectedGeneoNodeId;
+
+          if (
+            input.matches(
+              '.geneo-sticky-content-input'
+            )
+          ) {
+            bindGeneographStickyContentField(
+              input,
+              nodeId
+            );
+
+            return;
+          }
+
           input.addEventListener('change', () => {
             const node =
-              selectedGeneographNode();
+              getGeneographNode(nodeId);
 
             if (!node) return;
 
+            const field =
+              input.dataset.geneoNodeField;
+
+            if (!field) return;
+
+            const nextValue =
+              input.value;
+
+            if (node[field] === nextValue) {
+              return;
+            }
+
             geneoPushHistory();
 
-            node[
-              input.dataset.geneoNodeField
-            ] = input.value;
+            node[field] = nextValue;
 
             touchGeneographBoard();
 
@@ -69574,6 +70107,7 @@
           event.key === 'Escape'
           && (
             state.geneoTool === 'panel'
+            || state.geneoTool === 'sticky'
             || geneoPointerState?.kind === 'draw-panel'
           )
         ) {
