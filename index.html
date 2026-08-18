@@ -12250,10 +12250,74 @@
     .geneo-paint-slider-row input[type="range"] { appearance:none; width:100%; height:14px; margin:0; border:1px solid rgba(255,255,255,.16); border-radius:999px; background:linear-gradient(to right,#F00,#FF0,#0F0,#0FF,#00F,#F0F,#F00); }
     .geneo-paint-slider-row input[type="range"]::-webkit-slider-thumb { appearance:none; width:16px; height:16px; border:2px solid #fff; border-radius:50%; background:#101817; box-shadow:0 1px 5px rgba(0,0,0,.5); }
     .geneo-paint-slider-row input[type="range"]::-moz-range-thumb { width:13px; height:13px; border:2px solid #fff; border-radius:50%; background:#101817; box-shadow:0 1px 5px rgba(0,0,0,.5); }
-    .geneo-paint-slider-row .geneo-paint-alpha {
+    .geneo-paint-slider-row
+    input[type="range"].geneo-paint-alpha {
+      --geneo-paint-opacity: 100%;
+      --geneo-alpha-preview:
+        color-mix(
+          in srgb,
+          var(--geneo-paint-color) var(--geneo-paint-opacity),
+          transparent
+        );
+
       background:
-        linear-gradient(to right,transparent,var(--geneo-paint-color)),
-        conic-gradient(#D9E5E1 25%,#64716E 0 50%,#D9E5E1 0 75%,#64716E 0) 0 0/10px 10px;
+        linear-gradient(
+          to right,
+          transparent,
+          var(--geneo-paint-color)
+        ),
+        conic-gradient(
+          #8A9692 25%,
+          #505B57 0 50%,
+          #8A9692 0 75%,
+          #505B57 0
+        )
+        0 0 / 8px 8px;
+    }
+    .geneo-paint-slider-row
+    input[type="range"].geneo-paint-alpha::-webkit-slider-thumb {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      background:
+        linear-gradient(
+          var(--geneo-alpha-preview),
+          var(--geneo-alpha-preview)
+        ),
+        conic-gradient(
+          #8A9692 25%,
+          #505B57 0 50%,
+          #8A9692 0 75%,
+          #505B57 0
+        )
+        0 0 / 6px 6px;
+      box-shadow:
+        0 0 0 1px rgba(7,16,13,.75),
+        0 2px 6px rgba(0,0,0,.5);
+    }
+
+    .geneo-paint-slider-row
+    input[type="range"].geneo-paint-alpha::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      background:
+        linear-gradient(
+          var(--geneo-alpha-preview),
+          var(--geneo-alpha-preview)
+        ),
+        conic-gradient(
+          #8A9692 25%,
+          #505B57 0 50%,
+          #8A9692 0 75%,
+          #505B57 0
+        )
+        0 0 / 6px 6px;
+      box-shadow:
+        0 0 0 1px rgba(7,16,13,.75),
+        0 2px 6px rgba(0,0,0,.5);
     }
     .geneo-paint-popover-fields { display:grid; grid-template-columns:minmax(0,1fr) 96px; gap:10px; }
     .geneo-paint-popover-fields label { min-width:0; display:grid; gap:5px; color:var(--text-secondary); font-size:11px; font-weight:800; }
@@ -65913,7 +65977,7 @@
         <div class="geneo-paint-popover-body">
           <div class="geneo-paint-sv" tabindex="0" role="slider" aria-label="${escapeHtml(target.label)} saturation and brightness" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(hsv.v)}" aria-valuetext="Saturation ${Math.round(hsv.s)}%, brightness ${Math.round(hsv.v)}%" data-geneo-paint-sv style="--geneo-hue:${Math.round(hsv.h)}"><span style="left:${hsv.s}%;top:${100 - hsv.v}%" aria-hidden="true"></span></div>
           <label class="geneo-paint-slider-row"><span>Hue</span><input type="range" min="0" max="359" step="1" value="${Math.round(hsv.h)}" data-geneo-paint-hue ${disabled ? 'disabled' : ''}></label>
-          ${target.supportsOpacity ? `<label class="geneo-paint-slider-row"><span>Opacity</span><input class="geneo-paint-alpha" type="range" min="0" max="100" step="1" value="${paint.opacity}" data-geneo-paint-opacity style="--geneo-paint-color:${paint.color}" ${disabled ? 'disabled' : ''}></label>` : ''}
+          ${target.supportsOpacity ? `<label class="geneo-paint-slider-row"><span>Opacity</span><input class="geneo-paint-alpha" type="range" min="0" max="100" step="1" value="${paint.opacity}" data-geneo-paint-opacity style="--geneo-paint-color:${paint.color};--geneo-paint-opacity:${paint.opacity}%" ${disabled ? 'disabled' : ''}></label>` : ''}
           <div class="geneo-paint-popover-fields"><label><span>Hex</span><input type="text" maxlength="7" value="${paint.color}" spellcheck="false" autocomplete="off" data-geneo-paint-hex ${disabled ? 'disabled' : ''}></label>${target.supportsOpacity ? `<label><span>Opacity</span><span class="geneo-paint-percent-input"><input type="number" min="0" max="100" step="1" value="${paint.opacity}" data-geneo-paint-opacity-number ${disabled ? 'disabled' : ''}><span aria-hidden="true">%</span></span></label>` : ''}</div>
           <div
             class="geneo-paint-suggestions"
@@ -66011,7 +66075,17 @@
       if (hue && hue !== sourceInput) hue.value = Math.round(hsv.h);
       const alpha = popover.querySelector('[data-geneo-paint-opacity]');
       if (alpha && alpha !== sourceInput) alpha.value = target.paint.opacity;
-      if (alpha) alpha.style.setProperty('--geneo-paint-color', target.paint.color);
+      if (alpha) {
+        alpha.style.setProperty(
+          '--geneo-paint-color',
+          target.paint.color
+        );
+
+        alpha.style.setProperty(
+          '--geneo-paint-opacity',
+          `${target.paint.opacity}%`
+        );
+      }
       const hex = popover.querySelector('[data-geneo-paint-hex]');
       if (hex && hex !== sourceInput) hex.value = target.paint.color;
       const number = popover.querySelector('[data-geneo-paint-opacity-number]');
