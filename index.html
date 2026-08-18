@@ -11847,15 +11847,7 @@
     .geneo-node-text { border-color: transparent; background: transparent; box-shadow: none; }
     .geneo-node-text.selected { background: rgba(0,0,0,.12); }
     .geneo-text-copy { width:100%; height:100%; display:flex; align-items:center; padding:8px; white-space:pre-wrap; font-size: 26px; font-weight: 800; line-height: 1.15; }
-    .geneo-node-panel {
-      background:
-        color-mix(
-          in srgb,
-          var(--geneo-node-bg) 68%,
-          transparent
-        );
-      box-shadow: none;
-    }
+    .geneo-node-panel { background:var(--geneo-node-bg); box-shadow:none; }
     .geneo-node-panel .geneo-node-content { padding: 12px 14px; pointer-events: none; }
     .geneo-panel-title { display:inline-flex; max-width:calc(100% - 24px); font-size:13px; font-weight:900; color:var(--geneo-node-text); }
     .geneo-inline-editor { width:100%; height:100%; min-height:0; resize:none; border:0; outline:0; background:rgba(3,8,7,.5); color:inherit; padding:10px; font:inherit; }
@@ -11901,6 +11893,8 @@
     .geneo-resize-handle.sw { left:-7px; bottom:-7px; cursor:nesw-resize; }
     .geneo-connections { position:absolute; inset:0; width:100%; height:100%; z-index:15; overflow:visible; pointer-events:none; }
     .geneo-connection-line { fill:none; stroke-linejoin:round; stroke-linecap:round; pointer-events:none; }
+    .geneo-connection-selection-guide { display:none; fill:none; stroke:var(--brand-green-300); stroke-width:2; stroke-dasharray:5 5; stroke-linejoin:round; stroke-linecap:round; pointer-events:none; }
+    .geneo-connection.no-stroke.selected .geneo-connection-selection-guide { display:block; }
     .geneo-connection-hit { fill:none; stroke:transparent; stroke-width:var(--geneo-connection-hit-width, 14px); pointer-events:stroke; cursor:pointer; }
     .geneo-segment-hit { stroke: transparent; stroke-width:var(--geneo-segment-hit-width, 18px); pointer-events:stroke; cursor: move; }
     .geneo-connection-preview {
@@ -11975,9 +11969,405 @@
       .geneo-toolbar-object { width:36px; padding:0; justify-content:center; }
       .geneo-toolbar-object > span:last-child { display:none; }
     }
-    .geneo-color-presets { display:flex; gap:8px; flex-wrap:wrap; }
-    .geneo-color-presets button { width:30px; height:30px; padding:0; border:2px solid var(--border-default); border-radius:6px; background:var(--swatch); }
-    .geneo-color-presets button:focus-visible { outline:2px solid var(--brand-green-300); outline-offset:2px; }
+    /* Canonical Geneograph paint controls */
+    .geneo-paint-row {
+      min-width: 0;
+      display: grid;
+      gap: 6px;
+    }
+
+    .geneo-paint-row-heading {
+      min-width: 0;
+      min-height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .geneo-paint-heading-copy {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .geneo-paint-label {
+      min-width: 0;
+      overflow: hidden;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .geneo-paint-state {
+      flex: 0 0 auto;
+      padding: 2px 6px;
+      border: 1px solid var(--border-default);
+      border-radius: 999px;
+      background: rgba(255,255,255,.025);
+      color: var(--text-tertiary);
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .geneo-paint-state[hidden] {
+      display: none;
+    }
+
+    .geneo-paint-controls {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 36px minmax(0,1fr) 72px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .geneo-paint-controls.is-color-only {
+      grid-template-columns: 36px minmax(0,1fr);
+    }
+
+    .geneo-paint-swatch,
+    .geneo-paint-suggestions button {
+      position: relative;
+      overflow: hidden;
+      padding: 0;
+      border: 1px solid var(--border-strong);
+      background:
+        conic-gradient(
+          #8A9692 25%,
+          #505B57 0 50%,
+          #8A9692 0 75%,
+          #505B57 0
+        )
+        0 0 / 8px 8px;
+    }
+
+    .geneo-paint-swatch {
+      width: 36px;
+      height: 36px;
+      border-radius: 7px;
+    }
+
+    .geneo-paint-swatch > span {
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      background: var(--geneo-paint-rendered);
+    }
+
+    .geneo-paint-swatch:hover:not(:disabled) {
+      border-color: var(--brand-green-300);
+    }
+
+    .geneo-paint-swatch:disabled {
+      opacity: 1;
+      cursor: default;
+    }
+
+    .geneo-paint-row.is-none .geneo-paint-swatch > span {
+      opacity: .14;
+    }
+
+    .geneo-paint-row.is-none .geneo-paint-swatch::after {
+      content: "";
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      left: 50%;
+      width: 46px;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--red);
+      box-shadow: 0 0 0 1px rgba(7,16,13,.55);
+      transform: translate(-50%,-50%) rotate(-45deg);
+      pointer-events: none;
+    }
+
+    .geneo-paint-swatch:focus-visible,
+    .geneo-paint-action:focus-visible,
+    .geneo-paint-popover button:focus-visible,
+    .geneo-paint-popover input:focus-visible,
+    .geneo-paint-sv:focus-visible {
+      outline: 2px solid var(--brand-green-300);
+      outline-offset: 2px;
+    }
+
+    .geneo-paint-hex,
+    .geneo-paint-opacity-number input,
+    .geneo-paint-popover-fields input {
+      min-width: 0;
+      width: 100%;
+      height: 36px;
+      border: 1px solid var(--border-default);
+      border-radius: 7px;
+      background: rgba(255,255,255,.025);
+      color: var(--text-primary);
+      padding: 0 10px;
+      font: inherit;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      outline: 0;
+    }
+
+    .geneo-paint-hex:focus,
+    .geneo-paint-opacity-number input:focus,
+    .geneo-paint-popover-fields input:focus {
+      border-color: var(--brand-green-300);
+    }
+
+    .geneo-paint-hex.invalid,
+    .geneo-paint-popover-fields input.invalid {
+      border-color: var(--red);
+      box-shadow:
+        0 0 0 1px
+        color-mix(in srgb,var(--red) 45%,transparent);
+    }
+
+    .geneo-paint-opacity-number,
+    .geneo-paint-percent-input {
+      min-width: 0;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .geneo-paint-opacity-number input,
+    .geneo-paint-percent-input input {
+      padding-right: 24px;
+    }
+
+    .geneo-paint-opacity-number > span,
+    .geneo-paint-percent-input > span:last-child {
+      position: absolute;
+      right: 8px;
+      color: var(--text-tertiary);
+      font-size: 11px;
+      pointer-events: none;
+    }
+
+    .geneo-paint-action {
+      flex: 0 0 auto;
+      min-height: 26px;
+      padding: 0 7px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text-tertiary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .geneo-paint-action:hover {
+      border-color: var(--border-default);
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
+    }
+
+    .geneo-paint-row.is-none .geneo-paint-action {
+      color: var(--brand-green-300);
+    }
+
+    .geneo-paint-row input:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .geneo-appearance-group {
+      min-width: 0;
+      display: grid;
+      gap: 9px;
+    }
+
+    .geneo-appearance-group + .geneo-appearance-group {
+      padding-top: 13px;
+      border-top: 1px solid var(--border-default);
+    }
+
+    .geneo-appearance-subfield {
+      min-width: 0;
+      margin-left: 0;
+    }
+
+    .common-select.geneo-pattern-select:disabled,
+    .common-select.geneo-pattern-select:disabled:hover {
+      border-color: var(--border-default);
+      background: var(--surface-input);
+      color: var(--text-tertiary);
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .geneo-pattern-select:disabled
+    + .common-select-chevron {
+      opacity: .45;
+    }
+    
+    .geneo-paint-popover {
+      position:fixed;
+      z-index:220;
+      max-width:calc(100vw - 16px);
+      overflow:auto;
+      border:1px solid var(--border-strong);
+      border-radius:8px;
+      background:var(--surface-sidebar);
+      color:var(--text-primary);
+      box-shadow:0 18px 46px rgba(0,0,0,.46);
+      animation:geneo-paint-open 110ms ease-out;
+    }
+    @keyframes geneo-paint-open { from { opacity:0; transform:translateY(3px); } to { opacity:1; transform:translateY(0); } }
+    .geneo-paint-popover-header { position:sticky; z-index:2; top:0; min-height:42px; padding:0 8px 0 12px; border-bottom:1px solid var(--border-default); background:var(--surface-sidebar); display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .geneo-paint-popover-header strong { font-size:13px; }
+    .geneo-paint-popover-header button { width:32px; height:32px; padding:0; border:0; border-radius:6px; background:transparent; color:var(--text-secondary); display:grid; place-items:center; }
+    .geneo-paint-popover-header button:hover { background:var(--surface-card-hover); color:var(--text-primary); }
+    .geneo-paint-popover-header svg { width:16px; height:16px; display:block; }
+    .geneo-paint-popover-body { padding:12px; display:grid; gap:12px; }
+    .geneo-paint-sv {
+      position:relative;
+      width:100%;
+      height:150px;
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:7px;
+      overflow:hidden;
+      cursor:crosshair;
+      background:
+        linear-gradient(to top,#000,transparent),
+        linear-gradient(to right,#fff,transparent),
+        hsl(var(--geneo-hue) 100% 50%);
+      touch-action:none;
+    }
+    .geneo-paint-sv > span { position:absolute; width:14px; height:14px; border:2px solid #fff; border-radius:50%; box-shadow:0 0 0 1px #07100D,0 2px 6px rgba(0,0,0,.45); transform:translate(-50%,-50%); pointer-events:none; }
+    .geneo-paint-popover.is-none .geneo-paint-sv { opacity:.48; cursor:not-allowed; }
+    .geneo-paint-slider-row { display:grid; grid-template-columns:54px minmax(0,1fr); gap:10px; align-items:center; color:var(--text-secondary); font-size:12px; font-weight:800; }
+    .geneo-paint-slider-row input[type="range"] { appearance:none; width:100%; height:14px; margin:0; border:1px solid rgba(255,255,255,.16); border-radius:999px; background:linear-gradient(to right,#F00,#FF0,#0F0,#0FF,#00F,#F0F,#F00); }
+    .geneo-paint-slider-row input[type="range"]::-webkit-slider-thumb { appearance:none; width:16px; height:16px; border:2px solid #fff; border-radius:50%; background:#101817; box-shadow:0 1px 5px rgba(0,0,0,.5); }
+    .geneo-paint-slider-row input[type="range"]::-moz-range-thumb { width:13px; height:13px; border:2px solid #fff; border-radius:50%; background:#101817; box-shadow:0 1px 5px rgba(0,0,0,.5); }
+    .geneo-paint-slider-row .geneo-paint-alpha {
+      background:
+        linear-gradient(to right,transparent,var(--geneo-paint-color)),
+        conic-gradient(#D9E5E1 25%,#64716E 0 50%,#D9E5E1 0 75%,#64716E 0) 0 0/10px 10px;
+    }
+    .geneo-paint-popover-fields { display:grid; grid-template-columns:minmax(0,1fr) 96px; gap:10px; }
+    .geneo-paint-popover-fields label { min-width:0; display:grid; gap:5px; color:var(--text-secondary); font-size:11px; font-weight:800; }
+    .geneo-paint-suggestions {
+      display: grid;
+      grid-template-columns: repeat(8,minmax(0,1fr));
+      gap: 6px;
+    }
+
+    .geneo-paint-suggestions button {
+      min-width: 0;
+      min-height: 30px;
+      aspect-ratio: 1;
+      border-radius: 6px;
+    }
+
+    .geneo-paint-suggestions button::after {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      background: var(--geneo-suggestion);
+    }
+
+    .geneo-paint-suggestions button::before {
+      content: "✓";
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1;
+      text-shadow:
+        0 1px 2px rgba(0,0,0,.9),
+        0 0 4px rgba(0,0,0,.55);
+      opacity: 0;
+      transform: scale(.78);
+      transition:
+        opacity var(--ease),
+        transform var(--ease);
+    }
+
+    .geneo-paint-suggestions button[aria-pressed="true"] {
+      border-color: var(--brand-green-300);
+      box-shadow:
+        inset 0 0 0 2px rgba(15,20,19,.78),
+        0 0 0 1px var(--brand-green-300);
+    }
+
+    .geneo-paint-suggestions button[aria-pressed="true"]::before {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .geneo-paint-suggestions button:hover {
+      border-color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .geneo-paint-suggestions button:disabled {
+      opacity: .45;
+      transform: none;
+      cursor: not-allowed;
+    }
+
+    .geneo-paint-popover-footer {
+      padding-top: 12px;
+      border-top: 1px solid var(--border-default);
+    }
+
+    .geneo-paint-none {
+      width: 100%;
+      min-height: 34px;
+      border: 1px solid var(--border-default);
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-weight: 800;
+    }
+
+    .geneo-paint-none:hover {
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
+    }
+    .geneo-contrast-warning { margin:0; padding:8px 9px; border:1px solid rgba(212,170,107,.28); border-radius:6px; background:rgba(212,170,107,.08); color:#E4C797; display:grid; grid-template-columns:16px minmax(0,1fr); gap:7px; align-items:start; font-size:11px; line-height:1.4; }
+    .geneo-contrast-warning[hidden] { display:none; }
+    .geneo-contrast-warning svg { width:16px; height:16px; }
+    .geneo-layer-paint-status { flex:0 0 auto; color:var(--text-tertiary); font-size:10px; font-weight:800; }
+    .geneo-layer-paint-status[hidden] { display:none; }
+    @media (max-width:480px) {
+      .geneo-paint-controls {
+        grid-template-columns: 36px minmax(0,1fr) 68px;
+        gap: 7px;
+      }
+
+      .geneo-paint-controls.is-color-only {
+        grid-template-columns: 36px minmax(0,1fr);
+      }
+
+      .geneo-paint-suggestions {
+        grid-template-columns: repeat(4,minmax(0,1fr));
+      }
+
+      .geneo-paint-suggestions button {
+        min-height: 34px;
+      }
+
+      .geneo-paint-sv {
+        height: 132px;
+      }
+    }
     .geneo-layer-panel { min-width:0; }
     .geneo-layer-panel-head { display:grid; grid-template-columns:24px minmax(0,1fr); align-items:center; }
     .geneo-layer-panel-head .geneo-layer-row { min-width:0; }
@@ -26381,7 +26771,7 @@
       'About GeneoGraph': '- GeneoGraph', 'Prototype information and reference links.': '---------- - --------- - ------.', 'GeneoGraph prototype': '-------- GeneoGraph', 'Version 0.1 prototype - local-first genealogy workspace': '-------- 0.1 - --------- ------- ------------ ----------', 'Active': '-------', 'Help Center would open here.': '----- -------- -- ----- ------.', 'Release notes': '------- - -------', 'Product updates and prototype changes.': '---------- -------- - --------- ---------.', 'View': '--------', 'Privacy policy': '-------- ------------------', 'Privacy documentation placeholder.': '-------- ------------ - ------------------.',
       'Create family tree': '------- -------- ------', 'Import GEDCOM': '------------- GEDCOM', 'Open project': '------- ------', 'Tip of the day': '----- ---', 'You can drag and drop a GEDCOM file anywhere to import it.': '---------- GEDCOM----- - ----- -----, ----- ------------- ---.', 'Learn more': '--------- ?', 'Search projects...': '----- --------', 'Date modified': '----------: ---- ---------', ' Updated': '----------: ------- ---------', ' Name': '----------: ---', ' People count': '----------: ----- -----', 'All projects': '--- -------', 'Search results': '---------- ------', 'Continue where you left off': '---------- - -----, --- -- ----------', 'Last opened': '--------- -------', 'No projects yet': '------- ---- ---', 'No projects match': '------- -- ----------', 'Try another project name or clear the search.': '---------- ------- ----- ------- --- ------- -----.', 'Clear search': '------- -----', 'Welcome back! Here you can create, open, and manage your family-history projects.': '----------, ---------- - ----------- --------- -------- -------.', 'Drop a GeneoGraph or GEDCOM file here to open or import': '---------- ---- GeneoGraph --- GEDCOM --- -------- --- -------', 'Supports .ggproj and .ged files': '-------------- .ggproj - .ged', 'Recent activity': '-------- --------', 'Insights': '-------', 'Sync status': '-------------', 'Project': '------', 'Project overview': '----- -------', 'Project settings': '--------- -------', 'Back to all projects': '----- -- ---- --------', 'Go to Family Tree': '------- - ------', 'Export': '-------', 'Delete project': '------- ------', 'Manage backups': '--------- -------', 'Open': '-------',
       'Navigation': '---------', 'Saved filters': '---------- ----', 'Review center': '----- --------', 'Statistics': '----------', 'Profile': '-------', 'Search people...': '----- -----...', 'Columns': '-------', 'Filter': '------', 'Add person': '-------- --------', ' Birth date': '----------: ---- --------', 'Name': '---', 'Living': '---', 'Deceased': '----', 'Unknown': '----------', 'Living status': '------ -----', 'Birth date': '---- --------', 'Birth place': '----- --------', 'Death date': '---- ------', 'Death place': '----- ------', 'Updated': '---------', 'Actions': '--------', 'Record Info': '---------- - ------', 'Facts': '-----', 'Relationships': '-----', 'Photos': '----', 'Files': '-----', 'Full profile': '------ -------', 'Open profile': '------- -------', 'Add relative': '-------- ------------', 'Connect relative': '------- ------------', 'More actions': '--- --------', 'Back to people': '----- - -----', 'Edit profile': '------------- -------', 'Save changes': '--------- ---------', 'Cancel': '------', 'Locked': '-------------', 'Editing': '--------------', 'Main information': '-------- ----------', 'Education': '-----------', 'Work': '------', 'Other': '------', 'First name': '---', 'Last name': '-------', 'Patronym': '--------', 'Maiden name': '------- -------', 'Prefix': '-------', 'Suffix': '-------', 'Exact date': '------ ----', 'Before': '--', 'After': '-----', 'Between': '-----', 'About / Circa': '-----', 'Cause of Death': '------- ------', 'Death reason': '------- ------', 'Burial place': '----- -----------', 'Record info': '---------- - ------', 'Profile ID': 'ID -------', 'Created': '-------', 'Review issues': '-------- --------', 'Source status': '------ ----------', 'Partly sourced': '-------- ------------', 'Living protected': '------- --------', 'Immediate Family': '--------- -----', 'Parents': '--------', 'Children': '----', 'Siblings': '------ - -----', 'Grandparents': '------- - -------', 'Partners': '-------', 'Partner': '------', 'Spouse': '------(-)', 'Father': '----', 'Mother': '----', 'Brother': '----', 'Sister': '------', 'Grandmother': '-------', 'Grandfather': '-------', 'Cat': '---', 'Timeline': '----------', 'Add fact': '-------- ----', 'Birth': '--------', 'Wedding': '-------', 'Education start': '------ --------', 'Education finish': '--------- --------', 'Archive': '-----', 'Add': '--------', 'Open ?': '------- ?',
-      'New board': '------- -----', 'Import board': '------------- -----', 'Board type': '---------', 'Categories': '---------', 'All boards': '--- -----', 'Recently viewed': '--------', 'Favourites': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'DNA': '---', 'Publication': '----------', 'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '---- ------------ --- ------------, ------------ - ----------.', 'Search boards...': '----- -----', ' Board type': '----------: --- -----', 'All boards': '--- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Note': '-------', 'Image': '-----------', 'Place': '-----', 'Case': '------', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '-----------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Appearance': '------- ---', 'Layout': '-----', 'Background pattern': '\u0424\u043e\u043d \u0445\u043e\u043b\u0441\u0442\u0430', 'Dots': '\u0422\u043e\u0447\u043a\u0438', 'Grid': '\u0421\u0435\u0442\u043a\u0430', 'Clear': '\u0411\u0435\u0437 \u0443\u0437\u043e\u0440\u0430', 'Sibling relationship': '\u0421\u0432\u044f\u0437\u044c \u043c\u0435\u0436\u0434\u0443 \u0431\u0440\u0430\u0442\u044c\u044f\u043c\u0438 \u0438 \u0441\u0451\u0441\u0442\u0440\u0430\u043c\u0438', 'Linked to person': '------- - ---------', 'Visual only': '------ ---------',
+      'New board': '------- -----', 'Import board': '------------- -----', 'Board type': '---------', 'Categories': '---------', 'All boards': '--- -----', 'Recently viewed': '--------', 'Favourites': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'DNA': '---', 'Publication': '----------', 'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '---- ------------ --- ------------, ------------ - ----------.', 'Search boards...': '----- -----', ' Board type': '----------: --- -----', 'All boards': '--- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Note': '-------', 'Image': '-----------', 'Place': '-----', 'Case': '------', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '-----------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Appearance': '------- ---', 'Layout': '-----', 'Background pattern': '\u0424\u043e\u043d \u0445\u043e\u043b\u0441\u0442\u0430', 'Dots': '\u0422\u043e\u0447\u043a\u0438', 'Grid': '\u0421\u0435\u0442\u043a\u0430', 'Clear': '\u0411\u0435\u0437 \u0443\u0437\u043e\u0440\u0430', 'Fill': '\u0417\u0430\u043b\u0438\u0432\u043a\u0430', 'Stroke': '\u041e\u0431\u0432\u043e\u0434\u043a\u0430', 'Title text': '\u0422\u0435\u043a\u0441\u0442 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043a\u0430', 'Line': '\u041b\u0438\u043d\u0438\u044f', 'Background': '\u0424\u043e\u043d', 'Opacity': '\u041d\u0435\u043f\u0440\u043e\u0437\u0440\u0430\u0447\u043d\u043e\u0441\u0442\u044c', 'Hue': '\u0422\u043e\u043d', 'Hex': 'HEX', 'Remove': '\u0423\u0431\u0440\u0430\u0442\u044c', 'Restore': '\u0412\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c', 'Reset': '\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c', 'None': '\u041d\u0435\u0442', 'Opaque': '\u041d\u0435\u043f\u0440\u043e\u0437\u0440\u0430\u0447\u043d\u044b\u0439', 'Stroke pattern': '\u0421\u0442\u0438\u043b\u044c \u043e\u0431\u0432\u043e\u0434\u043a\u0438', 'Solid': '\u0421\u043f\u043b\u043e\u0448\u043d\u0430\u044f', 'Dashed': '\u041f\u0443\u043d\u043a\u0442\u0438\u0440\u043d\u0430\u044f', 'Restore paint': '\u0412\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c \u0446\u0432\u0435\u0442', 'Reset to default': '\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c', 'No stroke': '\u0411\u0435\u0437 \u043e\u0431\u0432\u043e\u0434\u043a\u0438', 'Ink': '\u0427\u0435\u0440\u043d\u0438\u043b\u0430', 'Graphite': '\u0413\u0440\u0430\u0444\u0438\u0442', 'Mist': '\u0422\u0443\u043c\u0430\u043d', 'Paper': '\u0411\u0443\u043c\u0430\u0433\u0430', 'Deep moss': '\u0422\u0451\u043c\u043d\u044b\u0439 \u043c\u043e\u0445', 'Archive blue': '\u0410\u0440\u0445\u0438\u0432\u043d\u044b\u0439 \u0441\u0438\u043d\u0438\u0439', 'Plum': '\u0421\u043b\u0438\u0432\u043e\u0432\u044b\u0439', 'Sepia': '\u0421\u0435\u043f\u0438\u044f', 'Geneograph green': '\u0417\u0435\u043b\u0451\u043d\u044b\u0439 Geneograph', 'Mint': '\u041c\u044f\u0442\u0430', 'Teal': '\u0411\u0438\u0440\u044e\u0437\u043e\u0432\u044b\u0439', 'Blue': '\u0421\u0438\u043d\u0438\u0439', 'Violet': '\u0424\u0438\u043e\u043b\u0435\u0442\u043e\u0432\u044b\u0439', 'Amber': '\u042f\u043d\u0442\u0430\u0440\u043d\u044b\u0439', 'Rose': '\u0420\u043e\u0437\u043e\u0432\u044b\u0439', 'Conflict red': '\u041a\u0440\u0430\u0441\u043d\u044b\u0439 \u043a\u043e\u043d\u0444\u043b\u0438\u043a\u0442', 'Sibling relationship': '\u0421\u0432\u044f\u0437\u044c \u043c\u0435\u0436\u0434\u0443 \u0431\u0440\u0430\u0442\u044c\u044f\u043c\u0438 \u0438 \u0441\u0451\u0441\u0442\u0440\u0430\u043c\u0438', 'Linked to person': '------- - ---------', 'Visual only': '------ ---------',
       'Add photos': '-------- ----', 'New album': '----- ------', 'All photos': '--- ----', 'Not in Album': '--- -------', 'Recently deleted': '------- --------', 'Search photos...': '----- ----...', ' Filename': '----------: --- -----', ' Photo date': '----------: ---- ----', 'People in this photo': '---- -- ----', 'Date': '----', 'Caption / story': '------- / -------', 'Source': '--------', 'Delete photo': '------- ----', 'Make favourite': '-------- - ---------', 'Remove favourite': '------ -- ----------', 'Tag people': '-------- -----', 'Open photo': '------- ----', 'No people tagged': '---- -- --------', 'Unknown date': '---- ----------', 'Unknown place': '----- ----------',
       'Add files': '-------- -----', 'Create source': '------- --------', 'Sources': '---------', 'Imports': '-------', 'Review': '--------', 'Folders': '-----', 'Search this folder...': '----- - ---- -----...', 'Create folder': '------- -----', ' Updated': '----------: ---------', ' Source status': '----------: ------ ---------', 'Source / provenance': '--------', 'Linked to': '------- -', 'Date / place': '---- / -----', 'OCR': 'OCR', 'File info': '---------- - -----', 'Linked evidence': '--------- --------------', 'Assign source': '--------- --------', 'Run OCR': '--------- OCR', 'Restore': '------------', 'Reviewed': '---------', 'Needs review': '----- --------', 'Missing source': '--- ---------', 'Not linked': '-- -------',
       'Add note': '----- -------', 'New collection': '----- ---------', 'All notes': '--- -------', 'Collections': '---------', 'Search notes...': '----- -------...', 'Cards': '--------', 'List': '------', 'Saved': '---------', 'Linked people': '--------- ----', 'Linked sources': '--------- ---------', 'Linked places': '--------- -----', 'Related notes': '--------- -------', 'Tasks': '------', 'Note type': '--- -------',
@@ -26411,6 +26801,12 @@
       stop: { one: 'остановка', few: 'остановки', many: 'остановок', other: 'остановки' },
       Objects: { one: '------', few: '-------', many: '--------', other: '-------' }
     };
+
+    Object.assign(RU_UI, {
+      'Suggested board colors': '\u0426\u0432\u0435\u0442\u0430 \u0434\u043e\u0441\u043a\u0438',
+      'Low text contrast': '\u041d\u0438\u0437\u043a\u0438\u0439 \u043a\u043e\u043d\u0442\u0440\u0430\u0441\u0442 \u0442\u0435\u043a\u0441\u0442\u0430',
+      'Consider a clearer text or fill color.': '\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0431\u043e\u043b\u0435\u0435 \u043a\u043e\u043d\u0442\u0440\u0430\u0441\u0442\u043d\u044b\u0439 \u0446\u0432\u0435\u0442 \u0442\u0435\u043a\u0441\u0442\u0430 \u0438\u043b\u0438 \u0444\u043e\u043d\u0430.'
+    });
 
 
 
@@ -58164,6 +58560,18 @@
       };
     }
 
+    function createGeneoPaintRuntime() {
+      return {
+        target: null,
+        opener: null,
+        popover: null,
+        controller: null,
+        interaction: null,
+        hsv: null,
+        invalidHex: false
+      };
+    }
+
     sampleData.boardCollections = [
       {
         id:
@@ -58250,7 +58658,7 @@
         thumb: 'tree',
         diagram: {
           canvas: {
-            backgroundColor: '#0F1413',
+            backgroundPaint: { color: '#0F1413', opacity: 100, enabled: true },
             backgroundPattern: 'dots',
             snapToGrid: false,
             alwaysShowSockets: false
@@ -58269,13 +58677,13 @@
             { id: 'gf-luna', partnerIds: ['gp-luna'], children: [{ personId: 'gp-theo', parentageType: 'biological' }] }
           ],
           nodes: [
-            { id: 'gn-panel', type: 'panel', x: 170, y: 105, width: 1060, height: 620, parentPanelId: null, order: 1, visible: true, locked: false, title: 'Whiskerfield household', description: '', appearance: { backgroundColor: '#132321', strokeColor: '#3f6f61', strokeWidth: 2, textColor: '#d9e8e2' } },
-            { id: 'gn-barnaby', type: 'person', personId: 'gp-barnaby', x: 270, y: 200, width: 240, height: 132, parentPanelId: 'gn-panel', order: 6, visible: true, locked: false, appearance: { backgroundColor: '#173029', strokeColor: '#62d99a', strokeWidth: 2, textColor: '#f3f7f5' } },
-            { id: 'gn-daisy', type: 'person', personId: 'gp-daisy', x: 700, y: 200, width: 240, height: 132, parentPanelId: 'gn-panel', order: 5, visible: true, locked: false, appearance: { backgroundColor: '#2d2437', strokeColor: '#aa8ce8', strokeWidth: 2, textColor: '#f6f1fb' } },
-            { id: 'gn-silver', type: 'person', personId: 'gp-silver', x: 350, y: 500, width: 240, height: 132, parentPanelId: 'gn-panel', order: 4, visible: true, locked: false, appearance: { backgroundColor: '#172a32', strokeColor: '#5dade2', strokeWidth: 2, textColor: '#f2f8fb' } },
-            { id: 'gn-iris', type: 'person', personId: 'gp-iris', x: 720, y: 500, width: 240, height: 132, parentPanelId: 'gn-panel', order: 3, visible: true, locked: false, appearance: { backgroundColor: '#302b1d', strokeColor: '#d4aa6b', strokeWidth: 3, textColor: '#fff8e8' } },
-            { id: 'gn-luna', type: 'person', personId: 'gp-luna', x: 1410, y: 230, width: 240, height: 132, parentPanelId: null, order: 9, visible: true, locked: false, appearance: { backgroundColor: '#2d2437', strokeColor: '#aa8ce8', strokeWidth: 2, textColor: '#f6f1fb' } },
-            { id: 'gn-theo', type: 'person', personId: 'gp-theo', x: 1420, y: 520, width: 240, height: 132, parentPanelId: null, order: 8, visible: true, locked: false, appearance: { backgroundColor: '#19302c', strokeColor: '#62d99a', strokeWidth: 2, textColor: '#f3f7f5' } },
+            { id: 'gn-panel', type: 'panel', x: 170, y: 105, width: 1060, height: 620, parentPanelId: null, order: 1, visible: true, locked: false, title: 'Whiskerfield household', description: '', appearance: { fill: { color: '#132321', opacity: 68, enabled: true }, stroke: { color: '#3F6F61', opacity: 100, enabled: true }, strokeWidth: 2, strokePattern: 'dashed', text: { color: '#D9E8E2', opacity: 100, enabled: true } } },
+            { id: 'gn-barnaby', type: 'person', personId: 'gp-barnaby', x: 270, y: 200, width: 240, height: 132, parentPanelId: 'gn-panel', order: 6, visible: true, locked: false, appearance: { fill: { color: '#173029', opacity: 100, enabled: true }, stroke: { color: '#62D99A', opacity: 100, enabled: true }, strokeWidth: 2, strokePattern: 'solid', text: { color: '#F3F7F5', opacity: 100, enabled: true } } },
+            { id: 'gn-daisy', type: 'person', personId: 'gp-daisy', x: 700, y: 200, width: 240, height: 132, parentPanelId: 'gn-panel', order: 5, visible: true, locked: false, appearance: { fill: { color: '#2D2437', opacity: 100, enabled: true }, stroke: { color: '#AA8CE8', opacity: 100, enabled: true }, strokeWidth: 2, strokePattern: 'solid', text: { color: '#F6F1FB', opacity: 100, enabled: true } } },
+            { id: 'gn-silver', type: 'person', personId: 'gp-silver', x: 350, y: 500, width: 240, height: 132, parentPanelId: 'gn-panel', order: 4, visible: true, locked: false, appearance: { fill: { color: '#172A32', opacity: 100, enabled: true }, stroke: { color: '#5DADE2', opacity: 100, enabled: true }, strokeWidth: 2, strokePattern: 'solid', text: { color: '#F2F8FB', opacity: 100, enabled: true } } },
+            { id: 'gn-iris', type: 'person', personId: 'gp-iris', x: 720, y: 500, width: 240, height: 132, parentPanelId: 'gn-panel', order: 3, visible: true, locked: false, appearance: { fill: { color: '#302B1D', opacity: 100, enabled: true }, stroke: { color: '#D4AA6B', opacity: 100, enabled: true }, strokeWidth: 3, strokePattern: 'solid', text: { color: '#FFF8E8', opacity: 100, enabled: true } } },
+            { id: 'gn-luna', type: 'person', personId: 'gp-luna', x: 1410, y: 230, width: 240, height: 132, parentPanelId: null, order: 9, visible: true, locked: false, appearance: { fill: { color: '#2D2437', opacity: 100, enabled: true }, stroke: { color: '#AA8CE8', opacity: 100, enabled: true }, strokeWidth: 2, strokePattern: 'solid', text: { color: '#F6F1FB', opacity: 100, enabled: true } } },
+            { id: 'gn-theo', type: 'person', personId: 'gp-theo', x: 1420, y: 520, width: 240, height: 132, parentPanelId: null, order: 8, visible: true, locked: false, appearance: { fill: { color: '#19302C', opacity: 100, enabled: true }, stroke: { color: '#62D99A', opacity: 100, enabled: true }, strokeWidth: 2, strokePattern: 'solid', text: { color: '#F3F7F5', opacity: 100, enabled: true } } },
             {
               id: 'gn-image',
               type: 'image',
@@ -58292,21 +58700,23 @@
                 id: 'photo-family-table'
               },
               appearance: {
-                backgroundColor: '#101817',
-                strokeColor: '#6f7d79',
-                strokeWidth: 1
+                fill: { color: '#101817', opacity: 100, enabled: true },
+                stroke: { color: '#6F7D79', opacity: 100, enabled: true },
+                strokeWidth: 1,
+                strokePattern: 'solid',
+                text: { color: '#F1F5F3', opacity: 100, enabled: true }
               }
             },
-            { id: 'gn-sticky', type: 'sticky', x: 1830, y: 500, width: 260, height: 180, parentPanelId: null, order: 6, visible: true, locked: false, text: 'Compare the household register with the family album before exporting this branch.', appearance: { backgroundColor: '#6b5525', strokeColor: '#d4aa6b', strokeWidth: 1, textColor: '#fff8e8' } },
-            { id: 'gn-text', type: 'text', x: 1330, y: 780, width: 420, height: 90, parentPanelId: null, order: 5, visible: true, locked: false, text: 'Possible Purrington branch', appearance: { textColor: '#dbe8e4', fontSize: 28, fontWeight: 800 } }
+            { id: 'gn-sticky', type: 'sticky', x: 1830, y: 500, width: 260, height: 180, parentPanelId: null, order: 6, visible: true, locked: false, text: 'Compare the household register with the family album before exporting this branch.', appearance: { fill: { color: '#6B5525', opacity: 100, enabled: true }, stroke: { color: '#D4AA6B', opacity: 100, enabled: true }, strokeWidth: 1, strokePattern: 'solid', text: { color: '#FFF8E8', opacity: 100, enabled: true } } },
+            { id: 'gn-text', type: 'text', x: 1330, y: 780, width: 420, height: 90, parentPanelId: null, order: 5, visible: true, locked: false, text: 'Possible Purrington branch', appearance: { text: { color: '#DBE8E4', opacity: 100, enabled: true }, fontSize: 28, fontWeight: 800 } }
           ],
           connections: [
-            { id: 'gc-partner', kind: 'family-partner', familyId: 'gf-whiskerfield', source: { nodeId: 'gn-barnaby', port: 'right' }, target: { nodeId: 'gn-daisy', port: 'left' }, style: { pattern: 'solid', color: '#d9e5e1', width: 3 }, route: { mode: 'auto', waypoints: [] } },
-            { id: 'gc-child-silver', kind: 'family-child', familyId: 'gf-whiskerfield', source: { familyId: 'gf-whiskerfield', port: 'bottom' }, target: { nodeId: 'gn-silver', port: 'top' }, style: { pattern: 'solid', color: '#8ecdb2', width: 2 }, route: { mode: 'auto', waypoints: [] } },
-            { id: 'gc-child-iris', kind: 'family-child', familyId: 'gf-whiskerfield', source: { familyId: 'gf-whiskerfield', port: 'bottom' }, target: { nodeId: 'gn-iris', port: 'top' }, style: { pattern: 'solid', color: '#8ecdb2', width: 2 }, route: { mode: 'auto', waypoints: [] } },
-            { id: 'gc-single-parent', kind: 'family-child', familyId: 'gf-luna', source: { nodeId: 'gn-luna', port: 'bottom' }, target: { nodeId: 'gn-theo', port: 'top' }, style: { pattern: 'solid', color: '#8ecdb2', width: 2 }, route: { mode: 'auto', waypoints: [] } },
-            { id: 'gc-visual-solid', kind: 'visual', familyId: null, source: { nodeId: 'gn-image', port: 'bottom' }, target: { nodeId: 'gn-sticky', port: 'top' }, style: { pattern: 'solid', color: '#d4aa6b', width: 2 }, route: { mode: 'manual', waypoints: [{ x: 2210, y: 440 }, { x: 2140, y: 440 }] } },
-            { id: 'gc-visual-dashed', kind: 'visual', familyId: null, source: { nodeId: 'gn-sticky', port: 'left' }, target: { nodeId: 'gn-luna', port: 'right' }, style: { pattern: 'dashed', color: '#aa8ce8', width: 2 }, route: { mode: 'auto', waypoints: [] } }
+            { id: 'gc-partner', kind: 'family-partner', familyId: 'gf-whiskerfield', source: { nodeId: 'gn-barnaby', port: 'right' }, target: { nodeId: 'gn-daisy', port: 'left' }, style: { pattern: 'solid', line: { color: '#D9E5E1', opacity: 100, enabled: true }, width: 3 }, route: { mode: 'auto', waypoints: [] } },
+            { id: 'gc-child-silver', kind: 'family-child', familyId: 'gf-whiskerfield', source: { familyId: 'gf-whiskerfield', port: 'bottom' }, target: { nodeId: 'gn-silver', port: 'top' }, style: { pattern: 'solid', line: { color: '#8ECDB2', opacity: 100, enabled: true }, width: 2 }, route: { mode: 'auto', waypoints: [] } },
+            { id: 'gc-child-iris', kind: 'family-child', familyId: 'gf-whiskerfield', source: { familyId: 'gf-whiskerfield', port: 'bottom' }, target: { nodeId: 'gn-iris', port: 'top' }, style: { pattern: 'solid', line: { color: '#8ECDB2', opacity: 100, enabled: true }, width: 2 }, route: { mode: 'auto', waypoints: [] } },
+            { id: 'gc-single-parent', kind: 'family-child', familyId: 'gf-luna', source: { nodeId: 'gn-luna', port: 'bottom' }, target: { nodeId: 'gn-theo', port: 'top' }, style: { pattern: 'solid', line: { color: '#8ECDB2', opacity: 100, enabled: true }, width: 2 }, route: { mode: 'auto', waypoints: [] } },
+            { id: 'gc-visual-solid', kind: 'visual', familyId: null, source: { nodeId: 'gn-image', port: 'bottom' }, target: { nodeId: 'gn-sticky', port: 'top' }, style: { pattern: 'solid', line: { color: '#D4AA6B', opacity: 100, enabled: true }, width: 2 }, route: { mode: 'manual', waypoints: [{ x: 2210, y: 440 }, { x: 2140, y: 440 }] } },
+            { id: 'gc-visual-dashed', kind: 'visual', familyId: null, source: { nodeId: 'gn-sticky', port: 'left' }, target: { nodeId: 'gn-luna', port: 'right' }, style: { pattern: 'dashed', line: { color: '#AA8CE8', opacity: 100, enabled: true }, width: 2 }, route: { mode: 'auto', waypoints: [] } }
           ]
         }
       }
@@ -58325,7 +58735,7 @@
     function createEmptyGeneographDiagram() {
       return {
         canvas: {
-          backgroundColor: '#0F1413',
+          backgroundPaint: { color: '#0F1413', opacity: 100, enabled: true },
           backgroundPattern: 'dots',
           snapToGrid: false,
           alwaysShowSockets: false
@@ -62153,6 +62563,10 @@
           return;
         }
 
+        if (!isCanonicalGeneoPaint(diagram.canvas?.backgroundPaint, { mustBeEnabled: true, fixedOpacity: 100 })) {
+          warn(`Board ${board.id} has an invalid canvas background paint`);
+        }
+
         const peopleIds =
           new Set();
         const nodeIds =
@@ -62198,6 +62612,15 @@
               );
             }
             nodeIds.add(node.id);
+
+            ['fill', 'stroke', 'text'].forEach(property => {
+              if (!isCanonicalGeneoPaint(node.appearance?.[property], { mustBeEnabled: property === 'text' })) {
+                warn(`Node ${node.id} has an invalid ${property} paint`);
+              }
+            });
+            if (!['solid', 'dashed'].includes(node.appearance?.strokePattern)) {
+              warn(`Node ${node.id} has an invalid stroke pattern`);
+            }
 
             if (
               node.type === 'person'
@@ -62248,6 +62671,13 @@
               );
             }
             connectionIds.add(connection.id);
+
+            if (!isCanonicalGeneoPaint(connection.style?.line)) {
+              warn(`Connection ${connection.id} has an invalid line paint`);
+            }
+            if (!['solid', 'dashed'].includes(connection.style?.pattern)) {
+              warn(`Connection ${connection.id} has an invalid line pattern`);
+            }
 
             [
               connection.source,
@@ -62880,6 +63310,7 @@
     let geneoPointerState = null;
     let geneoHistoryRuntime = { boardId: '', undo: [], redo: [] };
     let geneoCanvasRuntime = createGeneoCanvasRuntime();
+    let geneoPaintRuntime = createGeneoPaintRuntime();
     let geneoKeyboardBound = false;
     let geneoPointerBound = false;
     let geneoImageUploadRequestId = 0;
@@ -62910,37 +63341,128 @@
       };
     }
 
-    function geneoAppearance(value, defaults = {}) {
-      const source =
-        value && typeof value === 'object'
-          ? value
-          : {};
+    const GENEO_BOARD_COLORS = [
+      { color: '#101817', name: 'Ink' },
+      { color: '#26312E', name: 'Graphite' },
+      { color: '#D9E5E1', name: 'Mist' },
+      { color: '#F3F1E9', name: 'Paper' },
+      { color: '#173029', name: 'Deep moss' },
+      { color: '#172A32', name: 'Archive blue' },
+      { color: '#2D2437', name: 'Plum' },
+      { color: '#302B1D', name: 'Sepia' },
+      { color: '#2FAE74', name: 'Geneograph green' },
+      { color: '#62D99A', name: 'Mint' },
+      { color: '#4FB3A5', name: 'Teal' },
+      { color: '#5DADEC', name: 'Blue' },
+      { color: '#AA8CE8', name: 'Violet' },
+      { color: '#D4AA6B', name: 'Amber' },
+      { color: '#D9828B', name: 'Rose' },
+      { color: '#C75B5B', name: 'Conflict red' }
+    ];
 
-      const fallbackStrokeType =
-        ['dashed', 'solid', 'none'].includes(
-          defaults.strokeType
-        )
-          ? defaults.strokeType
-          : 'solid';
+    function normalizeGeneoHexColor(value, fallback = '#101817') {
+      const text = String(value || '').trim();
+      const short = text.match(/^#?([0-9a-f]{3})$/i);
+      const full = text.match(/^#?([0-9a-f]{6})$/i);
+      if (short) {
+        return `#${short[1].split('').map(character => `${character}${character}`).join('')}`.toUpperCase();
+      }
+      if (full) return `#${full[1]}`.toUpperCase();
+      const safeFallback = String(fallback || '#101817').match(/^#?([0-9a-f]{6})$/i);
+      return safeFallback ? `#${safeFallback[1]}`.toUpperCase() : '#101817';
+    }
 
-      const strokeType =
-        ['dashed', 'solid', 'none'].includes(
-          source.strokeType
-        )
-          ? source.strokeType
-          : fallbackStrokeType;
-
+    function normalizeGeneoPaint(value, fallback = {}, {
+      forceEnabled = false,
+      forceOpacity = null
+    } = {}) {
+      const source = value && typeof value === 'object' ? value : {};
+      const defaultPaint = fallback && typeof fallback === 'object' ? fallback : {};
       return {
-        ...defaults,
-        ...source,
-        strokeType,
-        strokeWidth: geneoNumber(
-          source.strokeWidth,
-          defaults.strokeWidth || 1,
-          0,
-          12
-        )
+        color: normalizeGeneoHexColor(source.color, defaultPaint.color || '#101817'),
+        opacity: forceOpacity === null
+          ? Math.round(geneoNumber(source.opacity, defaultPaint.opacity ?? 100, 0, 100))
+          : Math.round(geneoNumber(forceOpacity, 100, 0, 100)),
+        enabled: forceEnabled ? true : source.enabled !== false
       };
+    }
+
+    function geneoPaintFromLegacy(sourcePaint, legacyColor, fallback, options = {}) {
+      if (sourcePaint && typeof sourcePaint === 'object') {
+        return normalizeGeneoPaint(sourcePaint, fallback, options);
+      }
+      return normalizeGeneoPaint({
+        color: legacyColor,
+        opacity: options.legacyOpacity ?? fallback.opacity,
+        enabled: options.legacyEnabled ?? fallback.enabled
+      }, fallback, options);
+    }
+
+    function geneoHexToRgb(color) {
+      const normalized = normalizeGeneoHexColor(color);
+      return {
+        r: Number.parseInt(normalized.slice(1, 3), 16),
+        g: Number.parseInt(normalized.slice(3, 5), 16),
+        b: Number.parseInt(normalized.slice(5, 7), 16)
+      };
+    }
+
+    function geneoPaintCssColor(paint, { disabledColor = 'transparent' } = {}) {
+      if (!paint?.enabled) return disabledColor;
+      const { r, g, b } = geneoHexToRgb(paint.color);
+      return `rgba(${r}, ${g}, ${b}, ${geneoNumber(paint.opacity, 100, 0, 100) / 100})`;
+    }
+
+    function isCanonicalGeneoPaint(paint, { mustBeEnabled = false, fixedOpacity = null } = {}) {
+      return Boolean(
+        paint
+        && typeof paint === 'object'
+        && /^#[0-9A-F]{6}$/.test(paint.color)
+        && Number.isInteger(paint.opacity)
+        && paint.opacity >= 0
+        && paint.opacity <= 100
+        && typeof paint.enabled === 'boolean'
+        && (!mustBeEnabled || paint.enabled)
+        && (fixedOpacity === null || paint.opacity === fixedOpacity)
+      );
+    }
+
+    function geneoAppearance(value, defaults = {}, nodeType = '') {
+      const source = value && typeof value === 'object' ? value : {};
+      const legacyStrokeType = ['dashed', 'solid', 'none'].includes(source.strokeType)
+        ? source.strokeType
+        : null;
+      const defaultPattern = defaults.strokePattern === 'dashed' ? 'dashed' : 'solid';
+      const result = { ...defaults, ...source };
+      result.fill = geneoPaintFromLegacy(
+        source.fill,
+        source.backgroundColor,
+        defaults.fill,
+        { legacyOpacity: nodeType === 'panel' ? 68 : 100 }
+      );
+      result.stroke = geneoPaintFromLegacy(
+        source.stroke,
+        source.strokeColor,
+        defaults.stroke,
+        { legacyEnabled: legacyStrokeType !== 'none' }
+      );
+      result.text = geneoPaintFromLegacy(
+        source.text,
+        source.textColor,
+        defaults.text,
+        { forceEnabled: true }
+      );
+      result.strokePattern = legacyStrokeType && legacyStrokeType !== 'none'
+        ? legacyStrokeType
+        : source.strokePattern === 'dashed'
+          ? 'dashed'
+          : defaultPattern;
+      result.strokeWidth = geneoNumber(source.strokeWidth, defaults.strokeWidth || 1, 0, 12);
+      delete result.backgroundColor;
+      delete result.strokeColor;
+      delete result.textColor;
+      delete result.strokeType;
+      return result;
     }
 
     function geneoFilenameStem(filename) {
@@ -63274,7 +63796,12 @@
           : canvas.gridVisible === false ? 'clear' : 'dots';
         const diagram = {
           canvas: {
-            backgroundColor: /^#[0-9a-f]{6}$/i.test(canvas.backgroundColor || '') ? canvas.backgroundColor : '#0F1413',
+            backgroundPaint: geneoPaintFromLegacy(
+              canvas.backgroundPaint,
+              canvas.backgroundColor,
+              { color: '#0F1413', opacity: 100, enabled: true },
+              { forceEnabled: true, forceOpacity: 100 }
+            ),
             backgroundPattern,
             snapToGrid: Boolean(canvas.snapToGrid),
             alwaysShowSockets: Boolean(canvas.alwaysShowSockets)
@@ -63380,7 +63907,8 @@
               locked: Boolean(node.locked),
               appearance: geneoAppearance(
                 node.appearance,
-                defaults.appearance
+                defaults.appearance,
+                node.type
               )
             };
 
@@ -63486,7 +64014,11 @@
             source: { ...connection.source }, target: { ...connection.target },
             style: {
               pattern: connection.style?.pattern === 'dashed' ? 'dashed' : 'solid',
-              color: /^#[0-9a-f]{6}$/i.test(connection.style?.color || '') ? connection.style.color : '#d9e5e1',
+              line: geneoPaintFromLegacy(
+                connection.style?.line,
+                connection.style?.color,
+                { color: '#D9E5E1', opacity: 100, enabled: true }
+              ),
               width: geneoNumber(connection.style?.width, 2, 1, 8)
             },
             showRelationshipDates: connection.showRelationshipDates !== false,
@@ -63514,11 +64046,11 @@
     function geneoNodeDefaults(type) {
       const common = {
         appearance: {
-          backgroundColor: '#18211f',
-          strokeColor: '#52615d',
+          fill: { color: '#18211F', opacity: 100, enabled: true },
+          stroke: { color: '#52615D', opacity: 100, enabled: true },
           strokeWidth: 1,
-          strokeType: 'solid',
-          textColor: '#f1f5f3'
+          strokePattern: 'solid',
+          text: { color: '#F1F5F3', opacity: 100, enabled: true }
         }
       };
 
@@ -63570,7 +64102,8 @@
         minHeight: 180,
         appearance: {
           ...common.appearance,
-          strokeType: 'dashed'
+          fill: { ...common.appearance.fill, opacity: 68 },
+          strokePattern: 'dashed'
         }
       };
     }
@@ -63593,6 +64126,14 @@
     function geneoPushHistory() {
       geneoEnsureHistory();
       const snapshot = geneoSnapshot();
+      if (geneoHistoryRuntime.undo.at(-1) !== snapshot) geneoHistoryRuntime.undo.push(snapshot);
+      if (geneoHistoryRuntime.undo.length > GENEO_HISTORY_LIMIT) geneoHistoryRuntime.undo.shift();
+      geneoHistoryRuntime.redo = [];
+    }
+
+    function geneoPushHistorySnapshot(snapshot) {
+      if (!snapshot) return;
+      geneoEnsureHistory();
       if (geneoHistoryRuntime.undo.at(-1) !== snapshot) geneoHistoryRuntime.undo.push(snapshot);
       if (geneoHistoryRuntime.undo.length > GENEO_HISTORY_LIMIT) geneoHistoryRuntime.undo.shift();
       geneoHistoryRuntime.redo = [];
@@ -63633,7 +64174,7 @@
       const snapshot = geneoHistoryRuntime.undo.pop();
       if (!snapshot) return;
       geneoHistoryRuntime.redo.push(geneoSnapshot());
-      if (geneoRestoreSnapshot(snapshot)) renderGeneographEditorPreserveScroll();
+      if (geneoRestoreSnapshot(snapshot)) renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
     }
 
     function redoGeneographChange() {
@@ -63641,7 +64182,7 @@
       const snapshot = geneoHistoryRuntime.redo.pop();
       if (!snapshot) return;
       geneoHistoryRuntime.undo.push(geneoSnapshot());
-      if (geneoRestoreSnapshot(snapshot)) renderGeneographEditorPreserveScroll();
+      if (geneoRestoreSnapshot(snapshot)) renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true, preserveSidebarScroll: true });
     }
 
     function geneographBoardStats(board) {
@@ -64262,17 +64803,19 @@
           const selected = selectedConnectionIds.has(connection.id);
           const points = geneoConnectionPoints(connection);
           const path = geneoPolylinePath(points);
+          const linePaint = connection.style.line;
           const dash = connection.style.pattern === 'dashed' ? 'stroke-dasharray="8 7"' : '';
           const familyJunction = connection.kind === 'family-partner' && connection.familyId
             ? geneoFamilyJunction(connection.familyId)
             : null;
-          return `<g class="geneo-connection ${selected ? 'selected' : ''}" data-geneo-connection-group="${escapeHtml(connection.id)}">
+          return `<g class="geneo-connection ${selected ? 'selected' : ''} ${linePaint.enabled ? '' : 'no-stroke'}" data-geneo-connection-group="${escapeHtml(connection.id)}">
             <path class="geneo-connection-hit" d="${path}" data-geneo-connection="${escapeHtml(connection.id)}"></path>
             ${selected ? points.slice(0, -1).map((point, index) => {
               const next = points[index + 1];
               return index > 0 && index < points.length - 2 ? `<line class="geneo-segment-hit" x1="${point.x}" y1="${point.y}" x2="${next.x}" y2="${next.y}" data-geneo-segment="${index}" data-geneo-connection="${escapeHtml(connection.id)}"></line>` : '';
             }).join('') : ''}
-            <path class="geneo-connection-line" d="${path}" stroke="${escapeHtml(connection.style.color)}" stroke-width="${connection.style.width}" ${dash}></path>
+            <path class="geneo-connection-line" d="${path}" stroke="${escapeHtml(geneoPaintCssColor(linePaint))}" stroke-width="${connection.style.width}" ${dash}></path>
+            <path class="geneo-connection-selection-guide" d="${path}"></path>
             ${renderGeneographRelationshipDateLabel(connection, points)}
             ${selected && connection.route.mode === 'manual' ? connection.route.waypoints.map((point, index) => `<circle class="geneo-waypoint ${state.selectedGeneoConnectionId === connection.id && state.selectedGeneoWaypointIndex === index ? 'selected' : ''}" cx="${point.x}" cy="${point.y}" r="6" data-geneo-waypoint="${index}" data-geneo-connection="${escapeHtml(connection.id)}"></circle>`).join('') : ''}
             ${familyJunction ? `<circle class="geneo-family-junction" cx="${familyJunction.x}" cy="${familyJunction.y}" r="7" data-geneo-family-junction="${escapeHtml(connection.familyId)}" tabindex="0"><title>Connect child to this family</title></circle>` : ''}
@@ -64360,14 +64903,7 @@
 
       const appearance = node.appearance || {};
 
-      const strokeType =
-        ['dashed', 'solid', 'none'].includes(
-          appearance.strokeType
-        )
-          ? appearance.strokeType
-          : node.type === 'panel'
-            ? 'dashed'
-            : 'solid';
+      const strokePattern = appearance.strokePattern === 'dashed' ? 'dashed' : 'solid';
 
       const bounds =
         geneoCanvasRuntime.bounds
@@ -64381,11 +64917,11 @@
         `top:${node.y - bounds.top}px`,
         `width:${node.width}px`,
         `height:${node.height}px`,
-        `--geneo-node-bg:${appearance.backgroundColor || 'transparent'}`,
-        `--geneo-node-stroke:${appearance.strokeColor || '#52615d'}`,
+        `--geneo-node-bg:${geneoPaintCssColor(appearance.fill)}`,
+        `--geneo-node-stroke:${geneoPaintCssColor(appearance.stroke)}`,
         `--geneo-node-stroke-width:${appearance.strokeWidth || 1}px`,
-        `--geneo-node-stroke-style:${strokeType}`,
-        `--geneo-node-text:${appearance.textColor || '#f1f5f3'}`,
+        `--geneo-node-stroke-style:${appearance.stroke?.enabled ? strokePattern : 'none'}`,
+        `--geneo-node-text:${geneoPaintCssColor(appearance.text)}`,
         `z-index:${
           node.type === 'panel'
             ? Math.max(1, Math.min(10, node.order))
@@ -64547,6 +65083,7 @@
                 displayName
               )
             }
+            <span class="geneo-layer-paint-status" data-geneo-connection-paint-status ${connection.style.line.enabled ? 'hidden' : ''}>No stroke</span>
           </div>
         `;
       };
@@ -64887,6 +65424,851 @@
       return `<g class="geneo-relationship-date" transform="translate(${midpoint.x} ${midpoint.y - 18})" aria-label="Relationship date ${escapeHtml(label)}"><rect x="${-width / 2}" y="-13" width="${width}" height="24" rx="4"></rect><text text-anchor="middle" dominant-baseline="middle">${escapeHtml(label)}</text></g>`;
     }
 
+    function geneoRgbToHsv({ r, g, b }) {
+      const red = r / 255;
+      const green = g / 255;
+      const blue = b / 255;
+      const maximum = Math.max(red, green, blue);
+      const minimum = Math.min(red, green, blue);
+      const delta = maximum - minimum;
+      let hue = 0;
+      if (delta) {
+        if (maximum === red) hue = 60 * (((green - blue) / delta) % 6);
+        else if (maximum === green) hue = 60 * ((blue - red) / delta + 2);
+        else hue = 60 * ((red - green) / delta + 4);
+      }
+      if (hue < 0) hue += 360;
+      return {
+        h: hue,
+        s: maximum ? delta / maximum * 100 : 0,
+        v: maximum * 100
+      };
+    }
+
+    function geneoHsvToHex({ h, s, v }) {
+      const hue = ((geneoNumber(h, 0) % 360) + 360) % 360;
+      const saturation = geneoNumber(s, 0, 0, 100) / 100;
+      const value = geneoNumber(v, 0, 0, 100) / 100;
+      const chroma = value * saturation;
+      const x = chroma * (1 - Math.abs((hue / 60) % 2 - 1));
+      const offset = value - chroma;
+      let channels = [0, 0, 0];
+      if (hue < 60) channels = [chroma, x, 0];
+      else if (hue < 120) channels = [x, chroma, 0];
+      else if (hue < 180) channels = [0, chroma, x];
+      else if (hue < 240) channels = [0, x, chroma];
+      else if (hue < 300) channels = [x, 0, chroma];
+      else channels = [chroma, 0, x];
+      return `#${channels.map(channel => Math.round((channel + offset) * 255).toString(16).padStart(2, '0')).join('')}`.toUpperCase();
+    }
+
+    function geneoPaintTargetKey(target) {
+      return target ? `${target.scope}:${target.id || 'canvas'}:${target.property}` : '';
+    }
+
+    function resolveGeneoPaintTarget(reference) {
+      if (!reference) return null;
+      const { scope, id = '', property } = reference;
+      if (scope === 'canvas') {
+        const canvas = selectedGeneographDiagram()?.canvas;
+        if (!canvas || property !== 'background') return null;
+        return {
+          scope, id: selectedGeneographBoard()?.id || '', property,
+          label: 'Background', paint: canvas.backgroundPaint,
+          supportsOpacity: false, supportsNone: false, resettable: false,
+          defaultPaint: { color: '#0F1413', opacity: 100, enabled: true }
+        };
+      }
+      if (scope === 'connection') {
+        const connection = getGeneographConnection(id);
+        if (!connection || property !== 'line') return null;
+        return {
+          scope, id, property, entity: connection,
+          label: 'Line', paint: connection.style.line,
+          supportsOpacity: true, supportsNone: true, resettable: false,
+          defaultPaint: {
+            color: connection.kind === 'visual' ? '#D4AA6B' : '#8ECDB2',
+            opacity: 100, enabled: true
+          }
+        };
+      }
+      if (scope !== 'node') return null;
+      const node = getGeneographNode(id);
+      if (!node || !['fill', 'stroke', 'text'].includes(property)) return null;
+      const applicable = property === 'text'
+        ? node.type !== 'image'
+        : node.type !== 'text';
+      if (!applicable) return null;
+      const defaults = geneoNodeDefaults(node.type).appearance;
+      return {
+        scope, id, property, entity: node,
+        label: property === 'fill'
+          ? node.type === 'image' ? 'Background' : 'Fill'
+          : property === 'text'
+            ? node.type === 'panel' ? 'Title text' : 'Text'
+            : 'Stroke',
+        paint: node.appearance[property],
+        supportsOpacity: true,
+        supportsNone: property !== 'text',
+        resettable: property === 'text',
+        defaultPaint: defaults[property]
+      };
+    }
+
+    function geneoPaintReferenceFromElement(element) {
+      const host = element?.closest?.('[data-geneo-paint-scope]');
+      if (!host) return null;
+      return {
+        scope: host.dataset.geneoPaintScope,
+        id: host.dataset.geneoPaintId || '',
+        property: host.dataset.geneoPaintProperty
+      };
+    }
+
+    function geneoPaintDataAttributes(target) {
+      return `data-geneo-paint-scope="${escapeHtml(target.scope)}" data-geneo-paint-id="${escapeHtml(target.id || '')}" data-geneo-paint-property="${escapeHtml(target.property)}"`;
+    }
+
+    function geneoPaintSwatchStyle(paint) {
+      return `--geneo-paint-color:${normalizeGeneoHexColor(paint.color)};--geneo-paint-rendered:${geneoPaintCssColor({ ...paint, enabled: true })}`;
+    }
+
+    function renderGeneoPaintControl(reference) {
+      const target = resolveGeneoPaintTarget(reference);
+      if (!target) return '';
+
+      const paint = target.paint;
+      const disabled = !paint.enabled;
+      const actionSubject = target.label.toLowerCase();
+
+      const action = target.supportsNone
+        ? `
+          <button
+            class="geneo-paint-action"
+            type="button"
+            data-geneo-paint-toggle
+            aria-label="${escapeHtml(
+              disabled
+                ? `Restore ${actionSubject} color`
+                : `Remove ${actionSubject} color`
+            )}">
+            ${disabled ? 'Restore' : 'Remove'}
+          </button>
+        `
+        : target.resettable
+          ? `
+            <button
+              class="geneo-paint-action"
+              type="button"
+              data-geneo-paint-reset
+              aria-label="${escapeHtml(
+                `Reset ${actionSubject} color to default`
+              )}">
+              Reset
+            </button>
+          `
+          : '';
+
+      return `
+        <div
+          class="geneo-paint-row ${disabled ? 'is-none' : ''}"
+          ${geneoPaintDataAttributes(target)}>
+
+          <div class="geneo-paint-row-heading">
+            <div class="geneo-paint-heading-copy">
+              <span class="geneo-paint-label">
+                ${escapeHtml(target.label)}
+              </span>
+
+              <span
+                class="geneo-paint-state"
+                data-geneo-paint-state
+                ${disabled ? '' : 'hidden'}>
+                None
+              </span>
+            </div>
+
+            ${action}
+          </div>
+
+          <div class="geneo-paint-controls ${
+            target.supportsOpacity ? '' : 'is-color-only'
+          }">
+            <button
+              class="geneo-paint-swatch"
+              type="button"
+              data-geneo-paint-open
+              style="${geneoPaintSwatchStyle(paint)}"
+              aria-label="${escapeHtml(
+                `Edit ${target.label} color, ${
+                  disabled
+                    ? 'None'
+                    : `${paint.color}, ${paint.opacity}% opacity`
+                }`
+              )}"
+              aria-expanded="false"
+              aria-controls="geneoPaintPopover"
+              ${disabled ? 'disabled' : ''}>
+              <span aria-hidden="true"></span>
+            </button>
+
+            <input
+              class="geneo-paint-hex"
+              type="text"
+              value="${escapeHtml(paint.color)}"
+              maxlength="7"
+              spellcheck="false"
+              autocomplete="off"
+              data-geneo-paint-hex
+              aria-label="${escapeHtml(`${target.label} hex color`)}"
+              ${disabled ? 'disabled' : ''}>
+
+            ${
+              target.supportsOpacity
+                ? `
+                  <label class="geneo-paint-opacity-number">
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="1"
+                      value="${paint.opacity}"
+                      data-geneo-paint-opacity-number
+                      aria-label="${escapeHtml(
+                        `${target.label} opacity`
+                      )}"
+                      ${disabled ? 'disabled' : ''}>
+
+                    <span aria-hidden="true">%</span>
+                  </label>
+                `
+                : ''
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    function geneoCompositeRgb(foreground, background, alpha) {
+      const amount = geneoNumber(alpha, 1, 0, 1);
+      return {
+        r: Math.round(foreground.r * amount + background.r * (1 - amount)),
+        g: Math.round(foreground.g * amount + background.g * (1 - amount)),
+        b: Math.round(foreground.b * amount + background.b * (1 - amount))
+      };
+    }
+
+    function geneoRelativeLuminance(rgb) {
+      const channel = value => {
+        const normalized = value / 255;
+        return normalized <= .03928 ? normalized / 12.92 : ((normalized + .055) / 1.055) ** 2.4;
+      };
+      return .2126 * channel(rgb.r) + .7152 * channel(rgb.g) + .0722 * channel(rgb.b);
+    }
+
+    function geneoContrastRatio(first, second) {
+      const light = Math.max(geneoRelativeLuminance(first), geneoRelativeLuminance(second));
+      const dark = Math.min(geneoRelativeLuminance(first), geneoRelativeLuminance(second));
+      return (light + .05) / (dark + .05);
+    }
+
+    function geneoTextContrastRatio(node) {
+      if (!node || node.type === 'image') return null;
+      const canvasPaint = selectedGeneographDiagram()?.canvas.backgroundPaint;
+      const canvasRgb = geneoHexToRgb(canvasPaint?.color || '#0F1413');
+      const fill = node.type === 'text' ? null : node.appearance.fill;
+      const background = fill?.enabled
+        ? geneoCompositeRgb(geneoHexToRgb(fill.color), canvasRgb, fill.opacity / 100)
+        : canvasRgb;
+      const text = node.appearance.text;
+      const visibleText = geneoCompositeRgb(geneoHexToRgb(text.color), background, text.opacity / 100);
+      return geneoContrastRatio(visibleText, background);
+    }
+
+    function renderGeneoContrastWarning(node) {
+      const ratio = geneoTextContrastRatio(node);
+      const warning = Number.isFinite(ratio) && ratio < 4.5;
+      return `<p class="geneo-contrast-warning" data-geneo-contrast-warning ${warning ? '' : 'hidden'}>${icon.warning}<span><strong>${escapeHtml(t('Low text contrast'))}</strong> <span data-geneo-contrast-ratio>(${Number.isFinite(ratio) ? ratio.toFixed(1) : '0.0'}:1).</span> ${escapeHtml(t('Consider a clearer text or fill color.'))}</span></p>`;
+    }
+
+    function geneoPaintTargetMatches(element, target) {
+      const reference = geneoPaintReferenceFromElement(element);
+      return geneoPaintTargetKey(reference) === geneoPaintTargetKey(target);
+    }
+
+    function applyGeneoPaintTargetToDom(reference) {
+      const target = resolveGeneoPaintTarget(reference);
+      if (!target) return;
+      if (target.scope === 'node') {
+        const node = target.entity;
+        const element = main.querySelector(`[data-geneo-node="${CSS.escape(node.id)}"]`);
+        if (element) {
+          element.style.setProperty('--geneo-node-bg', geneoPaintCssColor(node.appearance.fill));
+          element.style.setProperty('--geneo-node-stroke', geneoPaintCssColor(node.appearance.stroke));
+          element.style.setProperty('--geneo-node-stroke-style', node.appearance.stroke.enabled ? node.appearance.strokePattern : 'none');
+          element.style.setProperty('--geneo-node-text', geneoPaintCssColor(node.appearance.text));
+        }
+      } else if (target.scope === 'connection') {
+        const group = main.querySelector(`[data-geneo-connection-group="${CSS.escape(target.id)}"]`);
+        group?.classList.toggle('no-stroke', !target.paint.enabled);
+        group?.querySelector('.geneo-connection-line')?.setAttribute('stroke', geneoPaintCssColor(target.paint));
+        const status = sidebar.querySelector(`[data-geneo-layer-connection="${CSS.escape(target.id)}"] [data-geneo-connection-paint-status]`);
+        if (status) status.hidden = target.paint.enabled;
+      } else {
+        main.querySelector('[data-geneo-canvas-viewport]')?.style.setProperty('--geneo-canvas-background', geneoPaintCssColor(target.paint));
+      }
+    }
+
+    function updateGeneoContrastWarning() {
+      const node = selectedGeneographNode();
+      const warning = main.querySelector('[data-geneo-contrast-warning]');
+      if (!warning || !node) return;
+      const ratio = geneoTextContrastRatio(node);
+      const visible = Number.isFinite(ratio) && ratio < 4.5;
+      warning.hidden = !visible;
+      const ratioCopy = warning.querySelector('[data-geneo-contrast-ratio]');
+      if (ratioCopy) ratioCopy.textContent = `(${Number.isFinite(ratio) ? ratio.toFixed(1) : '0.0'}:1).`;
+    }
+
+    function syncGeneoPaintUi(reference, sourceInput = null) {
+      const target = resolveGeneoPaintTarget(reference);
+      if (!target) return;
+      document.querySelectorAll('[data-geneo-paint-scope]').forEach(row => {
+        if (!geneoPaintTargetMatches(row, target)) return;
+        row.classList.toggle('is-none', !target.paint.enabled);
+        const stateLabel = row.querySelector('[data-geneo-paint-state]');
+        if (stateLabel) stateLabel.hidden = target.paint.enabled;
+        const swatch = row.querySelector('[data-geneo-paint-open]');
+
+        if (swatch) {
+          swatch.setAttribute(
+            'style',
+            geneoPaintSwatchStyle(target.paint)
+          );
+
+          swatch.setAttribute(
+            'aria-label',
+            translateAttributeValue(
+              `Edit ${target.label} color, ${
+                target.paint.enabled
+                  ? `${target.paint.color}, ${target.paint.opacity}% opacity`
+                  : 'None'
+              }`
+            )
+          );
+
+          swatch.disabled = !target.paint.enabled;
+
+          if (!target.paint.enabled) {
+            swatch.setAttribute('aria-expanded', 'false');
+          }
+        }
+
+        const hex = row.querySelector('[data-geneo-paint-hex]');
+
+        if (hex && hex !== sourceInput) {
+          hex.value = target.paint.color;
+        }
+
+        if (hex) {
+          hex.disabled = !target.paint.enabled;
+        }
+
+        const opacity = row.querySelector(
+          '[data-geneo-paint-opacity-number]'
+        );
+
+        if (opacity && opacity !== sourceInput) {
+          opacity.value = target.paint.opacity;
+        }
+
+        if (opacity) {
+          opacity.disabled = !target.paint.enabled;
+        }
+
+        const toggle = row.querySelector('[data-geneo-paint-toggle]');
+
+        if (toggle) {
+          const isPopover = row.classList.contains(
+            'geneo-paint-popover'
+          );
+
+          const visibleLabel = target.paint.enabled
+            ? isPopover
+              ? `Remove ${target.label}`
+              : 'Remove'
+            : isPopover
+              ? `Restore ${target.label}`
+              : 'Restore';
+
+          toggle.textContent = t(visibleLabel);
+
+          toggle.setAttribute(
+            'aria-label',
+            translateAttributeValue(
+              target.paint.enabled
+                ? `Remove ${target.label.toLowerCase()} color`
+                : `Restore ${target.label.toLowerCase()} color`
+            )
+          );
+        }
+      });
+      if (target.scope === 'node' && target.property === 'stroke') {
+        const pattern = main.querySelector('[data-geneo-stroke-pattern]');
+        if (pattern) pattern.disabled = !target.paint.enabled;
+      }
+      if (target.scope === 'connection') {
+        const pattern = main.querySelector('[data-geneo-connection-style="pattern"]');
+        if (pattern) pattern.disabled = !target.paint.enabled;
+      }
+      applyGeneoPaintTargetToDom(target);
+      updateGeneoContrastWarning();
+      syncGeneoPaintPopover(target, sourceInput);
+    }
+
+    function beginGeneoPaintInteraction(reference) {
+      const target = resolveGeneoPaintTarget(reference);
+      if (!target) return null;
+      if (geneoPaintRuntime.interaction) commitGeneoPaintInteraction();
+      geneoPaintRuntime.interaction = {
+        key: geneoPaintTargetKey(target),
+        reference: { scope: target.scope, id: target.id, property: target.property },
+        beforeDiagram: geneoSnapshot(),
+        beforePaint: structuredClone(target.paint),
+        lastValidPaint: structuredClone(target.paint)
+      };
+      return target;
+    }
+
+    function previewGeneoPaint(reference, changes, sourceInput = null) {
+      const target = resolveGeneoPaintTarget(reference);
+      if (!target || !target.paint.enabled && !('enabled' in changes)) return false;
+      Object.assign(target.paint, changes);
+      target.paint.color = normalizeGeneoHexColor(target.paint.color, target.defaultPaint.color);
+      target.paint.opacity = Math.round(geneoNumber(target.paint.opacity, 100, 0, 100));
+      if (!target.supportsNone) target.paint.enabled = true;
+      const interaction = geneoPaintRuntime.interaction;
+      if (interaction?.key === geneoPaintTargetKey(target)) interaction.lastValidPaint = structuredClone(target.paint);
+      syncGeneoPaintUi(target, sourceInput);
+      return true;
+    }
+
+    function commitGeneoPaintInteraction() {
+      const interaction = geneoPaintRuntime.interaction;
+      if (!interaction) return false;
+      geneoPaintRuntime.interaction = null;
+      const target = resolveGeneoPaintTarget(interaction.reference);
+      if (!target || JSON.stringify(interaction.beforePaint) === JSON.stringify(target.paint)) return false;
+      geneoPushHistorySnapshot(interaction.beforeDiagram);
+      touchGeneographBoard();
+      return true;
+    }
+
+    function cancelGeneoPaintInteraction() {
+      const interaction = geneoPaintRuntime.interaction;
+      if (!interaction) return false;
+      geneoPaintRuntime.interaction = null;
+      const target = resolveGeneoPaintTarget(interaction.reference);
+      if (!target) return false;
+      Object.assign(target.paint, structuredClone(interaction.beforePaint));
+      syncGeneoPaintUi(target);
+      return true;
+    }
+
+    function restoreLastValidGeneoPaintInteraction(sourceInput = null) {
+      const interaction = geneoPaintRuntime.interaction;
+      if (!interaction) return false;
+      const target = resolveGeneoPaintTarget(interaction.reference);
+      if (!target) return false;
+      Object.assign(target.paint, structuredClone(interaction.lastValidPaint));
+      syncGeneoPaintUi(target, sourceInput);
+      return true;
+    }
+
+    function commitGeneoPaintAction(reference, update) {
+      const target = resolveGeneoPaintTarget(reference);
+      if (!target) return false;
+      const beforeDiagram = geneoSnapshot();
+      const beforePaint = JSON.stringify(target.paint);
+      update(target);
+      target.paint.color = normalizeGeneoHexColor(target.paint.color, target.defaultPaint.color);
+      target.paint.opacity = Math.round(geneoNumber(target.paint.opacity, 100, 0, 100));
+      if (!target.supportsNone) target.paint.enabled = true;
+      if (beforePaint === JSON.stringify(target.paint)) return false;
+      geneoPushHistorySnapshot(beforeDiagram);
+      touchGeneographBoard();
+      syncGeneoPaintUi(target);
+      return true;
+    }
+
+    function renderGeneoPaintPopover(reference) {
+      const target = resolveGeneoPaintTarget(reference);
+      if (!target) return '';
+      const paint = target.paint;
+      const hsv = geneoRgbToHsv(geneoHexToRgb(paint.color));
+      geneoPaintRuntime.hsv = hsv;
+      const disabled = !paint.enabled;
+      return `<div class="geneo-paint-popover" id="geneoPaintPopover" role="dialog" aria-modal="false" aria-labelledby="geneoPaintPopoverTitle" ${geneoPaintDataAttributes(target)}>
+        <div class="geneo-paint-popover-header"><strong id="geneoPaintPopoverTitle">${escapeHtml(target.label)}</strong><button type="button" data-geneo-paint-close aria-label="Close ${escapeHtml(target.label)} color picker">${icon.close}</button></div>
+        <div class="geneo-paint-popover-body">
+          <div class="geneo-paint-sv" tabindex="0" role="slider" aria-label="${escapeHtml(target.label)} saturation and brightness" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(hsv.v)}" aria-valuetext="Saturation ${Math.round(hsv.s)}%, brightness ${Math.round(hsv.v)}%" data-geneo-paint-sv style="--geneo-hue:${Math.round(hsv.h)}"><span style="left:${hsv.s}%;top:${100 - hsv.v}%" aria-hidden="true"></span></div>
+          <label class="geneo-paint-slider-row"><span>Hue</span><input type="range" min="0" max="359" step="1" value="${Math.round(hsv.h)}" data-geneo-paint-hue ${disabled ? 'disabled' : ''}></label>
+          ${target.supportsOpacity ? `<label class="geneo-paint-slider-row"><span>Opacity</span><input class="geneo-paint-alpha" type="range" min="0" max="100" step="1" value="${paint.opacity}" data-geneo-paint-opacity style="--geneo-paint-color:${paint.color}" ${disabled ? 'disabled' : ''}></label>` : ''}
+          <div class="geneo-paint-popover-fields"><label><span>Hex</span><input type="text" maxlength="7" value="${paint.color}" spellcheck="false" autocomplete="off" data-geneo-paint-hex ${disabled ? 'disabled' : ''}></label>${target.supportsOpacity ? `<label><span>Opacity</span><span class="geneo-paint-percent-input"><input type="number" min="0" max="100" step="1" value="${paint.opacity}" data-geneo-paint-opacity-number ${disabled ? 'disabled' : ''}><span aria-hidden="true">%</span></span></label>` : ''}</div>
+          <div
+            class="geneo-paint-suggestions"
+            role="group"
+            aria-label="Suggested board colors">
+            ${
+              GENEO_BOARD_COLORS.map(item => {
+                const selected =
+                  normalizeGeneoHexColor(item.color)
+                  === normalizeGeneoHexColor(paint.color);
+
+                return `
+                  <button
+                    type="button"
+                    data-geneo-paint-suggestion="${item.color}"
+                    style="--geneo-suggestion:${item.color}"
+                    aria-label="${escapeHtml(
+                      `${item.name}, ${item.color}`
+                    )}"
+                    aria-pressed="${selected}"
+                    title="${escapeHtml(
+                      `${item.name} · ${item.color}`
+                    )}"
+                    ${disabled ? 'disabled' : ''}>
+                  </button>
+                `;
+              }).join('')
+            }
+          </div>
+
+          <div class="geneo-paint-popover-footer">
+            ${
+              target.supportsNone
+                ? `
+                  <button
+                    class="geneo-paint-none"
+                    type="button"
+                    data-geneo-paint-toggle>
+                    ${escapeHtml(
+                      `${disabled ? 'Restore' : 'Remove'} ${target.label}`
+                    )}
+                  </button>
+                `
+                : target.resettable
+                  ? `
+                    <button
+                      class="geneo-paint-none"
+                      type="button"
+                      data-geneo-paint-reset>
+                      Reset to default
+                    </button>
+                  `
+                  : ''
+            }
+          </div>
+      </div>`;
+    }
+
+    function positionGeneoPaintPopover() {
+      const { popover, opener } = geneoPaintRuntime;
+      const inspector = main.querySelector('.geneo-inspector:not(.collapsed)');
+      if (!popover || !opener?.isConnected || !inspector) return;
+      const inspectorRect = inspector.getBoundingClientRect();
+      const openerRect = opener.getBoundingClientRect();
+      const margin = 8;
+      const width = Math.max(280, Math.min(360, inspectorRect.width - margin * 2));
+      popover.style.width = `${width}px`;
+      popover.style.maxHeight = `${Math.max(280, inspectorRect.height - margin * 2)}px`;
+      const measuredHeight = Math.min(popover.scrollHeight, inspectorRect.height - margin * 2);
+      const below = openerRect.bottom + 6;
+      const above = openerRect.top - measuredHeight - 6;
+      const top = below + measuredHeight <= inspectorRect.bottom - margin
+        ? below
+        : Math.max(inspectorRect.top + margin, above);
+      popover.style.left = `${Math.max(inspectorRect.left + margin, Math.min(openerRect.right - width, inspectorRect.right - width - margin))}px`;
+      popover.style.top = `${top}px`;
+    }
+
+    function syncGeneoPaintPopover(reference, sourceInput = null) {
+      const popover = geneoPaintRuntime.popover;
+      const target = resolveGeneoPaintTarget(reference);
+      if (!popover || !target || geneoPaintTargetKey(target) !== geneoPaintTargetKey(geneoPaintRuntime.target)) return;
+      const hsv = geneoRgbToHsv(geneoHexToRgb(target.paint.color));
+      geneoPaintRuntime.hsv = hsv;
+      popover.classList.toggle('is-none', !target.paint.enabled);
+      const sv = popover.querySelector('[data-geneo-paint-sv]');
+      if (sv) {
+        sv.style.setProperty('--geneo-hue', Math.round(hsv.h));
+        sv.setAttribute('aria-valuenow', Math.round(hsv.v));
+        sv.setAttribute('aria-valuetext', `Saturation ${Math.round(hsv.s)}%, brightness ${Math.round(hsv.v)}%`);
+        const marker = sv.querySelector('span');
+        if (marker) { marker.style.left = `${hsv.s}%`; marker.style.top = `${100 - hsv.v}%`; }
+      }
+      const hue = popover.querySelector('[data-geneo-paint-hue]');
+      if (hue && hue !== sourceInput) hue.value = Math.round(hsv.h);
+      const alpha = popover.querySelector('[data-geneo-paint-opacity]');
+      if (alpha && alpha !== sourceInput) alpha.value = target.paint.opacity;
+      if (alpha) alpha.style.setProperty('--geneo-paint-color', target.paint.color);
+      const hex = popover.querySelector('[data-geneo-paint-hex]');
+      if (hex && hex !== sourceInput) hex.value = target.paint.color;
+      const number = popover.querySelector('[data-geneo-paint-opacity-number]');
+      if (number && number !== sourceInput) number.value = target.paint.opacity;
+      popover.querySelectorAll('input, [data-geneo-paint-suggestion]').forEach(control => {
+        if (!control.matches('[data-geneo-paint-close]')) control.disabled = !target.paint.enabled;
+      });
+      const selectedColor = normalizeGeneoHexColor(
+        target.paint.color
+      );
+
+      popover
+        .querySelectorAll('[data-geneo-paint-suggestion]')
+        .forEach(button => {
+          const selected =
+            normalizeGeneoHexColor(
+              button.dataset.geneoPaintSuggestion
+            ) === selectedColor;
+
+          button.setAttribute(
+            'aria-pressed',
+            String(selected)
+          );
+        });
+
+      const toggle = popover.querySelector(
+        '[data-geneo-paint-toggle]'
+      );
+
+      if (toggle) {
+        toggle.textContent = t(
+          `${target.paint.enabled ? 'Remove' : 'Restore'} ${
+            target.label
+          }`
+        );
+
+        toggle.setAttribute(
+          'aria-label',
+          translateAttributeValue(
+            target.paint.enabled
+              ? `Remove ${target.label.toLowerCase()} color`
+              : `Restore ${target.label.toLowerCase()} color`
+          )
+        );
+      }
+    }
+
+    function closeGeneoPaintPopover({ commit = true, restoreFocus = true } = {}) {
+      const opener = geneoPaintRuntime.opener;
+      const inspector = main.querySelector('.geneo-inspector:not(.collapsed)');
+      const scrollTop = inspector?.scrollTop ?? null;
+      if (commit) commitGeneoPaintInteraction();
+      else cancelGeneoPaintInteraction();
+      geneoPaintRuntime.controller?.abort();
+      geneoPaintRuntime.popover?.remove();
+      opener?.setAttribute('aria-expanded', 'false');
+      geneoPaintRuntime = createGeneoPaintRuntime();
+      if (scrollTop !== null && inspector) inspector.scrollTop = scrollTop;
+      if (restoreFocus && opener?.isConnected) opener.focus({ preventScroll: true });
+    }
+
+    function updateGeneoPaintFromSv(event, reference, element) {
+      const rect = element.getBoundingClientRect();
+      const saturation = geneoNumber((event.clientX - rect.left) / rect.width * 100, 0, 0, 100);
+      const value = geneoNumber((rect.bottom - event.clientY) / rect.height * 100, 0, 0, 100);
+      const hsv = { ...(geneoPaintRuntime.hsv || { h: 0 }), s: saturation, v: value };
+      geneoPaintRuntime.hsv = hsv;
+      previewGeneoPaint(reference, { color: geneoHsvToHex(hsv) });
+    }
+
+    function bindGeneoPaintPopover(reference) {
+      const popover = geneoPaintRuntime.popover;
+      if (!popover) return;
+      const sv = popover.querySelector('[data-geneo-paint-sv]');
+      sv?.addEventListener('pointerdown', event => {
+        if (!resolveGeneoPaintTarget(reference)?.paint.enabled) return;
+        event.preventDefault();
+        beginGeneoPaintInteraction(reference);
+        sv.setPointerCapture(event.pointerId);
+        updateGeneoPaintFromSv(event, reference, sv);
+      });
+      sv?.addEventListener('pointermove', event => {
+        if (!sv.hasPointerCapture(event.pointerId)) return;
+        updateGeneoPaintFromSv(event, reference, sv);
+      });
+      sv?.addEventListener('pointerup', event => {
+        if (sv.hasPointerCapture(event.pointerId)) sv.releasePointerCapture(event.pointerId);
+        commitGeneoPaintInteraction();
+      });
+      sv?.addEventListener('keydown', event => {
+        if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) return;
+        if (!resolveGeneoPaintTarget(reference)?.paint.enabled) return;
+        event.preventDefault();
+        if (!geneoPaintRuntime.interaction) beginGeneoPaintInteraction(reference);
+        const amount = event.shiftKey ? 10 : 1;
+        const hsv = { ...geneoPaintRuntime.hsv };
+        if (event.key === 'ArrowLeft') hsv.s = Math.max(0, hsv.s - amount);
+        if (event.key === 'ArrowRight') hsv.s = Math.min(100, hsv.s + amount);
+        if (event.key === 'ArrowDown') hsv.v = Math.max(0, hsv.v - amount);
+        if (event.key === 'ArrowUp') hsv.v = Math.min(100, hsv.v + amount);
+        geneoPaintRuntime.hsv = hsv;
+        previewGeneoPaint(reference, { color: geneoHsvToHex(hsv) });
+      });
+      sv?.addEventListener('keyup', event => {
+        if (event.key.startsWith('Arrow')) commitGeneoPaintInteraction();
+      });
+      bindGeneoPaintRange(popover.querySelector('[data-geneo-paint-hue]'), reference, input => {
+        const hsv = { ...geneoPaintRuntime.hsv, h: Number(input.value) };
+        geneoPaintRuntime.hsv = hsv;
+        previewGeneoPaint(reference, { color: geneoHsvToHex(hsv) }, input);
+      });
+      bindGeneoPaintRange(popover.querySelector('[data-geneo-paint-opacity]'), reference, input => {
+        previewGeneoPaint(reference, { opacity: Number(input.value) }, input);
+      });
+      bindGeneoPaintTextInput(popover.querySelector('[data-geneo-paint-hex]'), reference, 'hex');
+      bindGeneoPaintTextInput(popover.querySelector('[data-geneo-paint-opacity-number]'), reference, 'opacity');
+      popover.querySelectorAll('[data-geneo-paint-suggestion]').forEach(button => button.addEventListener('click', () => {
+        commitGeneoPaintAction(reference, target => { target.paint.color = button.dataset.geneoPaintSuggestion; });
+      }));
+      popover
+        .querySelector('[data-geneo-paint-toggle]')
+        ?.addEventListener('click', () => {
+          const currentTarget = resolveGeneoPaintTarget(reference);
+          if (!currentTarget) return;
+
+          const removingPaint = currentTarget.paint.enabled;
+
+          const changed = commitGeneoPaintAction(
+            reference,
+            target => {
+              target.paint.enabled = !target.paint.enabled;
+            }
+          );
+
+          if (!changed || !removingPaint) return;
+
+          closeGeneoPaintPopover({
+            restoreFocus: false
+          });
+
+          requestAnimationFrame(() => {
+            const inspectorRow = [
+              ...main.querySelectorAll('.geneo-paint-row')
+            ].find(row =>
+              geneoPaintTargetMatches(row, reference)
+            );
+
+            inspectorRow
+              ?.querySelector('[data-geneo-paint-toggle]')
+              ?.focus({ preventScroll: true });
+          });
+        });
+      popover.querySelector('[data-geneo-paint-reset]')?.addEventListener('click', () => {
+        commitGeneoPaintAction(reference, target => Object.assign(target.paint, structuredClone(target.defaultPaint), { enabled: true }));
+      });
+      popover.querySelector('[data-geneo-paint-close]')?.addEventListener('click', () => closeGeneoPaintPopover());
+    }
+
+    function bindGeneoPaintRange(input, reference, update) {
+      if (!input) return;
+      input.addEventListener('input', () => {
+        if (!geneoPaintRuntime.interaction) beginGeneoPaintInteraction(reference);
+        update(input);
+      });
+      input.addEventListener('change', commitGeneoPaintInteraction);
+      input.addEventListener('pointerup', commitGeneoPaintInteraction);
+      input.addEventListener('blur', commitGeneoPaintInteraction);
+    }
+
+    function bindGeneoPaintTextInput(input, reference, type) {
+      if (!input) return;
+      input.addEventListener('focus', () => beginGeneoPaintInteraction(reference));
+      input.addEventListener('input', () => {
+        if (!geneoPaintRuntime.interaction) beginGeneoPaintInteraction(reference);
+        if (type === 'hex') {
+          const valid = /^#?[0-9a-f]{3}$/i.test(input.value.trim()) || /^#?[0-9a-f]{6}$/i.test(input.value.trim());
+          input.classList.toggle('invalid', !valid);
+          input.setAttribute('aria-invalid', String(!valid));
+          if (valid) previewGeneoPaint(reference, { color: normalizeGeneoHexColor(input.value) }, input);
+        } else if (input.value.trim() !== '' && Number.isFinite(Number(input.value))) {
+          previewGeneoPaint(reference, { opacity: Math.round(geneoNumber(input.value, 100, 0, 100)) }, input);
+        }
+      });
+      input.addEventListener('keydown', event => {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          cancelGeneoPaintInteraction();
+          input.classList.remove('invalid');
+          input.setAttribute('aria-invalid', 'false');
+          const target = resolveGeneoPaintTarget(reference);
+          if (target) input.value = type === 'hex' ? target.paint.color : target.paint.opacity;
+          input.select();
+        } else if (event.key === 'Enter') {
+          event.preventDefault();
+          input.blur();
+        }
+      });
+      input.addEventListener('blur', () => {
+        if (type === 'hex' && input.classList.contains('invalid')) restoreLastValidGeneoPaintInteraction(input);
+        if (type === 'opacity' && input.value.trim() === '') restoreLastValidGeneoPaintInteraction(input);
+        const target = resolveGeneoPaintTarget(reference);
+        if (target) input.value = type === 'hex' ? target.paint.color : target.paint.opacity;
+        input.classList.remove('invalid');
+        input.setAttribute('aria-invalid', 'false');
+        commitGeneoPaintInteraction();
+      });
+    }
+
+    function openGeneoPaintPopover(reference, opener) {
+      if (geneoPaintRuntime.popover) closeGeneoPaintPopover({ restoreFocus: false });
+      const target = resolveGeneoPaintTarget(reference);
+      const inspector = main.querySelector('.geneo-inspector:not(.collapsed)');
+      if (!target || !inspector || !opener) return;
+      const scrollTop = inspector.scrollTop;
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = renderGeneoPaintPopover(target).trim();
+      const popover = wrapper.firstElementChild;
+      document.body.appendChild(popover);
+      localizeUI(popover);
+      const controller = new AbortController();
+      geneoPaintRuntime.target = { scope: target.scope, id: target.id, property: target.property };
+      geneoPaintRuntime.opener = opener;
+      geneoPaintRuntime.popover = popover;
+      geneoPaintRuntime.controller = controller;
+      opener.setAttribute('aria-expanded', 'true');
+      bindGeneoPaintPopover(geneoPaintRuntime.target);
+      positionGeneoPaintPopover();
+      inspector.scrollTop = scrollTop;
+      popover.querySelector('[data-geneo-paint-sv]')?.focus({ preventScroll: true });
+      document.addEventListener('pointerdown', event => {
+        if (popover.contains(event.target) || opener.contains(event.target)) return;
+        closeGeneoPaintPopover();
+      }, { capture: true, signal: controller.signal });
+      document.addEventListener('keydown', event => {
+        if (event.key !== 'Escape') return;
+        event.preventDefault();
+        closeGeneoPaintPopover({ commit: false });
+      }, { signal: controller.signal });
+      inspector.addEventListener('scroll', positionGeneoPaintPopover, { passive: true, signal: controller.signal });
+      window.addEventListener('resize', positionGeneoPaintPopover, { passive: true, signal: controller.signal });
+    }
+
+    function bindGeneoPaintControls() {
+      main.querySelectorAll('[data-geneo-paint-scope]').forEach(row => {
+        const reference = geneoPaintReferenceFromElement(row);
+        row.querySelector('[data-geneo-paint-open]')?.addEventListener('click', event => openGeneoPaintPopover(reference, event.currentTarget));
+        bindGeneoPaintTextInput(row.querySelector('[data-geneo-paint-hex]'), reference, 'hex');
+        bindGeneoPaintTextInput(row.querySelector('[data-geneo-paint-opacity-number]'), reference, 'opacity');
+        row.querySelector('[data-geneo-paint-toggle]')?.addEventListener('click', () => {
+          commitGeneoPaintAction(reference, target => { target.paint.enabled = !target.paint.enabled; });
+        });
+        row.querySelector('[data-geneo-paint-reset]')?.addEventListener('click', () => {
+          commitGeneoPaintAction(reference, target => Object.assign(target.paint, structuredClone(target.defaultPaint), { enabled: true }));
+        });
+      });
+    }
+
     function renderGeneographInspectorHeader(title, subtitle, iconHtml = '') {
       return `<div class="geneo-inspector-header"><button class="people-collapse-button people-sidebar-toggle-icon" type="button" data-geneo-inspector-toggle aria-label="Collapse inspector" aria-expanded="true">${icon.doublechevronSidebar}</button>${iconHtml ? `<span class="geneo-layer-icon">${iconHtml}</span>` : ''}<div class="geneo-inspector-title"><h2>${escapeHtml(title)}</h2><span>${escapeHtml(subtitle)}</span></div></div>`;
     }
@@ -64901,7 +66283,7 @@
       if (connection) return renderGeneographConnectionInspector(connection);
       if (node) return renderGeneographNodeInspector(node);
       const canvas = selectedGeneographDiagram().canvas;
-      return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader('Canvas', 'Board appearance and behavior')}<section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body"><div class="geneo-field"><label for="geneoCanvasColor">Background</label><input id="geneoCanvasColor" class="geneo-input" type="color" data-geneo-canvas-color value="${escapeHtml(canvas.backgroundColor)}"></div><div class="geneo-color-presets">${['#0F1413','#111827','#251c2b','#2a2418','#f3f1e9'].map(color => `<button type="button" data-geneo-canvas-preset="${color}" style="--swatch:${color}" aria-label="Use ${color}"></button>`).join('')}</div><div class="geneo-field"><span class="geneo-field-label">Background pattern</span><div class="geneo-background-pattern" role="group" aria-label="Background pattern">${['dots', 'grid', 'clear'].map(pattern => `<button type="button" data-geneo-background-pattern="${pattern}" aria-pressed="${canvas.backgroundPattern === pattern}">${capitalize(pattern)}</button>`).join('')}</div></div><label class="geneo-check"><input type="checkbox" data-geneo-sockets ${canvas.alwaysShowSockets ? 'checked' : ''}> Always show sockets</label><label class="geneo-check"><input type="checkbox" data-geneo-snap ${canvas.snapToGrid ? 'checked' : ''}> Snap to grid</label></div></section></div></aside>`;
+      return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader('Canvas', 'Board appearance and behavior')}<section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body">${renderGeneoPaintControl({ scope: 'canvas', property: 'background' })}<div class="geneo-field"><span class="geneo-field-label">Background pattern</span><div class="geneo-background-pattern" role="group" aria-label="Background pattern">${['dots', 'grid', 'clear'].map(pattern => `<button type="button" data-geneo-background-pattern="${pattern}" aria-pressed="${canvas.backgroundPattern === pattern}">${capitalize(pattern)}</button>`).join('')}</div></div><label class="geneo-check"><input type="checkbox" data-geneo-sockets ${canvas.alwaysShowSockets ? 'checked' : ''}> Always show sockets</label><label class="geneo-check"><input type="checkbox" data-geneo-snap ${canvas.snapToGrid ? 'checked' : ''}> Snap to grid</label></div></section></div></aside>`;
     }
 
     function renderGeneographMultiSelectionInspector(nodes, connections = []) {
@@ -65166,101 +66548,91 @@
               </section>
             `
         }
-        <section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body">
-        ${node.type !== 'text' ? `
-                  <div class="geneo-field">
-                    <label>Background</label>
-                    <input
-                      class="geneo-input"
-                      type="color"
-                      data-geneo-appearance="backgroundColor"
-                      value="${escapeHtml(
-                        appearance.backgroundColor || '#18211f'
-                      )}">
-                  </div>
+          <section class="geneo-inspector-section">
+            <h3>Appearance</h3>
 
-                  ${
-                    node.type === 'panel'
-                      ? `
-                        <div class="geneo-field">
-                          <label for="geneoPanelStrokeType">
-                            Stroke type
-                          </label>
+            <div class="geneo-inspector-section-body">
+              ${
+                node.type !== 'text'
+                  ? `
+                    <div class="geneo-appearance-group">
+                      ${renderGeneoPaintControl({
+                        scope: 'node',
+                        id: node.id,
+                        property: 'fill'
+                      })}
+                    </div>
 
-                          <select
-                            class="geneo-select"
-                            id="geneoPanelStrokeType"
-                            data-geneo-appearance="strokeType">
-                            <option
-                              value="dashed"
-                              ${
-                                appearance.strokeType === 'dashed'
-                                  ? 'selected'
-                                  : ''
-                              }>
-                              Dashed
-                            </option>
+                    <div class="geneo-appearance-group">
+                      ${renderGeneoPaintControl({
+                        scope: 'node',
+                        id: node.id,
+                        property: 'stroke'
+                      })}
 
-                            <option
-                              value="solid"
-                              ${
-                                appearance.strokeType === 'solid'
-                                  ? 'selected'
-                                  : ''
-                              }>
-                              Solid
-                            </option>
+                    <div class="geneo-field geneo-appearance-subfield">
+                      <label for="geneoNodeStrokePattern">
+                        Pattern
+                      </label>
 
-                            <option
-                              value="none"
-                              ${
-                                appearance.strokeType === 'none'
-                                  ? 'selected'
-                                  : ''
-                              }>
-                              No stroke
-                            </option>
-                          </select>
-                        </div>
-                      `
-                      : ''
-                  }
+                      <div class="common-select-shell geneo-pattern-select-shell">
+                        <select
+                          class="common-select geneo-pattern-select"
+                          id="geneoNodeStrokePattern"
+                          data-geneo-stroke-pattern
+                          ${appearance.stroke.enabled ? '' : 'disabled'}>
 
-                  ${
-                    node.type !== 'panel'
-                    || appearance.strokeType !== 'none'
-                      ? `
-                        <div class="geneo-field">
-                          <label>Stroke</label>
-                          <input
-                            class="geneo-input"
-                            type="color"
-                            data-geneo-appearance="strokeColor"
-                            value="${escapeHtml(
-                              appearance.strokeColor || '#52615d'
-                            )}">
-                        </div>
-                      `
-                      : ''
-                  }
-                ` : ''}
-          ${
-            node.type === 'image'
-              ? ''
-              : `
-                <div class="geneo-field">
-                  <label>Text</label>
-                  <input
-                    class="geneo-input"
-                    type="color"
-                    data-geneo-appearance="textColor"
-                    value="${escapeHtml(
-                      appearance.textColor || '#f1f5f3'
-                    )}">
-                </div>
-              `
-          }
-          </div></section><section class="geneo-inspector-section"><h3>Layout</h3><div class="geneo-inspector-section-body"><div class="geneo-layout-grid"><div class="geneo-field"><label>X</label><input class="geneo-input" type="number" data-geneo-layout="x" value="${Math.round(node.x)}"></div><div class="geneo-field"><label>Y</label><input class="geneo-input" type="number" data-geneo-layout="y" value="${Math.round(node.y)}"></div><div class="geneo-field"><label>Width</label><input class="geneo-input" type="number" data-geneo-layout="width" value="${Math.round(node.width)}"></div><div class="geneo-field"><label>Height</label><input class="geneo-input" type="number" data-geneo-layout="height" value="${Math.round(node.height)}"></div></div><label class="geneo-check"><input type="checkbox" data-geneo-node-visible ${node.visible ? 'checked' : ''}> Visible</label><label class="geneo-check"><input type="checkbox" data-geneo-node-locked ${node.locked ? 'checked' : ''}> Locked</label></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete ${node.type}</button></div></aside>`;
+                          <option
+                            value="solid"
+                            ${
+                              appearance.strokePattern === 'solid'
+                                ? 'selected'
+                                : ''
+                            }>
+                            Solid
+                          </option>
+
+                          <option
+                            value="dashed"
+                            ${
+                              appearance.strokePattern === 'dashed'
+                                ? 'selected'
+                                : ''
+                            }>
+                            Dashed
+                          </option>
+                        </select>
+
+                        <span
+                          class="common-select-chevron"
+                          aria-hidden="true">
+                          ${icon.chevron}
+                        </span>
+                      </div>
+                    </div>
+                    </div>
+                  `
+                  : ''
+              }
+
+              ${
+                node.type === 'image'
+                  ? ''
+                  : `
+                    <div class="geneo-appearance-group">
+                      ${renderGeneoPaintControl({
+                        scope: 'node',
+                        id: node.id,
+                        property: 'text'
+                      })}
+
+                      ${renderGeneoContrastWarning(node)}
+                    </div>
+                  `
+              }
+            </div>
+          </section>
+          <section class="geneo-inspector-section"><h3>Layout</h3><div class="geneo-inspector-section-body"><div class="geneo-layout-grid"><div class="geneo-field"><label>X</label><input class="geneo-input" type="number" data-geneo-layout="x" value="${Math.round(node.x)}"></div><div class="geneo-field"><label>Y</label><input class="geneo-input" type="number" data-geneo-layout="y" value="${Math.round(node.y)}"></div><div class="geneo-field"><label>Width</label><input class="geneo-input" type="number" data-geneo-layout="width" value="${Math.round(node.width)}"></div><div class="geneo-field"><label>Height</label><input class="geneo-input" type="number" data-geneo-layout="height" value="${Math.round(node.height)}"></div></div><label class="geneo-check"><input type="checkbox" data-geneo-node-visible ${node.visible ? 'checked' : ''}> Visible</label><label class="geneo-check"><input type="checkbox" data-geneo-node-locked ${node.locked ? 'checked' : ''}> Locked</label></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete ${node.type}</button></div></aside>`;
     }
 
     function renderGeneographConnectionInspector(connection) {
@@ -65276,10 +66648,11 @@
       const startEvent = relationship ? partnerRelationshipStartEvent(relationship, relationshipType) : null;
       const marriageType = startEvent?.typeLabel || relationship?.marriageType || 'Civil';
       const relationshipSection = family ? `<section class="geneo-inspector-section"><h3>Relationship details</h3><div class="geneo-inspector-section-body geneo-relationship-editor" data-geneo-relationship-editor><div class="geneo-field"><label for="geneoRelationshipType">Relationship type</label><select class="geneo-select" id="geneoRelationshipType" data-geneo-relationship-type>${addPersonRelationshipTypeOptions(relationshipType)}</select></div>${renderPartnerRelationshipDateFields({ prefix: 'geneoRelationship', relationshipType, family: relationship })}<div class="geneo-field" data-add-person-marriage-type-field ${addPersonRelationshipShowsMarriageType(relationshipType) ? '' : 'hidden'}><label for="geneoRelationshipMarriageType">Marriage type</label><select class="geneo-select" id="geneoRelationshipMarriageType" data-geneo-marriage-type>${addPersonMarriageTypeOptions(marriageType)}</select></div><label class="geneo-check"><input type="checkbox" data-geneo-show-relationship-dates ${connection.showRelationshipDates !== false ? 'checked' : ''}> Show relationship date on board</label><p class="geneo-relationship-storage">${resolved.central ? 'Linked Family Tree relationship' : 'Board-only relationship'}</p><button class="button primary" type="button" data-geneo-save-relationship>Save relationship details</button></div></section>` : '';
-      return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader(geneoConnectionLabel(connection), 'Connection', icon.link)}${nameSection}${relationshipSection}<section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body"><div class="geneo-field"><label>Color</label><input class="geneo-input" type="color" data-geneo-connection-style="color" value="${escapeHtml(connection.style.color)}"></div><div class="geneo-field"><label>Width</label><input class="geneo-input" type="number" min="1" max="8" data-geneo-connection-style="width" value="${connection.style.width}"></div><div class="geneo-field"><label>Pattern</label><select class="geneo-select" data-geneo-connection-style="pattern"><option value="solid" ${connection.style.pattern === 'solid' ? 'selected' : ''}>Solid</option><option value="dashed" ${connection.style.pattern === 'dashed' ? 'selected' : ''}>Dashed</option></select></div><div class="geneo-field"><label>Routing</label><select class="geneo-select" data-geneo-connection-routing><option value="auto" ${connection.route.mode === 'auto' ? 'selected' : ''}>Automatic</option><option value="manual" ${connection.route.mode === 'manual' ? 'selected' : ''}>Manual</option></select></div><button class="button secondary" type="button" data-geneo-reset-route>Reset route</button></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete connection</button></div></aside>`;
+      return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader(geneoConnectionLabel(connection), 'Connection', icon.link)}${nameSection}${relationshipSection}<section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body">${renderGeneoPaintControl({ scope: 'connection', id: connection.id, property: 'line' })}<div class="geneo-field"><label>Width</label><input class="geneo-input" type="number" min="1" max="8" data-geneo-connection-style="width" value="${connection.style.width}"></div><div class="geneo-field"><label>Pattern</label><select class="geneo-select" data-geneo-connection-style="pattern" ${connection.style.line.enabled ? '' : 'disabled'}><option value="solid" ${connection.style.pattern === 'solid' ? 'selected' : ''}>Solid</option><option value="dashed" ${connection.style.pattern === 'dashed' ? 'selected' : ''}>Dashed</option></select></div><div class="geneo-field"><label>Routing</label><select class="geneo-select" data-geneo-connection-routing><option value="auto" ${connection.route.mode === 'auto' ? 'selected' : ''}>Automatic</option><option value="manual" ${connection.route.mode === 'manual' ? 'selected' : ''}>Manual</option></select></div><button class="button secondary" type="button" data-geneo-reset-route>Reset route</button></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete connection</button></div></aside>`;
     }
 
     function renderGeneographEditor() {
+      if (geneoPaintRuntime.popover) closeGeneoPaintPopover({ restoreFocus: false });
       normalizeGeneographRuntimeData();
       pruneGeneographSelection();
       if (
@@ -65337,7 +66710,7 @@
             </button>
           </div>
         </div>
-        <div class="geneo-editor-main ${state.geneoInspectorCollapsed ? 'inspector-collapsed' : ''}"><div class="geneo-canvas-viewport" data-geneo-canvas-viewport style="--geneo-canvas-background:${escapeHtml(diagram.canvas.backgroundColor)}"><div class="geneo-canvas-wrap" data-geneo-canvas-wrap><div class="geneo-board-space pattern-${escapeHtml(diagram.canvas.backgroundPattern)}" style="width:${bounds.width * zoom}px;height:${bounds.height * zoom}px;--geneo-canvas-zoom:${zoom};--geneo-grid-origin-x:${gridOriginX}px;--geneo-grid-origin-y:${gridOriginY}px"><div class="${stageClasses}" data-geneo-stage style="width:${bounds.width}px;height:${bounds.height}px;transform:scale(${zoom})">
+        <div class="geneo-editor-main ${state.geneoInspectorCollapsed ? 'inspector-collapsed' : ''}"><div class="geneo-canvas-viewport" data-geneo-canvas-viewport style="--geneo-canvas-background:${escapeHtml(geneoPaintCssColor(diagram.canvas.backgroundPaint))}"><div class="geneo-canvas-wrap" data-geneo-canvas-wrap><div class="geneo-board-space pattern-${escapeHtml(diagram.canvas.backgroundPattern)}" style="width:${bounds.width * zoom}px;height:${bounds.height * zoom}px;--geneo-canvas-zoom:${zoom};--geneo-grid-origin-x:${gridOriginX}px;--geneo-grid-origin-y:${gridOriginY}px"><div class="${stageClasses}" data-geneo-stage style="width:${bounds.width}px;height:${bounds.height}px;transform:scale(${zoom})">
           ${renderGeneographConnectors()}<div class="geneo-panel-draft" data-geneo-panel-draft hidden><span data-geneo-panel-draft-size></span></div><div class="geneo-selection-marquee" data-geneo-marquee hidden></div>${ordered.map(renderGeneographObject).join('')}
           </div></div></div><div class="geneo-zoom-overlay canvas-zoom"><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="out" aria-label="Zoom out">${icon.zoomOut}</button><span class="geneo-zoom-value zoom-value">${state.geneoZoom}%</span><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="in" aria-label="Zoom in">${icon.zoomIn}</button><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="fit" aria-label="Fit board">${icon.home}</button></div></div>${renderGeneographInspector()}</div>
       </section>`;
@@ -65348,7 +66721,8 @@
     }
 
     function renderGeneographEditorPreserveScroll({
-      preserveInspectorScroll = false
+      preserveInspectorScroll = false,
+      preserveSidebarScroll = false
     } = {}) {
       const center = geneoCurrentViewportCenter();
 
@@ -65359,6 +66733,9 @@
             )?.scrollTop ?? null
           )
         : null;
+      const sidebarScrollTop = preserveSidebarScroll
+        ? sidebar.querySelector('.geneo-sidebar')?.scrollTop ?? null
+        : null;
 
       renderGeneographEditor();
 
@@ -65367,23 +66744,33 @@
           restoreGeneographViewportCenter(center);
         }
 
-        if (inspectorScrollTop === null) return;
+        if (inspectorScrollTop !== null) {
+          const inspector = main.querySelector(
+            '.geneo-inspector:not(.collapsed)'
+          );
 
-        const inspector = main.querySelector(
-          '.geneo-inspector:not(.collapsed)'
-        );
+          if (inspector) {
+            const maximumScrollTop = Math.max(
+              0,
+              inspector.scrollHeight - inspector.clientHeight
+            );
 
-        if (!inspector) return;
+            inspector.scrollTop = Math.min(
+              inspectorScrollTop,
+              maximumScrollTop
+            );
+          }
+        }
 
-        const maximumScrollTop = Math.max(
-          0,
-          inspector.scrollHeight - inspector.clientHeight
-        );
-
-        inspector.scrollTop = Math.min(
-          inspectorScrollTop,
-          maximumScrollTop
-        );
+        if (sidebarScrollTop !== null) {
+          const geneoSidebar = sidebar.querySelector('.geneo-sidebar');
+          if (geneoSidebar) {
+            geneoSidebar.scrollTop = Math.min(
+              sidebarScrollTop,
+              Math.max(0, geneoSidebar.scrollHeight - geneoSidebar.clientHeight)
+            );
+          }
+        }
       });
     }
 
@@ -65747,7 +67134,7 @@
         const defaults = geneoNodeDefaults('person');
         const position = nextGeneoObjectPosition(defaults.width, defaults.height);
         const person = { id: createRuntimeId('geneo-person'), treePersonId: null, syncState: 'local', ...values, photoId: null };
-        const node = { id: createRuntimeId('geneo-node'), type: 'person', personId: person.id, ...position, width: defaults.width, height: defaults.height, parentPanelId: null, order: Math.max(0, ...diagram.nodes.map(item => item.order || 0)) + 1, visible: true, locked: false, appearance: { ...defaults.appearance, backgroundColor: '#173029', strokeColor: '#62d99a', strokeWidth: 2 } };
+        const node = { id: createRuntimeId('geneo-node'), type: 'person', personId: person.id, ...position, width: defaults.width, height: defaults.height, parentPanelId: null, order: Math.max(0, ...diagram.nodes.map(item => item.order || 0)) + 1, visible: true, locked: false, appearance: { ...defaults.appearance, fill: { color: '#173029', opacity: 100, enabled: true }, stroke: { color: '#62D99A', opacity: 100, enabled: true }, strokeWidth: 2 } };
         diagram.people.push(person);
         diagram.nodes.push(node);
         selectGeneographNode(node.id);
@@ -66693,7 +68080,7 @@
     }
 
     function geneoCreateConnection(kind, source, target, familyId = null) {
-      return { id: createRuntimeId('geneo-connection'), kind, familyId, source: { ...source }, target: { ...target }, showRelationshipDates: true, style: { pattern: state.geneoConnectorPattern === 'dashed' ? 'dashed' : 'solid', color: kind === 'visual' ? '#d4aa6b' : '#8ecdb2', width: 2 }, route: { mode: 'auto', waypoints: [] } };
+      return { id: createRuntimeId('geneo-connection'), kind, familyId, source: { ...source }, target: { ...target }, showRelationshipDates: true, style: { pattern: state.geneoConnectorPattern === 'dashed' ? 'dashed' : 'solid', line: { color: kind === 'visual' ? '#D4AA6B' : '#8ECDB2', opacity: 100, enabled: true }, width: 2 }, route: { mode: 'auto', waypoints: [] } };
     }
 
     function commitGeneographConnection(source, target) {
@@ -67474,28 +68861,15 @@
             });
           });
         });
-      main
-        .querySelectorAll('[data-geneo-appearance]')
-        .forEach(input => {
-          input.addEventListener('change', () => {
-            const node =
-              selectedGeneographNode();
-
-            if (!node) return;
-
-            geneoPushHistory();
-
-            node.appearance[
-              input.dataset.geneoAppearance
-            ] = input.value;
-
-            touchGeneographBoard();
-
-            renderGeneographEditorPreserveScroll({
-              preserveInspectorScroll: true
-            });
-          });
-        });
+      bindGeneoPaintControls();
+      main.querySelector('[data-geneo-stroke-pattern]')?.addEventListener('change', event => {
+        const node = selectedGeneographNode();
+        if (!node || node.type === 'text') return;
+        geneoPushHistory();
+        node.appearance.strokePattern = event.target.value === 'dashed' ? 'dashed' : 'solid';
+        touchGeneographBoard();
+        applyGeneoPaintTargetToDom({ scope: 'node', id: node.id, property: 'stroke' });
+      });
       main
         .querySelectorAll('[data-geneo-layout]')
         .forEach(input => {
@@ -67713,8 +69087,6 @@
             preserveInspectorScroll: true
           });
         });
-      main.querySelector('[data-geneo-canvas-color]')?.addEventListener('change', event => updateGeneoCanvasSetting('backgroundColor', event.target.value));
-      main.querySelectorAll('[data-geneo-canvas-preset]').forEach(button => button.addEventListener('click', () => updateGeneoCanvasSetting('backgroundColor', button.dataset.geneoCanvasPreset)));
       main.querySelectorAll('[data-geneo-background-pattern]').forEach(button => button.addEventListener('click', () => updateGeneoCanvasSetting('backgroundPattern', button.dataset.geneoBackgroundPattern)));
       main.querySelector('[data-geneo-sockets]')?.addEventListener('change', event => updateGeneoCanvasSetting('alwaysShowSockets', event.target.checked));
       main.querySelector('[data-geneo-snap]')?.addEventListener('change', event => updateGeneoCanvasSetting('snapToGrid', event.target.checked));
