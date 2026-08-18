@@ -11334,6 +11334,12 @@
     .geneo-toolbar-objects { display:inline-flex; align-items:center; gap:4px; padding-left:8px; border-left:1px solid var(--border-default); }
     .geneo-toolbar-object { height:40px; min-width:0; padding:0 10px; border:1px solid transparent; border-radius:var(--radius-sm); background:transparent; color:var(--text-secondary); display:inline-flex; align-items:center; gap:7px; font-weight:800; white-space:nowrap; }
     .geneo-toolbar-object:hover { background:var(--surface-card-hover); border-color:var(--border-default); color:var(--text-primary); }
+    .geneo-toolbar-object[aria-pressed="true"] {
+      border-color: rgba(98, 217, 154, .3);
+      background: var(--surface-selected);
+      color: var(--text-primary);
+      box-shadow: inset 0 0 0 1px rgba(98, 217, 154, .12);
+    }
     .geneo-toolbar-object:focus-visible { outline:2px solid var(--brand-green-300); outline-offset:2px; }
     .geneo-toolbar-object svg { width:18px; height:18px; flex:0 0 18px; display:block; }
     .tool-split { position:relative; display:inline-flex; align-items:stretch; flex:0 0 auto; }
@@ -11679,6 +11685,47 @@
     .geneo-background-pattern button[aria-pressed="true"] { background: var(--surface-selected); border-color: rgba(98,217,154,.28); color: var(--text-primary); }
     .geneo-background-pattern button:focus-visible { outline: 2px solid var(--brand-green-300); outline-offset: 1px; }
     .geneo-selection-marquee { position:absolute; z-index:45; border:1px solid var(--brand-green-300); background:rgba(98,217,154,.12); pointer-events:none; }
+    .geneo-canvas-stage.panel-tool {
+      cursor: crosshair;
+    }
+
+    .geneo-canvas-stage.panel-tool .geneo-node {
+      cursor: default;
+    }
+
+    .geneo-panel-draft {
+      position: absolute;
+      z-index: 44;
+      min-width: 0;
+      min-height: 0;
+      border: 2px dashed var(--brand-green-300);
+      border-radius: 8px;
+      background: rgba(47, 174, 116, .08);
+      box-shadow:
+        0 0 0 1px rgba(8, 14, 11, .7),
+        0 12px 30px rgba(0, 0, 0, .18);
+      pointer-events: none;
+    }
+
+    .geneo-panel-draft[hidden] {
+      display: none;
+    }
+
+    .geneo-panel-draft > span {
+      position: absolute;
+      left: 8px;
+      top: 8px;
+      min-height: 24px;
+      padding: 0 7px;
+      border-radius: 5px;
+      display: inline-flex;
+      align-items: center;
+      background: rgba(7, 13, 10, .82);
+      color: var(--text-primary);
+      font-size: 11px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
     .geneo-node {
       position: absolute;
       min-width: 0;
@@ -58211,7 +58258,7 @@
             { id: 'gf-luna', partnerIds: ['gp-luna'], children: [{ personId: 'gp-theo', parentageType: 'biological' }] }
           ],
           nodes: [
-            { id: 'gn-panel', type: 'panel', x: 170, y: 105, width: 1060, height: 620, parentPanelId: null, order: 1, visible: true, locked: false, title: 'Whiskerfield household', appearance: { backgroundColor: '#132321', strokeColor: '#3f6f61', strokeWidth: 2, textColor: '#d9e8e2' } },
+            { id: 'gn-panel', type: 'panel', x: 170, y: 105, width: 1060, height: 620, parentPanelId: null, order: 1, visible: true, locked: false, title: 'Whiskerfield household', description: '', appearance: { backgroundColor: '#132321', strokeColor: '#3f6f61', strokeWidth: 2, textColor: '#d9e8e2' } },
             { id: 'gn-barnaby', type: 'person', personId: 'gp-barnaby', x: 270, y: 200, width: 240, height: 132, parentPanelId: 'gn-panel', order: 6, visible: true, locked: false, appearance: { backgroundColor: '#173029', strokeColor: '#62d99a', strokeWidth: 2, textColor: '#f3f7f5' } },
             { id: 'gn-daisy', type: 'person', personId: 'gp-daisy', x: 700, y: 200, width: 240, height: 132, parentPanelId: 'gn-panel', order: 5, visible: true, locked: false, appearance: { backgroundColor: '#2d2437', strokeColor: '#aa8ce8', strokeWidth: 2, textColor: '#f6f1fb' } },
             { id: 'gn-silver', type: 'person', personId: 'gp-silver', x: 350, y: 500, width: 240, height: 132, parentPanelId: 'gn-panel', order: 4, visible: true, locked: false, appearance: { backgroundColor: '#172a32', strokeColor: '#5dade2', strokeWidth: 2, textColor: '#f2f8fb' } },
@@ -61854,17 +61901,40 @@
       );
     }
 
-    function renderGeneoToolbarObjectButton(type, iconSvg, label) {
+    function renderGeneoToolbarObjectButton(
+      type,
+      iconSvg,
+      label
+    ) {
+      const isPanelTool = type === 'panel';
+      const active =
+        isPanelTool
+        && state.geneoTool === 'panel';
+
+      const actionAttribute = isPanelTool
+        ? 'data-geneo-panel-tool'
+        : `data-geneo-add="${escapeHtml(type)}"`;
+
+      const actionLabel = isPanelTool
+        ? `Draw ${label}`
+        : `Add ${label}`;
+
       return `
         <button
-          class="geneo-toolbar-object"
+          class="geneo-toolbar-object ${active ? 'active' : ''}"
           type="button"
-          data-geneo-add="${type}"
-          title="${escapeHtml(label)}"
-          aria-label="Add ${escapeHtml(label)}">
+          ${actionAttribute}
+          ${
+            isPanelTool
+              ? `aria-pressed="${active}"`
+              : ''
+          }
+          title="${escapeHtml(actionLabel)}"
+          aria-label="${escapeHtml(actionLabel)}">
           <span aria-hidden="true">${iconSvg}</span>
           <span>${escapeHtml(label)}</span>
-        </button>`;
+        </button>
+      `;
     }
 
     function renderGeneoConnectionSplitTool() {
@@ -63279,6 +63349,21 @@
               )
             };
 
+            if (node.type === 'panel') {
+              normalizedNode.title =
+                String(node.title || 'Panel')
+                  .trim()
+                  .slice(0, 160)
+                || 'Panel';
+
+              normalizedNode.description =
+                String(node.description || '')
+                  .trim()
+                  .slice(0, 500);
+            } else {
+              delete normalizedNode.description;
+            }
+
             if (node.type === 'image') {
               const imageRef = normalizeGeneographImageRef(node);
               normalizedNode.imageRef = imageRef;
@@ -63553,6 +63638,49 @@
       if (!node?.visible) return false;
       const parent = getGeneographNode(node.parentPanelId);
       return !parent || geneoNodeEffectiveVisible(parent);
+    }
+
+    function geneoConnectionReferenceNodes(reference) {
+      const diagram = selectedGeneographDiagram();
+      if (!diagram || !reference) return [];
+
+      if (reference.nodeId) {
+        const node = getGeneographNode(reference.nodeId);
+        return node ? [node] : [];
+      }
+
+      if (!reference.familyId) return [];
+
+      const family = getGeneographFamily(reference.familyId);
+      if (!family) return [];
+
+      const partnerIds = new Set(
+        family.partnerIds || []
+      );
+
+      return diagram.nodes.filter(node =>
+        node.type === 'person'
+        && partnerIds.has(node.personId)
+      );
+    }
+
+    function geneoConnectionReferenceEffectiveVisible(reference) {
+      const nodes = geneoConnectionReferenceNodes(reference);
+
+      return nodes.length > 0
+        && nodes.every(geneoNodeEffectiveVisible);
+    }
+
+    function geneoConnectionEffectiveVisible(connection) {
+      return Boolean(
+        connection
+        && geneoConnectionReferenceEffectiveVisible(
+          connection.source
+        )
+        && geneoConnectionReferenceEffectiveVisible(
+          connection.target
+        )
+      );
     }
 
     function geneoNodeEffectiveLocked(node) {
@@ -63966,6 +64094,7 @@
     }
 
     function geneoConnectionIntersectsRect(connection, rect) {
+      if (!geneoConnectionEffectiveVisible(connection)) return false;
       const corners = [
         { x: rect.left, y: rect.top }, { x: rect.right, y: rect.top },
         { x: rect.right, y: rect.bottom }, { x: rect.left, y: rect.bottom }
@@ -64033,9 +64162,12 @@
       const connectionPaintRank = connection => connection.kind === 'family-partner'
         ? 2
         : selectedConnectionIds.has(connection.id) ? 1 : 0;
-      const orderedConnections = diagram.connections.slice().sort((first, second) =>
-        connectionPaintRank(first) - connectionPaintRank(second)
-      );
+      const orderedConnections = diagram.connections
+        .filter(geneoConnectionEffectiveVisible)
+        .sort((first, second) =>
+          connectionPaintRank(first)
+          - connectionPaintRank(second)
+        );
       return `<svg class="geneo-connections" viewBox="${bounds.left} ${bounds.top} ${bounds.width} ${bounds.height}" style="--geneo-connection-hit-width:${14 / Math.max(.25, state.geneoZoom / 100)}px;--geneo-segment-hit-width:${18 / Math.max(.25, state.geneoZoom / 100)}px" aria-label="Board connections">
         ${orderedConnections.map(connection => {
           const selected = selectedConnectionIds.has(connection.id);
@@ -64815,7 +64947,46 @@
           node
         );
       const person = node.type === 'person' ? getGeneographPerson(node.personId) : null;
-      const content = node.type === 'person' ? renderGeneographPersonInspectorContent(person) : node.type === 'image' ? `<div class="geneo-field"><label>Title</label><input class="geneo-input" data-geneo-node-field="title" value="${escapeHtml(node.title || '')}"></div><button class="button secondary" type="button" data-geneo-choose-image>Choose project photo</button>` : node.type === 'panel' ? `<div class="geneo-field"><label>Panel title</label><input class="geneo-input" data-geneo-node-field="title" value="${escapeHtml(node.title || '')}"></div>` : `<div class="geneo-field"><label>${node.type === 'sticky' ? 'Note' : 'Text'}</label><textarea class="geneo-textarea" data-geneo-node-field="text">${escapeHtml(node.text || '')}</textarea></div>`;
+      const content = node.type === 'person' ? renderGeneographPersonInspectorContent(person) : 
+      node.type === 'image' ? `<div class="geneo-field"><label>Title</label><input class="geneo-input" data-geneo-node-field="title" value="${escapeHtml(node.title || '')}"></div><button class="button secondary" type="button" data-geneo-choose-image>Choose project photo</button>` : 
+      node.type === 'panel'
+        ? `
+          <div class="geneo-field">
+            <label for="geneoPanelTitle">
+              Panel title
+            </label>
+
+            <input
+              class="geneo-input"
+              id="geneoPanelTitle"
+              type="text"
+              maxlength="160"
+              data-geneo-node-field="title"
+              value="${escapeHtml(node.title || '')}">
+          </div>
+
+          <div class="geneo-field">
+            <label for="geneoPanelDescription">
+              Panel description
+            </label>
+
+            <textarea
+              class="geneo-textarea"
+              id="geneoPanelDescription"
+              maxlength="500"
+              rows="4"
+              data-geneo-node-field="description"
+              placeholder="Describe the purpose or contents of this panel.">${escapeHtml(
+                node.description || ''
+              )}</textarea>
+
+            <p class="geneo-selection-help">
+              Visible in panel properties only.
+            </p>
+          </div>
+        `
+        :
+      `<div class="geneo-field"><label>${node.type === 'sticky' ? 'Note' : 'Text'}</label><textarea class="geneo-textarea" data-geneo-node-field="text">${escapeHtml(node.text || '')}</textarea></div>`;
       return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader(geneoNodeTitle(node), capitalize(node.type), geneoNodeIcon(node.type))}${nameSection}
         ${
           node.type === 'image'
@@ -64894,6 +65065,7 @@
       const stageClasses = [
         'geneo-canvas-stage',
         state.geneoTool === 'connect' ? 'connection-tool' : '',
+        state.geneoTool === 'panel' ? 'panel-tool' : '',
         state.geneoConnectionDraft ? 'is-connecting' : '',
         diagram.canvas.alwaysShowSockets ? 'show-sockets' : ''
       ].filter(Boolean).join(' ');
@@ -64924,7 +65096,9 @@
             </button>
           </div>
         </div>
-        <div class="geneo-editor-main ${state.geneoInspectorCollapsed ? 'inspector-collapsed' : ''}"><div class="geneo-canvas-viewport" data-geneo-canvas-viewport style="--geneo-canvas-background:${escapeHtml(diagram.canvas.backgroundColor)}"><div class="geneo-canvas-wrap" data-geneo-canvas-wrap><div class="geneo-board-space pattern-${escapeHtml(diagram.canvas.backgroundPattern)}" style="width:${bounds.width * zoom}px;height:${bounds.height * zoom}px;--geneo-canvas-zoom:${zoom};--geneo-grid-origin-x:${gridOriginX}px;--geneo-grid-origin-y:${gridOriginY}px"><div class="${stageClasses}" data-geneo-stage style="width:${bounds.width}px;height:${bounds.height}px;transform:scale(${zoom})">${renderGeneographConnectors()}<div class="geneo-selection-marquee" data-geneo-marquee hidden></div>${ordered.map(renderGeneographObject).join('')}</div></div></div><div class="geneo-zoom-overlay canvas-zoom"><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="out" aria-label="Zoom out">${icon.zoomOut}</button><span class="geneo-zoom-value zoom-value">${state.geneoZoom}%</span><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="in" aria-label="Zoom in">${icon.zoomIn}</button><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="fit" aria-label="Fit board">${icon.home}</button></div></div>${renderGeneographInspector()}</div>
+        <div class="geneo-editor-main ${state.geneoInspectorCollapsed ? 'inspector-collapsed' : ''}"><div class="geneo-canvas-viewport" data-geneo-canvas-viewport style="--geneo-canvas-background:${escapeHtml(diagram.canvas.backgroundColor)}"><div class="geneo-canvas-wrap" data-geneo-canvas-wrap><div class="geneo-board-space pattern-${escapeHtml(diagram.canvas.backgroundPattern)}" style="width:${bounds.width * zoom}px;height:${bounds.height * zoom}px;--geneo-canvas-zoom:${zoom};--geneo-grid-origin-x:${gridOriginX}px;--geneo-grid-origin-y:${gridOriginY}px"><div class="${stageClasses}" data-geneo-stage style="width:${bounds.width}px;height:${bounds.height}px;transform:scale(${zoom})">
+          ${renderGeneographConnectors()}<div class="geneo-panel-draft" data-geneo-panel-draft hidden><span data-geneo-panel-draft-size></span></div><div class="geneo-selection-marquee" data-geneo-marquee hidden></div>${ordered.map(renderGeneographObject).join('')}
+          </div></div></div><div class="geneo-zoom-overlay canvas-zoom"><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="out" aria-label="Zoom out">${icon.zoomOut}</button><span class="geneo-zoom-value zoom-value">${state.geneoZoom}%</span><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="in" aria-label="Zoom in">${icon.zoomIn}</button><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="fit" aria-label="Fit board">${icon.home}</button></div></div>${renderGeneographInspector()}</div>
       </section>`;
       bindGeneographEditor();
       ensureGeneographKeyboardBinding();
@@ -65025,24 +65199,196 @@
 
     function addGeneographObject(type) {
       if (!GENEO_NODE_TYPES.has(type)) return;
-      if (type === 'person') { openAddGeneographPersonModal(); return; }
-      if (type === 'image') { openGeneographImagePicker(); return; }
-      const diagram = selectedGeneographDiagram();
-      const defaults = geneoNodeDefaults(type);
-      const position = nextGeneoObjectPosition(defaults.width, defaults.height);
-      geneoPushHistory();
-      const node = { id: createRuntimeId('geneo-node'), type, ...position, width: defaults.width, height: defaults.height, parentPanelId: null, order: Math.max(0, ...diagram.nodes.map(item => item.order || 0)) + 1, visible: true, locked: false, appearance: defaults.appearance };
-      if (type === 'sticky') node.text = 'New research note';
-      if (type === 'text') node.text = 'New text';
-      if (type === 'panel') node.title = 'New panel';
-      diagram.nodes.push(node);
-      if (type === 'panel') reconcileGeneographPanelMembership(node.id);
-      selectGeneographNode(node.id); touchGeneographBoard();
-      if (type === 'sticky' || type === 'text' || type === 'panel') {
-        beginGeneographInlineEdit(node.id, { selectAll: type === 'sticky' || type === 'text' });
+
+      if (type === 'panel') {
+        activateGeneographPanelTool();
         return;
       }
+
+      cancelGeneographConnectionDraft();
+      state.geneoTool = 'select';
+
+      if (type === 'person') {
+        openAddGeneographPersonModal();
+        return;
+      }
+
+      if (type === 'image') {
+        openGeneographImagePicker();
+        return;
+      }
+
+      const diagram = selectedGeneographDiagram();
+      const defaults = geneoNodeDefaults(type);
+      const position = nextGeneoObjectPosition(
+        defaults.width,
+        defaults.height
+      );
+
+      geneoPushHistory();
+
+      const node = {
+        id: createRuntimeId('geneo-node'),
+        type,
+        ...position,
+        width: defaults.width,
+        height: defaults.height,
+        parentPanelId: null,
+        order:
+          Math.max(
+            0,
+            ...diagram.nodes.map(item => item.order || 0)
+          ) + 1,
+        visible: true,
+        locked: false,
+        appearance: {
+          ...defaults.appearance
+        }
+      };
+
+      if (type === 'sticky') {
+        node.text = 'New research note';
+      }
+
+      if (type === 'text') {
+        node.text = 'New text';
+      }
+
+      diagram.nodes.push(node);
+      selectGeneographNode(node.id);
+      touchGeneographBoard();
+
+      if (type === 'sticky' || type === 'text') {
+        beginGeneographInlineEdit(node.id, {
+          selectAll: true
+        });
+        return;
+      }
+
       renderGeneographEditorPreserveScroll();
+    }
+
+    function activateGeneographPanelTool() {
+      cancelGeneographConnectionDraft();
+
+      const activating =
+        state.geneoTool !== 'panel';
+
+      state.geneoTool = activating
+        ? 'panel'
+        : 'pan';
+
+      renderGeneographEditorPreserveScroll();
+
+      if (activating) {
+        showToast(
+          'Drag on empty canvas to draw a panel.'
+        );
+      }
+    }
+
+    function geneoPanelDraftRect(start, current) {
+      const left = Math.min(start.x, current.x);
+      const top = Math.min(start.y, current.y);
+      const right = Math.max(start.x, current.x);
+      const bottom = Math.max(start.y, current.y);
+
+      return {
+        x: left,
+        y: top,
+        width: right - left,
+        height: bottom - top
+      };
+    }
+
+    function updateGeneographPanelDraftDom(start, current) {
+      const draft = main.querySelector(
+        '[data-geneo-panel-draft]'
+      );
+
+      if (!draft) return;
+
+      const bounds =
+        geneoCanvasRuntime.bounds
+        || {
+          left: 0,
+          top: 0
+        };
+
+      const rect = geneoPanelDraftRect(
+        start,
+        current
+      );
+
+      draft.hidden = false;
+      draft.style.left = `${rect.x - bounds.left}px`;
+      draft.style.top = `${rect.y - bounds.top}px`;
+      draft.style.width = `${rect.width}px`;
+      draft.style.height = `${rect.height}px`;
+
+      const size = draft.querySelector(
+        '[data-geneo-panel-draft-size]'
+      );
+
+      if (size) {
+        size.textContent =
+          `${Math.round(rect.width)} × ${Math.round(rect.height)}`;
+      }
+    }
+
+    function hideGeneographPanelDraftDom() {
+      const draft = main.querySelector(
+        '[data-geneo-panel-draft]'
+      );
+
+      if (draft) {
+        draft.hidden = true;
+      }
+    }
+
+    function createGeneographPanelFromRect(rect) {
+      const diagram = selectedGeneographDiagram();
+      const defaults = geneoNodeDefaults('panel');
+
+      if (
+        !diagram
+        || rect.width < defaults.minWidth
+        || rect.height < defaults.minHeight
+      ) {
+        return null;
+      }
+
+      geneoPushHistory();
+
+      const panel = {
+        id: createRuntimeId('geneo-node'),
+        type: 'panel',
+        title: 'New panel',
+        description: '',
+        x: snapGeneographCoordinate(rect.x),
+        y: snapGeneographCoordinate(rect.y),
+        width: rect.width,
+        height: rect.height,
+        parentPanelId: null,
+        order:
+          Math.max(
+            0,
+            ...diagram.nodes.map(item => item.order || 0)
+          ) + 1,
+        visible: true,
+        locked: false,
+        appearance: {
+          ...defaults.appearance
+        }
+      };
+
+      diagram.nodes.push(panel);
+
+      reconcileGeneographPanelMembership(panel.id);
+      selectGeneographNode(panel.id);
+      touchGeneographBoard();
+
+      return panel;
     }
 
     function clearGeneographConnectionClick() {
@@ -66341,6 +66687,28 @@
         geneoPointerState.moved = Math.abs(dx) > 1 || Math.abs(dy) > 1;
         return;
       }
+      if (geneoPointerState.kind === 'draw-panel') {
+        const point = snapGeneographPoint(
+          geneoPointerToCanvas(event)
+        );
+
+        const rect = geneoPanelDraftRect(
+          geneoPointerState.start,
+          point
+        );
+
+        geneoPointerState.current = point;
+        geneoPointerState.moved =
+          rect.width > 2
+          || rect.height > 2;
+
+        updateGeneographPanelDraftDom(
+          geneoPointerState.start,
+          point
+        );
+
+        return;
+      }
       if (geneoPointerState.kind === 'waypoint') {
         const connection = getGeneographConnection(geneoPointerState.connectionId);
         const point = snapGeneographPoint(geneoPointerToCanvas(event));
@@ -66463,6 +66831,55 @@
 
     function endGeneographObjectDrag() {
       if (!geneoPointerState) return; const stateBefore = geneoPointerState; geneoPointerState = null;
+      if (stateBefore.kind === 'draw-panel') {
+        hideGeneographPanelDraftDom();
+
+        geneoCanvasRuntime.suppressNodeClick = true;
+
+        requestAnimationFrame(() => {
+          geneoCanvasRuntime.suppressNodeClick = false;
+        });
+
+        const rect = geneoPanelDraftRect(
+          stateBefore.start,
+          stateBefore.current || stateBefore.start
+        );
+
+        const defaults = geneoNodeDefaults('panel');
+
+        if (
+          !stateBefore.moved
+          || rect.width < defaults.minWidth
+          || rect.height < defaults.minHeight
+        ) {
+          if (stateBefore.moved) {
+            showToast(
+              `Panel must be at least ${defaults.minWidth} × ${defaults.minHeight}.`
+            );
+          }
+
+          return;
+        }
+
+        const panel =
+          createGeneographPanelFromRect(rect);
+
+        if (!panel) return;
+
+        state.geneoTool = 'select';
+
+        renderGeneographEditorPreserveScroll();
+
+        requestAnimationFrame(() => {
+          main
+            .querySelector(
+              `[data-geneo-node="${CSS.escape(panel.id)}"]`
+            )
+            ?.focus();
+        });
+
+        return;
+      }
       if (stateBefore.kind === 'pan') return;
       if (stateBefore.kind === 'marquee') {
         geneoCanvasRuntime.suppressNodeClick = stateBefore.moved;
@@ -66599,7 +67016,22 @@
         }, true);
       }
       main.querySelector('[data-geneo-undo]')?.addEventListener('click', undoGeneographChange); main.querySelector('[data-geneo-redo]')?.addEventListener('click', redoGeneographChange);
-      main.querySelectorAll('[data-geneo-add]').forEach(button => button.addEventListener('click', () => addGeneographObject(button.dataset.geneoAdd)));
+      main
+        .querySelectorAll('[data-geneo-add]')
+        .forEach(button => {
+          button.addEventListener('click', () => {
+            addGeneographObject(
+              button.dataset.geneoAdd
+            );
+          });
+        });
+
+      main
+        .querySelector('[data-geneo-panel-tool]')
+        ?.addEventListener(
+          'click',
+          activateGeneographPanelTool
+        );
       main.querySelectorAll('[data-geneo-tool]').forEach(button => button.addEventListener('click', () => { cancelGeneographConnectionDraft(); state.geneoTool = button.dataset.geneoTool; renderGeneographEditorPreserveScroll(); }));
       main.querySelector('[data-geneo-connection-main]')?.addEventListener('click', () => {
         cancelGeneographConnectionDraft();
@@ -66688,12 +67120,55 @@
       });
       wrap?.addEventListener('pointerdown', event => {
         if (event.button !== 0 || event.target.closest('button,input,textarea,select,[data-geneo-node],[data-geneo-connection],[data-geneo-waypoint],[data-geneo-family-junction]')) return;
-        if (state.geneoTool === 'pan') geneoPointerState = { kind: 'pan', wrap, clientX: event.clientX, clientY: event.clientY, left: wrap.scrollLeft, top: wrap.scrollTop, moved: false };
-        else if (state.geneoTool === 'select') {
+        if (state.geneoTool === 'pan') {
+          geneoPointerState = {
+            kind: 'pan',
+            wrap,
+            clientX: event.clientX,
+            clientY: event.clientY,
+            left: wrap.scrollLeft,
+            top: wrap.scrollTop,
+            moved: false
+          };
+        } else if (state.geneoTool === 'select') {
           const additive = event.shiftKey;
-          geneoPointerState = { kind: 'marquee', start: geneoPointerToCanvas(event), current: geneoPointerToCanvas(event), baseIds: additive ? [...geneoSelectedNodeIdSet()] : [], baseConnectionIds: additive ? [...geneoSelectedConnectionIdSet()] : [], additive, moved: false };
-          if (!additive) setGeneographSelection();
-        } else return;
+
+          geneoPointerState = {
+            kind: 'marquee',
+            start: geneoPointerToCanvas(event),
+            current: geneoPointerToCanvas(event),
+            baseIds: additive
+              ? [...geneoSelectedNodeIdSet()]
+              : [],
+            baseConnectionIds: additive
+              ? [...geneoSelectedConnectionIdSet()]
+              : [],
+            additive,
+            moved: false
+          };
+
+          if (!additive) {
+            setGeneographSelection();
+          }
+        } else if (state.geneoTool === 'panel') {
+          const point = snapGeneographPoint(
+            geneoPointerToCanvas(event)
+          );
+
+          geneoPointerState = {
+            kind: 'draw-panel',
+            start: point,
+            current: point,
+            moved: false
+          };
+
+          updateGeneographPanelDraftDom(
+            point,
+            point
+          );
+        } else {
+          return;
+        }
         event.preventDefault();
       });
       wrap?.addEventListener('wheel', queueGeneographWheelZoom, { passive: false });
@@ -67379,6 +67854,23 @@
         if (editable) return;
         if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') { event.preventDefault(); event.shiftKey ? redoGeneographChange() : undoGeneographChange(); return; }
         if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'y') { event.preventDefault(); redoGeneographChange(); return; }
+        if (
+          event.key === 'Escape'
+          && (
+            state.geneoTool === 'panel'
+            || geneoPointerState?.kind === 'draw-panel'
+          )
+        ) {
+          event.preventDefault();
+
+          geneoPointerState = null;
+          hideGeneographPanelDraftDom();
+
+          state.geneoTool = 'pan';
+
+          renderGeneographEditorPreserveScroll();
+          return;
+        }
         if (event.key === 'Escape' && state.geneoConnectionDraft) { event.preventDefault(); cancelGeneographConnectionDraft(); renderGeneographEditorPreserveScroll(); return; }
         if (event.key === 'Escape' && geneoCanvasRuntime.connectionClick) { event.preventDefault(); clearGeneographConnectionClick(); return; }
         if (event.key === 'Delete' || event.key === 'Backspace') { if (Number.isInteger(state.selectedGeneoWaypointIndex)) { const connection = selectedGeneographConnection(); if (connection?.route.waypoints[state.selectedGeneoWaypointIndex]) { geneoPushHistory(); connection.route.waypoints.splice(state.selectedGeneoWaypointIndex, 1); state.selectedGeneoWaypointIndex = null; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); } } else deleteGeneographSelection(); return; }
