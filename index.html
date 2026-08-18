@@ -11729,7 +11729,10 @@
     .geneo-node {
       position: absolute;
       min-width: 0;
-      border: var(--geneo-node-stroke-width) solid var(--geneo-node-stroke);
+      border:
+        var(--geneo-node-stroke-width)
+        var(--geneo-node-stroke-style, solid)
+        var(--geneo-node-stroke);
       background: var(--geneo-node-bg);
       color: var(--geneo-node-text);
       border-radius: 8px;
@@ -11844,7 +11847,15 @@
     .geneo-node-text { border-color: transparent; background: transparent; box-shadow: none; }
     .geneo-node-text.selected { background: rgba(0,0,0,.12); }
     .geneo-text-copy { width:100%; height:100%; display:flex; align-items:center; padding:8px; white-space:pre-wrap; font-size: 26px; font-weight: 800; line-height: 1.15; }
-    .geneo-node-panel { border-style: dashed; background: color-mix(in srgb, var(--geneo-node-bg) 68%, transparent); box-shadow: none; }
+    .geneo-node-panel {
+      background:
+        color-mix(
+          in srgb,
+          var(--geneo-node-bg) 68%,
+          transparent
+        );
+      box-shadow: none;
+    }
     .geneo-node-panel .geneo-node-content { padding: 12px 14px; pointer-events: none; }
     .geneo-panel-title { display:inline-flex; max-width:calc(100% - 24px); font-size:13px; font-weight:900; color:var(--geneo-node-text); }
     .geneo-inline-editor { width:100%; height:100%; min-height:0; resize:none; border:0; outline:0; background:rgba(3,8,7,.5); color:inherit; padding:10px; font:inherit; }
@@ -62900,11 +62911,35 @@
     }
 
     function geneoAppearance(value, defaults = {}) {
-      const source = value && typeof value === 'object' ? value : {};
+      const source =
+        value && typeof value === 'object'
+          ? value
+          : {};
+
+      const fallbackStrokeType =
+        ['dashed', 'solid', 'none'].includes(
+          defaults.strokeType
+        )
+          ? defaults.strokeType
+          : 'solid';
+
+      const strokeType =
+        ['dashed', 'solid', 'none'].includes(
+          source.strokeType
+        )
+          ? source.strokeType
+          : fallbackStrokeType;
+
       return {
         ...defaults,
         ...source,
-        strokeWidth: geneoNumber(source.strokeWidth, defaults.strokeWidth || 1, 0, 12)
+        strokeType,
+        strokeWidth: geneoNumber(
+          source.strokeWidth,
+          defaults.strokeWidth || 1,
+          0,
+          12
+        )
       };
     }
 
@@ -63351,10 +63386,9 @@
 
             if (node.type === 'panel') {
               normalizedNode.title =
-                String(node.title || 'Panel')
+                String(node.title ?? '')
                   .trim()
-                  .slice(0, 160)
-                || 'Panel';
+                  .slice(0, 160);
 
               normalizedNode.description =
                 String(node.description || '')
@@ -63478,12 +63512,67 @@
     }
 
     function geneoNodeDefaults(type) {
-      const common = { appearance: { backgroundColor: '#18211f', strokeColor: '#52615d', strokeWidth: 1, textColor: '#f1f5f3' } };
-      if (type === 'person') return { ...common, width: 240, height: 132, minWidth: 190, minHeight: 110 };
-      if (type === 'image') return { ...common, width: 280, height: 200, minWidth: 160, minHeight: 120 };
-      if (type === 'sticky') return { ...common, width: 240, height: 170, minWidth: 160, minHeight: 110 };
-      if (type === 'text') return { ...common, width: 320, height: 80, minWidth: 120, minHeight: 48 };
-      return { ...common, width: 480, height: 320, minWidth: 240, minHeight: 180 };
+      const common = {
+        appearance: {
+          backgroundColor: '#18211f',
+          strokeColor: '#52615d',
+          strokeWidth: 1,
+          strokeType: 'solid',
+          textColor: '#f1f5f3'
+        }
+      };
+
+      if (type === 'person') {
+        return {
+          ...common,
+          width: 240,
+          height: 132,
+          minWidth: 190,
+          minHeight: 110
+        };
+      }
+
+      if (type === 'image') {
+        return {
+          ...common,
+          width: 280,
+          height: 200,
+          minWidth: 160,
+          minHeight: 120
+        };
+      }
+
+      if (type === 'sticky') {
+        return {
+          ...common,
+          width: 240,
+          height: 170,
+          minWidth: 160,
+          minHeight: 110
+        };
+      }
+
+      if (type === 'text') {
+        return {
+          ...common,
+          width: 320,
+          height: 80,
+          minWidth: 120,
+          minHeight: 48
+        };
+      }
+
+      return {
+        ...common,
+        width: 480,
+        height: 320,
+        minWidth: 240,
+        minHeight: 180,
+        appearance: {
+          ...common.appearance,
+          strokeType: 'dashed'
+        }
+      };
     }
 
     function touchGeneographBoard(board = selectedGeneographBoard()) {
@@ -64235,7 +64324,26 @@
       }
       if (node.type === 'sticky') return editing ? `<textarea class="geneo-inline-editor" data-geneo-inline-input>${escapeHtml(node.text || '')}</textarea>` : `<div class="geneo-sticky-copy">${escapeHtml(node.text || 'Double-click to edit')}</div>`;
       if (node.type === 'text') return editing ? `<textarea class="geneo-inline-editor geneo-inline-text" data-geneo-inline-input>${escapeHtml(node.text || '')}</textarea>` : `<div class="geneo-text-copy">${escapeHtml(node.text || 'Double-click to edit')}</div>`;
-      return editing ? `<input class="geneo-inline-editor" data-geneo-inline-input value="${escapeHtml(node.title || '')}">` : `<span class="geneo-panel-title">${escapeHtml(node.title || 'Panel')}</span>`;
+      const panelTitle =
+        String(node.title ?? '').trim();
+
+      if (editing) {
+        return `
+          <input
+            class="geneo-inline-editor"
+            data-geneo-inline-input
+            maxlength="160"
+            value="${escapeHtml(panelTitle)}">
+        `;
+      }
+
+      return panelTitle
+        ? `
+          <span class="geneo-panel-title">
+            ${escapeHtml(panelTitle)}
+          </span>
+        `
+        : '';
     }
 
     function renderGeneographPorts(node) {
@@ -64249,12 +64357,70 @@
 
     function renderGeneographObject(node) {
       if (!geneoNodeEffectiveVisible(node)) return '';
+
       const appearance = node.appearance || {};
-      const bounds = geneoCanvasRuntime.bounds || { left: 0, top: 0 };
-      const style = [`left:${node.x - bounds.left}px`, `top:${node.y - bounds.top}px`, `width:${node.width}px`, `height:${node.height}px`, `--geneo-node-bg:${appearance.backgroundColor || 'transparent'}`, `--geneo-node-stroke:${appearance.strokeColor || '#52615d'}`, `--geneo-node-stroke-width:${appearance.strokeWidth || 1}px`, `--geneo-node-text:${appearance.textColor || '#f1f5f3'}`, `z-index:${node.type === 'panel' ? Math.max(1, Math.min(10, node.order)) : 20 + node.order}`].join(';');
-      return `<article class="geneo-node geneo-node-${node.type} ${geneoSelectedNodeIdSet().has(node.id) ? 'selected' : ''} ${geneoNodeEffectiveLocked(node) ? 'locked' : ''}" style="${style}" data-geneo-node="${escapeHtml(node.id)}" tabindex="0" aria-label="${escapeHtml(geneoNodeTitle(node))}">
-        <div class="geneo-node-content">${renderGeneographNodeContent(node)}</div>${renderGeneographPorts(node)}${renderGeneographResizeHandles(node)}
-      </article>`;
+
+      const strokeType =
+        ['dashed', 'solid', 'none'].includes(
+          appearance.strokeType
+        )
+          ? appearance.strokeType
+          : node.type === 'panel'
+            ? 'dashed'
+            : 'solid';
+
+      const bounds =
+        geneoCanvasRuntime.bounds
+        || {
+          left: 0,
+          top: 0
+        };
+
+      const style = [
+        `left:${node.x - bounds.left}px`,
+        `top:${node.y - bounds.top}px`,
+        `width:${node.width}px`,
+        `height:${node.height}px`,
+        `--geneo-node-bg:${appearance.backgroundColor || 'transparent'}`,
+        `--geneo-node-stroke:${appearance.strokeColor || '#52615d'}`,
+        `--geneo-node-stroke-width:${appearance.strokeWidth || 1}px`,
+        `--geneo-node-stroke-style:${strokeType}`,
+        `--geneo-node-text:${appearance.textColor || '#f1f5f3'}`,
+        `z-index:${
+          node.type === 'panel'
+            ? Math.max(1, Math.min(10, node.order))
+            : 20 + node.order
+        }`
+      ].join(';');
+
+      return `
+        <article
+          class="
+            geneo-node
+            geneo-node-${node.type}
+            ${
+              geneoSelectedNodeIdSet().has(node.id)
+                ? 'selected'
+                : ''
+            }
+            ${
+              geneoNodeEffectiveLocked(node)
+                ? 'locked'
+                : ''
+            }
+          "
+          style="${style}"
+          data-geneo-node="${escapeHtml(node.id)}"
+          tabindex="0"
+          aria-label="${escapeHtml(geneoNodeTitle(node))}">
+          <div class="geneo-node-content">
+            ${renderGeneographNodeContent(node)}
+          </div>
+
+          ${renderGeneographPorts(node)}
+          ${renderGeneographResizeHandles(node)}
+        </article>
+      `;
     }
 
     function renderGeneographEditorSidebar(board) {
@@ -65000,9 +65166,84 @@
               </section>
             `
         }
-        <section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body">${node.type !== 'text' ? `
-          <div class="geneo-field"><label>Background</label><input class="geneo-input" type="color" data-geneo-appearance="backgroundColor" value="${escapeHtml(appearance.backgroundColor || '#18211f')}"></div>
-          <div class="geneo-field"><label>Stroke</label><input class="geneo-input" type="color" data-geneo-appearance="strokeColor" value="${escapeHtml(appearance.strokeColor || '#52615d')}"></div>` : ''}
+        <section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body">
+        ${node.type !== 'text' ? `
+                  <div class="geneo-field">
+                    <label>Background</label>
+                    <input
+                      class="geneo-input"
+                      type="color"
+                      data-geneo-appearance="backgroundColor"
+                      value="${escapeHtml(
+                        appearance.backgroundColor || '#18211f'
+                      )}">
+                  </div>
+
+                  ${
+                    node.type === 'panel'
+                      ? `
+                        <div class="geneo-field">
+                          <label for="geneoPanelStrokeType">
+                            Stroke type
+                          </label>
+
+                          <select
+                            class="geneo-select"
+                            id="geneoPanelStrokeType"
+                            data-geneo-appearance="strokeType">
+                            <option
+                              value="dashed"
+                              ${
+                                appearance.strokeType === 'dashed'
+                                  ? 'selected'
+                                  : ''
+                              }>
+                              Dashed
+                            </option>
+
+                            <option
+                              value="solid"
+                              ${
+                                appearance.strokeType === 'solid'
+                                  ? 'selected'
+                                  : ''
+                              }>
+                              Solid
+                            </option>
+
+                            <option
+                              value="none"
+                              ${
+                                appearance.strokeType === 'none'
+                                  ? 'selected'
+                                  : ''
+                              }>
+                              No stroke
+                            </option>
+                          </select>
+                        </div>
+                      `
+                      : ''
+                  }
+
+                  ${
+                    node.type !== 'panel'
+                    || appearance.strokeType !== 'none'
+                      ? `
+                        <div class="geneo-field">
+                          <label>Stroke</label>
+                          <input
+                            class="geneo-input"
+                            type="color"
+                            data-geneo-appearance="strokeColor"
+                            value="${escapeHtml(
+                              appearance.strokeColor || '#52615d'
+                            )}">
+                        </div>
+                      `
+                      : ''
+                  }
+                ` : ''}
           ${
             node.type === 'image'
               ? ''
@@ -66904,10 +67145,39 @@
     }
 
     function commitGeneoInlineEdit(cancel = false) {
-      const node = getGeneographNode(state.geneoInlineEditNodeId); const input = main.querySelector('[data-geneo-inline-input]');
-      if (!node) { state.geneoInlineEditNodeId = null; state.geneoInlineEditSelectAll = false; return; }
-      if (!cancel && input) { geneoPushHistory(); if (node.type === 'panel') node.title = input.value.trim() || 'Panel'; else node.text = input.value; touchGeneographBoard(); }
-      state.geneoInlineEditNodeId = null; state.geneoInlineEditSelectAll = false; renderGeneographEditorPreserveScroll();
+      const node = getGeneographNode(
+        state.geneoInlineEditNodeId
+      );
+
+      const input = main.querySelector(
+        '[data-geneo-inline-input]'
+      );
+
+      if (!node) {
+        state.geneoInlineEditNodeId = null;
+        state.geneoInlineEditSelectAll = false;
+        return;
+      }
+
+      if (!cancel && input) {
+        geneoPushHistory();
+
+        if (node.type === 'panel') {
+          node.title =
+            String(input.value ?? '')
+              .trim()
+              .slice(0, 160);
+        } else {
+          node.text = input.value;
+        }
+
+        touchGeneographBoard();
+      }
+
+      state.geneoInlineEditNodeId = null;
+      state.geneoInlineEditSelectAll = false;
+
+      renderGeneographEditorPreserveScroll();
     }
 
     function saveGeneographPartnerRelationship() {
