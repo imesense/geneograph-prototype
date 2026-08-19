@@ -13320,14 +13320,20 @@
     .geneo-node-panel {
       cursor: crosshair;
     }
-    .geneo-node-text { border-color: transparent; background: transparent; box-shadow: none; }
-    .geneo-node-text.selected { background: rgba(0,0,0,.12); }
+    .geneo-node-text {
+      box-shadow: none;
+    }
     .geneo-text-copy { width:100%; height:100%; display:flex; align-items:center; padding:8px; white-space:pre-wrap; font-size: 26px; font-weight: 800; line-height: 1.15; }
     .geneo-node-panel { background:var(--geneo-node-bg); box-shadow:none; }
     .geneo-node-panel .geneo-node-content { padding: 12px 14px; pointer-events: none; }
     .geneo-panel-title { display:inline-flex; max-width:calc(100% - 24px); font-size:13px; font-weight:900; color:var(--geneo-node-text); }
     .geneo-inline-editor { width:100%; height:100%; min-height:0; resize:none; border:0; outline:0; background:rgba(3,8,7,.5); color:inherit; padding:10px; font:inherit; }
-    .geneo-inline-text { font-size: 24px; font-weight: 800; }
+    .geneo-inline-text {
+      background: transparent;
+
+      font-size: 24px;
+      font-weight: 800;
+    }
     .geneo-port {
       position:absolute;
       z-index:30;
@@ -14597,6 +14603,32 @@
       align-items: center;
       justify-content: flex-end;
       gap: var(--space-3);
+    }
+    .geneo-image-picker-modal
+    > .geneo-image-picker-footer {
+      flex: 0 0 auto;
+
+      margin: 0;
+
+      padding:
+        var(--space-4)
+        var(--space-6);
+
+      background:
+        var(--surface-card);
+
+      border-top:
+        1px solid
+        var(--border-default);
+
+      box-shadow:
+        0 -10px 24px
+        rgba(0, 0, 0, .14);
+    }
+
+    .geneo-image-picker-modal
+    > .geneo-image-picker-footer[hidden] {
+      display: none;
     }
     .person-photo-picker-tabs,
     .person-photo-scope-switch {
@@ -33225,6 +33257,7 @@
       selectedGeneoConnectionIds: [],
       selectedGeneoWaypointIndex: null,
       geneoTool: 'pan',
+      geneoPlacementReturnTool: null,
       geneoConnectorPattern: 'solid',
       geneoConnectionDraft: null,
       geneoInlineEditNodeId: null,
@@ -50043,22 +50076,80 @@
     }
 
     function renderPersonPhotoPickerModal() {
-      const person = personPhotoPickerPerson();
+      const person =
+        personPhotoPickerPerson();
+
       if (!person) return;
-      const adjust = state.personPhotoPicker.step === 'adjust';
-      openModal(`<div class="modal person-photo-picker-modal" data-person-photo-picker role="dialog" aria-modal="true" aria-labelledby="personPhotoPickerTitle">
-        <div class="modal-header">
-          <div>
-            <h2 id="personPhotoPickerTitle">Change photo for ${escapeHtml(person.names?.display || 'Person')}</h2>
-            <p>This photo will appear in Family Tree, People, and Profile.</p>
+
+      const adjust =
+        state.personPhotoPicker.step
+        === 'adjust';
+
+      openModal(`
+        <div
+          class="
+            modal
+            person-photo-picker-modal
+          "
+          data-person-photo-picker
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="personPhotoPickerTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="personPhotoPickerTitle">
+                Change photo for ${
+                  escapeHtml(
+                    person.names?.display
+                    || 'Person'
+                  )
+                }
+              </h2>
+
+              <p>
+                This photo will appear in Family Tree,
+                People, and Profile.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close">
+              ${icon.close}
+            </button>
           </div>
-          <button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button>
+
+          <div
+            class="
+              modal-body
+              person-photo-picker-body
+            ">
+            <div
+              class="person-photo-picker-step"
+              aria-label="${
+                adjust
+                  ? 'Adjust photo'
+                  : 'Choose photo'
+              }">
+              ${
+                adjust
+                  ? 'Adjust photo'
+                  : 'Choose photo'
+              }
+            </div>
+
+            ${
+              adjust
+                ? renderPersonPhotoAdjustStage()
+                : renderPersonPhotoChooseStage()
+            }
+          </div>
         </div>
-        <div class="modal-body person-photo-picker-body">
-          <div class="person-photo-picker-step" aria-label="${adjust ? 'Adjust photo' : 'Choose photo'}">${adjust ? 'Adjust photo' : 'Choose photo'}</div>
-          ${adjust ? renderPersonPhotoAdjustStage() : renderPersonPhotoChooseStage()}
-        </div>
-      </div>`);
+      `);
+
       bindPersonPhotoPickerModal();
     }
 
@@ -60249,7 +60340,48 @@
               }
             },
             { id: 'gn-sticky', type: 'sticky', x: 1830, y: 500, width: 260, height: 180, parentPanelId: null, order: 6, visible: true, locked: false, text: 'Compare the household register with the family album before exporting this branch.', appearance: { fill: { color: '#6B5525', opacity: 100, enabled: true }, stroke: { color: '#D4AA6B', opacity: 100, enabled: true }, strokeWidth: 1, strokePattern: 'solid', text: { color: '#FFF8E8', opacity: 100, enabled: true } } },
-            { id: 'gn-text', type: 'text', x: 1330, y: 780, width: 420, height: 90, parentPanelId: null, order: 5, visible: true, locked: false, text: 'Possible Purrington branch', appearance: { text: { color: '#DBE8E4', opacity: 100, enabled: true }, fontSize: 28, fontWeight: 800 } }
+            {
+              id: 'gn-text',
+              type: 'text',
+              x: 1330,
+              y: 780,
+              width: 420,
+              height: 90,
+              parentPanelId: null,
+              order: 5,
+              visible: true,
+              locked: false,
+
+              text: 'Possible Purrington branch',
+
+              appearance: {
+                fill: {
+                  color: '#18211F',
+                  opacity: 100,
+                  enabled: false
+                },
+
+                stroke: {
+                  color: '#52615D',
+                  opacity: 100,
+                  enabled: false
+                },
+
+                strokeWidth: 1,
+                strokePattern: 'solid',
+
+                text: {
+                  color: '#DBE8E4',
+                  opacity: 100,
+                  enabled: true
+                },
+
+                cornerRadius: 8,
+
+                fontSize: 28,
+                fontWeight: 800
+              }
+            }
           ],
           connections: [
             { id: 'gc-partner', kind: 'family-partner', familyId: 'gf-whiskerfield', source: { nodeId: 'gn-barnaby', port: 'right' }, target: { nodeId: 'gn-daisy', port: 'left' }, style: { pattern: 'solid', line: { color: '#D9E5E1', opacity: 100, enabled: true }, width: 3 }, route: { mode: 'auto', waypoints: [] } },
@@ -61236,12 +61368,19 @@
     }
 
     function geneoNodeCornerRadius(node) {
-      if (node?.type !== 'person') {
-        return 8;
+      if (node?.type === 'person') {
+        return (
+          geneoPersonCardEffectiveSettings(
+            node
+          ).cornerRadius
+        );
       }
 
-      return geneoPersonCardEffectiveSettings(node)
-        .cornerRadius;
+      if (node?.type === 'text') {
+        return node.appearance.cornerRadius;
+      }
+
+      return 8;
     }
 
     function createEmptyGeneographDiagram() {
@@ -66669,22 +66808,57 @@
       if (type === 'text') {
         return {
           ...common,
+
           width: 320,
           height: 80,
           minWidth: 120,
-          minHeight: 48
+          minHeight: 48,
+
+          appearance: {
+            ...common.appearance,
+
+            /*
+             * Text blocks are transparent by default.
+             * The stored colors remain available so
+             * Background / Stroke can be restored
+             * directly from the Appearance inspector.
+             */
+            fill: {
+              ...common.appearance.fill,
+              enabled: false
+            },
+
+            stroke: {
+              ...common.appearance.stroke,
+              enabled: false
+            },
+
+            strokeWidth: 1,
+            strokePattern: 'solid',
+
+            text: {
+              ...common.appearance.text
+            },
+
+            cornerRadius: 8
+          }
         };
       }
-
-      return {
+            return {
         ...common,
         width: 480,
         height: 320,
         minWidth: 240,
         minHeight: 180,
+
         appearance: {
           ...common.appearance,
-          fill: { ...common.appearance.fill, opacity: 68 },
+
+          fill: {
+            ...common.appearance.fill,
+            opacity: 68
+          },
+
           strokePattern: 'dashed'
         }
       };
@@ -68669,16 +68843,23 @@
       if (scope !== 'node') return null;
       const node = getGeneographNode(id);
       if (!node || !['fill', 'stroke', 'text'].includes(property)) return null;
-      const applicable = property === 'text'
-        ? node.type !== 'image'
-        : node.type !== 'text';
+      const applicable =
+        property === 'text'
+          ? node.type !== 'image'
+          : true;
       if (!applicable) return null;
       const defaults = geneoNodeDefaults(node.type).appearance;
       return {
         scope, id, property, entity: node,
-        label: property === 'fill'
-          ? node.type === 'image' ? 'Background' : 'Fill'
-          : property === 'text'
+        label:
+          property === 'fill'
+            ? (
+                node.type === 'image'
+                || node.type === 'text'
+                  ? 'Background'
+                  : 'Fill'
+              )
+            : property === 'text'
             ? node.type === 'panel' ? 'Title text' : 'Text'
             : 'Stroke',
         paint: node.appearance[property],
@@ -68850,7 +69031,7 @@
       if (!node || node.type === 'image') return null;
       const canvasPaint = selectedGeneographDiagram()?.canvas.backgroundPaint;
       const canvasRgb = geneoHexToRgb(canvasPaint?.color || '#0F1413');
-      const fill = node.type === 'text' ? null : node.appearance.fill;
+      const fill = node.appearance.fill;
       const background = fill?.enabled
         ? geneoCompositeRgb(geneoHexToRgb(fill.color), canvasRgb, fill.opacity / 100)
         : canvasRgb;
@@ -71019,64 +71200,108 @@
           <h3>Appearance</h3>
 
             <div class="geneo-inspector-section-body">
+              <div class="geneo-appearance-group">
+                ${renderGeneoPaintControl({
+                  scope: 'node',
+                  id: node.id,
+                  property: 'fill'
+                })}
+              </div>
+
+              <div class="geneo-appearance-group">
+                ${renderGeneoPaintControl({
+                  scope: 'node',
+                  id: node.id,
+                  property: 'stroke'
+                })}
+
+                <div
+                  class="
+                    geneo-field
+                    geneo-appearance-subfield
+                  ">
+                  <label
+                    for="geneoNodeStrokePattern">
+                    Pattern
+                  </label>
+
+                  <div
+                    class="
+                      common-select-shell
+                      geneo-pattern-select-shell
+                    ">
+                    <select
+                      class="
+                        common-select
+                        geneo-pattern-select
+                      "
+                      id="geneoNodeStrokePattern"
+                      data-geneo-stroke-pattern
+                      ${
+                        appearance.stroke.enabled
+                          ? ''
+                          : 'disabled'
+                      }>
+
+                      <option
+                        value="solid"
+                        ${
+                          appearance.strokePattern
+                          === 'solid'
+                            ? 'selected'
+                            : ''
+                        }>
+                        Solid
+                      </option>
+
+                      <option
+                        value="dashed"
+                        ${
+                          appearance.strokePattern
+                          === 'dashed'
+                            ? 'selected'
+                            : ''
+                        }>
+                        Dashed
+                      </option>
+                    </select>
+
+                    <span
+                      class="common-select-chevron"
+                      aria-hidden="true">
+                      ${icon.chevron}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
               ${
-                node.type !== 'text'
+                node.type === 'text'
                   ? `
-                    <div class="geneo-appearance-group">
-                      ${renderGeneoPaintControl({
-                        scope: 'node',
-                        id: node.id,
-                        property: 'fill'
-                      })}
-                    </div>
-
-                    <div class="geneo-appearance-group">
-                      ${renderGeneoPaintControl({
-                        scope: 'node',
-                        id: node.id,
-                        property: 'stroke'
-                      })}
-
-                    <div class="geneo-field geneo-appearance-subfield">
-                      <label for="geneoNodeStrokePattern">
-                        Pattern
+                    <div
+                      class="
+                        geneo-field
+                        geneo-appearance-subfield
+                      ">
+                      <label
+                        for="geneoTextCornerRadius">
+                        Corner radius
                       </label>
 
-                      <div class="common-select-shell geneo-pattern-select-shell">
-                        <select
-                          class="common-select geneo-pattern-select"
-                          id="geneoNodeStrokePattern"
-                          data-geneo-stroke-pattern
-                          ${appearance.stroke.enabled ? '' : 'disabled'}>
+                      <input
+                        class="geneo-input"
+                        id="geneoTextCornerRadius"
+                        type="number"
+                        min="0"
+                        max="32"
+                        step="1"
+                        value="${appearance.cornerRadius}"
+                        data-geneo-text-corner-radius>
 
-                          <option
-                            value="solid"
-                            ${
-                              appearance.strokePattern === 'solid'
-                                ? 'selected'
-                                : ''
-                            }>
-                            Solid
-                          </option>
-
-                          <option
-                            value="dashed"
-                            ${
-                              appearance.strokePattern === 'dashed'
-                                ? 'selected'
-                                : ''
-                            }>
-                            Dashed
-                          </option>
-                        </select>
-
-                        <span
-                          class="common-select-chevron"
-                          aria-hidden="true">
-                          ${icon.chevron}
-                        </span>
-                      </div>
-                    </div>
+                      <span
+                        class="geneo-selection-help">
+                        0–32 px
+                      </span>
                     </div>
                   `
                   : ''
@@ -71305,12 +71530,11 @@
       }
 
       cancelGeneographConnectionDraft();
+
       if (type === 'person') {
         openAddGeneographPersonModal();
         return;
       }
-
-      state.geneoTool = 'select';
 
       if (type === 'image') {
         openGeneographImagePicker();
@@ -71363,23 +71587,62 @@
       renderGeneographEditorPreserveScroll();
     }
 
-    function activateGeneographPlacementTool(type) {
-      if (!['panel', 'sticky'].includes(type)) {
+    function geneoCurrentMoveTool() {
+      return ['select', 'pan'].includes(
+        state.geneoTool
+      )
+        ? state.geneoTool
+        : 'pan';
+    }
+
+    function finishGeneographPlacementTool() {
+      const returnTool =
+        state.geneoPlacementReturnTool;
+
+      state.geneoPlacementReturnTool =
+        null;
+
+      state.geneoTool =
+        ['select', 'pan'].includes(
+          returnTool
+        )
+          ? returnTool
+          : 'pan';
+    }
+
+    function activateGeneographPlacementTool(
+      type
+    ) {
+      if (
+        !['panel', 'sticky'].includes(type)
+      ) {
         return;
       }
 
       cancelGeneographConnectionDraft();
 
-      const activating =
-        state.geneoTool !== type;
+      const alreadyActive =
+        state.geneoTool === type;
 
-      state.geneoTool = activating
-        ? type
-        : 'pan';
+      if (alreadyActive) {
+        finishGeneographPlacementTool();
+
+        renderGeneographEditorPreserveScroll();
+
+        return;
+      }
+
+      /*
+       * Placement is temporary. Preserve the
+       * user's Select/Pan movement mode.
+       */
+      state.geneoPlacementReturnTool =
+        geneoCurrentMoveTool();
+
+      state.geneoTool =
+        type;
 
       renderGeneographEditorPreserveScroll();
-
-      if (!activating) return;
 
       showToast(
         type === 'panel'
@@ -71540,11 +71803,11 @@
       touchGeneographBoard();
 
       /*
-      * Sticky placement is intentionally single-use.
-      * Render directly into inline editing while Pan
-      * becomes the active board tool.
-      */
-      state.geneoTool = 'pan';
+       * Sticky placement is single-use.
+       * Restore the movement mode that was active
+       * before placement started.
+       */
+      finishGeneographPlacementTool();
 
       beginGeneographInlineEdit(node.id);
 
@@ -73186,7 +73449,11 @@
             </button>
           </div>
 
-          <div class="modal-body person-photo-picker-body">
+          <div
+            class="
+              modal-body
+              person-photo-picker-body
+            ">
             <div
               class="person-photo-picker-tabs"
               role="tablist"
@@ -73197,7 +73464,10 @@
                 type="button"
                 role="tab"
                 data-geneo-image-tab="project"
-                aria-selected="${picker.sourceTab === 'project'}">
+                aria-selected="${
+                  picker.sourceTab
+                  === 'project'
+                }">
                 Project photos
               </button>
 
@@ -73206,7 +73476,10 @@
                 type="button"
                 role="tab"
                 data-geneo-image-tab="upload"
-                aria-selected="${picker.sourceTab === 'upload'}">
+                aria-selected="${
+                  picker.sourceTab
+                  === 'upload'
+                }">
                 Upload new
               </button>
             </div>
@@ -73214,52 +73487,70 @@
             <div
               role="tabpanel"
               aria-label="${
-                picker.sourceTab === 'project'
+                picker.sourceTab
+                === 'project'
                   ? 'Project photos'
                   : 'Upload new images'
               }">
               ${
-                picker.sourceTab === 'project'
+                picker.sourceTab
+                === 'project'
                   ? renderGeneographImageProjectPanel()
                   : renderGeneographImageUploadPanel()
               }
             </div>
+          </div>
 
-            <div
-              class="
-                modal-footer
-                person-photos-adder-footer
-              ">
-              <span
-                class="person-photos-adder-count"
-                data-geneo-image-count>
-                ${escapeHtml(
-                  geneoImagePickerCountLabel(count)
-                )}
-              </span>
+          <div
+            class="
+              modal-footer
+              person-photos-adder-footer
+              geneo-image-picker-footer
+            "
+            data-geneo-image-footer
+            ${
+              count > 0
+                ? ''
+                : 'hidden'
+            }>
 
-              <div class="modal-footer-actions">
-                <button
-                  class="button secondary"
-                  type="button"
-                  data-close>
-                  Cancel
-                </button>
+            <span
+              class="person-photos-adder-count"
+              data-geneo-image-count>
+              ${escapeHtml(
+                geneoImagePickerCountLabel(
+                  count
+                )
+              )}
+            </span>
 
-                <button
-                  class="button primary"
-                  type="button"
-                  data-geneo-image-confirm
-                  ${canConfirm ? '' : 'disabled'}>
-                  ${
-                    picker.uploadBusy
-                      ? 'Preparing images…'
-                      : escapeHtml(
-                          geneoImagePickerActionLabel(count)
+            <div class="modal-footer-actions">
+              <button
+                class="button secondary"
+                type="button"
+                data-close>
+                Cancel
+              </button>
+
+              <button
+                class="button primary"
+                type="button"
+                data-geneo-image-confirm
+                ${
+                  canConfirm
+                    ? ''
+                    : 'disabled'
+                }>
+                ${
+                  picker.uploadBusy
+                    ? 'Preparing images…'
+                    : escapeHtml(
+                        geneoImagePickerActionLabel(
+                          count
                         )
-                  }
-                </button>
-              </div>
+                      )
+                }
+              </button>
             </div>
           </div>
         </div>
@@ -73323,6 +73614,16 @@
         });
 
       const count = geneoImagePickerPendingCount();
+
+      const footer =
+        modal.querySelector(
+          '[data-geneo-image-footer]'
+        );
+
+      if (footer) {
+        footer.hidden =
+          count === 0;
+      }
 
       const countElement = modal.querySelector(
         '[data-geneo-image-count]'
@@ -74980,10 +75281,9 @@
 
         if (!panel) return;
 
-        state.geneoTool = 'select';
+        finishGeneographPlacementTool();
 
         renderGeneographEditorPreserveScroll();
-
         requestAnimationFrame(() => {
           main
             .querySelector(
@@ -75961,7 +76261,28 @@
             );
           });
         });
-      main.querySelectorAll('[data-geneo-tool]').forEach(button => button.addEventListener('click', () => { cancelGeneographConnectionDraft(); state.geneoTool = button.dataset.geneoTool; renderGeneographEditorPreserveScroll(); }));
+      main
+        .querySelectorAll(
+          '[data-geneo-tool]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              cancelGeneographConnectionDraft();
+
+              state.geneoPlacementReturnTool =
+                null;
+
+              state.geneoTool =
+                button.dataset.geneoTool;
+
+              hideGeneographPanelDraftDom();
+
+              renderGeneographEditorPreserveScroll();
+            }
+          );
+        });
       main.querySelector('[data-geneo-connection-main]')?.addEventListener('click', () => {
         cancelGeneographConnectionDraft();
         state.geneoTool = 'connect';
@@ -76256,12 +76577,71 @@
       bindGeneoPaintControls();
       main.querySelector('[data-geneo-stroke-pattern]')?.addEventListener('change', event => {
         const node = selectedGeneographNode();
-        if (!node || node.type === 'text') return;
+        if (!node) return;
         geneoPushHistory();
         node.appearance.strokePattern = event.target.value === 'dashed' ? 'dashed' : 'solid';
         touchGeneographBoard();
         applyGeneoPaintTargetToDom({ scope: 'node', id: node.id, property: 'stroke' });
       });
+      main
+        .querySelector(
+          '[data-geneo-text-corner-radius]'
+        )
+        ?.addEventListener(
+          'change',
+          event => {
+            const node =
+              selectedGeneographNode();
+
+            if (
+              node?.type !== 'text'
+            ) {
+              return;
+            }
+
+            nextRadius =
+              Math.round(
+                geneoNumber(
+                  event.target.value,
+                  node.appearance.cornerRadius,
+                  0,
+                  32
+                )
+              );
+
+            if (
+              nextRadius
+              === node.appearance.cornerRadius
+            ) {
+              event.target.value =
+                nextRadius;
+
+              return;
+            }
+
+            geneoPushHistory();
+
+            node.appearance.cornerRadius =
+              nextRadius;
+
+            event.target.value =
+              nextRadius;
+
+            touchGeneographBoard();
+
+            main
+              .querySelector(
+                `[data-geneo-node="${
+                  CSS.escape(node.id)
+                }"]`
+              )
+              ?.style
+              .setProperty(
+                '--geneo-node-radius',
+                `${nextRadius}px`
+              );
+          }
+        );
       main
         .querySelectorAll(
           '[data-geneo-layout]'
@@ -77044,7 +77424,7 @@
           geneoPointerState = null;
           hideGeneographPanelDraftDom();
 
-          state.geneoTool = 'pan';
+          finishGeneographPlacementTool();
 
           renderGeneographEditorPreserveScroll();
           return;
