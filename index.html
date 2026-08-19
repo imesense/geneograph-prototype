@@ -13264,76 +13264,733 @@
         -1px -1px 0 rgba(0,0,0,.14);
       pointer-events: none;
     }
+    .geneo-rich-text-copy,
+    .geneo-rich-text-inspector-preview {
+      color: inherit;
 
-    .geneo-sticky-copy {
+      overflow-wrap:
+        anywhere;
+    }
+
+    .geneo-rich-text-copy {
       position: relative;
       z-index: 1;
+
       width: 100%;
       height: 100%;
+
       overflow: hidden;
-      color: inherit;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      font-size: 15px;
-      font-weight: 600;
-      line-height: 1.45;
     }
 
-    .geneo-node-sticky .geneo-inline-editor {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      height: 100%;
-      padding: 0;
-      border: 0;
-      border-radius: 2px;
-      background: transparent;
-      color: inherit;
-      caret-color: currentColor;
-      font-size: 15px;
-      font-weight: 600;
-      line-height: 1.45;
-      overflow-wrap: anywhere;
+    .geneo-rich-text-copy
+    > :first-child,
+    .geneo-rich-text-inspector-preview
+    > :first-child {
+      margin-top: 0;
     }
 
-    .geneo-node-sticky
-    .geneo-inline-editor:focus {
-      box-shadow:
-        inset 0 0 0 1px
+    .geneo-rich-text-copy
+    > :last-child,
+    .geneo-rich-text-inspector-preview
+    > :last-child {
+      margin-bottom: 0;
+    }
+
+    .geneo-rich-text-copy p,
+    .geneo-rich-text-inspector-preview p {
+      margin:
+        0 0 .55em;
+    }
+
+    .geneo-rich-text-copy ul,
+    .geneo-rich-text-copy ol,
+    .geneo-rich-text-inspector-preview ul,
+    .geneo-rich-text-inspector-preview ol {
+      margin:
+        .45em 0;
+
+      padding-left:
+        1.4em;
+    }
+
+    .geneo-rich-text-copy blockquote,
+    .geneo-rich-text-inspector-preview blockquote {
+      margin:
+        .55em 0;
+
+      padding:
+        5px 8px;
+
+      border-left:
+        3px solid
         color-mix(
           in srgb,
-          currentColor 26%,
+          currentColor 42%,
+          transparent
+        );
+
+      border-radius:
+        0 5px 5px 0;
+
+      background:
+        color-mix(
+          in srgb,
+          currentColor 7%,
           transparent
         );
     }
 
-    .geneo-canvas-stage.sticky-tool {
+    .geneo-rich-text-copy a,
+    .geneo-rich-text-inspector-preview a {
+      color: #8BC8F5;
+
+      text-decoration:
+        underline;
+
+      text-underline-offset:
+        2px;
+    }
+
+    .geneo-rich-text-placeholder {
+      opacity: .56;
+      font-style: italic;
+    }
+
+    .geneo-sticky-copy {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+
+    .geneo-sticky-copy h2 {
+      margin:
+        .45em 0 .25em;
+
+      font-size: 19px;
+      font-weight: 850;
+      line-height: 1.25;
+    }
+
+    .geneo-sticky-copy h3 {
+      margin:
+        .4em 0 .2em;
+
+      font-size: 17px;
+      font-weight: 820;
+      line-height: 1.3;
+    }
+
+    .geneo-rich-text-editor-shell {
+      position: relative;
+      z-index: 1;
+
+      width: 100%;
+      height: 100%;
+
+      min-width: 0;
+      min-height: 0;
+
+      overflow: visible;
+    }
+
+    .geneo-node.is-rich-editing
+    .geneo-node-content {
+      overflow: visible;
+    }
+
+    .geneo-rich-text-editor-shell
+    .ql-container.ql-snow {
+      width: 100%;
+      height: 100%;
+
+      min-height: 0;
+
+      border: 0;
+
+      background:
+        transparent;
+
+      color: inherit;
+
+      font-family:
+        inherit;
+    }
+
+    .geneo-rich-text-editor-shell
+    .ql-editor {
+      width: 100%;
+      height: 100%;
+
+      min-height: 0;
+
+      overflow:
+        auto;
+
+      color: inherit;
+
+      caret-color:
+        currentColor;
+
+      tab-size: 4;
+    }
+
+    .geneo-node-sticky
+    .geneo-rich-text-editor-shell
+    .ql-editor {
+      padding: 0;
+
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+
+    .geneo-node-sticky
+    .geneo-rich-text-editor-shell
+    .ql-editor h2 {
+      margin:
+        .45em 0 .25em;
+
+      font-size: 19px;
+      font-weight: 850;
+      line-height: 1.25;
+    }
+
+    .geneo-node-sticky
+    .geneo-rich-text-editor-shell
+    .ql-editor h3 {
+      margin:
+        .4em 0 .2em;
+
+      font-size: 17px;
+      font-weight: 820;
+      line-height: 1.3;
+    }
+
+    .geneo-rich-text-editor-shell
+    .ql-editor blockquote {
+      margin:
+        .55em 0;
+
+      padding:
+        5px 8px;
+
+      border-left:
+        3px solid
+        color-mix(
+          in srgb,
+          currentColor 42%,
+          transparent
+        );
+
+      border-radius:
+        0 5px 5px 0;
+    }
+
+    .geneo-rich-text-editor-shell
+    .ql-editor a {
+      color: #8BC8F5;
+    }
+
+    .geneo-rich-text-editor-shell
+    .ql-editor.ql-blank::before {
+      left: 0;
+      right: 0;
+
+      color:
+        color-mix(
+          in srgb,
+          currentColor 48%,
+          transparent
+        );
+
+      font-style: italic;
+    }
+
+    .geneo-rich-text-fallback {
+      width: 100%;
+      height: 100%;
+
+      min-width: 0;
+      min-height: 0;
+
+      padding: 0;
+
+      border: 0;
+      outline: 0;
+
+      resize: none;
+
+      background:
+        transparent;
+
+      color: inherit;
+
+      font: inherit;
+
+      line-height: inherit;
+    }
+
+    .geneo-rich-text-fallback[hidden],
+    .geneo-rich-text-editor-host[hidden] {
+      display: none !important;
+    }
+
+    .geneo-rich-text-toolbar.ql-toolbar.ql-snow {
+      position: absolute;
+
+      left: 50%;
+      right: auto;
+
+      top: auto;
+      bottom:
+        calc(100% + 10px);
+
+      z-index: 90;
+
+      width: max-content;
+      max-width: 560px;
+
+      flex-wrap: nowrap;
+
+      transform:
+        translateX(-50%);
+
+      border:
+        1px solid
+        color-mix(
+          in srgb,
+          var(--border-strong) 72%,
+          transparent
+        );
+
+      border-radius: 8px;
+
+      background:
+        color-mix(
+          in srgb,
+          var(--surface-card) 72%,
+          transparent
+        );
+
+      -webkit-backdrop-filter:
+        blur(10px);
+
+      backdrop-filter:
+        blur(10px);
+
+      box-shadow:
+        0 10px 28px
+        rgba(0, 0, 0, .2);
+    }
+
+    .geneo-rich-text-toolbar
+    .ql-stroke {
+      stroke:
+        currentColor;
+    }
+
+    .geneo-rich-text-toolbar
+    .ql-fill,
+    .geneo-rich-text-toolbar
+    .ql-stroke.ql-fill {
+      fill:
+        currentColor;
+    }
+
+    .geneo-rich-text-editor-shell
+    .ql-tooltip {
+      z-index: 120;
+
+      padding: 8px;
+
+      border:
+        1px solid
+        var(
+          --border-strong
+        );
+
+      border-radius: 8px;
+
+      background:
+        var(
+          --surface-card
+        );
+
+      color:
+        var(
+          --text-secondary
+        );
+
+      box-shadow:
+        var(
+          --shadow-soft
+        );
+    }
+
+    .geneo-rich-text-editor-shell
+    .ql-tooltip.ql-editing:not(.ql-hidden) {
+      width: 320px;
+      max-width:
+        calc(100vw - 40px);
+
+      display: grid;
+
+      grid-template-columns:
+        auto minmax(0, 1fr) auto;
+
+      align-items: center;
+
+      gap: 8px;
+
+      white-space: normal;
+    }
+
+    .geneo-rich-text-editor-shell
+    .ql-tooltip.ql-hidden {
+      display: none !important;
+    }
+
+    .geneo-rich-text-inspector {
+      display: grid;
+      gap: 10px;
+    }
+
+    .geneo-rich-text-inspector-editor-shell {
+      min-width: 0;
+
+      overflow: visible;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius: 8px;
+
+      background:
+        var(--surface-input);
+
+      transition:
+        border-color var(--ease),
+        box-shadow var(--ease);
+    }
+
+    .geneo-rich-text-inspector-editor-shell:focus-within {
+      border-color:
+        rgba(
+          98,
+          217,
+          154,
+          .42
+        );
+
+      box-shadow:
+        0 0 0 1px
+        rgba(
+          47,
+          174,
+          116,
+          .08
+        );
+    }
+
+    .geneo-rich-text-inspector-toolbar.ql-toolbar.ql-snow {
+      min-height: 42px;
+
+      padding: 5px;
+
+      flex-wrap: wrap;
+
+      border: 0;
+
+      border-bottom:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        7px 7px 0 0;
+
+      background:
+        rgba(
+          255,
+          255,
+          255,
+          .025
+        );
+    }
+
+    .geneo-rich-text-inspector-editor-shell
+    .ql-container.ql-snow {
+      height: auto;
+
+      border: 0;
+
+      background:
+        transparent;
+
+      color:
+        var(--text-secondary);
+
+      font-family:
+        inherit;
+    }
+
+    .geneo-rich-text-inspector-editor-shell
+    .ql-editor {
+      min-height: 150px;
+      max-height: 320px;
+
+      padding: 12px;
+
+      overflow-y: auto;
+
+      color:
+        var(--text-secondary);
+
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .geneo-rich-text-inspector-editor-shell
+    .ql-editor h2 {
+      margin:
+        .65em 0 .25em;
+
+      color:
+        var(--text-primary);
+
+      font-size: 19px;
+      font-weight: 850;
+      line-height: 1.3;
+    }
+
+    .geneo-rich-text-inspector-editor-shell
+    .ql-editor h3 {
+      margin:
+        .55em 0 .22em;
+
+      color:
+        var(--text-primary);
+
+      font-size: 16px;
+      font-weight: 820;
+      line-height: 1.35;
+    }
+
+    .geneo-rich-text-inspector-editor-shell
+    .ql-editor
+    > :first-child {
+      margin-top: 0;
+    }
+
+    .geneo-rich-text-inspector-editor-shell
+    .ql-editor blockquote {
+      margin:
+        .55em 0;
+
+      padding:
+        6px 9px;
+
+      border-left:
+        3px solid
+        rgba(
+          98,
+          217,
+          154,
+          .48
+        );
+
+      border-radius:
+        0 5px 5px 0;
+    }
+
+    .geneo-rich-text-inspector-editor-shell
+    .ql-editor a {
+      color: #8BC8F5;
+    }
+
+    .geneo-rich-text-inspector-fallback {
+      width: 100%;
+      min-height: 150px;
+
+      padding: 12px;
+
+      border: 0;
+      outline: 0;
+
+      resize: vertical;
+
+      background:
+        transparent;
+
+      color:
+        var(--text-secondary);
+
+      font: inherit;
+      line-height: 1.55;
+    }
+
+    .geneo-rich-text-inspector-fallback[hidden] {
+      display: none !important;
+    }
+
+    .geneo-rich-text-inspector-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .geneo-rich-text-inspector-preview {
+      max-height: 180px;
+
+      padding: 10px;
+
+      overflow: auto;
+
+      border:
+        1px solid
+        var(
+          --border-default
+        );
+
+      border-radius: 8px;
+
+      background:
+        var(
+          --surface-input
+        );
+
+      color:
+        var(
+          --text-secondary
+        );
+
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .geneo-rich-text-inspector-preview h2 {
+      margin:
+        .5em 0 .25em;
+
+      color:
+        var(
+          --text-primary
+        );
+
+      font-size: 18px;
+      line-height: 1.3;
+    }
+
+    .geneo-rich-text-inspector-preview h3 {
+      margin:
+        .45em 0 .2em;
+
+      color:
+        var(
+          --text-primary
+        );
+
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    .geneo-canvas-stage.sticky-tool,
+    .geneo-canvas-stage.text-tool {
       cursor: crosshair;
     }
 
     .geneo-canvas-stage.sticky-tool
+    .geneo-node,
+    .geneo-canvas-stage.text-tool
     .geneo-node {
       cursor: default;
     }
 
     .geneo-canvas-stage.sticky-tool
+    .geneo-node-panel,
+    .geneo-canvas-stage.text-tool
     .geneo-node-panel {
       cursor: crosshair;
     }
     .geneo-node-text {
       box-shadow: none;
     }
-    .geneo-text-copy { width:100%; height:100%; display:flex; align-items:center; padding:8px; white-space:pre-wrap; font-size: 26px; font-weight: 800; line-height: 1.15; }
+    .geneo-text-copy {
+      width: 100%;
+      height: 100%;
+
+      padding: 8px;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+
+    .geneo-text-copy h2 {
+      margin:
+        .3em 0 .18em;
+
+      font-size: 26px;
+      font-weight: 850;
+      line-height: 1.15;
+    }
+
+    .geneo-text-copy h3 {
+      margin:
+        .3em 0 .18em;
+
+      font-size: 22px;
+      font-weight: 820;
+      line-height: 1.2;
+    }
+
+    .geneo-node-text
+    .geneo-rich-text-editor-shell
+    .ql-editor {
+      padding: 8px;
+
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+
+    .geneo-node-text
+    .geneo-rich-text-editor-shell
+    .ql-editor h2 {
+      margin:
+        .3em 0 .18em;
+
+      font-size: 26px;
+      font-weight: 850;
+      line-height: 1.15;
+    }
+
+    .geneo-node-text
+    .geneo-rich-text-editor-shell
+    .ql-editor h3 {
+      margin:
+        .3em 0 .18em;
+
+      font-size: 22px;
+      font-weight: 820;
+      line-height: 1.2;
+    }
+
+    .geneo-node-text
+    .geneo-rich-text-fallback {
+      padding: 8px;
+
+      font-size: 18px;
+      line-height: 1.35;
+    }
     .geneo-node-panel { background:var(--geneo-node-bg); box-shadow:none; }
     .geneo-node-panel .geneo-node-content { padding: 12px 14px; pointer-events: none; }
     .geneo-panel-title { display:inline-flex; max-width:calc(100% - 24px); font-size:13px; font-weight:900; color:var(--geneo-node-text); }
     .geneo-inline-editor { width:100%; height:100%; min-height:0; resize:none; border:0; outline:0; background:rgba(3,8,7,.5); color:inherit; padding:10px; font:inherit; }
-    .geneo-inline-text {
-      background: transparent;
-
-      font-size: 24px;
-      font-weight: 800;
-    }
     .geneo-port {
       position:absolute;
       z-index:30;
@@ -21919,13 +22576,13 @@
       white-space: nowrap;
     }
 
-    .notes-rich-editor-toolbar[hidden],
+    .rich-text-toolbar[hidden],
     #notesRichTextEditor[hidden],
     .notes-body-input[hidden] {
       display: none !important;
     }
 
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow {
+    .rich-text-toolbar.ql-toolbar.ql-snow {
       min-width: 0;
       min-height: 46px;
 
@@ -21955,7 +22612,7 @@
         rgba(255, 255, 255, .022);
     }
 
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     .ql-formats {
       margin: 0;
 
@@ -21966,7 +22623,7 @@
         3px;
     }
 
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     .ql-formats
     + .ql-formats {
       padding-left:
@@ -21977,9 +22634,9 @@
         var(--border-default);
     }
 
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     button,
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     .ql-picker-label {
       width: 32px;
       height: 32px;
@@ -22010,13 +22667,13 @@
         color var(--ease);
     }
 
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     button:hover,
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     button:focus-visible,
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     .ql-picker-label:hover,
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     .ql-picker-label:focus-visible {
       border-color:
         var(--border-strong);
@@ -22028,9 +22685,9 @@
         var(--text-primary);
     }
 
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     button:focus-visible,
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     .ql-picker-label:focus-visible {
       outline:
         2px solid
@@ -22040,11 +22697,11 @@
         2px;
     }
 
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     button.ql-active,
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     .ql-picker-label.ql-active,
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     .ql-picker.ql-expanded
     .ql-picker-label {
       border-color:
@@ -22057,7 +22714,7 @@
         var(--brand-green-300);
     }
 
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     button svg {
       width: 17px;
       height: 17px;
@@ -22065,13 +22722,13 @@
       display: block;
     }
 
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     .ql-picker.ql-header {
       width: 116px;
       height: 32px;
     }
 
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     .ql-picker.ql-header
     .ql-picker-label {
       width: 116px;
@@ -22090,16 +22747,16 @@
       font-weight: 750;
     }
 
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     .ql-picker.ql-header
     .ql-picker-label::before,
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     .ql-picker.ql-header
     .ql-picker-item::before {
       line-height: 1.2;
     }
 
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     .ql-picker-options {
       min-width: 140px;
 
@@ -22123,7 +22780,7 @@
         var(--shadow-soft);
     }
 
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     .ql-picker-item {
       min-height: 34px;
 
@@ -22140,9 +22797,9 @@
       font-size: 12px;
     }
 
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     .ql-picker-item:hover,
-    .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+    .rich-text-toolbar.ql-toolbar.ql-snow
     .ql-picker-item.ql-selected {
       background:
         var(--surface-card-hover);
@@ -24147,21 +24804,21 @@
       .notes-editor-body { padding-inline: var(--space-4); }
       .notes-title-input { font-size: 24px; }
 
-      .notes-rich-editor-toolbar.ql-toolbar.ql-snow {
+      .rich-text-toolbar.ql-toolbar.ql-snow {
         padding:
           6px;
       }
 
-      .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+      .rich-text-toolbar.ql-toolbar.ql-snow
       .ql-formats
       + .ql-formats {
         padding-left:
           4px;
       }
 
-      .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+      .rich-text-toolbar.ql-toolbar.ql-snow
       .ql-picker.ql-header,
-      .notes-rich-editor-toolbar.ql-toolbar.ql-snow
+      .rich-text-toolbar.ql-toolbar.ql-snow
       .ql-picker.ql-header
       .ql-picker-label {
         width:
@@ -32376,7 +33033,7 @@
 
         const normalizedBodyDelta =
           note.bodyDelta
-            ? normalizeNoteBodyDelta(
+            ? normalizeRichTextDelta(
                 note.bodyDelta
               )
             : null;
@@ -33262,6 +33919,7 @@
       geneoConnectionDraft: null,
       geneoInlineEditNodeId: null,
       geneoInlineEditSelectAll: false,
+      geneoInlineEditSurface: 'canvas',
       geneoLayerRename: null,
       geneoZoom: 83,
       geneoBoardViewports: {},
@@ -33712,6 +34370,34 @@
 
       fallbackToastShown:
         false
+    };
+
+    const geneoRichTextRuntime = {
+      nodeId: '',
+
+      instances: {
+        canvas: null,
+        inspector: null
+      },
+
+      textChangeHandlers: {
+        canvas: null,
+        inspector: null
+      },
+
+      fallbackElements: {
+        canvas: null,
+        inspector: null
+      },
+
+      outsidePointerHandler: null,
+      keydownHandler: null,
+
+      draftDelta: null,
+      draftText: '',
+
+      syncing: false,
+      fallbackActive: false
     };
 
     const localizationObserver = new MutationObserver(records => {
@@ -60339,7 +61025,60 @@
                 text: { color: '#F1F5F3', opacity: 100, enabled: true }
               }
             },
-            { id: 'gn-sticky', type: 'sticky', x: 1830, y: 500, width: 260, height: 180, parentPanelId: null, order: 6, visible: true, locked: false, text: 'Compare the household register with the family album before exporting this branch.', appearance: { fill: { color: '#6B5525', opacity: 100, enabled: true }, stroke: { color: '#D4AA6B', opacity: 100, enabled: true }, strokeWidth: 1, strokePattern: 'solid', text: { color: '#FFF8E8', opacity: 100, enabled: true } } },
+            {
+              id: 'gn-sticky',
+              type: 'sticky',
+              x: 1830,
+              y: 500,
+              width: 260,
+              height: 180,
+              parentPanelId: null,
+              order: 6,
+              visible: true,
+              locked: false,
+
+              text:
+                'Compare the household register with the family album before exporting this branch.',
+
+              textDelta: {
+                ops: [
+                  {
+                    insert:
+                      'Compare the household register with the family album before exporting this branch.'
+                  },
+
+                  {
+                    insert: '\n'
+                  }
+                ]
+              },
+
+              textFormat:
+                'quill-delta-v1',
+
+              appearance: {
+                fill: {
+                  color: '#6B5525',
+                  opacity: 100,
+                  enabled: true
+                },
+
+                stroke: {
+                  color: '#D4AA6B',
+                  opacity: 100,
+                  enabled: true
+                },
+
+                strokeWidth: 1,
+                strokePattern: 'solid',
+
+                text: {
+                  color: '#FFF8E8',
+                  opacity: 100,
+                  enabled: true
+                }
+              }
+            },
             {
               id: 'gn-text',
               type: 'text',
@@ -60353,6 +61092,25 @@
               locked: false,
 
               text: 'Possible Purrington branch',
+              textDelta: {
+                ops: [
+                  {
+                    insert:
+                      'Possible Purrington branch'
+                  },
+
+                  {
+                    insert: '\n',
+
+                    attributes: {
+                      header: 2
+                    }
+                  }
+                ]
+              },
+
+              textFormat:
+                'quill-delta-v1',
 
               appearance: {
                 fill: {
@@ -60377,9 +61135,6 @@
                 },
 
                 cornerRadius: 8,
-
-                fontSize: 28,
-                fontWeight: 800
               }
             }
           ],
@@ -64981,21 +65736,29 @@
       label
     ) {
       const isPlacementTool =
-        type === 'panel'
-        || type === 'sticky';
+        [
+          'panel',
+          'sticky',
+          'text'
+        ].includes(type);
 
       const active =
         isPlacementTool
         && state.geneoTool === type;
 
-      const actionAttribute = isPlacementTool
-        ? `data-geneo-placement-tool="${escapeHtml(type)}"`
-        : `data-geneo-add="${escapeHtml(type)}"`;
+      const actionAttribute =
+        isPlacementTool
+          ? `data-geneo-placement-tool="${escapeHtml(
+              type
+            )}"`
+          : `data-geneo-add="${escapeHtml(
+              type
+            )}"`;
 
       const actionLabel =
         type === 'panel'
           ? `Draw ${label}`
-          : type === 'sticky'
+          : isPlacementTool
             ? `Place ${label}`
             : `Add ${label}`;
 
@@ -67235,62 +67998,6 @@
       }
       const zoom = Math.max(.25, Math.min(2, state.geneoZoom / 100));
       const wrap = main.querySelector('[data-geneo-canvas-wrap]');
-      wrap?.addEventListener(
-        'click',
-        event => {
-          if (state.geneoTool !== 'sticky') {
-            return;
-          }
-
-          /*
-          * Controls, existing non-panel objects, and
-          * connection geometry are not placement surfaces.
-          * Panel interiors are intentionally valid.
-          */
-          const blockedControl =
-            event.target.closest(
-              [
-                'button',
-                'input',
-                'textarea',
-                'select',
-                '[contenteditable="true"]',
-                '.geneo-connection-hit',
-                '.geneo-segment-hit',
-                '[data-geneo-waypoint]',
-                '[data-geneo-family-junction]'
-              ].join(',')
-            );
-
-          if (blockedControl) {
-            return;
-          }
-
-          const nodeElement =
-            event.target.closest('[data-geneo-node]');
-
-          if (nodeElement) {
-            const clickedNode =
-              getGeneographNode(
-                nodeElement.dataset.geneoNode
-              );
-
-            if (clickedNode?.type !== 'panel') {
-              return;
-            }
-          }
-
-          event.preventDefault();
-          event.stopImmediatePropagation();
-
-          createGeneographStickyAtPoint(
-            geneoPointerToCanvas(event)
-          );
-        },
-        {
-          capture: true
-        }
-      );
       const viewportWidth = Math.max(900, (wrap?.clientWidth || main.clientWidth || 1200) / zoom);
       const viewportHeight = Math.max(640, (wrap?.clientHeight || main.clientHeight || 760) / zoom);
       const content = geneoContentBounds(diagram);
@@ -68060,24 +68767,50 @@
       `;
     }
 
-    function renderGeneographNodeContent(node) {
-      const editing = state.geneoInlineEditNodeId === node.id;
-      if (node.type === 'person') return renderGeneographPersonNode(node);
+    function renderGeneographNodeContent(
+      node
+    ) {
+      const editing =
+        state.geneoInlineEditNodeId
+          === node.id;
+
+      if (node.type === 'person') {
+        return (
+          renderGeneographPersonNode(
+            node
+          )
+        );
+      }
+
       if (node.type === 'image') {
-        const source = resolveGeneographImageSource(node);
-        const layerName = geneoNodeTitle(node);
+        const source =
+          resolveGeneographImageSource(
+            node
+          );
+
+        const layerName =
+          geneoNodeTitle(node);
 
         return `
-          <div class="geneo-image-node-media">
+          <div
+            class="geneo-image-node-media">
             ${
               source.available
-                ? renderPhotoThumbnail(source.photo, {
-                    label: layerName
-                  })
+                ? renderPhotoThumbnail(
+                    source.photo,
+                    {
+                      label:
+                        layerName
+                    }
+                  )
                 : `
-                  <span class="geneo-image-node-missing">
+                  <span
+                    class="geneo-image-node-missing">
                     ${icon.image}
-                    <small>Image unavailable</small>
+
+                    <small>
+                      Image unavailable
+                    </small>
                   </span>
                 `
             }
@@ -68086,15 +68819,71 @@
           <span
             class="geneo-image-layer-label"
             aria-hidden="true"
-            title="${escapeHtml(layerName)}">
-            ${escapeHtml(layerName)}
+            title="${escapeHtml(
+              layerName
+            )}">
+            ${escapeHtml(
+              layerName
+            )}
           </span>
         `;
       }
-      if (node.type === 'sticky') return editing ? `<textarea class="geneo-inline-editor" data-geneo-inline-input>${escapeHtml(node.text || '')}</textarea>` : `<div class="geneo-sticky-copy">${escapeHtml(node.text || 'Double-click to edit')}</div>`;
-      if (node.type === 'text') return editing ? `<textarea class="geneo-inline-editor geneo-inline-text" data-geneo-inline-input>${escapeHtml(node.text || '')}</textarea>` : `<div class="geneo-text-copy">${escapeHtml(node.text || 'Double-click to edit')}</div>`;
+
+      if (
+        isGeneographRichTextNode(
+          node
+        )
+      ) {
+        if (editing) {
+          return `
+            <div
+              class="
+                geneo-rich-text-editor-shell
+                geneo-rich-text-editor-${escapeHtml(
+                  node.type
+                )}
+              "
+              data-geneo-rich-text-editor-shell>
+
+              <div
+                class="geneo-rich-text-editor-host"
+                data-geneo-rich-text-editor>
+              </div>
+
+              <textarea
+                class="geneo-rich-text-fallback"
+                data-geneo-rich-text-fallback
+                aria-label="${escapeHtml(
+                  node.type === 'sticky'
+                    ? 'Sticky note content'
+                    : 'Text block content'
+                )}"
+                hidden>${escapeHtml(
+                  node.text || ''
+                )}</textarea>
+            </div>
+          `;
+        }
+
+        return `
+          <div
+            class="
+              geneo-rich-text-copy
+              geneo-${escapeHtml(
+                node.type
+              )}-copy
+            ">
+            ${geneographRichTextDisplayHtml(
+              node
+            )}
+          </div>
+        `;
+      }
+
       const panelTitle =
-        String(node.title ?? '').trim();
+        String(
+          node.title ?? ''
+        ).trim();
 
       if (editing) {
         return `
@@ -68102,25 +68891,71 @@
             class="geneo-inline-editor"
             data-geneo-inline-input
             maxlength="160"
-            value="${escapeHtml(panelTitle)}">
+            value="${escapeHtml(
+              panelTitle
+            )}">
         `;
       }
 
       return panelTitle
         ? `
-          <span class="geneo-panel-title">
-            ${escapeHtml(panelTitle)}
+          <span
+            class="geneo-panel-title">
+            ${escapeHtml(
+              panelTitle
+            )}
           </span>
         `
         : '';
     }
 
-    function renderGeneographPorts(node) {
-      return ['top', 'right', 'bottom', 'left'].map(port => `<button class="geneo-port ${state.geneoConnectionDraft?.nodeId === node.id && state.geneoConnectionDraft?.port === port ? 'active' : ''}" type="button" data-geneo-port="${port}" data-geneo-port-node="${escapeHtml(node.id)}" aria-label="Connect from ${port}"></button>`).join('');
+    function renderGeneographPorts(
+      node
+    ) {
+      if (
+        isGeneographRichTextNode(
+          node
+        )
+        && state.geneoInlineEditNodeId
+          === node.id
+      ) {
+        return '';
+      }
+
+      return [
+        'top',
+        'right',
+        'bottom',
+        'left'
+      ]
+        .map(port => `
+          <button
+            class="
+              geneo-port
+              ${
+                state
+                  .geneoConnectionDraft
+                  ?.nodeId === node.id
+                && state
+                  .geneoConnectionDraft
+                  ?.port === port
+                  ? 'active'
+                  : ''
+              }
+            "
+            type="button"
+            data-geneo-port="${port}"
+            data-geneo-port-node="${escapeHtml(
+              node.id
+            )}"
+            aria-label="Connect from ${port}">
+          </button>
+        `)
+        .join('');
     }
 
     function renderGeneographResizeHandles(
-      node
+      node 
     ) {
       if (
         selectedGeneographNodes().length
@@ -68130,6 +68965,13 @@
         || state.selectedGeneoNodeId
           !== node.id
         || geneoNodeEffectiveLocked(node)
+        || (
+          isGeneographRichTextNode(
+            node
+          )
+          && state.geneoInlineEditNodeId
+            === node.id
+        )
       ) {
         return '';
       }
@@ -68168,6 +69010,13 @@
 
       const appearance =
         node.appearance || {};
+
+      const richEditing =
+        isGeneographRichTextNode(
+          node
+        )
+        && state.geneoInlineEditNodeId
+          === node.id;
 
       const personSettings =
         node.type === 'person'
@@ -68225,15 +69074,17 @@
         ),
 
         `z-index:${
-          node.type === 'panel'
-            ? Math.max(
-                1,
-                Math.min(
-                  10,
-                  node.order
+          richEditing
+            ? 1000
+            : node.type === 'panel'
+              ? Math.max(
+                  1,
+                  Math.min(
+                    10,
+                    node.order
+                  )
                 )
-              )
-            : 20 + node.order
+              : 20 + node.order
         }`
       ].join(';');
 
@@ -68253,6 +69104,11 @@
                 node
               )
                 ? 'locked'
+                : ''
+            }
+            ${
+              richEditing
+                ? 'is-rich-editing'
                 : ''
             }
             ${
@@ -68298,7 +69154,13 @@
             )}
           </div>
 
-          ${renderGeneographPorts(node)}
+          ${renderGeneographRichTextToolbar(
+            node
+          )}
+
+          ${renderGeneographPorts(
+            node
+          )}
 
           ${renderGeneographResizeHandles(
             node
@@ -71143,38 +72005,14 @@
           </div>
         `
         :
-      node.type === 'sticky'
-        ? `
-          <div class="geneo-field geneo-sticky-content-field">
-            <label for="geneoStickyNoteContent">
-              Note content
-            </label>
+      isGeneographRichTextNode(
+        node
+      )
+        ? renderGeneographRichTextInspectorContent(
+            node
+          )
+        : '';
 
-            <textarea
-              class="geneo-textarea geneo-sticky-content-input"
-              id="geneoStickyNoteContent"
-              rows="6"
-              wrap="soft"
-              data-geneo-node-field="text"
-              placeholder="Enter a research note…">${escapeHtml(
-                node.text || ''
-              )}</textarea>
-          </div>
-        `
-        : `
-          <div class="geneo-field">
-            <label for="geneoTextContent">
-              Text
-            </label>
-
-            <textarea
-              class="geneo-textarea"
-              id="geneoTextContent"
-              data-geneo-node-field="text">${escapeHtml(
-                node.text || ''
-              )}</textarea>
-          </div>
-        `;
       return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader(geneoNodeTitle(node), capitalize(node.type), geneoNodeIcon(node.type))}${nameSection}
         ${
           node.type === 'image'
@@ -71347,6 +72185,8 @@
     }
 
     function renderGeneographEditor() {
+      const richTextDraft = captureGeneographRichTextDraft();
+      destroyGeneographRichTextEditor();
       if (geneoPaintRuntime.popover) closeGeneoPaintPopover({ restoreFocus: false });
       normalizeGeneographRuntimeData();
       pruneGeneographSelection();
@@ -71374,8 +72214,15 @@
       const stageClasses = [
         'geneo-canvas-stage',
         state.geneoTool === 'connect' ? 'connection-tool' : '',
-        state.geneoTool === 'panel' ? 'panel-tool' : '',
-        state.geneoTool === 'sticky' ? 'sticky-tool' : '',
+        state.geneoTool === 'panel'
+          ? 'panel-tool'
+          : '',
+        state.geneoTool === 'sticky'
+          ? 'sticky-tool'
+          : '',
+        state.geneoTool === 'text'
+          ? 'text-tool'
+          : '',
         state.geneoConnectionDraft ? 'is-connecting' : '',
         diagram.canvas.alwaysShowSockets ? 'show-sockets' : ''
       ].filter(Boolean).join(' ');
@@ -71412,6 +72259,34 @@
       </section>`;
       bindGeneographEditor();
       ensureGeneographKeyboardBinding();
+      const editingNode =
+        getGeneographNode(
+          state.geneoInlineEditNodeId
+        );
+
+      if (
+        isGeneographRichTextNode(
+          editingNode
+        )
+      ) {
+        const matchingDraft =
+          richTextDraft?.nodeId
+            === editingNode.id
+              ? richTextDraft
+              : null;
+
+        requestAnimationFrame(
+          () => {
+            initializeGeneographRichTextEditor(
+              editingNode,
+              {
+                draft:
+                  matchingDraft
+              }
+            );
+          }
+        );
+      }
       if (!hadMountedCanvas) requestAnimationFrame(() => restoreGeneographViewportCenter(geneoSavedViewport(board.id)?.center || geneoContentCenter()));
       else requestAnimationFrame(() => requestAnimationFrame(() => { geneoCanvasRuntime.suppressEdgeExpansion = false; }));
     }
@@ -71470,6 +72345,24 @@
       });
     }
 
+    function geneoNodeCenter(
+      node
+    ) {
+      if (!node) {
+        return null;
+      }
+
+      return {
+        x:
+          node.x
+          + node.width / 2,
+
+        y:
+          node.y
+          + node.height / 2
+      };
+    }
+
     function renderGeneographEditorPreserveCenter(center = null) {
       const point = center || geneoCurrentViewportCenter();
       renderGeneographEditor();
@@ -71503,6 +72396,882 @@
       return candidate || { x: baseX, y: baseY };
     }
 
+    function isGeneographRichTextNode(
+      node
+    ) {
+      return Boolean(
+        node
+        && (
+          node.type === 'text'
+          || node.type === 'sticky'
+        )
+      );
+    }
+
+    function geneographRichTextDisplayHtml(
+      node
+    ) {
+      const text =
+        String(
+          node?.text || ''
+        );
+
+      if (!text) {
+        return `
+          <span
+            class="geneo-rich-text-placeholder">
+            Double-click to edit
+          </span>
+        `;
+      }
+
+      return renderRichTextDeltaHtml(
+        node.textFormat
+          === 'quill-delta-v1'
+            ? node.textDelta
+            : null,
+
+        text
+      );
+    }
+
+    function renderGeneographRichTextInspectorContent(
+      node
+    ) {
+      const editing =
+        state.geneoInlineEditNodeId
+          === node.id;
+
+      if (!editing) {
+        return `
+          <div
+            class="
+              geneo-rich-text-inspector-preview
+              geneo-rich-text-inspector-${escapeHtml(
+                node.type
+              )}
+            ">
+            ${geneographRichTextDisplayHtml(
+              node
+            )}
+          </div>
+
+          <button
+            class="button secondary"
+            type="button"
+            data-geneo-edit-rich-text="${escapeHtml(
+              node.id
+            )}">
+            Edit text
+          </button>
+        `;
+      }
+
+      const toolbarLabel =
+        node.type === 'sticky'
+          ? 'Sticky note formatting'
+          : 'Text formatting';
+
+      return `
+        <div
+          class="geneo-rich-text-inspector"
+          data-geneo-rich-text-inspector="${escapeHtml(
+            node.id
+          )}">
+
+          <div
+            class="geneo-rich-text-inspector-editor-shell"
+            data-geneo-inspector-rich-text-editor-shell>
+
+            ${renderRichTextToolbar({
+              id:
+                'geneoInspectorRichTextToolbar',
+
+              className:
+                'geneo-rich-text-inspector-toolbar',
+
+              ariaLabel:
+                toolbarLabel
+            })}
+
+            <div
+              class="geneo-rich-text-inspector-editor"
+              data-geneo-inspector-rich-text-editor>
+            </div>
+
+            <textarea
+              class="geneo-rich-text-inspector-fallback"
+              data-geneo-inspector-rich-text-fallback
+              aria-label="${escapeHtml(
+                node.type === 'sticky'
+                  ? 'Sticky note content'
+                  : 'Text block content'
+              )}"
+              hidden>${escapeHtml(
+                node.text || ''
+              )}</textarea>
+          </div>
+
+          <div
+            class="geneo-rich-text-inspector-actions">
+            <button
+              class="button secondary"
+              type="button"
+              data-geneo-rich-text-cancel>
+              Cancel
+            </button>
+
+            <button
+              class="button primary"
+              type="button"
+              data-geneo-rich-text-done>
+              Done
+            </button>
+          </div>
+        </div>
+      `;
+    }
+    
+    function renderGeneographRichTextToolbar(
+      node
+    ) {
+      if (
+        !isGeneographRichTextNode(
+          node
+        )
+        || state.geneoInlineEditNodeId
+          !== node.id
+      ) {
+        return '';
+      }
+
+      return renderRichTextToolbar({
+        id:
+          'geneoRichTextToolbar',
+
+        className:
+          'geneo-rich-text-toolbar',
+
+        ariaLabel:
+          node.type === 'sticky'
+            ? 'Sticky note formatting'
+            : 'Text formatting'
+      });
+    }
+
+    function captureGeneographRichTextDraft() {
+      if (
+        !geneoRichTextRuntime
+          .nodeId
+      ) {
+        return null;
+      }
+
+      return {
+        nodeId:
+          geneoRichTextRuntime
+            .nodeId,
+
+        delta:
+          cloneRichTextDelta(
+            geneoRichTextRuntime
+              .draftDelta
+          ),
+
+        text:
+          geneoRichTextRuntime
+            .draftText,
+
+        fallbackActive:
+          geneoRichTextRuntime
+            .fallbackActive
+      };
+    }
+
+    function destroyGeneographRichTextEditor() {
+      Object.entries(
+        geneoRichTextRuntime.instances
+      ).forEach(([
+        surface,
+        instance
+      ]) => {
+        const handler =
+          geneoRichTextRuntime
+            .textChangeHandlers[
+              surface
+            ];
+
+        if (
+          instance
+          && handler
+        ) {
+          instance.off(
+            'text-change',
+            handler
+          );
+        }
+      });
+
+      if (
+        geneoRichTextRuntime
+          .outsidePointerHandler
+      ) {
+        document.removeEventListener(
+          'pointerdown',
+          geneoRichTextRuntime
+            .outsidePointerHandler,
+          true
+        );
+      }
+
+      if (
+        geneoRichTextRuntime
+          .keydownHandler
+      ) {
+        document.removeEventListener(
+          'keydown',
+          geneoRichTextRuntime
+            .keydownHandler,
+          true
+        );
+      }
+
+      geneoRichTextRuntime.nodeId =
+        '';
+
+      geneoRichTextRuntime.instances = {
+        canvas: null,
+        inspector: null
+      };
+
+      geneoRichTextRuntime
+        .textChangeHandlers = {
+          canvas: null,
+          inspector: null
+        };
+
+      geneoRichTextRuntime
+        .fallbackElements = {
+          canvas: null,
+          inspector: null
+        };
+
+      geneoRichTextRuntime
+        .outsidePointerHandler =
+          null;
+
+      geneoRichTextRuntime
+        .keydownHandler =
+          null;
+
+      geneoRichTextRuntime.draftDelta =
+        null;
+
+      geneoRichTextRuntime.draftText =
+        '';
+
+      geneoRichTextRuntime.syncing =
+        false;
+
+      geneoRichTextRuntime
+        .fallbackActive =
+          false;
+    }
+
+    function bindGeneographRichTextSessionGuards(
+      node
+    ) {
+      const selector =
+        `[data-geneo-node="${
+          CSS.escape(node.id)
+        }"]`;
+
+      const outsidePointerHandler =
+        event => {
+          if (
+            geneoRichTextRuntime
+              .nodeId !== node.id
+          ) {
+            return;
+          }
+
+          if (
+            event.target.closest(
+              selector
+            )
+            || event.target.closest(
+              '[data-geneo-rich-text-inspector]'
+            )
+          ) {
+            return;
+          }
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          commitGeneoInlineEdit(
+            false
+          );
+        };
+
+      const keydownHandler =
+        event => {
+          if (
+            geneoRichTextRuntime
+              .nodeId !== node.id
+          ) {
+            return;
+          }
+
+          if (
+            event.key === 'Escape'
+          ) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            commitGeneoInlineEdit(
+              true
+            );
+
+            return;
+          }
+
+          if (
+            event.key === 'Enter'
+            && (
+              event.ctrlKey
+              || event.metaKey
+            )
+          ) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            commitGeneoInlineEdit(
+              false
+            );
+          }
+        };
+
+      geneoRichTextRuntime
+        .outsidePointerHandler =
+          outsidePointerHandler;
+
+      geneoRichTextRuntime
+        .keydownHandler =
+          keydownHandler;
+
+      document.addEventListener(
+        'pointerdown',
+        outsidePointerHandler,
+        true
+      );
+
+      document.addEventListener(
+        'keydown',
+        keydownHandler,
+        true
+      );
+    }
+
+    function initializeGeneographRichTextEditor(
+      node,
+      {
+        draft = null
+      } = {}
+    ) {
+      if (
+        !isGeneographRichTextNode(
+          node
+        )
+      ) {
+        return;
+      }
+
+      const nodeElement =
+        main.querySelector(
+          `[data-geneo-node="${
+            CSS.escape(node.id)
+          }"]`
+        );
+
+      const inspector =
+        main.querySelector(
+          `[data-geneo-rich-text-inspector="${
+            CSS.escape(node.id)
+          }"]`
+        );
+
+      if (!nodeElement) {
+        return;
+      }
+
+      const matchingDraft =
+        draft?.nodeId === node.id
+          ? draft
+          : null;
+
+      const initialDelta =
+        matchingDraft
+          ? cloneRichTextDelta(
+              matchingDraft.delta
+            )
+          : cloneRichTextDelta(
+              node.textDelta
+            );
+
+      const initialText =
+        matchingDraft
+          ? String(
+              matchingDraft.text || ''
+            )
+          : String(
+              node.text || ''
+            );
+
+      geneoRichTextRuntime.nodeId =
+        node.id;
+
+      geneoRichTextRuntime.draftDelta =
+        initialDelta;
+
+      geneoRichTextRuntime.draftText =
+        initialText;
+
+      const surfaces = [
+        {
+          key: 'canvas',
+
+          shell:
+            nodeElement.querySelector(
+              '[data-geneo-rich-text-editor-shell]'
+            ),
+
+          toolbar:
+            nodeElement.querySelector(
+              '#geneoRichTextToolbar'
+            ),
+
+          editorHost:
+            nodeElement.querySelector(
+              '[data-geneo-rich-text-editor]'
+            ),
+
+          fallback:
+            nodeElement.querySelector(
+              '[data-geneo-rich-text-fallback]'
+            ),
+
+          bounds:
+            nodeElement,
+
+          editorLabel:
+            node.type === 'sticky'
+              ? 'Sticky note content'
+              : 'Text block content'
+        },
+
+        {
+          key: 'inspector',
+
+          shell:
+            inspector?.querySelector(
+              '[data-geneo-inspector-rich-text-editor-shell]'
+            ),
+
+          toolbar:
+            inspector?.querySelector(
+              '#geneoInspectorRichTextToolbar'
+            ),
+
+          editorHost:
+            inspector?.querySelector(
+              '[data-geneo-inspector-rich-text-editor]'
+            ),
+
+          fallback:
+            inspector?.querySelector(
+              '[data-geneo-inspector-rich-text-fallback]'
+            ),
+
+          bounds:
+            inspector,
+
+          editorLabel:
+            node.type === 'sticky'
+              ? 'Sticky note content'
+              : 'Text block content'
+        }
+      ].filter(surface =>
+        surface.shell
+        && surface.toolbar
+        && surface.editorHost
+        && surface.fallback
+      );
+
+      if (!surfaces.length) {
+        return;
+      }
+
+      bindGeneographRichTextSessionGuards(
+        node
+      );
+
+      const requestedSurface =
+        state.geneoInlineEditSurface
+          === 'inspector'
+            ? 'inspector'
+            : 'canvas';
+
+      const center =
+        geneoNodeCenter(node);
+
+      /*
+       * Plain-text fallback uses both surfaces
+       * as synchronized views of the same draft.
+       */
+      if (
+        typeof window.Quill
+          !== 'function'
+      ) {
+        geneoRichTextRuntime
+          .fallbackActive =
+            true;
+
+        surfaces.forEach(surface => {
+          surface.toolbar.hidden =
+            true;
+
+          surface.editorHost.hidden =
+            true;
+
+          surface.fallback.hidden =
+            false;
+
+          surface.fallback.value =
+            initialText;
+
+          geneoRichTextRuntime
+            .fallbackElements[
+              surface.key
+            ] =
+              surface.fallback;
+
+          surface.fallback.addEventListener(
+            'focus',
+            () => {
+              state.geneoInlineEditSurface =
+                surface.key;
+            }
+          );
+
+          surface.fallback.addEventListener(
+            'input',
+            () => {
+              geneoRichTextRuntime
+                .draftText =
+                  surface.fallback.value;
+
+              geneoRichTextRuntime
+                .draftDelta =
+                  null;
+
+              Object.entries(
+                geneoRichTextRuntime
+                  .fallbackElements
+              ).forEach(([
+                key,
+                element
+              ]) => {
+                if (
+                  key !== surface.key
+                  && element
+                ) {
+                  element.value =
+                    surface.fallback.value;
+                }
+              });
+            }
+          );
+        });
+
+        const target =
+          geneoRichTextRuntime
+            .fallbackElements[
+              requestedSurface
+            ]
+          || geneoRichTextRuntime
+            .fallbackElements.canvas
+          || geneoRichTextRuntime
+            .fallbackElements.inspector;
+
+        requestAnimationFrame(
+          () => {
+            target?.focus({
+              preventScroll: true
+            });
+
+            if (
+              target
+              && state
+                .geneoInlineEditSelectAll
+            ) {
+              target.select();
+            }
+
+            state
+              .geneoInlineEditSelectAll =
+                false;
+
+            if (
+              requestedSurface
+              === 'canvas'
+              && center
+            ) {
+              requestAnimationFrame(
+                () => {
+                  restoreGeneographViewportCenter(
+                    center
+                  );
+                }
+              );
+            }
+          }
+        );
+
+        return;
+      }
+
+      const synchronize =
+        (
+          sourceKey,
+          sourceInstance
+        ) => {
+          if (
+            geneoRichTextRuntime.syncing
+          ) {
+            return;
+          }
+
+          geneoRichTextRuntime.syncing =
+            true;
+
+          const delta =
+            normalizeRichTextDelta(
+              sourceInstance
+                .getContents()
+            );
+
+          geneoRichTextRuntime
+            .draftDelta =
+              delta;
+
+          geneoRichTextRuntime
+            .draftText =
+              plainTextFromQuill(
+                sourceInstance
+              );
+
+          Object.entries(
+            geneoRichTextRuntime
+              .instances
+          ).forEach(([
+            key,
+            instance
+          ]) => {
+            if (
+              key === sourceKey
+              || !instance
+            ) {
+              return;
+            }
+
+            if (delta) {
+              instance.setContents(
+                delta,
+                'silent'
+              );
+            } else {
+              instance.setText(
+                geneoRichTextRuntime
+                  .draftText,
+                'silent'
+              );
+            }
+          });
+
+          geneoRichTextRuntime.syncing =
+            false;
+        };
+
+      surfaces.forEach(surface => {
+        const instance =
+          createRichTextQuill({
+            editorHost:
+              surface.editorHost,
+
+            toolbar:
+              surface.toolbar,
+
+            bounds:
+              surface.bounds,
+
+            placeholder:
+              node.type === 'sticky'
+                ? 'Write a note…'
+                : 'Enter text…',
+
+            toolbarLabel:
+              node.type === 'sticky'
+                ? 'Sticky note formatting'
+                : 'Text formatting',
+
+            editorLabel:
+              surface.editorLabel
+          });
+
+        if (!instance) {
+          return;
+        }
+
+        if (initialDelta) {
+          instance.setContents(
+            initialDelta,
+            'silent'
+          );
+        } else {
+          instance.setText(
+            initialText,
+            'silent'
+          );
+        }
+
+        instance.history.clear();
+
+        geneoRichTextRuntime
+          .instances[
+            surface.key
+          ] =
+            instance;
+
+        const textChangeHandler =
+          (
+            delta,
+            oldDelta,
+            source
+          ) => {
+            if (
+              source !== 'user'
+              || geneoRichTextRuntime
+                .nodeId !== node.id
+            ) {
+              return;
+            }
+
+            synchronize(
+              surface.key,
+              instance
+            );
+          };
+
+        geneoRichTextRuntime
+          .textChangeHandlers[
+            surface.key
+          ] =
+            textChangeHandler;
+
+        instance.on(
+          'text-change',
+          textChangeHandler
+        );
+
+        instance.root.addEventListener(
+          'focus',
+          () => {
+            state.geneoInlineEditSurface =
+              surface.key;
+          }
+        );
+
+        surface.toolbar.addEventListener(
+          'pointerdown',
+          () => {
+            state.geneoInlineEditSurface =
+              surface.key;
+          }
+        );
+      });
+
+      const targetInstance =
+        geneoRichTextRuntime
+          .instances[
+            requestedSurface
+          ]
+        || geneoRichTextRuntime
+          .instances.canvas
+        || geneoRichTextRuntime
+          .instances.inspector;
+
+      requestAnimationFrame(
+        () => {
+          if (!targetInstance) {
+            return;
+          }
+
+          targetInstance.root.focus({
+            preventScroll: true
+          });
+
+          const contentLength =
+            Math.max(
+              0,
+              targetInstance
+                .getLength() - 1
+            );
+
+          if (
+            state
+              .geneoInlineEditSelectAll
+            && contentLength
+          ) {
+            targetInstance.setSelection(
+              0,
+              contentLength,
+              'silent'
+            );
+          } else {
+            targetInstance.setSelection(
+              contentLength,
+              0,
+              'silent'
+            );
+          }
+
+          state
+            .geneoInlineEditSelectAll =
+              false;
+
+          /*
+           * Quill's selection update occurs after
+           * the board rerender. Reassert the object
+           * center after that focus/selection work.
+           */
+          if (
+            requestedSurface
+            === 'canvas'
+            && center
+          ) {
+            requestAnimationFrame(
+              () => {
+                restoreGeneographViewportCenter(
+                  center
+                );
+              }
+            );
+          }
+        }
+      );
+    }
+
     function focusGeneographInlineEditor() {
       const input = main.querySelector('[data-geneo-inline-input]');
       if (!input) {
@@ -71514,18 +73283,98 @@
       state.geneoInlineEditSelectAll = false;
     }
 
-    function beginGeneographInlineEdit(nodeId, { selectAll = false } = {}) {
-      state.geneoInlineEditNodeId = nodeId;
-      state.geneoInlineEditSelectAll = selectAll;
-      renderGeneographEditorPreserveScroll();
-      requestAnimationFrame(focusGeneographInlineEditor);
+    function beginGeneographInlineEdit(
+      nodeId,
+      {
+        selectAll = false,
+        surface = 'canvas'
+      } = {}
+    ) {
+      const node =
+        getGeneographNode(
+          nodeId
+        );
+
+      if (
+        !node
+        || ![
+          'text',
+          'sticky',
+          'panel'
+        ].includes(node.type)
+      ) {
+        return;
+      }
+
+      if (
+        state.geneoInlineEditNodeId
+        && state.geneoInlineEditNodeId
+          !== nodeId
+      ) {
+        commitGeneoInlineEdit(
+          false
+        );
+      }
+
+      selectGeneographNode(
+        nodeId
+      );
+
+      state.geneoInlineEditNodeId =
+        nodeId;
+
+      state.geneoInlineEditSelectAll =
+        selectAll;
+
+      state.geneoInlineEditSurface =
+        surface === 'inspector'
+          ? 'inspector'
+          : 'canvas';
+
+      if (
+        isGeneographRichTextNode(
+          node
+        )
+        && state.geneoInlineEditSurface
+          === 'canvas'
+      ) {
+        renderGeneographEditorPreserveCenter(
+          geneoNodeCenter(node)
+        );
+      } else {
+        renderGeneographEditorPreserveScroll({
+          preserveInspectorScroll:
+            true
+        });
+      }
+
+      if (node.type === 'panel') {
+        requestAnimationFrame(
+          focusGeneographInlineEditor
+        );
+      }
     }
 
-    function addGeneographObject(type) {
-      if (!GENEO_NODE_TYPES.has(type)) return;
+    function addGeneographObject(
+      type
+    ) {
+      if (
+        !GENEO_NODE_TYPES.has(type)
+      ) {
+        return;
+      }
 
-      if (type === 'panel' || type === 'sticky') {
-        activateGeneographPlacementTool(type);
+      if (
+        [
+          'panel',
+          'sticky',
+          'text'
+        ].includes(type)
+      ) {
+        activateGeneographPlacementTool(
+          type
+        );
+
         return;
       }
 
@@ -71538,53 +73387,7 @@
 
       if (type === 'image') {
         openGeneographImagePicker();
-        return;
       }
-
-      const diagram = selectedGeneographDiagram();
-      const defaults = geneoNodeDefaults(type);
-      const position = nextGeneoObjectPosition(
-        defaults.width,
-        defaults.height
-      );
-
-      geneoPushHistory();
-
-      const node = {
-        id: createRuntimeId('geneo-node'),
-        type,
-        ...position,
-        width: defaults.width,
-        height: defaults.height,
-        parentPanelId: null,
-        order:
-          Math.max(
-            0,
-            ...diagram.nodes.map(item => item.order || 0)
-          ) + 1,
-        visible: true,
-        locked: false,
-        appearance: {
-          ...defaults.appearance
-        }
-      };
-
-      if (type === 'text') {
-        node.text = 'New text';
-      }
-
-      diagram.nodes.push(node);
-      selectGeneographNode(node.id);
-      touchGeneographBoard();
-
-      if (type === 'text') {
-        beginGeneographInlineEdit(node.id, {
-          selectAll: true
-        });
-        return;
-      }
-
-      renderGeneographEditorPreserveScroll();
     }
 
     function geneoCurrentMoveTool() {
@@ -71614,7 +73417,11 @@
       type
     ) {
       if (
-        !['panel', 'sticky'].includes(type)
+        ![
+          'panel',
+          'sticky',
+          'text'
+        ].includes(type)
       ) {
         return;
       }
@@ -71632,10 +73439,6 @@
         return;
       }
 
-      /*
-       * Placement is temporary. Preserve the
-       * user's Select/Pan movement mode.
-       */
       state.geneoPlacementReturnTool =
         geneoCurrentMoveTool();
 
@@ -71644,10 +73447,15 @@
 
       renderGeneographEditorPreserveScroll();
 
-      showToast(
+      const instruction =
         type === 'panel'
           ? 'Drag on empty canvas to draw a panel.'
-          : 'Click empty canvas or a panel to place a sticky note.'
+          : type === 'sticky'
+            ? 'Click empty canvas or a panel to place a sticky note.'
+            : 'Click empty canvas or a panel to place a text block.';
+
+      showToast(
+        instruction
       );
     }
 
@@ -71755,61 +73563,144 @@
       return panel;
     }
 
-    function createGeneographStickyAtPoint(point) {
-      const diagram = selectedGeneographDiagram();
+    function createGeneographRichTextNodeAtPoint(
+      type,
+      point
+    ) {
+      const diagram =
+        selectedGeneographDiagram();
 
-      if (!diagram || !point) {
+      if (
+        !diagram
+        || !point
+        || ![
+          'sticky',
+          'text'
+        ].includes(type)
+      ) {
         return null;
       }
 
-      const defaults = geneoNodeDefaults('sticky');
+      const defaults =
+        geneoNodeDefaults(type);
 
-      const position = snapGeneographPoint({
-        x: point.x - defaults.width / 2,
-        y: point.y - defaults.height / 2
-      });
+      /*
+       * The click represents the visual center
+       * of the new object.
+       */
+      const position =
+        snapGeneographPoint({
+          x:
+            point.x
+            - defaults.width / 2,
+
+          y:
+            point.y
+            - defaults.height / 2
+        });
+
+      const text =
+        type === 'text'
+          ? 'New text'
+          : '';
+
+      const textDelta =
+        type === 'text'
+          ? {
+              ops: [
+                {
+                  insert:
+                    'New text'
+                },
+
+                {
+                  insert: '\n',
+
+                  attributes: {
+                    header: 2
+                  }
+                }
+              ]
+            }
+          : null;
 
       geneoPushHistory();
 
       const node = {
-        id: createRuntimeId('geneo-node'),
-        type: 'sticky',
-        text: '',
+        id:
+          createRuntimeId(
+            'geneo-node'
+          ),
+
+        type,
+
+        text,
+        textDelta,
+
+        textFormat:
+          textDelta
+            ? 'quill-delta-v1'
+            : '',
+
         x: position.x,
         y: position.y,
-        width: defaults.width,
-        height: defaults.height,
+
+        width:
+          defaults.width,
+
+        height:
+          defaults.height,
+
         parentPanelId: null,
+
         order:
           Math.max(
             0,
             ...diagram.nodes.map(
-              item => item.order || 0
+              item =>
+                item.order || 0
             )
           ) + 1,
+
         visible: true,
         locked: false,
+
         appearance:
-          structuredClone(defaults.appearance)
+          structuredClone(
+            defaults.appearance
+          )
       };
 
       diagram.nodes.push(node);
 
       node.parentPanelId =
-        geneoContainingPanelForNode(node)?.id
-        || null;
+        geneoContainingPanelForNode(
+          node
+        )?.id || null;
 
-      selectGeneographNode(node.id);
+      selectGeneographNode(
+        node.id
+      );
+
       touchGeneographBoard();
 
       /*
-       * Sticky placement is single-use.
-       * Restore the movement mode that was active
-       * before placement started.
+       * Placement is one-shot. Return to the
+       * movement mode that was active before
+       * Text/Sticky placement was armed.
        */
       finishGeneographPlacementTool();
 
-      beginGeneographInlineEdit(node.id);
+      beginGeneographInlineEdit(
+        node.id,
+        {
+          selectAll:
+            type === 'text',
+
+          surface:
+            'canvas'
+        }
+      );
 
       return node;
     }
@@ -74624,7 +76515,20 @@
     }
 
     function startGeneographObjectDrag(event) {
-      const nodeElement = event.target.closest('[data-geneo-node]'); if (!nodeElement || event.button !== 0 || event.target.closest('button,input,textarea,select,[contenteditable]')) return;
+      const nodeElement = event.target.closest('[data-geneo-node]'); if (!nodeElement || event.button !== 0 || 
+      event.target.closest(
+        [
+          'button',
+          'input',
+          'textarea',
+          'select',
+          'a',
+          '[contenteditable]',
+          '.rich-text-toolbar',
+          '.ql-tooltip'
+        ].join(',')
+      )) 
+      return;
       const node = getGeneographNode(nodeElement.dataset.geneoNode); if (!node || !['select', 'pan'].includes(state.geneoTool)) return;
       if (event.shiftKey || event.ctrlKey || event.metaKey) return;
       if (!geneoSelectedNodeIdSet().has(node.id)) selectGeneographNode(node.id);
@@ -75317,39 +77221,125 @@
       touchGeneographBoard(); renderGeneographEditorPreserveScroll();
     }
 
-    function commitGeneoInlineEdit(cancel = false) {
-      const node = getGeneographNode(
-        state.geneoInlineEditNodeId
-      );
-
-      const input = main.querySelector(
-        '[data-geneo-inline-input]'
-      );
+    function commitGeneoInlineEdit(
+      cancel = false
+    ) {
+      const node =
+        getGeneographNode(
+          state.geneoInlineEditNodeId
+        );
 
       if (!node) {
-        state.geneoInlineEditNodeId = null;
-        state.geneoInlineEditSelectAll = false;
+        destroyGeneographRichTextEditor();
+
+        state.geneoInlineEditNodeId =
+          null;
+
+        state.geneoInlineEditSelectAll =
+          false;
+
+        state.geneoInlineEditSurface =
+          'canvas';
+
         return;
       }
 
-      if (!cancel && input) {
-        geneoPushHistory();
+      if (
+        isGeneographRichTextNode(
+          node
+        )
+      ) {
+        if (!cancel) {
+          const activeRuntime =
+            geneoRichTextRuntime
+              .nodeId === node.id;
 
-        if (node.type === 'panel') {
-          node.title =
-            String(input.value ?? '')
-              .trim()
-              .slice(0, 160);
-        } else {
-          node.text = input.value;
+          const nextDelta =
+            activeRuntime
+              ? cloneRichTextDelta(
+                  geneoRichTextRuntime
+                    .draftDelta
+                )
+              : cloneRichTextDelta(
+                  node.textDelta
+                );
+
+          const nextText =
+            activeRuntime
+              ? String(
+                  geneoRichTextRuntime
+                    .draftText || ''
+                )
+              : String(
+                  node.text || ''
+                );
+
+          const changed =
+            node.text !== nextText
+            || !richTextDeltasEqual(
+              node.textDelta,
+              nextDelta
+            );
+
+          if (changed) {
+            geneoPushHistory();
+
+            node.text =
+              nextText;
+
+            node.textDelta =
+              nextDelta;
+
+            node.textFormat =
+              nextDelta
+                ? 'quill-delta-v1'
+                : '';
+
+            touchGeneographBoard();
+          }
         }
 
-        touchGeneographBoard();
+        destroyGeneographRichTextEditor();
+      } else {
+        const input =
+          main.querySelector(
+            '[data-geneo-inline-input]'
+          );
+
+        if (
+          !cancel
+          && input
+        ) {
+          const nextTitle =
+            String(
+              input.value ?? ''
+            )
+              .trim()
+              .slice(0, 160);
+
+          if (
+            node.title
+            !== nextTitle
+          ) {
+            geneoPushHistory();
+
+            node.title =
+              nextTitle;
+
+            touchGeneographBoard();
+          }
+        }
       }
 
-      state.geneoInlineEditNodeId = null;
-      state.geneoInlineEditSelectAll = false;
+      state.geneoInlineEditNodeId =
+        null;
 
+      state.geneoInlineEditSelectAll =
+        false;
+
+      state.geneoInlineEditSurface =
+        'canvas';
+        
       renderGeneographEditorPreserveScroll();
     }
 
@@ -75448,77 +77438,6 @@
           });
         }
       );
-    }
-
-    function updateGeneographStickyContentDom(node) {
-      if (!node || node.type !== 'sticky') return;
-
-      const nodeElement =
-        main.querySelector(
-          `[data-geneo-node="${CSS.escape(node.id)}"]`
-        );
-
-      const copy =
-        nodeElement?.querySelector(
-          '.geneo-sticky-copy'
-        );
-
-      if (!copy) return;
-
-      copy.textContent =
-        node.text
-        || 'Double-click to edit';
-    }
-
-    function bindGeneographStickyContentField(
-      input,
-      nodeId
-    ) {
-      if (!input || !nodeId) return;
-
-      /*
-      * One history snapshot is created for each
-      * continuous focus session, not per keystroke.
-      */
-      let historyStarted = false;
-
-      input.addEventListener('focus', () => {
-        historyStarted = false;
-      });
-
-      input.addEventListener('input', () => {
-        const node =
-          getGeneographNode(nodeId);
-
-        if (!node || node.type !== 'sticky') {
-          return;
-        }
-
-        const nextValue = input.value;
-
-        if (node.text === nextValue) {
-          return;
-        }
-
-        if (!historyStarted) {
-          geneoPushHistory();
-          historyStarted = true;
-        }
-
-        /*
-        * Persist immediately. Canvas panning prevents
-        * the usual blur/change sequence, so the model
-        * must already contain the current field value.
-        */
-        node.text = nextValue;
-
-        touchGeneographBoard();
-        updateGeneographStickyContentDom(node);
-      });
-
-      input.addEventListener('blur', () => {
-        historyStarted = false;
-      });
     }
 
     function bindGeneographPersonCardControls() {
@@ -76251,7 +78170,51 @@
             );
           });
         });
+      main
+        .querySelectorAll(
+          '[data-geneo-edit-rich-text]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              beginGeneographInlineEdit(
+                button.dataset
+                  .geneoEditRichText,
+                {
+                  surface:
+                    'inspector'
+                }
+              );
+            }
+          );
+        });
 
+      main
+        .querySelector(
+          '[data-geneo-rich-text-done]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            commitGeneoInlineEdit(
+              false
+            );
+          }
+        );
+
+      main
+        .querySelector(
+          '[data-geneo-rich-text-cancel]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            commitGeneoInlineEdit(
+              true
+            );
+          }
+        );
       main
         .querySelectorAll('[data-geneo-placement-tool]')
         .forEach(button => {
@@ -76323,7 +78286,102 @@
         const reference = { familyId: junction.dataset.geneoFamilyJunction, port: 'bottom' };
         activateGeneographConnectionPoint(reference);
       }));
-      main.querySelectorAll('[data-geneo-node]').forEach(element => { element.addEventListener('pointerdown', event => { if (!startGeneographResize(event)) startGeneographObjectDrag(event); }); element.addEventListener('click', event => { if (!geneoCanvasRuntime.suppressNodeClick && !event.target.closest('button,input,textarea,select')) { selectGeneographNode(element.dataset.geneoNode, { toggle: event.shiftKey || event.ctrlKey || event.metaKey }); renderGeneographEditorPreserveScroll(); } }); element.addEventListener('dblclick', event => { const node = getGeneographNode(element.dataset.geneoNode); if (node && ['sticky','text','panel'].includes(node.type)) { event.preventDefault(); beginGeneographInlineEdit(node.id); } }); });
+      main
+        .querySelectorAll(
+          '[data-geneo-node]'
+        )
+        .forEach(element => {
+          const interactiveSelector =
+            [
+              'button',
+              'input',
+              'textarea',
+              'select',
+              'a',
+              '[contenteditable="true"]',
+              '.rich-text-toolbar',
+              '.ql-tooltip'
+            ].join(',');
+
+          element.addEventListener(
+            'pointerdown',
+            event => {
+              if (
+                !startGeneographResize(
+                  event
+                )
+              ) {
+                startGeneographObjectDrag(
+                  event
+                );
+              }
+            }
+          );
+
+          element.addEventListener(
+            'click',
+            event => {
+              if (
+                geneoCanvasRuntime
+                  .suppressNodeClick
+                || event.target.closest(
+                  interactiveSelector
+                )
+              ) {
+                return;
+              }
+
+              selectGeneographNode(
+                element.dataset
+                  .geneoNode,
+                {
+                  toggle:
+                    event.shiftKey
+                    || event.ctrlKey
+                    || event.metaKey
+                }
+              );
+
+              renderGeneographEditorPreserveScroll();
+            }
+          );
+
+          element.addEventListener(
+            'dblclick',
+            event => {
+              if (
+                event.target.closest(
+                  interactiveSelector
+                )
+              ) {
+                return;
+              }
+
+              const node =
+                getGeneographNode(
+                  element.dataset
+                    .geneoNode
+                );
+
+              if (
+                node
+                && [
+                  'sticky',
+                  'text',
+                  'panel'
+                ].includes(
+                  node.type
+                )
+              ) {
+                event.preventDefault();
+
+                beginGeneographInlineEdit(
+                  node.id
+                );
+              }
+            }
+          );
+        });
       main.querySelectorAll('.geneo-connection-hit').forEach(path => path.addEventListener('pointerdown', startGeneographConnectionDrag));
       main.querySelectorAll('.geneo-connection-hit, .geneo-segment-hit').forEach(path => path.addEventListener('click', handleGeneographConnectionClick));
       main.querySelectorAll('[data-geneo-waypoint]').forEach(point => { point.addEventListener('click', event => { event.stopPropagation(); selectGeneographConnection(point.dataset.geneoConnection, Number(point.dataset.geneoWaypoint)); renderGeneographEditorPreserveScroll(); }); point.addEventListener('pointerdown', event => { event.preventDefault(); event.stopPropagation(); clearGeneographConnectionClick(); selectGeneographConnection(point.dataset.geneoConnection, Number(point.dataset.geneoWaypoint)); geneoPushHistory(); geneoPointerState = { kind: 'waypoint', connectionId: point.dataset.geneoConnection, index: Number(point.dataset.geneoWaypoint), moved: false }; }); });
@@ -76353,6 +78411,9 @@
               'input',
               'textarea',
               'select',
+              'a',
+              '.rich-text-toolbar',
+              '.ql-tooltip',
               '[contenteditable="true"]',
               '[data-geneo-node]',
               '.geneo-connection-hit',
@@ -76391,13 +78452,19 @@
         if (event.button !== 0 || event.isPrimary === false) {
           return;
         }
+        if (
+          state.geneoTool === 'sticky'
+          || state.geneoTool === 'text'
+        ) {
+          const placementType =
+            state.geneoTool;
 
-        if (state.geneoTool === 'sticky') {
           /*
-          * Sticky notes can be placed on empty canvas
-          * or inside a panel. Other objects, connectors,
-          * handles, and form controls block placement.
-          */
+           * Text and Sticky can be placed on
+           * empty canvas or inside a Panel.
+           * Existing objects and interaction
+           * controls are not placement surfaces.
+           */
           const blockedControl =
             event.target.closest(
               [
@@ -76405,7 +78472,10 @@
                 'input',
                 'textarea',
                 'select',
+                'a',
                 '[contenteditable="true"]',
+                '.rich-text-toolbar',
+                '.ql-tooltip',
                 '[data-geneo-connection]',
                 '.geneo-connection-hit',
                 '.geneo-segment-hit',
@@ -76419,15 +78489,21 @@
           }
 
           const nodeElement =
-            event.target.closest('[data-geneo-node]');
+            event.target.closest(
+              '[data-geneo-node]'
+            );
 
           if (nodeElement) {
             const clickedNode =
               getGeneographNode(
-                nodeElement.dataset.geneoNode
+                nodeElement.dataset
+                  .geneoNode
               );
 
-            if (clickedNode?.type !== 'panel') {
+            if (
+              clickedNode?.type
+                !== 'panel'
+            ) {
               return;
             }
           }
@@ -76435,8 +78511,11 @@
           event.preventDefault();
           event.stopPropagation();
 
-          createGeneographStickyAtPoint(
-            geneoPointerToCanvas(event)
+          createGeneographRichTextNodeAtPoint(
+            placementType,
+            geneoPointerToCanvas(
+              event
+            )
           );
 
           return;
@@ -76532,20 +78611,7 @@
           const nodeId =
             state.selectedGeneoNodeId;
 
-          if (
-            input.matches(
-              '.geneo-sticky-content-input'
-            )
-          ) {
-            bindGeneographStickyContentField(
-              input,
-              nodeId
-            );
-
-            return;
-          }
-
-          input.addEventListener('change', () => {
+            input.addEventListener('change', () => {
             const node =
               getGeneographNode(nodeId);
 
@@ -77416,7 +79482,9 @@
           && (
             state.geneoTool === 'panel'
             || state.geneoTool === 'sticky'
-            || geneoPointerState?.kind === 'draw-panel'
+            || state.geneoTool === 'text'
+            || geneoPointerState?.kind
+              === 'draw-panel'
           )
         ) {
           event.preventDefault();
@@ -95283,9 +97351,88 @@
         : text;
     }
 
-    function prepareNotesRichTextAccessibility(
+    function createRichTextQuill({
+      editorHost,
+      toolbar,
+      bounds,
+      placeholder =
+        'Start writing…',
+
+      toolbarLabel =
+        'Text formatting',
+
+      editorLabel =
+        'Rich text'
+    }) {
+      if (
+        !editorHost
+        || !toolbar
+        || typeof window.Quill
+          !== 'function'
+      ) {
+        return null;
+      }
+
+      const instance =
+        new window.Quill(
+          editorHost,
+          {
+            theme: 'snow',
+
+            placeholder,
+
+            bounds,
+
+            formats: [
+              'header',
+              'bold',
+              'italic',
+              'blockquote',
+              'list',
+              'link'
+            ],
+
+            modules: {
+              toolbar: {
+                container:
+                  toolbar
+              },
+
+              history: {
+                delay: 1000,
+                maxStack: 100,
+                userOnly: true
+              }
+            }
+          }
+        );
+
+      prepareRichTextAccessibility(
+        instance,
+        toolbar,
+        {
+          toolbarLabel,
+          editorLabel
+        }
+      );
+
+      configureRichTextLinkControl(
+        instance
+      );
+
+      return instance;
+    }
+
+    function prepareRichTextAccessibility(
       instance,
-      toolbar
+      toolbar,
+      {
+        toolbarLabel =
+          'Text formatting',
+
+        editorLabel =
+          'Rich text'
+      } = {}
     ) {
       if (!instance || !toolbar) {
         return;
@@ -95298,7 +97445,7 @@
 
       toolbar.setAttribute(
         'aria-label',
-        'Note formatting'
+        toolbarLabel
       );
 
       const controlLabels = [
@@ -95381,7 +97528,7 @@
 
       instance.root.setAttribute(
         'aria-label',
-        'Note body'
+        editorLabel
       );
 
       instance.root.setAttribute(
@@ -95395,7 +97542,7 @@
       );
     }
 
-    function configureNotesRichTextLinkControl(
+    function configureRichTextLinkControl(
       instance
     ) {
       if (!instance) {
@@ -95728,49 +97875,34 @@
         );
 
         const instance =
-          new window.Quill(
+          createRichTextQuill({
             editorHost,
-            {
-              theme:
-                'snow',
+            toolbar,
+            bounds: shell,
 
-              placeholder:
-                'Start writing…',
+            placeholder:
+              'Start writing…',
 
-              bounds:
-                shell,
+            toolbarLabel:
+              'Note formatting',
 
-              formats: [
-                'header',
-                'bold',
-                'italic',
-                'blockquote',
-                'list',
-                'link'
-              ],
+            editorLabel:
+              'Note body'
+          });
 
-              modules: {
-                toolbar: {
-                  container:
-                    toolbar
-                },
-
-                history: {
-                  delay:
-                    1000,
-
-                  maxStack:
-                    100,
-
-                  userOnly:
-                    true
-                }
-              }
-            }
+        if (!instance) {
+          bindNotesBodyFallback(
+            note
           );
 
+          notesRichTextRuntime.initializing =
+            false;
+
+          return;
+        }
+
         const storedDelta =
-          cloneNoteBodyDelta(
+          cloneRichTextDelta(
             note.bodyDelta
           );
 
@@ -95840,7 +97972,7 @@
           }
 
           currentNote.bodyDelta =
-            normalizeNoteBodyDelta(
+            normalizeRichTextDelta(
               instance.getContents()
             );
 
@@ -95887,15 +98019,6 @@
         instance.on(
           'selection-change',
           selectionChangeHandler
-        );
-
-        prepareNotesRichTextAccessibility(
-          instance,
-          toolbar
-        );
-
-        configureNotesRichTextLinkControl(
-          instance
         );
 
         notesRichTextRuntime.initializing =
@@ -98259,88 +100382,13 @@
                   Note body
                 </span>
 
-                <div
-                  class="notes-rich-editor-toolbar"
-                  id="notesRichTextToolbar"
-                  role="toolbar"
-                  aria-label="Note formatting">
+                ${renderRichTextToolbar({
+                  id:
+                    'notesRichTextToolbar',
 
-                  <span class="ql-formats">
-                    <select
-                      class="ql-header"
-                      aria-label="Text style"
-                      title="Text style">
-                      <option
-                        value=""
-                        selected>
-                        Normal
-                      </option>
-                      <option value="2">
-                        Heading 2
-                      </option>
-                      <option value="3">
-                        Heading 3
-                      </option>
-                    </select>
-                  </span>
-
-                  <span class="ql-formats">
-                    <button
-                      class="ql-bold"
-                      type="button"
-                      aria-label="Bold"
-                      title="Bold">
-                    </button>
-
-                    <button
-                      class="ql-italic"
-                      type="button"
-                      aria-label="Italic"
-                      title="Italic">
-                    </button>
-                  </span>
-
-                  <span class="ql-formats">
-                    <button
-                      class="ql-list"
-                      type="button"
-                      value="bullet"
-                      aria-label="Bulleted list"
-                      title="Bulleted list">
-                    </button>
-
-                    <button
-                      class="ql-list"
-                      type="button"
-                      value="ordered"
-                      aria-label="Numbered list"
-                      title="Numbered list">
-                    </button>
-                  </span>
-
-                  <span class="ql-formats">
-                    <button
-                      class="ql-blockquote"
-                      type="button"
-                      aria-label="Block quote"
-                      title="Block quote">
-                    </button>
-
-                    <button
-                      class="ql-link"
-                      type="button"
-                      aria-label="Link"
-                      title="Link">
-                    </button>
-
-                    <button
-                      class="ql-clean"
-                      type="button"
-                      aria-label="Clear formatting"
-                      title="Clear formatting">
-                    </button>
-                  </span>
-                </div>
+                  ariaLabel:
+                    'Note formatting'
+                })}
 
                 <div
                   id="notesRichTextEditor"
@@ -108994,7 +111042,7 @@
             `${note.title} copy`,
 
           bodyDelta:
-            cloneNoteBodyDelta(
+            cloneRichTextDelta(
               note.bodyDelta
             ),
 
@@ -123456,9 +125504,385 @@
       ];
     }
 
-    
+    function renderRichTextToolbar({
+      id,
+      className = '',
+      ariaLabel = 'Text formatting'
+    } = {}) {
+      const resolvedId =
+        String(
+          id || 'richTextToolbar'
+        );
 
-    function normalizeNoteBodyDelta(
+      const classes = [
+        'rich-text-toolbar',
+        className
+      ]
+        .filter(Boolean)
+        .join(' ');
+
+      return `
+        <div
+          class="${escapeHtml(classes)}"
+          id="${escapeHtml(resolvedId)}"
+          role="toolbar"
+          aria-label="${escapeHtml(
+            ariaLabel
+          )}">
+
+          <span class="ql-formats">
+            <select
+              class="ql-header"
+              aria-label="Text style"
+              title="Text style">
+              <option value="" selected>
+                Normal
+              </option>
+
+              <option value="2">
+                Heading 2
+              </option>
+
+              <option value="3">
+                Heading 3
+              </option>
+            </select>
+          </span>
+
+          <span class="ql-formats">
+            <button
+              class="ql-bold"
+              type="button"
+              aria-label="Bold"
+              title="Bold">
+            </button>
+
+            <button
+              class="ql-italic"
+              type="button"
+              aria-label="Italic"
+              title="Italic">
+            </button>
+          </span>
+
+          <span class="ql-formats">
+            <button
+              class="ql-list"
+              type="button"
+              value="bullet"
+              aria-label="Bulleted list"
+              title="Bulleted list">
+            </button>
+
+            <button
+              class="ql-list"
+              type="button"
+              value="ordered"
+              aria-label="Numbered list"
+              title="Numbered list">
+            </button>
+          </span>
+
+          <span class="ql-formats">
+            <button
+              class="ql-blockquote"
+              type="button"
+              aria-label="Block quote"
+              title="Block quote">
+            </button>
+
+            <button
+              class="ql-link"
+              type="button"
+              aria-label="Link"
+              title="Link">
+            </button>
+
+            <button
+              class="ql-clean"
+              type="button"
+              aria-label="Clear formatting"
+              title="Clear formatting">
+            </button>
+          </span>
+        </div>
+      `;
+    }
+
+    function richTextSafeLinkUrl(
+      value
+    ) {
+      const raw =
+        String(value || '').trim();
+
+      if (!raw) {
+        return '';
+      }
+
+      try {
+        const url =
+          new URL(
+            raw,
+            window.location.href
+          );
+
+        if (
+          ![
+            'http:',
+            'https:',
+            'mailto:'
+          ].includes(url.protocol)
+        ) {
+          return '';
+        }
+
+        return url.href;
+      } catch {
+        return '';
+      }
+    }
+
+    function renderRichTextInline(
+      value,
+      attributes = {}
+    ) {
+      let html =
+        escapeHtml(
+          String(value || '')
+        );
+
+      if (attributes.bold === true) {
+        html =
+          `<strong>${html}</strong>`;
+      }
+
+      if (attributes.italic === true) {
+        html =
+          `<em>${html}</em>`;
+      }
+
+      const href =
+        richTextSafeLinkUrl(
+          attributes.link
+        );
+
+      if (href) {
+        html = `
+          <a
+            href="${escapeHtml(href)}"
+            target="_blank"
+            rel="noopener noreferrer">
+            ${html}
+          </a>
+        `;
+      }
+
+      return html;
+    }
+
+    function renderPlainRichTextHtml(
+      value
+    ) {
+      return String(value || '')
+        .split(/\r?\n/)
+        .map(line => `
+          <p>
+            ${
+              line
+                ? escapeHtml(line)
+                : '<br>'
+            }
+          </p>
+        `)
+        .join('');
+    }
+
+    function renderRichTextDeltaHtml(
+      value,
+      fallbackText = ''
+    ) {
+      const delta =
+        normalizeRichTextDelta(
+          value
+        );
+
+      if (!delta) {
+        return (
+          renderPlainRichTextHtml(
+            fallbackText
+          )
+        );
+      }
+
+      const lines = [];
+      let fragments = [];
+
+      delta.ops.forEach(operation => {
+        const attributes =
+          operation.attributes || {};
+
+        const parts =
+          operation.insert.split('\n');
+
+        parts.forEach(
+          (part, index) => {
+            if (part) {
+              fragments.push(
+                renderRichTextInline(
+                  part,
+                  attributes
+                )
+              );
+            }
+
+            if (
+              index
+              < parts.length - 1
+            ) {
+              lines.push({
+                html:
+                  fragments.join(''),
+
+                attributes: {
+                  header:
+                    attributes.header,
+
+                  list:
+                    attributes.list,
+
+                  blockquote:
+                    attributes.blockquote
+                }
+              });
+
+              fragments = [];
+            }
+          }
+        );
+      });
+
+      if (fragments.length) {
+        lines.push({
+          html:
+            fragments.join(''),
+
+          attributes: {}
+        });
+      }
+
+      if (!lines.length) {
+        return (
+          renderPlainRichTextHtml(
+            fallbackText
+          )
+        );
+      }
+
+      let html = '';
+      let activeList = null;
+      let listItems = [];
+
+      const flushList = () => {
+        if (!activeList) {
+          return;
+        }
+
+        const tag =
+          activeList === 'ordered'
+            ? 'ol'
+            : 'ul';
+
+        html += `
+          <${tag}>
+            ${listItems.join('')}
+          </${tag}>
+        `;
+
+        activeList = null;
+        listItems = [];
+      };
+
+      lines.forEach(line => {
+        const content =
+          line.html || '<br>';
+
+        const attributes =
+          line.attributes || {};
+
+        if (attributes.list) {
+          if (
+            activeList
+            && activeList
+              !== attributes.list
+          ) {
+            flushList();
+          }
+
+          activeList =
+            attributes.list;
+
+          listItems.push(
+            `<li>${content}</li>`
+          );
+
+          return;
+        }
+
+        flushList();
+
+        if (attributes.header === 2) {
+          html +=
+            `<h2>${content}</h2>`;
+
+          return;
+        }
+
+        if (attributes.header === 3) {
+          html +=
+            `<h3>${content}</h3>`;
+
+          return;
+        }
+
+        if (
+          attributes.blockquote
+            === true
+        ) {
+          html +=
+            `<blockquote>${content}</blockquote>`;
+
+          return;
+        }
+
+        html +=
+          `<p>${content}</p>`;
+      });
+
+      flushList();
+
+      return html;
+    }
+
+    function richTextDeltasEqual(
+      first,
+      second
+    ) {
+      return (
+        JSON.stringify(
+          normalizeRichTextDelta(
+            first
+          )
+        )
+        ===
+        JSON.stringify(
+          normalizeRichTextDelta(
+            second
+          )
+        )
+      );
+    }
+
+    function normalizeRichTextDelta(
       value
     ) {
       if (
@@ -123578,19 +126002,19 @@
       };
     }
 
-    function cloneNoteBodyDelta(
+    function cloneRichTextDelta(
       value
     ) {
-      return normalizeNoteBodyDelta(
+      return normalizeRichTextDelta(
         value
       );
     }
 
-    function plainTextFromNoteBodyDelta(
+    function plainTextFromRichTextDelta(
       value
     ) {
       const delta =
-        normalizeNoteBodyDelta(
+        normalizeRichTextDelta(
           value
         );
 
@@ -123698,7 +126122,7 @@
           : '';
 
       note.bodyDelta =
-        normalizeNoteBodyDelta(
+        normalizeRichTextDelta(
           note.bodyDelta
         );
 
@@ -123707,7 +126131,7 @@
           'quill-delta-v1';
 
         note.body =
-          plainTextFromNoteBodyDelta(
+          plainTextFromRichTextDelta(
             note.bodyDelta
           );
       } else {
