@@ -11649,6 +11649,7 @@
       min-height: 32px;
     }
     .geneo-check input { accent-color: var(--brand-green-500); width: 16px; height: 16px; }
+
     .geneo-person-card-options {
       display: grid;
       gap: 4px;
@@ -11656,7 +11657,7 @@
 
     .geneo-person-card-controls {
       display: grid;
-      gap: var(--space-3);
+      gap: var(--space-4);
     }
 
     .geneo-person-card-inheritance-note {
@@ -11668,10 +11669,325 @@
       cursor: default;
     }
 
+    .geneo-person-card-control-group {
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .geneo-person-card-group-title {
+      color: var(--text-secondary);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .geneo-person-style-picker {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(0, 1fr)
+        );
+
+      gap: 8px;
+    }
+
+    .geneo-person-style-option {
+      min-width: 0;
+      padding: 8px;
+
+      border:
+        1px solid
+        var(
+          --border-default
+        );
+
+      border-radius: 8px;
+
+      background:
+        var(
+          --surface-input
+        );
+
+      color:
+        var(
+          --text-secondary
+        );
+
+      display: grid;
+      gap: 6px;
+
+      font-size: 11px;
+      font-weight: 800;
+
+      text-align: left;
+
+      transition:
+        border-color var(--ease),
+        background var(--ease),
+        color var(--ease);
+    }
+
+    .geneo-person-style-option:hover {
+      border-color:
+        var(
+          --border-strong
+        );
+
+      color:
+        var(
+          --text-primary
+        );
+    }
+
+    .geneo-person-style-option.active {
+      border-color:
+        rgba(
+          98,
+          217,
+          154,
+          .62
+        );
+
+      background:
+        var(
+          --surface-selected
+        );
+
+      color:
+        var(
+          --text-primary
+        );
+    }
+
+    .geneo-person-style-option:focus-visible {
+      outline:
+        2px solid
+        var(
+          --brand-green-300
+        );
+
+      outline-offset: 2px;
+    }
+
+    .geneo-person-style-preview {
+      position: relative;
+
+      width: 100%;
+      height: 50px;
+
+      overflow: hidden;
+
+      border:
+        1px solid
+        rgba(
+          255,
+          255,
+          255,
+          .13
+        );
+
+      border-radius: 5px;
+
+      background:
+        rgba(
+          255,
+          255,
+          255,
+          .035
+        );
+    }
+
+    .geneo-person-style-preview
+    > span {
+      position: absolute;
+      display: block;
+
+      border-radius: 2px;
+
+      background:
+        rgba(
+          255,
+          255,
+          255,
+          .42
+        );
+    }
+
+    .geneo-person-style-preview
+    .preview-photo {
+      background:
+        rgba(
+          98,
+          217,
+          154,
+          .34
+        );
+    }
+
+    .preview-standard
+    .preview-photo {
+      left: 6px;
+      top: 8px;
+      width: 28px;
+      height: 34px;
+    }
+
+    .preview-standard
+    .preview-name {
+      left: 40px;
+      top: 10px;
+      width: 50%;
+      height: 5px;
+    }
+
+    .preview-standard
+    .preview-line.one {
+      left: 40px;
+      top: 21px;
+      width: 42%;
+      height: 3px;
+    }
+
+    .preview-standard
+    .preview-line.two {
+      left: 40px;
+      top: 30px;
+      width: 30%;
+      height: 3px;
+    }
+
+    .preview-tree
+    .preview-photo {
+      left: 7px;
+      top: 6px;
+      width: 20px;
+      height: 20px;
+    }
+
+    .preview-tree
+    .preview-name {
+      left: 33px;
+      top: 10px;
+      width: 48%;
+      height: 5px;
+    }
+
+    .preview-tree
+    .preview-line.one {
+      left: 7px;
+      top: 33px;
+      width: 65%;
+      height: 3px;
+    }
+
+    .preview-tree
+    .preview-line.two {
+      left: 7px;
+      top: 40px;
+      width: 48%;
+      height: 3px;
+    }
+
+    .preview-chart
+    .preview-photo {
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 31%;
+      height: 100%;
+
+      border-radius: 0;
+    }
+
+    .preview-chart
+    .preview-name {
+      left: 43%;
+      top: 15px;
+      width: 45%;
+      height: 6px;
+    }
+
+    .preview-chart
+    .preview-line.one {
+      left: 50%;
+      top: 27px;
+      width: 31%;
+      height: 4px;
+    }
+
+    .preview-chart
+    .preview-line.two {
+      display: none;
+    }
+
+    .preview-portrait
+    .preview-photo {
+      left: 50%;
+      top: 5px;
+      width: 28px;
+      height: 25px;
+
+      transform:
+        translateX(-50%);
+    }
+
+    .preview-portrait
+    .preview-name {
+      left: 50%;
+      top: 34px;
+      width: 50%;
+      height: 5px;
+
+      transform:
+        translateX(-50%);
+    }
+
+    .preview-portrait
+    .preview-line.one {
+      left: 50%;
+      top: 43px;
+      width: 34%;
+      height: 3px;
+
+      transform:
+        translateX(-50%);
+    }
+
+    .preview-portrait
+    .preview-line.two {
+      display: none;
+    }
+
+    .geneo-person-card-setting-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(0, 1fr)
+        );
+
+      gap:
+        var(--space-3);
+    }
+
+    .geneo-person-card-setting-grid
+    .geneo-field {
+      min-width: 0;
+    }
+
+    .geneo-person-card-field-help {
+      margin:
+        var(--space-2)
+        0
+        0;
+    }
+
     .geneo-person-card-radius-row {
       display: grid;
       grid-template-columns:
-        minmax(0, 1fr) 78px;
+        minmax(0, 1fr)
+        78px;
+
       gap: var(--space-3);
       align-items: end;
     }
@@ -11680,8 +11996,28 @@
     .geneo-input {
       text-align: right;
     }
+
+    .geneo-person-multi-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .geneo-person-card-radius-row
+    .geneo-input {
+      text-align: right;
+    }
     .geneo-layout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
-    
+    .geneo-person-size-controls {
+      display: grid;
+      gap: 7px;
+    }
+
+    .geneo-person-size-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
     .geneo-image-source-card {
       min-width: 0;
       display: grid;
@@ -11870,90 +12206,82 @@
     .geneo-node-person
     .geneo-node-content {
       position: relative;
-      padding: 10px;
+      padding: 0;
+      overflow: hidden;
     }
 
+    /*
+     * Person content uses a fixed reference
+     * composition which is scaled as one object.
+     * The node rectangle remains the true
+     * connector/hit-test geometry.
+     */
     .geneo-person-node-content {
-      min-width: 0;
-      width: 100%;
-      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
 
-      display: grid;
-      grid-template-columns:
-        auto minmax(0, 1fr);
-      grid-template-areas:
-        "avatar identity"
-        "avatar life"
-        "avatar footer";
+      width:
+        var(
+          --geneo-person-reference-width,
+          280px
+        );
 
-      grid-template-rows:
-        auto
-        minmax(0, 1fr)
-        auto;
+      height:
+        var(
+          --geneo-person-reference-height,
+          110px
+        );
 
-      column-gap: 10px;
-      row-gap: 4px;
+      box-sizing: border-box;
 
-      align-content: stretch;
-      align-items: start;
-    }
+      transform:
+        scale(
+          var(
+            --geneo-person-scale,
+            1
+          )
+        );
 
-    .geneo-person-node-content.no-photo {
-      grid-template-columns:
-        minmax(0, 1fr);
-      grid-template-areas:
-        "identity"
-        "life"
-        "footer";
+      transform-origin:
+        top left;
+
+      overflow: hidden;
     }
 
     .geneo-person-avatar {
-      --person-avatar-width: 48px;
-      --person-avatar-height: 48px;
-      --person-avatar-radius:
-        max(
-          3px,
-          calc(
-            var(
-              --geneo-node-radius,
-              8px
-            )
-            - 3px
-          )
+      --person-avatar-width:
+        var(
+          --geneo-card-photo,
+          68px
         );
-      --person-avatar-font-size: 17px;
 
-      grid-area: avatar;
-      align-self: start;
-    }
+      --person-avatar-height:
+        var(
+          --geneo-card-photo,
+          68px
+        );
 
-    .geneo-person-identity-block {
-      grid-area: identity;
-      min-width: 0;
-    }
+      --person-avatar-radius: 7px;
 
-    .geneo-person-identity {
-      min-width: 0;
-
-      display: grid;
-      grid-template-columns:
-        minmax(0, 1fr) auto;
-      gap: 6px;
-      align-items: start;
+      --person-avatar-font-size:
+        calc(
+          var(
+            --geneo-card-photo,
+            68px
+          )
+          * .34
+        );
     }
 
     .geneo-person-name-wrap {
       min-width: 0;
-
-      display: flex;
-      flex-wrap: wrap;
-      align-items: baseline;
-      gap: 2px 6px;
+      display: grid;
+      gap: 2px;
     }
 
     .geneo-person-name {
       min-width: 0;
-      margin: 0;
 
       overflow: hidden;
 
@@ -11961,10 +12289,9 @@
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
 
-      font-size: 14px;
-      font-weight: 850;
-      line-height: 1.2;
       overflow-wrap: anywhere;
+
+      color: inherit;
     }
 
     .geneo-person-maiden {
@@ -11978,40 +12305,27 @@
       color:
         color-mix(
           in srgb,
-          currentColor 68%,
+          currentColor 66%,
           transparent
         );
 
-      font-size: 11px;
       font-weight: 700;
-      line-height: 1.25;
     }
 
-    .geneo-person-identity-meta {
+    .geneo-person-life,
+    .geneo-person-identity-block,
+    .geneo-person-meta-row {
+      min-width: 0;
+    }
+
+    .geneo-person-life-span {
       min-width: 0;
 
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 4px;
-    }
-
-    .geneo-person-gender {
-      max-width: 72px;
-      padding: 1px 5px;
+      display: block;
 
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-
-      border:
-        1px solid
-        color-mix(
-          in srgb,
-          currentColor 18%,
-          transparent
-        );
-      border-radius: 999px;
 
       color:
         color-mix(
@@ -12019,57 +12333,6 @@
           currentColor 72%,
           transparent
         );
-
-      font-size: 9px;
-      font-weight: 800;
-      line-height: 1.4;
-    }
-
-    .geneo-person-link-indicator {
-      width: 16px;
-      height: 16px;
-      flex: 0 0 16px;
-
-      color: var(--brand-green-300);
-
-      display: inline-grid;
-      place-items: center;
-    }
-
-    .geneo-person-link-indicator.modified {
-      color: var(--amber);
-    }
-
-    .geneo-person-link-indicator svg {
-      width: 13px;
-      height: 13px;
-      display: block;
-    }
-
-    .geneo-person-life {
-      grid-area: life;
-      min-width: 0;
-      align-self: start;
-    }
-
-    .geneo-person-life-span {
-      min-width: 0;
-
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-
-      display: block;
-
-      color:
-        color-mix(
-          in srgb,
-          currentColor 68%,
-          transparent
-        );
-
-      font-size: 11px;
-      line-height: 1.3;
     }
 
     .geneo-person-life-events {
@@ -12085,6 +12348,7 @@
       display: grid;
       grid-template-columns:
         34px minmax(0, 1fr);
+
       gap: 5px;
       align-items: baseline;
     }
@@ -12093,14 +12357,14 @@
       color:
         color-mix(
           in srgb,
-          currentColor 54%,
+          currentColor 52%,
           transparent
         );
 
       font-size: 9px;
       font-weight: 850;
-      line-height: 1.3;
-      letter-spacing: .025em;
+      line-height: 1.25;
+      letter-spacing: .035em;
       text-transform: uppercase;
     }
 
@@ -12119,14 +12383,12 @@
           currentColor 74%,
           transparent
         );
-
-      font-size: 11px;
-      line-height: 1.3;
     }
 
     .geneo-person-life-event-date {
       flex: 0 0 auto;
       white-space: nowrap;
+      font-weight: 700;
     }
 
     .geneo-person-life-event-separator {
@@ -12135,7 +12397,7 @@
       color:
         color-mix(
           in srgb,
-          currentColor 42%,
+          currentColor 40%,
           transparent
         );
     }
@@ -12148,16 +12410,17 @@
       white-space: nowrap;
     }
 
-    .geneo-person-footer {
-      grid-area: footer;
-      min-width: 0;
-      min-height: 18px;
-      padding-right: 38px;
-
+    .geneo-person-meta-row {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 5px 8px;
 
-      align-self: end;
+      /*
+       * Keep the contextual action from
+       * obscuring right-most metadata.
+       */
+      padding-right: 32px;
     }
 
     .geneo-person-status {
@@ -12170,9 +12433,6 @@
           currentColor 74%,
           transparent
         );
-
-      font-size: 11px;
-      line-height: 1.2;
     }
 
     .geneo-person-status.status-dot::before {
@@ -12180,41 +12440,645 @@
       height: 6px;
     }
 
-    .geneo-person-add-relative {
-      position: absolute;
-      z-index: 6;
-      right: 7px;
-      bottom: 7px;
+    .geneo-person-identity-meta {
+      min-width: 0;
 
-      width: 32px;
-      height: 32px;
-      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .geneo-person-gender {
+      max-width: 90px;
+      padding: 1px 5px;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
 
       border:
         1px solid
-        rgba(255,255,255,.16);
-      border-radius: 7px;
+        color-mix(
+          in srgb,
+          currentColor 18%,
+          transparent
+        );
+
+      border-radius: 999px;
+
+      color:
+        color-mix(
+          in srgb,
+          currentColor 72%,
+          transparent
+        );
+
+      font-size: 9px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .geneo-person-link-indicator {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 16px;
+
+      color:
+        var(
+          --brand-green-300
+        );
+
+      display: inline-grid;
+      place-items: center;
+    }
+
+    .geneo-person-link-indicator.modified {
+      color: var(--amber);
+    }
+
+    .geneo-person-link-indicator svg {
+      width: 13px;
+      height: 13px;
+      display: block;
+    }
+
+    /*
+     * STANDARD
+     * Family-tree-like horizontal research card.
+     */
+    .geneo-node-person[
+      data-geneo-person-card-style="standard"
+    ]
+    .geneo-person-node-content {
+      padding: 10px;
+
+      display: grid;
+
+      grid-template-areas:
+        "avatar identity"
+        "avatar life"
+        "avatar meta";
+
+      grid-template-columns:
+        var(
+          --geneo-card-photo,
+          68px
+        )
+        minmax(0, 1fr);
+
+      grid-template-rows:
+        auto auto auto;
+
+      column-gap: 11px;
+      row-gap: 4px;
+
+      align-content: center;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="standard"
+    ]
+    .geneo-person-avatar {
+      grid-area: avatar;
+      align-self: center;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="standard"
+    ]
+    .geneo-person-identity-block {
+      grid-area: identity;
+      align-self: end;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="standard"
+    ]
+    .geneo-person-life {
+      grid-area: life;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="standard"
+    ]
+    .geneo-person-meta-row {
+      grid-area: meta;
+      align-self: start;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="standard"
+    ]
+    .geneo-person-name {
+      font-size: 15px;
+      font-weight: 850;
+      line-height: 1.18;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="standard"
+    ]
+    .geneo-person-maiden,
+    .geneo-node-person[
+      data-geneo-person-card-style="standard"
+    ]
+    .geneo-person-life-span,
+    .geneo-node-person[
+      data-geneo-person-card-style="standard"
+    ]
+    .geneo-person-life-event-value,
+    .geneo-node-person[
+      data-geneo-person-card-style="standard"
+    ]
+    .geneo-person-status {
+      font-size: 12px;
+      line-height: 1.3;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="standard"
+    ][
+      data-geneo-person-card-align="center"
+    ]
+    .geneo-person-identity-block,
+    .geneo-node-person[
+      data-geneo-person-card-style="standard"
+    ][
+      data-geneo-person-card-align="center"
+    ]
+    .geneo-person-life {
+      text-align: center;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="standard"
+    ][
+      data-geneo-person-card-align="center"
+    ]
+    .geneo-person-meta-row {
+      justify-content: center;
+    }
+
+    /*
+     * TREE
+     * Identity row first, genealogy details
+     * become a separate full-width section.
+     */
+    .geneo-node-person[
+      data-geneo-person-card-style="tree"
+    ]
+    .geneo-person-node-content {
+      padding: 10px 12px;
+
+      display: grid;
+
+      grid-template-areas:
+        "avatar identity"
+        "life life"
+        "meta meta";
+
+      grid-template-columns:
+        var(
+          --geneo-card-photo,
+          46px
+        )
+        minmax(0, 1fr);
+
+      grid-template-rows:
+        auto auto auto;
+
+      column-gap: 9px;
+      row-gap: 6px;
+
+      align-content: center;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="tree"
+    ]
+    .geneo-person-avatar {
+      grid-area: avatar;
+      align-self: center;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="tree"
+    ]
+    .geneo-person-identity-block {
+      grid-area: identity;
+      align-self: center;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="tree"
+    ]
+    .geneo-person-life {
+      grid-area: life;
+
+      padding-top: 6px;
+
+      border-top:
+        1px solid
+        color-mix(
+          in srgb,
+          currentColor 13%,
+          transparent
+        );
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="tree"
+    ]
+    .geneo-person-meta-row {
+      grid-area: meta;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="tree"
+    ]
+    .geneo-person-name {
+      font-size: 14px;
+      font-weight: 820;
+      line-height: 1.18;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="tree"
+    ]
+    .geneo-person-life-events {
+      gap: 2px;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="tree"
+    ]
+    .geneo-person-life-span,
+    .geneo-node-person[
+      data-geneo-person-card-style="tree"
+    ]
+    .geneo-person-life-event-value,
+    .geneo-node-person[
+      data-geneo-person-card-style="tree"
+    ]
+    .geneo-person-status,
+    .geneo-node-person[
+      data-geneo-person-card-style="tree"
+    ]
+    .geneo-person-maiden {
+      font-size: 11px;
+      line-height: 1.3;
+    }
+
+    /*
+     * CHART
+     * Compact historical/presentation node.
+     * Portrait becomes an integrated left strip.
+     */
+    .geneo-node-person[
+      data-geneo-person-card-style="chart"
+    ]
+    .geneo-person-node-content {
+      padding: 0;
+
+      display: grid;
+
+      grid-template-areas:
+        "avatar identity"
+        "avatar life"
+        "avatar meta";
+
+      grid-template-columns:
+        var(
+          --geneo-card-photo,
+          76px
+        )
+        minmax(0, 1fr);
+
+      grid-template-rows:
+        1fr auto 1fr;
+
+      align-items: center;
 
       background:
-        rgba(8,14,11,.88);
-      color: var(--text-primary);
+        linear-gradient(
+          90deg,
+          rgba(
+            255,
+            255,
+            255,
+            .04
+          ),
+          transparent 45%
+        );
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="chart"
+    ]
+    .geneo-person-avatar {
+      grid-area: avatar;
+
+      --person-avatar-height:
+        var(
+          --geneo-person-reference-height,
+          88px
+        );
+
+      --person-avatar-radius: 0;
+
+      align-self: stretch;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="chart"
+    ]
+    .geneo-person-identity-block {
+      grid-area: identity;
+
+      align-self: end;
+
+      padding:
+        10px 12px 2px;
+
+      text-align: center;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="chart"
+    ]
+    .geneo-person-life {
+      grid-area: life;
+
+      padding:
+        0 12px;
+
+      text-align: center;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="chart"
+    ]
+    .geneo-person-meta-row {
+      grid-area: meta;
+
+      align-self: start;
+      justify-content: center;
+
+      padding:
+        2px 34px 8px 12px;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="chart"
+    ]
+    .geneo-person-name {
+      font-size: 17px;
+      font-weight: 900;
+      line-height: 1.08;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="chart"
+    ]
+    .geneo-person-life-span {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.15;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="chart"
+    ]
+    .geneo-person-life-events {
+      justify-items: center;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="chart"
+    ]
+    .geneo-person-life-event {
+      width: max-content;
+      max-width: 100%;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="chart"
+    ]
+    .geneo-person-life-event-value,
+    .geneo-node-person[
+      data-geneo-person-card-style="chart"
+    ]
+    .geneo-person-maiden,
+    .geneo-node-person[
+      data-geneo-person-card-style="chart"
+    ]
+    .geneo-person-status {
+      font-size: 11px;
+      line-height: 1.25;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="chart"
+    ]
+    .geneo-person-node-content.no-photo {
+      grid-template-areas:
+        "identity"
+        "life"
+        "meta";
+
+      grid-template-columns:
+        minmax(0, 1fr);
+    }
+
+    /*
+     * PORTRAIT
+     * Everything is intentionally centered.
+     */
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-node-content {
+      padding: 14px;
+
+      display: grid;
+
+      grid-template-areas:
+        "avatar"
+        "identity"
+        "life"
+        "meta";
+
+      grid-template-columns:
+        minmax(0, 1fr);
+
+      grid-template-rows:
+        auto auto auto auto;
+
+      justify-items: center;
+      align-content: center;
+      gap: 8px;
+
+      text-align: center;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-avatar {
+      grid-area: avatar;
+      justify-self: center;
+
+      --person-avatar-radius: 10px;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-identity-block {
+      grid-area: identity;
+
+      width: 100%;
+
+      text-align: center;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-life {
+      grid-area: life;
+
+      width: 100%;
+
+      text-align: center;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-meta-row {
+      grid-area: meta;
+
+      width: 100%;
+
+      justify-content: center;
+
+      padding:
+        0 28px;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-name {
+      font-size: 16px;
+      font-weight: 880;
+      line-height: 1.15;
+      text-align: center;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-name-wrap {
+      justify-items: center;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-maiden,
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-life-span,
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-life-event-value,
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-status {
+      font-size: 11px;
+      line-height: 1.3;
+      text-align: center;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-life-events {
+      justify-items: center;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-life-event {
+      width: 100%;
+
+      grid-template-columns:
+        minmax(0, 1fr);
+
+      justify-items: center;
+      gap: 1px;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-life-event-value {
+      justify-content: center;
+    }
+
+    /*
+     * Add relative remains inside the card,
+     * matching the interaction language of
+     * Family Tree.
+     */
+    .geneo-person-add-relative {
+      position: absolute;
+      z-index: 10;
+
+      right: 8px;
+      bottom: 8px;
+
+      width: 27px;
+      height: 27px;
+      padding: 0;
+
+      border: 0;
+      border-radius: 6px;
+
+      background:
+        rgba(
+          8,
+          14,
+          11,
+          .72
+        );
+
+      color:
+        color-mix(
+          in srgb,
+          currentColor 76%,
+          transparent
+        );
 
       display: grid;
       place-items: center;
 
       opacity: 0;
+      visibility: hidden;
       pointer-events: none;
-      transform: translateY(2px);
-
-      box-shadow:
-        0 5px 16px
-        rgba(0,0,0,.3);
 
       transition:
         opacity var(--ease),
-        transform var(--ease),
+        visibility var(--ease),
         background var(--ease),
-        border-color var(--ease);
+        color var(--ease);
     }
 
     .geneo-person-add-relative svg {
@@ -12230,228 +13094,45 @@
     .geneo-node-person.selected
     .geneo-person-add-relative {
       opacity: 1;
+      visibility: visible;
       pointer-events: auto;
-      transform: translateY(0);
     }
 
     .geneo-person-add-relative:hover {
-      border-color:
-        rgba(98,217,154,.5);
       background:
-        rgba(29,67,49,.96);
-      color: var(--brand-green-200);
+        rgba(
+          255,
+          255,
+          255,
+          .1
+        );
+
+      color: currentColor;
     }
 
     .geneo-person-add-relative:focus-visible {
       opacity: 1;
+      visibility: visible;
       pointer-events: auto;
-      transform: none;
 
       outline:
         2px solid
-        var(--brand-green-300);
+        var(
+          --brand-green-300
+        );
+
       outline-offset: 2px;
-    }
-
-    /* Standard person card */
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="standard"
-    ]
-    .geneo-node-content {
-      padding: 12px;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="standard"
-    ]
-    .geneo-person-node-content {
-      column-gap: 12px;
-      row-gap: 6px;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="standard"
-    ]
-    .geneo-person-avatar {
-      --person-avatar-width: 62px;
-      --person-avatar-height: 62px;
-      --person-avatar-font-size: 20px;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="standard"
-    ]
-    .geneo-person-name {
-      font-size: 15px;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="standard"
-    ]
-    .geneo-person-maiden {
-      font-size: 12px;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="standard"
-    ]
-    .geneo-person-gender {
-      font-size: 10px;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="standard"
-    ]
-    .geneo-person-life-span,
-    .geneo-node-person[
-      data-geneo-person-card-tier="standard"
-    ]
-    .geneo-person-life-event-value,
-    .geneo-node-person[
-      data-geneo-person-card-tier="standard"
-    ]
-    .geneo-person-status {
-      font-size: 12px;
-    }
-
-    /* Expanded person card */
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="expanded"
-    ]
-    .geneo-node-content {
-      padding: 15px;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="expanded"
-    ]
-    .geneo-person-node-content {
-      grid-template-columns:
-        auto minmax(0, 1fr);
-      grid-template-areas:
-        "avatar identity"
-        "life life"
-        "footer footer";
-
-      column-gap: 15px;
-      row-gap: 12px;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="expanded"
-    ]
-    .geneo-person-node-content.no-photo {
-      grid-template-columns:
-        minmax(0, 1fr);
-      grid-template-areas:
-        "identity"
-        "life"
-        "footer";
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="expanded"
-    ]
-    .geneo-person-avatar {
-      --person-avatar-width: 88px;
-      --person-avatar-height: 88px;
-      --person-avatar-font-size: 26px;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="expanded"
-    ]
-    .geneo-person-name {
-      font-size: 17px;
-      line-height: 1.18;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="expanded"
-    ]
-    .geneo-person-maiden {
-      font-size: 12px;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="expanded"
-    ]
-    .geneo-person-gender {
-      max-width: 90px;
-      padding: 2px 6px;
-      font-size: 10px;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="expanded"
-    ]
-    .geneo-person-life-events {
-      grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="expanded"
-    ]
-    .geneo-person-life-event {
-      grid-template-columns:
-        minmax(0, 1fr);
-      gap: 3px;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="expanded"
-    ]
-    .geneo-person-life-event-kind {
-      font-size: 10px;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="expanded"
-    ]
-    .geneo-person-life-event-value {
-      display: grid;
-      gap: 2px;
-
-      font-size: 12px;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="expanded"
-    ]
-    .geneo-person-life-event-date {
-      font-size: 13px;
-      font-weight: 750;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="expanded"
-    ]
-    .geneo-person-life-event-separator {
-      display: none;
-    }
-
-    .geneo-node-person[
-      data-geneo-person-card-tier="expanded"
-    ]
-    .geneo-person-life-span,
-    .geneo-node-person[
-      data-geneo-person-card-tier="expanded"
-    ]
-    .geneo-person-status {
-      font-size: 13px;
     }
 
     @media (hover: none) {
       .geneo-node-person.selected
       .geneo-person-add-relative {
         opacity: 1;
+        visibility: visible;
         pointer-events: auto;
       }
     }
+
     .geneo-node-image .geneo-node-content {
       position: relative;
       display: block;
@@ -59538,12 +60219,12 @@
           ],
           nodes: [
             { id: 'gn-panel', type: 'panel', x: 170, y: 105, width: 1060, height: 620, parentPanelId: null, order: 1, visible: true, locked: false, title: 'Whiskerfield household', description: '', appearance: { fill: { color: '#132321', opacity: 68, enabled: true }, stroke: { color: '#3F6F61', opacity: 100, enabled: true }, strokeWidth: 2, strokePattern: 'dashed', text: { color: '#D9E8E2', opacity: 100, enabled: true } } },
-            { id: 'gn-barnaby', type: 'person', personId: 'gp-barnaby', x: 270, y: 200, width: 240, height: 132, parentPanelId: 'gn-panel', order: 6, visible: true, locked: false, appearance: { fill: { color: '#173029', opacity: 100, enabled: true }, stroke: { color: '#62D99A', opacity: 100, enabled: true }, strokeWidth: 2, strokePattern: 'solid', text: { color: '#F3F7F5', opacity: 100, enabled: true } } },
-            { id: 'gn-daisy', type: 'person', personId: 'gp-daisy', x: 700, y: 200, width: 240, height: 132, parentPanelId: 'gn-panel', order: 5, visible: true, locked: false, appearance: { fill: { color: '#2D2437', opacity: 100, enabled: true }, stroke: { color: '#AA8CE8', opacity: 100, enabled: true }, strokeWidth: 2, strokePattern: 'solid', text: { color: '#F6F1FB', opacity: 100, enabled: true } } },
-            { id: 'gn-silver', type: 'person', personId: 'gp-silver', x: 350, y: 500, width: 240, height: 132, parentPanelId: 'gn-panel', order: 4, visible: true, locked: false, appearance: { fill: { color: '#172A32', opacity: 100, enabled: true }, stroke: { color: '#5DADE2', opacity: 100, enabled: true }, strokeWidth: 2, strokePattern: 'solid', text: { color: '#F2F8FB', opacity: 100, enabled: true } } },
-            { id: 'gn-iris', type: 'person', personId: 'gp-iris', x: 720, y: 500, width: 240, height: 132, parentPanelId: 'gn-panel', order: 3, visible: true, locked: false, appearance: { fill: { color: '#302B1D', opacity: 100, enabled: true }, stroke: { color: '#D4AA6B', opacity: 100, enabled: true }, strokeWidth: 3, strokePattern: 'solid', text: { color: '#FFF8E8', opacity: 100, enabled: true } } },
-            { id: 'gn-luna', type: 'person', personId: 'gp-luna', x: 1410, y: 230, width: 240, height: 132, parentPanelId: null, order: 9, visible: true, locked: false, appearance: { fill: { color: '#2D2437', opacity: 100, enabled: true }, stroke: { color: '#AA8CE8', opacity: 100, enabled: true }, strokeWidth: 2, strokePattern: 'solid', text: { color: '#F6F1FB', opacity: 100, enabled: true } } },
-            { id: 'gn-theo', type: 'person', personId: 'gp-theo', x: 1420, y: 520, width: 240, height: 132, parentPanelId: null, order: 8, visible: true, locked: false, appearance: { fill: { color: '#19302C', opacity: 100, enabled: true }, stroke: { color: '#62D99A', opacity: 100, enabled: true }, strokeWidth: 2, strokePattern: 'solid', text: { color: '#F3F7F5', opacity: 100, enabled: true } } },
+            { id: 'gn-barnaby', type: 'person', personId: 'gp-barnaby', x: 270, y: 200, width: 280, height: 110, parentPanelId: 'gn-panel', order: 6, visible: true, locked: false, appearance: { fill: { color: '#173029', opacity: 100, enabled: true }, stroke: { color: '#62D99A', opacity: 100, enabled: true }, strokeWidth: 2, strokePattern: 'solid', text: { color: '#F3F7F5', opacity: 100, enabled: true } } },
+            { id: 'gn-daisy', type: 'person', personId: 'gp-daisy', x: 700, y: 200, width: 280, height: 110, parentPanelId: 'gn-panel', order: 5, visible: true, locked: false, appearance: { fill: { color: '#2D2437', opacity: 100, enabled: true }, stroke: { color: '#AA8CE8', opacity: 100, enabled: true }, strokeWidth: 2, strokePattern: 'solid', text: { color: '#F6F1FB', opacity: 100, enabled: true } } },
+            { id: 'gn-silver', type: 'person', personId: 'gp-silver', x: 350, y: 500, width: 280, height: 110, parentPanelId: 'gn-panel', order: 4, visible: true, locked: false, appearance: { fill: { color: '#172A32', opacity: 100, enabled: true }, stroke: { color: '#5DADE2', opacity: 100, enabled: true }, strokeWidth: 2, strokePattern: 'solid', text: { color: '#F2F8FB', opacity: 100, enabled: true } } },
+            { id: 'gn-iris', type: 'person', personId: 'gp-iris', x: 720, y: 500, width: 280, height: 110, parentPanelId: 'gn-panel', order: 3, visible: true, locked: false, appearance: { fill: { color: '#302B1D', opacity: 100, enabled: true }, stroke: { color: '#D4AA6B', opacity: 100, enabled: true }, strokeWidth: 3, strokePattern: 'solid', text: { color: '#FFF8E8', opacity: 100, enabled: true } } },
+            { id: 'gn-luna', type: 'person', personId: 'gp-luna', x: 1410, y: 230, width: 280, height: 110, parentPanelId: null, order: 9, visible: true, locked: false, appearance: { fill: { color: '#2D2437', opacity: 100, enabled: true }, stroke: { color: '#AA8CE8', opacity: 100, enabled: true }, strokeWidth: 2, strokePattern: 'solid', text: { color: '#F6F1FB', opacity: 100, enabled: true } } },
+            { id: 'gn-theo', type: 'person', personId: 'gp-theo', x: 1420, y: 520, width: 280, height: 110, parentPanelId: null, order: 8, visible: true, locked: false, appearance: { fill: { color: '#19302C', opacity: 100, enabled: true }, stroke: { color: '#62D99A', opacity: 100, enabled: true }, strokeWidth: 2, strokePattern: 'solid', text: { color: '#F3F7F5', opacity: 100, enabled: true } } },
             {
               id: 'gn-image',
               type: 'image',
@@ -59594,44 +60275,434 @@
 
     const GENEO_PERSON_CARD_WIDTH =
       Object.freeze({
-        min: 200,
-        standard: 260,
-        expanded: 380,
-        max: 520
+        min: 124,
+        default: 280,
+        max: 560
       });
 
     const GENEO_PERSON_CARD_HEIGHT =
       Object.freeze({
-        min: 110,
-        max: 320
+        min: 56,
+        max: 460
       });
 
-    function geneoPersonCardLayoutTier(
-      width
+    const GENEO_PERSON_CARD_SCALE =
+      Object.freeze({
+        min: 0.65,
+        default: 1,
+        max: 2
+      });
+
+    const GENEO_PERSON_CARD_STYLES =
+      Object.freeze([
+        'standard',
+        'tree',
+        'chart',
+        'portrait'
+      ]);
+
+    const GENEO_PERSON_CARD_NAME_FORMATS =
+      Object.freeze([
+        'full',
+        'first-last',
+        'surname-first'
+      ]);
+
+    const GENEO_PERSON_CARD_DATE_FORMATS =
+      Object.freeze([
+        'full',
+        'years'
+      ]);
+
+    const GENEO_PERSON_CARD_PHOTO_SIZES =
+      Object.freeze([
+        'small',
+        'medium',
+        'large'
+      ]);
+
+    const GENEO_PERSON_CARD_ALIGNMENTS =
+      Object.freeze([
+        'left',
+        'center'
+      ]);
+
+    const GENEO_PERSON_CARD_ENUMS =
+      Object.freeze({
+        style:
+          GENEO_PERSON_CARD_STYLES,
+
+        nameFormat:
+          GENEO_PERSON_CARD_NAME_FORMATS,
+
+        dateFormat:
+          GENEO_PERSON_CARD_DATE_FORMATS,
+
+        photoSize:
+          GENEO_PERSON_CARD_PHOTO_SIZES,
+
+        alignment:
+          GENEO_PERSON_CARD_ALIGNMENTS
+      });
+
+    const GENEO_PERSON_CARD_REFERENCE =
+      Object.freeze({
+        standard: {
+          width: 280,
+          height: 110
+        },
+
+        tree: {
+          width: 260,
+          height: 118
+        },
+
+        chart: {
+          width: 240,
+          height: 88
+        },
+
+        portrait: {
+          width: 190,
+          height: 230
+        }
+      });
+
+    function geneoPersonCardEnumValue(
+      key,
+      value,
+      fallback
     ) {
-      const value =
-        geneoNumber(
-          width,
-          240,
-          GENEO_PERSON_CARD_WIDTH.min,
-          GENEO_PERSON_CARD_WIDTH.max
+      return (
+        GENEO_PERSON_CARD_ENUMS[key]
+          ?.includes(value)
+          ? value
+          : fallback
+      );
+    }
+
+    function geneoPersonCardSettingValueIsValid(
+      key,
+      value
+    ) {
+      return Boolean(
+        GENEO_PERSON_CARD_ENUMS[key]
+          ?.includes(value)
+      );
+    }
+
+    function geneoEmptyPersonCardOverrides(
+      custom = false
+    ) {
+      return {
+        custom:
+          Boolean(custom),
+
+        fields: {},
+
+        style: null,
+        nameFormat: null,
+        dateFormat: null,
+        photoSize: null,
+        alignment: null,
+        cornerRadius: null
+      };
+    }
+
+    function geneoPersonCardDisplayName(
+      person,
+      format = 'full'
+    ) {
+      const names =
+        normalizeGeneographPersonNames(
+          person || {}
         );
 
-      if (
-        value
-        >= GENEO_PERSON_CARD_WIDTH.expanded
+      let parts = [];
+
+      if (format === 'first-last') {
+        parts = [
+          names.first,
+          names.last
+        ];
+      } else if (
+        format === 'surname-first'
       ) {
-        return 'expanded';
+        parts = [
+          names.last,
+          names.first,
+          names.middle
+        ];
+      } else {
+        parts = [
+          names.first,
+          names.middle,
+          names.last
+        ];
       }
 
-      if (
-        value
-        >= GENEO_PERSON_CARD_WIDTH.standard
-      ) {
-        return 'standard';
+      return (
+        parts
+          .filter(Boolean)
+          .join(' ')
+        || 'Unknown'
+      );
+    }
+
+    function geneoPersonCardVitalDateLabel(
+      vital,
+      dateFormat = 'full'
+    ) {
+      if (dateFormat === 'years') {
+        return (
+          timelineYearFromValue(vital)
+          || ''
+        );
       }
 
-      return 'compact';
+      return (
+        formatGenealogyDateLabel(vital)
+        || ''
+      );
+    }
+
+    function geneoDefaultPersonCardSettings() {
+      return {
+        style: 'standard',
+        nameFormat: 'full',
+        dateFormat: 'full',
+        photoSize: 'medium',
+        alignment: 'left',
+
+        fields: {
+          photo: true,
+          dates: true,
+          livingStatus: true,
+          birthPlace: false,
+          deathPlace: false,
+          maidenName: false,
+          gender: false,
+          linkIndicator: false
+        },
+
+        cornerRadius: 8
+      };
+    }
+
+    function normalizeGeneographPersonCardSettings(
+      value
+    ) {
+      const defaults =
+        geneoDefaultPersonCardSettings();
+
+      const source =
+        value
+        && typeof value === 'object'
+          ? value
+          : {};
+
+      const sourceFields =
+        source.fields
+        && typeof source.fields === 'object'
+          ? source.fields
+          : {};
+
+      const fields = {};
+
+      Object.keys(
+        defaults.fields
+      ).forEach(key => {
+        fields[key] =
+          typeof sourceFields[key]
+            === 'boolean'
+            ? sourceFields[key]
+            : defaults.fields[key];
+      });
+
+      return {
+        style:
+          geneoPersonCardEnumValue(
+            'style',
+            source.style,
+            defaults.style
+          ),
+
+        nameFormat:
+          geneoPersonCardEnumValue(
+            'nameFormat',
+            source.nameFormat,
+            defaults.nameFormat
+          ),
+
+        dateFormat:
+          geneoPersonCardEnumValue(
+            'dateFormat',
+            source.dateFormat,
+            defaults.dateFormat
+          ),
+
+        photoSize:
+          geneoPersonCardEnumValue(
+            'photoSize',
+            source.photoSize,
+            defaults.photoSize
+          ),
+
+        alignment:
+          geneoPersonCardEnumValue(
+            'alignment',
+            source.alignment,
+            defaults.alignment
+          ),
+
+        fields,
+
+        cornerRadius:
+          Math.round(
+            geneoNumber(
+              source.cornerRadius,
+              defaults.cornerRadius,
+              0,
+              32
+            )
+          )
+      };
+    }
+
+    function normalizeGeneographPersonCardOverrides(
+      value
+    ) {
+      const source =
+        value
+        && typeof value === 'object'
+          ? value
+          : {};
+
+      if (source.custom !== true) {
+        return (
+          geneoEmptyPersonCardOverrides(
+            false
+          )
+        );
+      }
+
+      const fields = {};
+
+      const sourceFields =
+        source.fields
+        && typeof source.fields === 'object'
+          ? source.fields
+          : {};
+
+      Object.keys(
+        geneoDefaultPersonCardSettings()
+          .fields
+      ).forEach(key => {
+        if (
+          typeof sourceFields[key]
+          === 'boolean'
+        ) {
+          fields[key] =
+            sourceFields[key];
+        }
+      });
+
+      const radius =
+        Number(source.cornerRadius);
+
+      const enumOverride =
+        key =>
+          geneoPersonCardSettingValueIsValid(
+            key,
+            source[key]
+          )
+            ? source[key]
+            : null;
+
+      return {
+        custom: true,
+        fields,
+
+        style:
+          enumOverride('style'),
+
+        nameFormat:
+          enumOverride('nameFormat'),
+
+        dateFormat:
+          enumOverride('dateFormat'),
+
+        photoSize:
+          enumOverride('photoSize'),
+
+        alignment:
+          enumOverride('alignment'),
+
+        cornerRadius:
+          Number.isFinite(radius)
+            ? Math.round(
+                geneoNumber(
+                  radius,
+                  8,
+                  0,
+                  32
+                )
+              )
+            : null
+      };
+    }
+
+    function geneoPersonCardEffectiveSettings(
+      node,
+      diagram = selectedGeneographDiagram()
+    ) {
+      const boardSettings =
+        normalizeGeneographPersonCardSettings(
+          diagram?.personCardDefaults
+        );
+
+      const overrides =
+        normalizeGeneographPersonCardOverrides(
+          node?.personCard
+        );
+
+      if (!overrides.custom) {
+        return boardSettings;
+      }
+
+      const value =
+        key =>
+          overrides[key] === null
+          || overrides[key] === undefined
+            ? boardSettings[key]
+            : overrides[key];
+
+      return {
+        style:
+          value('style'),
+
+        nameFormat:
+          value('nameFormat'),
+
+        dateFormat:
+          value('dateFormat'),
+
+        photoSize:
+          value('photoSize'),
+
+        alignment:
+          value('alignment'),
+
+        fields: {
+          ...boardSettings.fields,
+          ...overrides.fields
+        },
+
+        cornerRadius:
+          overrides.cornerRadius === null
+            ? boardSettings.cornerRadius
+            : overrides.cornerRadius
+      };
     }
 
     function geneoPersonCardViewModel(
@@ -59660,23 +60731,28 @@
       if (!person) {
         return {
           person: null,
+          settings,
           fields,
           displayName: 'Unknown',
           maidenName: '',
           genderLabel: '',
-          showPhoto: Boolean(fields.photo),
+          showPhoto:
+            Boolean(fields.photo),
           lifeSpan: '',
           structuredLife: false,
           birthEvent: null,
           deathEvent: null,
-          status: '',
+          displayStatus: '',
           linked: false,
           linkTitle: ''
         };
       }
 
       const displayName =
-        geneoPersonDisplayName(person);
+        geneoPersonCardDisplayName(
+          person,
+          settings.nameFormat
+        );
 
       const surname =
         String(
@@ -59705,20 +60781,23 @@
           : '';
 
       const deceased =
-        person.livingStatus === 'Deceased';
+        person.livingStatus ===
+        'Deceased';
 
       const birthDate =
         fields.dates
-          ? formatGenealogyDateLabel(
-              person.birth
+          ? geneoPersonCardVitalDateLabel(
+              person.birth,
+              settings.dateFormat
             )
           : '';
 
       const deathDate =
         fields.dates
         && deceased
-          ? formatGenealogyDateLabel(
-              person.death
+          ? geneoPersonCardVitalDateLabel(
+              person.death,
+              settings.dateFormat
             )
           : '';
 
@@ -59737,11 +60816,6 @@
             )
           : '';
 
-      /*
-      * Places promote the Life area from one
-      * compact lifespan into semantic
-      * birth/death events.
-      */
       const structuredLife =
         Boolean(
           birthPlace
@@ -59776,8 +60850,25 @@
         fields.dates
         && !structuredLife
           ? geneoPersonCardLifeSpan(
-              person
+              person,
+              settings.dateFormat
             )
+          : '';
+
+      /*
+       * Living is intentionally not presented
+       * as a card status. Only exceptional or
+       * unresolved states appear.
+       */
+      const displayStatus =
+        fields.livingStatus
+        && (
+          person.livingStatus ===
+            'Deceased'
+          || person.livingStatus ===
+            'Unknown'
+        )
+          ? person.livingStatus
           : '';
 
       const linked =
@@ -59793,6 +60884,7 @@
 
       return {
         person,
+        settings,
         fields,
         displayName,
         maidenName,
@@ -59803,21 +60895,14 @@
         structuredLife,
         birthEvent,
         deathEvent,
-        status:
-          fields.livingStatus
-            ? (
-                person.livingStatus
-                || 'Unknown'
-              )
-            : '',
+        displayStatus,
         linked,
         linkTitle
       };
     }
 
-    function geneoPersonCardMinimumHeight(
+    function geneoPersonCardReferenceSize(
       node,
-      width = node?.width,
       diagram = selectedGeneographDiagram()
     ) {
       const model =
@@ -59826,317 +60911,277 @@
           diagram
         );
 
-      const tier =
-        geneoPersonCardLayoutTier(
-          width
-        );
+      const style =
+        model.settings?.style
+        || 'standard';
 
-      if (!model.person) {
-        return 118;
-      }
+      const base =
+        GENEO_PERSON_CARD_REFERENCE[
+          style
+        ]
+        || GENEO_PERSON_CARD_REFERENCE
+          .standard;
 
-      const eventCount =
-        [
-          model.birthEvent,
-          model.deathEvent
-        ].filter(Boolean).length;
+      let extraHeight = 0;
 
-      const hasLife =
-        Boolean(
-          model.lifeSpan
-          || eventCount
-        );
+      if (model.person) {
+        const eventCount =
+          [
+            model.birthEvent,
+            model.deathEvent
+          ].filter(Boolean).length;
 
-      const hasStatus =
-        Boolean(model.status);
-
-      if (tier === 'compact') {
-        const identityHeight =
-          34
-          + (
-            model.maidenName
-              ? 14
-              : 0
-          );
-
-        const lifeHeight =
-          model.structuredLife
-            ? (
-                eventCount * 18
-                + Math.max(
-                    0,
-                    eventCount - 1
-                  ) * 3
-              )
-            : model.lifeSpan
-              ? 16
-              : 0;
-
-        const statusHeight =
-          hasStatus
-            ? 16
-            : 0;
-
-        const contentHeight =
-          identityHeight
-          + (
-            hasLife
-              ? 4 + lifeHeight
-              : 0
-          )
-          + (
-            hasStatus
-              ? 5 + statusHeight
-              : 0
-          );
-
-        return Math.min(
-          190,
-          Math.max(
-            118,
-            Math.ceil(
-              Math.max(
-                model.showPhoto
-                  ? 48
-                  : 0,
-                contentHeight
-              )
-              + 20
-            )
-          )
-        );
-      }
-
-      if (tier === 'standard') {
-        const identityHeight =
-          36
-          + (
-            model.maidenName
-              ? 15
-              : 0
-          );
-
-        const lifeHeight =
-          model.structuredLife
-            ? (
-                eventCount * 19
-                + Math.max(
-                    0,
-                    eventCount - 1
-                  ) * 3
-              )
-            : model.lifeSpan
-              ? 18
-              : 0;
-
-        const statusHeight =
-          hasStatus
-            ? 18
-            : 0;
-
-        const contentHeight =
-          identityHeight
-          + (
-            hasLife
-              ? 6 + lifeHeight
-              : 0
-          )
-          + (
-            hasStatus
-              ? 6 + statusHeight
-              : 0
-          );
-
-        return Math.min(
-          220,
-          Math.max(
-            132,
-            Math.ceil(
-              Math.max(
-                model.showPhoto
-                  ? 62
-                  : 0,
-                contentHeight
-              )
-              + 24
-            )
-          )
-        );
-      }
-
-      const identityHeight =
-        Math.max(
-          model.showPhoto
-            ? 88
-            : 0,
-          42
-          + (
-            model.maidenName
-              ? 16
-              : 0
-          )
-        );
-
-      const lifeHeight =
-        model.structuredLife
-          ? (
-              eventCount
-                ? 54
-                : 0
-            )
-          : model.lifeSpan
-            ? 18
-            : 0;
-
-      const statusHeight =
-        hasStatus
-          ? 18
-          : 0;
-
-      return Math.min(
-        280,
-        Math.max(
-          168,
-          30
-          + identityHeight
-          + (
-            hasLife
-              ? 12 + lifeHeight
-              : 0
-          )
-          + (
-            hasStatus
-              ? 10 + statusHeight
-              : 0
-          )
-        )
-      );
-    }
-
-    function geneoDefaultPersonCardSettings() {
-      return {
-        fields: {
-          photo: true,
-          dates: true,
-          livingStatus: true,
-          birthPlace: false,
-          deathPlace: false,
-          maidenName: false,
-          gender: false,
-          linkIndicator: false
-        },
-        cornerRadius: 8
-      };
-    }
-
-    function normalizeGeneographPersonCardSettings(value) {
-      const defaults =
-        geneoDefaultPersonCardSettings();
-
-      const source =
-        value && typeof value === 'object'
-          ? value
-          : {};
-
-      const sourceFields =
-        source.fields
-        && typeof source.fields === 'object'
-          ? source.fields
-          : {};
-
-      const fields = {};
-
-      Object.keys(defaults.fields).forEach(key => {
-        fields[key] =
-          typeof sourceFields[key] === 'boolean'
-            ? sourceFields[key]
-            : defaults.fields[key];
-      });
-
-      return {
-        fields,
-        cornerRadius: Math.round(
-          geneoNumber(
-            source.cornerRadius,
-            defaults.cornerRadius,
-            0,
-            32
-          )
-        )
-      };
-    }
-
-    function normalizeGeneographPersonCardOverrides(value) {
-      const source =
-        value && typeof value === 'object'
-          ? value
-          : {};
-
-      if (source.custom !== true) {
-        return {
-          custom: false,
-          fields: {},
-          cornerRadius: null
-        };
-      }
-
-      const fields = {};
-      const sourceFields =
-        source.fields
-        && typeof source.fields === 'object'
-          ? source.fields
-          : {};
-
-      Object.keys(
-        geneoDefaultPersonCardSettings().fields
-      ).forEach(key => {
-        if (typeof sourceFields[key] === 'boolean') {
-          fields[key] = sourceFields[key];
+        if (model.structuredLife) {
+          if (style === 'standard') {
+            extraHeight +=
+              eventCount * 14;
+          } else if (
+            style === 'tree'
+          ) {
+            extraHeight +=
+              eventCount * 15;
+          } else if (
+            style === 'chart'
+          ) {
+            extraHeight +=
+              eventCount * 13;
+          } else if (
+            style === 'portrait'
+          ) {
+            extraHeight +=
+              eventCount * 14;
+          }
         }
-      });
 
-      const radius = Number(source.cornerRadius);
+        if (
+          style === 'portrait'
+          && model.maidenName
+        ) {
+          extraHeight += 10;
+        }
+
+        if (
+          style === 'chart'
+          && model.displayStatus
+          && model.structuredLife
+        ) {
+          extraHeight += 8;
+        }
+      }
 
       return {
-        custom: true,
-        fields,
-        cornerRadius:
-          Number.isFinite(radius)
-            ? Math.round(
-                geneoNumber(radius, 8, 0, 32)
-              )
-            : null
+        width:
+          base.width,
+
+        height:
+          base.height
+          + extraHeight
       };
     }
 
-    function geneoPersonCardEffectiveSettings(
+    function geneoPersonCardScaleForNode(
       node,
       diagram = selectedGeneographDiagram()
     ) {
-      const boardSettings =
-        normalizeGeneographPersonCardSettings(
-          diagram?.personCardDefaults
+      const reference =
+        geneoPersonCardReferenceSize(
+          node,
+          diagram
         );
 
-      const overrides =
-        normalizeGeneographPersonCardOverrides(
-          node?.personCard
+      const rawScale =
+        Number(node?.width)
+        / reference.width;
+
+      return geneoNumber(
+        rawScale,
+        GENEO_PERSON_CARD_SCALE.default,
+        GENEO_PERSON_CARD_SCALE.min,
+        GENEO_PERSON_CARD_SCALE.max
+      );
+    }
+
+    function geneoPersonCardSizeForScale(
+      node,
+      scale,
+      diagram = selectedGeneographDiagram()
+    ) {
+      const reference =
+        geneoPersonCardReferenceSize(
+          node,
+          diagram
         );
 
-      if (!overrides.custom) {
-        return boardSettings;
-      }
+      const resolvedScale =
+        geneoNumber(
+          scale,
+          GENEO_PERSON_CARD_SCALE.default,
+          GENEO_PERSON_CARD_SCALE.min,
+          GENEO_PERSON_CARD_SCALE.max
+        );
 
       return {
-        fields: {
-          ...boardSettings.fields,
-          ...overrides.fields
-        },
-        cornerRadius:
-          overrides.cornerRadius === null
-            ? boardSettings.cornerRadius
-            : overrides.cornerRadius
+        width:
+          reference.width
+          * resolvedScale,
+
+        height:
+          reference.height
+          * resolvedScale,
+
+        scale:
+          resolvedScale,
+
+        reference
       };
+    }
+
+    function geneoSetPersonCardScale(
+      node,
+      scale,
+      diagram = selectedGeneographDiagram()
+    ) {
+      if (node?.type !== 'person') {
+        return;
+      }
+
+      const size =
+        geneoPersonCardSizeForScale(
+          node,
+          scale,
+          diagram
+        );
+
+      node.width =
+        size.width;
+
+      node.height =
+        size.height;
+    }
+
+    function geneoCapturePersonCardScales(
+      nodes,
+      diagram = selectedGeneographDiagram()
+    ) {
+      return new Map(
+        (
+          Array.isArray(nodes)
+            ? nodes
+            : []
+        )
+          .filter(
+            node =>
+              node?.type === 'person'
+          )
+          .map(
+            node => [
+              node.id,
+              geneoPersonCardScaleForNode(
+                node,
+                diagram
+              )
+            ]
+          )
+      );
+    }
+
+    function geneoRestorePersonCardScales(
+      scaleMap,
+      diagram = selectedGeneographDiagram()
+    ) {
+      if (!(scaleMap instanceof Map)) {
+        return;
+      }
+
+      scaleMap.forEach(
+        (scale, nodeId) => {
+          const node =
+            getGeneographNode(nodeId);
+
+          if (node?.type !== 'person') {
+            return;
+          }
+
+          geneoSetPersonCardScale(
+            node,
+            scale,
+            diagram
+          );
+        }
+      );
+    }
+
+    function geneoPersonCardPhotoBaseSize(
+      settings
+    ) {
+      const style =
+        settings?.style
+        || 'standard';
+
+      const size =
+        settings?.photoSize
+        || 'medium';
+
+      const values = {
+        standard: {
+          small: 56,
+          medium: 68,
+          large: 78
+        },
+
+        tree: {
+          small: 38,
+          medium: 46,
+          large: 56
+        },
+
+        chart: {
+          small: 62,
+          medium: 76,
+          large: 90
+        },
+
+        portrait: {
+          small: 88,
+          medium: 108,
+          large: 128
+        }
+      };
+
+      return (
+        values[style]?.[size]
+        || values.standard.medium
+      );
+    }
+
+    function geneoPersonCardCssVariables(
+      node,
+      settings =
+        geneoPersonCardEffectiveSettings(
+          node
+        )
+    ) {
+      const reference =
+        geneoPersonCardReferenceSize(
+          node
+        );
+
+      const scale =
+        geneoPersonCardScaleForNode(
+          node
+        );
+
+      const photo =
+        geneoPersonCardPhotoBaseSize(
+          settings
+        );
+
+      return [
+        `--geneo-person-reference-width:${reference.width}px`,
+        `--geneo-person-reference-height:${reference.height}px`,
+        `--geneo-person-scale:${scale}`,
+        `--geneo-card-photo:${photo}px`
+      ];
     }
 
     function geneoPersonCardMinimumSize(
@@ -60144,27 +61189,20 @@
       width = node?.width,
       diagram = selectedGeneographDiagram()
     ) {
-      const defaults =
-        geneoNodeDefaults('person');
-
-      const resolvedWidth =
-        geneoNumber(
-          width,
-          node?.width || defaults.width,
-          GENEO_PERSON_CARD_WIDTH.min,
-          GENEO_PERSON_CARD_WIDTH.max
+      const reference =
+        geneoPersonCardReferenceSize(
+          node,
+          diagram
         );
 
       return {
         width:
-          GENEO_PERSON_CARD_WIDTH.min,
+          reference.width
+          * GENEO_PERSON_CARD_SCALE.min,
 
         height:
-          geneoPersonCardMinimumHeight(
-            node,
-            resolvedWidth,
-            diagram
-          )
+          reference.height
+          * GENEO_PERSON_CARD_SCALE.min
       };
     }
 
@@ -60176,39 +61214,25 @@
         return;
       }
 
-      const defaults =
-        geneoNodeDefaults('person');
-
-      node.width =
-        geneoNumber(
-          node.width,
-          defaults.width,
-          GENEO_PERSON_CARD_WIDTH.min,
-          GENEO_PERSON_CARD_WIDTH.max
-        );
-
-      const minimumSize =
-        geneoPersonCardMinimumSize(
+      const reference =
+        geneoPersonCardReferenceSize(
           node,
-          node.width,
           diagram
         );
 
-      /*
-      * Content determines the minimum usable
-      * height, but the user's stored height
-      * remains authoritative above that minimum.
-      */
-      node.height =
-        geneoNumber(
-          node.height,
-          Math.max(
-            defaults.height,
-            minimumSize.height
-          ),
-          minimumSize.height,
-          GENEO_PERSON_CARD_HEIGHT.max
-        );
+      const width =
+        Number(node.width);
+
+      const scale =
+        Number.isFinite(width)
+          ? width / reference.width
+          : GENEO_PERSON_CARD_SCALE.default;
+
+      geneoSetPersonCardScale(
+        node,
+        scale,
+        diagram
+      );
     }
 
     function geneoNodeCornerRadius(node) {
@@ -65583,8 +66607,10 @@
         return {
           ...common,
 
-          width: 280,
-          height: 132,
+          width:
+            GENEO_PERSON_CARD_WIDTH.default,
+
+          height: 110,
 
           minWidth:
             GENEO_PERSON_CARD_WIDTH.min,
@@ -65599,7 +66625,7 @@
             GENEO_PERSON_CARD_HEIGHT.max
         };
       }
-
+      
       if (type === 'image') {
         return {
           ...common,
@@ -65693,12 +66719,19 @@
       node
     ) {
       if (node?.type === 'person') {
+        const reference =
+          geneoPersonCardReferenceSize(
+            node
+          );
+
         return {
           width:
-            GENEO_PERSON_CARD_WIDTH.max,
+            reference.width
+            * GENEO_PERSON_CARD_SCALE.max,
 
           height:
-            GENEO_PERSON_CARD_HEIGHT.max
+            reference.height
+            * GENEO_PERSON_CARD_SCALE.max
         };
       }
 
@@ -66531,16 +67564,22 @@
       };
     }
 
-    function geneoPersonCardLifeSpan(person) {
+    function geneoPersonCardLifeSpan(
+      person,
+      dateFormat = 'full'
+    ) {
       const birth =
-        formatGenealogyDateLabel(
-          person?.birth
+        geneoPersonCardVitalDateLabel(
+          person?.birth,
+          dateFormat
         );
 
       const death =
-        person?.livingStatus === 'Deceased'
-          ? formatGenealogyDateLabel(
-              person?.death
+        person?.livingStatus ===
+        'Deceased'
+          ? geneoPersonCardVitalDateLabel(
+              person?.death,
+              dateFormat
             )
           : '';
 
@@ -66548,8 +67587,13 @@
         return `${birth} – ${death}`;
       }
 
-      if (birth) return `Born ${birth}`;
-      if (death) return `Died ${death}`;
+      if (birth) {
+        return `Born ${birth}`;
+      }
+
+      if (death) {
+        return `Died ${death}`;
+      }
 
       return '';
     }
@@ -66577,14 +67621,17 @@
 
           <span
             class="geneo-person-life-event-value">
-
             ${
               event.date
                 ? `
                   <span
                     class="geneo-person-life-event-date"
-                    title="${escapeHtml(event.date)}">
-                    ${escapeHtml(event.date)}
+                    title="${escapeHtml(
+                      event.date
+                    )}">
+                    ${escapeHtml(
+                      event.date
+                    )}
                   </span>
                 `
                 : ''
@@ -66608,8 +67655,12 @@
                 ? `
                   <span
                     class="geneo-person-life-event-place"
-                    title="${escapeHtml(event.place)}">
-                    ${escapeHtml(event.place)}
+                    title="${escapeHtml(
+                      event.place
+                    )}">
+                    ${escapeHtml(
+                      event.place
+                    )}
                   </span>
                 `
                 : ''
@@ -66649,13 +67700,42 @@
             )
           : '';
 
+      const lifeContent =
+        model.structuredLife
+          ? `
+            <div
+              class="geneo-person-life-events">
+              ${renderGeneographPersonLifeEvent(
+                'Born',
+                model.birthEvent
+              )}
+
+              ${renderGeneographPersonLifeEvent(
+                'Died',
+                model.deathEvent
+              )}
+            </div>
+          `
+          : model.lifeSpan
+            ? `
+              <span
+                class="geneo-person-life-span"
+                title="${escapeHtml(
+                  model.lifeSpan
+                )}">
+                ${escapeHtml(
+                  model.lifeSpan
+                )}
+              </span>
+            `
+            : '';
+
       const identityMeta =
         model.genderLabel
         || model.linked
           ? `
             <span
               class="geneo-person-identity-meta">
-
               ${
                 model.genderLabel
                   ? `
@@ -66701,34 +67781,35 @@
           `
           : '';
 
-      const lifeContent =
-        model.structuredLife
+      const metadata =
+        model.displayStatus
+        || identityMeta
           ? `
-            <div class="geneo-person-life-events">
-              ${renderGeneographPersonLifeEvent(
-                'Born',
-                model.birthEvent
-              )}
+            <div
+              class="geneo-person-meta-row">
+              ${
+                model.displayStatus
+                  ? `
+                    <span
+                      class="
+                        geneo-person-status
+                        status-dot
+                        ${statusDotClass(
+                          model.displayStatus
+                        )}
+                      ">
+                      ${escapeHtml(
+                        model.displayStatus
+                      )}
+                    </span>
+                  `
+                  : ''
+              }
 
-              ${renderGeneographPersonLifeEvent(
-                'Died',
-                model.deathEvent
-              )}
+              ${identityMeta}
             </div>
           `
-          : model.lifeSpan
-            ? `
-              <span
-                class="geneo-person-life-span"
-                title="${escapeHtml(
-                  model.lifeSpan
-                )}">
-                ${escapeHtml(
-                  model.lifeSpan
-                )}
-              </span>
-            `
-            : '';
+          : '';
 
       return `
         <div
@@ -66740,77 +67821,52 @@
                 : 'no-photo'
             }
           ">
-
           ${avatar}
 
           <div
             class="geneo-person-identity-block">
+            <span
+              class="geneo-person-name-wrap"
+              title="${escapeHtml(
+                identityTitle
+              )}">
+              <strong
+                class="geneo-person-name">
+                ${escapeHtml(
+                  model.displayName
+                )}
+              </strong>
 
-            <div class="geneo-person-identity">
-              <span
-                class="geneo-person-name-wrap"
-                title="${escapeHtml(
-                  identityTitle
-                )}">
-
-                <strong
-                  class="geneo-person-name">
-                  ${escapeHtml(
-                    model.displayName
-                  )}
-                </strong>
-
-                ${
-                  model.maidenName
-                    ? `
-                      <span
-                        class="geneo-person-maiden"
-                        title="${escapeHtml(
-                          `Maiden name: ${model.maidenName}`
-                        )}">
-                        (${escapeHtml(
-                          model.maidenName
-                        )})
-                      </span>
-                    `
-                    : ''
-                }
-              </span>
-
-              ${identityMeta}
-            </div>
+              ${
+                model.maidenName
+                  ? `
+                    <span
+                      class="geneo-person-maiden"
+                      title="${escapeHtml(
+                        `Maiden name: ${model.maidenName}`
+                      )}">
+                      (${escapeHtml(
+                        model.maidenName
+                      )})
+                    </span>
+                  `
+                  : ''
+              }
+            </span>
           </div>
 
           ${
             lifeContent
               ? `
-                <div class="geneo-person-life">
+                <div
+                  class="geneo-person-life">
                   ${lifeContent}
                 </div>
               `
               : ''
           }
 
-          ${
-            model.status
-              ? `
-                <div class="geneo-person-footer">
-                  <span
-                    class="
-                      geneo-person-status
-                      status-dot
-                      ${statusDotClass(
-                        model.status
-                      )}
-                    ">
-                    ${escapeHtml(
-                      model.status
-                    )}
-                  </span>
-                </div>
-              `
-              : ''
-          }
+          ${metadata}
 
           <button
             class="geneo-person-add-relative"
@@ -66893,8 +67949,10 @@
       node
     ) {
       if (
-        selectedGeneographNodes().length !== 1
-        || selectedGeneographConnections().length
+        selectedGeneographNodes().length
+          !== 1
+        || selectedGeneographConnections()
+          .length
         || state.selectedGeneoNodeId
           !== node.id
         || geneoNodeEffectiveLocked(node)
@@ -66902,14 +67960,12 @@
         return '';
       }
 
-      const handles = [
+      return [
         'nw',
         'ne',
         'se',
         'sw'
-      ];
-
-      return handles
+      ]
         .map(handle => `
           <button
             class="
@@ -66921,8 +67977,8 @@
             data-geneo-node="${escapeHtml(
               node.id
             )}"
-            aria-label="Resize ${escapeHtml(
-              geneoNodeTitle(node)
+            aria-label="${escapeHtml(
+              `Resize ${geneoNodeTitle(node)}`
             )}">
           </button>
         `)
@@ -66930,15 +67986,28 @@
     }
 
     function renderGeneographObject(node) {
-      if (!geneoNodeEffectiveVisible(node)) return '';
-      const appearance = node.appearance || {};
-      const personCardTier =
+      if (
+        !geneoNodeEffectiveVisible(node)
+      ) {
+        return '';
+      }
+
+      const appearance =
+        node.appearance || {};
+
+      const personSettings =
         node.type === 'person'
-          ? geneoPersonCardLayoutTier(
-              node.width
+          ? geneoPersonCardEffectiveSettings(
+              node
             )
-          : '';
-      const strokePattern = appearance.strokePattern === 'dashed' ? 'dashed' : 'solid';
+          : null;
+
+      const strokePattern =
+        appearance.strokePattern
+          === 'dashed'
+          ? 'dashed'
+          : 'solid';
+
       const bounds =
         geneoCanvasRuntime.bounds
         || {
@@ -66951,15 +68020,45 @@
         `top:${node.y - bounds.top}px`,
         `width:${node.width}px`,
         `height:${node.height}px`,
-        `--geneo-node-bg:${geneoPaintCssColor(appearance.fill)}`,
-        `--geneo-node-stroke:${geneoPaintCssColor(appearance.stroke)}`,
-        `--geneo-node-stroke-width:${appearance.strokeWidth || 1}px`,
-        `--geneo-node-stroke-style:${appearance.stroke?.enabled ? strokePattern : 'none'}`,
-        `--geneo-node-text:${geneoPaintCssColor(appearance.text)}`,
-        `--geneo-node-radius:${geneoNodeCornerRadius(node)}px`,
+        `--geneo-node-bg:${geneoPaintCssColor(
+          appearance.fill
+        )}`,
+        `--geneo-node-stroke:${geneoPaintCssColor(
+          appearance.stroke
+        )}`,
+        `--geneo-node-stroke-width:${
+          appearance.strokeWidth || 1
+        }px`,
+        `--geneo-node-stroke-style:${
+          appearance.stroke?.enabled
+            ? strokePattern
+            : 'none'
+        }`,
+        `--geneo-node-text:${geneoPaintCssColor(
+          appearance.text
+        )}`,
+        `--geneo-node-radius:${
+          geneoNodeCornerRadius(node)
+        }px`,
+
+        ...(
+          personSettings
+            ? geneoPersonCardCssVariables(
+                node,
+                personSettings
+              )
+            : []
+        ),
+
         `z-index:${
           node.type === 'panel'
-            ? Math.max(1, Math.min(10, node.order))
+            ? Math.max(
+                1,
+                Math.min(
+                  10,
+                  node.order
+                )
+              )
             : 20 + node.order
         }`
       ].join(';');
@@ -66970,12 +68069,15 @@
             geneo-node
             geneo-node-${node.type}
             ${
-              geneoSelectedNodeIdSet().has(node.id)
+              geneoSelectedNodeIdSet()
+                .has(node.id)
                 ? 'selected'
                 : ''
             }
             ${
-              geneoNodeEffectiveLocked(node)
+              geneoNodeEffectiveLocked(
+                node
+              )
                 ? 'locked'
                 : ''
             }
@@ -66993,22 +68095,40 @@
             }
           "
           style="${style}"
-          data-geneo-node="${escapeHtml(node.id)}"
+          data-geneo-node="${escapeHtml(
+            node.id
+          )}"
           ${
-            node.type === 'person'
+            personSettings
               ? `
-                data-geneo-person-card-tier="${personCardTier}"
+                data-geneo-person-card-style="${escapeHtml(
+                  personSettings.style
+                )}"
+                data-geneo-person-card-align="${escapeHtml(
+                  personSettings.alignment
+                )}"
+                data-geneo-person-card-photo="${escapeHtml(
+                  personSettings.photoSize
+                )}"
               `
               : ''
           }
           tabindex="0"
-          aria-label="${escapeHtml(geneoNodeTitle(node))}">
-          <div class="geneo-node-content">
-            ${renderGeneographNodeContent(node)}
+          aria-label="${escapeHtml(
+            geneoNodeTitle(node)
+          )}">
+          <div
+            class="geneo-node-content">
+            ${renderGeneographNodeContent(
+              node
+            )}
           </div>
 
           ${renderGeneographPorts(node)}
-          ${renderGeneographResizeHandles(node)}
+
+          ${renderGeneographResizeHandles(
+            node
+          )}
         </article>
       `;
     }
@@ -68418,7 +69538,6 @@
         </div>
       `;
     }
-
     function geneoPersonCardFieldLabels() {
       return {
         photo:
@@ -68428,7 +69547,7 @@
           'Life dates',
 
         livingStatus:
-          'Living status',
+          'Status',
 
         birthPlace:
           'Birth place',
@@ -68437,7 +69556,7 @@
           'Death place',
 
         maidenName:
-          'Maiden name in identity',
+          'Maiden name',
 
         gender:
           'Gender badge',
@@ -68445,6 +69564,235 @@
         linkIndicator:
           'Family Tree link indicator'
       };
+    }
+
+    function geneoPersonCardControlOptions() {
+      return {
+        style: [
+          ['standard', 'Standard'],
+          ['tree', 'Tree'],
+          ['chart', 'Chart'],
+          ['portrait', 'Portrait']
+        ],
+
+        nameFormat: [
+          ['full', 'Full name'],
+          [
+            'first-last',
+            'First + surname'
+          ],
+          [
+            'surname-first',
+            'Surname first'
+          ]
+        ],
+
+        dateFormat: [
+          ['full', 'Full dates'],
+          ['years', 'Years only']
+        ],
+
+        photoSize: [
+          ['small', 'Small'],
+          ['medium', 'Medium'],
+          ['large', 'Large']
+        ],
+
+        alignment: [
+          ['left', 'Left'],
+          ['center', 'Center']
+        ]
+      };
+    }
+
+    function renderGeneographPersonCardSelect({
+      key,
+      label,
+      value,
+      scope,
+      node = null,
+      disabled = false,
+      help = ''
+    }) {
+      const options =
+        geneoPersonCardControlOptions()[
+          key
+        ] || [];
+
+      const id =
+        `geneo-person-card-${
+          scope
+        }-${
+          node?.id || 'board'
+        }-${key}`;
+
+      return `
+        <div class="geneo-field">
+          <label
+            for="${escapeHtml(id)}">
+            ${escapeHtml(label)}
+          </label>
+
+          <select
+            class="geneo-select"
+            id="${escapeHtml(id)}"
+            data-geneo-person-card-setting="${escapeHtml(
+              key
+            )}"
+            data-geneo-person-card-scope="${escapeHtml(
+              scope
+            )}"
+            ${
+              node
+                ? `
+                  data-geneo-person-card-node="${escapeHtml(
+                    node.id
+                  )}"
+                `
+                : ''
+            }
+            ${
+              disabled
+                ? `
+                  disabled
+                  aria-disabled="true"
+                `
+                : ''
+            }>
+            ${options
+              .map(
+                ([
+                  optionValue,
+                  optionLabel
+                ]) => `
+                  <option
+                    value="${escapeHtml(
+                      optionValue
+                    )}"
+                    ${
+                      optionValue === value
+                        ? 'selected'
+                        : ''
+                    }>
+                    ${escapeHtml(
+                      optionLabel
+                    )}
+                  </option>
+                `
+              )
+              .join('')}
+          </select>
+
+          ${
+            help
+              ? `
+                <span
+                  class="geneo-selection-help">
+                  ${escapeHtml(help)}
+                </span>
+              `
+              : ''
+          }
+        </div>
+      `;
+    }
+
+    function renderGeneographPersonCardStylePicker({
+      scope,
+      node = null,
+      settings,
+      disabled = false
+    }) {
+      const styles = [
+        {
+          id: 'standard',
+          label: 'Standard'
+        },
+        {
+          id: 'tree',
+          label: 'Tree'
+        },
+        {
+          id: 'chart',
+          label: 'Chart'
+        },
+        {
+          id: 'portrait',
+          label: 'Portrait'
+        }
+      ];
+
+      return `
+        <div
+          class="geneo-person-style-picker"
+          role="group"
+          aria-label="Person card style">
+          ${styles
+            .map(style => `
+              <button
+                class="
+                  geneo-person-style-option
+                  ${
+                    settings.style
+                    === style.id
+                      ? 'active'
+                      : ''
+                  }
+                "
+                type="button"
+                data-geneo-person-card-style="${escapeHtml(
+                  style.id
+                )}"
+                data-geneo-person-card-scope="${escapeHtml(
+                  scope
+                )}"
+                ${
+                  node
+                    ? `
+                      data-geneo-person-card-node="${escapeHtml(
+                        node.id
+                      )}"
+                    `
+                    : ''
+                }
+                aria-pressed="${
+                  settings.style
+                  === style.id
+                    ? 'true'
+                    : 'false'
+                }"
+                ${
+                  disabled
+                    ? `
+                      disabled
+                      aria-disabled="true"
+                    `
+                    : ''
+                }>
+                <span
+                  class="
+                    geneo-person-style-preview
+                    preview-${escapeHtml(
+                      style.id
+                    )}
+                  "
+                  aria-hidden="true">
+                  <span class="preview-photo"></span>
+                  <span class="preview-name"></span>
+                  <span class="preview-line one"></span>
+                  <span class="preview-line two"></span>
+                </span>
+
+                <span>
+                  ${escapeHtml(
+                    style.label
+                  )}
+                </span>
+              </button>
+            `)
+            .join('')}
+        </div>
+      `;
     }
 
     function renderGeneographPersonCardControls({
@@ -68486,6 +69834,24 @@
       const labels =
         geneoPersonCardFieldLabels();
 
+      const select =
+        (
+          key,
+          label,
+          help = ''
+        ) =>
+          renderGeneographPersonCardSelect({
+            key,
+            label,
+            help,
+            value:
+              settings[key],
+            scope,
+            node,
+            disabled:
+              inherited
+          });
+
       return `
         ${
           node
@@ -68497,7 +69863,11 @@
                   data-geneo-person-card-node="${escapeHtml(
                     node.id
                   )}"
-                  ${custom ? '' : 'checked'}>
+                  ${
+                    custom
+                      ? ''
+                      : 'checked'
+                  }>
                 Use board defaults
               </label>
             `
@@ -68508,9 +69878,10 @@
           class="geneo-person-card-controls"
           data-geneo-person-card-controls
           data-inherited="${
-            inherited ? 'true' : 'false'
+            inherited
+              ? 'true'
+              : 'false'
           }">
-
           ${
             inherited
               ? `
@@ -68526,45 +69897,146 @@
               : ''
           }
 
-          <div class="geneo-person-card-options">
-            ${Object.entries(labels)
-              .map(([field, label]) => `
-                <label class="geneo-check">
-                  <input
-                    type="checkbox"
-                    data-geneo-person-card-field="${escapeHtml(
-                      field
-                    )}"
-                    data-geneo-person-card-scope="${escapeHtml(
-                      scope
-                    )}"
-                    ${
-                      node
-                        ? `
-                          data-geneo-person-card-node="${escapeHtml(
-                            node.id
-                          )}"
-                        `
-                        : ''
-                    }
-                    ${
-                      settings.fields[field]
-                        ? 'checked'
-                        : ''
-                    }
-                    ${inherited
-                      ? `
-                        disabled
-                        aria-disabled="true"
-                      `
-                      : ''}>
-                  ${escapeHtml(label)}
-                </label>
-              `)
-              .join('')}
+          <div
+            class="geneo-person-card-control-group">
+            <strong
+              class="geneo-person-card-group-title">
+              Card style
+            </strong>
+
+            ${renderGeneographPersonCardStylePicker({
+              scope,
+              node,
+              settings,
+              disabled:
+                inherited
+            })}
           </div>
 
-          <div class="geneo-person-card-radius-row">
+          <div
+            class="geneo-person-card-control-group">
+            <strong
+              class="geneo-person-card-group-title">
+              Formatting
+            </strong>
+
+            <div
+              class="geneo-person-card-setting-grid">
+              ${select(
+                'nameFormat',
+                'Name format'
+              )}
+
+              ${select(
+                'dateFormat',
+                'Date format'
+              )}
+
+              ${select(
+                'photoSize',
+                'Photo size'
+              )}
+
+              ${
+                settings.style
+                  === 'standard'
+                  ? select(
+                      'alignment',
+                      'Text alignment'
+                    )
+                  : `
+                    <div
+                      class="geneo-field">
+                      <span
+                        class="geneo-field-label">
+                        Text alignment
+                      </span>
+
+                      <span
+                        class="geneo-selection-help">
+                        ${
+                          settings.style
+                          === 'portrait'
+                          || settings.style
+                          === 'chart'
+                            ? 'Centered by this style'
+                            : 'Defined by this style'
+                        }
+                      </span>
+                    </div>
+                  `
+              }
+            </div>
+          </div>
+
+          <div
+            class="geneo-person-card-control-group">
+            <strong
+              class="geneo-person-card-group-title">
+              Displayed information
+            </strong>
+
+            <div
+              class="geneo-person-card-options">
+              ${Object.entries(labels)
+                .map(
+                  ([
+                    field,
+                    label
+                  ]) => `
+                    <label
+                      class="geneo-check">
+                      <input
+                        type="checkbox"
+                        data-geneo-person-card-field="${escapeHtml(
+                          field
+                        )}"
+                        data-geneo-person-card-scope="${escapeHtml(
+                          scope
+                        )}"
+                        ${
+                          node
+                            ? `
+                              data-geneo-person-card-node="${escapeHtml(
+                                node.id
+                              )}"
+                            `
+                            : ''
+                        }
+                        ${
+                          settings.fields[
+                            field
+                          ]
+                            ? 'checked'
+                            : ''
+                        }
+                        ${
+                          inherited
+                            ? `
+                              disabled
+                              aria-disabled="true"
+                            `
+                            : ''
+                        }>
+                      ${escapeHtml(label)}
+                    </label>
+                  `
+                )
+                .join('')}
+            </div>
+
+            <p
+              class="
+                geneo-selection-help
+                geneo-person-card-field-help
+              ">
+              Status is shown only for Deceased or Unknown people.
+              Living is never displayed on the card.
+            </p>
+          </div>
+
+          <div
+            class="geneo-person-card-radius-row">
             <div class="geneo-field">
               <label
                 for="${
@@ -68575,7 +70047,8 @@
                 Corner radius
               </label>
 
-              <span class="geneo-selection-help">
+              <span
+                class="geneo-selection-help">
                 0–32 px
               </span>
             </div>
@@ -68591,7 +70064,9 @@
               min="0"
               max="32"
               step="1"
-              value="${settings.cornerRadius}"
+              value="${
+                settings.cornerRadius
+              }"
               data-geneo-person-card-radius="${escapeHtml(
                 scope
               )}"
@@ -68604,28 +70079,31 @@
                   `
                   : ''
               }
-              ${inherited
-                ? `
-                  disabled
-                  aria-disabled="true"
-                `
-                : ''}>
+              ${
+                inherited
+                  ? `
+                    disabled
+                    aria-disabled="true"
+                  `
+                  : ''
+              }>
           </div>
-
-          <p class="geneo-selection-help">
-            The person name is always shown.
-            Card settings change presentation only.
-          </p>
         </div>
       `;
     }
 
-    function renderGeneographPersonCardSection(node) {
+    function renderGeneographPersonCardSection(
+      node
+    ) {
       return `
-        <section class="geneo-inspector-section">
-          <h3>Card content</h3>
+        <section
+          class="geneo-inspector-section">
+          <h3>
+            Card style & content
+          </h3>
 
-          <div class="geneo-inspector-section-body">
+          <div
+            class="geneo-inspector-section-body">
             ${renderGeneographPersonCardControls({
               scope: 'node',
               node
@@ -68773,11 +70251,310 @@
       `;
     }
 
-    function renderGeneographMultiSelectionInspector(nodes, connections = []) {
-      const labels = [...nodes.map(geneoNodeTitle), ...connections.map(geneoConnectionLabel)];
-      const visibleNames = labels.slice(0, 6).map(label => `<li>${escapeHtml(label)}</li>`).join('');
-      const remaining = Math.max(0, labels.length - 6);
-      return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader(`${labels.length} items selected`, 'Multiple selection', icon.cursorSelect)}<section class="geneo-inspector-section"><h3>Selection</h3><div class="geneo-inspector-section-body"><ul class="geneo-selection-list">${visibleNames}</ul>${remaining ? `<p class="geneo-selection-more">and ${remaining} more</p>` : ''}<p class="geneo-selection-help">Drag a selected object or connector to move the selection.</p></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete selected</button></div></aside>`;
+    function geneoSharedPersonCardValue(
+      nodes,
+      getter
+    ) {
+      if (!nodes.length) {
+        return null;
+      }
+
+      const values =
+        nodes.map(
+          node =>
+            getter(
+              geneoPersonCardEffectiveSettings(
+                node
+              )
+            )
+        );
+
+      return values.every(
+        value =>
+          value === values[0]
+      )
+        ? values[0]
+        : null;
+    }
+
+    function renderGeneographPersonMultiSelectionControls(
+      nodes
+    ) {
+      const options =
+        geneoPersonCardControlOptions();
+
+      const sharedSetting =
+        key =>
+          geneoSharedPersonCardValue(
+            nodes,
+            settings =>
+              settings[key]
+          );
+
+      const sharedField =
+        field =>
+          geneoSharedPersonCardValue(
+            nodes,
+            settings =>
+              settings.fields[
+                field
+              ]
+          );
+
+      const style =
+        sharedSetting(
+          'style'
+        );
+
+      const renderField =
+        (
+          field,
+          label
+        ) => {
+          const value =
+            sharedField(field);
+
+          return `
+            <label class="geneo-check">
+              <input
+                type="checkbox"
+                data-geneo-person-multi-field="${escapeHtml(
+                  field
+                )}"
+                data-mixed="${
+                  value === null
+                    ? 'true'
+                    : 'false'
+                }"
+                ${
+                  value === true
+                    ? 'checked'
+                    : ''
+                }>
+              ${escapeHtml(label)}
+            </label>
+          `;
+        };
+
+      return `
+        <section
+          class="geneo-inspector-section">
+          <h3>
+            Person cards
+          </h3>
+
+          <div
+            class="geneo-inspector-section-body">
+            <div class="geneo-field">
+              <label>
+                Card style
+              </label>
+
+              <select
+                class="geneo-select"
+                data-geneo-person-multi-setting="style">
+                ${
+                  style === null
+                    ? `
+                      <option
+                        value=""
+                        selected>
+                        Mixed
+                      </option>
+                    `
+                    : ''
+                }
+
+                ${options.style
+                  .map(
+                    ([
+                      value,
+                      label
+                    ]) => `
+                      <option
+                        value="${escapeHtml(
+                          value
+                        )}"
+                        ${
+                          style === value
+                            ? 'selected'
+                            : ''
+                        }>
+                        ${escapeHtml(
+                          label
+                        )}
+                      </option>
+                    `
+                  )
+                  .join('')}
+              </select>
+            </div>
+
+            <div
+              class="geneo-person-card-options">
+              ${renderField(
+                'photo',
+                'Photo'
+              )}
+
+              ${renderField(
+                'dates',
+                'Life dates'
+              )}
+
+              ${renderField(
+                'livingStatus',
+                'Status'
+              )}
+
+              ${renderField(
+                'birthPlace',
+                'Birth place'
+              )}
+
+              ${renderField(
+                'deathPlace',
+                'Death place'
+              )}
+            </div>
+
+            <p class="geneo-selection-help">
+              Status displays only Deceased or Unknown.
+            </p>
+
+            <div
+              class="geneo-person-multi-actions">
+              <button
+                class="button secondary"
+                type="button"
+                data-geneo-person-multi-use-defaults>
+                Use board defaults
+              </button>
+            </div>
+
+            <div
+              class="geneo-person-multi-actions">
+              ${[
+                [0.8, '80%'],
+                [1, '100%'],
+                [1.25, '125%']
+              ]
+                .map(
+                  ([
+                    scale,
+                    label
+                  ]) => `
+                    <button
+                      class="button secondary compact"
+                      type="button"
+                      data-geneo-person-multi-size="${scale}">
+                      ${label}
+                    </button>
+                  `
+                )
+                .join('')}
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderGeneographMultiSelectionInspector(
+      nodes,
+      connections = []
+    ) {
+      const labels = [
+        ...nodes.map(
+          geneoNodeTitle
+        ),
+
+        ...connections.map(
+          geneoConnectionLabel
+        )
+      ];
+
+      const visibleNames =
+        labels
+          .slice(0, 6)
+          .map(
+            label =>
+              `<li>${escapeHtml(
+                label
+              )}</li>`
+          )
+          .join('');
+
+      const remaining =
+        Math.max(
+          0,
+          labels.length - 6
+        );
+
+      const peopleOnly =
+        nodes.length > 0
+        && connections.length === 0
+        && nodes.every(
+          node =>
+            node.type === 'person'
+        );
+
+      return `
+        <aside class="geneo-inspector">
+          <div
+            class="geneo-inspector-body">
+            ${renderGeneographInspectorHeader(
+              `${labels.length} items selected`,
+              'Multiple selection',
+              icon.cursorSelect
+            )}
+
+            <section
+              class="geneo-inspector-section">
+              <h3>Selection</h3>
+
+              <div
+                class="geneo-inspector-section-body">
+                <ul
+                  class="geneo-selection-list">
+                  ${visibleNames}
+                </ul>
+
+                ${
+                  remaining
+                    ? `
+                      <p
+                        class="geneo-selection-more">
+                        and ${remaining} more
+                      </p>
+                    `
+                    : ''
+                }
+
+                <p
+                  class="geneo-selection-help">
+                  Drag a selected object or connector to move the selection.
+                </p>
+              </div>
+            </section>
+
+            ${
+              peopleOnly
+                ? renderGeneographPersonMultiSelectionControls(
+                    nodes
+                  )
+                : ''
+            }
+
+            <button
+              class="button danger"
+              type="button"
+              data-geneo-delete-selection>
+              ${icon.trash}
+              Delete selected
+            </button>
+          </div>
+        </aside>
+      `;
     }
 
     function renderGeneographPersonInspectorContent(person) {
@@ -68988,12 +70765,25 @@
           node
         );
 
+      const isPerson =
+        node.type === 'person';
+
+      const personScale =
+        isPerson
+          ? geneoPersonCardScaleForNode(
+              node
+            )
+          : null;
+
       return `
-        <section class="geneo-inspector-section">
+        <section
+          class="geneo-inspector-section">
           <h3>Layout</h3>
 
-          <div class="geneo-inspector-section-body">
-            <div class="geneo-layout-grid">
+          <div
+            class="geneo-inspector-section-body">
+            <div
+              class="geneo-layout-grid">
               <div class="geneo-field">
                 <label>X</label>
 
@@ -69055,11 +70845,58 @@
               </div>
             </div>
 
+            ${
+              isPerson
+                ? `
+                  <div
+                    class="geneo-person-size-controls">
+                    <span
+                      class="geneo-selection-help">
+                      Dimensions are linked · ${
+                        Math.round(
+                          personScale * 100
+                        )
+                      }%
+                    </span>
+
+                    <div
+                      class="geneo-person-size-presets"
+                      role="group"
+                      aria-label="Person card size">
+                      ${[
+                        [0.8, '80%'],
+                        [1, '100%'],
+                        [1.25, '125%']
+                      ]
+                        .map(
+                          ([
+                            scale,
+                            label
+                          ]) => `
+                            <button
+                              class="button secondary compact"
+                              type="button"
+                              data-geneo-person-size="${scale}">
+                              ${label}
+                            </button>
+                          `
+                        )
+                        .join('')}
+                    </div>
+                  </div>
+                `
+                : ''
+            }
+
             <label class="geneo-check">
               <input
                 type="checkbox"
                 data-geneo-node-visible
-                ${node.visible ? 'checked' : ''}>
+                ${
+                  node.visible
+                    ? 'checked'
+                    : ''
+                }>
               Visible
             </label>
 
@@ -69067,7 +70904,11 @@
               <input
                 type="checkbox"
                 data-geneo-node-locked
-                ${node.locked ? 'checked' : ''}>
+                ${
+                  node.locked
+                    ? 'checked'
+                    : ''
+                }>
               Locked
             </label>
           </div>
@@ -69464,12 +71305,12 @@
       }
 
       cancelGeneographConnectionDraft();
-      state.geneoTool = 'select';
-
       if (type === 'person') {
         openAddGeneographPersonModal();
         return;
       }
+
+      state.geneoTool = 'select';
 
       if (type === 'image') {
         openGeneographImagePicker();
@@ -70589,6 +72430,20 @@
         if (existing.treePersonId) {
           existing.syncState = 'modified';
         }
+        diagram.nodes
+          .filter(
+            node =>
+              node.type === 'person'
+              && node.personId
+                === existing.id
+          )
+          .forEach(
+            node =>
+              ensureGeneographPersonCardSize(
+                node,
+                diagram
+              )
+          );
       } else {
       const defaults =
         geneoNodeDefaults('person');
@@ -70610,36 +72465,50 @@
 
       diagram.people.push(person);
 
-      const personCard = {
-        custom: false,
-        fields: {},
-        cornerRadius: null
+      const personCard =
+        geneoEmptyPersonCardOverrides(
+          false
+        );
+
+      const draftNode = {
+        type: 'person',
+        personId: person.id,
+        width:
+          defaults.width,
+        height:
+          defaults.height,
+        personCard
       };
 
-      const initialHeight =
-        geneoPersonCardMinimumHeight(
-          {
-            type: 'person',
-            personId: person.id,
-            width: defaults.width,
-            height: defaults.height,
-            personCard
-          },
-          defaults.width,
+      const reference =
+        geneoPersonCardReferenceSize(
+          draftNode,
           diagram
         );
+
+      draftNode.width =
+        reference.width;
+
+      draftNode.height =
+        reference.height;
+
+      const initialWidth =
+        draftNode.width;
+
+      const initialHeight =
+        draftNode.height;
 
       const placement =
         anchorNode && relative
           ? geneoRelativeNodePlacement(
               anchorNode,
               relative.type,
-              defaults.width,
+              initialWidth,
               initialHeight
             )
           : {
               ...nextGeneoObjectPosition(
-                defaults.width,
+                initialWidth,
                 initialHeight
               ),
 
@@ -70659,7 +72528,7 @@
         y: placement.y,
 
         width:
-          defaults.width,
+          initialWidth,
 
         height:
           initialHeight,
@@ -72494,10 +74363,84 @@
       return true;
     }
 
-    function startGeneographResize(event) {
-      const button = event.target.closest('[data-geneo-resize]'); if (!button || event.button !== 0) return false;
-      const node = getGeneographNode(button.dataset.geneoNode); if (!node || geneoNodeEffectiveLocked(node)) return true;
-      geneoPushHistory(); geneoPointerState = { kind: 'resize', nodeId: node.id, handle: button.dataset.geneoResize, start: geneoPointerToCanvas(event), x: node.x, y: node.y, width: node.width, height: node.height, moved: false }; event.preventDefault(); event.stopPropagation(); return true;
+    function startGeneographResize(
+      event
+    ) {
+      const button =
+        event.target.closest(
+          '[data-geneo-resize]'
+        );
+
+      if (
+        !button
+        || event.button !== 0
+      ) {
+        return false;
+      }
+
+      const node =
+        getGeneographNode(
+          button.dataset.geneoNode
+        );
+
+      if (
+        !node
+        || geneoNodeEffectiveLocked(
+          node
+        )
+      ) {
+        return true;
+      }
+
+      geneoPushHistory();
+
+      geneoPointerState = {
+        kind: 'resize',
+
+        nodeId:
+          node.id,
+
+        handle:
+          button.dataset.geneoResize,
+
+        start:
+          geneoPointerToCanvas(
+            event
+          ),
+
+        x:
+          node.x,
+
+        y:
+          node.y,
+
+        width:
+          node.width,
+
+        height:
+          node.height,
+
+        personScale:
+          node.type === 'person'
+            ? geneoPersonCardScaleForNode(
+                node
+              )
+            : null,
+
+        personReference:
+          node.type === 'person'
+            ? geneoPersonCardReferenceSize(
+                node
+              )
+            : null,
+
+        moved: false
+      };
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      return true;
     }
 
     function moveGeneographObject(event) {
@@ -72603,6 +74546,181 @@
 
         const diagram =
           selectedGeneographDiagram();
+
+        if (
+          geneoPointerState.kind
+            === 'resize'
+          && node.type === 'person'
+        ) {
+          const handle =
+            geneoPointerState.handle;
+
+          const west =
+            handle.includes('w');
+
+          const north =
+            handle.includes('n');
+
+          const fixedLeft =
+            geneoPointerState.x;
+
+          const fixedTop =
+            geneoPointerState.y;
+
+          const fixedRight =
+            geneoPointerState.x
+            + geneoPointerState.width;
+
+          const fixedBottom =
+            geneoPointerState.y
+            + geneoPointerState.height;
+
+          /*
+           * The opposite corner is the anchor.
+           * Only one scalar is resolved, so the
+           * card can never become distorted.
+           */
+          const anchorX =
+            west
+              ? fixedRight
+              : fixedLeft;
+
+          const anchorY =
+            north
+              ? fixedBottom
+              : fixedTop;
+
+          let dragX =
+            west
+              ? fixedLeft + dx
+              : fixedRight + dx;
+
+          let dragY =
+            north
+              ? fixedTop + dy
+              : fixedBottom + dy;
+
+          if (
+            diagram.canvas.snapToGrid
+          ) {
+            dragX =
+              snapGeneographCoordinate(
+                dragX
+              );
+
+            dragY =
+              snapGeneographCoordinate(
+                dragY
+              );
+          }
+
+          const reference =
+            geneoPointerState
+              .personReference
+            || geneoPersonCardReferenceSize(
+                node,
+                diagram
+              );
+
+          const horizontalDistance =
+            Math.abs(
+              dragX - anchorX
+            );
+
+          const verticalDistance =
+            Math.abs(
+              dragY - anchorY
+            );
+
+          const scaleX =
+            horizontalDistance
+            / reference.width;
+
+          const scaleY =
+            verticalDistance
+            / reference.height;
+
+          const startScale =
+            geneoPointerState
+              .personScale
+            || 1;
+
+          /*
+           * Use whichever axis represents the
+           * stronger proportional intent from
+           * the starting scale.
+           */
+          const horizontalDelta =
+            Math.abs(
+              scaleX - startScale
+            );
+
+          const verticalDelta =
+            Math.abs(
+              scaleY - startScale
+            );
+
+          const requestedScale =
+            horizontalDelta
+            >= verticalDelta
+              ? scaleX
+              : scaleY;
+
+          const scale =
+            geneoNumber(
+              requestedScale,
+              startScale,
+              GENEO_PERSON_CARD_SCALE.min,
+              GENEO_PERSON_CARD_SCALE.max
+            );
+
+          const width =
+            reference.width
+            * scale;
+
+          const height =
+            reference.height
+            * scale;
+
+          node.width =
+            width;
+
+          node.height =
+            height;
+
+          node.x =
+            west
+              ? anchorX - width
+              : anchorX;
+
+          node.y =
+            north
+              ? anchorY - height
+              : anchorY;
+
+          node.x =
+            geneoNumber(
+              node.x,
+              geneoPointerState.x,
+              -GENEO_WORLD_LIMIT,
+              GENEO_WORLD_LIMIT
+            );
+
+          node.y =
+            geneoNumber(
+              node.y,
+              geneoPointerState.y,
+              -GENEO_WORLD_LIMIT,
+              GENEO_WORLD_LIMIT
+            );
+
+          updateGeneographLiveGeometry(
+            node,
+            [node]
+          );
+
+          return;
+        }
 
         const handle =
           geneoPointerState.handle;
@@ -72774,13 +74892,24 @@
       updateGeneographLiveGeometry(node, geneoPointerState.kind === 'move-group' ? geneoPointerState.nodes.map(item => getGeneographNode(item.id)).filter(Boolean) : [node]);
     }
 
-    function updateGeneographLiveGeometry(node, nodes = [node]) {
-      const bounds = geneoCanvasRuntime.bounds || { left: 0, top: 0 };
+    function updateGeneographLiveGeometry(
+      node,
+      nodes = [node]
+    ) {
+      const bounds =
+        geneoCanvasRuntime.bounds
+        || {
+          left: 0,
+          top: 0
+        };
+
       nodes.forEach(item => {
         const element =
           main.querySelector(
             `article[data-geneo-node="${
-              CSS.escape(item.id)
+              CSS.escape(
+                item.id
+              )
             }"]`
           );
 
@@ -72801,16 +74930,17 @@
 
         element.style.height =
           `${item.height}px`;
-
-        if (item.type === 'person') {
-          element.dataset
-            .geneoPersonCardTier =
-              geneoPersonCardLayoutTier(
-                item.width
-              );
-        }
       });
-      const svg = main.querySelector('.geneo-connections'); if (svg) svg.outerHTML = renderGeneographConnectors();
+
+      const svg =
+        main.querySelector(
+          '.geneo-connections'
+        );
+
+      if (svg) {
+        svg.outerHTML =
+          renderGeneographConnectors();
+      }
     }
 
     function endGeneographObjectDrag() {
@@ -73097,14 +75227,29 @@
 
       if (!diagram) return;
 
-      const commit = () => {
+      const commit = (
+        scaleMap = null
+      ) => {
+        if (
+          scaleMap instanceof Map
+        ) {
+          geneoRestorePersonCardScales(
+            scaleMap,
+            diagram
+          );
+        }
+
         diagram.nodes
-          .filter(node => node.type === 'person')
-          .forEach(node =>
-            ensureGeneographPersonCardSize(
-              node,
-              diagram
-            )
+          .filter(
+            node =>
+              node.type === 'person'
+          )
+          .forEach(
+            node =>
+              ensureGeneographPersonCardSize(
+                node,
+                diagram
+              )
           );
 
         touchGeneographBoard();
@@ -73115,49 +75260,270 @@
         });
       };
 
+      const ensureCustomNode =
+        node => {
+          if (
+            node?.type !== 'person'
+          ) {
+            return null;
+          }
+
+          if (
+            node.personCard?.custom
+            !== true
+          ) {
+            node.personCard =
+              geneoEmptyPersonCardOverrides(
+                true
+              );
+          }
+
+          node.personCard.fields =
+            node.personCard.fields
+            || {};
+
+          return node;
+        };
+
+      main
+        .querySelectorAll(
+          '[data-geneo-person-card-style]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              const value =
+                button.dataset
+                  .geneoPersonCardStyle;
+
+              const scope =
+                button.dataset
+                  .geneoPersonCardScope;
+
+              if (
+                !geneoPersonCardSettingValueIsValid(
+                  'style',
+                  value
+                )
+              ) {
+                return;
+              }
+
+              if (scope === 'board') {
+                if (
+                  diagram
+                    .personCardDefaults
+                    .style
+                  === value
+                ) {
+                  return;
+                }
+
+                const scales =
+                  geneoCapturePersonCardScales(
+                    diagram.nodes,
+                    diagram
+                  );
+
+                geneoPushHistory();
+
+                diagram
+                  .personCardDefaults
+                  .style =
+                    value;
+
+                commit(scales);
+                return;
+              }
+
+              const node =
+                getGeneographNode(
+                  button.dataset
+                    .geneoPersonCardNode
+                );
+
+              if (
+                node?.type !== 'person'
+                || node.personCard
+                  ?.custom !== true
+              ) {
+                return;
+              }
+
+              const effective =
+                geneoPersonCardEffectiveSettings(
+                  node,
+                  diagram
+                );
+
+              if (
+                effective.style === value
+              ) {
+                return;
+              }
+
+              const scales =
+                geneoCapturePersonCardScales(
+                  [node],
+                  diagram
+                );
+
+              geneoPushHistory();
+
+              const boardValue =
+                diagram
+                  .personCardDefaults
+                  .style;
+
+              node.personCard.style =
+                value === boardValue
+                  ? null
+                  : value;
+
+              commit(scales);
+            }
+          );
+        });
+
       main
         .querySelector(
           '[data-geneo-person-card-use-defaults]'
         )
-        ?.addEventListener('change', event => {
-          const node =
-            getGeneographNode(
-              event.target.dataset
-                .geneoPersonCardNode
-            );
+        ?.addEventListener(
+          'change',
+          event => {
+            const node =
+              getGeneographNode(
+                event.target.dataset
+                  .geneoPersonCardNode
+              );
 
-          if (node?.type !== 'person') return;
+            if (
+              node?.type !== 'person'
+            ) {
+              return;
+            }
 
-          const useDefaults =
-            event.target.checked;
+            const useDefaults =
+              event.target.checked;
 
-          const current =
-            normalizeGeneographPersonCardOverrides(
-              node.personCard
-            );
+            const current =
+              normalizeGeneographPersonCardOverrides(
+                node.personCard
+              );
 
-          if (
-            useDefaults
-            && !current.custom
-          ) {
-            return;
+            if (
+              useDefaults
+              && !current.custom
+            ) {
+              return;
+            }
+            
+            const scales =
+              geneoCapturePersonCardScales(
+                [node],
+                diagram
+              );
+
+            geneoPushHistory();
+
+            node.personCard =
+              geneoEmptyPersonCardOverrides(
+                !useDefaults
+              );
+
+            commit(scales);
           }
+        );
 
-          geneoPushHistory();
+      main
+        .querySelectorAll(
+          '[data-geneo-person-card-setting]'
+        )
+        .forEach(select => {
+          select.addEventListener(
+            'change',
+            () => {
+              const key =
+                select.dataset
+                  .geneoPersonCardSetting;
 
-          node.personCard = useDefaults
-            ? {
-                custom: false,
-                fields: {},
-                cornerRadius: null
+              const scope =
+                select.dataset
+                  .geneoPersonCardScope;
+
+              const value =
+                select.value;
+
+              if (
+                !geneoPersonCardSettingValueIsValid(
+                  key,
+                  value
+                )
+              ) {
+                return;
               }
-            : {
-                custom: true,
-                fields: {},
-                cornerRadius: null
-              };
 
-          commit();
+              if (scope === 'board') {
+                if (
+                  diagram.personCardDefaults[
+                    key
+                  ] === value
+                ) {
+                  return;
+                }
+
+                geneoPushHistory();
+
+                diagram.personCardDefaults[
+                  key
+                ] = value;
+
+                commit();
+                return;
+              }
+
+              const node =
+                getGeneographNode(
+                  select.dataset
+                    .geneoPersonCardNode
+                );
+
+              if (
+                node?.type !== 'person'
+                || node.personCard
+                  ?.custom !== true
+              ) {
+                return;
+              }
+
+              const effective =
+                geneoPersonCardEffectiveSettings(
+                  node
+                );
+
+              if (
+                effective[key] === value
+              ) {
+                return;
+              }
+
+              geneoPushHistory();
+
+              const boardValue =
+                diagram.personCardDefaults[
+                  key
+                ];
+
+              node.personCard[key] =
+                value === boardValue
+                  ? null
+                  : value;
+
+              commit();
+            }
+          );
         });
 
       main
@@ -73165,85 +75531,105 @@
           '[data-geneo-person-card-field]'
         )
         .forEach(input => {
-          input.addEventListener('change', () => {
-            const field =
-              input.dataset.geneoPersonCardField;
+          input.addEventListener(
+            'change',
+            () => {
+              const field =
+                input.dataset
+                  .geneoPersonCardField;
 
-            const scope =
-              input.dataset.geneoPersonCardScope;
+              const scope =
+                input.dataset
+                  .geneoPersonCardScope;
 
-            if (
-              !Object.hasOwn(
-                geneoDefaultPersonCardSettings()
-                  .fields,
-                field
-              )
-            ) {
-              return;
-            }
+              if (
+                !Object.hasOwn(
+                  geneoDefaultPersonCardSettings()
+                    .fields,
+                  field
+                )
+              ) {
+                return;
+              }
 
-            if (scope === 'board') {
-              const current =
-                diagram.personCardDefaults
-                  .fields[field];
+              if (scope === 'board') {
+                const current =
+                  diagram
+                    .personCardDefaults
+                    .fields[field];
 
-              if (current === input.checked) {
+                if (
+                  current
+                  === input.checked
+                ) {
+                  return;
+                }
+
+                geneoPushHistory();
+
+                diagram
+                  .personCardDefaults
+                  .fields[field] =
+                    input.checked;
+
+                commit();
+                return;
+              }
+
+              const node =
+                getGeneographNode(
+                  input.dataset
+                    .geneoPersonCardNode
+                );
+
+              if (
+                node?.type !== 'person'
+                || node.personCard
+                  ?.custom !== true
+              ) {
+                return;
+              }
+
+              const effective =
+                geneoPersonCardEffectiveSettings(
+                  node
+                );
+
+              if (
+                effective.fields[field]
+                === input.checked
+              ) {
                 return;
               }
 
               geneoPushHistory();
 
-              diagram.personCardDefaults
-                .fields[field] =
-                  input.checked;
+              node.personCard.fields =
+                node.personCard.fields
+                || {};
+
+              const boardValue =
+                diagram
+                  .personCardDefaults
+                  .fields[field];
+
+              if (
+                input.checked
+                === boardValue
+              ) {
+                delete node
+                  .personCard
+                  .fields[field];
+              } else {
+                node
+                  .personCard
+                  .fields[field] =
+                    input.checked;
+              }
 
               commit();
-              return;
             }
-
-            const node =
-              getGeneographNode(
-                input.dataset
-                  .geneoPersonCardNode
-              );
-
-            if (
-              node?.type !== 'person'
-              || node.personCard?.custom !== true
-            ) {
-              return;
-            }
-
-            const effective =
-              geneoPersonCardEffectiveSettings(node);
-
-            if (
-              effective.fields[field]
-              === input.checked
-            ) {
-              return;
-            }
-
-            geneoPushHistory();
-
-            node.personCard.fields =
-              node.personCard.fields || {};
-
-            const boardValue =
-              diagram.personCardDefaults
-                .fields[field];
-
-            if (input.checked === boardValue) {
-              delete node.personCard
-                .fields[field];
-            } else {
-              node.personCard
-                .fields[field] =
-                  input.checked;
-            }
-
-            commit();
-          });
+          );
         });
 
       main
@@ -73251,70 +75637,299 @@
           '[data-geneo-person-card-radius]'
         )
         .forEach(input => {
-          input.addEventListener('change', () => {
-            const radius =
-              Math.round(
-                geneoNumber(
-                  input.value,
-                  8,
-                  0,
-                  32
-                )
-              );
+          input.addEventListener(
+            'change',
+            () => {
+              const radius =
+                Math.round(
+                  geneoNumber(
+                    input.value,
+                    8,
+                    0,
+                    32
+                  )
+                );
 
-            const scope =
-              input.dataset.geneoPersonCardRadius;
+              const scope =
+                input.dataset
+                  .geneoPersonCardRadius;
 
-            if (scope === 'board') {
+              if (scope === 'board') {
+                if (
+                  diagram
+                    .personCardDefaults
+                    .cornerRadius
+                  === radius
+                ) {
+                  return;
+                }
+
+                geneoPushHistory();
+
+                diagram
+                  .personCardDefaults
+                  .cornerRadius =
+                    radius;
+
+                commit();
+                return;
+              }
+
+              const node =
+                getGeneographNode(
+                  input.dataset
+                    .geneoPersonCardNode
+                );
+
               if (
-                diagram.personCardDefaults
-                  .cornerRadius === radius
+                node?.type !== 'person'
+                || node.personCard
+                  ?.custom !== true
+              ) {
+                return;
+              }
+
+              if (
+                geneoPersonCardEffectiveSettings(
+                  node
+                ).cornerRadius
+                === radius
               ) {
                 return;
               }
 
               geneoPushHistory();
 
-              diagram.personCardDefaults
-                .cornerRadius = radius;
+              const boardRadius =
+                diagram
+                  .personCardDefaults
+                  .cornerRadius;
+
+              node.personCard
+                .cornerRadius =
+                  radius === boardRadius
+                    ? null
+                    : radius;
 
               commit();
-              return;
             }
+          );
+        });
 
-            const node =
-              getGeneographNode(
+      /*
+       * Multi-person presentation controls.
+       */
+      main
+        .querySelectorAll(
+          '[data-geneo-person-multi-field]'
+        )
+        .forEach(input => {
+          input.indeterminate =
+            input.dataset.mixed
+            === 'true';
+
+          input.addEventListener(
+            'change',
+            () => {
+              const nodes =
+                selectedGeneographNodes()
+                  .filter(
+                    node =>
+                      node.type
+                      === 'person'
+                  );
+
+              if (!nodes.length) return;
+
+              const field =
                 input.dataset
-                  .geneoPersonCardNode
-              );
+                  .geneoPersonMultiField;
 
-            if (
-              node?.type !== 'person'
-              || node.personCard?.custom !== true
-            ) {
-              return;
+              if (
+                !Object.hasOwn(
+                  geneoDefaultPersonCardSettings()
+                    .fields,
+                  field
+                )
+              ) {
+                return;
+              }
+
+              geneoPushHistory();
+
+              nodes.forEach(node => {
+                ensureCustomNode(node);
+
+                const boardValue =
+                  diagram
+                    .personCardDefaults
+                    .fields[field];
+
+                if (
+                  input.checked
+                  === boardValue
+                ) {
+                  delete node
+                    .personCard
+                    .fields[field];
+                } else {
+                  node
+                    .personCard
+                    .fields[field] =
+                      input.checked;
+                }
+              });
+
+              commit();
             }
+          );
+        });
 
-            if (
-              geneoPersonCardEffectiveSettings(node)
-                .cornerRadius === radius
-            ) {
-              return;
+      main
+        .querySelectorAll(
+          '[data-geneo-person-multi-setting]'
+        )
+        .forEach(select => {
+          select.addEventListener(
+            'change',
+            () => {
+              const value =
+                select.value;
+
+              const key =
+                select.dataset
+                  .geneoPersonMultiSetting;
+
+              if (
+                !value
+                || !geneoPersonCardSettingValueIsValid(
+                  key,
+                  value
+                )
+              ) {
+                return;
+              }
+
+              const nodes =
+                selectedGeneographNodes()
+                  .filter(
+                    node =>
+                      node.type
+                      === 'person'
+                  );
+
+              if (!nodes.length) return;
+
+              const scales =
+                geneoCapturePersonCardScales(
+                  nodes,
+                  diagram
+                );
+
+              geneoPushHistory();
+
+              nodes.forEach(node => {
+                ensureCustomNode(node);
+
+                const boardValue =
+                  diagram
+                    .personCardDefaults[
+                      key
+                    ];
+
+                node.personCard[key] =
+                  value === boardValue
+                    ? null
+                    : value;
+              });
+
+              commit(scales);
             }
+          );
+        });
 
-            geneoPushHistory();
+      main
+        .querySelector(
+          '[data-geneo-person-multi-use-defaults]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const nodes =
+              selectedGeneographNodes()
+                .filter(
+                  node =>
+                    node.type
+                    === 'person'
+                );
 
-            const boardRadius =
-              diagram.personCardDefaults
-                .cornerRadius;
+            if (!nodes.length) return;
 
-            node.personCard.cornerRadius =
-              radius === boardRadius
-                ? null
-                : radius;
+              const scales =
+                geneoCapturePersonCardScales(
+                  nodes,
+                  diagram
+                );
 
-            commit();
-          });
+              geneoPushHistory();
+
+              nodes.forEach(node => {
+              node.personCard =
+                geneoEmptyPersonCardOverrides(
+                  false
+                );
+            });
+
+            commit(scales);
+          }
+        );
+      main
+        .querySelectorAll(
+          '[data-geneo-person-multi-size]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              const nodes =
+                selectedGeneographNodes()
+                  .filter(
+                    node =>
+                      node.type
+                      === 'person'
+                  );
+
+              if (!nodes.length) return;
+
+              const scale =
+                geneoNumber(
+                  button.dataset
+                    .geneoPersonMultiSize,
+                  1,
+                  GENEO_PERSON_CARD_SCALE.min,
+                  GENEO_PERSON_CARD_SCALE.max
+                );
+
+              geneoPushHistory();
+
+              nodes.forEach(node => {
+                geneoSetPersonCardScale(
+                  node,
+                  scale,
+                  diagram
+                );
+              });
+
+              touchGeneographBoard();
+
+              renderGeneographEditorPreserveScroll({
+                preserveInspectorScroll:
+                  true,
+                preserveSidebarScroll:
+                  true
+              });
+            }
+          );
         });
     }
 
@@ -73661,7 +76276,78 @@
               if (!node) return;
 
               const field =
-                input.dataset.geneoLayout;
+                input.dataset
+                  .geneoLayout;
+
+              /*
+               * Person width and height are two
+               * views of one proportional scale.
+               */
+              if (
+                node.type === 'person'
+                && (
+                  field === 'width'
+                  || field === 'height'
+                )
+              ) {
+                const reference =
+                  geneoPersonCardReferenceSize(
+                    node
+                  );
+
+                const rawValue =
+                  Number(input.value);
+
+                if (
+                  !Number.isFinite(rawValue)
+                ) {
+                  return;
+                }
+
+                const requestedScale =
+                  field === 'width'
+                    ? rawValue
+                      / reference.width
+                    : rawValue
+                      / reference.height;
+
+                const nextScale =
+                  geneoNumber(
+                    requestedScale,
+                    geneoPersonCardScaleForNode(
+                      node
+                    ),
+                    GENEO_PERSON_CARD_SCALE.min,
+                    GENEO_PERSON_CARD_SCALE.max
+                  );
+
+                if (
+                  Math.abs(
+                    nextScale
+                    - geneoPersonCardScaleForNode(
+                        node
+                      )
+                  ) < 0.0001
+                ) {
+                  return;
+                }
+
+                geneoPushHistory();
+
+                geneoSetPersonCardScale(
+                  node,
+                  nextScale
+                );
+
+                touchGeneographBoard();
+
+                renderGeneographEditorPreserveScroll({
+                  preserveInspectorScroll:
+                    true
+                });
+
+                return;
+              }
 
               const minimumSize =
                 geneoNodeMinimumSize(
@@ -73697,8 +76383,8 @@
                 );
 
               if (
-                nextValue
-                === node[field]
+                nextValue ===
+                node[field]
               ) {
                 return;
               }
@@ -73709,39 +76395,55 @@
                 nextValue;
 
               if (
-                node.type === 'person'
+                node.type === 'panel'
               ) {
-                /*
-                * Changing width can increase the
-                * semantic minimum height. Grow only
-                * when required; never reset a valid
-                * user-selected height.
-                */
-                const personMinimum =
-                  geneoNodeMinimumSize(
-                    node,
-                    node.width
-                  );
-
-                node.height =
-                  geneoNumber(
-                    node.height,
-                    Math.max(
-                      geneoNodeDefaults(
-                        'person'
-                      ).height,
-                      personMinimum.height
-                    ),
-                    personMinimum.height,
-                    GENEO_PERSON_CARD_HEIGHT.max
-                  );
-              }
-
-              if (node.type === 'panel') {
                 reconcileGeneographPanelMembership(
                   node.id
                 );
               }
+
+              touchGeneographBoard();
+
+              renderGeneographEditorPreserveScroll({
+                preserveInspectorScroll:
+                  true
+              });
+            }
+          );
+        });
+
+      main
+        .querySelectorAll(
+          '[data-geneo-person-size]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              const node =
+                selectedGeneographNode();
+
+              if (
+                node?.type !== 'person'
+              ) {
+                return;
+              }
+
+              const scale =
+                geneoNumber(
+                  button.dataset
+                    .geneoPersonSize,
+                  1,
+                  GENEO_PERSON_CARD_SCALE.min,
+                  GENEO_PERSON_CARD_SCALE.max
+                );
+
+              geneoPushHistory();
+
+              geneoSetPersonCardScale(
+                node,
+                scale
+              );
 
               touchGeneographBoard();
 
