@@ -13537,21 +13537,16 @@
 
     .geneo-rich-text-toolbar.ql-toolbar.ql-snow {
       position: absolute;
-
       left: 50%;
       right: auto;
-
       top: auto;
       bottom:
         calc(100% + 10px);
-
       z-index: 90;
-
       width: max-content;
-      max-width: 560px;
-
-      flex-wrap: nowrap;
-
+      max-width: 620px;
+      flex-wrap: wrap;
+      justify-content: center;
       transform:
         translateX(-50%);
 
@@ -22582,6 +22577,62 @@
       display: none !important;
     }
 
+    .rich-text-size-small {
+      font-size: .75em;
+    }
+
+    .rich-text-size-large {
+      font-size: 1.5em;
+    }
+
+    .rich-text-size-huge {
+      font-size: 2.5em;
+    }
+
+    .rich-text-align-center {
+      text-align: center;
+    }
+
+    .rich-text-align-right {
+      text-align: right;
+    }
+
+    .rich-text-align-justify {
+      text-align: justify;
+    }
+
+    .rich-text-indent-1 {
+      margin-inline-start: 3em;
+    }
+
+    .rich-text-indent-2 {
+      margin-inline-start: 6em;
+    }
+
+    .rich-text-indent-3 {
+      margin-inline-start: 9em;
+    }
+
+    .rich-text-indent-4 {
+      margin-inline-start: 12em;
+    }
+
+    .rich-text-indent-5 {
+      margin-inline-start: 15em;
+    }
+
+    .rich-text-indent-6 {
+      margin-inline-start: 18em;
+    }
+
+    .rich-text-indent-7 {
+      margin-inline-start: 21em;
+    }
+
+    .rich-text-indent-8 {
+      margin-inline-start: 24em;
+    }
+
     .rich-text-toolbar.ql-toolbar.ql-snow {
       min-width: 0;
       min-height: 46px;
@@ -22757,6 +22808,35 @@
     }
 
     .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-size {
+      width: 86px;
+      height: 32px;
+    }
+
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-size
+    .ql-picker-label {
+      width: 86px;
+
+      padding:
+        0
+        25px
+        0
+        10px;
+
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-header
+    .ql-picker-options,
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-size
     .ql-picker-options {
       min-width: 140px;
 
@@ -22781,6 +22861,10 @@
     }
 
     .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-header
+    .ql-picker-item,
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-size
     .ql-picker-item {
       min-height: 34px;
 
@@ -22798,8 +22882,140 @@
     }
 
     .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-header
     .ql-picker-item:hover,
     .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-header
+    .ql-picker-item.ql-selected,
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-size
+    .ql-picker-item:hover,
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-size
+    .ql-picker-item.ql-selected {
+      background:
+        var(--surface-card-hover);
+
+      color:
+        var(--brand-green-300);
+    }
+
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-color-picker,
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-align {
+      width: 32px;
+      height: 32px;
+    }
+
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-color-picker
+    .ql-picker-label,
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-align
+    .ql-picker-label {
+      width: 32px;
+      height: 32px;
+    }
+
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-color-picker
+    .ql-picker-options {
+      width: 158px;
+      min-width: 158px;
+      padding: 7px;
+      display: none;
+      flex-wrap: wrap;
+      gap: 4px;
+      border:
+        1px solid
+        var(--border-strong);
+      border-radius:
+        var(--radius-sm);
+      background:
+        var(--surface-card);
+      box-shadow:
+        var(--shadow-soft);
+    }
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-color-picker.ql-expanded
+    .ql-picker-options {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-color-picker
+    .ql-picker-item {
+      width: 20px;
+      height: 20px;
+      min-height: 0;
+
+      padding: 0;
+
+      border:
+        1px solid
+        rgba(255, 255, 255, .16);
+
+      border-radius: 4px;
+    }
+
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-color-picker
+    .ql-picker-item:hover,
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-color-picker
+    .ql-picker-item.ql-selected {
+      border-color:
+        var(--brand-green-300);
+
+      box-shadow:
+        0 0 0 1px
+        var(--brand-green-300);
+    }
+
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-align
+    .ql-picker-options {
+      width: 42px;
+      min-width: 42px;
+
+      padding: 4px;
+
+      border:
+        1px solid
+        var(--border-strong);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        var(--surface-card);
+
+      box-shadow:
+        var(--shadow-soft);
+    }
+
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-align
+    .ql-picker-item {
+      width: 32px;
+      height: 32px;
+      min-height: 0;
+
+      padding: 7px;
+
+      border-radius: 6px;
+
+      color:
+        var(--text-secondary);
+    }
+
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-align
+    .ql-picker-item:hover,
+    .rich-text-toolbar.ql-toolbar.ql-snow
+    .ql-picker.ql-align
     .ql-picker-item.ql-selected {
       background:
         var(--surface-card-hover);
@@ -97385,10 +97601,21 @@
 
             formats: [
               'header',
+              'size',
+
               'bold',
               'italic',
+              'underline',
+              'strike',
+
+              'color',
+              'background',
+
               'blockquote',
               'list',
+              'align',
+              'indent',
+
               'link'
             ],
 
@@ -97460,6 +97687,16 @@
         ],
 
         [
+          'button.ql-underline',
+          'Underline'
+        ],
+
+        [
+          'button.ql-strike',
+          'Strikethrough'
+        ],
+
+        [
           'button.ql-list[value="bullet"]',
           'Bulleted list'
         ],
@@ -97467,6 +97704,16 @@
         [
           'button.ql-list[value="ordered"]',
           'Numbered list'
+        ],
+
+        [
+          'button.ql-indent[value="-1"]',
+          'Decrease indent'
+        ],
+
+        [
+          'button.ql-indent[value="+1"]',
+          'Increase indent'
         ],
 
         [
@@ -97509,22 +97756,161 @@
         );
       });
 
-      const headerPicker =
-        toolbar.querySelector(
-          '.ql-picker.ql-header .ql-picker-label'
-        );
+      const pickerLabels = [
+        [
+          '.ql-picker.ql-header',
+          'Text style'
+        ],
 
-      if (headerPicker) {
-        headerPicker.setAttribute(
+        [
+          '.ql-picker.ql-size',
+          'Font size'
+        ],
+
+        [
+          '.ql-picker.ql-color',
+          'Text color'
+        ],
+
+        [
+          '.ql-picker.ql-background',
+          'Highlight color'
+        ],
+
+        [
+          '.ql-picker.ql-align',
+          'Alignment'
+        ]
+      ];
+
+      pickerLabels.forEach(([
+        selector,
+        label
+      ]) => {
+        const picker =
+          toolbar.querySelector(
+            selector
+          );
+
+        const pickerLabel =
+          picker?.querySelector(
+            '.ql-picker-label'
+          );
+
+        if (!pickerLabel) {
+          return;
+        }
+
+        pickerLabel.setAttribute(
           'aria-label',
-          'Text style'
+          label
         );
 
-        headerPicker.setAttribute(
+        pickerLabel.setAttribute(
           'title',
-          'Text style'
+          label
         );
-      }
+      });
+
+      const sizeLabels = {
+        small: 'Small',
+        large: 'Large',
+        huge: 'Huge'
+      };
+
+      toolbar
+        .querySelectorAll(
+          '.ql-picker.ql-size .ql-picker-item'
+        )
+        .forEach(item => {
+          const value =
+            item.dataset.value || '';
+
+          const label =
+            sizeLabels[value]
+            || 'Normal';
+
+          item.setAttribute(
+            'aria-label',
+            label
+          );
+
+          item.setAttribute(
+            'title',
+            label
+          );
+        });
+
+      const alignmentLabels = {
+        center: 'Center',
+        right: 'Right',
+        justify: 'Justify'
+      };
+
+      toolbar
+        .querySelectorAll(
+          '.ql-picker.ql-align .ql-picker-item'
+        )
+        .forEach(item => {
+          const value =
+            item.dataset.value || '';
+
+          const label =
+            alignmentLabels[value]
+            || 'Left';
+
+          item.setAttribute(
+            'aria-label',
+            label
+          );
+
+          item.setAttribute(
+            'title',
+            label
+          );
+        });
+
+      [
+        [
+          '.ql-picker.ql-color',
+          'Text color',
+          'Default text color'
+        ],
+
+        [
+          '.ql-picker.ql-background',
+          'Highlight',
+          'No highlight'
+        ]
+      ].forEach(([
+        selector,
+        prefix,
+        defaultLabel
+      ]) => {
+        toolbar
+          .querySelectorAll(
+            `${selector} .ql-picker-item`
+          )
+          .forEach(item => {
+            const value =
+              item.dataset.value || '';
+
+            const label =
+              value
+                ? `${prefix} ${value}`
+                : defaultLabel;
+
+            item.setAttribute(
+              'aria-label',
+              label
+            );
+
+            item.setAttribute(
+              'title',
+              label
+            );
+          });
+      });
 
       instance.root.setAttribute(
         'aria-label',
@@ -125547,6 +125933,27 @@
                 Heading 3
               </option>
             </select>
+
+            <select
+              class="ql-size"
+              aria-label="Font size"
+              title="Font size">
+              <option value="small">
+                Small
+              </option>
+
+              <option value="" selected>
+                Normal
+              </option>
+
+              <option value="large">
+                Large
+              </option>
+
+              <option value="huge">
+                Huge
+              </option>
+            </select>
           </span>
 
           <span class="ql-formats">
@@ -125563,6 +125970,34 @@
               aria-label="Italic"
               title="Italic">
             </button>
+
+            <button
+              class="ql-underline"
+              type="button"
+              aria-label="Underline"
+              title="Underline">
+            </button>
+
+            <button
+              class="ql-strike"
+              type="button"
+              aria-label="Strikethrough"
+              title="Strikethrough">
+            </button>
+          </span>
+
+          <span class="ql-formats">
+            <select
+              class="ql-color"
+              aria-label="Text color"
+              title="Text color">
+            </select>
+
+            <select
+              class="ql-background"
+              aria-label="Highlight color"
+              title="Highlight color">
+            </select>
           </span>
 
           <span class="ql-formats">
@@ -125581,6 +126016,30 @@
               aria-label="Numbered list"
               title="Numbered list">
             </button>
+
+            <button
+              class="ql-indent"
+              type="button"
+              value="-1"
+              aria-label="Decrease indent"
+              title="Decrease indent">
+            </button>
+
+            <button
+              class="ql-indent"
+              type="button"
+              value="+1"
+              aria-label="Increase indent"
+              title="Increase indent">
+            </button>
+          </span>
+
+          <span class="ql-formats">
+            <select
+              class="ql-align"
+              aria-label="Alignment"
+              title="Alignment">
+            </select>
           </span>
 
           <span class="ql-formats">
@@ -125661,6 +126120,81 @@
           `<em>${html}</em>`;
       }
 
+      if (
+        attributes.underline
+          === true
+      ) {
+        html =
+          `<u>${html}</u>`;
+      }
+
+      if (
+        attributes.strike
+          === true
+      ) {
+        html =
+          `<s>${html}</s>`;
+      }
+
+      const classes = [];
+
+      const size =
+        normalizeRichTextSize(
+          attributes.size
+        );
+
+      if (size) {
+        classes.push(
+          `rich-text-size-${size}`
+        );
+      }
+
+      const styles = [];
+
+      const color =
+        normalizeRichTextColor(
+          attributes.color
+        );
+
+      if (color) {
+        styles.push(
+          `color:${color}`
+        );
+      }
+
+      const background =
+        normalizeRichTextColor(
+          attributes.background
+        );
+
+      if (background) {
+        styles.push(
+          `background-color:${background}`
+        );
+      }
+
+      if (
+        classes.length
+        || styles.length
+      ) {
+        const classAttribute =
+          classes.length
+            ? ` class="${escapeHtml(
+                classes.join(' ')
+              )}"`
+            : '';
+
+        const styleAttribute =
+          styles.length
+            ? ` style="${escapeHtml(
+                styles.join(';')
+              )}"`
+            : '';
+
+        html =
+          `<span${classAttribute}${styleAttribute}>${html}</span>`;
+      }
+
       const href =
         richTextSafeLinkUrl(
           attributes.link
@@ -125695,6 +126229,51 @@
           </p>
         `)
         .join('');
+    }
+
+    function richTextBlockClassNames(
+      attributes = {}
+    ) {
+      const classes = [];
+
+      const alignment =
+        normalizeRichTextAlignment(
+          attributes.align
+        );
+
+      if (alignment) {
+        classes.push(
+          `rich-text-align-${alignment}`
+        );
+      }
+
+      const indent =
+        normalizeRichTextIndent(
+          attributes.indent
+        );
+
+      if (indent) {
+        classes.push(
+          `rich-text-indent-${indent}`
+        );
+      }
+
+      return classes;
+    }
+
+    function richTextBlockClassAttribute(
+      attributes = {}
+    ) {
+      const classes =
+        richTextBlockClassNames(
+          attributes
+        );
+
+      return classes.length
+        ? ` class="${escapeHtml(
+            classes.join(' ')
+          )}"`
+        : '';
     }
 
     function renderRichTextDeltaHtml(
@@ -125751,7 +126330,13 @@
                     attributes.list,
 
                   blockquote:
-                    attributes.blockquote
+                    attributes.blockquote,
+
+                  align:
+                    attributes.align,
+
+                  indent:
+                    attributes.indent
                 }
               });
 
@@ -125809,6 +126394,11 @@
         const attributes =
           line.attributes || {};
 
+        const classAttribute =
+          richTextBlockClassAttribute(
+            attributes
+          );
+
         if (attributes.list) {
           if (
             activeList
@@ -125822,7 +126412,7 @@
             attributes.list;
 
           listItems.push(
-            `<li>${content}</li>`
+            `<li${classAttribute}>${content}</li>`
           );
 
           return;
@@ -125832,14 +126422,14 @@
 
         if (attributes.header === 2) {
           html +=
-            `<h2>${content}</h2>`;
+            `<h2${classAttribute}>${content}</h2>`;
 
           return;
         }
 
         if (attributes.header === 3) {
           html +=
-            `<h3>${content}</h3>`;
+            `<h3${classAttribute}>${content}</h3>`;
 
           return;
         }
@@ -125849,13 +126439,13 @@
             === true
         ) {
           html +=
-            `<blockquote>${content}</blockquote>`;
+            `<blockquote${classAttribute}>${content}</blockquote>`;
 
           return;
         }
 
         html +=
-          `<p>${content}</p>`;
+          `<p${classAttribute}>${content}</p>`;
       });
 
       flushList();
@@ -125880,6 +126470,65 @@
           )
         )
       );
+    }
+
+    function normalizeRichTextColor(
+      value
+    ) {
+      const color =
+        String(value || '')
+          .trim()
+          .toLowerCase();
+
+      /*
+       * Quill Snow's built-in color palettes
+       * use hexadecimal CSS colors.
+       */
+      return (
+        /^#[0-9a-f]{3}$/.test(color)
+        || /^#[0-9a-f]{6}$/.test(color)
+      )
+        ? color
+        : '';
+    }
+
+    function normalizeRichTextSize(
+      value
+    ) {
+      return [
+        'small',
+        'large',
+        'huge'
+      ].includes(value)
+        ? value
+        : '';
+    }
+
+    function normalizeRichTextAlignment(
+      value
+    ) {
+      return [
+        'center',
+        'right',
+        'justify'
+      ].includes(value)
+        ? value
+        : '';
+    }
+
+    function normalizeRichTextIndent(
+      value
+    ) {
+      const indent =
+        Number(value);
+
+      return (
+        Number.isInteger(indent)
+        && indent >= 1
+        && indent <= 8
+      )
+        ? indent
+        : 0;
     }
 
     function normalizeRichTextDelta(
@@ -125946,6 +126595,53 @@
             }
 
             if (
+              sourceAttributes.underline
+                === true
+            ) {
+              attributes.underline =
+                true;
+            }
+
+            if (
+              sourceAttributes.strike
+                === true
+            ) {
+              attributes.strike =
+                true;
+            }
+
+            const textColor =
+              normalizeRichTextColor(
+                sourceAttributes.color
+              );
+
+            if (textColor) {
+              attributes.color =
+                textColor;
+            }
+
+            const backgroundColor =
+              normalizeRichTextColor(
+                sourceAttributes
+                  .background
+              );
+
+            if (backgroundColor) {
+              attributes.background =
+                backgroundColor;
+            }
+
+            const size =
+              normalizeRichTextSize(
+                sourceAttributes.size
+              );
+
+            if (size) {
+              attributes.size =
+                size;
+            }
+
+            if (
               sourceAttributes.blockquote
                 === true
             ) {
@@ -125971,6 +126667,26 @@
             ) {
               attributes.list =
                 sourceAttributes.list;
+            }
+
+            const alignment =
+              normalizeRichTextAlignment(
+                sourceAttributes.align
+              );
+
+            if (alignment) {
+              attributes.align =
+                alignment;
+            }
+
+            const indent =
+              normalizeRichTextIndent(
+                sourceAttributes.indent
+              );
+
+            if (indent) {
+              attributes.indent =
+                indent;
             }
 
             if (
