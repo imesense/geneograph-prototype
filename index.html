@@ -11363,6 +11363,19 @@
     .tool-options-menu button[aria-checked="true"] { background: var(--surface-selected); color: var(--text-primary); }
     .tool-options-menu button:focus-visible { outline: 2px solid var(--brand-green-300); outline-offset: -2px; }
     .tool-options-menu svg { width: 18px; height: 18px; display: block; flex: 0 0 18px; }
+    .geneo-shape-options-menu { min-width: 216px; }
+    .geneo-shape-option-preview {
+      width: 22px;
+      height: 18px;
+      flex: 0 0 22px;
+      display: block;
+      border: 2px solid currentColor;
+      background: rgba(98,217,154,.12);
+    }
+    .geneo-shape-option-preview.shape-ellipse { border-radius: 50%; }
+    .geneo-shape-option-preview.shape-diamond { transform: rotate(45deg) scale(.72); }
+    .geneo-shape-option-preview.shape-triangle { border: 0; clip-path: polygon(50% 0,100% 100%,0 100%); background: currentColor; }
+    .geneo-shape-option-preview.shape-hexagon { border: 0; clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%); background: currentColor; }
     .geneo-zoom-overlay {
       position: absolute;
       left: 18px;
@@ -13985,6 +13998,65 @@
     .geneo-node-panel { background:var(--geneo-node-bg); box-shadow:none; }
     .geneo-node-panel .geneo-node-content { padding: 12px 14px; pointer-events: none; }
     .geneo-panel-title { display:inline-flex; max-width:calc(100% - 24px); font-size:13px; font-weight:900; color:var(--geneo-node-text); }
+    .geneo-node-shape {
+      border: 0;
+      background: transparent;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .geneo-node-shape:focus-visible,
+    .geneo-node-shape.selected {
+      box-shadow: 0 0 0 2px var(--brand-green-300);
+    }
+    .geneo-node-shape .geneo-node-content { overflow: visible; }
+    .geneo-shape-svg { width: 100%; height: 100%; display: block; overflow: visible; }
+    .geneo-shape-svg :is(rect,ellipse,polygon,path) {
+      fill: var(--geneo-node-bg);
+      stroke: var(--geneo-node-stroke);
+      stroke-width: var(--geneo-node-stroke-width);
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+    .geneo-node-shape.stroke-dashed .geneo-shape-svg :is(rect,ellipse,polygon,path) { stroke-dasharray: 8 7; }
+    .geneo-node-shape.stroke-none .geneo-shape-svg :is(rect,ellipse,polygon,path) { stroke: none; }
+    .geneo-node-drawing { border:0; background:transparent; box-shadow:none; pointer-events:none; }
+    .geneo-node-drawing .geneo-node-content { overflow:visible; pointer-events:none; }
+    .geneo-node-drawing .geneo-resize-handle { pointer-events:auto; }
+    .geneo-drawing-svg { width:100%; height:100%; display:block; overflow:visible; pointer-events:none; }
+    .geneo-drawing-line { fill:none; stroke:var(--geneo-node-stroke); stroke-width:var(--geneo-node-stroke-width); stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke; pointer-events:none; }
+    .geneo-drawing-hit { fill:none; stroke:transparent; stroke-width:14px; stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke; pointer-events:stroke; }
+    .geneo-node-drawing.stroke-dashed .geneo-drawing-line { stroke-dasharray:8 7; }
+    .geneo-node-drawing.stroke-none .geneo-drawing-line { stroke:none; }
+    .geneo-node-drawing.selected .geneo-drawing-line { filter:drop-shadow(0 0 3px var(--brand-green-300)); }
+    .geneo-pencil-preview { fill:none; stroke:#D9E5E1; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke; pointer-events:none; }
+    .geneo-node-place { box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+    .geneo-node-place .geneo-node-content { display: flex; align-items: stretch; }
+    .geneo-place-node-content { width: 100%; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 0 14px; color: var(--geneo-node-text); }
+    .geneo-place-node-icon { width: 20px; height: 20px; flex: 0 0 20px; display: grid; place-items: center; color: var(--brand-green-300); }
+    .geneo-place-node-icon svg { width: 19px; height: 19px; display: block; }
+    .geneo-place-node-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 750; }
+    .geneo-place-inspector-summary { min-width: 0; display: flex; align-items: center; gap: 10px; }
+    .geneo-place-inspector-summary > span { width: 34px; height: 34px; flex: 0 0 34px; display: grid; place-items: center; border-radius: var(--radius-sm); background: var(--surface-selected); color: var(--brand-green-300); }
+    .geneo-place-inspector-summary svg { width: 18px; height: 18px; display: block; }
+    .geneo-place-inspector-summary div { min-width: 0; display: grid; gap: 2px; }
+    .geneo-place-inspector-summary strong,
+    .geneo-place-inspector-summary span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .geneo-place-inspector-summary span { color: var(--text-tertiary); font-size: 12px; }
+    .geneo-place-inspector-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+    .geneo-place-inspector-actions .button.ghost { color:var(--text-secondary); background:transparent; border-color:var(--border-default); }
+    .geneo-place-inspector-actions .button.ghost:hover { color:var(--text-primary); background:var(--surface-card-hover); border-color:var(--border-strong); }
+    .geneo-place-inspector-actions .button.ghost:focus-visible { outline:2px solid var(--brand-green-300); outline-offset:2px; }
+    .geneo-stroke-settings { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); align-items:start; gap:var(--space-3); }
+    .geneo-stroke-settings .geneo-field { align-content:start; }
+    .geneo-number-unit { position:relative; min-width:0; }
+    .geneo-number-unit .geneo-input { width:100%; height:42px; min-height:42px; box-sizing:border-box; padding-right:34px; }
+    .geneo-number-unit span { position:absolute; right:11px; top:50%; transform:translateY(-50%); color:var(--text-tertiary); font-size:12px; pointer-events:none; }
+    .geneo-shape-kind-value { min-height:40px; padding:0 12px; border:1px solid var(--border-default); border-radius:var(--radius-sm); background:var(--surface-input); color:var(--text-primary); display:flex; align-items:center; font-weight:750; }
+    .geneo-place-modal-help { margin: 0; color: var(--text-tertiary); font-size: 12px; line-height: 1.45; }
+    .geneo-place-modal .place-combobox-list { top: auto; bottom: calc(100% + 6px); max-height: 145px; }
+    .geneo-canvas-stage.shape-tool,
+    .geneo-canvas-stage.shape-tool .geneo-node-panel { cursor: crosshair; }
+    .geneo-canvas-stage.pencil-tool { cursor:crosshair; touch-action:none; }
     .geneo-inline-editor { width:100%; height:100%; min-height:0; resize:none; border:0; outline:0; background:rgba(3,8,7,.5); color:inherit; padding:10px; font:inherit; }
     .geneo-port {
       position:absolute;
@@ -29216,7 +29288,8 @@
       'About GeneoGraph': '- GeneoGraph', 'Prototype information and reference links.': '---------- - --------- - ------.', 'GeneoGraph prototype': '-------- GeneoGraph', 'Version 0.1 prototype - local-first genealogy workspace': '-------- 0.1 - --------- ------- ------------ ----------', 'Active': '-------', 'Help Center would open here.': '----- -------- -- ----- ------.', 'Release notes': '------- - -------', 'Product updates and prototype changes.': '---------- -------- - --------- ---------.', 'View': '--------', 'Privacy policy': '-------- ------------------', 'Privacy documentation placeholder.': '-------- ------------ - ------------------.',
       'Create family tree': '------- -------- ------', 'Import GEDCOM': '------------- GEDCOM', 'Open project': '------- ------', 'Tip of the day': '----- ---', 'You can drag and drop a GEDCOM file anywhere to import it.': '---------- GEDCOM----- - ----- -----, ----- ------------- ---.', 'Learn more': '--------- ?', 'Search projects...': '----- --------', 'Date modified': '----------: ---- ---------', ' Updated': '----------: ------- ---------', ' Name': '----------: ---', ' People count': '----------: ----- -----', 'All projects': '--- -------', 'Search results': '---------- ------', 'Continue where you left off': '---------- - -----, --- -- ----------', 'Last opened': '--------- -------', 'No projects yet': '------- ---- ---', 'No projects match': '------- -- ----------', 'Try another project name or clear the search.': '---------- ------- ----- ------- --- ------- -----.', 'Clear search': '------- -----', 'Welcome back! Here you can create, open, and manage your family-history projects.': '----------, ---------- - ----------- --------- -------- -------.', 'Drop a GeneoGraph or GEDCOM file here to open or import': '---------- ---- GeneoGraph --- GEDCOM --- -------- --- -------', 'Supports .ggproj and .ged files': '-------------- .ggproj - .ged', 'Recent activity': '-------- --------', 'Insights': '-------', 'Sync status': '-------------', 'Project': '------', 'Project overview': '----- -------', 'Project settings': '--------- -------', 'Back to all projects': '----- -- ---- --------', 'Go to Family Tree': '------- - ------', 'Export': '-------', 'Delete project': '------- ------', 'Manage backups': '--------- -------', 'Open': '-------',
       'Navigation': '---------', 'Saved filters': '---------- ----', 'Review center': '----- --------', 'Statistics': '----------', 'Profile': '-------', 'Search people...': '----- -----...', 'Columns': '-------', 'Filter': '------', 'Add person': '-------- --------', ' Birth date': '----------: ---- --------', 'Name': '---', 'Living': '---', 'Deceased': '----', 'Unknown': '----------', 'Living status': '------ -----', 'Birth date': '---- --------', 'Birth place': '----- --------', 'Death date': '---- ------', 'Death place': '----- ------', 'Updated': '---------', 'Actions': '--------', 'Record Info': '---------- - ------', 'Facts': '-----', 'Relationships': '-----', 'Photos': '----', 'Files': '-----', 'Full profile': '------ -------', 'Open profile': '------- -------', 'Add relative': '-------- ------------', 'Connect relative': '------- ------------', 'More actions': '--- --------', 'Back to people': '----- - -----', 'Edit profile': '------------- -------', 'Save changes': '--------- ---------', 'Cancel': '------', 'Locked': '-------------', 'Editing': '--------------', 'Main information': '-------- ----------', 'Education': '-----------', 'Work': '------', 'Other': '------', 'First name': '---', 'Last name': '-------', 'Patronym': '--------', 'Maiden name': '------- -------', 'Prefix': '-------', 'Suffix': '-------', 'Exact date': '------ ----', 'Before': '--', 'After': '-----', 'Between': '-----', 'About / Circa': '-----', 'Cause of Death': '------- ------', 'Death reason': '------- ------', 'Burial place': '----- -----------', 'Record info': '---------- - ------', 'Profile ID': 'ID -------', 'Created': '-------', 'Review issues': '-------- --------', 'Source status': '------ ----------', 'Partly sourced': '-------- ------------', 'Living protected': '------- --------', 'Immediate Family': '--------- -----', 'Parents': '--------', 'Children': '----', 'Siblings': '------ - -----', 'Grandparents': '------- - -------', 'Partners': '-------', 'Partner': '------', 'Spouse': '------(-)', 'Father': '----', 'Mother': '----', 'Brother': '----', 'Sister': '------', 'Grandmother': '-------', 'Grandfather': '-------', 'Cat': '---', 'Timeline': '----------', 'Add fact': '-------- ----', 'Birth': '--------', 'Wedding': '-------', 'Education start': '------ --------', 'Education finish': '--------- --------', 'Archive': '-----', 'Add': '--------', 'Open ?': '------- ?',
-      'New board': '------- -----', 'Import board': '------------- -----', 'Board type': '---------', 'Categories': '---------', 'All boards': '--- -----', 'Recently viewed': '--------', 'Favourites': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'DNA': '---', 'Publication': '----------', 'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '---- ------------ --- ------------, ------------ - ----------.', 'Search boards...': '----- -----', ' Board type': '----------: --- -----', 'All boards': '--- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Note': '-------', 'Image': '-----------', 'Place': '-----', 'Case': '------', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '-----------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Appearance': '------- ---', 'Layout': '-----', 'Background pattern': '\u0424\u043e\u043d \u0445\u043e\u043b\u0441\u0442\u0430', 'Dots': '\u0422\u043e\u0447\u043a\u0438', 'Grid': '\u0421\u0435\u0442\u043a\u0430', 'Clear': '\u0411\u0435\u0437 \u0443\u0437\u043e\u0440\u0430', 'Fill': '\u0417\u0430\u043b\u0438\u0432\u043a\u0430', 'Stroke': '\u041e\u0431\u0432\u043e\u0434\u043a\u0430', 'Title text': '\u0422\u0435\u043a\u0441\u0442 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043a\u0430', 'Line': '\u041b\u0438\u043d\u0438\u044f', 'Background': '\u0424\u043e\u043d', 'Opacity': '\u041d\u0435\u043f\u0440\u043e\u0437\u0440\u0430\u0447\u043d\u043e\u0441\u0442\u044c', 'Hue': '\u0422\u043e\u043d', 'Hex': 'HEX', 'Remove': '\u0423\u0431\u0440\u0430\u0442\u044c', 'Restore': '\u0412\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c', 'Reset': '\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c', 'None': '\u041d\u0435\u0442', 'Opaque': '\u041d\u0435\u043f\u0440\u043e\u0437\u0440\u0430\u0447\u043d\u044b\u0439', 'Stroke pattern': '\u0421\u0442\u0438\u043b\u044c \u043e\u0431\u0432\u043e\u0434\u043a\u0438', 'Solid': '\u0421\u043f\u043b\u043e\u0448\u043d\u0430\u044f', 'Dashed': '\u041f\u0443\u043d\u043a\u0442\u0438\u0440\u043d\u0430\u044f', 'Restore paint': '\u0412\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c \u0446\u0432\u0435\u0442', 'Reset to default': '\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c', 'No stroke': '\u0411\u0435\u0437 \u043e\u0431\u0432\u043e\u0434\u043a\u0438', 'Ink': '\u0427\u0435\u0440\u043d\u0438\u043b\u0430', 'Graphite': '\u0413\u0440\u0430\u0444\u0438\u0442', 'Mist': '\u0422\u0443\u043c\u0430\u043d', 'Paper': '\u0411\u0443\u043c\u0430\u0433\u0430', 'Deep moss': '\u0422\u0451\u043c\u043d\u044b\u0439 \u043c\u043e\u0445', 'Archive blue': '\u0410\u0440\u0445\u0438\u0432\u043d\u044b\u0439 \u0441\u0438\u043d\u0438\u0439', 'Plum': '\u0421\u043b\u0438\u0432\u043e\u0432\u044b\u0439', 'Sepia': '\u0421\u0435\u043f\u0438\u044f', 'Geneograph green': '\u0417\u0435\u043b\u0451\u043d\u044b\u0439 Geneograph', 'Mint': '\u041c\u044f\u0442\u0430', 'Teal': '\u0411\u0438\u0440\u044e\u0437\u043e\u0432\u044b\u0439', 'Blue': '\u0421\u0438\u043d\u0438\u0439', 'Violet': '\u0424\u0438\u043e\u043b\u0435\u0442\u043e\u0432\u044b\u0439', 'Amber': '\u042f\u043d\u0442\u0430\u0440\u043d\u044b\u0439', 'Rose': '\u0420\u043e\u0437\u043e\u0432\u044b\u0439', 'Conflict red': '\u041a\u0440\u0430\u0441\u043d\u044b\u0439 \u043a\u043e\u043d\u0444\u043b\u0438\u043a\u0442', 'Sibling relationship': '\u0421\u0432\u044f\u0437\u044c \u043c\u0435\u0436\u0434\u0443 \u0431\u0440\u0430\u0442\u044c\u044f\u043c\u0438 \u0438 \u0441\u0451\u0441\u0442\u0440\u0430\u043c\u0438', 'Linked to person': '------- - ---------', 'Visual only': '------ ---------',
+      'New board': '------- -----', 'Import board': '------------- -----', 'Board type': '---------', 'Categories': '---------', 'All boards': '--- -----', 'Recently viewed': '--------', 'Favourites': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'DNA': '---', 'Publication': '----------', 'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '---- ------------ --- ------------, ------------ - ----------.', 'Search boards...': '----- -----', ' Board type': '----------: --- -----', 'All boards': '--- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Note': '-------', 'Image': '-----------', 'Place': '-----', 'Case': '------', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '-----------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Appearance': '------- ---', 'Layout': '-----', 'Background pattern': '\u0424\u043e\u043d \u0445\u043e\u043b\u0441\u0442\u0430', 'Dots': '\u0422\u043e\u0447\u043a\u0438', 'Grid': '\u0421\u0435\u0442\u043a\u0430', 'Clear': '\u0411\u0435\u0437 \u0443\u0437\u043e\u0440\u0430', 'Fill': '\u0417\u0430\u043b\u0438\u0432\u043a\u0430', 'Stroke': '\u041e\u0431\u0432\u043e\u0434\u043a\u0430', 'Title text': '\u0422\u0435\u043a\u0441\u0442 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043a\u0430', 'Line': '\u041b\u0438\u043d\u0438\u044f', 'Background': '\u0424\u043e\u043d', 'Opacity': '\u041d\u0435\u043f\u0440\u043e\u0437\u0440\u0430\u0447\u043d\u043e\u0441\u0442\u044c', 'Hue': '\u0422\u043e\u043d', 'Hex': 'HEX', 'Remove': '\u0423\u0431\u0440\u0430\u0442\u044c', 'Restore': '\u0412\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c', 'Reset': '\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c', 'None': '\u041d\u0435\u0442', 'Opaque': '\u041d\u0435\u043f\u0440\u043e\u0437\u0440\u0430\u0447\u043d\u044b\u0439', 'Stroke pattern': '\u0421\u0442\u0438\u043b\u044c \u043e\u0431\u0432\u043e\u0434\u043a\u0438', 'Solid': '\u0421\u043f\u043b\u043e\u0448\u043d\u0430\u044f', 'Dashed': '\u041f\u0443\u043d\u043a\u0442\u0438\u0440\u043d\u0430\u044f', 'Restore paint': '\u0412\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c \u0446\u0432\u0435\u0442', 'Reset to default': '\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c', 'No stroke': '\u0411\u0435\u0437 \u043e\u0431\u0432\u043e\u0434\u043a\u0438', 'Ink': '\u0427\u0435\u0440\u043d\u0438\u043b\u0430', 'Graphite': '\u0413\u0440\u0430\u0444\u0438\u0442', 'Mist': '\u0422\u0443\u043c\u0430\u043d', 'Paper': '\u0411\u0443\u043c\u0430\u0433\u0430', 'Deep moss': '\u0422\u0451\u043c\u043d\u044b\u0439 \u043c\u043e\u0445', 'Archive blue': '\u0410\u0440\u0445\u0438\u0432\u043d\u044b\u0439 \u0441\u0438\u043d\u0438\u0439', 'Plum': '\u0421\u043b\u0438\u0432\u043e\u0432\u044b\u0439', 'Sepia': '\u0421\u0435\u043f\u0438\u044f', 'Geneograph green': '\u0417\u0435\u043b\u0451\u043d\u044b\u0439 Geneograph', 'Mint': '\u041c\u044f\u0442\u0430', 'Teal': '\u0411\u0438\u0440\u044e\u0437\u043e\u0432\u044b\u0439', 'Blue': '\u0421\u0438\u043d\u0438\u0439', 'Violet': '\u0424\u0438\u043e\u043b\u0435\u0442\u043e\u0432\u044b\u0439', 'Amber': '\u042f\u043d\u0442\u0430\u0440\u043d\u044b\u0439', 'Rose': '\u0420\u043e\u0437\u043e\u0432\u044b\u0439', 'Conflict red': '\u041a\u0440\u0430\u0441\u043d\u044b\u0439 \u043a\u043e\u043d\u0444\u043b\u0438\u043a\u0442', 'Sibling relationship': '\u0421\u0432\u044f\u0437\u044c \u043c\u0435\u0436\u0434\u0443 \u0431\u0440\u0430\u0442\u044c\u044f\u043c\u0438 \u0438 \u0441\u0451\u0441\u0442\u0440\u0430\u043c\u0438', 'Rectangle': '\u041f\u0440\u044f\u043c\u043e\u0443\u0433\u043e\u043b\u044c\u043d\u0438\u043a', 'Rounded rectangle': '\u0421\u043a\u0440\u0443\u0433\u043b\u0451\u043d\u043d\u044b\u0439 \u043f\u0440\u044f\u043c\u043e\u0443\u0433\u043e\u043b\u044c\u043d\u0438\u043a', 'Ellipse': '\u042d\u043b\u043b\u0438\u043f\u0441', 'Diamond': '\u0420\u043e\u043c\u0431', 'Triangle': '\u0422\u0440\u0435\u0443\u0433\u043e\u043b\u044c\u043d\u0438\u043a', 'Hexagon': '\u0428\u0435\u0441\u0442\u0438\u0443\u0433\u043e\u043b\u044c\u043d\u0438\u043a', 'Linked project place': '\u0421\u0432\u044f\u0437\u0430\u043d\u043e \u0441 \u043c\u0435\u0441\u0442\u043e\u043c \u043f\u0440\u043e\u0435\u043a\u0442\u0430', 'Board-only place': '\u041c\u0435\u0441\u0442\u043e \u0442\u043e\u043b\u044c\u043a\u043e \u043d\u0430 \u0434\u043e\u0441\u043a\u0435', 'Make board-only': '\u0421\u0434\u0435\u043b\u0430\u0442\u044c \u043b\u043e\u043a\u0430\u043b\u044c\u043d\u044b\u043c', 'Open in Places': '\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u0432 \u041c\u0435\u0441\u0442\u0430\u0445', 'Add place object': '\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u043e\u0431\u044a\u0435\u043a\u0442-\u043c\u0435\u0441\u0442\u043e', 'Edit place object': '\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c \u043e\u0431\u044a\u0435\u043a\u0442-\u043c\u0435\u0441\u0442\u043e', 'Use as board-only place': '\u0418\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u044c \u0442\u043e\u043b\u044c\u043a\u043e \u043d\u0430 \u0434\u043e\u0441\u043a\u0435', 'Width': '\u0428\u0438\u0440\u0438\u043d\u0430', 'Linked to person': '------- - ---------', 'Visual only': '------ ---------',
+      'Choose shape': '\u0412\u044b\u0431\u0440\u0430\u0442\u044c \u0444\u0438\u0433\u0443\u0440\u0443', 'Shape type': '\u0422\u0438\u043f \u0444\u0438\u0433\u0443\u0440\u044b', 'Change place': '\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c \u043c\u0435\u0441\u0442\u043e', 'Link a project place or keep a board-only historical name.': '\u0421\u0432\u044f\u0436\u0438\u0442\u0435 \u0441 \u043c\u0435\u0441\u0442\u043e\u043c \u043f\u0440\u043e\u0435\u043a\u0442\u0430 \u0438\u043b\u0438 \u043e\u0441\u0442\u0430\u0432\u044c\u0442\u0435 \u0438\u0441\u0442\u043e\u0440\u0438\u0447\u0435\u0441\u043a\u043e\u0435 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u0442\u043e\u043b\u044c\u043a\u043e \u043d\u0430 \u0434\u043e\u0441\u043a\u0435.', 'Search project places or type a board-only name': '\u041d\u0430\u0439\u0434\u0438\u0442\u0435 \u043c\u0435\u0441\u0442\u043e \u043f\u0440\u043e\u0435\u043a\u0442\u0430 \u0438\u043b\u0438 \u0432\u0432\u0435\u0434\u0438\u0442\u0435 \u043b\u043e\u043a\u0430\u043b\u044c\u043d\u043e\u0435 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435', 'Project places stay linked and reflect future name changes. Board-only places exist only on this board.': '\u041c\u0435\u0441\u0442\u0430 \u043f\u0440\u043e\u0435\u043a\u0442\u0430 \u043e\u0441\u0442\u0430\u044e\u0442\u0441\u044f \u0441\u0432\u044f\u0437\u0430\u043d\u043d\u044b\u043c\u0438 \u0438 \u043e\u0431\u043d\u043e\u0432\u043b\u044f\u044e\u0442 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435. \u041b\u043e\u043a\u0430\u043b\u044c\u043d\u044b\u0435 \u043c\u0435\u0441\u0442\u0430 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044e\u0442 \u0442\u043e\u043b\u044c\u043a\u043e \u043d\u0430 \u044d\u0442\u043e\u0439 \u0434\u043e\u0441\u043a\u0435.', 'Enter a place name or select a project place.': '\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u0438\u043b\u0438 \u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u043c\u0435\u0441\u0442\u043e \u043f\u0440\u043e\u0435\u043a\u0442\u0430.', 'Place object updated.': '\u041e\u0431\u044a\u0435\u043a\u0442-\u043c\u0435\u0441\u0442\u043e \u043e\u0431\u043d\u043e\u0432\u043b\u0451\u043d.', 'Place added to board.': '\u041c\u0435\u0441\u0442\u043e \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u043e \u043d\u0430 \u0434\u043e\u0441\u043a\u0443.', 'Place is now board-only.': '\u041c\u0435\u0441\u0442\u043e \u0442\u0435\u043f\u0435\u0440\u044c \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u0435\u0442 \u0442\u043e\u043b\u044c\u043a\u043e \u043d\u0430 \u0434\u043e\u0441\u043a\u0435.',
       'Add photos': '-------- ----', 'New album': '----- ------', 'All photos': '--- ----', 'Not in Album': '--- -------', 'Recently deleted': '------- --------', 'Search photos...': '----- ----...', ' Filename': '----------: --- -----', ' Photo date': '----------: ---- ----', 'People in this photo': '---- -- ----', 'Date': '----', 'Caption / story': '------- / -------', 'Source': '--------', 'Delete photo': '------- ----', 'Make favourite': '-------- - ---------', 'Remove favourite': '------ -- ----------', 'Tag people': '-------- -----', 'Open photo': '------- ----', 'No people tagged': '---- -- --------', 'Unknown date': '---- ----------', 'Unknown place': '----- ----------',
       'Add files': '-------- -----', 'Create source': '------- --------', 'Sources': '---------', 'Imports': '-------', 'Review': '--------', 'Folders': '-----', 'Search this folder...': '----- - ---- -----...', 'Create folder': '------- -----', ' Updated': '----------: ---------', ' Source status': '----------: ------ ---------', 'Source / provenance': '--------', 'Linked to': '------- -', 'Date / place': '---- / -----', 'OCR': 'OCR', 'File info': '---------- - -----', 'Linked evidence': '--------- --------------', 'Assign source': '--------- --------', 'Run OCR': '--------- OCR', 'Restore': '------------', 'Reviewed': '---------', 'Needs review': '----- --------', 'Missing source': '--- ---------', 'Not linked': '-- -------',
       'Add note': '----- -------', 'New collection': '----- ---------', 'All notes': '--- -------', 'Collections': '---------', 'Search notes...': '----- -------...', 'Cards': '--------', 'List': '------', 'Saved': '---------', 'Linked people': '--------- ----', 'Linked sources': '--------- ---------', 'Linked places': '--------- -----', 'Related notes': '--------- -------', 'Tasks': '------', 'Note type': '--- -------',
@@ -29441,6 +29514,12 @@
       'without place': 'без места',
       'unmapped': 'без координат',
       'across': 'в',
+
+      // Geneograph drawing and shape refinement
+      'Pencil': 'Карандаш',
+      'Pencil stroke': 'Карандашный штрих',
+      'Drawing': 'Рисунок',
+      'Corner radius': 'Радиус скругления',
 
       // Publish
       'Create output': '------- ----------', 'Start a new publication': '------ ----- ----------', 'Data export': '------- ------', 'Data exports': '------- ------', 'Recently exported': '------- --------------', 'Family report': '-------- -----', 'Family chart': '-------- ---------', 'Type': '---', 'Scope': '-------', 'Settings': '---------', 'Choose output type': '-------- --- ----------', 'Choose scope': '-------- -------', 'Content and privacy settings': '------- - ------------------', 'Preview and export': '------------ - -------', 'Save draft': '--------- --------', 'Export PDF': '------- PDF', 'Export PNG': '------- PNG', 'Export GEDCOM': '------- GEDCOM', 'Living people hidden': '------- ---- ------', 'Sources can be included': '--------- ----- --------', 'No outputs here yet': '---------- ---- ---', 'Create a report, chart, or export package to get started.': '-------- -----, --------- --- ---------- -----, ----- ------.', 'Ready to export': '------ - --------', 'Needs update': '------- ----------', 'Published': '------------'
@@ -32096,8 +32175,9 @@
           list.innerHTML = currentOptions.map((opt, i) => {
             const active = i === activeIndex ? ' active' : '';
             if (opt.type === 'create') {
+              const createLabel = field.dataset.placeCreateLabel || 'Create new place';
               return `<div class="place-combobox-option${active}" role="option" data-place-opt="${i}" data-place-create="1">
-                <div class="place-combobox-copy"><strong>Create new place</strong><span>${escapeHtml(opt.text)}</span></div>
+                <div class="place-combobox-copy"><strong>${escapeHtml(createLabel)}</strong><span>${escapeHtml(opt.text)}</span></div>
               </div>`;
             }
             const p = opt.place;
@@ -34132,6 +34212,7 @@
       geneoTool: 'pan',
       geneoPlacementReturnTool: null,
       geneoConnectorPattern: 'solid',
+      geneoShapeKind: 'rectangle',
       geneoConnectionDraft: null,
       geneoInlineEditNodeId: null,
       geneoInlineEditSelectAll: false,
@@ -39581,11 +39662,12 @@
       showAddress = true,
       placeholder = 'Search or type a place',
       className = '',
-      inputAttrs = ''
+      inputAttrs = '',
+      createOptionLabel = 'Create new place'
     } = {}) {
       const listId = `${id}PlaceList`;
 
-      return `<div class="field ${escapeHtml(className)} place-combobox-field" data-place-combobox>
+      return `<div class="field ${escapeHtml(className)} place-combobox-field" data-place-combobox data-place-create-label="${escapeHtml(createOptionLabel)}">
         <label for="${escapeHtml(id)}">${escapeHtml(label)}</label>
         <div class="place-combobox-shell">
           <input
@@ -63015,6 +63097,7 @@
     }
 
     function renderGeneographHome() {
+      cancelGeneographPencilStroke();
       const filtered =
         filteredGeneographBoards();
 
@@ -65758,6 +65841,7 @@
     }
 
     function openGeneographBoard(id) {
+      cancelGeneographPencilStroke();
       const previousBoard = selectedGeneographBoard();
       if (state.geneoView === 'board' && previousBoard?.id && previousBoard.id !== id) captureGeneographViewport(previousBoard.id);
       const savedViewport = geneoSavedViewport(id);
@@ -66055,6 +66139,58 @@
       requestAnimationFrame(() => menu.querySelector('[aria-checked="true"]')?.focus());
     }
 
+    function renderGeneoShapeSplitTool() {
+      const kind = normalizeGeneographShapeKind(state.geneoShapeKind);
+      const label = geneoShapeLabel(kind);
+      const active = state.geneoTool === 'shape';
+      return `<div class="tool-split ${active ? 'active' : ''}" data-tool-split="shape">
+        <button class="tool-split-main" type="button" data-geneo-shape-main aria-pressed="${active}" title="Draw ${escapeHtml(label.toLowerCase())}">${icon.shape}<span>${escapeHtml(label)}</span></button>
+        <button class="tool-split-trigger" type="button" data-geneo-shape-menu aria-label="Choose shape" aria-haspopup="menu" aria-expanded="false">${icon.chevron}</button>
+      </div>`;
+    }
+
+    function openGeneoShapeMenu(anchor) {
+      if (!(anchor instanceof HTMLElement)) return;
+      closeMenu();
+      const selected = normalizeGeneographShapeKind(state.geneoShapeKind);
+      const rect = anchor.getBoundingClientRect();
+      const menu = document.createElement('div');
+      menu.className = 'menu-popover tool-options-menu geneo-shape-options-menu';
+      menu.id = 'projectMenu';
+      menu.setAttribute('role', 'menu');
+      menu.setAttribute('aria-label', 'Shape');
+      menu.style.top = `${rect.bottom + 7}px`;
+      menu.style.left = `${Math.max(12, Math.min(rect.left - 118, window.innerWidth - 224))}px`;
+      menu.innerHTML = GENEO_SHAPE_KINDS.map(shape => `<button type="button" role="menuitemradio" aria-checked="${selected === shape.id}" data-geneo-shape-kind="${escapeHtml(shape.id)}"><span class="geneo-shape-option-preview shape-${escapeHtml(shape.id)}" aria-hidden="true"></span><span>${escapeHtml(shape.label)}</span></button>`).join('');
+      document.body.appendChild(menu);
+      anchor.setAttribute('aria-expanded', 'true');
+      menu.addEventListener('click', event => {
+        const button = event.target.closest('[data-geneo-shape-kind]');
+        if (!button) return;
+        state.geneoShapeKind = normalizeGeneographShapeKind(button.dataset.geneoShapeKind);
+        closeMenu();
+        activateGeneographPlacementTool('shape');
+      });
+      menu.addEventListener('keydown', event => {
+        const items = [...menu.querySelectorAll('[role="menuitemradio"]')];
+        const index = items.indexOf(document.activeElement);
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          event.stopPropagation();
+          closeMenu();
+          anchor.focus();
+        } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+          event.preventDefault();
+          items[(index + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length]?.focus();
+        } else if (event.key === 'Home' || event.key === 'End') {
+          event.preventDefault();
+          items[event.key === 'Home' ? 0 : items.length - 1]?.focus();
+        }
+      });
+      bindMenuLifecycle(anchor);
+      requestAnimationFrame(() => menu.querySelector('[aria-checked="true"]')?.focus());
+    }
+
     function geneographEditorCollectionMeta(board) {
       const collections =
         getCollectionsForBoard(
@@ -66264,6 +66400,13 @@
             if (!['solid', 'dashed'].includes(node.appearance?.strokePattern)) {
               warn(`Node ${node.id} has an invalid stroke pattern`);
             }
+            if (
+              !Number.isInteger(node.appearance?.strokeWidth)
+              || node.appearance.strokeWidth < GENEO_STROKE_WIDTH_MIN
+              || node.appearance.strokeWidth > GENEO_STROKE_WIDTH_MAX
+            ) {
+              warn(`Node ${node.id} has an invalid stroke width`);
+            }
 
             if (
               node.type === 'person'
@@ -66272,6 +66415,57 @@
               warn(
                 `Person node ${node.id} points to a missing board person`
               );
+            }
+            if (
+              node.type === 'shape'
+              && !GENEO_SHAPE_KINDS.some(shape => shape.id === node.shapeKind)
+            ) {
+              warn(`Shape node ${node.id} has an invalid shape kind`);
+            }
+            if (
+              node.type === 'shape'
+              && (
+                !Number.isInteger(node.appearance?.cornerRadius)
+                || node.appearance.cornerRadius < 0
+                || node.appearance.cornerRadius > 32
+              )
+            ) {
+              warn(`Shape node ${node.id} has an invalid corner radius`);
+            }
+            if (
+              node.type === 'drawing'
+              && (
+                !Array.isArray(node.points)
+                || node.points.length < 2
+                || node.points.some(point =>
+                  !Number.isFinite(point?.x)
+                  || !Number.isFinite(point?.y)
+                  || point.x < 0
+                  || point.x > 1
+                  || point.y < 0
+                  || point.y > 1
+                )
+              )
+            ) {
+              warn(`Drawing node ${node.id} has invalid points`);
+            }
+            if (node.type === 'place') {
+              const ref = node.placeRef;
+              const projectPlace = ref?.scope === 'project'
+                ? (sampleData.places || []).find(place => place.id === ref.id)
+                : null;
+              if (
+                !ref
+                || !['project', 'board'].includes(ref.scope)
+                || (ref.scope === 'board' && !String(ref.name || '').trim())
+                || (ref.scope === 'project' && (
+                  !projectPlace
+                  || projectPlace.deleted
+                  || projectPlace.projectId !== board.projectId
+                ))
+              ) {
+                warn(`Place node ${node.id} has an invalid place reference`);
+              }
             }
           });
 
@@ -66317,6 +66511,13 @@
 
             if (!isCanonicalGeneoPaint(connection.style?.line)) {
               warn(`Connection ${connection.id} has an invalid line paint`);
+            }
+            if (
+              !Number.isInteger(connection.style?.width)
+              || connection.style.width < GENEO_STROKE_WIDTH_MIN
+              || connection.style.width > GENEO_STROKE_WIDTH_MAX
+            ) {
+              warn(`Connection ${connection.id} has an invalid stroke width`);
             }
             if (!['solid', 'dashed'].includes(connection.style?.pattern)) {
               warn(`Connection ${connection.id} has an invalid line pattern`);
@@ -66739,6 +66940,7 @@
     }
 
     function openGeneographSettingsModal() {
+      cancelGeneographPencilStroke();
       const board =
         selectedGeneographBoard();
 
@@ -66945,7 +67147,16 @@
         );
     }
 
-    const GENEO_NODE_TYPES = new Set(['person', 'image', 'sticky', 'text', 'panel']);
+    const GENEO_NODE_TYPES = new Set(['person', 'image', 'sticky', 'text', 'panel', 'shape', 'place', 'drawing']);
+    const GENEO_SHAPE_KINDS = Object.freeze([
+      { id: 'rectangle', label: 'Rectangle' },
+      { id: 'ellipse', label: 'Ellipse' },
+      { id: 'diamond', label: 'Diamond' },
+      { id: 'triangle', label: 'Triangle' },
+      { id: 'hexagon', label: 'Hexagon' }
+    ]);
+    const GENEO_STROKE_WIDTH_MIN = 1;
+    const GENEO_STROKE_WIDTH_MAX = 12;
     const GENEO_GRID_SIZE = 20;
     const GENEO_TOP_ROUTE_CLEARANCE = GENEO_GRID_SIZE * 4;
     const GENEO_HISTORY_LIMIT = 50;
@@ -67100,7 +67311,22 @@
         : source.strokePattern === 'dashed'
           ? 'dashed'
           : defaultPattern;
-      result.strokeWidth = geneoNumber(source.strokeWidth, defaults.strokeWidth || 1, 0, 12);
+      result.strokeWidth = Math.round(geneoNumber(
+        source.strokeWidth,
+        defaults.strokeWidth || GENEO_STROKE_WIDTH_MIN,
+        GENEO_STROKE_WIDTH_MIN,
+        GENEO_STROKE_WIDTH_MAX
+      ));
+      if (Number.isFinite(Number(defaults.cornerRadius))) {
+        result.cornerRadius = Math.round(geneoNumber(
+          source.cornerRadius,
+          defaults.cornerRadius,
+          0,
+          32
+        ));
+      } else {
+        delete result.cornerRadius;
+      }
       delete result.backgroundColor;
       delete result.strokeColor;
       delete result.textColor;
@@ -67147,6 +67373,90 @@
       }
 
       return null;
+    }
+
+    function normalizeGeneographShapeKind(value) {
+      const kind = String(value || '').trim().toLowerCase();
+      if (kind === 'rounded-rectangle') return 'rectangle';
+      return GENEO_SHAPE_KINDS.some(shape => shape.id === kind)
+        ? kind
+        : 'rectangle';
+    }
+
+    function geneoShapeLabel(value) {
+      const kind = normalizeGeneographShapeKind(value);
+      return GENEO_SHAPE_KINDS.find(shape => shape.id === kind)?.label || 'Rectangle';
+    }
+
+    function normalizeGeneographDrawingPoints(value) {
+      const points = [];
+      (Array.isArray(value) ? value : []).forEach(point => {
+        const x = Number(point?.x);
+        const y = Number(point?.y);
+        if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+        const next = {
+          x: geneoNumber(x, 0, 0, 1),
+          y: geneoNumber(y, 0, 0, 1)
+        };
+        const previous = points.at(-1);
+        if (previous && Math.hypot(next.x - previous.x, next.y - previous.y) < 0.0001) return;
+        points.push(next);
+      });
+      return points;
+    }
+
+    function normalizeGeneographPlaceRef(node, projectId = selectedGeneographBoard()?.projectId || '') {
+      const source = node?.placeRef;
+      if (source?.scope === 'project') {
+        const id = String(source.id || '').trim();
+        const place = id ? getPlace(id) : null;
+        if (place && !place.deleted && place.projectId === projectId) {
+          return {
+            scope: 'project',
+            id,
+            fallbackName: String(placePrimaryName(place) || place.name || source.fallbackName || 'Place').trim().slice(0, 160)
+          };
+        }
+        const fallbackName = String(source.fallbackName || node?.placeName || '').trim().slice(0, 160);
+        return fallbackName ? { scope: 'board', name: fallbackName } : null;
+      }
+      if (source?.scope === 'board') {
+        const name = String(source.name || '').replace(/\s+/g, ' ').trim().slice(0, 160);
+        return name ? { scope: 'board', name } : null;
+      }
+      const legacyPlaceId = String(node?.placeId || '').trim();
+      const legacyPlace = legacyPlaceId ? getPlace(legacyPlaceId) : null;
+      if (legacyPlace && !legacyPlace.deleted && legacyPlace.projectId === projectId) {
+        return {
+          scope: 'project',
+          id: legacyPlace.id,
+          fallbackName: String(placePrimaryName(legacyPlace) || legacyPlace.name || 'Place').trim().slice(0, 160)
+        };
+      }
+      const legacyName = String(node?.placeName || node?.title || '').replace(/\s+/g, ' ').trim().slice(0, 160);
+      return legacyName ? { scope: 'board', name: legacyName } : null;
+    }
+
+    function resolveGeneographPlace(node, board = selectedGeneographBoard()) {
+      const ref = normalizeGeneographPlaceRef(node, board?.projectId || '');
+      if (!ref) return { ref: null, place: null, linked: false, name: 'Place' };
+      if (ref.scope === 'project') {
+        const place = getPlace(ref.id);
+        if (place && !place.deleted && place.projectId === board?.projectId) {
+          return {
+            ref,
+            place,
+            linked: true,
+            name: placePrimaryName(place) || place.name || ref.fallbackName || 'Place'
+          };
+        }
+      }
+      return {
+        ref,
+        place: null,
+        linked: false,
+        name: ref.name || ref.fallbackName || 'Place'
+      };
     }
 
     function normalizeGeneographBoardAsset(asset) {
@@ -67410,6 +67720,7 @@
     }
 
     function normalizeGeneographRuntimeData() {
+      state.geneoShapeKind = normalizeGeneographShapeKind(state.geneoShapeKind);
       const projects = new Set((sampleData.projects || []).map(project => project.id));
       const projectPeople = new Map();
       (sampleData.people || []).forEach(person => {
@@ -67524,6 +67835,11 @@
             nodeIds.add(node.id);
 
             const defaults = geneoNodeDefaults(node.type);
+            const legacyRoundedShape = node.type === 'shape'
+              && String(node.shapeKind || '').trim().toLowerCase() === 'rounded-rectangle';
+            const appearanceDefaults = legacyRoundedShape
+              ? { ...defaults.appearance, cornerRadius: 12 }
+              : defaults.appearance;
 
             const normalizedNode = {
               ...node,
@@ -67564,7 +67880,7 @@
               locked: Boolean(node.locked),
               appearance: geneoAppearance(
                 node.appearance,
-                defaults.appearance,
+                appearanceDefaults,
                 node.type
               )
             };
@@ -67578,6 +67894,26 @@
                 normalizedNode,
                 diagram
               );
+            }
+            if (node.type === 'shape') {
+              normalizedNode.shapeKind = normalizeGeneographShapeKind(node.shapeKind);
+            } else {
+              delete normalizedNode.shapeKind;
+            }
+            if (node.type === 'drawing') {
+              normalizedNode.points = normalizeGeneographDrawingPoints(node.points);
+              if (normalizedNode.points.length < 2) return;
+            } else {
+              delete normalizedNode.points;
+            }
+            if (node.type === 'place') {
+              normalizedNode.placeRef = normalizeGeneographPlaceRef(node, board.projectId);
+              if (!normalizedNode.placeRef) return;
+              delete normalizedNode.placeId;
+              delete normalizedNode.placeName;
+              delete normalizedNode.title;
+            } else {
+              delete normalizedNode.placeRef;
             }
             if (node.type === 'panel') {
               normalizedNode.title =
@@ -67686,7 +68022,12 @@
                 connection.style?.color,
                 { color: '#D9E5E1', opacity: 100, enabled: true }
               ),
-              width: geneoNumber(connection.style?.width, 2, 1, 8)
+              width: Math.round(geneoNumber(
+                connection.style?.width,
+                2,
+                GENEO_STROKE_WIDTH_MIN,
+                GENEO_STROKE_WIDTH_MAX
+              ))
             },
             showRelationshipDates: connection.showRelationshipDates !== false,
             route: {
@@ -67823,7 +68164,61 @@
           }
         };
       }
-            return {
+
+      if (type === 'shape') {
+        return {
+          ...common,
+          width: 180,
+          height: 120,
+          minWidth: 60,
+          minHeight: 60,
+          appearance: {
+            ...common.appearance,
+            fill: { color: '#173029', opacity: 100, enabled: true },
+            stroke: { color: '#62D99A', opacity: 100, enabled: true },
+            strokeWidth: 2,
+            strokePattern: 'solid',
+            cornerRadius: 8
+          }
+        };
+      }
+
+      if (type === 'drawing') {
+        return {
+          ...common,
+          width: 160,
+          height: 100,
+          minWidth: 12,
+          minHeight: 12,
+          appearance: {
+            ...common.appearance,
+            fill: { ...common.appearance.fill, enabled: false },
+            stroke: { color: '#D9E5E1', opacity: 100, enabled: true },
+            strokeWidth: 2,
+            strokePattern: 'solid'
+          }
+        };
+      }
+
+      if (type === 'place') {
+        return {
+          ...common,
+          width: 240,
+          height: 54,
+          minWidth: 160,
+          minHeight: 44,
+          appearance: {
+            ...common.appearance,
+            fill: { color: '#18211F', opacity: 100, enabled: true },
+            stroke: { color: '#52615D', opacity: 100, enabled: true },
+            strokeWidth: 1,
+            strokePattern: 'solid',
+            text: { color: '#F1F5F3', opacity: 100, enabled: true }
+          }
+        };
+      }
+
+      return {
         ...common,
         width: 480,
         height: 320,
@@ -67956,6 +68351,7 @@
     }
 
     function undoGeneographChange() {
+      cancelGeneographPencilStroke();
       geneoEnsureHistory();
       const snapshot = geneoHistoryRuntime.undo.pop();
       if (!snapshot) return;
@@ -67964,6 +68360,7 @@
     }
 
     function redoGeneographChange() {
+      cancelGeneographPencilStroke();
       geneoEnsureHistory();
       const snapshot = geneoHistoryRuntime.redo.pop();
       if (!snapshot) return;
@@ -68156,6 +68553,18 @@
         return node.title || 'Panel';
       }
 
+      if (node.type === 'shape') {
+        return geneoShapeLabel(node.shapeKind);
+      }
+
+      if (node.type === 'place') {
+        return resolveGeneographPlace(node).name;
+      }
+
+      if (node.type === 'drawing') {
+        return 'Pencil stroke';
+      }
+
       /*
       * Sticky content is independent from its layer
       * identity. Users can provide a custom layer name
@@ -68182,7 +68591,19 @@
     }
 
     function geneoNodeIcon(type) {
-      return type === 'person' ? icon.profile : type === 'image' ? icon.image : type === 'sticky' ? icon.note : type === 'text' ? icon.text : icon.shape;
+      return type === 'person'
+        ? icon.profile
+        : type === 'image'
+          ? icon.image
+          : type === 'sticky'
+            ? icon.note
+            : type === 'text'
+              ? icon.text
+              : type === 'place'
+                ? icon.mapPin
+                : type === 'drawing'
+                  ? icon.edit
+                  : icon.shape;
     }
 
     function geneoContentBounds(diagram = selectedGeneographDiagram()) {
@@ -68479,6 +68900,7 @@
           y: start.y
         };
       }
+
       return {
         x: start.x,
         y: Math.max(Math.min(start.y, end.y), Math.min(Math.max(start.y, end.y), point.y))
@@ -68522,6 +68944,32 @@
       return points.slice(0, -1).some((start, index) => {
         const end = points[index + 1];
         return geneoPointInsideRect(start, rect) || geneoPointInsideRect(end, rect)
+          || edges.some(([edgeStart, edgeEnd]) => geneoSegmentsIntersect(start, end, edgeStart, edgeEnd));
+      });
+    }
+
+    function geneoDrawingWorldPoints(node) {
+      if (node?.type !== 'drawing') return [];
+      return normalizeGeneographDrawingPoints(node.points).map(point => ({
+        x: node.x + point.x * node.width,
+        y: node.y + point.y * node.height
+      }));
+    }
+
+    function geneoDrawingIntersectsRect(node, rect) {
+      const points = geneoDrawingWorldPoints(node);
+      if (points.length < 2) return false;
+      const corners = [
+        { x: rect.left, y: rect.top },
+        { x: rect.right, y: rect.top },
+        { x: rect.right, y: rect.bottom },
+        { x: rect.left, y: rect.bottom }
+      ];
+      const edges = corners.map((corner, index) => [corner, corners[(index + 1) % corners.length]]);
+      return points.slice(0, -1).some((start, index) => {
+        const end = points[index + 1];
+        return geneoPointInsideRect(start, rect)
+          || geneoPointInsideRect(end, rect)
           || edges.some(([edgeStart, edgeEnd]) => geneoSegmentsIntersect(start, end, edgeStart, edgeEnd));
       });
     }
@@ -68610,6 +69058,7 @@
           </g>`;
         }).join('')}
         ${state.geneoConnectionDraft ? `<path class="geneo-connection-preview" data-geneo-connection-preview d="${previewPath}"></path>` : ''}
+        <path class="geneo-pencil-preview" data-geneo-pencil-preview hidden></path>
       </svg>`;
     }
 
@@ -68983,6 +69432,100 @@
       `;
     }
 
+    function geneoRoundedPolygonPath(points, radius = 0) {
+      if (!Array.isArray(points) || points.length < 3) return '';
+      const corners = points.map((point, index) => {
+        const previous = points[(index - 1 + points.length) % points.length];
+        const next = points[(index + 1) % points.length];
+        const previousLength = Math.hypot(previous.x - point.x, previous.y - point.y);
+        const nextLength = Math.hypot(next.x - point.x, next.y - point.y);
+        const distance = Math.max(0, Math.min(radius, previousLength / 2, nextLength / 2));
+        const toward = (target, length) => ({
+          x: point.x + (target.x - point.x) * (length ? distance / length : 0),
+          y: point.y + (target.y - point.y) * (length ? distance / length : 0)
+        });
+        return {
+          point,
+          incoming: toward(previous, previousLength),
+          outgoing: toward(next, nextLength)
+        };
+      });
+      const number = value => Number(value.toFixed(3));
+      return corners.reduce((path, corner, index) => {
+        const incoming = `${number(corner.incoming.x)} ${number(corner.incoming.y)}`;
+        const vertex = `${number(corner.point.x)} ${number(corner.point.y)}`;
+        const outgoing = `${number(corner.outgoing.x)} ${number(corner.outgoing.y)}`;
+        return `${path}${index ? ' L' : 'M'} ${incoming} Q ${vertex} ${outgoing}`;
+      }, '') + ' Z';
+    }
+
+    function renderGeneographShapeContent(node) {
+      const kind = normalizeGeneographShapeKind(node?.shapeKind);
+      const width = Math.max(1, geneoNumber(node?.width, 100));
+      const height = Math.max(1, geneoNumber(node?.height, 100));
+      const inset = 1;
+      const radius = Math.min(
+        Math.round(geneoNumber(node?.appearance?.cornerRadius, 8, 0, 32)),
+        Math.max(0, Math.min(width, height) / 2 - inset)
+      );
+      const polygonPoints = {
+        diamond: [
+          { x: width / 2, y: inset },
+          { x: width - inset, y: height / 2 },
+          { x: width / 2, y: height - inset },
+          { x: inset, y: height / 2 }
+        ],
+        triangle: [
+          { x: width / 2, y: inset },
+          { x: width - inset, y: height - inset },
+          { x: inset, y: height - inset }
+        ],
+        hexagon: [
+          { x: width * .25, y: inset },
+          { x: width * .75, y: inset },
+          { x: width - inset, y: height / 2 },
+          { x: width * .75, y: height - inset },
+          { x: width * .25, y: height - inset },
+          { x: inset, y: height / 2 }
+        ]
+      };
+      const geometry = kind === 'rectangle'
+        ? `<rect x="${inset}" y="${inset}" width="${Math.max(0, width - inset * 2)}" height="${Math.max(0, height - inset * 2)}" rx="${radius}" ry="${radius}"></rect>`
+        : kind === 'ellipse'
+          ? `<ellipse cx="${width / 2}" cy="${height / 2}" rx="${Math.max(0, width / 2 - inset)}" ry="${Math.max(0, height / 2 - inset)}"></ellipse>`
+          : `<path d="${geneoRoundedPolygonPath(polygonPoints[kind], radius)}"></path>`;
+      return `<svg class="geneo-shape-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-hidden="true" focusable="false"><g vector-effect="non-scaling-stroke">${geometry}</g></svg>`;
+    }
+
+    function geneoDrawingPath(points, width = 1, height = 1) {
+      const resolved = normalizeGeneographDrawingPoints(points).map(point => ({
+        x: point.x * width,
+        y: point.y * height
+      }));
+      if (resolved.length < 2) return '';
+      const number = value => Number(value.toFixed(3));
+      let path = `M ${number(resolved[0].x)} ${number(resolved[0].y)}`;
+      for (let index = 1; index < resolved.length - 1; index += 1) {
+        const point = resolved[index];
+        const next = resolved[index + 1];
+        path += ` Q ${number(point.x)} ${number(point.y)} ${number((point.x + next.x) / 2)} ${number((point.y + next.y) / 2)}`;
+      }
+      const last = resolved.at(-1);
+      return `${path} L ${number(last.x)} ${number(last.y)}`;
+    }
+
+    function renderGeneographDrawingContent(node) {
+      const width = Math.max(1, geneoNumber(node?.width, 1));
+      const height = Math.max(1, geneoNumber(node?.height, 1));
+      const path = geneoDrawingPath(node?.points, width, height);
+      return `<svg class="geneo-drawing-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path class="geneo-drawing-line" d="${path}"></path><path class="geneo-drawing-hit" d="${path}"></path></svg>`;
+    }
+
+    function renderGeneographPlaceContent(node) {
+      const resolved = resolveGeneographPlace(node);
+      return `<div class="geneo-place-node-content" title="${escapeHtml(resolved.name)}"><span class="geneo-place-node-icon" aria-hidden="true">${icon.mapPin}</span><span class="geneo-place-node-name">${escapeHtml(resolved.name)}</span></div>`;
+    }
+
     function renderGeneographNodeContent(
       node
     ) {
@@ -69043,6 +69586,18 @@
             )}
           </span>
         `;
+      }
+
+      if (node.type === 'shape') {
+        return renderGeneographShapeContent(node);
+      }
+
+      if (node.type === 'place') {
+        return renderGeneographPlaceContent(node);
+      }
+
+      if (node.type === 'drawing') {
+        return renderGeneographDrawingContent(node);
       }
 
       if (
@@ -69128,6 +69683,7 @@
     function renderGeneographPorts(
       node
     ) {
+      if (node?.type === 'drawing') return '';
       if (
         isGeneographRichTextNode(
           node
@@ -69266,7 +69822,7 @@
           appearance.stroke
         )}`,
         `--geneo-node-stroke-width:${
-          appearance.strokeWidth || 1
+          appearance.strokeWidth ?? GENEO_STROKE_WIDTH_MIN
         }px`,
         `--geneo-node-stroke-style:${
           appearance.stroke?.enabled
@@ -69339,11 +69895,13 @@
                 ? 'has-paper-fill'
                 : ''
             }
+            ${appearance.stroke?.enabled ? `stroke-${strokePattern}` : 'stroke-none'}
           "
           style="${style}"
           data-geneo-node="${escapeHtml(
             node.id
           )}"
+          ${node.type === 'shape' ? `data-geneo-shape-kind="${escapeHtml(normalizeGeneographShapeKind(node.shapeKind))}"` : ''}
           ${
             personSettings
               ? `
@@ -70279,11 +70837,11 @@
         }
       });
       if (target.scope === 'node' && target.property === 'stroke') {
-        const pattern = main.querySelector('[data-geneo-stroke-pattern]');
+        const pattern = main.querySelector('[data-geneo-stroke-pattern="node"]');
         if (pattern) pattern.disabled = !target.paint.enabled;
       }
       if (target.scope === 'connection') {
-        const pattern = main.querySelector('[data-geneo-connection-style="pattern"]');
+        const pattern = main.querySelector('[data-geneo-stroke-pattern="connection"]');
         if (pattern) pattern.disabled = !target.paint.enabled;
       }
       applyGeneoPaintTargetToDom(target);
@@ -72175,6 +72733,26 @@
       `;
     }
 
+    function renderGeneographStrokeFields({ scope, appearance }) {
+      const connection = scope === 'connection';
+      const width = connection ? appearance.width : appearance.strokeWidth;
+      const pattern = connection ? appearance.pattern : appearance.strokePattern;
+      const strokeEnabled = connection ? appearance.line?.enabled : appearance.stroke?.enabled;
+      const prefix = connection ? 'Connection' : 'Node';
+      return `<div class="geneo-stroke-settings"><div class="geneo-field geneo-appearance-subfield"><label for="geneo${prefix}StrokeWidth">Width</label><div class="geneo-number-unit"><input class="geneo-input" id="geneo${prefix}StrokeWidth" type="number" min="${GENEO_STROKE_WIDTH_MIN}" max="${GENEO_STROKE_WIDTH_MAX}" step="1" value="${Math.round(width)}" data-geneo-stroke-width="${scope}"><span aria-hidden="true">px</span></div></div><div class="geneo-field geneo-appearance-subfield"><label for="geneo${prefix}StrokePattern">Pattern</label><div class="common-select-shell geneo-pattern-select-shell"><select class="common-select geneo-pattern-select" id="geneo${prefix}StrokePattern" data-geneo-stroke-pattern="${scope}" ${strokeEnabled ? '' : 'disabled'}><option value="solid" ${pattern === 'solid' ? 'selected' : ''}>Solid</option><option value="dashed" ${pattern === 'dashed' ? 'selected' : ''}>Dashed</option></select><span class="common-select-chevron" aria-hidden="true">${icon.chevron}</span></div></div></div>`;
+    }
+
+    function renderGeneographPlaceInspectorContent(node) {
+      const resolved = resolveGeneographPlace(node);
+      return `<section class="geneo-inspector-section"><h3>Place</h3><div class="geneo-inspector-section-body"><div class="geneo-place-inspector-summary"><span aria-hidden="true">${icon.mapPin}</span><div><strong>${escapeHtml(resolved.name)}</strong><span>${resolved.linked ? 'Linked project place' : 'Board-only place'}</span></div></div><div class="geneo-place-inspector-actions"><button class="button secondary" type="button" data-geneo-edit-place="${escapeHtml(node.id)}">Change place</button>${resolved.linked ? `<button class="button secondary" type="button" data-geneo-open-place="${escapeHtml(node.id)}">Open in Places</button><button class="button ghost" type="button" data-geneo-place-board-only="${escapeHtml(node.id)}">Make board-only</button>` : ''}</div></div></section>`;
+    }
+
+    function renderGeneographShapeInspectorContent(node) {
+      const kind = normalizeGeneographShapeKind(node.shapeKind);
+      const radius = Math.round(geneoNumber(node.appearance?.cornerRadius, 8, 0, 32));
+      return `<section class="geneo-inspector-section"><h3>Shape</h3><div class="geneo-inspector-section-body"><div class="geneo-field"><span class="geneo-field-label">Shape type</span><div class="geneo-shape-kind-value">${escapeHtml(geneoShapeLabel(kind))}</div></div>${kind === 'ellipse' ? '' : `<div class="geneo-field"><label for="geneoShapeCornerRadius">Corner radius</label><div class="geneo-number-unit"><input class="geneo-input" id="geneoShapeCornerRadius" type="number" min="0" max="32" step="1" value="${radius}" data-geneo-shape-corner-radius><span aria-hidden="true">px</span></div></div>`}</div></section>`;
+    }
+
     function renderGeneographNodeInspector(node) {
       const appearance = node.appearance || {};
       const nameSection =
@@ -72233,7 +72811,13 @@
         ${
           node.type === 'image'
             ? renderGeneographImageSourceSection(node)
-            : `
+            : node.type === 'place'
+              ? renderGeneographPlaceInspectorContent(node)
+              : node.type === 'shape'
+                ? renderGeneographShapeInspectorContent(node)
+                : node.type === 'drawing'
+                  ? ''
+                : `
               <section class="geneo-inspector-section">
                 <h3>Content</h3>
 
@@ -72254,13 +72838,13 @@
           <h3>Appearance</h3>
 
             <div class="geneo-inspector-section-body">
-              <div class="geneo-appearance-group">
+              ${node.type === 'drawing' ? '' : `<div class="geneo-appearance-group">
                 ${renderGeneoPaintControl({
                   scope: 'node',
                   id: node.id,
                   property: 'fill'
                 })}
-              </div>
+              </div>`}
 
               <div class="geneo-appearance-group">
                 ${renderGeneoPaintControl({
@@ -72269,64 +72853,7 @@
                   property: 'stroke'
                 })}
 
-                <div
-                  class="
-                    geneo-field
-                    geneo-appearance-subfield
-                  ">
-                  <label
-                    for="geneoNodeStrokePattern">
-                    Pattern
-                  </label>
-
-                  <div
-                    class="
-                      common-select-shell
-                      geneo-pattern-select-shell
-                    ">
-                    <select
-                      class="
-                        common-select
-                        geneo-pattern-select
-                      "
-                      id="geneoNodeStrokePattern"
-                      data-geneo-stroke-pattern
-                      ${
-                        appearance.stroke.enabled
-                          ? ''
-                          : 'disabled'
-                      }>
-
-                      <option
-                        value="solid"
-                        ${
-                          appearance.strokePattern
-                          === 'solid'
-                            ? 'selected'
-                            : ''
-                        }>
-                        Solid
-                      </option>
-
-                      <option
-                        value="dashed"
-                        ${
-                          appearance.strokePattern
-                          === 'dashed'
-                            ? 'selected'
-                            : ''
-                        }>
-                        Dashed
-                      </option>
-                    </select>
-
-                    <span
-                      class="common-select-chevron"
-                      aria-hidden="true">
-                      ${icon.chevron}
-                    </span>
-                  </div>
-                </div>
+                ${renderGeneographStrokeFields({ scope: 'node', appearance })}
               </div>
 
               ${
@@ -72362,7 +72889,7 @@
               }
 
               ${
-                node.type === 'image'
+                node.type === 'image' || node.type === 'shape' || node.type === 'drawing'
                   ? ''
                   : `
                     <div class="geneo-appearance-group">
@@ -72397,7 +72924,7 @@
       const startEvent = relationship ? partnerRelationshipStartEvent(relationship, relationshipType) : null;
       const marriageType = startEvent?.typeLabel || relationship?.marriageType || 'Civil';
       const relationshipSection = family ? `<section class="geneo-inspector-section"><h3>Relationship details</h3><div class="geneo-inspector-section-body geneo-relationship-editor" data-geneo-relationship-editor><div class="geneo-field"><label for="geneoRelationshipType">Relationship type</label><select class="geneo-select" id="geneoRelationshipType" data-geneo-relationship-type>${addPersonRelationshipTypeOptions(relationshipType)}</select></div>${renderPartnerRelationshipDateFields({ prefix: 'geneoRelationship', relationshipType, family: relationship })}<div class="geneo-field" data-add-person-marriage-type-field ${addPersonRelationshipShowsMarriageType(relationshipType) ? '' : 'hidden'}><label for="geneoRelationshipMarriageType">Marriage type</label><select class="geneo-select" id="geneoRelationshipMarriageType" data-geneo-marriage-type>${addPersonMarriageTypeOptions(marriageType)}</select></div><label class="geneo-check"><input type="checkbox" data-geneo-show-relationship-dates ${connection.showRelationshipDates !== false ? 'checked' : ''}> Show relationship date on board</label><p class="geneo-relationship-storage">${resolved.central ? 'Linked Family Tree relationship' : 'Board-only relationship'}</p><button class="button primary" type="button" data-geneo-save-relationship>Save relationship details</button></div></section>` : '';
-      return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader(geneoConnectionLabel(connection), 'Connection', icon.link)}${nameSection}${relationshipSection}<section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body">${renderGeneoPaintControl({ scope: 'connection', id: connection.id, property: 'line' })}<div class="geneo-field"><label>Width</label><input class="geneo-input" type="number" min="1" max="8" data-geneo-connection-style="width" value="${connection.style.width}"></div><div class="geneo-field"><label>Pattern</label><select class="geneo-select" data-geneo-connection-style="pattern" ${connection.style.line.enabled ? '' : 'disabled'}><option value="solid" ${connection.style.pattern === 'solid' ? 'selected' : ''}>Solid</option><option value="dashed" ${connection.style.pattern === 'dashed' ? 'selected' : ''}>Dashed</option></select></div><div class="geneo-field"><label>Routing</label><select class="geneo-select" data-geneo-connection-routing><option value="auto" ${connection.route.mode === 'auto' ? 'selected' : ''}>Automatic</option><option value="manual" ${connection.route.mode === 'manual' ? 'selected' : ''}>Manual</option></select></div><button class="button secondary" type="button" data-geneo-reset-route>Reset route</button></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete connection</button></div></aside>`;
+      return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader(geneoConnectionLabel(connection), 'Connection', icon.link)}${nameSection}${relationshipSection}<section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body">${renderGeneoPaintControl({ scope: 'connection', id: connection.id, property: 'line' })}${renderGeneographStrokeFields({ scope: 'connection', appearance: connection.style })}<div class="geneo-field"><label>Routing</label><select class="geneo-select" data-geneo-connection-routing><option value="auto" ${connection.route.mode === 'auto' ? 'selected' : ''}>Automatic</option><option value="manual" ${connection.route.mode === 'manual' ? 'selected' : ''}>Manual</option></select></div><button class="button secondary" type="button" data-geneo-reset-route>Reset route</button></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete connection</button></div></aside>`;
     }
 
     function renderGeneographEditor() {
@@ -72439,6 +72966,12 @@
         state.geneoTool === 'text'
           ? 'text-tool'
           : '',
+        state.geneoTool === 'shape'
+          ? 'shape-tool'
+          : '',
+        state.geneoTool === 'pencil'
+          ? 'pencil-tool'
+          : '',
         state.geneoConnectionDraft ? 'is-connecting' : '',
         diagram.canvas.alwaysShowSockets ? 'show-sockets' : ''
       ].filter(Boolean).join(' ');
@@ -72448,13 +72981,15 @@
           <div class="geneo-editor-toolbar-left">
             <button class="geneo-toolbar-button" type="button" data-geneo-undo aria-label="Undo" ${geneoHistoryRuntime.undo.length ? '' : 'disabled'}>${icon.undo}<span class="optional">Undo</span></button>
             <button class="geneo-toolbar-button" type="button" data-geneo-redo aria-label="Redo" ${geneoHistoryRuntime.redo.length ? '' : 'disabled'}>${icon.redo}<span class="optional">Redo</span></button>
-            <div class="geneo-tool-group"><button class="geneo-tool ${state.geneoTool === 'select' ? 'active' : ''}" type="button" data-geneo-tool="select" aria-pressed="${state.geneoTool === 'select'}">${icon.cursorSelect}<span>Select</span></button><button class="geneo-tool ${state.geneoTool === 'pan' ? 'active' : ''}" type="button" data-geneo-tool="pan" aria-pressed="${state.geneoTool === 'pan'}">${icon.pan}<span>Pan</span></button></div>
+            <div class="geneo-tool-group"><button class="geneo-tool ${state.geneoTool === 'select' ? 'active' : ''}" type="button" data-geneo-tool="select" aria-pressed="${state.geneoTool === 'select'}">${icon.cursorSelect}<span>Select</span></button><button class="geneo-tool ${state.geneoTool === 'pan' ? 'active' : ''}" type="button" data-geneo-tool="pan" aria-pressed="${state.geneoTool === 'pan'}">${icon.pan}<span>Pan</span></button><button class="geneo-tool ${state.geneoTool === 'pencil' ? 'active' : ''}" type="button" data-geneo-tool="pencil" aria-pressed="${state.geneoTool === 'pencil'}">${icon.edit}<span>Pencil</span></button></div>
             ${renderGeneoConnectionSplitTool()}
             <div class="geneo-toolbar-objects" aria-label="Add objects">
               ${renderGeneoToolbarObjectButton('person', icon.profile, 'Person')}
+              ${renderGeneoToolbarObjectButton('place', icon.mapPin, 'Place')}
               ${renderGeneoToolbarObjectButton('image', icon.image, 'Image')}
               ${renderGeneoToolbarObjectButton('sticky', icon.note, 'Sticky note')}
               ${renderGeneoToolbarObjectButton('text', icon.text, 'Text')}
+              ${renderGeneoShapeSplitTool()}
               ${renderGeneoToolbarObjectButton('panel', icon.shape, 'Panel')}
             </div>
           </div>
@@ -73574,6 +74109,7 @@
     function addGeneographObject(
       type
     ) {
+      cancelGeneographPencilStroke();
       if (
         !GENEO_NODE_TYPES.has(type)
       ) {
@@ -73584,7 +74120,8 @@
         [
           'panel',
           'sticky',
-          'text'
+          'text',
+          'shape'
         ].includes(type)
       ) {
         activateGeneographPlacementTool(
@@ -73592,6 +74129,19 @@
         );
 
         return;
+      }
+
+      const endedPlacementTool =
+        [
+          'panel',
+          'sticky',
+          'text',
+          'shape'
+        ].includes(state.geneoTool);
+
+      if (endedPlacementTool) {
+        finishGeneographPlacementTool();
+        renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
       }
 
       cancelGeneographConnectionDraft();
@@ -73603,6 +74153,11 @@
 
       if (type === 'image') {
         openGeneographImagePicker();
+        return;
+      }
+
+      if (type === 'place') {
+        openGeneographPlaceModal();
       }
     }
 
@@ -73632,11 +74187,13 @@
     function activateGeneographPlacementTool(
       type
     ) {
+      cancelGeneographPencilStroke();
       if (
         ![
           'panel',
           'sticky',
-          'text'
+          'text',
+          'shape'
         ].includes(type)
       ) {
         return;
@@ -73666,6 +74223,8 @@
       const instruction =
         type === 'panel'
           ? 'Drag on empty canvas to draw a panel.'
+          : type === 'shape'
+            ? `Drag on empty canvas to draw a ${geneoShapeLabel(state.geneoShapeKind).toLowerCase()}, or click to use the default size.`
           : type === 'sticky'
             ? 'Click empty canvas or a panel to place a sticky note.'
             : 'Click empty canvas or a panel to place a text block.';
@@ -73734,6 +74293,105 @@
       }
     }
 
+    function geneoPointToSegmentDistance(point, start, end) {
+      const dx = end.x - start.x;
+      const dy = end.y - start.y;
+      if (!dx && !dy) return Math.hypot(point.x - start.x, point.y - start.y);
+      const ratio = Math.max(0, Math.min(1, ((point.x - start.x) * dx + (point.y - start.y) * dy) / (dx * dx + dy * dy)));
+      return Math.hypot(point.x - (start.x + ratio * dx), point.y - (start.y + ratio * dy));
+    }
+
+    function simplifyGeneographDrawingPoints(points, tolerance) {
+      if (!Array.isArray(points) || points.length <= 2) return points ? [...points] : [];
+      let farthestIndex = 0;
+      let farthestDistance = 0;
+      for (let index = 1; index < points.length - 1; index += 1) {
+        const distance = geneoPointToSegmentDistance(points[index], points[0], points.at(-1));
+        if (distance > farthestDistance) {
+          farthestDistance = distance;
+          farthestIndex = index;
+        }
+      }
+      if (farthestDistance <= tolerance) return [points[0], points.at(-1)];
+      const first = simplifyGeneographDrawingPoints(points.slice(0, farthestIndex + 1), tolerance);
+      const second = simplifyGeneographDrawingPoints(points.slice(farthestIndex), tolerance);
+      return [...first.slice(0, -1), ...second];
+    }
+
+    function geneoSmoothAbsolutePath(points) {
+      if (!Array.isArray(points) || points.length < 2) return '';
+      const number = value => Number(value.toFixed(3));
+      let path = `M ${number(points[0].x)} ${number(points[0].y)}`;
+      for (let index = 1; index < points.length - 1; index += 1) {
+        const point = points[index];
+        const next = points[index + 1];
+        path += ` Q ${number(point.x)} ${number(point.y)} ${number((point.x + next.x) / 2)} ${number((point.y + next.y) / 2)}`;
+      }
+      const last = points.at(-1);
+      return `${path} L ${number(last.x)} ${number(last.y)}`;
+    }
+
+    function updateGeneographPencilPreview(points = []) {
+      const preview = main.querySelector('[data-geneo-pencil-preview]');
+      if (!preview) return;
+      const path = geneoSmoothAbsolutePath(points);
+      preview.hidden = !path;
+      preview.setAttribute('d', path);
+    }
+
+    function cancelGeneographPencilStroke() {
+      if (geneoPointerState?.kind !== 'pencil') return false;
+      const activeStroke = geneoPointerState;
+      geneoPointerState = null;
+      if (activeStroke.wrap?.hasPointerCapture?.(activeStroke.pointerId)) {
+        activeStroke.wrap.releasePointerCapture(activeStroke.pointerId);
+      }
+      updateGeneographPencilPreview();
+      return true;
+    }
+
+    function createGeneographDrawingFromPoints(sourcePoints, beforeSnapshot = null) {
+      const diagram = selectedGeneographDiagram();
+      const defaults = geneoNodeDefaults('drawing');
+      const zoom = Math.max(.25, state.geneoZoom / 100);
+      const points = simplifyGeneographDrawingPoints(sourcePoints, 1.5 / zoom);
+      if (!diagram || points.length < 2) return null;
+      const length = points.slice(1).reduce((total, point, index) => total + Math.hypot(point.x - points[index].x, point.y - points[index].y), 0);
+      if (length < 4 / zoom) return null;
+      const minX = Math.min(...points.map(point => point.x));
+      const maxX = Math.max(...points.map(point => point.x));
+      const minY = Math.min(...points.map(point => point.y));
+      const maxY = Math.max(...points.map(point => point.y));
+      const width = Math.max(defaults.minWidth, maxX - minX);
+      const height = Math.max(defaults.minHeight, maxY - minY);
+      const x = (minX + maxX) / 2 - width / 2;
+      const y = (minY + maxY) / 2 - height / 2;
+      const drawing = {
+        id: createRuntimeId('geneo-node'),
+        type: 'drawing',
+        points: points.map(point => ({
+          x: geneoNumber((point.x - x) / width, 0, 0, 1),
+          y: geneoNumber((point.y - y) / height, 0, 0, 1)
+        })),
+        x,
+        y,
+        width,
+        height,
+        parentPanelId: null,
+        order: Math.max(0, ...diagram.nodes.map(item => item.order || 0)) + 1,
+        visible: true,
+        locked: false,
+        appearance: structuredClone(defaults.appearance)
+      };
+      if (beforeSnapshot) geneoPushHistorySnapshot(beforeSnapshot);
+      else geneoPushHistory();
+      diagram.nodes.push(drawing);
+      drawing.parentPanelId = geneoContainingPanelForNode(drawing)?.id || null;
+      selectGeneographNode(drawing.id);
+      touchGeneographBoard();
+      return drawing;
+    }
+
     function createGeneographPanelFromRect(rect) {
       const diagram = selectedGeneographDiagram();
       const defaults = geneoNodeDefaults('panel');
@@ -73777,6 +74435,146 @@
       touchGeneographBoard();
 
       return panel;
+    }
+
+    function createGeneographShapeFromRect(rect, { useDefaultSize = false } = {}) {
+      const diagram = selectedGeneographDiagram();
+      const defaults = geneoNodeDefaults('shape');
+      if (!diagram || !rect) return null;
+      const source = useDefaultSize
+        ? {
+            x: rect.x - defaults.width / 2,
+            y: rect.y - defaults.height / 2,
+            width: defaults.width,
+            height: defaults.height
+          }
+        : rect;
+      if (source.width < defaults.minWidth || source.height < defaults.minHeight) return null;
+      const position = snapGeneographPoint({ x: source.x, y: source.y });
+      const shape = {
+        id: createRuntimeId('geneo-node'),
+        type: 'shape',
+        shapeKind: normalizeGeneographShapeKind(state.geneoShapeKind),
+        x: position.x,
+        y: position.y,
+        width: Math.max(defaults.minWidth, snapGeneographCoordinate(source.width)),
+        height: Math.max(defaults.minHeight, snapGeneographCoordinate(source.height)),
+        parentPanelId: null,
+        order: Math.max(0, ...diagram.nodes.map(item => item.order || 0)) + 1,
+        visible: true,
+        locked: false,
+        appearance: structuredClone(defaults.appearance)
+      };
+      geneoPushHistory();
+      diagram.nodes.push(shape);
+      shape.parentPanelId = geneoContainingPanelForNode(shape)?.id || null;
+      selectGeneographNode(shape.id);
+      touchGeneographBoard();
+      return shape;
+    }
+
+    function createGeneographPlaceNode(placeRef) {
+      const diagram = selectedGeneographDiagram();
+      const defaults = geneoNodeDefaults('place');
+      if (!diagram || !placeRef) return null;
+      const position = snapGeneographPoint(nextGeneoObjectPosition(defaults.width, defaults.height));
+      const node = {
+        id: createRuntimeId('geneo-node'),
+        type: 'place',
+        placeRef: structuredClone(placeRef),
+        x: position.x,
+        y: position.y,
+        width: defaults.width,
+        height: defaults.height,
+        parentPanelId: null,
+        order: Math.max(0, ...diagram.nodes.map(item => item.order || 0)) + 1,
+        visible: true,
+        locked: false,
+        appearance: structuredClone(defaults.appearance)
+      };
+      diagram.nodes.push(node);
+      node.parentPanelId = geneoContainingPanelForNode(node)?.id || null;
+      selectGeneographNode(node.id);
+      return node;
+    }
+
+    function openGeneographPlaceModal(nodeId = '') {
+      const board = selectedGeneographBoard();
+      const node = nodeId ? getGeneographNode(nodeId) : null;
+      if (!board || (nodeId && node?.type !== 'place')) return;
+      const resolved = node ? resolveGeneographPlace(node, board) : null;
+      const selectedPlaceId = resolved?.linked ? resolved.place.id : '';
+      const value = resolved?.linked
+        ? placeDisplayText(resolved.place)
+        : resolved?.name || '';
+      const editing = Boolean(node);
+      openModal(`<div class="modal geneo-place-modal" role="dialog" aria-modal="true" aria-labelledby="geneoPlaceModalTitle"><form data-geneo-place-form><div class="modal-header"><div><h2 id="geneoPlaceModalTitle">${editing ? 'Edit place object' : 'Add place object'}</h2><p>Link a project place or keep a board-only historical name.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body">${renderPlaceCombobox({
+        id: 'geneoPlaceObjectInput',
+        label: 'Place',
+        value,
+        selectedPlaceId,
+        showAddress: false,
+        placeholder: 'Search project places or type a board-only name',
+        inputAttrs: `data-place-project-id="${escapeHtml(board.projectId)}" autocomplete="off"`,
+        createOptionLabel: 'Use as board-only place'
+      })}<p class="geneo-place-modal-help">Project places stay linked and reflect future name changes. Board-only places exist only on this board.</p><span class="field-error" data-geneo-place-error role="alert" aria-live="polite"></span></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">${editing ? 'Save changes' : 'Add place'}</button></div></form></div>`);
+      const form = modalBackdrop.querySelector('[data-geneo-place-form]');
+      bindPlaceComboboxes(form);
+      form?.addEventListener('submit', event => {
+        event.preventDefault();
+        const input = form.querySelector('[data-place-input]');
+        const error = form.querySelector('[data-geneo-place-error]');
+        const enteredName = String(input?.value || '').replace(/[\r\n\u0000-\u001F\u007F]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160);
+        const projectPlace = input?.dataset.placeId ? getPlace(input.dataset.placeId) : null;
+        const validProjectPlace = projectPlace && !projectPlace.deleted && projectPlace.projectId === board.projectId;
+        if (!validProjectPlace && !enteredName) {
+          if (error) error.textContent = 'Enter a place name or select a project place.';
+          input?.setAttribute('aria-invalid', 'true');
+          input?.focus({ preventScroll: true });
+          return;
+        }
+        const nextRef = validProjectPlace
+          ? {
+              scope: 'project',
+              id: projectPlace.id,
+              fallbackName: String(placePrimaryName(projectPlace) || projectPlace.name || enteredName).trim().slice(0, 160)
+            }
+          : { scope: 'board', name: enteredName };
+        geneoPushHistory();
+        const target = node || createGeneographPlaceNode(nextRef);
+        if (!target) {
+          geneoHistoryRuntime.undo.pop();
+          return;
+        }
+        if (node) target.placeRef = nextRef;
+        touchGeneographBoard();
+        closeModal();
+        renderGeneographEditorPreserveCenter(geneoNodeCenter(target));
+        showToast(editing ? 'Place object updated.' : 'Place added to board.');
+      });
+      requestAnimationFrame(() => form?.querySelector('[data-place-input]')?.focus({ preventScroll: true }));
+    }
+
+    function makeGeneographPlaceBoardOnly(nodeId) {
+      const node = getGeneographNode(nodeId);
+      if (node?.type !== 'place') return;
+      const name = resolveGeneographPlace(node).name;
+      geneoPushHistory();
+      node.placeRef = { scope: 'board', name };
+      touchGeneographBoard();
+      renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
+      showToast('Place is now board-only.');
+    }
+
+    function openGeneographPlaceInPlaces(nodeId) {
+      const node = getGeneographNode(nodeId);
+      const resolved = node?.type === 'place' ? resolveGeneographPlace(node) : null;
+      if (!resolved?.linked) return;
+      captureGeneographViewport();
+      state.activeModule = 'Places';
+      state.placesView = 'list';
+      state.selectedPlaceId = resolved.place.id;
+      render();
     }
 
     function createGeneographRichTextNodeAtPoint(
@@ -76867,6 +77665,17 @@
     function moveGeneographObject(event) {
       updateGeneographConnectionPreview(event);
       if (!geneoPointerState) return;
+      if (geneoPointerState.kind === 'pencil') {
+        if (event.pointerId !== geneoPointerState.pointerId) return;
+        const point = geneoPointerToCanvas(event);
+        const previous = geneoPointerState.points.at(-1);
+        const minimumDistance = 2 / Math.max(.25, state.geneoZoom / 100);
+        if (previous && Math.hypot(point.x - previous.x, point.y - previous.y) < minimumDistance) return;
+        geneoPointerState.points.push(point);
+        geneoPointerState.moved = true;
+        updateGeneographPencilPreview(geneoPointerState.points);
+        return;
+      }
       if (geneoPointerState.kind === 'pan') {
         const dx = event.clientX - geneoPointerState.clientX;
         const dy = event.clientY - geneoPointerState.clientY;
@@ -76875,7 +77684,10 @@
         geneoPointerState.moved = Math.abs(dx) > 1 || Math.abs(dy) > 1;
         return;
       }
-      if (geneoPointerState.kind === 'draw-panel') {
+      if (
+        geneoPointerState.kind === 'draw-panel'
+        || geneoPointerState.kind === 'draw-shape'
+      ) {
         const point = snapGeneographPoint(
           geneoPointerToCanvas(event)
         );
@@ -76930,7 +77742,11 @@
         geneoPointerState.current = point;
         geneoPointerState.moved = Math.abs(right - left) > 2 || Math.abs(bottom - top) > 2;
         const rect = { left, top, right, bottom };
-        const hitIds = selectedGeneographDiagram().nodes.filter(node => geneoNodeEffectiveVisible(node) && node.x < right && node.x + node.width > left && node.y < bottom && node.y + node.height > top).map(node => node.id);
+        const hitIds = selectedGeneographDiagram().nodes.filter(node => {
+          if (!geneoNodeEffectiveVisible(node)) return false;
+          if (node.type === 'drawing') return geneoDrawingIntersectsRect(node, rect);
+          return node.x < right && node.x + node.width > left && node.y < bottom && node.y + node.height > top;
+        }).map(node => node.id);
         const hitConnectionIds = selectedGeneographDiagram().connections.filter(connection => geneoConnectionIntersectsRect(connection, rect)).map(connection => connection.id);
         const nextIds = geneoPointerState.additive ? [...new Set([...geneoPointerState.baseIds, ...hitIds])] : hitIds;
         const nextConnectionIds = geneoPointerState.additive ? [...new Set([...geneoPointerState.baseConnectionIds, ...hitConnectionIds])] : hitConnectionIds;
@@ -77364,9 +78180,26 @@
       }
     }
 
-    function endGeneographObjectDrag() {
+    function endGeneographObjectDrag(event) {
       if (!geneoPointerState) return; const stateBefore = geneoPointerState; geneoPointerState = null;
-      if (stateBefore.kind === 'draw-panel') {
+      if (stateBefore.kind === 'pencil') {
+        updateGeneographPencilPreview();
+        if (stateBefore.wrap?.hasPointerCapture?.(stateBefore.pointerId)) {
+          stateBefore.wrap.releasePointerCapture(stateBefore.pointerId);
+        }
+        geneoCanvasRuntime.suppressNodeClick = true;
+        requestAnimationFrame(() => { geneoCanvasRuntime.suppressNodeClick = false; });
+        if (event?.type === 'pointercancel') return;
+        const drawing = createGeneographDrawingFromPoints(stateBefore.points, stateBefore.beforeSnapshot);
+        if (!drawing) return;
+        renderGeneographEditorPreserveScroll();
+        requestAnimationFrame(() => main.querySelector(`[data-geneo-node="${CSS.escape(drawing.id)}"]`)?.focus());
+        return;
+      }
+      if (
+        stateBefore.kind === 'draw-panel'
+        || stateBefore.kind === 'draw-shape'
+      ) {
         hideGeneographPanelDraftDom();
 
         geneoCanvasRuntime.suppressNodeClick = true;
@@ -77380,7 +78213,20 @@
           stateBefore.current || stateBefore.start
         );
 
-        const defaults = geneoNodeDefaults('panel');
+        const drawingShape = stateBefore.kind === 'draw-shape';
+        const defaults = geneoNodeDefaults(drawingShape ? 'shape' : 'panel');
+
+        if (drawingShape && !stateBefore.moved) {
+          const shape = createGeneographShapeFromRect(
+            { x: stateBefore.start.x, y: stateBefore.start.y },
+            { useDefaultSize: true }
+          );
+          if (!shape) return;
+          finishGeneographPlacementTool();
+          renderGeneographEditorPreserveScroll();
+          requestAnimationFrame(() => main.querySelector(`[data-geneo-node="${CSS.escape(shape.id)}"]`)?.focus());
+          return;
+        }
 
         if (
           !stateBefore.moved
@@ -77389,15 +78235,16 @@
         ) {
           if (stateBefore.moved) {
             showToast(
-              `Panel must be at least ${defaults.minWidth} × ${defaults.minHeight}.`
+              `${drawingShape ? 'Shape' : 'Panel'} must be at least ${defaults.minWidth} × ${defaults.minHeight}.`
             );
           }
 
           return;
         }
 
-        const panel =
-          createGeneographPanelFromRect(rect);
+        const panel = drawingShape
+          ? createGeneographShapeFromRect(rect)
+          : createGeneographPanelFromRect(rect);
 
         if (!panel) return;
 
@@ -78448,6 +79295,7 @@
           button.addEventListener(
             'click',
             () => {
+              cancelGeneographPencilStroke();
               cancelGeneographConnectionDraft();
 
               state.geneoPlacementReturnTool =
@@ -78463,6 +79311,7 @@
           );
         });
       main.querySelector('[data-geneo-connection-main]')?.addEventListener('click', () => {
+        cancelGeneographPencilStroke();
         cancelGeneographConnectionDraft();
         state.geneoTool = 'connect';
         renderGeneographEditorPreserveScroll();
@@ -78472,6 +79321,15 @@
         event.preventDefault();
         event.stopPropagation();
         openGeneoConnectionStyleMenu(connectionMenuButton);
+      });
+      main.querySelector('[data-geneo-shape-main]')?.addEventListener('click', () => {
+        activateGeneographPlacementTool('shape');
+      });
+      const shapeMenuButton = main.querySelector('[data-geneo-shape-menu]');
+      shapeMenuButton?.addEventListener('click', event => {
+        event.preventDefault();
+        event.stopPropagation();
+        openGeneoShapeMenu(shapeMenuButton);
       });
       main
         .querySelectorAll(
@@ -78737,6 +79595,36 @@
           return;
         }
 
+        if (state.geneoTool === 'pencil') {
+          if (event.target.closest([
+            'button',
+            'input',
+            'textarea',
+            'select',
+            'a',
+            '[contenteditable="true"]',
+            '.rich-text-toolbar',
+            '.ql-tooltip'
+          ].join(','))) return;
+          event.preventDefault();
+          event.stopPropagation();
+          const point = geneoPointerToCanvas(event);
+          geneoPointerState = {
+            kind: 'pencil',
+            pointerId: event.pointerId,
+            wrap,
+            points: [point],
+            beforeSnapshot: geneoSnapshot(),
+            moved: false
+          };
+          wrap.setPointerCapture?.(event.pointerId);
+          updateGeneographPencilPreview(geneoPointerState.points);
+          return;
+        }
+
+        const placementNodeElement = event.target.closest('[data-geneo-node]');
+        const drawingShapeOnPanel = state.geneoTool === 'shape'
+          && getGeneographNode(placementNodeElement?.dataset.geneoNode)?.type === 'panel';
         if (
           event.target.closest(
             [
@@ -78744,12 +79632,12 @@
               'input',
               'textarea',
               'select',
-              '[data-geneo-node]',
               '[data-geneo-connection]',
               '[data-geneo-waypoint]',
               '[data-geneo-family-junction]'
             ].join(',')
           )
+          || (placementNodeElement && !drawingShapeOnPanel)
         ) {
           return;
         }
@@ -78784,13 +79672,16 @@
           if (!additive) {
             setGeneographSelection();
           }
-        } else if (state.geneoTool === 'panel') {
+        } else if (
+          state.geneoTool === 'panel'
+          || state.geneoTool === 'shape'
+        ) {
           const point = snapGeneographPoint(
             geneoPointerToCanvas(event)
           );
 
           geneoPointerState = {
-            kind: 'draw-panel',
+            kind: state.geneoTool === 'shape' ? 'draw-shape' : 'draw-panel',
             start: point,
             current: point,
             moved: false
@@ -78857,13 +79748,51 @@
           });
         });
       bindGeneoPaintControls();
-      main.querySelector('[data-geneo-stroke-pattern]')?.addEventListener('change', event => {
-        const node = selectedGeneographNode();
-        if (!node) return;
-        geneoPushHistory();
-        node.appearance.strokePattern = event.target.value === 'dashed' ? 'dashed' : 'solid';
-        touchGeneographBoard();
-        applyGeneoPaintTargetToDom({ scope: 'node', id: node.id, property: 'stroke' });
+      main.querySelectorAll('[data-geneo-stroke-pattern]').forEach(input => {
+        input.addEventListener('change', event => {
+          const scope = event.target.dataset.geneoStrokePattern;
+          const entity = scope === 'connection' ? selectedGeneographConnection() : selectedGeneographNode();
+          if (!entity) return;
+          const target = scope === 'connection' ? entity.style : entity.appearance;
+          const nextPattern = event.target.value === 'dashed' ? 'dashed' : 'solid';
+          if (target[scope === 'connection' ? 'pattern' : 'strokePattern'] === nextPattern) return;
+          geneoPushHistory();
+          target[scope === 'connection' ? 'pattern' : 'strokePattern'] = nextPattern;
+          touchGeneographBoard();
+          renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
+        });
+      });
+      main.querySelectorAll('[data-geneo-stroke-width]').forEach(input => {
+        const scope = input.dataset.geneoStrokeWidth;
+        const entityId = scope === 'connection'
+          ? state.selectedGeneoConnectionId
+          : state.selectedGeneoNodeId;
+        const commitStrokeWidth = () => {
+          const entity = scope === 'connection'
+            ? getGeneographConnection(entityId)
+            : getGeneographNode(entityId);
+          if (!entity) return;
+          const target = scope === 'connection' ? entity.style : entity.appearance;
+          const key = scope === 'connection' ? 'width' : 'strokeWidth';
+          const nextWidth = Math.round(geneoNumber(
+            input.value,
+            target[key],
+            GENEO_STROKE_WIDTH_MIN,
+            GENEO_STROKE_WIDTH_MAX
+          ));
+          input.value = nextWidth;
+          if (target[key] === nextWidth) return;
+          geneoPushHistory();
+          target[key] = nextWidth;
+          touchGeneographBoard();
+          renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
+        };
+        input.addEventListener('change', commitStrokeWidth);
+        input.addEventListener('keydown', event => {
+          if (event.key !== 'Enter') return;
+          event.preventDefault();
+          commitStrokeWidth();
+        });
       });
       main
         .querySelector(
@@ -78881,7 +79810,7 @@
               return;
             }
 
-            nextRadius =
+            const nextRadius =
               Math.round(
                 geneoNumber(
                   event.target.value,
@@ -79157,6 +80086,30 @@
       main.querySelector('[data-geneo-link-person]')?.addEventListener('click', openGeneographTreePersonPicker);
       main.querySelector('[data-geneo-edit-person]')?.addEventListener('click', () => { const person = getGeneographPerson(selectedGeneographNode()?.personId); if (person) openGeneographPersonModal(person.id); });
       main.querySelector('[data-geneo-unlink-person]')?.addEventListener('click', () => { const person = getGeneographPerson(selectedGeneographNode()?.personId); if (person) { geneoPushHistory(); person.treePersonId = null; person.syncState = 'local'; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); } });
+      main.querySelector('[data-geneo-edit-place]')?.addEventListener('click', event => openGeneographPlaceModal(event.currentTarget.dataset.geneoEditPlace));
+      main.querySelector('[data-geneo-place-board-only]')?.addEventListener('click', event => makeGeneographPlaceBoardOnly(event.currentTarget.dataset.geneoPlaceBoardOnly));
+      main.querySelector('[data-geneo-open-place]')?.addEventListener('click', event => openGeneographPlaceInPlaces(event.currentTarget.dataset.geneoOpenPlace));
+      const shapeRadiusInput = main.querySelector('[data-geneo-shape-corner-radius]');
+      if (shapeRadiusInput) {
+        const nodeId = state.selectedGeneoNodeId;
+        const commitShapeRadius = () => {
+          const node = getGeneographNode(nodeId);
+          if (node?.type !== 'shape' || normalizeGeneographShapeKind(node.shapeKind) === 'ellipse') return;
+          const radius = Math.round(geneoNumber(shapeRadiusInput.value, node.appearance.cornerRadius, 0, 32));
+          shapeRadiusInput.value = radius;
+          if (node.appearance.cornerRadius === radius) return;
+          geneoPushHistory();
+          node.appearance.cornerRadius = radius;
+          touchGeneographBoard();
+          renderGeneographEditorPreserveScroll({ preserveInspectorScroll: true });
+        };
+        shapeRadiusInput.addEventListener('change', commitShapeRadius);
+        shapeRadiusInput.addEventListener('keydown', event => {
+          if (event.key !== 'Enter') return;
+          event.preventDefault();
+          commitShapeRadius();
+        });
+      }
       main
         .querySelector('[data-geneo-replace-image]')
         ?.addEventListener('click', () => {
@@ -79191,38 +80144,6 @@
         relationshipEditor.querySelector('[data-geneo-show-relationship-dates]')?.addEventListener('change', event => { const connection = selectedGeneographConnection(); if (!connection) return; geneoPushHistory(); connection.showRelationshipDates = event.target.checked; touchGeneographBoard(); renderGeneographEditorPreserveScroll(); });
         relationshipEditor.querySelector('[data-geneo-save-relationship]')?.addEventListener('click', saveGeneographPartnerRelationship);
       }
-      main
-        .querySelectorAll('[data-geneo-connection-style]')
-        .forEach(input => {
-          input.addEventListener('change', () => {
-            const connection =
-              selectedGeneographConnection();
-
-            if (!connection) return;
-
-            geneoPushHistory();
-
-            const field =
-              input.dataset.geneoConnectionStyle;
-
-            connection.style[field] =
-              field === 'width'
-                ? geneoNumber(
-                    input.value,
-                    2,
-                    1,
-                    8
-                  )
-                : input.value;
-
-            touchGeneographBoard();
-
-            renderGeneographEditorPreserveScroll({
-              preserveInspectorScroll: true
-            });
-          });
-        });
-
       main
         .querySelector('[data-geneo-connection-routing]')
         ?.addEventListener('change', event => {
@@ -79693,14 +80614,24 @@
         if (editable) return;
         if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') { event.preventDefault(); event.shiftKey ? redoGeneographChange() : undoGeneographChange(); return; }
         if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'y') { event.preventDefault(); redoGeneographChange(); return; }
+        if (event.key === 'Escape' && (state.geneoTool === 'pencil' || geneoPointerState?.kind === 'pencil')) {
+          event.preventDefault();
+          cancelGeneographPencilStroke();
+          state.geneoTool = 'pan';
+          renderGeneographEditorPreserveScroll();
+          return;
+        }
         if (
           event.key === 'Escape'
           && (
             state.geneoTool === 'panel'
             || state.geneoTool === 'sticky'
             || state.geneoTool === 'text'
+            || state.geneoTool === 'shape'
             || geneoPointerState?.kind
               === 'draw-panel'
+            || geneoPointerState?.kind
+              === 'draw-shape'
           )
         ) {
           event.preventDefault();
@@ -123244,6 +124175,18 @@
       openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deletePlaceTitle" data-place-delete-confirm${returnAttribute}><div class="modal-header"><div><h2 id="deletePlaceTitle">Delete place permanently?</h2><p>This action cannot be undone.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body place-delete-confirm"><strong>${escapeHtml(place.name)}</strong><ul><li>The place will no longer appear in calculated routes.</li><li>Structured links from connected records will be cleared.</li><li>Connected people, events, files, photos, and notes will remain.</li><li>Textual mentions may remain in free-text content.</li></ul></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-confirm-delete-place>Delete permanently</button></div></div>`);
       modalBackdrop.querySelector('[data-confirm-delete-place]')?.addEventListener('click', () => {
         resetPlaceEditorDraft();
+        (sampleData.boards || []).forEach(board => {
+          let repairedBoardPlace = false;
+          (board.diagram?.nodes || []).forEach(node => {
+            if (node.type !== 'place' || node.placeRef?.scope !== 'project' || node.placeRef.id !== place.id) return;
+            node.placeRef = {
+              scope: 'board',
+              name: String(node.placeRef.fallbackName || placePrimaryName(place) || place.name || 'Place').trim()
+            };
+            repairedBoardPlace = true;
+          });
+          if (repairedBoardPlace) board.updatedAt = new Date().toISOString();
+        });
         sampleData.places = sampleData.places.filter(item => item.id !== place.id);
         sampleData.placeIssues = (sampleData.placeIssues || []).filter(issue => issue.placeId !== place.id);
         sampleData.people.forEach(person => [person, person.birth, person.death, ...(person.events || []), ...(person.attributes || [])].filter(Boolean).forEach(record => clearStructuredPlaceReferences(record, place.id)));
@@ -124105,6 +125048,7 @@
       const projectChanged = previousProjectId !== project.id;
       if (state.activeModule === 'Geneograph' && state.geneoView === 'board' && (nextModule !== 'Geneograph' || projectChanged)) {
         captureGeneographViewport();
+        cancelGeneographPencilStroke();
         clearGeneographConnectionClick();
       }
       closeMenu();
