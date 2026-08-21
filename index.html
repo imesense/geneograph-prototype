@@ -12199,7 +12199,27 @@
       flex-wrap: wrap;
       gap: var(--space-2);
     }
-    .geneo-layout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+    .geneo-layout-name {
+      min-width: 0;
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .geneo-layout-grid {
+      min-width: 0;
+      display: grid;
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(0, 1fr)
+        );
+      gap: var(--space-2);
+    }
+
+    .geneo-layout-grid
+    .geneo-field {
+      min-width: 0;
+    }
     .geneo-person-size-controls {
       display: grid;
       gap: 7px;
@@ -34930,7 +34950,6 @@
         },
 
         person: {
-          layer: true,
           content: true,
           familyTreeLink: true,
           card: true,
@@ -34939,62 +34958,54 @@
         },
 
         text: {
-          layer: true,
           content: true,
           appearance: true,
           layout: true
         },
 
         sticky: {
-          layer: true,
           content: true,
           appearance: true,
           layout: true
         },
 
         image: {
-          layer: true,
           imageSource: true,
           appearance: true,
           layout: true
         },
 
         panel: {
-          layer: true,
           content: true,
           appearance: true,
           layout: true
         },
 
         place: {
-          layer: true,
           content: true,
           appearance: true,
           layout: true
         },
 
         shape: {
-          layer: true,
           content: true,
           appearance: true,
           layout: true
         },
 
         drawing: {
-          layer: true,
           appearance: true,
           layout: true
         },
 
         node: {
-          layer: true,
           content: true,
           appearance: true,
           layout: true
         },
 
         connection: {
-          layer: true,
+          connection: true,
           relationship: true,
           appearance: true
         },
@@ -74804,17 +74815,18 @@
       });
     }
 
-    function renderGeneographNameSection(
+    function renderGeneographLayerNameField(
       entityType,
-      entity,
-      context
+      entity
     ) {
       const node =
         entityType === 'node';
 
       const automaticName =
         node
-          ? geneoDefaultNodeTitle(entity)
+          ? geneoDefaultNodeTitle(
+              entity
+            )
           : geneoDefaultConnectionLabel(
               entity
             );
@@ -74832,10 +74844,10 @@
       const descriptionId =
         `${inputId}Description`;
 
-      const content = `
+      return `
         <div class="geneo-field">
           <label for="${inputId}">
-            Name
+            Layer name
           </label>
 
           <input
@@ -74845,8 +74857,12 @@
             maxlength="${GENEO_LAYER_NAME_LIMIT}"
             value="${escapeHtml(value)}"
             placeholder="${escapeHtml(automaticName)}"
-            data-geneo-entity-name="${escapeHtml(entityType)}"
-            data-geneo-entity-id="${escapeHtml(entity.id)}"
+            data-geneo-entity-name="${escapeHtml(
+              entityType
+            )}"
+            data-geneo-entity-id="${escapeHtml(
+              entity.id
+            )}"
             data-user-content
             aria-describedby="${descriptionId}">
         </div>
@@ -74861,15 +74877,20 @@
           }
         </p>
       `;
+    }
 
+    function renderGeneographConnectionNameSection(
+      connection
+    ) {
       return renderGeneographInspectorSection({
-        context,
-        id: 'layer',
-        title:
-          node
-            ? 'Layer'
-            : 'Connection',
-        content
+        context: 'connection',
+        id: 'connection',
+        title: 'Connection',
+        content:
+          renderGeneographLayerNameField(
+            'connection',
+            connection
+          )
       });
     }
 
@@ -75001,151 +75022,176 @@
           geneoInspectorContextForNode(
             node
           ),
+
         id: 'layout',
         title: 'Layout',
+
         content: `
-            <div
-              class="geneo-layout-grid">
-              <div class="geneo-field">
-                <label>X</label>
+          <div class="geneo-layout-name">
+            ${renderGeneographLayerNameField(
+              'node',
+              node
+            )}
+          </div>
 
-                <input
-                  class="geneo-input"
-                  type="number"
-                  data-geneo-layout="x"
-                  value="${Math.round(
-                    node.x
-                  )}">
-              </div>
+          <div class="geneo-layout-grid">
+            <div class="geneo-field">
+              <label for="geneoNodeLayoutX">
+                X
+              </label>
 
-              <div class="geneo-field">
-                <label>Y</label>
-
-                <input
-                  class="geneo-input"
-                  type="number"
-                  data-geneo-layout="y"
-                  value="${Math.round(
-                    node.y
-                  )}">
-              </div>
-
-              <div class="geneo-field">
-                <label>Width</label>
-
-                <input
-                  class="geneo-input"
-                  type="number"
-                  min="${Math.round(
-                    minimumSize.width
-                  )}"
-                  max="${Math.round(
-                    maximumSize.width
-                  )}"
-                  data-geneo-layout="width"
-                  value="${Math.round(
-                    node.width
-                  )}">
-              </div>
-
-              <div class="geneo-field">
-                <label>Height</label>
-
-                <input
-                  class="geneo-input"
-                  type="number"
-                  min="${Math.round(
-                    minimumSize.height
-                  )}"
-                  max="${Math.round(
-                    maximumSize.height
-                  )}"
-                  data-geneo-layout="height"
-                  value="${Math.round(
-                    node.height
-                  )}">
-              </div>
+              <input
+                class="geneo-input"
+                id="geneoNodeLayoutX"
+                type="number"
+                data-geneo-layout="x"
+                value="${Math.round(
+                  node.x
+                )}">
             </div>
 
-            ${
-              isPerson
-                ? `
-                  <div
-                    class="geneo-person-size-controls">
-                    <span
-                      class="geneo-selection-help">
-                      ${
-                        autoHeight
-                          ? 'Height fits visible content · Width remains freeform'
-                          : 'Freeform size · Hold Shift to preserve ratio'
-                      }
-                    </span>
+            <div class="geneo-field">
+              <label for="geneoNodeLayoutY">
+                Y
+              </label>
 
-                    <div
-                      class="geneo-person-size-presets"
-                      role="group"
-                      aria-label="Person card size">
-                      ${[
-                        [0.9, '90%'],
-                        [1, '100%'],
-                        [1.25, '125%']
-                      ]
-                        .map(
-                          ([
-                            scale,
-                            label
-                          ]) => `
-                            <button
-                              class="button secondary compact"
-                              type="button"
-                              data-geneo-person-size="${scale}">
-                              ${label}
-                            </button>
-                          `
-                        )
-                        .join('')}
-                    </div>
+              <input
+                class="geneo-input"
+                id="geneoNodeLayoutY"
+                type="number"
+                data-geneo-layout="y"
+                value="${Math.round(
+                  node.y
+                )}">
+            </div>
 
+            <div class="geneo-field">
+              <label for="geneoNodeLayoutWidth">
+                Width
+              </label>
+
+              <input
+                class="geneo-input"
+                id="geneoNodeLayoutWidth"
+                type="number"
+                min="${Math.round(
+                  minimumSize.width
+                )}"
+                max="${Math.round(
+                  maximumSize.width
+                )}"
+                data-geneo-layout="width"
+                value="${Math.round(
+                  node.width
+                )}">
+            </div>
+
+            <div class="geneo-field">
+              <label for="geneoNodeLayoutHeight">
+                Height
+              </label>
+
+              <input
+                class="geneo-input"
+                id="geneoNodeLayoutHeight"
+                type="number"
+                min="${Math.round(
+                  minimumSize.height
+                )}"
+                max="${Math.round(
+                  maximumSize.height
+                )}"
+                data-geneo-layout="height"
+                value="${Math.round(
+                  node.height
+                )}">
+            </div>
+          </div>
+
+          ${
+            isPerson
+              ? `
+                <div class="geneo-person-size-controls">
+                  <span class="geneo-selection-help">
                     ${
                       autoHeight
-                        ? ''
-                        : `
+                        ? 'Height fits visible content · Width remains freeform'
+                        : 'Freeform size · Hold Shift to preserve ratio'
+                    }
+                  </span>
+
+                  <div
+                    class="geneo-person-size-presets"
+                    role="group"
+                    aria-label="Person card size">
+
+                    ${[
+                      [0.9, '90%'],
+                      [1, '100%'],
+                      [1.25, '125%']
+                    ]
+                      .map(
+                        ([
+                          scale,
+                          label
+                        ]) => `
                           <button
-                            class="button ghost compact"
+                            class="button secondary compact"
                             type="button"
-                            data-geneo-person-fit-height>
-                            Fit height to content
+                            data-geneo-person-size="${scale}">
+                            ${label}
                           </button>
                         `
-                    }
+                      )
+                      .join('')}
                   </div>
-                `
-                : ''
-            }
 
-            <label class="geneo-check">
-              <input
-                type="checkbox"
-                data-geneo-node-visible
-                ${
-                  node.visible
-                    ? 'checked'
-                    : ''
-                }>
+                  ${
+                    autoHeight
+                      ? ''
+                      : `
+                        <button
+                          class="button ghost compact"
+                          type="button"
+                          data-geneo-person-fit-height>
+                          Fit height to content
+                        </button>
+                      `
+                  }
+                </div>
+              `
+              : ''
+          }
+
+          <label class="geneo-check">
+            <input
+              type="checkbox"
+              data-geneo-node-visible
+              ${
+                node.visible
+                  ? 'checked'
+                  : ''
+              }>
+
+            <span>
               Visible
-            </label>
+            </span>
+          </label>
 
-            <label class="geneo-check">
-              <input
-                type="checkbox"
-                data-geneo-node-locked
-                ${
-                  node.locked
-                    ? 'checked'
-                    : ''
-                }>
+          <label class="geneo-check">
+            <input
+              type="checkbox"
+              data-geneo-node-locked
+              ${
+                node.locked
+                  ? 'checked'
+                  : ''
+              }>
+
+            <span>
               Locked
-            </label>
+            </span>
+          </label>
         `
       });
     }
@@ -75302,13 +75348,6 @@
 
       const appearance =
         node.appearance || {};
-
-      const nameSection =
-        renderGeneographNameSection(
-          'node',
-          node,
-          context
-        );
 
       const person =
         node.type === 'person'
@@ -75478,7 +75517,6 @@
               geneoNodeIcon(node.type)
             )}
 
-            ${nameSection}
             ${contentSection}
 
             ${
@@ -75520,10 +75558,8 @@
       connection
     ) {
       const nameSection =
-        renderGeneographNameSection(
-          'connection',
-          connection,
-          'connection'
+        renderGeneographConnectionNameSection(
+          connection
         );
 
       const family =
