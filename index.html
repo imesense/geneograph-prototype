@@ -34669,6 +34669,162 @@
     const toast = document.getElementById('toast');
     const workspace = document.querySelector('.workspace');
 
+    const INTENTIONAL_BACKDROP_DRAG_THRESHOLD = 6;
+
+    function bindIntentionalBackdropDismiss(
+      backdrop,
+      onDismiss,
+      options = {}
+    ) {
+      const dragThreshold = Number.isFinite(options.dragThreshold)
+        ? Math.max(0, options.dragThreshold)
+        : INTENTIONAL_BACKDROP_DRAG_THRESHOLD;
+
+      const thresholdSquared =
+        dragThreshold * dragThreshold;
+
+      let gesture = null;
+
+      const reset = () => {
+        gesture = null;
+      };
+
+      const handlePointerDown = event => {
+        /*
+        * Beginning a new gesture always clears any state that
+        * may have survived an interrupted previous gesture.
+        */
+        reset();
+
+        if (
+          event.target !== backdrop ||
+          event.isPrimary === false ||
+          event.button !== 0
+        ) {
+          return;
+        }
+
+        gesture = {
+          startedOnBackdrop: true,
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          moved: false
+        };
+      };
+
+      const handlePointerMove = event => {
+        if (
+          !gesture ||
+          event.pointerId !== gesture.pointerId
+        ) {
+          return;
+        }
+
+        const deltaX =
+          event.clientX - gesture.startX;
+
+        const deltaY =
+          event.clientY - gesture.startY;
+
+        if (
+          deltaX * deltaX + deltaY * deltaY >
+          thresholdSquared
+        ) {
+          gesture.moved = true;
+        }
+      };
+
+      const handlePointerUp = event => {
+        if (
+          !gesture ||
+          event.pointerId !== gesture.pointerId
+        ) {
+          return;
+        }
+
+        const deltaX =
+          event.clientX - gesture.startX;
+
+        const deltaY =
+          event.clientY - gesture.startY;
+
+        const stayedWithinThreshold =
+          !gesture.moved &&
+          deltaX * deltaX + deltaY * deltaY <=
+            thresholdSquared;
+
+        const shouldDismiss =
+          gesture.startedOnBackdrop &&
+          event.target === backdrop &&
+          stayedWithinThreshold;
+
+        /*
+        * Reset before invoking the callback because onDismiss
+        * may replace or remove the backdrop synchronously.
+        */
+        reset();
+
+        if (shouldDismiss) {
+          onDismiss?.(event);
+        }
+      };
+
+      const handlePointerCancel = () => {
+        reset();
+      };
+
+      backdrop.addEventListener(
+        'pointerdown',
+        handlePointerDown
+      );
+
+      backdrop.addEventListener(
+        'pointermove',
+        handlePointerMove
+      );
+
+      backdrop.addEventListener(
+        'pointerup',
+        handlePointerUp
+      );
+
+      backdrop.addEventListener(
+        'pointercancel',
+        handlePointerCancel
+      );
+
+      return {
+        reset,
+
+        destroy() {
+          reset();
+
+          backdrop.removeEventListener(
+            'pointerdown',
+            handlePointerDown
+          );
+
+          backdrop.removeEventListener(
+            'pointermove',
+            handlePointerMove
+          );
+
+          backdrop.removeEventListener(
+            'pointerup',
+            handlePointerUp
+          );
+
+          backdrop.removeEventListener(
+            'pointercancel',
+            handlePointerCancel
+          );
+        }
+      };
+    }
+
+    let modalBackdropDismissBinding = null;
+
     const notesRichTextRuntime = {
       instance:
         null,
@@ -43129,42 +43285,109 @@
       updateAddPersonFactSummary();
     }
 
-    function confirmRemoveAddPersonFact(factId, onConfirm) {
-      const definition = addPersonFactDefinition(factId);
-      document.querySelector('[data-add-person-fact-confirm]')?.remove();
-      const backdrop = document.createElement('div');
-      backdrop.className = 'add-person-fact-confirm-backdrop';
-      backdrop.dataset.addPersonFactConfirm = 'true';
-      backdrop.innerHTML = `<div class="add-person-fact-confirm-card" role="dialog" aria-modal="true" aria-labelledby="removeFactTitle">
-        <div class="add-person-fact-confirm-header">
-          <h3 id="removeFactTitle">Remove ${escapeHtml(definition.label)}?</h3>
-          <button class="close-button" type="button" data-cancel-remove-fact aria-label="Cancel removing fact">${icon.close}</button>
+    function confirmRemoveAddPersonFact(
+      factId,
+      onConfirm
+    ) {
+      const definition =
+        addPersonFactDefinition(factId);
+
+      document
+        .querySelector(
+          '[data-add-person-fact-confirm]'
+        )
+        ?.remove();
+
+      const backdrop =
+        document.createElement('div');
+
+      backdrop.className =
+        'add-person-fact-confirm-backdrop';
+
+      backdrop.dataset.addPersonFactConfirm =
+        'true';
+
+      backdrop.innerHTML = `
+        <div class="add-person-fact-confirm-card" role="dialog" aria-modal="true" aria-labelledby="removeFactTitle">
+          <div class="add-person-fact-confirm-header">
+            <h3 id="removeFactTitle">Remove ${escapeHtml(definition.label)}?</h3>
+            <button class="close-button" type="button" data-cancel-remove-fact aria-label="Cancel removing fact">${icon.close}</button>
+          </div>
+
+          <div class="add-person-fact-confirm-body">
+            Removing this fact will clear the saved ${escapeHtml(definition.label.toLowerCase())} data when you save the person.
+          </div>
+
+          <div class="add-person-fact-confirm-actions">
+            <button class="button secondary" type="button" data-cancel-remove-fact>Cancel</button>
+            <button class="button primary" type="button" data-confirm-remove-fact>Remove fact</button>
+          </div>
         </div>
-        <div class="add-person-fact-confirm-body">
-          Removing this fact will clear the saved ${escapeHtml(definition.label.toLowerCase())} data when you save the person.
-        </div>
-        <div class="add-person-fact-confirm-actions">
-          <button class="button secondary" type="button" data-cancel-remove-fact>Cancel</button>
-          <button class="button primary" type="button" data-confirm-remove-fact>Remove fact</button>
-        </div>
-      </div>`;
-      const close = () => {
-        document.removeEventListener('keydown', onKey);
-        backdrop.remove();
-      };
-      backdrop.addEventListener('click', event => {
-        if (event.target === backdrop || event.target.closest('[data-cancel-remove-fact]')) close();
-        if (event.target.closest('[data-confirm-remove-fact]')) {
+      `;
+
+      let backdropDismissBinding = null;
+
+      function handleKeydown(event) {
+        if (event.key === 'Escape') {
           close();
-          onConfirm?.();
         }
-      });
-      const onKey = event => {
-        if (event.key === 'Escape') close();
-      };
-      document.addEventListener('keydown', onKey);
+      }
+
+      function close() {
+        backdropDismissBinding?.destroy();
+        backdropDismissBinding = null;
+
+        document.removeEventListener(
+          'keydown',
+          handleKeydown
+        );
+
+        backdrop.remove();
+      }
+
+      backdrop.addEventListener(
+        'click',
+        event => {
+          if (
+            event.target.closest(
+              '[data-cancel-remove-fact]'
+            )
+          ) {
+            close();
+            return;
+          }
+
+          if (
+            event.target.closest(
+              '[data-confirm-remove-fact]'
+            )
+          ) {
+            close();
+            onConfirm?.();
+          }
+        }
+      );
+
+      document.addEventListener(
+        'keydown',
+        handleKeydown
+      );
+
       document.body.appendChild(backdrop);
-      backdrop.querySelector('[data-cancel-remove-fact]')?.focus({ preventScroll: true });
+
+      backdropDismissBinding =
+        bindIntentionalBackdropDismiss(
+          backdrop,
+          close
+        );
+
+      backdrop
+        .querySelector(
+          '[data-cancel-remove-fact]'
+        )
+        ?.focus({
+          preventScroll: true
+        });
     }
 
     function bindAddPersonAdditionalFacts(personId = '') {
@@ -58024,9 +58247,19 @@
         overlay
       );
 
+      let backdropDismissBinding = null;
+
       const closeSelector = () => {
+        backdropDismissBinding?.destroy();
+        backdropDismissBinding = null;
         overlay.remove();
       };
+
+      backdropDismissBinding =
+        bindIntentionalBackdropDismiss(
+          overlay,
+          closeSelector
+        );
 
       const resultsHost =
         overlay.querySelector(
@@ -58062,13 +58295,6 @@
       overlay.addEventListener(
         'click',
         event => {
-          if (
-            event.target === overlay
-          ) {
-            closeSelector();
-            return;
-          }
-
           if (
             event.target.closest(
               '[data-add-person-photo-draft-close]'
@@ -79619,6 +79845,252 @@
         });
     }
 
+    const GENEO_CANVAS_CLICK_DRAG_THRESHOLD = 6;
+
+    const GENEO_CANVAS_INTERACTIVE_SELECTOR = [
+      'button',
+      'input',
+      'textarea',
+      'select',
+      'a',
+      '[contenteditable]',
+      '.rich-text-toolbar',
+      '.ql-tooltip',
+      '[data-geneo-node]',
+      '.geneo-connection-hit',
+      '.geneo-segment-hit',
+      '[data-geneo-waypoint]',
+      '[data-geneo-family-junction]'
+    ].join(',');
+
+    function geneographCanvasTargetIsInteractive(
+      target
+    ) {
+      const element =
+        target instanceof Element
+          ? target
+          : target?.parentElement || null;
+
+      return Boolean(
+        element?.closest(
+          GENEO_CANVAS_INTERACTIVE_SELECTOR
+        )
+      );
+    }
+
+    function bindGeneographIntentionalCanvasClick(
+      wrap
+    ) {
+      if (!wrap) return;
+
+      const thresholdSquared =
+        GENEO_CANVAS_CLICK_DRAG_THRESHOLD
+        * GENEO_CANVAS_CLICK_DRAG_THRESHOLD;
+
+      let gesture = null;
+      let allowNextCanvasClick = false;
+
+      const removeWindowListeners = () => {
+        window.removeEventListener(
+          'pointermove',
+          handlePointerMove,
+          true
+        );
+
+        window.removeEventListener(
+          'pointerup',
+          handlePointerUp,
+          true
+        );
+
+        window.removeEventListener(
+          'pointercancel',
+          handlePointerCancel,
+          true
+        );
+      };
+
+      const resetGesture = () => {
+        gesture = null;
+        removeWindowListeners();
+      };
+
+      const handlePointerMove = event => {
+        if (
+          !gesture ||
+          event.pointerId !== gesture.pointerId
+        ) {
+          return;
+        }
+
+        const deltaX =
+          event.clientX - gesture.startX;
+
+        const deltaY =
+          event.clientY - gesture.startY;
+
+        if (
+          deltaX * deltaX + deltaY * deltaY >
+          thresholdSquared
+        ) {
+          gesture.moved = true;
+        }
+      };
+
+      const finishPointerGesture = (
+        event,
+        cancelled = false
+      ) => {
+        if (
+          !gesture ||
+          event.pointerId !== gesture.pointerId
+        ) {
+          return;
+        }
+
+        const deltaX =
+          event.clientX - gesture.startX;
+
+        const deltaY =
+          event.clientY - gesture.startY;
+
+        const exceededThreshold =
+          gesture.moved ||
+          deltaX * deltaX + deltaY * deltaY >
+            thresholdSquared;
+
+        allowNextCanvasClick =
+          !cancelled &&
+          gesture.startedOnEmptyCanvas &&
+          !geneographCanvasTargetIsInteractive(
+            event.target
+          ) &&
+          !exceededThreshold;
+
+        resetGesture();
+      };
+
+      function handlePointerUp(event) {
+        finishPointerGesture(
+          event,
+          false
+        );
+      }
+
+      function handlePointerCancel(event) {
+        finishPointerGesture(
+          event,
+          true
+        );
+      }
+
+      /*
+       * Capture phase records the true pointer origin before
+       * a node, Quill, or another board control can stop the
+       * event from propagating.
+       */
+      wrap.addEventListener(
+        'pointerdown',
+        event => {
+          allowNextCanvasClick = false;
+          resetGesture();
+
+          if (
+            event.button !== 0 ||
+            event.isPrimary === false
+          ) {
+            return;
+          }
+
+          gesture = {
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            startedOnEmptyCanvas:
+              !geneographCanvasTargetIsInteractive(
+                event.target
+              ),
+            moved: false
+          };
+
+          /*
+           * Window listeners let the gesture finish safely
+           * even when the pointer leaves the original node.
+           * They do not prevent defaults or capture the pointer.
+           */
+          window.addEventListener(
+            'pointermove',
+            handlePointerMove,
+            true
+          );
+
+          window.addEventListener(
+            'pointerup',
+            handlePointerUp,
+            true
+          );
+
+          window.addEventListener(
+            'pointercancel',
+            handlePointerCancel,
+            true
+          );
+        },
+        true
+      );
+
+      wrap.addEventListener(
+        'click',
+        event => {
+          const intentionalCanvasClick =
+            allowNextCanvasClick;
+
+          /*
+           * Consume the authorization once. A later synthetic
+           * or unrelated click must not inherit it.
+           */
+          allowNextCanvasClick = false;
+
+          if (
+            !intentionalCanvasClick ||
+            geneoCanvasRuntime.suppressNodeClick ||
+            geneographCanvasTargetIsInteractive(
+              event.target
+            )
+          ) {
+            return;
+          }
+
+          if (
+            state.geneoTool === 'connect'
+          ) {
+            /*
+             * Preserve the existing connect-mode behavior:
+             * the first empty-canvas click remains inert and
+             * the second click in a double-click exits to Pan.
+             */
+            if (event.detail !== 2) {
+              return;
+            }
+
+            event.preventDefault();
+
+            cancelGeneographConnectionDraft();
+            selectGeneographCanvas();
+
+            state.geneoTool = 'pan';
+
+            renderGeneographEditorPreserveScroll();
+            return;
+          }
+
+          selectGeneographCanvas();
+          cancelGeneographConnectionDraft();
+          renderGeneographEditorPreserveScroll();
+        }
+      );
+    }
+
     function bindGeneographEditor() {
       const wrap = main.querySelector('[data-geneo-canvas-wrap]');
       if (!main.dataset.geneoConnectionClickBoundaryBound) {
@@ -79873,58 +80345,9 @@
         geneoPointerState = { kind: 'segment', connectionId: connection.id, start: geneoPointerToCanvas(event), firstWaypoint, secondWaypoint, first: { ...first }, second: { ...second }, vertical: Math.abs(first.x - second.x) < Math.abs(first.y - second.y), moved: false };
       }));
       wrap?.addEventListener('click', event => {
-        if (geneoCanvasRuntime.suppressNodeClick) {
-          return;
-        }
-
-        /*
-        * Treat any non-interactive canvas layer as
-        * empty canvas. This includes the board,
-        * stage, SVG connection layer, and preview.
-        */
-        const interactiveTarget =
-          event.target.closest(
-            [
-              'button',
-              'input',
-              'textarea',
-              'select',
-              'a',
-              '.rich-text-toolbar',
-              '.ql-tooltip',
-              '[contenteditable="true"]',
-              '[data-geneo-node]',
-              '.geneo-connection-hit',
-              '.geneo-segment-hit',
-              '[data-geneo-waypoint]',
-              '[data-geneo-family-junction]'
-            ].join(',')
-          );
-
-        if (interactiveTarget) return;
-
-        if (state.geneoTool === 'connect') {
-          /*
-          * Keep the first click inert so the line
-          * remains active. The second click in the
-          * native double-click sequence exits to Pan.
-          */
-          if (event.detail !== 2) return;
-
-          event.preventDefault();
-
-          cancelGeneographConnectionDraft();
-          selectGeneographCanvas();
-
-          state.geneoTool = 'pan';
-
-          renderGeneographEditorPreserveScroll();
-          return;
-        }
-
-        selectGeneographCanvas();
-        cancelGeneographConnectionDraft();
-        renderGeneographEditorPreserveScroll();
+        bindGeneographIntentionalCanvasClick(
+          wrap
+        );
       });
       wrap?.addEventListener('pointerdown', event => {
         if (event.button !== 0 || event.isPrimary === false) {
@@ -126692,11 +127115,12 @@
           preferredReturnFocus;
       }
 
-      modalBackdrop
-        .removeEventListener(
-          'click',
-          backdropClose
-        );
+      /*
+      * Reopening or replacing modal content starts with completely
+      * fresh backdrop-gesture state.
+      */
+      modalBackdropDismissBinding?.destroy();
+      modalBackdropDismissBinding = null;
 
       document.removeEventListener(
         'keydown',
@@ -126739,17 +127163,11 @@
           );
         });
 
-      setTimeout(() => {
-        if (
-          modalBackdrop.classList
-            .contains('open')
-        ) {
-          modalBackdrop.addEventListener(
-            'click',
-            backdropClose
-          );
-        }
-      }, 0);
+      modalBackdropDismissBinding =
+        bindIntentionalBackdropDismiss(
+          modalBackdrop,
+          () => closeModal()
+        );
 
       document.addEventListener(
         'keydown',
@@ -126778,27 +127196,84 @@
     }
 
     function openPersonPhotoDiscardConfirm() {
-      if (document.getElementById('personPhotoDiscardOverlay')) return;
-      const overlay = document.createElement('div');
-      overlay.className = 'add-person-mini-backdrop';
-      overlay.id = 'personPhotoDiscardOverlay';
-      overlay.innerHTML = `<div class="add-person-mini-card" role="alertdialog" aria-modal="true" aria-labelledby="personPhotoDiscardTitle">
-        <div class="add-person-mini-head"><div><h3 id="personPhotoDiscardTitle">Discard photo changes?</h3><p>Your selected photo and crop adjustments will not be saved.</p></div></div>
-        <div class="add-person-mini-footer">
-          <button class="button secondary" type="button" data-person-photo-continue-editing>Continue editing</button>
-          <button class="button danger" type="button" data-person-photo-discard>Discard changes</button>
+      if (
+        document.getElementById(
+          'personPhotoDiscardOverlay'
+        )
+      ) {
+        return;
+      }
+
+      const overlay =
+        document.createElement('div');
+
+      overlay.className =
+        'add-person-mini-backdrop';
+
+      overlay.id =
+        'personPhotoDiscardOverlay';
+
+      overlay.innerHTML = `
+        <div class="add-person-mini-card" role="alertdialog" aria-modal="true" aria-labelledby="personPhotoDiscardTitle">
+          <div class="add-person-mini-head">
+            <div>
+              <h3 id="personPhotoDiscardTitle">Discard photo changes?</h3>
+              <p>Your selected photo and crop adjustments will not be saved.</p>
+            </div>
+          </div>
+
+          <div class="add-person-mini-footer">
+            <button class="button secondary" type="button" data-person-photo-continue-editing>Continue editing</button>
+            <button class="button danger" type="button" data-person-photo-discard>Discard changes</button>
+          </div>
         </div>
-      </div>`;
+      `;
+
+      let backdropDismissBinding = null;
+
+      const removeOverlay = () => {
+        backdropDismissBinding?.destroy();
+        backdropDismissBinding = null;
+        overlay.remove();
+      };
+
       document.body.appendChild(overlay);
-      overlay.querySelector('[data-person-photo-continue-editing]')?.addEventListener('click', () => overlay.remove());
-      overlay.querySelector('[data-person-photo-discard]')?.addEventListener('click', () => {
-        resetPersonPhotoPickerState();
-        closeModal({ force: true });
-      });
-      overlay.addEventListener('click', event => {
-        if (event.target === overlay) overlay.remove();
-      });
-      overlay.querySelector('[data-person-photo-continue-editing]')?.focus();
+
+      backdropDismissBinding =
+        bindIntentionalBackdropDismiss(
+          overlay,
+          removeOverlay
+        );
+
+      overlay
+        .querySelector(
+          '[data-person-photo-continue-editing]'
+        )
+        ?.addEventListener(
+          'click',
+          removeOverlay
+        );
+
+      overlay
+        .querySelector(
+          '[data-person-photo-discard]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            removeOverlay();
+            resetPersonPhotoPickerState();
+            closeModal({
+              force: true
+            });
+          }
+        );
+
+      overlay
+        .querySelector(
+          '[data-person-photo-continue-editing]'
+        )
+        ?.focus();
     }
 
     function closeModal(options = {}) {
@@ -126860,12 +127335,21 @@
       }
       document.getElementById('personPhotoDiscardOverlay')?.remove();
       document.getElementById('addPersonMiniOverlay')?.remove();
+
+      modalBackdropDismissBinding?.destroy();
+      modalBackdropDismissBinding = null;
+
       modalBackdrop.classList.remove('open');
       modalBackdrop.setAttribute('aria-hidden', 'true');
       modalBackdrop.removeAttribute('tabindex');
       modalBackdrop.innerHTML = '';
-      modalBackdrop.removeEventListener('click', backdropClose);
-      document.removeEventListener('keydown', handleModalKeydown, true);
+
+      document.removeEventListener(
+        'keydown',
+        handleModalKeydown,
+        true
+      );
+
       setApplicationInert(false);
 
       const returnTarget = modalReturnFocus;
@@ -126888,7 +127372,6 @@
         }
       );
     }
-    function backdropClose(e) { if (e.target === modalBackdrop) closeModal(); }
 
     function bindToasts(
       root
