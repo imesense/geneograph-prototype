@@ -11626,6 +11626,11 @@
       gap: var(--space-3);
     }
 
+    .geneo-inspector
+    .panel-section-body[hidden] {
+      display: none;
+    }
+
     .geneo-inspector-danger {
       display: flex;
       padding: var(--space-4);
@@ -12088,31 +12093,24 @@
       font-weight: 600;
       line-height: 1.35;
     }
-
     .geneo-person-card-radius-row {
       display: grid;
       grid-template-columns:
         minmax(0, 1fr)
         78px;
-
       gap: var(--space-3);
       align-items: end;
     }
 
     .geneo-person-card-radius-row
     .geneo-input {
-      text-align: right;
+      text-align: left;
     }
 
     .geneo-person-multi-actions {
       display: flex;
       flex-wrap: wrap;
       gap: var(--space-2);
-    }
-
-    .geneo-person-card-radius-row
-    .geneo-input {
-      text-align: right;
     }
     .geneo-layout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
     .geneo-person-size-controls {
@@ -34787,7 +34785,6 @@
       geneoInspectorSections: {
         canvas: {
           appearance: true,
-          behavior: true,
           personCards: true
         },
 
@@ -72787,6 +72784,10 @@
             ?.personCardDefaults
         );
 
+      const canvas =
+        selectedGeneographDiagram()
+          ?.canvas;
+
       const overrides =
         node
           ? normalizeGeneographPersonCardOverrides(
@@ -72933,8 +72934,7 @@
                       'Text alignment'
                     )
                   : `
-                    <div
-                      class="geneo-field">
+                    <div class="geneo-field">
                       <span
                         class="geneo-field-label">
                         Text alignment
@@ -72955,6 +72955,90 @@
                   `
               }
             </div>
+
+            <div
+              class="geneo-person-card-radius-row">
+              <div class="geneo-field">
+                <label
+                  for="${
+                    node
+                      ? 'geneoPersonCardRadius'
+                      : 'geneoBoardPersonCardRadius'
+                  }">
+                  Corner radius
+                </label>
+
+                <span
+                  class="geneo-selection-help">
+                  0–32 px
+                </span>
+              </div>
+
+              <input
+                class="geneo-input"
+                id="${
+                  node
+                    ? 'geneoPersonCardRadius'
+                    : 'geneoBoardPersonCardRadius'
+                }"
+                type="number"
+                min="0"
+                max="32"
+                step="1"
+                value="${settings.cornerRadius}"
+                data-geneo-person-card-radius="${escapeHtml(
+                  scope
+                )}"
+                ${
+                  node
+                    ? `
+                      data-geneo-person-card-node="${escapeHtml(
+                        node.id
+                      )}"
+                    `
+                    : ''
+                }
+                ${
+                  inherited
+                    ? `
+                      disabled
+                      aria-disabled="true"
+                    `
+                    : ''
+                }>
+            </div>
+
+            ${
+              scope === 'board'
+                ? `
+                  <label
+                    class="
+                      geneo-check
+                      geneo-gender-color-toggle
+                    ">
+                    <input
+                      type="checkbox"
+                      data-geneo-person-gender-colors
+                      ${
+                        canvas
+                          ?.colorPersonCardsByGender
+                          ? 'checked'
+                          : ''
+                      }>
+
+                    <span>
+                      Color person cards by gender
+
+                      <small
+                        class="geneo-selection-help">
+                        Use Family Tree colors for male and female cards.
+                        Unknown remains neutral.
+                      </small>
+                    </span>
+                  </label>
+                `
+                : ''
+            }
           </div>
 
           <div
@@ -73030,70 +73114,6 @@
                 )
                 .join('')}
             </div>
-
-            <p
-              class="
-                geneo-selection-help
-                geneo-person-card-field-help
-              ">
-              Living is never shown. Deceased appears only when no
-              death date or death place is recorded. Unknown appears
-              when enabled.
-            </p>
-          </div>
-
-          <div
-            class="geneo-person-card-radius-row">
-            <div class="geneo-field">
-              <label
-                for="${
-                  node
-                    ? 'geneoPersonCardRadius'
-                    : 'geneoBoardPersonCardRadius'
-                }">
-                Corner radius
-              </label>
-
-              <span
-                class="geneo-selection-help">
-                0–32 px
-              </span>
-            </div>
-
-            <input
-              class="geneo-input"
-              id="${
-                node
-                  ? 'geneoPersonCardRadius'
-                  : 'geneoBoardPersonCardRadius'
-              }"
-              type="number"
-              min="0"
-              max="32"
-              step="1"
-              value="${
-                settings.cornerRadius
-              }"
-              data-geneo-person-card-radius="${escapeHtml(
-                scope
-              )}"
-              ${
-                node
-                  ? `
-                    data-geneo-person-card-node="${escapeHtml(
-                      node.id
-                    )}"
-                  `
-                  : ''
-              }
-              ${
-                inherited
-                  ? `
-                    disabled
-                    aria-disabled="true"
-                  `
-                  : ''
-              }>
           </div>
         </div>
       `;
@@ -73363,7 +73383,6 @@
 
       const canvas =
         selectedGeneographDiagram().canvas;
-
       const appearanceContent = `
         ${renderGeneoPaintControl({
           scope: 'canvas',
@@ -73394,9 +73413,7 @@
               .join('')}
           </div>
         </div>
-      `;
 
-      const behaviorContent = `
         <label class="geneo-check">
           <input
             type="checkbox"
@@ -73420,32 +73437,8 @@
             }>
           Snap to grid
         </label>
-
-        <label
-          class="
-            geneo-check
-            geneo-gender-color-toggle
-          ">
-          <input
-            type="checkbox"
-            data-geneo-person-gender-colors
-            ${
-              canvas.colorPersonCardsByGender
-                ? 'checked'
-                : ''
-            }>
-
-          <span>
-            Color person cards by gender
-
-            <small class="geneo-selection-help">
-              Use Family Tree colors for male and female cards.
-              Unknown remains neutral.
-            </small>
-          </span>
-        </label>
       `;
-
+ 
       return `
         <aside class="geneo-inspector">
           <div class="geneo-inspector-body">
@@ -73461,12 +73454,6 @@
               content: appearanceContent
             })}
 
-            ${renderGeneographInspectorSection({
-              context: 'canvas',
-              id: 'behavior',
-              title: 'Behavior',
-              content: behaviorContent
-            })}
 
             ${renderGeneographInspectorSection({
               context: 'canvas',
@@ -82146,13 +82133,51 @@
 
             state.geneoTool = 'pan';
 
-            renderGeneographEditorPreserveScroll();
+            renderGeneographEditorPreserveScroll({
+              preserveInspectorScroll: true,
+              preserveSidebarScroll: true
+            });
             return;
           }
 
+          const hadSelection =
+            Boolean(
+              state.selectedGeneoNodeId
+              || state.selectedGeneoConnectionId
+              || state.selectedGeneoNodeIds
+                .length
+              || state
+                .selectedGeneoConnectionIds
+                .length
+              || Number.isInteger(
+                state.selectedGeneoWaypointIndex
+              )
+            );
+
+          const hadConnectionDraft =
+            Boolean(
+              state.geneoConnectionDraft
+            );
+
           selectGeneographCanvas();
           cancelGeneographConnectionDraft();
-          renderGeneographEditorPreserveScroll();
+
+          /*
+           * Clicking an already selected Canvas is a no-op.
+           * Avoid recreating the inspector and losing its
+           * current scroll position.
+           */
+          if (
+            !hadSelection
+            && !hadConnectionDraft
+          ) {
+            return;
+          }
+
+          renderGeneographEditorPreserveScroll({
+            preserveInspectorScroll: true,
+            preserveSidebarScroll: true
+          });
         }
       );
     }
