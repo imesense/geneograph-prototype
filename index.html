@@ -68439,6 +68439,30 @@
         defaults.text,
         { forceEnabled: true }
       );
+      if (nodeType === 'person') {
+        const sourceOverrides =
+          source.paintOverrides
+          && typeof source.paintOverrides
+            === 'object'
+            ? source.paintOverrides
+            : {};
+
+        result.paintOverrides = {
+          fill:
+            sourceOverrides.fill
+            === true,
+
+          stroke:
+            sourceOverrides.stroke
+            === true,
+
+          text:
+            sourceOverrides.text
+            === true
+        };
+      } else {
+        delete result.paintOverrides;
+      }
       result.strokePattern = legacyStrokeType && legacyStrokeType !== 'none'
         ? legacyStrokeType
         : source.strokePattern === 'dashed'
@@ -69228,10 +69252,27 @@
         return {
           ...common,
 
-          width: geometry.width,
-          height: geometry.height,
-          // Normalization uses the full style envelope, then applies
-          // the selected style's limits in ensureGeneographPersonCardSize().
+          appearance: {
+            ...common.appearance,
+
+            paintOverrides: {
+              fill: false,
+              stroke: false,
+              text: false
+            }
+          },
+
+          width:
+            geometry.width,
+
+          height:
+            geometry.height,
+
+          /*
+           * Normalization uses the full style
+           * envelope, then applies the selected
+           * style limits.
+           */
           minWidth: 170,
           maxWidth: 600,
           minHeight: 100,
@@ -70960,51 +71001,26 @@
               node
             )
           : null;
-
-      const personModel =
-        node.type === 'person'
-          ? geneoPersonCardViewModel(node)
-          : null;
+      const visibleAppearance =
+        geneoResolveVisibleNodeAppearance(
+          node
+        );
 
       const genderColorClass =
-        selectedGeneographDiagram()
-          ?.canvas
-          ?.colorPersonCardsByGender
-        && (
-          personModel?.person?.gender === 'male'
-          || personModel?.person?.gender === 'female'
-        )
-          ? `geneo-person-gender-${personModel.person.gender}`
+        visibleAppearance.gender
+          ? `geneo-person-gender-${
+              visibleAppearance.gender
+            }`
           : '';
 
-      const genderVisual =
-        genderColorClass === 'geneo-person-gender-male'
-          ? {
-              fill: '#172A32',
-              stroke: '#5A9BD8'
-            }
-          : genderColorClass === 'geneo-person-gender-female'
-            ? {
-                fill: '#2D2437',
-                stroke: '#8D6CE8'
-              }
-            : null;
-
       const visibleFill =
-        genderVisual
-          ? {
-              ...appearance.fill,
-              color: genderVisual.fill
-            }
-          : appearance.fill;
+        visibleAppearance.fill;
 
       const visibleStroke =
-        genderVisual
-          ? {
-              ...appearance.stroke,
-              color: genderVisual.stroke
-            }
-          : appearance.stroke;
+        visibleAppearance.stroke;
+
+      const visibleText =
+        visibleAppearance.text;
 
       const strokePattern =
         appearance.strokePattern
@@ -71034,12 +71050,12 @@
           appearance.strokeWidth ?? GENEO_STROKE_WIDTH_MIN
         }px`,
         `--geneo-node-stroke-style:${
-          appearance.stroke?.enabled
+          visibleStroke?.enabled
             ? strokePattern
             : 'none'
         }`,
         `--geneo-node-text:${geneoPaintCssColor(
-          appearance.text
+          visibleText
         )}`,
         `--geneo-node-radius:${
           geneoNodeCornerRadius(node)
@@ -71104,7 +71120,11 @@
                 ? 'has-paper-fill'
                 : ''
             }
-            ${appearance.stroke?.enabled ? `stroke-${strokePattern}` : 'stroke-none'}
+            ${
+              visibleStroke?.enabled
+                ? `stroke-${strokePattern}`
+                : 'stroke-none'
+            }
             ${genderColorClass}
           "
           style="${style}"
@@ -71876,17 +71896,200 @@
       return (light + .05) / (dark + .05);
     }
 
-    function geneoTextContrastRatio(node) {
-      if (!node || node.type === 'image') return null;
-      const canvasPaint = selectedGeneographDiagram()?.canvas.backgroundPaint;
-      const canvasRgb = geneoHexToRgb(canvasPaint?.color || '#0F1413');
-      const fill = node.appearance.fill;
-      const background = fill?.enabled
-        ? geneoCompositeRgb(geneoHexToRgb(fill.color), canvasRgb, fill.opacity / 100)
-        : canvasRgb;
-      const text = node.appearance.text;
-      const visibleText = geneoCompositeRgb(geneoHexToRgb(text.color), background, text.opacity / 100);
-      return geneoContrastRatio(visibleText, background);
+    const GENEO_PERSON_GENDER_APPEARANCE =
+      Object.freeze({
+        male: Object.freeze({
+          fill: Object.freeze({
+            color: '#172A32',
+            opacity: 100,
+            enabled: true
+          }),
+
+          stroke: Object.freeze({
+            color: '#5A9BD8',
+            opacity: 100,
+            enabled: true
+          }),
+
+          text: Object.freeze({
+            color: '#F2F8FB',
+            opacity: 100,
+            enabled: true
+          })
+        }),
+
+        female: Object.freeze({
+          fill: Object.freeze({
+            color: '#2D2437',
+            opacity: 100,
+            enabled: true
+          }),
+
+          stroke: Object.freeze({
+            color: '#8D6CE8',
+            opacity: 100,
+            enabled: true
+          }),
+
+          text: Object.freeze({
+            color: '#F6F1FB',
+            opacity: 100,
+            enabled: true
+          })
+        })
+      });
+    function geneoPersonGenderAppearance(
+      node,
+      diagram =
+        selectedGeneographDiagram()
+    ) {
+      if (
+        node?.type !== 'person'
+        || !diagram?.canvas
+          ?.colorPersonCardsByGender
+      ) {
+        return null;
+      }
+
+      const person =
+        (
+          diagram.people || []
+        ).find(
+          item =>
+            item.id === node.personId
+        );
+
+      const gender =
+        person?.gender;
+
+      const appearance =
+        GENEO_PERSON_GENDER_APPEARANCE[
+          gender
+        ];
+
+      return appearance
+        ? {
+            gender,
+            ...appearance
+          }
+        : null;
+    }
+
+    function geneoResolveVisibleNodeAppearance(
+      node,
+      diagram =
+        selectedGeneographDiagram()
+    ) {
+      const savedAppearance =
+        node?.appearance || {};
+
+      const genderAppearance =
+        geneoPersonGenderAppearance(
+          node,
+          diagram
+        );
+
+      if (!genderAppearance) {
+        return {
+          gender: '',
+          fill:
+            savedAppearance.fill,
+          stroke:
+            savedAppearance.stroke,
+          text:
+            savedAppearance.text
+        };
+      }
+
+      const paintOverrides =
+        savedAppearance.paintOverrides
+        && typeof savedAppearance
+          .paintOverrides === 'object'
+          ? savedAppearance
+              .paintOverrides
+          : {};
+
+      const resolvePaint =
+        property =>
+          paintOverrides[property]
+          === true
+            ? savedAppearance[property]
+            : genderAppearance[property];
+
+      return {
+        gender:
+          genderAppearance.gender,
+
+        fill:
+          resolvePaint('fill'),
+
+        stroke:
+          resolvePaint('stroke'),
+
+        text:
+          resolvePaint('text')
+      };
+    }
+
+    function geneoTextContrastRatio(
+      node
+    ) {
+      if (
+        !node
+        || node.type === 'image'
+      ) {
+        return null;
+      }
+
+      const diagram =
+        selectedGeneographDiagram();
+
+      const canvasPaint =
+        diagram?.canvas
+          ?.backgroundPaint;
+
+      const canvasRgb =
+        geneoHexToRgb(
+          canvasPaint?.color
+          || '#0F1413'
+        );
+
+      const visibleAppearance =
+        geneoResolveVisibleNodeAppearance(
+          node,
+          diagram
+        );
+
+      const fill =
+        visibleAppearance.fill;
+
+      const text =
+        visibleAppearance.text;
+
+      const background =
+        fill?.enabled
+          ? geneoCompositeRgb(
+              geneoHexToRgb(
+                fill.color
+              ),
+              canvasRgb,
+              fill.opacity / 100
+            )
+          : canvasRgb;
+
+      const visibleText =
+        geneoCompositeRgb(
+          geneoHexToRgb(
+            text.color
+          ),
+          background,
+          text.opacity / 100
+        );
+
+      return geneoContrastRatio(
+        visibleText,
+        background
+      );
     }
 
     function renderGeneoContrastWarning(node) {
@@ -71904,38 +72107,67 @@
       const target = resolveGeneoPaintTarget(reference);
       if (!target) return;
       if (target.scope === 'node') {
-        const node = target.entity;
-        const element = main.querySelector(`[data-geneo-node="${CSS.escape(node.id)}"]`);
+        const node =
+          target.entity;
+
+        const element =
+          main.querySelector(
+            `[data-geneo-node="${
+              CSS.escape(node.id)
+            }"]`
+          );
+
         if (element) {
+          const visibleAppearance =
+            geneoResolveVisibleNodeAppearance(
+              node
+            );
+
+          const visibleFill =
+            visibleAppearance.fill;
+
+          const visibleStroke =
+            visibleAppearance.stroke;
+
+          const visibleText =
+            visibleAppearance.text;
+
           element.style.setProperty(
             '--geneo-node-bg',
-            geneoPaintCssColor(node.appearance.fill)
+            geneoPaintCssColor(
+              visibleFill
+            )
           );
 
           element.style.setProperty(
             '--geneo-node-stroke',
-            geneoPaintCssColor(node.appearance.stroke)
+            geneoPaintCssColor(
+              visibleStroke
+            )
           );
 
           element.style.setProperty(
             '--geneo-node-stroke-style',
-            node.appearance.stroke.enabled
-              ? node.appearance.strokePattern
+            visibleStroke?.enabled
+              ? node.appearance
+                  .strokePattern
               : 'none'
           );
 
           element.style.setProperty(
             '--geneo-node-text',
-            geneoPaintCssColor(node.appearance.text)
+            geneoPaintCssColor(
+              visibleText
+            )
           );
 
           if (node.type === 'sticky') {
             element.classList.toggle(
               'has-paper-fill',
               Boolean(
-                node.appearance.fill?.enabled
+                visibleFill?.enabled
                 && geneoNumber(
-                  node.appearance.fill.opacity,
+                  visibleFill.opacity,
                   100,
                   0,
                   100
@@ -72062,52 +72294,298 @@
       syncGeneoPaintPopover(target, sourceInput);
     }
 
-    function beginGeneoPaintInteraction(reference) {
-      const target = resolveGeneoPaintTarget(reference);
-      if (!target) return null;
-      if (geneoPaintRuntime.interaction) commitGeneoPaintInteraction();
-      geneoPaintRuntime.interaction = {
-        key: geneoPaintTargetKey(target),
-        reference: { scope: target.scope, id: target.id, property: target.property },
-        beforeDiagram: geneoSnapshot(),
-        beforePaint: structuredClone(target.paint),
-        lastValidPaint: structuredClone(target.paint)
+    function geneoPaintOverrideState(
+      target
+    ) {
+      if (
+        target?.scope !== 'node'
+        || target.entity?.type
+          !== 'person'
+        || ![
+          'fill',
+          'stroke',
+          'text'
+        ].includes(
+          target.property
+        )
+      ) {
+        return false;
+      }
+
+      return target.entity
+        .appearance
+        ?.paintOverrides
+        ?.[target.property]
+        === true;
+    }
+
+    function setGeneoPaintOverrideState(
+      target,
+      overridden
+    ) {
+      if (
+        target?.scope !== 'node'
+        || target.entity?.type
+          !== 'person'
+        || ![
+          'fill',
+          'stroke',
+          'text'
+        ].includes(
+          target.property
+        )
+      ) {
+        return false;
+      }
+
+      const appearance =
+        target.entity.appearance;
+
+      const previous =
+        appearance.paintOverrides
+        ?.[target.property]
+        === true;
+
+      const next =
+        Boolean(overridden);
+
+      appearance.paintOverrides = {
+        fill:
+          appearance.paintOverrides
+            ?.fill === true,
+
+        stroke:
+          appearance.paintOverrides
+            ?.stroke === true,
+
+        text:
+          appearance.paintOverrides
+            ?.text === true,
+
+        [target.property]:
+          next
       };
+
+      return previous !== next;
+    }
+
+    function beginGeneoPaintInteraction(
+      reference
+    ) {
+      const target =
+        resolveGeneoPaintTarget(
+          reference
+        );
+
+      if (!target) {
+        return null;
+      }
+
+      if (
+        geneoPaintRuntime.interaction
+      ) {
+        commitGeneoPaintInteraction();
+      }
+
+      geneoPaintRuntime.interaction = {
+        key:
+          geneoPaintTargetKey(
+            target
+          ),
+
+        reference: {
+          scope: target.scope,
+          id: target.id,
+          property: target.property
+        },
+
+        beforeDiagram:
+          geneoSnapshot(),
+
+        beforePaint:
+          structuredClone(
+            target.paint
+          ),
+
+        beforeOverride:
+          geneoPaintOverrideState(
+            target
+          ),
+
+        lastValidPaint:
+          structuredClone(
+            target.paint
+          )
+      };
+
       return target;
     }
 
-    function previewGeneoPaint(reference, changes, sourceInput = null) {
-      const target = resolveGeneoPaintTarget(reference);
-      if (!target || !target.paint.enabled && !('enabled' in changes)) return false;
-      Object.assign(target.paint, changes);
-      target.paint.color = normalizeGeneoHexColor(target.paint.color, target.defaultPaint.color);
-      target.paint.opacity = Math.round(geneoNumber(target.paint.opacity, 100, 0, 100));
-      if (!target.supportsNone) target.paint.enabled = true;
-      const interaction = geneoPaintRuntime.interaction;
-      if (interaction?.key === geneoPaintTargetKey(target)) interaction.lastValidPaint = structuredClone(target.paint);
-      syncGeneoPaintUi(target, sourceInput);
+    function previewGeneoPaint(
+      reference,
+      changes,
+      sourceInput = null
+    ) {
+      const target =
+        resolveGeneoPaintTarget(
+          reference
+        );
+
+      if (
+        !target
+        || (
+          !target.paint.enabled
+          && !(
+            'enabled' in changes
+          )
+        )
+      ) {
+        return false;
+      }
+
+      Object.assign(
+        target.paint,
+        changes
+      );
+
+      target.paint.color =
+        normalizeGeneoHexColor(
+          target.paint.color,
+          target.defaultPaint.color
+        );
+
+      target.paint.opacity =
+        Math.round(
+          geneoNumber(
+            target.paint.opacity,
+            100,
+            0,
+            100
+          )
+        );
+
+      if (!target.supportsNone) {
+        target.paint.enabled = true;
+      }
+
+      /*
+       * A direct paint edit is an explicit
+       * object-level override.
+       */
+      setGeneoPaintOverrideState(
+        target,
+        true
+      );
+
+      const interaction =
+        geneoPaintRuntime.interaction;
+
+      if (
+        interaction?.key
+        === geneoPaintTargetKey(
+          target
+        )
+      ) {
+        interaction.lastValidPaint =
+          structuredClone(
+            target.paint
+          );
+      }
+
+      syncGeneoPaintUi(
+        target,
+        sourceInput
+      );
+
       return true;
     }
 
     function commitGeneoPaintInteraction() {
-      const interaction = geneoPaintRuntime.interaction;
-      if (!interaction) return false;
-      geneoPaintRuntime.interaction = null;
-      const target = resolveGeneoPaintTarget(interaction.reference);
-      if (!target || JSON.stringify(interaction.beforePaint) === JSON.stringify(target.paint)) return false;
-      geneoPushHistorySnapshot(interaction.beforeDiagram);
+      const interaction =
+        geneoPaintRuntime.interaction;
+
+      if (!interaction) {
+        return false;
+      }
+
+      geneoPaintRuntime.interaction =
+        null;
+
+      const target =
+        resolveGeneoPaintTarget(
+          interaction.reference
+        );
+
+      if (!target) {
+        return false;
+      }
+
+      const paintChanged =
+        JSON.stringify(
+          interaction.beforePaint
+        )
+        !== JSON.stringify(
+          target.paint
+        );
+
+      const overrideChanged =
+        interaction.beforeOverride
+        !== geneoPaintOverrideState(
+          target
+        );
+
+      if (
+        !paintChanged
+        && !overrideChanged
+      ) {
+        return false;
+      }
+
+      geneoPushHistorySnapshot(
+        interaction.beforeDiagram
+      );
+
       touchGeneographBoard();
+
       return true;
     }
 
     function cancelGeneoPaintInteraction() {
-      const interaction = geneoPaintRuntime.interaction;
-      if (!interaction) return false;
-      geneoPaintRuntime.interaction = null;
-      const target = resolveGeneoPaintTarget(interaction.reference);
-      if (!target) return false;
-      Object.assign(target.paint, structuredClone(interaction.beforePaint));
-      syncGeneoPaintUi(target);
+      const interaction =
+        geneoPaintRuntime.interaction;
+
+      if (!interaction) {
+        return false;
+      }
+
+      geneoPaintRuntime.interaction =
+        null;
+
+      const target =
+        resolveGeneoPaintTarget(
+          interaction.reference
+        );
+
+      if (!target) {
+        return false;
+      }
+
+      Object.assign(
+        target.paint,
+        structuredClone(
+          interaction.beforePaint
+        )
+      );
+
+      setGeneoPaintOverrideState(
+        target,
+        interaction.beforeOverride
+      );
+
+      syncGeneoPaintUi(
+        target
+      );
+
       return true;
     }
 
@@ -72121,19 +72599,91 @@
       return true;
     }
 
-    function commitGeneoPaintAction(reference, update) {
-      const target = resolveGeneoPaintTarget(reference);
-      if (!target) return false;
-      const beforeDiagram = geneoSnapshot();
-      const beforePaint = JSON.stringify(target.paint);
+    function commitGeneoPaintAction(
+      reference,
+      update,
+      {
+        resetOverride = false
+      } = {}
+    ) {
+      const target =
+        resolveGeneoPaintTarget(
+          reference
+        );
+
+      if (!target) {
+        return false;
+      }
+
+      const beforeDiagram =
+        geneoSnapshot();
+
+      const beforePaint =
+        JSON.stringify(
+          target.paint
+        );
+
+      const beforeOverride =
+        geneoPaintOverrideState(
+          target
+        );
+
       update(target);
-      target.paint.color = normalizeGeneoHexColor(target.paint.color, target.defaultPaint.color);
-      target.paint.opacity = Math.round(geneoNumber(target.paint.opacity, 100, 0, 100));
-      if (!target.supportsNone) target.paint.enabled = true;
-      if (beforePaint === JSON.stringify(target.paint)) return false;
-      geneoPushHistorySnapshot(beforeDiagram);
+
+      target.paint.color =
+        normalizeGeneoHexColor(
+          target.paint.color,
+          target.defaultPaint.color
+        );
+
+      target.paint.opacity =
+        Math.round(
+          geneoNumber(
+            target.paint.opacity,
+            100,
+            0,
+            100
+          )
+        );
+
+      if (!target.supportsNone) {
+        target.paint.enabled = true;
+      }
+
+      setGeneoPaintOverrideState(
+        target,
+        !resetOverride
+      );
+
+      const paintChanged =
+        beforePaint
+        !== JSON.stringify(
+          target.paint
+        );
+
+      const overrideChanged =
+        beforeOverride
+        !== geneoPaintOverrideState(
+          target
+        );
+
+      if (
+        !paintChanged
+        && !overrideChanged
+      ) {
+        return false;
+      }
+
+      geneoPushHistorySnapshot(
+        beforeDiagram
+      );
+
       touchGeneographBoard();
-      syncGeneoPaintUi(target);
+
+      syncGeneoPaintUi(
+        target
+      );
+
       return true;
     }
 
@@ -72410,9 +72960,34 @@
               ?.focus({ preventScroll: true });
           });
         });
-      popover.querySelector('[data-geneo-paint-reset]')?.addEventListener('click', () => {
-        commitGeneoPaintAction(reference, target => Object.assign(target.paint, structuredClone(target.defaultPaint), { enabled: true }));
-      });
+      popover
+        .querySelector(
+          '[data-geneo-paint-reset]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            commitGeneoPaintAction(
+              reference,
+
+              target => {
+                Object.assign(
+                  target.paint,
+                  structuredClone(
+                    target.defaultPaint
+                  ),
+                  {
+                    enabled: true
+                  }
+                );
+              },
+
+              {
+                resetOverride: true
+              }
+            );
+          }
+        );
       popover.querySelector('[data-geneo-paint-close]')?.addEventListener('click', () => closeGeneoPaintPopover());
     }
 
@@ -72509,9 +73084,34 @@
         row.querySelector('[data-geneo-paint-toggle]')?.addEventListener('click', () => {
           commitGeneoPaintAction(reference, target => { target.paint.enabled = !target.paint.enabled; });
         });
-        row.querySelector('[data-geneo-paint-reset]')?.addEventListener('click', () => {
-          commitGeneoPaintAction(reference, target => Object.assign(target.paint, structuredClone(target.defaultPaint), { enabled: true }));
-        });
+        row
+          .querySelector(
+            '[data-geneo-paint-reset]'
+          )
+          ?.addEventListener(
+            'click',
+            () => {
+              commitGeneoPaintAction(
+                reference,
+
+                target => {
+                  Object.assign(
+                    target.paint,
+                    structuredClone(
+                      target.defaultPaint
+                    ),
+                    {
+                      enabled: true
+                    }
+                  );
+                },
+
+                {
+                  resetOverride: true
+                }
+              );
+            }
+          );
       });
     }
 
