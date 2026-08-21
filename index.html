@@ -14056,8 +14056,507 @@
     .geneo-number-unit .geneo-input { width:100%; height:42px; min-height:42px; box-sizing:border-box; padding-right:34px; }
     .geneo-number-unit span { position:absolute; right:11px; top:50%; transform:translateY(-50%); color:var(--text-tertiary); font-size:12px; pointer-events:none; }
     .geneo-shape-kind-value { min-height:40px; padding:0 12px; border:1px solid var(--border-default); border-radius:var(--radius-sm); background:var(--surface-input); color:var(--text-primary); display:flex; align-items:center; font-weight:750; }
-    .geneo-place-modal-help { margin: 0; color: var(--text-tertiary); font-size: 12px; line-height: 1.45; }
-    .geneo-place-modal .place-combobox-list { top: auto; bottom: calc(100% + 6px); max-height: 145px; }
+    .geneo-place-modal {
+      width: min(
+        790px,
+        calc(100vw - 48px)
+      );
+
+      height: min(
+        600px,
+        calc(100vh - 48px)
+      );
+
+      max-height:
+        calc(100vh - 48px);
+
+      display: flex;
+      flex-direction: column;
+
+      overflow: hidden;
+    }
+
+    .geneo-place-picker-form {
+      width: 100%;
+      height: 100%;
+
+      min-width: 0;
+      min-height: 0;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .geneo-place-modal
+    .modal-header {
+      flex: 0 0 auto;
+
+      padding:
+        20px
+        var(--space-6);
+    }
+
+    .geneo-place-picker-body {
+      flex: 1 1 auto;
+
+      min-width: 0;
+      min-height: 0;
+
+      padding:
+        20px
+        var(--space-6)
+        16px;
+
+      display: grid;
+
+      grid-template-rows:
+        auto
+        minmax(0, 1fr)
+        auto
+        auto
+        auto;
+
+      gap: 14px;
+
+      overflow: hidden;
+    }
+
+    .geneo-place-picker-search {
+      min-width: 0;
+    }
+
+    .geneo-place-picker-search
+    label {
+      margin-bottom:
+        var(--space-2);
+    }
+
+    .geneo-place-picker-results-section {
+      min-width: 0;
+      min-height: 0;
+
+      display: flex;
+      flex-direction: column;
+
+      gap: 8px;
+    }
+
+    .geneo-place-picker-results-heading {
+      min-height: 24px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: var(--space-3);
+    }
+
+    .geneo-place-picker-results-heading
+    h3 {
+      margin: 0;
+
+      color:
+        var(--text-secondary);
+
+      font-size: 13px;
+      font-weight: 850;
+
+      letter-spacing: .02em;
+    }
+
+    .geneo-place-picker-count {
+      min-width: 26px;
+      height: 24px;
+
+      padding:
+        0
+        8px;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        999px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      color:
+        var(--text-tertiary);
+
+      background:
+        rgba(255, 255, 255, .025);
+
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .geneo-place-picker-results {
+      flex: 1 1 auto;
+
+      min-width: 0;
+      min-height: 112px;
+
+      overflow-x: hidden;
+      overflow-y: auto;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        rgba(10, 16, 14, .44);
+
+      scrollbar-gutter:
+        stable;
+    }
+
+    .geneo-place-picker-option {
+      width: 100%;
+      min-height: 60px;
+
+      padding:
+        10px
+        12px;
+
+      border: 0;
+      border-bottom:
+        1px solid
+        var(--border-default);
+
+      border-radius: 0;
+
+      display: grid;
+
+      grid-template-columns:
+        minmax(0, 1fr)
+        24px;
+
+      align-items: center;
+
+      gap: var(--space-3);
+
+      color:
+        var(--text-primary);
+
+      background:
+        transparent;
+
+      text-align: left;
+
+      transition:
+        background-color
+        var(--ease),
+        color
+        var(--ease);
+    }
+
+    .geneo-place-picker-option:last-child {
+      border-bottom: 0;
+    }
+
+    .geneo-place-picker-option:hover {
+      background:
+        var(--surface-card-hover);
+    }
+
+    .geneo-place-picker-option:focus-visible {
+      position: relative;
+      z-index: 1;
+
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset:
+        -2px;
+    }
+
+    .geneo-place-picker-option.selected {
+      background:
+        var(--surface-selected);
+    }
+
+    .geneo-place-picker-option-copy {
+      min-width: 0;
+
+      display: grid;
+
+      gap: 3px;
+    }
+
+    .geneo-place-picker-option-copy
+    strong {
+      overflow: hidden;
+
+      color:
+        var(--text-primary);
+
+      font-size: 14px;
+      font-weight: 850;
+
+      line-height: 1.3;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .geneo-place-picker-option-copy
+    span {
+      overflow: hidden;
+
+      color:
+        var(--text-tertiary);
+
+      font-size: 12px;
+
+      line-height: 1.35;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .geneo-place-picker-check {
+      width: 22px;
+      height: 22px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius:
+        50%;
+
+      color:
+        #06110d;
+
+      background:
+        var(--brand-green-300);
+    }
+
+    .geneo-place-picker-check[hidden] {
+      display: none;
+    }
+
+    .geneo-place-picker-check
+    svg {
+      width: 14px;
+      height: 14px;
+
+      display: block;
+    }
+
+    .geneo-place-picker-empty {
+      min-height: 112px;
+
+      padding:
+        var(--space-5);
+
+      display: grid;
+      place-items: center;
+
+      color:
+        var(--text-tertiary);
+
+      text-align: center;
+    }
+
+    .geneo-place-picker-empty
+    div {
+      max-width: 420px;
+
+      display: grid;
+
+      gap: 5px;
+    }
+
+    .geneo-place-picker-empty
+    strong {
+      color:
+        var(--text-secondary);
+
+      font-size: 14px;
+    }
+
+    .geneo-place-picker-empty
+    span {
+      font-size: 12px;
+
+      line-height: 1.45;
+    }
+
+    .geneo-place-board-choice-host:empty {
+      display: none;
+    }
+
+    .geneo-place-board-choice {
+      width: 100%;
+      min-height: 68px;
+
+      padding:
+        10px
+        12px;
+
+      border:
+        1px solid
+        rgba(98, 217, 154, .22);
+
+      border-radius:
+        var(--radius-sm);
+
+      display: grid;
+
+      grid-template-columns:
+        minmax(0, 1fr)
+        24px;
+
+      align-items: center;
+
+      gap: var(--space-3);
+
+      color:
+        var(--text-primary);
+
+      background:
+        rgba(47, 174, 116, .045);
+
+      text-align: left;
+
+      transition:
+        background-color
+        var(--ease),
+        border-color
+        var(--ease);
+    }
+
+    .geneo-place-board-choice:hover {
+      border-color:
+        rgba(98, 217, 154, .42);
+
+      background:
+        rgba(47, 174, 116, .09);
+    }
+
+    .geneo-place-board-choice:focus-visible {
+      outline:
+        2px solid
+        var(--brand-green-300);
+
+      outline-offset:
+        2px;
+    }
+
+    .geneo-place-board-choice.selected {
+      border-color:
+        rgba(98, 217, 154, .6);
+
+      background:
+        var(--surface-selected);
+    }
+
+    .geneo-place-board-choice-copy {
+      min-width: 0;
+
+      display: grid;
+
+      gap: 2px;
+    }
+
+    .geneo-place-board-choice-copy
+    strong {
+      color:
+        var(--brand-green-300);
+
+      font-size: 13px;
+    }
+
+    .geneo-place-board-choice-name {
+      overflow: hidden;
+
+      color:
+        var(--text-primary);
+
+      font-size: 14px;
+      font-weight: 850;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .geneo-place-board-choice-meta {
+      color:
+        var(--text-tertiary);
+
+      font-size: 12px;
+    }
+
+    .geneo-place-modal-help {
+      margin: 0;
+
+      color:
+        var(--text-tertiary);
+
+      font-size: 12px;
+
+      line-height: 1.45;
+    }
+
+    .geneo-place-picker-error:empty {
+      display: none;
+    }
+
+    .geneo-place-modal
+    .modal-footer {
+      flex: 0 0 auto;
+
+      min-height: 76px;
+
+      padding:
+        16px
+        var(--space-6);
+
+      align-items: center;
+    }
+
+    @media (max-width: 700px) {
+      .geneo-place-modal {
+        width:
+          calc(100vw - 24px);
+
+        height:
+          calc(100vh - 24px);
+
+        max-height:
+          calc(100vh - 24px);
+      }
+
+      .geneo-place-modal
+      .modal-header {
+        padding:
+          var(--space-4);
+      }
+
+      .geneo-place-picker-body {
+        padding:
+          var(--space-4);
+
+        gap:
+          var(--space-3);
+      }
+
+      .geneo-place-modal
+      .modal-footer {
+        min-height: 68px;
+
+        padding:
+          12px
+          var(--space-4);
+      }
+    }
     .geneo-canvas-stage.shape-tool,
     .geneo-canvas-stage.shape-tool .geneo-node-panel { cursor: crosshair; }
     .geneo-canvas-stage.pencil-tool { cursor:crosshair; touch-action:none; }
@@ -75135,61 +75634,956 @@
       return node;
     }
 
-    function openGeneographPlaceModal(nodeId = '') {
-      const board = selectedGeneographBoard();
-      const node = nodeId ? getGeneographNode(nodeId) : null;
-      if (!board || (nodeId && node?.type !== 'place')) return;
-      const resolved = node ? resolveGeneographPlace(node, board) : null;
-      const selectedPlaceId = resolved?.linked ? resolved.place.id : '';
-      const value = resolved?.linked
-        ? placeDisplayText(resolved.place)
-        : resolved?.name || '';
-      const editing = Boolean(node);
-      openModal(`<div class="modal geneo-place-modal" role="dialog" aria-modal="true" aria-labelledby="geneoPlaceModalTitle"><form data-geneo-place-form><div class="modal-header"><div><h2 id="geneoPlaceModalTitle">${editing ? 'Edit place object' : 'Add place object'}</h2><p>Link a project place or keep a board-only historical name.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body">${renderPlaceCombobox({
-        id: 'geneoPlaceObjectInput',
-        label: 'Place',
-        value,
-        selectedPlaceId,
-        showAddress: false,
-        placeholder: 'Search project places or type a board-only name',
-        inputAttrs: `data-place-project-id="${escapeHtml(board.projectId)}" autocomplete="off"`,
-        createOptionLabel: 'Use as board-only place'
-      })}<p class="geneo-place-modal-help">Project places stay linked and reflect future name changes. Board-only places exist only on this board.</p><span class="field-error" data-geneo-place-error role="alert" aria-live="polite"></span></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">${editing ? 'Save changes' : 'Add place'}</button></div></form></div>`);
-      const form = modalBackdrop.querySelector('[data-geneo-place-form]');
-      bindPlaceComboboxes(form);
-      form?.addEventListener('submit', event => {
-        event.preventDefault();
-        const input = form.querySelector('[data-place-input]');
-        const error = form.querySelector('[data-geneo-place-error]');
-        const enteredName = String(input?.value || '').replace(/[\r\n\u0000-\u001F\u007F]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160);
-        const projectPlace = input?.dataset.placeId ? getPlace(input.dataset.placeId) : null;
-        const validProjectPlace = projectPlace && !projectPlace.deleted && projectPlace.projectId === board.projectId;
-        if (!validProjectPlace && !enteredName) {
-          if (error) error.textContent = 'Enter a place name or select a project place.';
-          input?.setAttribute('aria-invalid', 'true');
-          input?.focus({ preventScroll: true });
-          return;
+    function cleanGeneographPlacePickerName(
+      value
+    ) {
+      return String(value || '')
+        .replace(
+          /[\r\n\u0000-\u001F\u007F]/g,
+          ' '
+        )
+        .replace(
+          /\s+/g,
+          ' '
+        )
+        .trim()
+        .slice(
+          0,
+          160
+        );
+    }
+
+    function geneographPlacePickerMatchScore(
+      place,
+      query
+    ) {
+      const normalizedQuery =
+        normalizePlaceLookupText(query);
+
+      if (!normalizedQuery) {
+        return 1;
+      }
+
+      const candidates = [
+        place.name,
+        placePrimaryName(place),
+        placeSecondaryName(place),
+        placeCountry(place),
+        ...placeAlternativeNames(place)
+      ];
+
+      for (const candidate of candidates) {
+        if (!candidate) continue;
+
+        const normalizedCandidate =
+          normalizePlaceLookupText(
+            candidate
+          );
+
+        if (
+          normalizedCandidate.startsWith(
+            normalizedQuery
+          )
+        ) {
+          return 3;
         }
-        const nextRef = validProjectPlace
-          ? {
-              scope: 'project',
-              id: projectPlace.id,
-              fallbackName: String(placePrimaryName(projectPlace) || projectPlace.name || enteredName).trim().slice(0, 160)
+
+        if (
+          normalizedCandidate.includes(
+            normalizedQuery
+          )
+        ) {
+          return 2;
+        }
+      }
+
+      return 0;
+    }
+
+    function geneographPlacePickerViewModel(
+      projectId,
+      pickerState
+    ) {
+      const query =
+        cleanGeneographPlacePickerName(
+          pickerState.query
+        );
+
+      const allPlaces =
+        projectPlaces(projectId)
+          .filter(place =>
+            place &&
+            !place.deleted
+          );
+
+      const exactPlace =
+        query
+          ? allPlaces.find(place =>
+              normalizePlaceLookupText(
+                placeDisplayText(place)
+              ) ===
+              normalizePlaceLookupText(
+                query
+              )
+            ) || null
+          : null;
+
+      const matches =
+        allPlaces
+          .map(place => ({
+            place,
+
+            score:
+              geneographPlacePickerMatchScore(
+                place,
+                query
+              ),
+
+            peopleCount:
+              getPeopleForPlace(
+                place.id,
+                {
+                  projectId
+                }
+              ).length
+          }))
+          .filter(item =>
+            item.score > 0
+          )
+          .sort(
+            (left, right) =>
+              right.score - left.score
+              || right.peopleCount
+                - left.peopleCount
+              || placeDisplayText(
+                left.place
+              ).localeCompare(
+                placeDisplayText(
+                  right.place
+                )
+              )
+          )
+          .map(item =>
+            item.place
+          );
+
+      return {
+        query,
+        allPlaces,
+        matches,
+        exactPlace,
+
+        boardOnlyCandidate:
+          query && !exactPlace
+            ? query
+            : ''
+      };
+    }
+
+    function renderGeneographPlacePickerResults(
+      model,
+      pickerState
+    ) {
+      if (!model.matches.length) {
+        const noProjectPlaces =
+          !model.allPlaces.length;
+
+        const title =
+          noProjectPlaces
+            ? 'No project places yet.'
+            : `No project places match “${model.query}”.`;
+
+        const support =
+          noProjectPlaces &&
+          !model.query
+            ? 'Type a name above to create a board-only place.'
+            : '';
+
+        return `
+          <div class="geneo-place-picker-empty">
+            <div>
+              <strong>
+                ${escapeHtml(title)}
+              </strong>
+
+              ${
+                support
+                  ? `
+                    <span>
+                      ${escapeHtml(support)}
+                    </span>
+                  `
+                  : ''
+              }
+            </div>
+          </div>
+        `;
+      }
+
+      return model.matches
+        .map(place => {
+          const selected =
+            pickerState.choice?.type
+              === 'project'
+            && pickerState.choice
+              .placeId === place.id;
+
+          const primary =
+            placePrimaryName(place)
+            || placeDisplayText(place)
+            || 'Unnamed place';
+
+          const context =
+            placeSecondaryName(place)
+            || 'Project place';
+
+          return `
+            <button
+              class="
+                geneo-place-picker-option
+                ${selected ? 'selected' : ''}
+              "
+              type="button"
+              data-geneo-place-picker-choice="project"
+              data-geneo-place-picker-id="${escapeHtml(
+                place.id
+              )}"
+              aria-pressed="${
+                selected
+                  ? 'true'
+                  : 'false'
+              }"
+              aria-label="${escapeHtml(
+                `Select ${primary}`
+              )}">
+
+              <span
+                class="geneo-place-picker-option-copy">
+                <strong>
+                  ${escapeHtml(primary)}
+                </strong>
+
+                <span>
+                  ${escapeHtml(context)}
+                </span>
+              </span>
+
+              <span
+                class="geneo-place-picker-check"
+                data-geneo-place-picker-check
+                aria-hidden="true"
+                ${selected ? '' : 'hidden'}>
+                ${icon.check}
+              </span>
+            </button>
+          `;
+        })
+        .join('');
+    }
+
+    function renderGeneographBoardOnlyPlaceChoice(
+      model,
+      pickerState
+    ) {
+      if (!model.boardOnlyCandidate) {
+        return '';
+      }
+
+      const selected =
+        pickerState.choice?.type
+          === 'board'
+        && normalizePlaceLookupText(
+          pickerState.choice.name
+        ) ===
+          normalizePlaceLookupText(
+            model.boardOnlyCandidate
+          );
+
+      return `
+        <button
+          class="
+            geneo-place-board-choice
+            ${selected ? 'selected' : ''}
+          "
+          type="button"
+          data-geneo-place-picker-choice="board"
+          data-geneo-board-place-name="${escapeHtml(
+            model.boardOnlyCandidate
+          )}"
+          aria-pressed="${
+            selected
+              ? 'true'
+              : 'false'
+          }">
+
+          <span
+            class="geneo-place-board-choice-copy">
+            <strong>
+              Create board-only place
+            </strong>
+
+            <span
+              class="geneo-place-board-choice-name">
+              ${escapeHtml(
+                model.boardOnlyCandidate
+              )}
+            </span>
+
+            <span
+              class="geneo-place-board-choice-meta">
+              Only available on this board
+            </span>
+          </span>
+
+          <span
+            class="geneo-place-picker-check"
+            data-geneo-place-picker-check
+            aria-hidden="true"
+            ${selected ? '' : 'hidden'}>
+            ${icon.check}
+          </span>
+        </button>
+      `;
+    }
+
+    function geneographPlacePickerPrimaryLabel(
+      pickerState,
+      editing
+    ) {
+      if (
+        pickerState.choice?.type
+          === 'board'
+      ) {
+        return editing
+          ? 'Save board-only place'
+          : 'Add board-only place';
+      }
+
+      return editing
+        ? 'Save changes'
+        : 'Add place';
+    }
+
+    function renderGeneographPlacePickerModal({
+      editing,
+      pickerState,
+      model
+    }) {
+      return `
+        <div
+          class="modal geneo-place-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="geneoPlaceModalTitle">
+
+          <form
+            class="geneo-place-picker-form"
+            data-geneo-place-form
+            novalidate>
+
+            <div class="modal-header">
+              <div>
+                <h2 id="geneoPlaceModalTitle">
+                  ${
+                    editing
+                      ? 'Edit place object'
+                      : 'Add place'
+                  }
+                </h2>
+
+                <p>
+                  Add an existing project place or create a place that exists only on this board.
+                </p>
+              </div>
+
+              <button
+                class="close-button"
+                type="button"
+                data-close
+                aria-label="Close">
+                ${icon.close}
+              </button>
+            </div>
+
+            <div
+              class="
+                modal-body
+                geneo-place-picker-body
+              ">
+
+              <div
+                class="
+                  field
+                  geneo-place-picker-search
+                ">
+                <label for="geneoPlacePickerSearch">
+                  Search places
+                </label>
+
+                <input
+                  id="geneoPlacePickerSearch"
+                  type="search"
+                  value="${escapeHtml(
+                    pickerState.query
+                  )}"
+                  placeholder="Search project places or type a board-only name"
+                  autocomplete="off"
+                  aria-describedby="geneoPlacePickerHelp"
+                  data-geneo-place-picker-search
+                  autofocus>
+              </div>
+
+              <section
+                class="geneo-place-picker-results-section"
+                aria-labelledby="geneoPlacePickerResultsTitle">
+
+                <div
+                  class="geneo-place-picker-results-heading">
+                  <h3 id="geneoPlacePickerResultsTitle">
+                    Project places
+                  </h3>
+
+                  <span
+                    class="geneo-place-picker-count"
+                    data-geneo-place-picker-count
+                    aria-live="polite">
+                    ${model.matches.length}
+                  </span>
+                </div>
+
+                <div
+                  class="geneo-place-picker-results"
+                  data-geneo-place-picker-results
+                  aria-label="Project place results">
+                  ${renderGeneographPlacePickerResults(
+                    model,
+                    pickerState
+                  )}
+                </div>
+              </section>
+
+              <div
+                class="geneo-place-board-choice-host"
+                data-geneo-place-board-choice-host>
+                ${renderGeneographBoardOnlyPlaceChoice(
+                  model,
+                  pickerState
+                )}
+              </div>
+
+              <p
+                class="geneo-place-modal-help"
+                id="geneoPlacePickerHelp">
+                Project places stay linked and reflect future name changes. Board-only places exist only on this board.
+              </p>
+
+              <span
+                class="
+                  field-error
+                  geneo-place-picker-error
+                "
+                data-geneo-place-error
+                role="alert"
+                aria-live="polite">
+              </span>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                class="button secondary"
+                type="button"
+                data-close>
+                Cancel
+              </button>
+
+              <button
+                class="button primary"
+                type="submit"
+                data-geneo-place-picker-submit
+                ${
+                  pickerState.choice
+                    ? ''
+                    : 'disabled'
+                }>
+                ${escapeHtml(
+                  geneographPlacePickerPrimaryLabel(
+                    pickerState,
+                    editing
+                  )
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      `;
+    }
+
+    function openGeneographPlaceModal(
+      nodeId = ''
+    ) {
+      const board =
+        selectedGeneographBoard();
+
+      const node =
+        nodeId
+          ? getGeneographNode(
+              nodeId
+            )
+          : null;
+
+      if (
+        !board
+        || (
+          nodeId
+          && node?.type !== 'place'
+        )
+      ) {
+        return;
+      }
+
+      const resolved =
+        node
+          ? resolveGeneographPlace(
+              node,
+              board
+            )
+          : null;
+
+      const editing =
+        Boolean(node);
+
+      const initialBoardName =
+        resolved && !resolved.linked
+          ? cleanGeneographPlacePickerName(
+              resolved.name
+            )
+          : '';
+
+      const pickerState = {
+        query:
+          initialBoardName,
+
+        choice:
+          resolved?.linked
+            ? {
+                type: 'project',
+                placeId:
+                  resolved.place.id
+              }
+            : null
+      };
+
+      if (
+        initialBoardName
+        && !geneographPlacePickerViewModel(
+          board.projectId,
+          pickerState
+        ).exactPlace
+      ) {
+        pickerState.choice = {
+          type: 'board',
+          name: initialBoardName
+        };
+      }
+
+      const initialModel =
+        geneographPlacePickerViewModel(
+          board.projectId,
+          pickerState
+        );
+
+      openModal(
+        renderGeneographPlacePickerModal({
+          editing,
+          pickerState,
+          model: initialModel
+        })
+      );
+
+      const form =
+        modalBackdrop.querySelector(
+          '[data-geneo-place-form]'
+        );
+
+      const searchInput =
+        form?.querySelector(
+          '[data-geneo-place-picker-search]'
+        );
+
+      const resultsHost =
+        form?.querySelector(
+          '[data-geneo-place-picker-results]'
+        );
+
+      const boardChoiceHost =
+        form?.querySelector(
+          '[data-geneo-place-board-choice-host]'
+        );
+
+      const countElement =
+        form?.querySelector(
+          '[data-geneo-place-picker-count]'
+        );
+
+      const primaryButton =
+        form?.querySelector(
+          '[data-geneo-place-picker-submit]'
+        );
+
+      const errorElement =
+        form?.querySelector(
+          '[data-geneo-place-error]'
+        );
+
+      if (
+        !form
+        || !searchInput
+        || !resultsHost
+        || !boardChoiceHost
+        || !countElement
+        || !primaryButton
+      ) {
+        return;
+      }
+
+      const clearError = () => {
+        if (errorElement) {
+          errorElement.textContent =
+            '';
+        }
+
+        searchInput.removeAttribute(
+          'aria-invalid'
+        );
+      };
+
+      const choiceIsSelected = (
+        button
+      ) => {
+        const type =
+          button.dataset
+            .geneoPlacePickerChoice;
+
+        if (type === 'project') {
+          return (
+            pickerState.choice?.type
+              === 'project'
+            && pickerState.choice
+              .placeId ===
+                button.dataset
+                  .geneoPlacePickerId
+          );
+        }
+
+        if (type === 'board') {
+          return (
+            pickerState.choice?.type
+              === 'board'
+            && normalizePlaceLookupText(
+              pickerState.choice.name
+            ) ===
+              normalizePlaceLookupText(
+                button.dataset
+                  .geneoBoardPlaceName
+              )
+          );
+        }
+
+        return false;
+      };
+
+      const updateChoiceUi = () => {
+        form
+          .querySelectorAll(
+            '[data-geneo-place-picker-choice]'
+          )
+          .forEach(button => {
+            const selected =
+              choiceIsSelected(
+                button
+              );
+
+            button.classList.toggle(
+              'selected',
+              selected
+            );
+
+            button.setAttribute(
+              'aria-pressed',
+              selected
+                ? 'true'
+                : 'false'
+            );
+
+            const check =
+              button.querySelector(
+                '[data-geneo-place-picker-check]'
+              );
+
+            if (check) {
+              check.hidden =
+                !selected;
             }
-          : { scope: 'board', name: enteredName };
-        geneoPushHistory();
-        const target = node || createGeneographPlaceNode(nextRef);
-        if (!target) {
-          geneoHistoryRuntime.undo.pop();
-          return;
+          });
+
+        primaryButton.disabled =
+          !pickerState.choice;
+
+        primaryButton.textContent =
+          geneographPlacePickerPrimaryLabel(
+            pickerState,
+            editing
+          );
+      };
+
+      const refreshResults = () => {
+        const model =
+          geneographPlacePickerViewModel(
+            board.projectId,
+            pickerState
+          );
+
+        resultsHost.innerHTML =
+          renderGeneographPlacePickerResults(
+            model,
+            pickerState
+          );
+
+        boardChoiceHost.innerHTML =
+          renderGeneographBoardOnlyPlaceChoice(
+            model,
+            pickerState
+          );
+
+        countElement.textContent =
+          String(
+            model.matches.length
+          );
+
+        updateChoiceUi();
+      };
+
+      searchInput.addEventListener(
+        'input',
+        () => {
+          pickerState.query =
+            searchInput.value;
+
+          /*
+          * Typing changes the candidate but does not implicitly
+          * select either a Project place or a board-only place.
+          */
+          pickerState.choice =
+            null;
+
+          clearError();
+          refreshResults();
         }
-        if (node) target.placeRef = nextRef;
-        touchGeneographBoard();
-        closeModal();
-        renderGeneographEditorPreserveCenter(geneoNodeCenter(target));
-        showToast(editing ? 'Place object updated.' : 'Place added to board.');
-      });
-      requestAnimationFrame(() => form?.querySelector('[data-place-input]')?.focus({ preventScroll: true }));
+      );
+
+      form.addEventListener(
+        'click',
+        event => {
+          const choiceButton =
+            event.target.closest(
+              '[data-geneo-place-picker-choice]'
+            );
+
+          if (
+            !choiceButton
+            || !form.contains(
+              choiceButton
+            )
+          ) {
+            return;
+          }
+
+          const choiceType =
+            choiceButton.dataset
+              .geneoPlacePickerChoice;
+
+          if (
+            choiceType === 'project'
+          ) {
+            const place =
+              getPlace(
+                choiceButton.dataset
+                  .geneoPlacePickerId
+              );
+
+            if (
+              !place
+              || place.deleted
+              || place.projectId
+                !== board.projectId
+            ) {
+              refreshResults();
+              return;
+            }
+
+            pickerState.choice = {
+              type: 'project',
+              placeId: place.id
+            };
+          } else if (
+            choiceType === 'board'
+          ) {
+            const name =
+              cleanGeneographPlacePickerName(
+                choiceButton.dataset
+                  .geneoBoardPlaceName
+              );
+
+            if (!name) return;
+
+            pickerState.choice = {
+              type: 'board',
+              name
+            };
+          } else {
+            return;
+          }
+
+          clearError();
+
+          /*
+          * Do not rerender the result buttons after selection.
+          * Updating their state in place preserves keyboard focus.
+          */
+          updateChoiceUi();
+        }
+      );
+
+      form.addEventListener(
+        'submit',
+        event => {
+          event.preventDefault();
+
+          let nextRef = null;
+
+          if (
+            pickerState.choice?.type
+              === 'project'
+          ) {
+            const projectPlace =
+              getPlace(
+                pickerState.choice
+                  .placeId
+              );
+
+            const validProjectPlace =
+              projectPlace
+              && !projectPlace.deleted
+              && projectPlace.projectId
+                === board.projectId;
+
+            if (validProjectPlace) {
+              nextRef = {
+                scope: 'project',
+                id: projectPlace.id,
+                fallbackName:
+                  String(
+                    placePrimaryName(
+                      projectPlace
+                    )
+                    || projectPlace.name
+                    || ''
+                  )
+                    .trim()
+                    .slice(
+                      0,
+                      160
+                    )
+              };
+            }
+          } else if (
+            pickerState.choice?.type
+              === 'board'
+          ) {
+            const boardOnlyName =
+              cleanGeneographPlacePickerName(
+                pickerState.choice.name
+              );
+
+            if (boardOnlyName) {
+              nextRef = {
+                scope: 'board',
+                name: boardOnlyName
+              };
+            }
+          }
+
+          if (!nextRef) {
+            if (errorElement) {
+              errorElement.textContent =
+                'Select a project place or the board-only creation choice.';
+            }
+
+            searchInput.setAttribute(
+              'aria-invalid',
+              'true'
+            );
+
+            searchInput.focus({
+              preventScroll: true
+            });
+
+            return;
+          }
+
+          geneoPushHistory();
+
+          const target =
+            node
+            || createGeneographPlaceNode(
+              nextRef
+            );
+
+          if (!target) {
+            geneoHistoryRuntime
+              .undo
+              .pop();
+
+            return;
+          }
+
+          if (node) {
+            target.placeRef =
+              nextRef;
+          }
+
+          touchGeneographBoard();
+          closeModal();
+
+          renderGeneographEditorPreserveCenter(
+            geneoNodeCenter(
+              target
+            )
+          );
+
+          showToast(
+            editing
+              ? 'Place object updated.'
+              : 'Place added to board.'
+          );
+        }
+      );
+
+      requestAnimationFrame(
+        () => {
+          searchInput.focus({
+            preventScroll: true
+          });
+
+          const cursorPosition =
+            searchInput.value.length;
+
+          searchInput.setSelectionRange(
+            cursorPosition,
+            cursorPosition
+          );
+        }
+      );
     }
 
     function makeGeneographPlaceBoardOnly(nodeId) {
