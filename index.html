@@ -36430,9 +36430,9 @@
       const DRAG_THRESHOLD = 4;
 
       /*
-      * Person cards are intentionally not included here.
-      * A card can initiate a canvas pan, while controls inside
-      * the card retain their normal button behavior.
+      * Person cards are intentionally omitted. Their non-control
+      * surfaces can initiate panning, while clicking without
+      * moving continues to activate the card.
       */
       const interactiveSelector = [
         '.add-parent-card',
@@ -36445,26 +36445,29 @@
         '[contenteditable="true"]'
       ].join(', ');
 
-      let drag = null;
+      let gesture = null;
       let suppressNextClick = false;
 
-      const finishPan = event => {
-        if (!drag) return;
+      const finishGesture = event => {
+        if (!gesture) return;
 
         if (
           event?.pointerId !== undefined &&
-          event.pointerId !== drag.pointerId
+          event.pointerId !== gesture.pointerId
         ) {
           return;
         }
 
-        const pointerId = drag.pointerId;
-        const didMove = drag.moved;
+        const pointerId = gesture.pointerId;
+        const didPan = gesture.didPan;
 
-        drag = null;
+        gesture = null;
         canvas.classList.remove('is-panning');
 
-        if (!didMove) {
+        /*
+        * A stationary press must remain a normal browser click.
+        */
+        if (!didPan) {
           suppressNextClick = false;
         }
 
@@ -36473,8 +36476,7 @@
             canvas.releasePointerCapture(pointerId);
           } catch {
             /*
-            * Pointer capture may already have been released
-            * by the browser.
+            * The browser may already have released capture.
             */
           }
         }
@@ -36498,66 +36500,66 @@
           return;
         }
 
-        /*
-        * A new pointer gesture invalidates any unconsumed
-        * click suppression left by the previous gesture.
-        */
         suppressNextClick = false;
 
-        drag = {
+        gesture = {
           pointerId: event.pointerId,
           startX: event.clientX,
           startY: event.clientY,
           startScrollLeft: canvas.scrollLeft,
           startScrollTop: canvas.scrollTop,
-          moved: false
+          didPan: false
         };
 
-        canvas.setPointerCapture?.(event.pointerId);
+        /*
+        * Do not call setPointerCapture here. Keeping the original
+        * pointer target is what allows stationary card clicks.
+        */
       });
 
       canvas.addEventListener('pointermove', event => {
         if (
-          !drag ||
-          event.pointerId !== drag.pointerId
+          !gesture ||
+          event.pointerId !== gesture.pointerId
         ) {
           return;
         }
 
-        const deltaX = event.clientX - drag.startX;
-        const deltaY = event.clientY - drag.startY;
+        const deltaX = event.clientX - gesture.startX;
+        const deltaY = event.clientY - gesture.startY;
 
-        if (!drag.moved) {
+        if (!gesture.didPan) {
           const distance = Math.hypot(deltaX, deltaY);
 
           if (distance < DRAG_THRESHOLD) {
             return;
           }
 
-          drag.moved = true;
+          gesture.didPan = true;
           suppressNextClick = true;
           canvas.classList.add('is-panning');
 
           /*
-          * Clear any selection that existed before the
-          * drag began.
+          * Capture only after this gesture has become a pan.
           */
+          canvas.setPointerCapture?.(event.pointerId);
+
           window.getSelection()?.removeAllRanges();
         }
 
         event.preventDefault();
 
         canvas.scrollLeft =
-          drag.startScrollLeft - deltaX;
+          gesture.startScrollLeft - deltaX;
 
         canvas.scrollTop =
-          drag.startScrollTop - deltaY;
+          gesture.startScrollTop - deltaY;
       });
 
       /*
-      * A pointer drag beginning on a card can otherwise
-      * produce a click after pointerup and select that card.
-      * Capture the click before it reaches card handlers.
+      * Dragging from a card can still produce a synthetic click
+      * after pointerup. Consume that click only when a real pan
+      * crossed the drag threshold.
       */
       canvas.addEventListener(
         'click',
@@ -36571,9 +36573,9 @@
         true
       );
 
-      canvas.addEventListener('pointerup', finishPan);
-      canvas.addEventListener('pointercancel', finishPan);
-      canvas.addEventListener('lostpointercapture', finishPan);
+      canvas.addEventListener('pointerup', finishGesture);
+      canvas.addEventListener('pointercancel', finishGesture);
+      canvas.addEventListener('lostpointercapture', finishGesture);
     }
 
     function renderFamilyTree() {
@@ -36653,14 +36655,32 @@
       `;
       bindTreeCanvasPan();
       main.querySelector('.tree-canvas')?.addEventListener('wheel', queueTreeWheelZoom, { passive: false });
-      main.querySelectorAll('[data-person-id]').forEach(card => card.addEventListener('click', e => {
-        if (e.target.closest('button')) return;
+      main
+        .querySelectorAll('.tree-person-card[data-person-id]')
+        .forEach(card => {
+          const selectCard = () => {
+            state.selectedPersonId = card.dataset.personId;
+            state.treeInspectorCollapsed = false;
+            renderFamilyTreePreserveScroll();
+          };
 
-        state.selectedPersonId = card.dataset.personId;
-        state.treeInspectorCollapsed = false;
+          card.addEventListener('click', event => {
+            if (event.target.closest('button')) return;
+            selectCard();
+          });
 
-        renderFamilyTreePreserveScroll();
-      }));
+          card.addEventListener('keydown', event => {
+            if (
+              event.target !== card ||
+              !['Enter', ' '].includes(event.key)
+            ) {
+              return;
+            }
+
+            event.preventDefault();
+            selectCard();
+          });
+        });
       main
         .querySelectorAll('[data-card-add]')
         .forEach(button =>
