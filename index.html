@@ -3602,6 +3602,8 @@
       background-image: radial-gradient(rgba(127,138,134,.18) 1px, transparent 1px);
       background-size: 20px 20px;
       cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
     }
     .tree-stage {
       position: relative;
@@ -3723,11 +3725,6 @@
     .tree-canvas.is-panning .tree-zoom,
     .tree-canvas.is-panning .zoom-button {
       cursor: grabbing;
-    }
-
-    .tree-canvas.is-panning {
-      user-select: none;
-      -webkit-user-select: none;
     }
 
     .tree-zoom {
@@ -35953,9 +35950,10 @@
     const TREE_SPOUSE_GAP = 42;
     const TREE_SIBLING_GAP = 52;
     const TREE_BRANCH_GAP = 96;
-    const TREE_PADDING_X = 56;
-    const TREE_PADDING_Y = 52;
-    const TREE_MIN_STAGE_W = 2020;
+    const TREE_PADDING_X = 900;
+    const TREE_PADDING_Y = 500;
+    const TREE_MIN_STAGE_W = 4040;
+    const TREE_MIN_STAGE_H = 1800;
     const TREE_PARENT_PLACEHOLDER_GAP = 48;
     const TREE_PARENT_PLACEHOLDER_VERTICAL_GAP = 112;
     const TREE_CONNECTOR_RAIL_OFFSET = 56;
@@ -36248,7 +36246,10 @@
         refreshTreeFamilyAnchors(families, positionedById, familyAnchors);
       }
       const rightEdge = Math.max(TREE_MIN_STAGE_W - TREE_PADDING_X, ...layoutNodes.map(n => n.rightX ?? n.x + n.width));
-      const bottomEdge = Math.max(TREE_PADDING_Y + TREE_CARD_H, ...layoutNodes.map(n => n.bottomY ?? n.y + n.height));
+      const bottomEdge = Math.max(
+        TREE_MIN_STAGE_H - TREE_PADDING_Y,
+        ...layoutNodes.map(node => node.bottomY ?? node.y + node.height)
+      );
       const stageWidth = Math.ceil(rightEdge + TREE_PADDING_X);
       const stageHeight = Math.ceil(bottomEdge + TREE_PADDING_Y);
       const peopleById = Object.fromEntries(positionedPeople.map(p => [p.id, p]));
@@ -36422,19 +36423,18 @@
     }
 
     function bindTreeCanvasPan() {
-      const canvas =
-        main.querySelector(
-          '.tree-canvas'
-        );
+      const canvas = main.querySelector('.tree-canvas');
 
-      if (!canvas) {
-        return;
-      }
+      if (!canvas) return;
 
       const DRAG_THRESHOLD = 4;
 
+      /*
+      * Person cards are intentionally not included here.
+      * A card can initiate a canvas pan, while controls inside
+      * the card retain their normal button behavior.
+      */
       const interactiveSelector = [
-        '.tree-person-card',
         '.add-parent-card',
         '.tree-zoom',
         'button',
@@ -36446,177 +36446,134 @@
       ].join(', ');
 
       let drag = null;
+      let suppressNextClick = false;
 
       const finishPan = event => {
-        if (!drag) {
-          return;
-        }
+        if (!drag) return;
 
         if (
-          event?.pointerId !== undefined
-          && event.pointerId
-            !== drag.pointerId
+          event?.pointerId !== undefined &&
+          event.pointerId !== drag.pointerId
         ) {
           return;
         }
 
-        const pointerId =
-          drag.pointerId;
+        const pointerId = drag.pointerId;
+        const didMove = drag.moved;
 
         drag = null;
+        canvas.classList.remove('is-panning');
 
-        canvas.classList.remove(
-          'is-panning'
-        );
+        if (!didMove) {
+          suppressNextClick = false;
+        }
 
-        if (
-          canvas.hasPointerCapture
-          ?.(
-            pointerId
-          )
-        ) {
+        if (canvas.hasPointerCapture?.(pointerId)) {
           try {
-            canvas.releasePointerCapture(
-              pointerId
-            );
+            canvas.releasePointerCapture(pointerId);
           } catch {
             /*
-            * Pointer capture may already have been
-            * released by the browser.
+            * Pointer capture may already have been released
+            * by the browser.
             */
           }
         }
       };
 
-      canvas.addEventListener(
-        'pointerdown',
-        event => {
-          /*
-          * Support the primary left mouse button.
-          * Pen input can use the same interaction.
-          */
-          if (
-            event.button !== 0
-            || event.isPrimary === false
-            || event.pointerType === 'touch'
-          ) {
-            return;
-          }
-
-          const target =
-            event.target instanceof Element
-              ? event.target
-              : null;
-
-          /*
-          * Do not begin panning from cards,
-          * placeholders, zoom controls, or
-          * other interactive elements.
-          */
-          if (
-            target?.closest(
-              interactiveSelector
-            )
-          ) {
-            return;
-          }
-
-          drag = {
-            pointerId:
-              event.pointerId,
-
-            startX:
-              event.clientX,
-
-            startY:
-              event.clientY,
-
-            startScrollLeft:
-              canvas.scrollLeft,
-
-            startScrollTop:
-              canvas.scrollTop,
-
-            moved: false
-          };
-
-          canvas.setPointerCapture
-            ?.(
-              event.pointerId
-            );
+      canvas.addEventListener('pointerdown', event => {
+        if (
+          event.button !== 0 ||
+          event.isPrimary === false ||
+          event.pointerType === 'touch'
+        ) {
+          return;
         }
-      );
 
-      canvas.addEventListener(
-        'pointermove',
-        event => {
-          if (
-            !drag
-            || event.pointerId
-              !== drag.pointerId
-          ) {
+        const target =
+          event.target instanceof Element
+            ? event.target
+            : null;
+
+        if (target?.closest(interactiveSelector)) {
+          return;
+        }
+
+        /*
+        * A new pointer gesture invalidates any unconsumed
+        * click suppression left by the previous gesture.
+        */
+        suppressNextClick = false;
+
+        drag = {
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          startScrollLeft: canvas.scrollLeft,
+          startScrollTop: canvas.scrollTop,
+          moved: false
+        };
+
+        canvas.setPointerCapture?.(event.pointerId);
+      });
+
+      canvas.addEventListener('pointermove', event => {
+        if (
+          !drag ||
+          event.pointerId !== drag.pointerId
+        ) {
+          return;
+        }
+
+        const deltaX = event.clientX - drag.startX;
+        const deltaY = event.clientY - drag.startY;
+
+        if (!drag.moved) {
+          const distance = Math.hypot(deltaX, deltaY);
+
+          if (distance < DRAG_THRESHOLD) {
             return;
           }
 
-          const deltaX =
-            event.clientX
-            - drag.startX;
+          drag.moved = true;
+          suppressNextClick = true;
+          canvas.classList.add('is-panning');
 
-          const deltaY =
-            event.clientY
-            - drag.startY;
+          /*
+          * Clear any selection that existed before the
+          * drag began.
+          */
+          window.getSelection()?.removeAllRanges();
+        }
 
-          if (!drag.moved) {
-            const distance =
-              Math.hypot(
-                deltaX,
-                deltaY
-              );
+        event.preventDefault();
 
-            if (
-              distance
-              < DRAG_THRESHOLD
-            ) {
-              return;
-            }
+        canvas.scrollLeft =
+          drag.startScrollLeft - deltaX;
 
-            drag.moved = true;
+        canvas.scrollTop =
+          drag.startScrollTop - deltaY;
+      });
 
-            canvas.classList.add(
-              'is-panning'
-            );
-          }
+      /*
+      * A pointer drag beginning on a card can otherwise
+      * produce a click after pointerup and select that card.
+      * Capture the click before it reaches card handlers.
+      */
+      canvas.addEventListener(
+        'click',
+        event => {
+          if (!suppressNextClick) return;
 
+          suppressNextClick = false;
           event.preventDefault();
-
-          /*
-          * Subtract the pointer movement so the tree
-          * behaves like a physical sheet being moved.
-          */
-          canvas.scrollLeft =
-            drag.startScrollLeft
-            - deltaX;
-
-          canvas.scrollTop =
-            drag.startScrollTop
-            - deltaY;
-        }
+          event.stopImmediatePropagation();
+        },
+        true
       );
 
-      canvas.addEventListener(
-        'pointerup',
-        finishPan
-      );
-
-      canvas.addEventListener(
-        'pointercancel',
-        finishPan
-      );
-
-      canvas.addEventListener(
-        'lostpointercapture',
-        finishPan
-      );
+      canvas.addEventListener('pointerup', finishPan);
+      canvas.addEventListener('pointercancel', finishPan);
+      canvas.addEventListener('lostpointercapture', finishPan);
     }
 
     function renderFamilyTree() {
@@ -36877,7 +36834,6 @@
         <div class="tree-card-content">
           <h3 class="tree-name">${escapeHtml(person.name)}</h3>
           ${renderTreeCardDateLines(person)}
-          ${renderTreeCardStatus(person)}
         </div>
         <div class="card-actions">
           <button class="card-action" type="button" data-card-edit="${person.id}" aria-label="Edit ${escapeHtml(person.name)}">${icon.edit}</button>
@@ -36896,28 +36852,29 @@
     }
 
     function renderTreeCardDateLines(person) {
-          const lines = [];
-          const status = normalizeLivingStatus(person.status);
+      const lines = [];
+      const status = normalizeLivingStatus(person.status);
+      const birthDate = String(person.birth || '').trim();
+      const deathDate = String(person.death || '').trim();
 
-          if (person.birth) {
-            lines.push(`<span>Born: ${escapeHtml(person.birth)}</span>`);
-          }
+      if (birthDate) {
+        lines.push(`<span>Born: ${escapeHtml(birthDate)}</span>`);
+      }
 
-          if (status === 'Deceased' && person.death) {
-            lines.push(`<span>Died: ${escapeHtml(person.death)}</span>`);
-          }
+      if (status === 'Deceased') {
+        lines.push(
+          deathDate
+            ? `<span>Died: ${escapeHtml(deathDate)}</span>`
+            : '<span>Deceased</span>'
+        );
+      } else if (status === 'Unknown') {
+        lines.push('<span>Unknown</span>');
+      }
 
-          return lines.length ? `<div class="tree-dates">${lines.join('')}</div>` : '';
-        }
-
-        function renderTreeCardStatus(person) {
-          const safeStatus = normalizeLivingStatus(person.status);
-
-          return `<span class="status-dot ${statusDotClass(safeStatus)}">
-            ${escapeHtml(safeStatus)}
-          </span>`;
-        }
-
+      return lines.length
+        ? `<div class="tree-dates">${lines.join('')}</div>`
+        : '';
+    }
         function sectionIsOpen(id) {
           return state.inspectorSections[id] !== false;
         }
