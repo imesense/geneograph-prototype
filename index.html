@@ -11538,13 +11538,20 @@
       place-items: start center;
       padding-top: var(--space-4);
     }
-    .geneo-inspector-body { padding: var(--space-4); display: grid; gap: var(--space-4); }
+    .geneo-inspector-body {
+      min-width: 0;
+      min-height: 100%;
+    }
     .geneo-inspector-header {
       min-width: 0;
-      min-height: 40px;
+      min-height: 72px;
       display: flex;
       align-items: center;
       gap: var(--space-3);
+      padding: var(--space-4);
+      border-bottom:
+        1px solid
+        var(--border-default);
     }
 
     .geneo-inspector-header
@@ -11609,9 +11616,29 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .geneo-inspector-section { border: 1px solid var(--border-default); background: var(--surface-card); border-radius: var(--radius-sm); overflow: hidden; }
-    .geneo-inspector-section h3 { margin: 0; padding: var(--space-3); font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-tertiary); border-bottom: 1px solid var(--border-default); }
-    .geneo-inspector-section-body { padding: var(--space-3); display: grid; gap: var(--space-3); }
+    .geneo-inspector .panel-section {
+      min-width: 0;
+    }
+
+    .geneo-inspector .panel-section-body {
+      min-width: 0;
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .geneo-inspector-danger {
+      display: flex;
+      padding: var(--space-4);
+      margin-top: var(--space-2);
+      border-top:
+        1px solid
+        var(--border-default);
+    }
+
+    .geneo-inspector-danger .button {
+      width: 100%;
+      min-width: 0;
+    }
     .geneo-link-status { border-radius: 8px; padding: var(--space-3); background: rgba(47,174,116,.08); border: 1px solid rgba(47,174,116,.22); color: var(--text-secondary); }
     .geneo-link-status.visual { background: rgba(212,170,107,.08); border-color: rgba(212,170,107,.24); }
     .geneo-link-status strong { color: var(--text-primary); display:block; margin-bottom: 4px; }
@@ -34757,6 +34784,87 @@
       geneoInspectorCollapsed: false,
       geneoLayerSearch: '',
       geneoSidebarSections: { layers: true, connections: true },
+      geneoInspectorSections: {
+        canvas: {
+          appearance: true,
+          behavior: true,
+          personCards: true
+        },
+
+        person: {
+          layer: true,
+          content: true,
+          card: true,
+          appearance: true,
+          layout: true
+        },
+
+        text: {
+          layer: true,
+          content: true,
+          appearance: true,
+          layout: true
+        },
+
+        sticky: {
+          layer: true,
+          content: true,
+          appearance: true,
+          layout: true
+        },
+
+        image: {
+          layer: true,
+          imageSource: true,
+          appearance: true,
+          layout: true
+        },
+
+        panel: {
+          layer: true,
+          content: true,
+          appearance: true,
+          layout: true
+        },
+
+        place: {
+          layer: true,
+          content: true,
+          appearance: true,
+          layout: true
+        },
+
+        shape: {
+          layer: true,
+          content: true,
+          appearance: true,
+          layout: true
+        },
+
+        drawing: {
+          layer: true,
+          appearance: true,
+          layout: true
+        },
+
+        node: {
+          layer: true,
+          content: true,
+          appearance: true,
+          layout: true
+        },
+
+        connection: {
+          layer: true,
+          relationship: true,
+          appearance: true
+        },
+
+        multi: {
+          selection: true,
+          personCards: true
+        }
+      },
       geneoCollapsedPanels: {},
       geneoImagePicker: {
         open: false,
@@ -72991,27 +73099,212 @@
       `;
     }
 
-    function renderGeneographPersonCardSection(
+    function geneoInspectorContextForNode(
       node
     ) {
-      return `
-        <section
-          class="geneo-inspector-section">
-          <h3>
-            Card style & content
-          </h3>
+      const supportedContexts = new Set([
+        'person',
+        'text',
+        'sticky',
+        'image',
+        'panel',
+        'place',
+        'shape',
+        'drawing'
+      ]);
 
-          <div
-            class="geneo-inspector-section-body">
-            ${renderGeneographPersonCardControls({
-              scope: 'node',
-              node
-            })}
-          </div>
-        </section>
+      return supportedContexts.has(
+        node?.type
+      )
+        ? node.type
+        : 'node';
+    }
+
+    function geneoInspectorSectionIsOpen(
+      context,
+      id
+    ) {
+      return state
+        .geneoInspectorSections
+        ?.[context]
+        ?.[id] !== false;
+    }
+
+    function renderGeneographInspectorSection({
+      context,
+      id,
+      title,
+      content,
+      meta = '',
+      actionHtml = ''
+    }) {
+      const sectionKey =
+        `${context}:${id}`;
+
+      return renderInspectorSection(
+        sectionKey,
+        title,
+        meta,
+        content,
+        actionHtml,
+        {
+          open:
+            geneoInspectorSectionIsOpen(
+              context,
+              id
+            ),
+
+          toggleAttribute:
+            'data-geneo-inspector-section',
+
+          sectionId:
+            `geneo-inspector-${context}-${id}`
+        }
+      );
+    }
+
+    function renderGeneographInspectorDangerAction(
+      label
+    ) {
+      return `
+        <div class="geneo-inspector-danger">
+          <button
+            class="button danger"
+            type="button"
+            data-geneo-delete-selection>
+            ${icon.trash}
+            ${escapeHtml(label)}
+          </button>
+        </div>
       `;
     }
 
+    function bindGeneographInspectorSectionToggles() {
+      if (
+        main.dataset
+          .geneoInspectorSectionToggleBound
+        === 'true'
+      ) {
+        return;
+      }
+
+      main.dataset
+        .geneoInspectorSectionToggleBound =
+        'true';
+
+      main.addEventListener(
+        'click',
+        event => {
+          const button =
+            event.target.closest?.(
+              '[data-geneo-inspector-section]'
+            );
+
+          if (
+            !button
+            || !main.contains(button)
+          ) {
+            return;
+          }
+
+          const sectionKey =
+            button.dataset
+              .geneoInspectorSection
+            || '';
+
+          const separatorIndex =
+            sectionKey.indexOf(':');
+
+          if (separatorIndex < 1) {
+            return;
+          }
+
+          const context =
+            sectionKey.slice(
+              0,
+              separatorIndex
+            );
+
+          const id =
+            sectionKey.slice(
+              separatorIndex + 1
+            );
+
+          if (!context || !id) {
+            return;
+          }
+
+          const section =
+            button.closest(
+              '.panel-section'
+            );
+
+          const bodyId =
+            button.getAttribute(
+              'aria-controls'
+            );
+
+          const body =
+            bodyId && section
+              ? section.querySelector(
+                  `#${CSS.escape(bodyId)}`
+                )
+              : null;
+
+          if (!section || !body) {
+            return;
+          }
+
+          const open =
+            !geneoInspectorSectionIsOpen(
+              context,
+              id
+            );
+
+          if (
+            !state.geneoInspectorSections[
+              context
+            ]
+          ) {
+            state.geneoInspectorSections[
+              context
+            ] = {};
+          }
+
+          state.geneoInspectorSections[
+            context
+          ][id] = open;
+
+          button.setAttribute(
+            'aria-expanded',
+            String(open)
+          );
+
+          section.classList.toggle(
+            'is-open',
+            open
+          );
+
+          body.hidden = !open;
+        }
+      );
+    }
+
+    function renderGeneographPersonCardSection(
+      node
+    ) {
+      return renderGeneographInspectorSection({
+        context: 'person',
+        id: 'card',
+        title: 'Card style & content',
+        content:
+          renderGeneographPersonCardControls({
+            scope: 'node',
+            node
+          })
+      });
+    }
+    
     function renderGeneographInspector() {
       if (state.geneoInspectorCollapsed) {
         return `
@@ -73063,11 +73356,95 @@
       }
 
       if (node) {
-        return renderGeneographNodeInspector(node);
+        return renderGeneographNodeInspector(
+          node
+        );
       }
 
       const canvas =
         selectedGeneographDiagram().canvas;
+
+      const appearanceContent = `
+        ${renderGeneoPaintControl({
+          scope: 'canvas',
+          property: 'background'
+        })}
+
+        <div class="geneo-field">
+          <span class="geneo-field-label">
+            Background pattern
+          </span>
+
+          <div
+            class="geneo-background-pattern"
+            role="group"
+            aria-label="Background pattern">
+            ${['dots', 'grid', 'clear']
+              .map(pattern => `
+                <button
+                  type="button"
+                  data-geneo-background-pattern="${pattern}"
+                  aria-pressed="${
+                    canvas.backgroundPattern
+                    === pattern
+                  }">
+                  ${capitalize(pattern)}
+                </button>
+              `)
+              .join('')}
+          </div>
+        </div>
+      `;
+
+      const behaviorContent = `
+        <label class="geneo-check">
+          <input
+            type="checkbox"
+            data-geneo-sockets
+            ${
+              canvas.alwaysShowSockets
+                ? 'checked'
+                : ''
+            }>
+          Always show sockets
+        </label>
+
+        <label class="geneo-check">
+          <input
+            type="checkbox"
+            data-geneo-snap
+            ${
+              canvas.snapToGrid
+                ? 'checked'
+                : ''
+            }>
+          Snap to grid
+        </label>
+
+        <label
+          class="
+            geneo-check
+            geneo-gender-color-toggle
+          ">
+          <input
+            type="checkbox"
+            data-geneo-person-gender-colors
+            ${
+              canvas.colorPersonCardsByGender
+                ? 'checked'
+                : ''
+            }>
+
+          <span>
+            Color person cards by gender
+
+            <small class="geneo-selection-help">
+              Use Family Tree colors for male and female cards.
+              Unknown remains neutral.
+            </small>
+          </span>
+        </label>
+      `;
 
       return `
         <aside class="geneo-inspector">
@@ -73076,93 +73453,30 @@
               'Canvas',
               'Board appearance and behavior'
             )}
-              <section class="geneo-inspector-section">
-                <h3>Appearance</h3>
 
-              <div class="geneo-inspector-section-body">
-                ${renderGeneoPaintControl({
-                  scope: 'canvas',
-                  property: 'background'
-                })}
+            ${renderGeneographInspectorSection({
+              context: 'canvas',
+              id: 'appearance',
+              title: 'Appearance',
+              content: appearanceContent
+            })}
 
-                <div class="geneo-field">
-                  <span class="geneo-field-label">
-                    Background pattern
-                  </span>
+            ${renderGeneographInspectorSection({
+              context: 'canvas',
+              id: 'behavior',
+              title: 'Behavior',
+              content: behaviorContent
+            })}
 
-                  <div
-                    class="geneo-background-pattern"
-                    role="group"
-                    aria-label="Background pattern">
-                    ${['dots', 'grid', 'clear']
-                      .map(pattern => `
-                        <button
-                          type="button"
-                          data-geneo-background-pattern="${pattern}"
-                          aria-pressed="${
-                            canvas.backgroundPattern
-                            === pattern
-                          }">
-                          ${capitalize(pattern)}
-                        </button>
-                      `)
-                      .join('')}
-                  </div>
-                </div>
-
-                <label class="geneo-check">
-                  <input
-                    type="checkbox"
-                    data-geneo-sockets
-                    ${
-                      canvas.alwaysShowSockets
-                        ? 'checked'
-                        : ''
-                    }>
-                  Always show sockets
-                </label>
-
-                <label class="geneo-check">
-                  <input
-                    type="checkbox"
-                    data-geneo-snap
-                    ${
-                      canvas.snapToGrid
-                        ? 'checked'
-                        : ''
-                    }>
-                  Snap to grid
-                </label>
-
-                <label class="geneo-check geneo-gender-color-toggle">
-                  <input
-                    type="checkbox"
-                    data-geneo-person-gender-colors
-                    ${
-                      canvas.colorPersonCardsByGender
-                        ? 'checked'
-                        : ''
-                    }>
-                  <span>
-                    Color person cards by gender
-                    <small class="geneo-selection-help">
-                      Use Family Tree colors for male and female cards.
-                      Unknown remains neutral.
-                    </small>
-                  </span>
-                </label>
-              </div>
-            </section>
-
-            <section class="geneo-inspector-section">
-              <h3>Person cards</h3>
-
-              <div class="geneo-inspector-section-body">
-                ${renderGeneographPersonCardControls({
+            ${renderGeneographInspectorSection({
+              context: 'canvas',
+              id: 'personCards',
+              title: 'Person cards',
+              content:
+                renderGeneographPersonCardControls({
                   scope: 'board'
-                })}
-              </div>
-            </section>
+                })
+            })}
           </div>
         </aside>
       `;
@@ -73275,15 +73589,11 @@
           `;
         };
 
-      return `
-        <section
-          class="geneo-inspector-section">
-          <h3>
-            Person cards
-          </h3>
-
-          <div
-            class="geneo-inspector-section-body">
+      return renderGeneographInspectorSection({
+        context: 'multi',
+        id: 'personCards',
+        title: 'Person cards',
+        content: `
             <div class="geneo-field">
               <label>
                 Card style
@@ -73394,9 +73704,8 @@
                 )
                 .join('')}
             </div>
-          </div>
-        </section>
-      `;
+        `
+      });
     }
 
     function renderGeneographMultiSelectionInspector(
@@ -73418,9 +73727,7 @@
           .slice(0, 6)
           .map(
             label =>
-              `<li>${escapeHtml(
-                label
-              )}</li>`
+              `<li>${escapeHtml(label)}</li>`
           )
           .join('');
 
@@ -73438,44 +73745,41 @@
             node.type === 'person'
         );
 
+      const selectionContent = `
+        <ul class="geneo-selection-list">
+          ${visibleNames}
+        </ul>
+
+        ${
+          remaining
+            ? `
+              <p class="geneo-selection-more">
+                and ${remaining} more
+              </p>
+            `
+            : ''
+        }
+
+        <p class="geneo-selection-help">
+          Drag a selected object or connector to move the selection.
+        </p>
+      `;
+
       return `
         <aside class="geneo-inspector">
-          <div
-            class="geneo-inspector-body">
+          <div class="geneo-inspector-body">
             ${renderGeneographInspectorHeader(
               `${labels.length} items selected`,
               'Multiple selection',
               icon.cursorSelect
             )}
 
-            <section
-              class="geneo-inspector-section">
-              <h3>Selection</h3>
-
-              <div
-                class="geneo-inspector-section-body">
-                <ul
-                  class="geneo-selection-list">
-                  ${visibleNames}
-                </ul>
-
-                ${
-                  remaining
-                    ? `
-                      <p
-                        class="geneo-selection-more">
-                        and ${remaining} more
-                      </p>
-                    `
-                    : ''
-                }
-
-                <p
-                  class="geneo-selection-help">
-                  Drag a selected object or connector to move the selection.
-                </p>
-              </div>
-            </section>
+            ${renderGeneographInspectorSection({
+              context: 'multi',
+              id: 'selection',
+              title: 'Selection',
+              content: selectionContent
+            })}
 
             ${
               peopleOnly
@@ -73485,13 +73789,9 @@
                 : ''
             }
 
-            <button
-              class="button danger"
-              type="button"
-              data-geneo-delete-selection>
-              ${icon.trash}
-              Delete selected
-            </button>
+            ${renderGeneographInspectorDangerAction(
+              'Delete selected'
+            )}
           </div>
         </aside>
       `;
@@ -73515,9 +73815,11 @@
 
     function renderGeneographNameSection(
       entityType,
-      entity
+      entity,
+      context
     ) {
-      const node = entityType === 'node';
+      const node =
+        entityType === 'node';
 
       const automaticName =
         node
@@ -73539,55 +73841,45 @@
       const descriptionId =
         `${inputId}Description`;
 
-      return `
-        <section
-          class="geneo-inspector-section">
-          <h3>
-            ${node ? 'Layer' : 'Connection'}
-          </h3>
+      const content = `
+        <div class="geneo-field">
+          <label for="${inputId}">
+            Name
+          </label>
 
-          <div
-            class="geneo-inspector-section-body">
-            <div class="geneo-field">
-              <label for="${inputId}">
-                Name
-              </label>
+          <input
+            id="${inputId}"
+            class="geneo-input"
+            type="text"
+            maxlength="${GENEO_LAYER_NAME_LIMIT}"
+            value="${escapeHtml(value)}"
+            placeholder="${escapeHtml(automaticName)}"
+            data-geneo-entity-name="${escapeHtml(entityType)}"
+            data-geneo-entity-id="${escapeHtml(entity.id)}"
+            data-user-content
+            aria-describedby="${descriptionId}">
+        </div>
 
-              <input
-                id="${inputId}"
-                class="geneo-input"
-                type="text"
-                maxlength="${
-                  GENEO_LAYER_NAME_LIMIT
-                }"
-                value="${escapeHtml(value)}"
-                placeholder="${
-                  escapeHtml(automaticName)
-                }"
-                data-geneo-entity-name="${
-                  escapeHtml(entityType)
-                }"
-                data-geneo-entity-id="${
-                  escapeHtml(entity.id)
-                }"
-                data-user-content
-                aria-describedby="${
-                  descriptionId
-                }">
-            </div>
-
-            <p
-              class="geneo-selection-help"
-              id="${descriptionId}">
-              ${
-                node
-                  ? 'Board organization only. Card content and linked records are unchanged.'
-                  : 'Leave blank to use the automatic relationship or connector name.'
-              }
-            </p>
-          </div>
-        </section>
+        <p
+          class="geneo-selection-help"
+          id="${descriptionId}">
+          ${
+            node
+              ? 'Board organization only. Card content and linked records are unchanged.'
+              : 'Leave blank to use the automatic relationship or connector name.'
+          }
+        </p>
       `;
+
+      return renderGeneographInspectorSection({
+        context,
+        id: 'layer',
+        title:
+          node
+            ? 'Layer'
+            : 'Connection',
+        content
+      });
     }
 
     function renderGeneographImageSourceSection(node) {
@@ -73607,11 +73899,11 @@
         .filter(Boolean)
         .join(' · ');
 
-      return `
-        <section class="geneo-inspector-section">
-          <h3>Image source</h3>
-
-          <div class="geneo-inspector-section-body">
+      return renderGeneographInspectorSection({
+        context: 'image',
+        id: 'imageSource',
+        title: 'Image source',
+        content: `
             ${
               source.available
                 ? `
@@ -73686,9 +73978,8 @@
                   : ''
               }
             </div>
-          </div>
-        </section>
-      `;
+        `
+      });
     }
 
     function renderGeneographNodeLayoutSection(
@@ -73714,13 +74005,14 @@
           node
         );
 
-      return `
-        <section
-          class="geneo-inspector-section">
-          <h3>Layout</h3>
-
-          <div
-            class="geneo-inspector-section-body">
+      return renderGeneographInspectorSection({
+        context:
+          geneoInspectorContextForNode(
+            node
+          ),
+        id: 'layout',
+        title: 'Layout',
+        content: `
             <div
               class="geneo-layout-grid">
               <div class="geneo-field">
@@ -73863,9 +74155,8 @@
                 }>
               Locked
             </label>
-          </div>
-        </section>
-      `;
+        `
+      });
     }
 
     function renderGeneographStrokeFields({ scope, appearance }) {
@@ -73877,189 +74168,570 @@
       return `<div class="geneo-stroke-settings"><div class="geneo-field geneo-appearance-subfield"><label for="geneo${prefix}StrokeWidth">Width</label><div class="geneo-number-unit"><input class="geneo-input" id="geneo${prefix}StrokeWidth" type="number" min="${GENEO_STROKE_WIDTH_MIN}" max="${GENEO_STROKE_WIDTH_MAX}" step="1" value="${Math.round(width)}" data-geneo-stroke-width="${scope}"><span aria-hidden="true">px</span></div></div><div class="geneo-field geneo-appearance-subfield"><label for="geneo${prefix}StrokePattern">Pattern</label><div class="common-select-shell geneo-pattern-select-shell"><select class="common-select geneo-pattern-select" id="geneo${prefix}StrokePattern" data-geneo-stroke-pattern="${scope}" ${strokeEnabled ? '' : 'disabled'}><option value="solid" ${pattern === 'solid' ? 'selected' : ''}>Solid</option><option value="dashed" ${pattern === 'dashed' ? 'selected' : ''}>Dashed</option></select><span class="common-select-chevron" aria-hidden="true">${icon.chevron}</span></div></div></div>`;
     }
 
-    function renderGeneographPlaceInspectorContent(node) {
-      const resolved = resolveGeneographPlace(node);
-      return `<section class="geneo-inspector-section"><h3>Place</h3><div class="geneo-inspector-section-body"><div class="geneo-place-inspector-summary"><span aria-hidden="true">${icon.mapPin}</span><div><strong>${escapeHtml(resolved.name)}</strong><span>${resolved.linked ? 'Linked project place' : 'Board-only place'}</span></div></div><div class="geneo-place-inspector-actions"><button class="button secondary" type="button" data-geneo-edit-place="${escapeHtml(node.id)}">Change place</button>${resolved.linked ? `<button class="button secondary" type="button" data-geneo-open-place="${escapeHtml(node.id)}">Open in Places</button><button class="button ghost" type="button" data-geneo-place-board-only="${escapeHtml(node.id)}">Make board-only</button>` : ''}</div></div></section>`;
+    function renderGeneographPlaceInspectorContent(
+      node
+    ) {
+      const resolved =
+        resolveGeneographPlace(node);
+
+      const content = `
+        <div class="geneo-place-inspector-summary">
+          <span aria-hidden="true">
+            ${icon.mapPin}
+          </span>
+
+          <div>
+            <strong>
+              ${escapeHtml(resolved.name)}
+            </strong>
+
+            <span>
+              ${
+                resolved.linked
+                  ? 'Linked project place'
+                  : 'Board-only place'
+              }
+            </span>
+          </div>
+        </div>
+
+        <div class="geneo-place-inspector-actions">
+          <button
+            class="button secondary"
+            type="button"
+            data-geneo-edit-place="${escapeHtml(node.id)}">
+            Change place
+          </button>
+
+          ${
+            resolved.linked
+              ? `
+                <button
+                  class="button secondary"
+                  type="button"
+                  data-geneo-open-place="${escapeHtml(node.id)}">
+                  Open in Places
+                </button>
+
+                <button
+                  class="button ghost"
+                  type="button"
+                  data-geneo-place-board-only="${escapeHtml(node.id)}">
+                  Make board-only
+                </button>
+              `
+              : ''
+          }
+        </div>
+      `;
+
+      return renderGeneographInspectorSection({
+        context: 'place',
+        id: 'content',
+        title: 'Content',
+        content
+      });
     }
 
-    function renderGeneographShapeInspectorContent(node) {
-      const kind = normalizeGeneographShapeKind(node.shapeKind);
-      const radius = Math.round(geneoNumber(node.appearance?.cornerRadius, 8, 0, 32));
-      return `<section class="geneo-inspector-section"><h3>Shape</h3><div class="geneo-inspector-section-body"><div class="geneo-field"><span class="geneo-field-label">Shape type</span><div class="geneo-shape-kind-value">${escapeHtml(geneoShapeLabel(kind))}</div></div>${kind === 'ellipse' ? '' : `<div class="geneo-field"><label for="geneoShapeCornerRadius">Corner radius</label><div class="geneo-number-unit"><input class="geneo-input" id="geneoShapeCornerRadius" type="number" min="0" max="32" step="1" value="${radius}" data-geneo-shape-corner-radius><span aria-hidden="true">px</span></div></div>`}</div></section>`;
+    function renderGeneographShapeInspectorContent(
+      node
+    ) {
+      const kind =
+        normalizeGeneographShapeKind(
+          node.shapeKind
+        );
+
+      const radius =
+        Math.round(
+          geneoNumber(
+            node.appearance?.cornerRadius,
+            8,
+            0,
+            32
+          )
+        );
+
+      const content = `
+        <div class="geneo-field">
+          <span class="geneo-field-label">
+            Shape type
+          </span>
+
+          <div class="geneo-shape-kind-value">
+            ${escapeHtml(
+              geneoShapeLabel(kind)
+            )}
+          </div>
+        </div>
+
+        ${
+          kind === 'ellipse'
+            ? ''
+            : `
+              <div class="geneo-field">
+                <label for="geneoShapeCornerRadius">
+                  Corner radius
+                </label>
+
+                <div class="geneo-number-unit">
+                  <input
+                    class="geneo-input"
+                    id="geneoShapeCornerRadius"
+                    type="number"
+                    min="0"
+                    max="32"
+                    step="1"
+                    value="${radius}"
+                    data-geneo-shape-corner-radius>
+
+                  <span aria-hidden="true">
+                    px
+                  </span>
+                </div>
+              </div>
+            `
+        }
+      `;
+
+      return renderGeneographInspectorSection({
+        context: 'shape',
+        id: 'content',
+        title: 'Content',
+        content
+      });
     }
 
-    function renderGeneographNodeInspector(node) {
-      const appearance = node.appearance || {};
+    function renderGeneographNodeInspector(
+      node
+    ) {
+      const context =
+        geneoInspectorContextForNode(
+          node
+        );
+
+      const appearance =
+        node.appearance || {};
+
       const nameSection =
         renderGeneographNameSection(
           'node',
-          node
+          node,
+          context
         );
-      const person = node.type === 'person' ? getGeneographPerson(node.personId) : null;
-      const content = node.type === 'person' ? renderGeneographPersonInspectorContent(person) : 
-      node.type === 'panel'
-        ? `
-          <div class="geneo-field">
-            <label for="geneoPanelTitle">
-              Panel title
-            </label>
 
-            <input
-              class="geneo-input"
-              id="geneoPanelTitle"
-              type="text"
-              maxlength="160"
-              data-geneo-node-field="title"
-              value="${escapeHtml(node.title || '')}">
-          </div>
+      const person =
+        node.type === 'person'
+          ? getGeneographPerson(
+              node.personId
+            )
+          : null;
 
-          <div class="geneo-field">
-            <label for="geneoPanelDescription">
-              Panel description
-            </label>
+      const content =
+        node.type === 'person'
+          ? renderGeneographPersonInspectorContent(
+              person
+            )
+          : node.type === 'panel'
+            ? `
+              <div class="geneo-field">
+                <label for="geneoPanelTitle">
+                  Panel title
+                </label>
 
-            <textarea
-              class="geneo-textarea"
-              id="geneoPanelDescription"
-              maxlength="500"
-              rows="4"
-              data-geneo-node-field="description"
-              placeholder="Describe the purpose or contents of this panel.">${escapeHtml(
-                node.description || ''
-              )}</textarea>
+                <input
+                  class="geneo-input"
+                  id="geneoPanelTitle"
+                  type="text"
+                  maxlength="160"
+                  data-geneo-node-field="title"
+                  value="${escapeHtml(node.title || '')}">
+              </div>
 
-            <p class="geneo-selection-help">
-              Visible in panel properties only.
-            </p>
-          </div>
-        `
-        :
-      isGeneographRichTextNode(
-        node
-      )
-        ? renderGeneographRichTextInspectorContent(
-            node
-          )
-        : '';
+              <div class="geneo-field">
+                <label for="geneoPanelDescription">
+                  Panel description
+                </label>
 
-      return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader(geneoNodeTitle(node), capitalize(node.type), geneoNodeIcon(node.type))}${nameSection}
-        ${
-          node.type === 'image'
-            ? renderGeneographImageSourceSection(node)
-            : node.type === 'place'
-              ? renderGeneographPlaceInspectorContent(node)
-              : node.type === 'shape'
-                ? renderGeneographShapeInspectorContent(node)
-                : node.type === 'drawing'
-                  ? ''
-                : `
-              <section class="geneo-inspector-section">
-                <h3>Content</h3>
+                <textarea
+                  class="geneo-textarea"
+                  id="geneoPanelDescription"
+                  maxlength="500"
+                  rows="4"
+                  data-geneo-node-field="description"
+                  placeholder="Describe the purpose or contents of this panel.">${escapeHtml(
+                    node.description || ''
+                  )}</textarea>
 
-                <div class="geneo-inspector-section-body">
-                  ${content}
-                </div>
-              </section>
+                <p class="geneo-selection-help">
+                  Visible in panel properties only.
+                </p>
+              </div>
             `
-        }
+            : isGeneographRichTextNode(
+                node
+              )
+              ? renderGeneographRichTextInspectorContent(
+                  node
+                )
+              : '';
 
+      const contentSection =
+        node.type === 'image'
+          ? renderGeneographImageSourceSection(
+              node
+            )
+          : node.type === 'place'
+            ? renderGeneographPlaceInspectorContent(
+                node
+              )
+            : node.type === 'shape'
+              ? renderGeneographShapeInspectorContent(
+                  node
+                )
+              : node.type === 'drawing'
+                ? ''
+                : renderGeneographInspectorSection({
+                    context,
+                    id: 'content',
+                    title: 'Content',
+                    content
+                  });
+
+      const appearanceContent = `
         ${
-          node.type === 'person'
-            ? renderGeneographPersonCardSection(node)
-            : ''
-        }
-
-        <section class="geneo-inspector-section">
-          <h3>Appearance</h3>
-
-            <div class="geneo-inspector-section-body">
-              ${node.type === 'drawing' ? '' : `<div class="geneo-appearance-group">
+          node.type === 'drawing'
+            ? ''
+            : `
+              <div class="geneo-appearance-group">
                 ${renderGeneoPaintControl({
                   scope: 'node',
                   id: node.id,
                   property: 'fill'
                 })}
-              </div>`}
+              </div>
+            `
+        }
 
+        <div class="geneo-appearance-group">
+          ${renderGeneoPaintControl({
+            scope: 'node',
+            id: node.id,
+            property: 'stroke'
+          })}
+
+          ${renderGeneographStrokeFields({
+            scope: 'node',
+            appearance
+          })}
+        </div>
+
+        ${
+          node.type === 'text'
+            ? `
+              <div
+                class="
+                  geneo-field
+                  geneo-appearance-subfield
+                ">
+                <label for="geneoTextCornerRadius">
+                  Corner radius
+                </label>
+
+                <input
+                  class="geneo-input"
+                  id="geneoTextCornerRadius"
+                  type="number"
+                  min="0"
+                  max="32"
+                  step="1"
+                  value="${appearance.cornerRadius}"
+                  data-geneo-text-corner-radius>
+
+                <span class="geneo-selection-help">
+                  0–32 px
+                </span>
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          [
+            'image',
+            'shape',
+            'drawing'
+          ].includes(node.type)
+            ? ''
+            : `
               <div class="geneo-appearance-group">
                 ${renderGeneoPaintControl({
                   scope: 'node',
                   id: node.id,
-                  property: 'stroke'
+                  property: 'text'
                 })}
 
-                ${renderGeneographStrokeFields({ scope: 'node', appearance })}
+                ${renderGeneoContrastWarning(
+                  node
+                )}
               </div>
+            `
+        }
+      `;
 
-              ${
-                node.type === 'text'
-                  ? `
-                    <div
-                      class="
-                        geneo-field
-                        geneo-appearance-subfield
-                      ">
-                      <label
-                        for="geneoTextCornerRadius">
-                        Corner radius
-                      </label>
+      return `
+        <aside class="geneo-inspector">
+          <div class="geneo-inspector-body">
+            ${renderGeneographInspectorHeader(
+              geneoNodeTitle(node),
+              capitalize(node.type),
+              geneoNodeIcon(node.type)
+            )}
 
-                      <input
-                        class="geneo-input"
-                        id="geneoTextCornerRadius"
-                        type="number"
-                        min="0"
-                        max="32"
-                        step="1"
-                        value="${appearance.cornerRadius}"
-                        data-geneo-text-corner-radius>
+            ${nameSection}
+            ${contentSection}
 
-                      <span
-                        class="geneo-selection-help">
-                        0–32 px
-                      </span>
-                    </div>
-                  `
-                  : ''
-              }
+            ${
+              node.type === 'person'
+                ? renderGeneographPersonCardSection(
+                    node
+                  )
+                : ''
+            }
 
-              ${
-                node.type === 'image' || node.type === 'shape' || node.type === 'drawing'
-                  ? ''
-                  : `
-                    <div class="geneo-appearance-group">
-                      ${renderGeneoPaintControl({
-                        scope: 'node',
-                        id: node.id,
-                        property: 'text'
-                      })}
+            ${renderGeneographInspectorSection({
+              context,
+              id: 'appearance',
+              title: 'Appearance',
+              content: appearanceContent
+            })}
 
-                      ${renderGeneoContrastWarning(node)}
-                    </div>
-                  `
-              }
-            </div>
-          </section>
-          ${renderGeneographNodeLayoutSection(
-            node
-          )}
-          <button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete ${node.type}</button></div></aside>`;
+            ${renderGeneographNodeLayoutSection(
+              node
+            )}
+
+            ${renderGeneographInspectorDangerAction(
+              `Delete ${capitalize(node.type)}`
+            )}
+          </div>
+        </aside>
+      `;
     }
 
-    function renderGeneographConnectionInspector(connection) {
+    function renderGeneographConnectionInspector(
+      connection
+    ) {
       const nameSection =
         renderGeneographNameSection(
           'connection',
-          connection
+          connection,
+          'connection'
         );
-      const family = connection.kind === 'family-partner' ? getGeneographFamily(connection.familyId) : null;
-      const resolved = family ? geneoRelationshipForFamily(family) : null;
-      const relationship = resolved?.relationship;
-      const relationshipType = relationship ? relationshipTypeFromLegacy(relationship) : 'Married';
-      const startEvent = relationship ? partnerRelationshipStartEvent(relationship, relationshipType) : null;
-      const marriageType = startEvent?.typeLabel || relationship?.marriageType || 'Civil';
-      const relationshipSection = family ? `<section class="geneo-inspector-section"><h3>Relationship details</h3><div class="geneo-inspector-section-body geneo-relationship-editor" data-geneo-relationship-editor><div class="geneo-field"><label for="geneoRelationshipType">Relationship type</label><select class="geneo-select" id="geneoRelationshipType" data-geneo-relationship-type>${addPersonRelationshipTypeOptions(relationshipType)}</select></div>${renderPartnerRelationshipDateFields({ prefix: 'geneoRelationship', relationshipType, family: relationship })}<div class="geneo-field" data-add-person-marriage-type-field ${addPersonRelationshipShowsMarriageType(relationshipType) ? '' : 'hidden'}><label for="geneoRelationshipMarriageType">Marriage type</label><select class="geneo-select" id="geneoRelationshipMarriageType" data-geneo-marriage-type>${addPersonMarriageTypeOptions(marriageType)}</select></div><label class="geneo-check"><input type="checkbox" data-geneo-show-relationship-dates ${connection.showRelationshipDates !== false ? 'checked' : ''}> Show relationship date on board</label><p class="geneo-relationship-storage">${resolved.central ? 'Linked Family Tree relationship' : 'Board-only relationship'}</p><button class="button primary" type="button" data-geneo-save-relationship>Save relationship details</button></div></section>` : '';
-      return `<aside class="geneo-inspector"><div class="geneo-inspector-body">${renderGeneographInspectorHeader(geneoConnectionLabel(connection), 'Connection', icon.link)}${nameSection}${relationshipSection}<section class="geneo-inspector-section"><h3>Appearance</h3><div class="geneo-inspector-section-body">${renderGeneoPaintControl({ scope: 'connection', id: connection.id, property: 'line' })}${renderGeneographStrokeFields({ scope: 'connection', appearance: connection.style })}<div class="geneo-field"><label>Routing</label><select class="geneo-select" data-geneo-connection-routing><option value="auto" ${connection.route.mode === 'auto' ? 'selected' : ''}>Automatic</option><option value="manual" ${connection.route.mode === 'manual' ? 'selected' : ''}>Manual</option></select></div><button class="button secondary" type="button" data-geneo-reset-route>Reset route</button></div></section><button class="button danger" type="button" data-geneo-delete-selection>${icon.trash} Delete connection</button></div></aside>`;
+
+      const family =
+        connection.kind === 'family-partner'
+          ? getGeneographFamily(
+              connection.familyId
+            )
+          : null;
+
+      const resolved =
+        family
+          ? geneoRelationshipForFamily(
+              family
+            )
+          : null;
+
+      const relationship =
+        resolved?.relationship;
+
+      const relationshipType =
+        relationship
+          ? relationshipTypeFromLegacy(
+              relationship
+            )
+          : 'Married';
+
+      const startEvent =
+        relationship
+          ? partnerRelationshipStartEvent(
+              relationship,
+              relationshipType
+            )
+          : null;
+
+      const marriageType =
+        startEvent?.typeLabel
+        || relationship?.marriageType
+        || 'Civil';
+
+      const relationshipSection =
+        family
+          ? renderGeneographInspectorSection({
+              context: 'connection',
+              id: 'relationship',
+              title: 'Relationship details',
+              content: `
+                <div
+                  class="
+                    geneo-relationship-editor
+                  "
+                  data-geneo-relationship-editor>
+                  <div class="geneo-field">
+                    <label for="geneoRelationshipType">
+                      Relationship type
+                    </label>
+
+                    <select
+                      class="geneo-select"
+                      id="geneoRelationshipType"
+                      data-geneo-relationship-type>
+                      ${addPersonRelationshipTypeOptions(
+                        relationshipType
+                      )}
+                    </select>
+                  </div>
+
+                  ${renderPartnerRelationshipDateFields({
+                    prefix:
+                      'geneoRelationship',
+                    relationshipType,
+                    family: relationship
+                  })}
+
+                  <div
+                    class="geneo-field"
+                    data-add-person-marriage-type-field
+                    ${
+                      addPersonRelationshipShowsMarriageType(
+                        relationshipType
+                      )
+                        ? ''
+                        : 'hidden'
+                    }>
+                    <label for="geneoRelationshipMarriageType">
+                      Marriage type
+                    </label>
+
+                    <select
+                      class="geneo-select"
+                      id="geneoRelationshipMarriageType"
+                      data-geneo-marriage-type>
+                      ${addPersonMarriageTypeOptions(
+                        marriageType
+                      )}
+                    </select>
+                  </div>
+
+                  <label class="geneo-check">
+                    <input
+                      type="checkbox"
+                      data-geneo-show-relationship-dates
+                      ${
+                        connection.showRelationshipDates
+                        !== false
+                          ? 'checked'
+                          : ''
+                      }>
+                    Show relationship date on board
+                  </label>
+
+                  <p class="geneo-relationship-storage">
+                    ${
+                      resolved.central
+                        ? 'Linked Family Tree relationship'
+                        : 'Board-only relationship'
+                    }
+                  </p>
+
+                  <button
+                    class="button primary"
+                    type="button"
+                    data-geneo-save-relationship>
+                    Save relationship details
+                  </button>
+                </div>
+              `
+            })
+          : '';
+
+      const appearanceContent = `
+        ${renderGeneoPaintControl({
+          scope: 'connection',
+          id: connection.id,
+          property: 'line'
+        })}
+
+        ${renderGeneographStrokeFields({
+          scope: 'connection',
+          appearance: connection.style
+        })}
+
+        <div class="geneo-field">
+          <label for="geneoConnectionRouting">
+            Routing
+          </label>
+
+          <select
+            class="geneo-select"
+            id="geneoConnectionRouting"
+            data-geneo-connection-routing>
+            <option
+              value="auto"
+              ${
+                connection.route.mode === 'auto'
+                  ? 'selected'
+                  : ''
+              }>
+              Automatic
+            </option>
+
+            <option
+              value="manual"
+              ${
+                connection.route.mode === 'manual'
+                  ? 'selected'
+                  : ''
+              }>
+              Manual
+            </option>
+          </select>
+        </div>
+
+        <button
+          class="button secondary"
+          type="button"
+          data-geneo-reset-route>
+          Reset route
+        </button>
+      `;
+
+      return `
+        <aside class="geneo-inspector">
+          <div class="geneo-inspector-body">
+            ${renderGeneographInspectorHeader(
+              geneoConnectionLabel(
+                connection
+              ),
+              'Connection',
+              icon.link
+            )}
+
+            ${nameSection}
+            ${relationshipSection}
+
+            ${renderGeneographInspectorSection({
+              context: 'connection',
+              id: 'appearance',
+              title: 'Appearance',
+              content: appearanceContent
+            })}
+
+            ${renderGeneographInspectorDangerAction(
+              'Delete connection'
+            )}
+          </div>
+        </aside>
+      `;
     }
 
     function renderGeneographEditor() {
@@ -81486,7 +82158,11 @@
     }
 
     function bindGeneographEditor() {
-      const wrap = main.querySelector('[data-geneo-canvas-wrap]');
+      bindGeneographInspectorSectionToggles();
+
+      const wrap = main.querySelector(
+        '[data-geneo-canvas-wrap]'
+      );
       if (!main.dataset.geneoConnectionClickBoundaryBound) {
         main.dataset.geneoConnectionClickBoundaryBound = 'true';
         main.addEventListener('pointerdown', event => {
