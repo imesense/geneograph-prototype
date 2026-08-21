@@ -12965,6 +12965,55 @@
     .geneo-node-person[
       data-geneo-person-card-style="portrait"
     ]
+    .geneo-person-life-events {
+      gap: 10px;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-life-event {
+      grid-template-columns:
+        44px minmax(0, 1fr);
+      gap: 6px;
+      align-items: start;
+      text-align: left;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-life-event-value {
+      display: grid;
+      justify-items: start;
+      gap: 1px;
+      overflow: visible;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-life-event-separator {
+      display: none;
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
+    .geneo-person-life-event-place {
+      display: block;
+      max-width: 100%;
+      color:
+        color-mix(
+          in srgb,
+          currentColor 68%,
+          transparent
+        );
+    }
+
+    .geneo-node-person[
+      data-geneo-person-card-style="portrait"
+    ]
     .geneo-person-name {
       font-size: 18px;
       font-weight: 880;
@@ -62880,7 +62929,10 @@
         field === 'birthPlace'
         || field === 'deathPlace'
       ) {
-        return style === 'standard';
+        return (
+          style === 'standard'
+          || style === 'portrait'
+        );
       }
 
       return true;
@@ -62981,7 +63033,8 @@
         );
 
       const detailedStyle =
-        settings.style === 'standard';
+        settings.style === 'standard'
+        || settings.style === 'portrait';
 
       const birthDate =
         fields.dates
@@ -70343,8 +70396,13 @@
           : '';
 
       const compactStyle =
-        model.settings.style !== 'standard';
-
+        ![
+          'standard',
+          'portrait'
+        ].includes(
+          model.settings.style
+        );
+        
       const compactLife =
         [
           model.lifeSpan,
@@ -73072,7 +73130,7 @@
                       ${
                         supported
                           ? ''
-                          : 'title="Available in Standard cards"'
+                          : 'title="Available in Standard and Portrait cards"'
                       }>
                       <input
                         type="checkbox"
@@ -73549,7 +73607,7 @@
               ${
                 supported
                   ? ''
-                  : 'title="Available in Standard cards"'
+                  : 'title="Available in Standard and Portrait cards"'
               }>
               <input
                 type="checkbox"
