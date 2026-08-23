@@ -13250,6 +13250,7 @@
       width: 27px;
       height: 27px;
       padding: 0;
+      line-height: 0;
 
       border: 0;
       border-radius: 6px;
@@ -31427,8 +31428,8 @@
       'Photo': 'Фотография',
       'Select': 'Выделение',
       'Status': 'Статус',
-      'Undo': 'Отменить',
-      'Redo': 'Повторить',
+      'Undo': 'Отм.',
+      'Redo': 'Повт.',
       'Born': 'Рождение',
       'Date modified': 'Дата изменения',
       'Full name': 'Полное имя',
@@ -31926,7 +31927,7 @@
         'Добавить файлы',
 
       'Organize your research files and folders.':
-        'Организуйте исследовательские файлы и папки.',
+        'Организуйте документы связанные с вашим исследованием.',
 
       'Document where your research files and information came from.':
         'Укажите, откуда получены ваши исследовательские файлы и сведения.',
@@ -32509,7 +32510,7 @@
         'Список заметок',
 
       'Capture, organize and connect research notes across your family history.':
-        'Создавайте, систематизируйте и связывайте исследовательские заметки по всей семейной истории.',
+        'Пишите исследовательские заметки о вашей семейной истории.',
 
       'Add note':
         'Добавить заметку',
@@ -69479,6 +69480,9 @@
         zoomClientY: 0,
         zoomSettleFrame: null,
         edgeExpansionFrame: null,
+        viewportReleaseFrame: null,
+        viewportRestoreToken: 0,
+        pendingEdgeExpansion: false,
         suppressEdgeExpansion: false,
         zooming: false,
         suppressNodeClick: false
@@ -69762,8 +69766,16 @@
 
     function renderGeneograph() {
       workspace.classList.remove('no-sidebar');
-      if (state.geneoView === 'board') renderGeneographEditor();
-      else renderGeneographHome();
+      if (state.geneoView === 'board') {
+        const board = selectedGeneographBoard();
+        const center = geneoCurrentViewportCenter()
+          || geneoSavedViewport(board?.id)?.center
+          || geneoContentCenter();
+        renderGeneographEditor();
+        scheduleGeneographViewportRestore(center);
+      } else {
+        renderGeneographHome();
+      }
     }
 
     function selectedGeneographBoard() {
@@ -77338,11 +77350,70 @@
     function restoreGeneographViewportCenter(point) {
       const wrap = main.querySelector('[data-geneo-canvas-wrap]');
       const bounds = geneoCanvasRuntime.bounds;
-      if (!wrap || !bounds || !point) return;
+      if (!wrap || !bounds || !point) return false;
       const zoom = state.geneoZoom / 100;
       wrap.scrollLeft = (point.x - bounds.left) * zoom - wrap.clientWidth / 2;
       wrap.scrollTop = (point.y - bounds.top) * zoom - wrap.clientHeight / 2;
-      requestAnimationFrame(() => { geneoCanvasRuntime.suppressEdgeExpansion = false; });
+      return true;
+    }
+
+    function cancelGeneographViewportRestore({ releaseSuppression = false } = {}) {
+      if (geneoCanvasRuntime.viewportReleaseFrame) {
+        cancelAnimationFrame(geneoCanvasRuntime.viewportReleaseFrame);
+      }
+      geneoCanvasRuntime.viewportReleaseFrame = null;
+      geneoCanvasRuntime.viewportRestoreToken += 1;
+      if (releaseSuppression) geneoCanvasRuntime.suppressEdgeExpansion = false;
+    }
+
+    function cancelGeneographEdgeExpansion({ pending = false } = {}) {
+      if (geneoCanvasRuntime.edgeExpansionFrame) {
+        cancelAnimationFrame(geneoCanvasRuntime.edgeExpansionFrame);
+      }
+      geneoCanvasRuntime.edgeExpansionFrame = null;
+      if (pending) geneoCanvasRuntime.pendingEdgeExpansion = true;
+    }
+
+    function scheduleGeneographViewportRestore(point, afterRestore = null) {
+      const boardId = selectedGeneographBoard()?.id || '';
+      cancelGeneographViewportRestore();
+      const token = geneoCanvasRuntime.viewportRestoreToken;
+      geneoCanvasRuntime.suppressEdgeExpansion = true;
+
+      if (
+        selectedGeneographBoard()?.id !== boardId
+      ) {
+        geneoCanvasRuntime.suppressEdgeExpansion = false;
+        return;
+      }
+
+      if (point && !restoreGeneographViewportCenter(point)) {
+        geneoCanvasRuntime.suppressEdgeExpansion = false;
+        return;
+      }
+
+      afterRestore?.();
+      captureGeneographViewport(boardId);
+
+      /*
+       * Restoration must complete before another pointer gesture can begin.
+       * A frame is used only to release edge-expansion suppression after the
+       * browser has painted the already-restored viewport.
+       */
+      geneoCanvasRuntime.viewportReleaseFrame = requestAnimationFrame(() => {
+        geneoCanvasRuntime.viewportReleaseFrame = null;
+        if (
+          token !== geneoCanvasRuntime.viewportRestoreToken
+          || selectedGeneographBoard()?.id !== boardId
+        ) {
+          return;
+        }
+        geneoCanvasRuntime.suppressEdgeExpansion = false;
+        if (geneoCanvasRuntime.pendingEdgeExpansion && !geneoPointerState) {
+          geneoCanvasRuntime.pendingEdgeExpansion = false;
+          expandGeneographCanvasNearEdge();
+        }
+      });
     }
 
     function geneoViewportPointAtClient(clientX, clientY) {
@@ -77396,6 +77467,7 @@
       const zoom = Math.max(25, Math.min(200, Math.round(nextZoom)));
       if (zoom === state.geneoZoom) return false;
       const center = options.center || (!options.anchor ? geneoCurrentViewportCenter() : null);
+      cancelGeneographViewportRestore({ releaseSuppression: true });
       if (geneoCanvasRuntime.edgeExpansionFrame) cancelAnimationFrame(geneoCanvasRuntime.edgeExpansionFrame);
       geneoCanvasRuntime.edgeExpansionFrame = null;
       geneoCanvasRuntime.zooming = true;
@@ -77428,10 +77500,25 @@
     }
 
     function expandGeneographCanvasNearEdge() {
-      if (geneoCanvasRuntime.suppressEdgeExpansion || geneoCanvasRuntime.zooming) return;
+      if (
+        geneoCanvasRuntime.suppressEdgeExpansion
+        || geneoCanvasRuntime.zooming
+        || geneoPointerState
+      ) {
+        geneoCanvasRuntime.pendingEdgeExpansion = true;
+        return;
+      }
       if (geneoCanvasRuntime.edgeExpansionFrame) return;
       geneoCanvasRuntime.edgeExpansionFrame = requestAnimationFrame(() => {
         geneoCanvasRuntime.edgeExpansionFrame = null;
+        if (
+          geneoCanvasRuntime.suppressEdgeExpansion
+          || geneoCanvasRuntime.zooming
+          || geneoPointerState
+        ) {
+          geneoCanvasRuntime.pendingEdgeExpansion = true;
+          return;
+        }
         const wrap = main.querySelector('[data-geneo-canvas-wrap]');
         const bounds = geneoCanvasRuntime.bounds;
         if (!wrap || !bounds) return;
@@ -77444,6 +77531,7 @@
         if (wrap.scrollTop < threshold && next.top > -GENEO_WORLD_LIMIT) next.top = Math.max(-GENEO_WORLD_LIMIT, next.top - expansion);
         if (wrap.scrollLeft + wrap.clientWidth > bounds.width * zoom - threshold && next.right < GENEO_WORLD_LIMIT) next.right = Math.min(GENEO_WORLD_LIMIT, next.right + expansion);
         if (wrap.scrollTop + wrap.clientHeight > bounds.height * zoom - threshold && next.bottom < GENEO_WORLD_LIMIT) next.bottom = Math.min(GENEO_WORLD_LIMIT, next.bottom + expansion);
+        geneoCanvasRuntime.pendingEdgeExpansion = false;
         if (next.left === bounds.left && next.top === bounds.top && next.right === bounds.right && next.bottom === bounds.bottom) return;
         next.width = next.right - next.left;
         next.height = next.bottom - next.top;
@@ -77850,6 +77938,23 @@
       `;
     }
 
+    function renderGeneographPersonAddRelativeAction(node) {
+      const displayName = geneoPersonCardViewModel(node)?.displayName
+        || geneoNodeTitle(node);
+      return `
+        <button
+          class="geneo-person-add-relative"
+          type="button"
+          data-geneo-add-relative="${escapeHtml(node.id)}"
+          aria-label="${escapeHtml(`Add relative to ${displayName}`)}"
+          aria-haspopup="dialog"
+          aria-expanded="false"
+          title="Add relative">
+          ${icon.plus}
+        </button>
+      `;
+    }
+
     function renderGeneographPersonNode(
       node
     ) {
@@ -78044,21 +78149,6 @@
           }
 
           ${linkIndicator}
-
-          <button
-            class="geneo-person-add-relative"
-            type="button"
-            data-geneo-add-relative="${escapeHtml(
-              node.id
-            )}"
-            aria-label="${escapeHtml(
-              `Add relative to ${model.displayName}`
-            )}"
-            aria-haspopup="dialog"
-            aria-expanded="false"
-            title="Add relative">
-            ${icon.plus}
-          </button>
         </div>
       `;
     }
@@ -78604,6 +78694,12 @@
               node
             )}
           </div>
+
+          ${
+            node.type === 'person'
+              ? renderGeneographPersonAddRelativeAction(node)
+              : ''
+          }
 
           ${renderGeneographRichTextToolbar(
             node
@@ -83126,7 +83222,6 @@
       const board = selectedGeneographBoard();
       if (!board) { state.geneoView = 'home'; renderGeneographHome(); return; }
       const zoom = Math.max(.25, Math.min(2, state.geneoZoom / 100));
-      const hadMountedCanvas = geneoCanvasRuntime.boardId === board.id && Boolean(geneoCanvasRuntime.bounds) && Boolean(main.querySelector('[data-geneo-canvas-wrap]'));
       renderGeneographEditorSidebar(board);
       const diagram = board.diagram;
       const bounds = geneoDerivedCanvasBounds(diagram);
@@ -83187,7 +83282,8 @@
         <div class="geneo-editor-main ${state.geneoInspectorCollapsed ? 'inspector-collapsed' : ''}"><div class="geneo-canvas-viewport" data-geneo-canvas-viewport style="--geneo-canvas-background:${escapeHtml(geneoPaintCssColor(diagram.canvas.backgroundPaint))}"><div class="geneo-canvas-wrap" data-geneo-canvas-wrap><div class="geneo-board-space pattern-${escapeHtml(diagram.canvas.backgroundPattern)}" style="width:${bounds.width * zoom}px;height:${bounds.height * zoom}px;--geneo-canvas-zoom:${zoom};--geneo-grid-origin-x:${gridOriginX}px;--geneo-grid-origin-y:${gridOriginY}px"><div class="${stageClasses}" data-geneo-stage style="width:${bounds.width}px;height:${bounds.height}px;transform:scale(${zoom})">
           ${renderGeneographConnectors()}<div class="geneo-panel-draft" data-geneo-panel-draft hidden><span data-geneo-panel-draft-size></span></div><div class="geneo-selection-marquee" data-geneo-marquee hidden></div>${ordered.map(renderGeneographObject).join('')}
           </div></div></div><div class="geneo-zoom-overlay canvas-zoom"><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="out" aria-label="Zoom out">${icon.zoomOut}</button><span class="geneo-zoom-value zoom-value">${state.geneoZoom}%</span><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="in" aria-label="Zoom in">${icon.zoomIn}</button><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="fit" aria-label="Fit board">${icon.home}</button></div></div>${renderGeneographInspector()}</div>
-      </section>`;
+          </section>`;
+      localizeUI(main);
       syncGeneographAutoPersonCardHeights();
       bindGeneographEditor();
       ensureGeneographKeyboardBinding();
@@ -83219,8 +83315,6 @@
           }
         );
       }
-      if (!hadMountedCanvas) requestAnimationFrame(() => restoreGeneographViewportCenter(geneoSavedViewport(board.id)?.center || geneoContentCenter()));
-      else requestAnimationFrame(() => requestAnimationFrame(() => { geneoCanvasRuntime.suppressEdgeExpansion = false; }));
     }
 
     function renderGeneographEditorPreserveScroll({
@@ -83242,11 +83336,7 @@
 
       renderGeneographEditor();
 
-      requestAnimationFrame(() => {
-        if (center) {
-          restoreGeneographViewportCenter(center);
-        }
-
+      scheduleGeneographViewportRestore(center, () => {
         if (inspectorScrollTop !== null) {
           const inspector = main.querySelector(
             '.geneo-inspector:not(.collapsed)'
@@ -83298,7 +83388,7 @@
     function renderGeneographEditorPreserveCenter(center = null) {
       const point = center || geneoCurrentViewportCenter();
       renderGeneographEditor();
-      if (point) requestAnimationFrame(() => restoreGeneographViewportCenter(point));
+      scheduleGeneographViewportRestore(point);
     }
 
     function nextGeneoObjectPosition(width, height) {
@@ -83855,7 +83945,7 @@
             : 'canvas';
 
       const center =
-        geneoNodeCenter(node);
+        geneoCurrentViewportCenter();
 
       /*
        * Plain-text fallback uses both surfaces
@@ -83959,12 +84049,8 @@
               === 'canvas'
               && center
             ) {
-              requestAnimationFrame(
-                () => {
-                  restoreGeneographViewportCenter(
-                    center
-                  );
-                }
+              scheduleGeneographViewportRestore(
+                center
               );
             }
           }
@@ -84192,12 +84278,8 @@
             === 'canvas'
             && center
           ) {
-            requestAnimationFrame(
-              () => {
-                restoreGeneographViewportCenter(
-                  center
-                );
-              }
+            scheduleGeneographViewportRestore(
+              center
             );
           }
         }
@@ -84210,7 +84292,7 @@
         state.geneoInlineEditSelectAll = false;
         return;
       }
-      input.focus();
+      input.focus({ preventScroll: true });
       if (state.geneoInlineEditSelectAll && typeof input.select === 'function') input.select();
       state.geneoInlineEditSelectAll = false;
     }
@@ -84263,22 +84345,10 @@
           ? 'inspector'
           : 'canvas';
 
-      if (
-        isGeneographRichTextNode(
-          node
-        )
-        && state.geneoInlineEditSurface
-          === 'canvas'
-      ) {
-        renderGeneographEditorPreserveCenter(
-          geneoNodeCenter(node)
-        );
-      } else {
-        renderGeneographEditorPreserveScroll({
-          preserveInspectorScroll:
-            true
-        });
-      }
+      renderGeneographEditorPreserveScroll({
+        preserveInspectorScroll:
+          true
+      });
 
       if (node.type === 'panel') {
         requestAnimationFrame(
@@ -85600,11 +85670,17 @@
           touchGeneographBoard();
           closeModal();
 
-          renderGeneographEditorPreserveCenter(
-            geneoNodeCenter(
-              target
-            )
-          );
+          renderGeneographEditorPreserveScroll({
+            preserveInspectorScroll: editing
+          });
+
+          requestAnimationFrame(() => {
+            main
+              .querySelector(
+                `[data-geneo-node="${CSS.escape(target.id)}"]`
+              )
+              ?.focus({ preventScroll: true });
+          });
 
           showToast(
             editing
@@ -86837,6 +86913,16 @@
 
       renderGeneographEditorPreserveScroll();
 
+      if (createdNode) {
+        requestAnimationFrame(() => {
+          main
+            .querySelector(
+              `[data-geneo-node="${CSS.escape(createdNode.id)}"]`
+            )
+            ?.focus({ preventScroll: true });
+        });
+      }
+
       if (createdNode && relative) {
         showToast(
           `${
@@ -86847,14 +86933,6 @@
             )
           } added to the board.`
         );
-
-        requestAnimationFrame(() => {
-          main
-            .querySelector(
-              `[data-geneo-node="${CSS.escape(createdNode.id)}"]`
-            )
-            ?.focus();
-        });
 
         return;
       }
@@ -87949,6 +88027,7 @@
       const existingNode = replacing
         ? getGeneographNode(picker.nodeId)
         : null;
+      let focusNodeId = existingNode?.id || '';
 
       if (
         replacing
@@ -88057,6 +88136,7 @@
           addedNodeIds,
           addedNodeIds.at(-1)
         );
+        focusNodeId = addedNodeIds.at(-1) || '';
       }
 
       pruneGeneographBoardAssets(diagram);
@@ -88078,6 +88158,16 @@
       renderGeneographEditorPreserveScroll({
         preserveInspectorScroll: replacing
       });
+
+      if (focusNodeId) {
+        requestAnimationFrame(() => {
+          main
+            .querySelector(
+              `[data-geneo-node="${CSS.escape(focusNodeId)}"]`
+            )
+            ?.focus({ preventScroll: true });
+        });
+      }
 
       showToast(message);
     }
@@ -89825,7 +89915,7 @@
         const drawing = createGeneographDrawingFromPoints(stateBefore.points, stateBefore.beforeSnapshot);
         if (!drawing) return;
         renderGeneographEditorPreserveScroll();
-        requestAnimationFrame(() => main.querySelector(`[data-geneo-node="${CSS.escape(drawing.id)}"]`)?.focus());
+        requestAnimationFrame(() => main.querySelector(`[data-geneo-node="${CSS.escape(drawing.id)}"]`)?.focus({ preventScroll: true }));
         return;
       }
       if (
@@ -89856,7 +89946,7 @@
           if (!shape) return;
           finishGeneographPlacementTool();
           renderGeneographEditorPreserveScroll();
-          requestAnimationFrame(() => main.querySelector(`[data-geneo-node="${CSS.escape(shape.id)}"]`)?.focus());
+          requestAnimationFrame(() => main.querySelector(`[data-geneo-node="${CSS.escape(shape.id)}"]`)?.focus({ preventScroll: true }));
           return;
         }
 
@@ -89888,12 +89978,16 @@
             .querySelector(
               `[data-geneo-node="${CSS.escape(panel.id)}"]`
             )
-            ?.focus();
+            ?.focus({ preventScroll: true });
         });
 
         return;
       }
-      if (stateBefore.kind === 'pan') return;
+      if (stateBefore.kind === 'pan') {
+        captureGeneographViewport();
+        expandGeneographCanvasNearEdge();
+        return;
+      }
       if (stateBefore.kind === 'marquee') {
         geneoCanvasRuntime.suppressNodeClick = stateBefore.moved;
         requestAnimationFrame(() => { geneoCanvasRuntime.suppressNodeClick = false; });
@@ -91496,6 +91590,14 @@
         const firstWaypoint = index - 1, secondWaypoint = index; const first = connection.route.waypoints[firstWaypoint], second = connection.route.waypoints[secondWaypoint]; if (!first || !second) return;
         geneoPointerState = { kind: 'segment', connectionId: connection.id, start: geneoPointerToCanvas(event), firstWaypoint, secondWaypoint, first: { ...first }, second: { ...second }, vertical: Math.abs(first.x - second.x) < Math.abs(first.y - second.y), moved: false };
       }));
+      wrap?.addEventListener('pointerdown', () => {
+        const pendingExpansion = Boolean(
+          geneoCanvasRuntime.edgeExpansionFrame
+          || geneoCanvasRuntime.pendingEdgeExpansion
+        );
+        cancelGeneographEdgeExpansion({ pending: pendingExpansion });
+        cancelGeneographViewportRestore({ releaseSuppression: true });
+      }, { capture: true });
       wrap?.addEventListener('click', event => {
         bindGeneographIntentionalCanvasClick(
           wrap
