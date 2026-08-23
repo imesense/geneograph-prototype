@@ -29993,258 +29993,628 @@
     const LANGUAGE_STORAGE_KEY = 'geneograph.language';
     const PROJECT_CONTINUATION_STORAGE_KEY = 'geneograph.projectContinuation';
     const RU_UI = {
-      'Projects': '-------', 'Family Tree': '-------- ------', 'People': '----', 'Geneograph': '---------', 'Albums': '-------', 'Archive': '-----', 'Notes': '-------', 'Places': '-----', 'Publish': '----------',
-      'Family history workspace': '------- ------------ -------- -------', 'Search anything...': '------ -----', 'Ctrl + K': 'Ctrl + K',
-      'Help center': '----- ------', 'Find guides, shortcuts, and support for GeneoGraph.': '-----------, ------- ------- - --------- GeneoGraph.', 'Open Help Center': '------- ----- ------', 'Contact support': '--------- - ----------',
-      'Getting started': '------ ------', 'Create, open, and import projects.': '----------, ---------- - ------------ -------.', 'Family Tree basics': '------ --------- ------', 'Add relatives, edit people, and navigate the tree.': '---------- -------------, ------------ ----- - ------------- -- ------.', 'Archive & sources': '----- - ---------', 'Organize files and connect evidence.': '----------- ----- - ---------- --------------.', 'Albums and notes': '------- - -------', 'Manage photos, captions, notes, and cases.': '---------- ------------, ---------, --------- - --------.', 'Keyboard shortcuts': '------- -------', 'Search, selection, overlays, and navigation.': '-----, ---------, ---- - ---------.',
-      'Notifications': '-----------', 'Mark all read': '-------- --- ------------', 'View all notifications': '--- -----------', 'No unread notifications': '--- ------------- -----------',
-      'GeneoGraph account': '------- GeneoGraph', 'You are not signed in.': '-- -- ----- - -------.', 'Signed in': '-------- ----', 'My account': '--- -------', 'Profile, subscription, and account details.': '-------, -------- - ------ --------.', 'Account settings': '--------- --------', 'Manage account preferences.': '---------- ----------- --------.', 'Sign out': '-----', 'Sign in': '-----', 'Create account': '------- -------', 'Visual account action only.': '---------- -------- --------.',
-      'Global settings': '---------- ---------', 'App-wide preferences for GeneoGraph. Project-specific settings stay inside each project.': '----- --------- GeneoGraph. --------- ------- --------- ------ -------.', 'General': '-----', 'Storage & backup': '--------- - --------- -----', 'Privacy': '------------------', 'Accessibility': '-----------', 'About': '- ----------',
-      'Basic app-wide preferences.': '-------- --------- ----------.', 'Interface theme': '---- ----------', 'GeneoGraph currently uses the dark archival theme.': 'GeneoGraph ------ ---------- ----- -------- ----.', 'Dark archival': 'Ҹ---- --------', 'Startup behavior': '--------- --- -------', 'Choose what opens when the app starts.': '--------, --- ----------- --- -------.', 'Show project picker': '-------- ----- -------', 'Open last project': '------- --------- ------', 'Language': '----', 'App interface language.': '---- ---------- ----------.', 'English': 'English', '-------': '-------', 'Date format': '------ ----', 'Default date display across the app.': '------ ----------- --- - ----------.', 'Time zone': '------- ----', 'Used for activity timestamps.': '------------ --- ------- --------.', 'System default': '--------- -- ---------',
-      'Set global storage defaults for local-first projects.': '--------- --------- --- --------- --------.', 'Default project folder': '----- -------- -- ---------', 'New local projects are created here.': '----- --------- ----- --------- -------.', 'Local backups': '--------- --------- -----', 'Create local backup reminders.': '--------- ----------- - --------- -----.', 'Backup frequency': '------- ---------- -----------', 'Default reminder cadence.': '------- ----------- -- ---------.', 'Weekly': '-----------', 'Daily': '---------', 'Manual': '-------', 'Cloud sync': '-------- -------------', 'Optional cloud backup is disabled by default.': '-------------- -------- --------- ----------- --------- -- ---------.', 'Enable sync': '-------- -------------',
-      'Set defaults used by publishing, exports, and living-person handling.': '--------- --- ----------, -------- - ------- -----.', 'Hide living people in Publish outputs': '-------- ------- ----- - -----------', 'Recommended for family sharing.': '------------- --- --------- ------.', 'Exclude private notes from exports': '--------- --------- ------- -- --------', 'Private research notes stay out of shared files.': '--------- ----------------- ------- -- ------- - ----- -----.', 'Warn before exporting unsourced facts': '------------- ----- --------- ------ --- ----------', 'Show a privacy/source warning during Publish.': '---------- -------------- - ----------- - ---------- --- ----------.', 'Confirm permanent delete': '------------ ------------- --------', 'Require confirmation for destructive actions.': '--------- ------------- --- ------- --------.',
-      'Choose which app reminders appear in the notification overlay.': '-------- ----------- --- ---- -----------.', 'Archive organization reminders': 'Напоминания об организации архива', 'Files without folders or genealogy links.': 'Файлы без папок или связей с генеалогическими записями.', 'Backup reminders': '----------- - --------- -----', 'Remind me when a local backup is recommended.': '----------, ----- ----- --------- -----.', 'Needs review place reminders': '----------- - ------------- ------', 'Imported place names and missing coordinates.': '--------------- -------- ---- - ------------- ----------.', 'Photo organization reminders': '----------- -- ----------- ----', 'Photos not assigned to albums.': '---------- --- --------.', 'Product tips': '------ -- --------', 'Occasional workflow tips inside the app.': '------------- ------ -- ------.',
-      'Adjust interface density, contrast, and motion behavior.': '--------- ---------, -------- - -------- ----------.', 'Reduce motion': '--------- --------', 'Limit non-essential transitions.': '---------- -------------- --------.', 'Increase contrast': '-------- --------', 'Strengthen borders and text contrast.': '------- ------- - -------- ------.', 'Interface density': '--------- ----------', 'Choose comfortable or compact spacing.': '-------- ------- --- ---------- -------.', 'Comfortable': '-------', 'Compact': '----------', 'Font size': '------ ------', 'Default app text size.': '------ ------ -- ---------.', 'Default': '-- ---------', 'Large': '-------', 'Always show focus outlines': '------ ---------- -----', 'Keep keyboard focus visible.': '---------- ----- ----------.',
-      'About GeneoGraph': '- GeneoGraph', 'Prototype information and reference links.': '---------- - --------- - ------.', 'GeneoGraph prototype': '-------- GeneoGraph', 'Version 0.1 prototype - local-first genealogy workspace': '-------- 0.1 - --------- ------- ------------ ----------', 'Active': '-------', 'Help Center would open here.': '----- -------- -- ----- ------.', 'Release notes': '------- - -------', 'Product updates and prototype changes.': '---------- -------- - --------- ---------.', 'View': '--------', 'Privacy policy': '-------- ------------------', 'Privacy documentation placeholder.': '-------- ------------ - ------------------.',
-      'Create family tree': '------- -------- ------', 'Import GEDCOM': '------------- GEDCOM', 'Open project': '------- ------', 'Tip of the day': '----- ---', 'You can drag and drop a GEDCOM file anywhere to import it.': '---------- GEDCOM----- - ----- -----, ----- ------------- ---.', 'Learn more': '--------- ?', 'Search projects...': '----- --------', 'Date modified': '----------: ---- ---------', ' Updated': '----------: ------- ---------', ' Name': '----------: ---', ' People count': '----------: ----- -----', 'All projects': '--- -------', 'Search results': '---------- ------', 'Continue where you left off': '---------- - -----, --- -- ----------', 'Last opened': '--------- -------', 'No projects yet': '------- ---- ---', 'No projects match': '------- -- ----------', 'Try another project name or clear the search.': '---------- ------- ----- ------- --- ------- -----.', 'Clear search': '------- -----', 'Welcome back! Here you can create, open, and manage your family-history projects.': '----------, ---------- - ----------- --------- -------- -------.', 'Drop a GeneoGraph or GEDCOM file here to open or import': '---------- ---- GeneoGraph --- GEDCOM --- -------- --- -------', 'Supports .ggproj and .ged files': '-------------- .ggproj - .ged', 'Recent activity': '-------- --------', 'Insights': '-------', 'Sync status': '-------------', 'Project': '------', 'Project overview': '----- -------', 'Project settings': '--------- -------', 'Back to all projects': '----- -- ---- --------', 'Go to Family Tree': '------- - ------', 'Export': '-------', 'Delete project': '------- ------', 'Manage backups': '--------- -------', 'Open': '-------',
-      'Navigation': '---------', 'Saved filters': '---------- ----', 'Review center': '----- --------', 'Statistics': '----------', 'Profile': '-------', 'Search people...': '----- -----...', 'Columns': '-------', 'Filter': '------', 'Add person': '-------- --------', ' Birth date': '----------: ---- --------', 'Name': '---', 'Living': '---', 'Deceased': '----', 'Unknown': '----------', 'Living status': '------ -----', 'Birth date': '---- --------', 'Birth place': '----- --------', 'Death date': '---- ------', 'Death place': '----- ------', 'Updated': '---------', 'Actions': '--------', 'Record Info': '---------- - ------', 'Facts': '-----', 'Relationships': '-----', 'Photos': '----', 'Files': '-----', 'Full profile': '------ -------', 'Open profile': '------- -------', 'Add relative': '-------- ------------', 'Connect relative': '------- ------------', 'More actions': '--- --------', 'Back to people': '----- - -----', 'Edit profile': '------------- -------', 'Save changes': '--------- ---------', 'Cancel': '------', 'Locked': '-------------', 'Editing': '--------------', 'Main information': '-------- ----------', 'Education': '-----------', 'Work': '------', 'Other': '------', 'First name': '---', 'Last name': '-------', 'Patronym': '--------', 'Maiden name': '------- -------', 'Prefix': '-------', 'Suffix': '-------', 'Exact date': '------ ----', 'Before': '--', 'After': '-----', 'Between': '-----', 'About / Circa': '-----', 'Cause of Death': '------- ------', 'Death reason': '------- ------', 'Burial place': '----- -----------', 'Record info': '---------- - ------', 'Profile ID': 'ID -------', 'Created': '-------', 'Review issues': '-------- --------', 'Source status': '------ ----------', 'Partly sourced': '-------- ------------', 'Living protected': '------- --------', 'Immediate Family': '--------- -----', 'Parents': '--------', 'Children': '----', 'Siblings': '------ - -----', 'Grandparents': '------- - -------', 'Partners': '-------', 'Partner': '------', 'Spouse': '------(-)', 'Father': '----', 'Mother': '----', 'Brother': '----', 'Sister': '------', 'Grandmother': '-------', 'Grandfather': '-------', 'Cat': '---', 'Timeline': '----------', 'Add fact': '-------- ----', 'Birth': '--------', 'Wedding': '-------', 'Education start': '------ --------', 'Education finish': '--------- --------', 'Archive': '-----', 'Add': '--------', 'Open ?': '------- ?',
-      'New board': '------- -----', 'Import board': '------------- -----', 'Board type': '---------', 'Categories': '---------', 'All boards': '--- -----', 'Recently viewed': '--------', 'Favourites': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'DNA': '---', 'Publication': '----------', 'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '---- ------------ --- ------------, ------------ - ----------.', 'Search boards...': '----- -----', ' Board type': '----------: --- -----', 'All boards': '--- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Note': '-------', 'Image': '-----------', 'Place': '-----', 'Case': '------', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '-----------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Appearance': '------- ---', 'Layout': '-----', 'Background pattern': '\u0424\u043e\u043d \u0445\u043e\u043b\u0441\u0442\u0430', 'Dots': '\u0422\u043e\u0447\u043a\u0438', 'Grid': '\u0421\u0435\u0442\u043a\u0430', 'Clear': '\u0411\u0435\u0437 \u0443\u0437\u043e\u0440\u0430', 'Fill': '\u0417\u0430\u043b\u0438\u0432\u043a\u0430', 'Stroke': '\u041e\u0431\u0432\u043e\u0434\u043a\u0430', 'Title text': '\u0422\u0435\u043a\u0441\u0442 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043a\u0430', 'Line': '\u041b\u0438\u043d\u0438\u044f', 'Background': '\u0424\u043e\u043d', 'Opacity': '\u041d\u0435\u043f\u0440\u043e\u0437\u0440\u0430\u0447\u043d\u043e\u0441\u0442\u044c', 'Hue': '\u0422\u043e\u043d', 'Hex': 'HEX', 'Remove': '\u0423\u0431\u0440\u0430\u0442\u044c', 'Restore': '\u0412\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c', 'Reset': '\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c', 'None': '\u041d\u0435\u0442', 'Opaque': '\u041d\u0435\u043f\u0440\u043e\u0437\u0440\u0430\u0447\u043d\u044b\u0439', 'Stroke pattern': '\u0421\u0442\u0438\u043b\u044c \u043e\u0431\u0432\u043e\u0434\u043a\u0438', 'Solid': '\u0421\u043f\u043b\u043e\u0448\u043d\u0430\u044f', 'Dashed': '\u041f\u0443\u043d\u043a\u0442\u0438\u0440\u043d\u0430\u044f', 'Restore paint': '\u0412\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c \u0446\u0432\u0435\u0442', 'Reset to default': '\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c', 'No stroke': '\u0411\u0435\u0437 \u043e\u0431\u0432\u043e\u0434\u043a\u0438', 'Ink': '\u0427\u0435\u0440\u043d\u0438\u043b\u0430', 'Graphite': '\u0413\u0440\u0430\u0444\u0438\u0442', 'Mist': '\u0422\u0443\u043c\u0430\u043d', 'Paper': '\u0411\u0443\u043c\u0430\u0433\u0430', 'Deep moss': '\u0422\u0451\u043c\u043d\u044b\u0439 \u043c\u043e\u0445', 'Archive blue': '\u0410\u0440\u0445\u0438\u0432\u043d\u044b\u0439 \u0441\u0438\u043d\u0438\u0439', 'Plum': '\u0421\u043b\u0438\u0432\u043e\u0432\u044b\u0439', 'Sepia': '\u0421\u0435\u043f\u0438\u044f', 'Geneograph green': '\u0417\u0435\u043b\u0451\u043d\u044b\u0439 Geneograph', 'Mint': '\u041c\u044f\u0442\u0430', 'Teal': '\u0411\u0438\u0440\u044e\u0437\u043e\u0432\u044b\u0439', 'Blue': '\u0421\u0438\u043d\u0438\u0439', 'Violet': '\u0424\u0438\u043e\u043b\u0435\u0442\u043e\u0432\u044b\u0439', 'Amber': '\u042f\u043d\u0442\u0430\u0440\u043d\u044b\u0439', 'Rose': '\u0420\u043e\u0437\u043e\u0432\u044b\u0439', 'Conflict red': '\u041a\u0440\u0430\u0441\u043d\u044b\u0439 \u043a\u043e\u043d\u0444\u043b\u0438\u043a\u0442', 'Sibling relationship': '\u0421\u0432\u044f\u0437\u044c \u043c\u0435\u0436\u0434\u0443 \u0431\u0440\u0430\u0442\u044c\u044f\u043c\u0438 \u0438 \u0441\u0451\u0441\u0442\u0440\u0430\u043c\u0438', 'Rectangle': '\u041f\u0440\u044f\u043c\u043e\u0443\u0433\u043e\u043b\u044c\u043d\u0438\u043a', 'Rounded rectangle': '\u0421\u043a\u0440\u0443\u0433\u043b\u0451\u043d\u043d\u044b\u0439 \u043f\u0440\u044f\u043c\u043e\u0443\u0433\u043e\u043b\u044c\u043d\u0438\u043a', 'Ellipse': '\u042d\u043b\u043b\u0438\u043f\u0441', 'Diamond': '\u0420\u043e\u043c\u0431', 'Triangle': '\u0422\u0440\u0435\u0443\u0433\u043e\u043b\u044c\u043d\u0438\u043a', 'Hexagon': '\u0428\u0435\u0441\u0442\u0438\u0443\u0433\u043e\u043b\u044c\u043d\u0438\u043a', 'Linked project place': '\u0421\u0432\u044f\u0437\u0430\u043d\u043e \u0441 \u043c\u0435\u0441\u0442\u043e\u043c \u043f\u0440\u043e\u0435\u043a\u0442\u0430', 'Board-only place': '\u041c\u0435\u0441\u0442\u043e \u0442\u043e\u043b\u044c\u043a\u043e \u043d\u0430 \u0434\u043e\u0441\u043a\u0435', 'Make board-only': '\u0421\u0434\u0435\u043b\u0430\u0442\u044c \u043b\u043e\u043a\u0430\u043b\u044c\u043d\u044b\u043c', 'Open in Places': '\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u0432 \u041c\u0435\u0441\u0442\u0430\u0445', 'Add place object': '\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u043e\u0431\u044a\u0435\u043a\u0442-\u043c\u0435\u0441\u0442\u043e', 'Edit place object': '\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c \u043e\u0431\u044a\u0435\u043a\u0442-\u043c\u0435\u0441\u0442\u043e', 'Use as board-only place': '\u0418\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u044c \u0442\u043e\u043b\u044c\u043a\u043e \u043d\u0430 \u0434\u043e\u0441\u043a\u0435', 'Width': '\u0428\u0438\u0440\u0438\u043d\u0430', 'Linked to person': '------- - ---------', 'Visual only': '------ ---------',
-      'Choose shape': '\u0412\u044b\u0431\u0440\u0430\u0442\u044c \u0444\u0438\u0433\u0443\u0440\u0443', 'Shape type': '\u0422\u0438\u043f \u0444\u0438\u0433\u0443\u0440\u044b', 'Change place': '\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c \u043c\u0435\u0441\u0442\u043e', 'Link a project place or keep a board-only historical name.': '\u0421\u0432\u044f\u0436\u0438\u0442\u0435 \u0441 \u043c\u0435\u0441\u0442\u043e\u043c \u043f\u0440\u043e\u0435\u043a\u0442\u0430 \u0438\u043b\u0438 \u043e\u0441\u0442\u0430\u0432\u044c\u0442\u0435 \u0438\u0441\u0442\u043e\u0440\u0438\u0447\u0435\u0441\u043a\u043e\u0435 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u0442\u043e\u043b\u044c\u043a\u043e \u043d\u0430 \u0434\u043e\u0441\u043a\u0435.', 'Search project places or type a board-only name': '\u041d\u0430\u0439\u0434\u0438\u0442\u0435 \u043c\u0435\u0441\u0442\u043e \u043f\u0440\u043e\u0435\u043a\u0442\u0430 \u0438\u043b\u0438 \u0432\u0432\u0435\u0434\u0438\u0442\u0435 \u043b\u043e\u043a\u0430\u043b\u044c\u043d\u043e\u0435 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435', 'Project places stay linked and reflect future name changes. Board-only places exist only on this board.': '\u041c\u0435\u0441\u0442\u0430 \u043f\u0440\u043e\u0435\u043a\u0442\u0430 \u043e\u0441\u0442\u0430\u044e\u0442\u0441\u044f \u0441\u0432\u044f\u0437\u0430\u043d\u043d\u044b\u043c\u0438 \u0438 \u043e\u0431\u043d\u043e\u0432\u043b\u044f\u044e\u0442 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435. \u041b\u043e\u043a\u0430\u043b\u044c\u043d\u044b\u0435 \u043c\u0435\u0441\u0442\u0430 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044e\u0442 \u0442\u043e\u043b\u044c\u043a\u043e \u043d\u0430 \u044d\u0442\u043e\u0439 \u0434\u043e\u0441\u043a\u0435.', 'Enter a place name or select a project place.': '\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u0438\u043b\u0438 \u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u043c\u0435\u0441\u0442\u043e \u043f\u0440\u043e\u0435\u043a\u0442\u0430.', 'Place object updated.': '\u041e\u0431\u044a\u0435\u043a\u0442-\u043c\u0435\u0441\u0442\u043e \u043e\u0431\u043d\u043e\u0432\u043b\u0451\u043d.', 'Place added to board.': '\u041c\u0435\u0441\u0442\u043e \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u043e \u043d\u0430 \u0434\u043e\u0441\u043a\u0443.', 'Place is now board-only.': '\u041c\u0435\u0441\u0442\u043e \u0442\u0435\u043f\u0435\u0440\u044c \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u0435\u0442 \u0442\u043e\u043b\u044c\u043a\u043e \u043d\u0430 \u0434\u043e\u0441\u043a\u0435.',
-      'Add photos': '-------- ----', 'New album': '----- ------', 'All photos': '--- ----', 'Not in Album': '--- -------', 'Recently deleted': '------- --------', 'Search photos...': '----- ----...', ' Filename': '----------: --- -----', ' Photo date': '----------: ---- ----', 'People in this photo': '---- -- ----', 'Date': '----', 'Caption / story': '------- / -------', 'Source': '--------', 'Delete photo': '------- ----', 'Make favourite': '-------- - ---------', 'Remove favourite': '------ -- ----------', 'Tag people': '-------- -----', 'Open photo': '------- ----', 'No people tagged': '---- -- --------', 'Unknown date': '---- ----------', 'Unknown place': '----- ----------',
-      'Add files': '-------- -----', 'Create source': '------- --------', 'Sources': '---------', 'Imports': '-------', 'Review': '--------', 'Folders': '-----', 'Search this folder...': '----- - ---- -----...', 'Create folder': '------- -----', ' Updated': '----------: ---------', ' Source status': '----------: ------ ---------', 'Source / provenance': '--------', 'Linked to': '------- -', 'Date / place': '---- / -----', 'OCR': 'OCR', 'File info': '---------- - -----', 'Linked evidence': '--------- --------------', 'Assign source': '--------- --------', 'Run OCR': '--------- OCR', 'Restore': '------------', 'Reviewed': '---------', 'Needs review': '----- --------', 'Missing source': '--- ---------', 'Not linked': '-- -------',
-      'Add note': '----- -------', 'New collection': '----- ---------', 'All notes': '--- -------', 'Collections': '---------', 'Search notes...': '----- -------...', 'Cards': '--------', 'List': '------', 'Saved': '---------', 'Linked people': '--------- ----', 'Linked sources': '--------- ---------', 'Linked places': '--------- -----', 'Related notes': '--------- -------', 'Tasks': '------', 'Note type': '--- -------',
-      'New place': '----- -----', 'New collection': '----- ---------', 'Countries': '------', 'Search places': '----- ----', 'Map': '-----', 'Resolved': '---------', 'Approximate': '--------------', 'Missing': '-----------', 'Ambiguous': '------------', 'Back to places': '----- - ------', 'Edit place': '------------- -----', 'Connected people': '--------- ----', 'Sources / files': '--------- / -----', 'Events here': '------- -----', 'Historical names': '------------ --------', 'Identity': '------------', 'Coordinates': '----------', 'Hierarchy': '--------',
-      'New Publication': '----- ----------', 'Export history': '------- --------', 'AI Assistant': 'AI----------', 'All outputs': '--- ---------', 'Drafts': '---------', 'Ready to export': '------ - --------', 'Needs update': '------- ----------', 'Published': '------------', 'Archived': '- ------', 'Reports': '------', 'Books': '-----', 'Charts': '---------', 'Maps': '-----', 'Photo stories': '-----------', 'Archive indexes': '------- ------', 'DNA reports': '----------', 'Preview': '------------', 'Content': '-------', 'Settings': '---------', 'Export PDF': '------- PDF', 'Export DOCX': '------- DOCX', 'Share': '----------', 'Duplicate': '-----------', 'Delete': '-------',
-      'Save': '---------', 'Create': '-------', 'Edit': '-------------', 'Delete person': '------- --------', 'Show in Family Tree': '-------- - -------- ------', 'Clear all': '-------- --', 'Save filter': '--------- ---', 'View all': '-------- ---', 'View all files': '--- -----', 'View all notes': '--- -------', 'View all photos': '--- ----', 'Add note': '-------- -------', 'Add file': '-------- ----', 'Add photo': '-------- ----', 'Created May 1, 2026': '------- 1 --- 2026', 'Today': '-------', 'Yesterday': '-----', 'Just now': '------ ---', 'Local project': '--------- ------', 'No insights found': '------- -- -------', 'No insights found for this person.': '--- ----- -------- ------- -- -------.', 'Unknown': '----------'
+      //New localization
+      //Projects module
+      'Projects': 'Проекты',
+      'Projects home': 'Главная проектов',
+      'Project modules': 'Модули проекта',
+      'Family history workspace': 'Ваша семейная история',
+      'Family Tree': 'Семейное древо',
+      'People': 'Люди',
+      'Geneograph': 'Генеограф',
+      'Albums': 'Альбомы',
+      'Archive': 'Архив',
+      'Notes': 'Заметки',
+      'Places': 'Места',
+      'Publish': 'Публикация',
+      'Search anything...': 'Поиск по всему...',
+      'Ctrl + K': 'Ctrl + K',
+      'Help': 'Справка',
+      'Notifications': 'Уведомления',
+      'Settings': 'Настройки',
+      'User profile': 'Профиль пользователя',
+      'Welcome back!': 'С возвращением!',
+      'Here you can create, open, and manage your family-history projects.': 'Здесь можно создавать, открывать и управлять проектами семейной истории.',
+      'Create family tree': 'Создать древо',
+      'Import GEDCOM': 'Импорт GEDCOM',
+      'Open project': 'Открыть проект',
+      'Tip of the day': 'Совет дня',
+      'You can drag and drop a GEDCOM file anywhere to import it.': 'Чтобы импортировать GEDCOM, перетащите файл в окно приложения.',
+      'Learn more': 'Подробнее',
+      'File picker would open here.': 'Здесь откроется окно выбора файла.',
+      'Learning center is outside this prototype.': 'Учебный центр не входит в этот прототип.',
+      'Search projects': 'Поиск проектов',
+      'Search projects...': 'Поиск проектов...',
+      'Sort projects': 'Сортировка проектов',
+      'Updated': 'Обновлено',
+      'Name': 'Название',
+      'People count': 'Число людей',
+      'Grid view': 'Плитка',
+      'List view': 'Список',
+      'All projects': 'Все проекты',
+      'Search results': 'Результаты поиска',
+      'Continue where you left off': 'Продолжить с места остановки',
+      'Continue': 'Продолжить',
+      'Last opened': 'Последнее открытие',
+      'No projects yet': 'Проектов пока нет',
+      'Create a family tree or import a GEDCOM file': 'Создайте семейное древо или импортируйте файл GEDCOM',
+      'to begin your family-history workspace.': 'чтобы начать работу с семейной историей.',
+      'No projects match': 'Нет проектов по запросу',
+      'Try another project name or clear the search.': 'Попробуйте другое название проекта или очистите поиск.',
+      'Clear search': 'Очистить поиск',
+      '1 project': '1 проект',
+      '1 of 1 project': '1 из 1 проекта',
+      '0 of 1 project': '0 из 1 проекта',
+      'Open or import a GeneoGraph or GEDCOM file': 'Открыть или импортировать файл GeneoGraph или GEDCOM',
+      'Open or import a file': 'Открыть или импортировать файл',
+      'Drop a .ggproj or .ged file here': 'Перетащите сюда файл .ggproj или .ged',
+      'Choose file': 'Выбрать файл',
+      'Choose a .ggproj or .ged file.': 'Выберите файл .ggproj или .ged.',
+      'Open': 'Открыть',
+      'More actions': 'Другие действия',
+      'Rename': 'Переименовать',
+      'Duplicate': 'Создать копию',
+      'Update cover': 'Изменить обложку',
+      'Delete': 'Удалить',
+      'Whiskerfield Family Tree': 'Семейное древо Уискерфилдов',
+      'Whiskerfield Family History': 'История семьи Уискерфилдов',
+      'Whiskerfield Family Tree copy': 'Копия семейного древа Уискерфилдов',
+      'Research into the Whiskerfield and Purrington family lines from Pawford, Meowbridge, Fishmarket Row, and Old Cattery.': 'Исследование родов Уискерфилд и Пуррингтон из Поуфорда, Мяубриджа, Фишмаркет-Роу и Олд-Кэттери.',
+      'Local project': 'Локальный проект',
+      'Modified': 'Изменено',
+      'Last modified': 'Последнее изменение',
+      'Created': 'Создано',
+      'Open Whiskerfield Family Tree': 'Открыть проект «Семейное древо Уискерфилдов»',
+      'Recent activity': 'Недавние действия',
+      '4 photos added': 'Добавлено 4 фотографии',
+      'Whiskerfield family album photos are ready to organize': 'Фотографии из семейного альбома Уискерфилдов готовы к сортировке',
+      'Profile updated': 'Профиль обновлён',
+      'Luna Purrington now has a verified birth place': 'Место рождения Луны Пуррингтон подтверждено',
+      'GEDCOM import reviewed': 'Импорт GEDCOM проверен',
+      '17 people were added to the project': 'В проект добавлено 17 человек',
+      'Whiskerfield Family Tree · Albums': 'Семейное древо Уискерфилдов · Альбомы',
+      'Whiskerfield Family Tree · People': 'Семейное древо Уискерфилдов · Люди',
+      'Whiskerfield Family Tree · Family Tree': 'Семейное древо Уискерфилдов · Семейное древо',
+      'Open Whiskerfield Family Tree Albums activity': 'Открыть действия модуля «Альбомы» проекта «Семейное древо Уискерфилдов»',
+      'Open Whiskerfield Family Tree People activity': 'Открыть действия модуля «Люди» проекта «Семейное древо Уискерфилдов»',
+      'Open Whiskerfield Family Tree Family Tree activity': 'Открыть действия модуля «Семейное древо» проекта «Семейное древо Уискерфилдов»',
+      'Sync status': 'Синхронизация',
+      'Sync now': 'Синхронизировать',
+      'Cloud sync is optional. Your current projects are stored locally.': 'Облачная синхронизация необязательна. Текущие проекты хранятся локально.',
+      'All files are stored locally': 'Все файлы хранятся локально',
+      'Your projects, photos, archive files, notes, and boards stay on this device.': 'Все проекты, фото и файлы хранятся на этом устройстве.',
+      'Enable cloud sync to protect your files.': 'Включите облачную синхронизацию для дополнительной защиты файлов.',
+      'Project': 'Проект',
+      'Project overview': 'Обзор проекта',
+      'Project settings': 'Настройки проекта',
+      'Back to all projects': 'Назад ко всем проектам',
+      'Edit project name': 'Изменить название проекта',
+      'Project actions': 'Действия с проектом',
+      'Export project': 'Экспорт проекта',
+      'Export project options will be defined in the Publish module.': 'Параметры экспорта проекта будут доступны в модуле «Публикация».',
+      'Delete project': 'Удалить проект',
+      'View all': 'Показать все',
+      'Structured relationship canvas': 'Структурированная схема родственных связей',
+      'Browse and clean records': 'Просмотр и уточнение записей',
+      'Photos and albums': 'Фотографии и альбомы',
+      'Files and sources': 'Файлы и источники',
+      'Drop a GEDCOM file here to import': 'Перетащите сюда файл GEDCOM для импорта',
+      'Supports .ged files': 'Поддерживаются файлы .ged',
+      'Project insights': 'Подсказки по проекту',
+      'Missing facts': 'Недостающие сведения',
+      'Cleo Whiskerfield is missing a confirmed birth date and place.': 'У Клео Уискерфилд не подтверждены дата и место рождения.',
+      'Missing source data': 'Недостающие данные об источниках',
+      '6 archive files in this project are missing source or provenance information.': 'У 6 архивных файлов этого проекта не указан источник.',
+      'Unsorted photos': 'Неразобранные фотографии',
+      '8 photos are not assigned to an album.': '8 фотографий не добавлены ни в один альбом.',
+      'Place cleanup': 'Уточнение мест',
+      '3 imported place names need coordinates or hierarchy review.': 'Для 3 импортированных названий мест нужно проверить координаты или иерархию.',
+      'Whiskerfield Family Tree · Cleo Whiskerfield is missing a confirmed birth date and place.': 'Семейное древо Уискерфилдов · У Клео Уискерфилд не подтверждены дата и место рождения.',
+      'Whiskerfield Family Tree · 6 archive files in this project are missing source or provenance information.': 'Семейное древо Уискерфилдов · У 6 архивных файлов этого проекта не указаны источник или происхождение.',
+      'Whiskerfield Family Tree · 8 photos are not assigned to an album.': 'Семейное древо Уискерфилдов · 8 фотографий не добавлены ни в один альбом.',
+      'Whiskerfield Family Tree · 3 imported place names need coordinates or hierarchy review.': 'Семейное древо Уискерфилдов · Для 3 импортированных названий мест нужно проверить координаты.',
+      'Open People for Missing facts': 'Открыть раздел «Люди» для проверки недостающих сведений',
+      'Open Archive for Missing source data': 'Открыть «Архив» для проверки данных об источниках',
+      'Open Albums for Unsorted photos': 'Открыть «Альбомы» для разбора фотографий',
+      'Open Places for Place cleanup': 'Открыть «Места» для уточнения данных',
+      'Offline project': 'Синхронизация выключена',
+      'Cloud sync is optional. This project is currently stored locally.': 'Облачная синхронизация необязательна. Этот проект сейчас хранится локально.',
+      'Cloud backup is disabled. Project files, photos, archive files, notes, and boards stay on this device.': 'Резервное копирование в облако отключено. Проекты, фотографии и файлы хранятся на этом устройстве.',
+      'Learn more about cloud backup': 'Подробнее о резервном копировании',
+      'Cloud backup help is a placeholder for a later flow.': 'Справка по облачному резервному копированию пока является заглушкой.',
+      'Photos added': 'Добавлены фотографии',
+      '4 photos added to Family photos': '4 фотографии добавлены в альбом «Семейные фотографии»',
+      'Person updated': 'Данные человека обновлены',
+      'Luna Purrington profile updated': 'Профиль Луны Пуррингтон обновлён',
+      'GEDCOM imported': 'GEDCOM импортирован',
+      '24 people imported from GEDCOM': 'Из GEDCOM импортировано 24 человека',
+      'Research note added': 'Добавлена исследовательская заметка',
+      'Surname origin note updated': 'Заметка о происхождении фамилии обновлена',
+      'Relationship connected': 'Добавлена родственная связь',
+      'Luna Purrington was connected to the tree': 'Луна Пуррингтон добавлена в семейное древо',
+      'Archive file linked': 'Архивный файл связан',
+      'Pawford household register linked to Silver Whiskerfield': 'Домовая ведомость Поуфорда связана с Сильвером Уискерфилдом',
+      'Duplicate reviewed': 'Возможный дубликат проверен',
+      'Possible duplicate was marked reviewed': 'Возможный дубликат отмечен как проверенный',
+      'Photo tags added': 'Добавлены отметки на фотографиях',
+      'Three portraits were linked to people': 'Три портрета связаны с записями о людях',
+      'Family photos': 'Семейные фотографии',
+      'Pawford household register': 'Домовая ведомость Поуфорда',
+      'Silver Whiskerfield': 'Сильвер Уискерфилд',
+      'Luna Purrington': 'Луна Пуррингтон',
+      'Cleo Whiskerfield': 'Клео Уискерфилд',
+      'Edit project name': 'Изменить название проекта',
+      'Save': 'Сохранить',
+      'Project name': 'Название проекта',
+      'Project name cannot be empty.': 'Название проекта не может быть пустым.',
+      'Project name updated.': 'Название проекта обновлено.',
+      'Rename project': 'Переименовать проект',
+      'Update the project name shown throughout GeneoGraph.': 'Измените название проекта, отображаемое во всех разделах GeneoGraph.',
+      'Close': 'Закрыть',
+      'Cancel': 'Отмена',
+      'Save changes': 'Сохранить изменения',
+      'Project renamed.': 'Проект переименован.',
+      'Project duplicated.': 'Копия проекта создана.',
+      'Choose the cover shown on this project card.': 'Выберите обложку для карточки проекта.',
+      'Cover style': 'Стиль обложки',
+      'Archival paper': 'Архивная бумага',
+      'Family tree': 'Семейное древо',
+      'Family photo': 'Семейная фотография',
+      'Preview of Whiskerfield Family Tree cover': 'Предпросмотр обложки проекта «Семейное древо Уискерфилдов»',
+      'Project cover updated.': 'Обложка проекта обновлена.',
+      'Delete project?': 'Удалить проект?',
+      'Delete Whiskerfield Family Tree and all people, relationships, media, and research records owned by this project.': 'Удалить проект «Семейное древо Уискерфилдов» и все связанные с ним записи о людях, файлах и исследованиях.',
+      'This action cannot be undone.': 'Это действие нельзя отменить.',
+      'Project deleted.': 'Проект удалён.',
+      'Project identity': 'Сведения о проекте',
+      'Project description': 'Описание проекта',
+      'Cover image': 'Обложка',
+      'Custom image': 'Своё изображение',
+      'Custom cover upload is a placeholder.': 'Загрузка своей обложки пока является заглушкой.',
+      'Project location': 'Расположение проекта',
+      'Cloud backup disabled': 'Облачное резервное копирование отключено',
+      'Last local backup': 'Последняя локальная резервная копия',
+      'Cloud backup': 'Облачное резервное копирование',
+      'Disabled': 'Отключено',
+      'View in folder': 'Показать в папке',
+      'Move project': 'Переместить проект',
+      'Create local backup': 'Создать локальную резервную копию',
+      'Data and privacy': 'Данные и конфиденциальность',
+      'Living-person protection': 'Защита данных живущих людей',
+      'On': 'Включено',
+      'Off': 'Выключено',
+      'Publish living people': 'Публикация данных живущих людей',
+      'Hide by default': 'Скрывать по умолчанию',
+      'Anonymize names': 'Анонимизировать имена',
+      'Include with warning': 'Включать с предупреждением',
+      'Private notes in exports': 'Личные заметки при экспорте',
+      'Exclude by default': 'Исключать по умолчанию',
+      'Date format': 'Формат даты',
+      'DD MMM YYYY': 'ДД МММ ГГГГ',
+      'DD.MM.YYYY': 'ДД.ММ.ГГГГ',
+      'YYYY-MM-DD': 'ГГГГ-ММ-ДД',
+      'Reset changes': 'Сбросить изменения',
+      'Not created yet': 'Ещё не создана',
+      'This would open the project folder on your computer.': 'Здесь откроется папка проекта на вашем компьютере.',
+      'Local backup created.': 'Локальная резервная копия создана.',
+      'Cover style updated. Save settings to keep other changes.': 'Стиль обложки обновлён. Сохраните настройки, чтобы применить остальные изменения.',
+      'Project settings saved.': 'Настройки проекта сохранены.',
+      'Choose a new local folder for this project. This is simulated in the prototype.': 'Выберите новую локальную папку для проекта. В прототипе это действие имитируется.',
+      'Current location': 'Текущее расположение',
+      'New location': 'Новое расположение',
+      'Moving a project would relocate the local project package and keep existing people, sources, photos, archive files, notes, boards, and settings together.': 'При перемещении пакет проекта будет перенесён в новое место вместе со всеми людьми, источниками, фотографиями, архивными файлами, заметками, досками и настройками.',
+      'Choose a project location.': 'Выберите расположение проекта.',
+      'Project location updated.': 'Расположение проекта обновлено.',
+      'Start a new GeneoGraph project for a family line or research case.': 'Создайте новый проект GeneoGraph для семейной линии или исследовательской задачи.',
+      'e.g. Whiskerfield Family History': 'например, История семьи Уискерфилдов',
+      'Description': 'Описание',
+      'Family line, location, archive focus, or research goal': 'Семейная линия, место, архивное направление или цель исследования',
+      'Starting point': 'Начальный вариант',
+      'Blank project': 'Пустой проект',
+      'Add people manually.': 'Добавить людей вручную.',
+      'Bring an existing tree.': 'Импортировать существующее древо.',
+      'Start from person': 'Начать с человека',
+      'Create the first profile now.': 'Создать первый профиль сейчас.',
+      'GEDCOM file': 'Файл GEDCOM',
+      'Drop a GEDCOM file here or choose a file': 'Перетащите сюда файл GEDCOM или выберите файл',
+      'Supports .ged and .gedcom files': 'Поддерживаются файлы .ged и .gedcom',
+      'Create project': 'Создать проект',
+      'Project creation simulated.': 'Создание проекта смоделировано.',
+      'Import an existing family tree file into a new or open project.': 'Импортируйте существующий файл семейного древа в новый или открытый проект.',
+      'Drop a GEDCOM file here': 'Перетащите сюда файл GEDCOM',
+      'File handling is simulated in this prototype.': 'Работа с файлами смоделирована в этом прототипе.',
+      'Help center': 'Справочный центр',
+      'Profile menu': 'Меню профиля',
+      'Find guides, shortcuts, and support for GeneoGraph.': 'Здесь доступны руководства, сочетания клавиш и справка по GeneoGraph.',
+      'Getting started': 'Начало работы',
+      'Create, open, and import projects.': 'Создание, открытие и импорт проектов.',
+      'Family Tree basics': 'Основы семейного древа',
+      'Add relatives, edit people, and navigate the tree.': 'Добавляйте родственников, редактируйте людей и перемещайтесь по древу.',
+      'Archive & sources': 'Архив и источники',
+      'Organize files and connect evidence.': 'Организуйте файлы и связывайте подтверждающие материалы.',
+      'Albums and notes': 'Альбомы и заметки',
+      'Manage photos, captions, notes, and cases.': 'Работайте с фотографиями, подписями, заметками и исследовательскими задачами.',
+      'Keyboard shortcuts': 'Сочетания клавиш',
+      'Search, selection, overlays, and navigation.': 'Поиск, выделение, всплывающие элементы и навигация.',
+      'Open Help Center': 'Открыть справочный центр',
+      'Contact support': 'Связаться с поддержкой',
+      'Getting started help would open here.': 'Здесь откроется справка по началу работы.',
+      'Family Tree basics help would open here.': 'Здесь откроется справка по основам семейного древа.',
+      'Archive & sources help would open here.': 'Здесь откроется справка по архиву и источникам.',
+      'Albums and notes help would open here.': 'Здесь откроется справка по альбомам и заметкам.',
+      'Keyboard shortcuts help would open here.': 'Здесь откроется справка по сочетаниям клавиш.',
+      'Help Center would open here.': 'Здесь откроется справочный центр.',
+      'Contact support flow is a placeholder.': 'Обращение в поддержку пока является заглушкой.',
+      '5 items need attention': '5 уведомлений требуют внимания',
+      'No unread notifications': 'Нет непрочитанных уведомлений',
+      'Mark all read': 'Отметить все как прочитанные',
+      'View all notifications': 'Показать все уведомления',
+      'Notifications marked as read.': 'Уведомления отмечены как прочитанные.',
+      'Full notifications center is a placeholder.': 'Полный центр уведомлений пока является заглушкой.',
+      'Archive files are ready to organize': 'Архивные файлы готовы к организации',
+      'Archive · Files': 'Архив · Файлы',
+      'Albums - Cleanup': 'Альбомы — Разбор',
+      'Places may need review': 'Места требуют проверки',
+      'Places - Review': 'Места — Проверка',
+      'Local backup recommended': 'Рекомендуется локальная резервная копия',
+      'Project settings - Stored locally': 'Настройки проекта — Хранится локально',
+      'Living people are hidden by default in exports': 'Данные живущих людей по умолчанию скрыты при экспорте',
+      'Publish - Privacy reminder': 'Публикация — Напоминание о конфиденциальности',
+      'GeneoGraph account': 'Аккаунт GeneoGraph',
+      'You are not signed in.': 'Вы не вошли в аккаунт.',
+      'Sign in': 'Войти',
+      'Connect your GeneoGraph account.': 'Подключите свой аккаунт GeneoGraph.',
+      'Create account': 'Создать аккаунт',
+      'Account creation is visual only.': 'Создание аккаунта здесь только демонстрируется.',
+      'Signed in': 'Выполнен вход',
+      'My account': 'Мой аккаунт',
+      'Profile, subscription, and account details.': 'Профиль, подписка и сведения об аккаунте.',
+      'Account settings': 'Настройки аккаунта',
+      'Manage account preferences.': 'Управление настройками аккаунта.',
+      'Sign out': 'Выйти',
+      'Visual account action only.': 'Действие с аккаунтом здесь только демонстрируется.',
+      'Signed out visually for this prototype.': 'Выход из аккаунта смоделирован в прототипе.',
+      'Signed in visually for this prototype.': 'Вход в аккаунт смоделирован в прототипе.',
+      'My account flow is a visual placeholder.': 'Раздел «Мой аккаунт» пока является визуальной заглушкой.',
+      'Account flow is a visual placeholder.': 'Работа с аккаунтом пока является визуальной заглушкой.',
+      'Global settings': 'Общие настройки',
+      'App-wide preferences for GeneoGraph. Project-specific settings stay inside each project.': 'Общие настройки GeneoGraph. Параметры отдельных проектов настраиваются внутри соответствующих проектов.',
+      'Global settings sections': 'Разделы общих настроек',
+      'General': 'Основные',
+      'Storage & backup': 'Хранилище и резервные копии',
+      'Privacy': 'Конфиденциальность',
+      'Accessibility': 'Специальные возможности',
+      'About': 'О программе',
+      'Interface language updated.': 'Язык интерфейса обновлён.',
+      'Global settings saved.': 'Общие настройки сохранены.',
+      'Basic app-wide preferences.': 'Основные настройки приложения.',
+      'Interface theme': 'Тема интерфейса',
+      'GeneoGraph currently uses the dark archival theme.': 'Сейчас GeneoGraph использует тёмную архивную тему.',
+      'Dark archival': 'Тёмная архивная',
+      'Startup behavior': 'Поведение при запуске',
+      'Choose what opens when the app starts.': 'Выберите, что открывать при запуске приложения.',
+      'Show project picker': 'Показывать выбор проекта',
+      'Open last project': 'Открывать последний проект',
+      'Language': 'Язык',
+      'App interface language.': 'Язык интерфейса приложения.',
+      'English': 'Английский',
+      'Default date display across the app.': 'Формат отображения дат по умолчанию во всём приложении.',
+      'MM/DD/YYYY': 'ММ/ДД/ГГГГ',
+      'Time zone': 'Часовой пояс',
+      'Used for activity timestamps.': 'Используется для времени в журнале действий.',
+      'System default': 'Системный',
+      'Set global storage defaults for local-first projects.': 'Настройте общие параметры хранения для локальных проектов.',
+      'Default project folder': 'Папка проектов по умолчанию',
+      'New local projects are created here.': 'Здесь создаются новые локальные проекты.',
+      'Local backups': 'Локальные резервные копии',
+      'Create local backup reminders.': 'Напоминать о создании локальных резервных копий.',
+      'Backup frequency': 'Частота резервного копирования',
+      'Default reminder cadence.': 'Частота напоминаний по умолчанию.',
+      'Weekly': 'Еженедельно',
+      'Daily': 'Ежедневно',
+      'Manual': 'Вручную',
+      'Cloud sync': 'Облачная синхронизация',
+      'Optional cloud backup is disabled by default.': 'Необязательное облачное резервное копирование по умолчанию отключено.',
+      'Enable sync': 'Включить синхронизацию',
+      'Cloud sync setup is a placeholder.': 'Настройка облачной синхронизации пока является заглушкой.',
+      'Set defaults used by publishing, exports, and living-person handling.': 'Настройте параметры по умолчанию для публикации, экспорта и данных живущих людей.',
+      'Hide living people in Publish outputs': 'Скрывать живущих людей в публикациях',
+      'Recommended for family sharing.': 'Рекомендуется для семейного доступа.',
+      'Exclude private notes from exports': 'Исключать личные заметки из экспорта',
+      'Private research notes stay out of shared files.': 'Личные исследовательские заметки не попадут в общие файлы.',
+      'Warn before exporting unsourced facts': 'Предупреждать перед экспортом фактов без источников',
+      'Show a privacy/source warning during Publish.': 'Показывать предупреждение о конфиденциальности и источниках при публикации.',
+      'Confirm permanent delete': 'Подтверждать безвозвратное удаление',
+      'Require confirmation for destructive actions.': 'Требовать подтверждение для необратимых действий.',
+      'Choose which app reminders appear in the notification overlay.': 'Выберите, какие напоминания показывать в уведомлениях.',
+      'Archive organization reminders': 'Напоминания об организации архива',
+      'Files without folders or genealogy links.': 'Файлы без папок или связей с генеалогическими записями.',
+      'Backup reminders': 'Напоминания о резервном копировании',
+      'Remind me when a local backup is recommended.': 'Напоминать, когда рекомендуется создать локальную резервную копию.',
+      'Needs review place reminders': 'Напоминания о местах, требующих проверки',
+      'Imported place names and missing coordinates.': 'Импортированные названия мест и отсутствующие координаты.',
+      'Photo organization reminders': 'Напоминания об организации фотографий',
+      'Photos not assigned to albums.': 'Фотографии, не добавленные в альбомы.',
+      'Product tips': 'Советы по работе',
+      'Occasional workflow tips inside the app.': 'Периодические советы по работе в приложении.',
+      'Adjust interface density, contrast, and motion behavior.': 'Настройте плотность интерфейса, контрастность и анимацию.',
+      'Reduce motion': 'Уменьшить анимацию',
+      'Limit non-essential transitions.': 'Ограничить необязательные анимационные переходы.',
+      'Increase contrast': 'Повысить контрастность',
+      'Strengthen borders and text contrast.': 'Сделать границы и текст контрастнее.',
+      'Interface density': 'Плотность интерфейса',
+      'Choose comfortable or compact spacing.': 'Выберите обычные или компактные отступы.',
+      'Comfortable': 'Обычная',
+      'Compact': 'Компактная',
+      'Font size': 'Размер шрифта',
+      'Default app text size.': 'Размер текста приложения по умолчанию.',
+      'Default': 'По умолчанию',
+      'Large': 'Крупный',
+      'Always show focus outlines': 'Всегда показывать рамку фокуса',
+      'Keep keyboard focus visible.': 'Всегда показывать клавиатурный фокус.',
+      'About GeneoGraph': 'О GeneoGraph',
+      'Prototype information and reference links.': 'Информация о прототипе и справочные ссылки.',
+      'GeneoGraph prototype': 'Прототип GeneoGraph',
+      'Version 0.1 prototype - local-first genealogy workspace': 'Версия 0.1 — прототип локального рабочего пространства для генеалогии',
+      'Active': 'Активно',
+      'Guides and support documentation placeholder.': 'Заглушка для руководств и справочной документации.',
+      'Release notes': 'Примечания к выпуску',
+      'Product updates and prototype changes.': 'Обновления продукта и изменения прототипа.',
+      'View': 'Просмотреть',
+      'Release notes are a placeholder.': 'Примечания к выпуску пока являются заглушкой.',
+      'Privacy policy': 'Политика конфиденциальности',
+      'Privacy documentation placeholder.': 'Заглушка для документации о конфиденциальности.',
+      'Privacy policy would open here.': 'Здесь откроется политика конфиденциальности.'
     };
 
     const RU_PLURALS = {
-      people: { one: '-------', few: '--------', many: '-------', other: '--------' },
-      person: { one: '-------', few: '--------', many: '-------', other: '--------' },
-      photos: { one: '----', few: '----', many: '----', other: '----' },
-      photo: { one: '----', few: '----', many: '----', other: '----' },
-      files: { one: '----', few: '-----', many: '------', other: '-----' },
-      file: { one: '----', few: '-----', many: '------', other: '-----' },
-      notes: { one: '-------', few: '-------', many: '-------', other: '-------' },
-      note: { one: '-------', few: '-------', many: '-------', other: '-------' },
-      events: { one: '-------', few: '-------', many: '-------', other: '-------' },
-      event: { one: '-------', few: '-------', many: '-------', other: '-------' },
-      sources: { one: '--------', few: '---------', many: '----------', other: '---------' },
-      questions: { one: '------', few: '-------', many: '--------', other: '-------' },
-      projects: { one: '------', few: '-------', many: '--------', other: '-------' },
-      project: { one: '------', few: '-------', many: '--------', other: '-------' },
-      places: { one: 'место', few: 'места', many: 'мест', other: 'места' },
-      place: { one: 'место', few: 'места', many: 'мест', other: 'места' },
-      stops: { one: 'остановка', few: 'остановки', many: 'остановок', other: 'остановки' },
-      stop: { one: 'остановка', few: 'остановки', many: 'остановок', other: 'остановки' },
-      Objects: { one: '------', few: '-------', many: '--------', other: '-------' }
+      people: {
+        one: 'человек',
+        few: 'человека',
+        many: 'человек',
+        other: 'человека'
+      },
+
+      person: {
+        one: 'человек',
+        few: 'человека',
+        many: 'человек',
+        other: 'человека'
+      },
+
+      photos: {
+        one: 'фотография',
+        few: 'фотографии',
+        many: 'фотографий',
+        other: 'фотографии'
+      },
+
+      photo: {
+        one: 'фотография',
+        few: 'фотографии',
+        many: 'фотографий',
+        other: 'фотографии'
+      },
+
+      files: {
+        one: 'файл',
+        few: 'файла',
+        many: 'файлов',
+        other: 'файла'
+      },
+
+      file: {
+        one: 'файл',
+        few: 'файла',
+        many: 'файлов',
+        other: 'файла'
+      },
+
+      notes: {
+        one: 'заметка',
+        few: 'заметки',
+        many: 'заметок',
+        other: 'заметки'
+      },
+
+      note: {
+        one: 'заметка',
+        few: 'заметки',
+        many: 'заметок',
+        other: 'заметки'
+      },
+
+      events: {
+        one: 'событие',
+        few: 'события',
+        many: 'событий',
+        other: 'события'
+      },
+
+      event: {
+        one: 'событие',
+        few: 'события',
+        many: 'событий',
+        other: 'события'
+      },
+
+      sources: {
+        one: 'источник',
+        few: 'источника',
+        many: 'источников',
+        other: 'источника'
+      },
+
+      source: {
+        one: 'источник',
+        few: 'источника',
+        many: 'источников',
+        other: 'источника'
+      },
+
+      questions: {
+        one: 'вопрос',
+        few: 'вопроса',
+        many: 'вопросов',
+        other: 'вопроса'
+      },
+
+      question: {
+        one: 'вопрос',
+        few: 'вопроса',
+        many: 'вопросов',
+        other: 'вопроса'
+      },
+
+      projects: {
+        one: 'проект',
+        few: 'проекта',
+        many: 'проектов',
+        other: 'проекта'
+      },
+
+      project: {
+        one: 'проект',
+        few: 'проекта',
+        many: 'проектов',
+        other: 'проекта'
+      },
+
+      places: {
+        one: 'место',
+        few: 'места',
+        many: 'мест',
+        other: 'места'
+      },
+
+      place: {
+        one: 'место',
+        few: 'места',
+        many: 'мест',
+        other: 'места'
+      },
+
+      stops: {
+        one: 'остановка',
+        few: 'остановки',
+        many: 'остановок',
+        other: 'остановки'
+      },
+
+      stop: {
+        one: 'остановка',
+        few: 'остановки',
+        many: 'остановок',
+        other: 'остановки'
+      },
+
+      Objects: {
+        one: 'объект',
+        few: 'объекта',
+        many: 'объектов',
+        other: 'объекта'
+      },
+
+      objects: {
+        one: 'объект',
+        few: 'объекта',
+        many: 'объектов',
+        other: 'объекта'
+      },
+
+      object: {
+        one: 'объект',
+        few: 'объекта',
+        many: 'объектов',
+        other: 'объекта'
+      }
     };
 
-    Object.assign(RU_UI, {
-      'Suggested board colors': '\u0426\u0432\u0435\u0442\u0430 \u0434\u043e\u0441\u043a\u0438',
-      'Low text contrast': '\u041d\u0438\u0437\u043a\u0438\u0439 \u043a\u043e\u043d\u0442\u0440\u0430\u0441\u0442 \u0442\u0435\u043a\u0441\u0442\u0430',
-      'Consider a clearer text or fill color.': '\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0431\u043e\u043b\u0435\u0435 \u043a\u043e\u043d\u0442\u0440\u0430\u0441\u0442\u043d\u044b\u0439 \u0446\u0432\u0435\u0442 \u0442\u0435\u043a\u0441\u0442\u0430 \u0438\u043b\u0438 \u0444\u043e\u043d\u0430.'
-    });
+    const DEFAULT_DOCUMENT_TITLE =
+      document.title;
 
+    const LOCALIZABLE_DOM_ATTRIBUTES =
+      Object.freeze([
+        'placeholder',
+        'aria-label',
+        'aria-description',
+        'aria-valuetext',
+        'aria-placeholder',
+        'title',
+        'alt',
+        'data-toast'
+      ]);
 
+    const LOCALIZABLE_DOM_ATTRIBUTE_SELECTOR =
+      LOCALIZABLE_DOM_ATTRIBUTES
+        .map(attribute =>
+          `[${attribute}]`
+        )
+        .join(',');
 
-    Object.assign(RU_UI, {
-      // Global shell and shared UI
-      'Projects home': '------- --------', 'Project modules': '------ -------', 'User profile': '------- ------------', 'Profile menu': '---- -------',
-      'Search anything...': '------ -----...', 'Search anything...': '------ -----', 'Notifications': '-----------', 'Profile': '-------', 'Help': '------',
-      'Getting started': '------ ------', 'Create, open, and import projects.': '----------, ---------- - ------------ -------.',
-      'Family Tree basics': '------ --------- ------', 'Add relatives, edit people, and navigate the tree.': '---------- -------------, ------------ ----- - ------------- -- ------.',
-      'Archive & sources': '----- - ---------', 'Organize files and connect evidence.': '-------------- ----- - ---------- --------------.',
-      'Albums and notes': '------- - -------', 'Manage photos, captions, research notes, and cases.': '---------- ----, ---------, ------------------ --------- - ------.',
-      'Keyboard shortcuts': '------- -------', 'Missing source information': '--- -------- -- ----------', 'Unsorted photos': '------------- ----',
-      'Needs review places': '------------- -----', 'Local backup recommended': '------------- --------- --------- -----',
-      'Publish privacy reminder': '----------- - ------------------ ----------', 'Mark all read': '-------- -- -----------', 'View all notifications': '--- -----------',
-      'Needs attention': '------- --------', 'Cleanup': '------- -------', 'Review': '--------', 'Privacy reminder': '----------- - ------------------',
-      'Stored locally': '-------- --------', 'My account': '--- -------', 'Account settings': '--------- --------', 'Sign out': '-----', 'Sign in': '-----', 'Create account': '------- -------',
-      'You are not signed in.': '-- -- ----- - -------.', 'GeneoGraph account': '------- GeneoGraph', 'Signed in': '-------- ----', 'Local account': '--------- -------',
-      'Cancel': '------', 'Save changes': '--------- ---------', 'Got it': '-------', 'Learn more': '--------- ?', 'Learn more': '---------', 'More actions': '--- --------', 'Actions': '--------',
-      'Open': '-------', 'Close': '-------', 'Back': '-----', 'Continue': '----------', 'Export': '-------', 'Import': '------', 'Rename': '-------------', 'Duplicate': '-----------',
-      'Rename project': '------------- ------', 'Update cover': '--------- -------', 'Project renamed.': '------ -------------..', 'Project duplicated.': '------ -----------.', 'Project cover updated.': '------- ------ ---------.', 'Project deleted.': '------ ------.', 'Delete project?': '------- ------?', 'Project name cannot be empty.': '------- ------ -- ----- ---- ----.',
-      'Archive': '-----', 'Restore': '------------', 'Permanent delete': '------- --------', 'Delete permanently': '------- --------', 'Create folder': '------- -----',
-      'Open profile': '------- -------', 'Full profile': '------ -------', 'Edit relationship': '------------- -----', 'Unlink': '--------', 'Remove connection?': '------- -----?',
-      'This removes the relationship link. The person record remains in the project.': '----- ------- ------ -----. ------ -------- --------- - -------.',
-      'Changes reset.': '--------- --------.', 'Profile updated.': '------- -------.',
+    function escapeLocalizationRegExp(
+      value
+    ) {
+      return String(value)
+        .replace(
+          /[.*+?^${}()|[\]\\]/g,
+          '\\$&'
+        );
+    }
 
-      // Common values and statuses
-      'Male': '-------', 'Female': '-------', 'Living': '---', 'Deceased': '----', 'Unknown': '----------', 'Exact date': '------ ----', 'Approximate date': '--------------- ----',
-      'Year only': '------ ---', 'Before': '--', 'After': '-----', 'Between': '-----', 'About / Circa': '-----', 'Any': '-----', 'None': '---', 'Complete': '---------', 'Incomplete': '-- ---------', 'Draft': '--------', 'Open': '-------', 'In progress': '- ------', 'Solved': '------', 'Archived': '- ------',
-      'Good': '------', 'High': '-------', 'Medium': '-------', 'Low': '------', 'Not run': '-- -----------', 'Transcribed': '----------------', 'OCR suggested': 'OCR ---------', 'Transcript draft': '-------- -----------', 'Not needed': '-- ---------',
-      'Missing links': '--- ------', 'Incomplete source': '-------- --------', 'Unreviewed': '-- ---------', 'In review': '-- --------', 'Folder': '-----', 'File': '----', 'Image': '-----------', 'Audio': '-----', 'PDF': 'PDF',
+    /*
+    * Attribute values often contain composed copy:
+    *
+    * "Open Silver Whiskerfield profile"
+    * "Actions for Luna Purrington"
+    *
+    * Translate known RU_UI fragments, but only at
+    * token boundaries so short keys do not corrupt
+    * unrelated words.
+    *
+    * Example:
+    * "Off" must not mutate "Office".
+    */
+    const RU_UI_EMBEDDED_RULES =
+      Object.keys(RU_UI)
+        .filter(key =>
+          key.length > 2
+          && RU_UI[key] !== key
+        )
+        .sort(
+          (left, right) =>
+            right.length - left.length
+        )
+        .map(key => ({
+          translation:
+            RU_UI[key],
 
-      // Projects
-      'Projects': '-------', 'Create, open, and manage your family-history projects.': '----------, ---------- - ----------- --------- -------- -------.', 'All projects': '--- -------', 'Search results': '---------- ------',
-      'Continue where you left off': '---------- - -----, --- -- ----------', 'Continue': '----------', 'Last opened': '--------- -------',
-      'Modified': '--------', 'Last modified': '--------- --------', 'today at': '------- -', 'yesterday at': '----- -',
-      'No projects yet': '------- ---- ---', 'No projects match': '------- -- ----------', 'Try another project name or clear the search.': '---------- ------- ----- ------- --- ------- -----.', 'Clear search': '------- -----',
-      'Create a family tree or import a GEDCOM file': '-------- -------- ------ --- ------------ ---- GEDCOM', 'to begin your family-history workspace.': '----- ------- --------- - --------- -------- -------.',
-      'Create family tree': '------- -----', 'Import GEDCOM': '------ GEDCOM', 'Open project': '------- ------', 'Open project overview': '------- ----- -------',
-      'Project overview': '----- -------', 'Recent activity': '-------- ----------', 'Project settings': '--------- -------', 'Back to all projects': '----- -- ---- --------',
-      'Project identity': '------------- -------', 'Project name': '-------- -------', 'Project description': '-------- -------', 'Project location': '------------ -------',
-      'Cover image': '-------', 'Data and privacy': '------ - ------------------', 'View in folder': '-------- - -----', 'Move project': '----------- ------', 'Create local backup': '------- --------- -----',
-      'Cloud backup disabled': '-------- ----- ---------', 'Last local backup': '--------- --------- -----',
-      'Living-person protection': '------ ------- -----', 'Hide living people in Publish outputs': '-------- ------- ----- - -----------', 'Private notes in exports': '------ ------- - --------',
-      'Date format': '------ ----', 'Reset changes': '-------- ---------', 'Offline project': '-------------', 'Offline projects': '--------------',
-      'All files are stored locally': '--- ----- -------- --------', 'All files are stored locally on this device.': '--- ----- -------- -------- -- ---- ----------.',
-      'Enable could sync to protect your files.': '-------- ------------- ----- -------- -----.', 'Sync now': '----------------', 'Project insights': '------- -------',
-      'Possible duplicate': '--------- -----', 'Missing source data': '-- ------- ------ ---------', 'Place cleanup': '------- ----', 'Unsorted photos': '------------- ----',
+          pattern:
+            new RegExp(
+              `(^|[^\\p{L}\\p{N}_])${escapeLocalizationRegExp(
+                key
+              )}(?=$|[^\\p{L}\\p{N}_])`,
+              'gu'
+            )
+        }));
 
-      // Family tree and add person
-      'Classic': '------------', 'Pedigree': '-----------', 'Fan': '----', 'Search people...': '----- -----', 'Search people...': '----- -----...', 'Tree Settings': '--------- ------', 'Print': '------',
-      'Selected person details': '------ ---------- --------', 'Collapse person sidebar': '-------- ------ --------', 'Show person sidebar': '-------- ------ --------', 'Quick edit': '------- --------------',
-      'Add relative': '-------- ------------', 'Connect relative': '------- ------------', 'Add father': '-------- ----', 'Add mother': '-------- ----', 'Father': '----', 'Mother': '----', 'Partner / Spouse': '------ / ------(-)', 'Son': '---', 'Daughter': '----', 'Brother': '----', 'Sister': '------', 'Parents': '--------', 'Partners': '-------', 'Children': '----', 'Siblings': '------ - -----', 'Grandparents': '------- - -------',
-      'Add person': '-------- --------', 'Edit person': '------------- --------', 'Create a new person in this project': '-------- ------ -------- - ---- -------', 'Identity': '------', 'Life events': '------- -----', 'Additional facts': '-------------- -----', 'Middle name / Patronym': '-------- / ------- ---', 'Alternative names': '------ -----', 'Cause of death': '------- ------', 'Occupation': '---------', 'Create and add another': '------- - -------- ---', 'Attach to this person': '---------- - ----- --------', 'Possible matches': '--------- ----------', 'Similar people in this project': '------- ---- - -------',
+    function isTechnicalLocalizationValue(
+      value
+    ) {
+      const source =
+        String(value || '').trim();
 
-      // People
-      'Navigation': '---------', 'Review center': '----- --------', 'Statistics': '----------', 'Saved filters': '---------- ----', 'Columns': '-------', 'Filter': '------', ' Date modified': '----------: ---- ---------', ' Name': '----------: ---', ' Birth date': '----------: ---- --------', 'Name': '---', 'Birth date': '---- --------', 'Birth Date': '---- --------', 'Birth place': '----- --------', 'Birth Place': '----- --------', 'Death date': '---- ------', 'Death Date': '---- ------', 'Death place': '----- ------', 'Death Place': '----- ------', 'Updated': '---------', 'Rows per page': '----- -- --------', 'Record Info': '---------- - ------', 'Record info': '---------- - ------', 'Facts': '-----', 'Relationships': '-----', 'Record ID': 'ID ------', 'Created': '-------', 'Updated': '---------', 'Review issues': '-------- --------', 'Privacy': '------------------', 'Source status': '------ ----------', 'Partly sourced': '-------- ------------', 'Living protected': '------- ------- -------', 'Main information': '-------- ----------', 'First name': '---', 'Last name': '-------', 'Patronym': '--------', 'Maiden name': '------- -------', 'Maiden Name': '------- -------', 'Prefix': '-------', 'Suffix': '-------', 'Gender': '---', 'Living status': '------ -----', 'Death reason': '------- ------', 'Cause of Death': '------- ------', 'Burial place': '----- -----------', 'Burial Place': '----- -----------', 'Education': '-----------', 'Work': '------', 'Other': '------', 'Education place': '----- --------', 'Company name': '--------', 'Religion': '-------', 'Baptism place': '----- --------', 'Baptism date': '---- --------', 'Immediate Family': '--------- -----', 'Family': '-----',
+      if (!source) {
+        return false;
+      }
 
-      // Geneograph
-      'Geneograph Visual Boards': '---------- ----- ----------', 'Your personal space for research, visualizations and publications.': '------ ------------ --- ------------, ------------ - ----------.', 'New board': '------- -----', 'Import board': '------------- -----', 'All boards': '--- -----', 'Recently viewed': '------- -------------', 'Favourites': '---------', 'Categories': '---------', 'Board type': '---------', 'Research theory': '----------------- ------', 'Tree design': '------ ------', 'Evidence map': '----- -------------', 'Publication': '----------', 'DNA': '---', 'Search boards...': '----- -----', ' Board type': '----------: --- -----', 'Undo': '--------', 'Redo': '---------', 'Select': '-----', 'Pan': '--------', 'Connect': '-------', 'Templates': '-------', 'Board settings': '--------- -----', 'Current board': '------- -----', 'Objects': '-------', 'Person': '-------', 'Evidence': '--------------', 'Case': '----', 'Shape': '------', 'Connector': '-----', 'Text': '-----', 'Object palette': '------- --------', 'Properties': '--------', 'Comments': '-----------', 'Card content': '---------- --------', 'Display name': '------------ ---', 'Life dates': '---- -----', 'Metadata': '----------', 'Short note': '-------- -------', 'Body / description': '----- / --------', 'Delete object': '------- ------', 'Appearance': '------- ---', 'Layout': '-----', 'Card style': '----- --------', 'Show dates': '---------- ----', 'Show place': '---------- -----', 'Show badge': '---------- -----', 'Locked': '-------------', 'Layer': '----', 'Zoom controls': '-------', 'Zoom out': '---------', 'Zoom in': '---------', 'Fit board': '------- -----', 'Fit': '-------',
-      'Person cards': 'Карточки людей', 'Detailed facts': 'Подробные сведения', 'Compact family view': 'Компактный семейный вид', 'Maximum density': 'Максимальная плотность', 'Photo-first': 'Акцент на фото', 'Color person cards by gender': 'Окрашивать карточки по полу', 'Use Family Tree colors for male and female cards. Unknown remains neutral.': 'Использовать цвета Семейного древа для мужских и женских карточек. Неизвестный пол остается нейтральным.', 'Family Tree link indicator': 'Индикатор связи с Семейным древом', 'Maiden surname': 'Девичья фамилия',
-
-      // Albums
-      'Photos': '----', 'Photo details': '------ ----', 'Select a photo': '-------- ----', 'Select a photo to view details, albums, people, date, place and caption.': '-------- ----, ----- ------- ------, -------, -----, ----, ----- - -------.', 'Grid view': '------', 'List view': '------', 'Search photos-': '----- ----', 'Search photos...': '----- ----...', ' Filename': '----------: --- -----', ' Photo date': '----------: ---- ----', 'Date precision': '-------- ----', 'Caption / story': '------- / -------', 'Add to album': '-------- - ------', 'Delete photo?': '------- ----?', 'This photo will be moved to Recently deleted. You can restore it later from the Albums sidebar.': '---- ----- ---------- - ------- --------. --- ----- ----- ------------ -- ------ --------.', 'No photos yet': '---- ---- ---', 'No deleted photos': '-------- ---- ---', 'No favourite photos yet': '--------- ---- ---- ---', 'Every photo is in an album': '--- ---- --- - --------', 'Open photo': '------- ----',
-
-      // Archive
-      'All files': 'Все файлы',
-      'Archive workspace': 'Архивное рабочее пространство',
-      'Navigation': 'Навигация',
-      'Files': 'Файлы',
-      'Favourites': 'Избранное',
-      'Sources': 'Источники',
-      'Folders': 'Папки',
-      'Source types': 'Типы источников',
-      'All sources': 'Все источники',
-      'Favourite sources': 'Избранные источники',
-      'Add file': 'Добавить файл',
-      'Add files': 'Добавить файлы',
-      'New folder': 'Новая папка',
-      'New subfolder': 'Новая вложенная папка',
-      'Add source': 'Добавить источник',
-      'Edit source': 'Редактировать источник',
-      'Create source': 'Создать источник',
-      'Search this folder...': 'Поиск в этой папке...',
-      'Search all files...': 'Поиск по всем файлам...',
-      'Search sources...': 'Поиск источников...',
-      'This folder': 'Эта папка',
-      'All files': 'Все файлы',
-      'All types': 'Все типы',
-      'All links': 'Все связи',
-      'Linked': 'Со связями',
-      'Unlinked': 'Без связей',
-      'Modified': 'Изменено',
-      'Date added': 'Дата добавления',
-      'Name': 'Название',
-      'Type': 'Тип',
-      'Size / Items': 'Размер / Элементы',
-      'Favourite': 'Избранное',
-      'Folder': 'Папка',
-      'File details': 'Сведения о файле',
-      'Folder details': 'Сведения о папке',
-      'Source details': 'Сведения об источнике',
-      'Research details': 'Исследовательские сведения',
-      'Description': 'Описание',
-      'Document date': 'Дата документа',
-      'Date modified': 'Дата изменения',
-      'Repository / owner': 'Архив / владелец',
-      'Location': 'Место',
-      'Reference': 'Шифр / ссылка',
-      'Website': 'Веб-сайт',
-      'Accessed': 'Дата обращения',
-      'People': 'Люди',
-      'Events': 'События',
-      'Notes': 'Заметки',
-      'Places': 'Места',
-      'Add people': 'Добавить людей',
-      'Add events': 'Добавить события',
-      'Add notes': 'Добавить заметки',
-      'Add places': 'Добавить места',
-      'Add sources': 'Добавить источники',
-      'Add links': 'Добавить связи',
-      'Already linked': 'Уже связано',
-      'Move': 'Переместить',
-      'Rename': 'Переименовать',
-      'Open': 'Открыть',
-      'Save details': 'Сохранить сведения',
-      'Delete permanently': 'Удалить навсегда',
-      'Delete source permanently': 'Удалить источник навсегда',
-      'Delete permanently?': 'Удалить навсегда?',
-      'Delete folder permanently?': 'Удалить папку навсегда?',
-      'Delete source permanently?': 'Удалить источник навсегда?',
-      'This action cannot be undone.': 'Это действие нельзя отменить.',
-      'The linked record will not be deleted.': 'Связанная запись не будет удалена.',
-      'No favourite files': 'Нет избранных файлов',
-      'No files match this search': 'Файлы не найдены',
-      'No files or folders here': 'Здесь нет файлов и папок',
-      'No sources found': 'Источники не найдены',
-      'Inspector': 'Инспектор',
-      'Archive or repository': 'Архив или хранилище',
-      'Website or database': 'Веб-сайт или база данных',
-      'Book or publication': 'Книга или публикация',
-      'Register or record collection': 'Реестр или коллекция записей',
-      'Interview or correspondence': 'Интервью или переписка',
-      'Family collection': 'Семейная коллекция',
-      'Other': 'Другое',
-
-      // Notes
-      'Notes browser': '------- -------', 'Filter by type': '------ -- ----', 'Cards view': '--------', 'List view': '------', 'Untitled note': '---------- -------', 'Note status': '------ -------', 'Evidence references': '------ -- --------------', 'Collapse editor': '-------- --------', 'Note body': '----- -------', 'Bold': '------', 'Italic': '------', 'Heading': '---------', 'Checklist': '--------', 'Quote': '------', 'Link person': '------- --------', 'Link source': '------- --------', 'Link place': '------- -----', 'Add evidence': '-------- --------------', 'Collection': '---------', 'Archived': '- ------',
-
-      // Places
-      'All places': '--- -----', 'Needs review': '-------------', 'Countries': '------', 'Search places': '----- ----', ' Most linked': '----------: ------ ------', 'Map view': '-----', 'List view': '------', 'Legend': '-------', 'Approximate': '--------------', 'Archive / repository': '----- / -----------', 'Residence / story place': '----- ---------- / -------', 'Open place': '------- -----', 'Related people': '--------- ----', 'No events linked yet.': '--------- ------- ---- ---.', 'Events here': '------- -----', 'Historical names': '------------ --------', 'Connected to this place': '------- - ---- ------', 'No aliases recorded.': '---------- -- --------.', 'Place name': '-------- -----', 'Place type': '--- -----', 'Country': '------', 'City': '-----', 'Village': '-------', 'Region': '------', 'Residence': '----- ----------', 'Cemetery': '--------', 'Church': '-------', 'Repository': '-----------', 'Coordinate status': '------ ---------', 'Delete place permanently?': '------- ----- --------?',
-      'Routes': 'Маршруты',
-      'Route settings': 'Настройки маршрута',
-      'Calculate route': 'Рассчитать маршрут',
-      'Choose a person or surname. Routes use dated events with mapped places.': 'Выберите персону или фамилию. Маршруты строятся по датированным событиям с местами на карте.',
-      'Route mode': 'Режим маршрута',
-      'Person': 'Персона',
-      'Surname': 'Фамилия',
-      'Search surnames...': 'Поиск фамилий...',
-      'No matching people.': 'Люди не найдены.',
-      'No matching surnames.': 'Фамилии не найдены.',
-      'Select a person to preview their route.': 'Выберите персону, чтобы просмотреть маршрут.',
-      'Select a surname to preview its route.': 'Выберите фамилию, чтобы просмотреть маршрут.',
-      'Show route': 'Показать маршрут',
-      'Route shown': 'Маршрут показан',
-      'Clear route': 'Очистить маршрут',
-      'Clear shown route': 'Очистить показанный маршрут',
-      'Person route': 'Маршрут персоны',
-      'Surname route': 'Маршрут фамилии',
-      'Not enough dated, mapped places to calculate this route.': 'Недостаточно датированных мест на карте для расчета маршрута.',
-      'event excluded': 'событие исключено',
-      'events excluded': 'событий исключено',
-      'Shown': 'Показан',
-      'Hidden': 'Скрыт',
-      'Date unknown': 'Дата неизвестна',
-
-      'Route available': 'Маршрут доступен',
-      'Not enough mapped history': 'Недостаточно мест на карте',
-      'At least two dated, mapped places are needed.': 'Нужны как минимум два датированных места на карте.',
-      'Route needs at least two dated, mapped places.': 'Для маршрута нужны как минимум два датированных места на карте.',
-      'Review unmapped places': 'Проверить места без координат',
-      'Active route': 'Активный маршрут',
-      'Change': 'Изменить',
-      'Died': 'Умер',
-      'Dates unknown': 'Даты неизвестны',
-      'Active': 'Активен',
-      'Needs attention': 'Требует внимания',
-      'undated': 'без даты',
-      'without place': 'без места',
-      'unmapped': 'без координат',
-      'across': 'в',
-
-      // Geneograph drawing and shape refinement
-      'Pencil': 'Карандаш',
-      'Pencil stroke': 'Карандашный штрих',
-      'Drawing': 'Рисунок',
-      'Corner radius': 'Радиус скругления',
-
-      // Publish
-      'Create output': '------- ----------', 'Start a new publication': '------ ----- ----------', 'Data export': '------- ------', 'Data exports': '------- ------', 'Recently exported': '------- --------------', 'Family report': '-------- -----', 'Family chart': '-------- ---------', 'Type': '---', 'Scope': '-------', 'Settings': '---------', 'Choose output type': '-------- --- ----------', 'Choose scope': '-------- -------', 'Content and privacy settings': '------- - ------------------', 'Preview and export': '------------ - -------', 'Save draft': '--------- --------', 'Export PDF': '------- PDF', 'Export PNG': '------- PNG', 'Export GEDCOM': '------- GEDCOM', 'Living people hidden': '------- ---- ------', 'Sources can be included': '--------- ----- --------', 'No outputs here yet': '---------- ---- ---', 'Create a report, chart, or export package to get started.': '-------- -----, --------- --- ---------- -----, ----- ------.', 'Ready to export': '------ - --------', 'Needs update': '------- ----------', 'Published': '------------'
-    });
+      /*
+      * Do not translate URL or filesystem contents.
+      * These are data/identifiers, not localized UI.
+      */
+      return /^(?:https?:\/\/|mailto:|tel:|[a-z]:\\|\/(?:[^/\s]+\/)+)/i
+        .test(source);
+    }
 
     function normalizeLang(lang) {
       return SUPPORTED_LANGUAGES.includes(lang) ? lang : 'en';
@@ -30258,121 +30628,1161 @@
 
     function t(key) { return state.language === 'ru' ? (RU_UI[key] || key) : key; }
 
-    function translateCountPhrase(text) {
-      if (state.language !== 'ru') return text;
-      return String(text).replace(/(\d[\d\s.,]*)\s+(people|person|places|place|stops|stop|photos|photo|files|file|notes|note|events|event|sources|questions|projects|project|Objects)\b/gi, (match, rawNumber, noun) => {
-        const n = Number(String(rawNumber).replace(/[\s,]/g, ''));
-        if (!Number.isFinite(n)) return match;
-        const forms = RU_PLURALS[noun] || RU_PLURALS[noun.toLowerCase()];
-        if (!forms) return match;
-        const rule = new Intl.PluralRules('ru').select(n);
-        const word = forms[rule] || forms.other;
-        return `${new Intl.NumberFormat('ru').format(n)} ${word}`;
-      });
+    function translateCountPhrase(
+      text
+    ) {
+      if (
+        state.language !== 'ru'
+      ) {
+        return text;
+      }
+
+      return String(text).replace(
+        /(\d[\d\s.,]*)\s+(people|person|places|place|stops|stop|photos|photo|files|file|notes|note|events|event|sources|source|questions|question|projects|project|objects|object)\b/gi,
+        (
+          match,
+          rawNumber,
+          noun
+        ) => {
+          const number =
+            Number(
+              String(rawNumber)
+                .replace(
+                  /[\s,]/g,
+                  ''
+                )
+            );
+
+          if (
+            !Number.isFinite(
+              number
+            )
+          ) {
+            return match;
+          }
+
+          const forms =
+            RU_PLURALS[noun]
+            || RU_PLURALS[
+              noun.toLowerCase()
+            ];
+
+          if (!forms) {
+            return match;
+          }
+
+          const rule =
+            new Intl.PluralRules('ru')
+              .select(number);
+
+          const word =
+            forms[rule]
+            || forms.other;
+
+          return `${
+            new Intl.NumberFormat('ru')
+              .format(number)
+          } ${word}`;
+        }
+      );
     }
 
     function translateDynamicPhrase(core) {
-      if (state.language !== 'ru' || !core) return core;
-      let out = core;
-      const repl = (re, fn) => { out = out.replace(re, fn); };
+      if (
+        state.language !== 'ru'
+        || core == null
+        || core === ''
+      ) {
+        return core;
+      }
 
-      repl(/^Sort:\s*(.+)$/i, (_, value) => `----------: ${translateExact(value)}`);
-      repl(/^Search\s+(.+?)\.{0,1}-?$/i, (_, value) => `-----: ${translateExact(value)}`);
-      repl(/^Rows per page:\s*(\d+)$/i, (_, n) => `----- -- --------: ${n}`);
-      repl(/^Showing\s+(.+?)\s+of\s+(\d+)\s+people$/i, (_, range, total) => `-------- ${range} -- ${new Intl.NumberFormat('ru').format(Number(total))} -------`);
-      repl(/^(\d+)\s+selected$/i, (_, n) => `-------: ${new Intl.NumberFormat('ru').format(Number(n))}`);
-      repl(/^Modified\s+(.+)$/i, (_, value) => `--------: ${value}`);
-      repl(/^Created\s+(.+)$/i, (_, value) => `-------: ${value}`);
-      repl(/^Added\s+(.+)$/i, (_, value) => `---------: ${value}`);
-      repl(/^Updated\s+(.+)$/i, (_, value) => `---------: ${value}`);
-      repl(/^Born\s+(.+?)\s*\((living person|deceased)\)$/i, (_, date, status) => `--------: ${date} - ${status.toLowerCase() === 'deceased' ? '----' : '---'}`);
-      repl(/^Born\s+(.+)$/i, (_, value) => `--------: ${value}`);
-      repl(/^Child of\s+(.+)\s+and\s+(.+)$/i, (_, a, b) => `------ ${a} - ${b}`);
-      repl(/^Create\s+(.+)$/i, (_, value) => `-------: ${translateExact(value)}`);
-      repl(/^Add\s+(.+)$/i, (_, value) => `--------: ${translateExact(value)}`);
-      repl(/^Delete\s+(.+)\?$/i, (_, value) => `------- ${translateExact(value).toLowerCase()}?`);
-      repl(/^No\s+(.+)\s+found\.?$/i, (_, value) => `${translateExact('No')} ${translateExact(value)} -------`);
-      repl(/^(.+?)\s+will be added later\.?$/i, (_, value) => `${translateExact(value)} ----- --------- -----.`);
-      repl(/^(.+?)\s+is simulated\.?$/i, (_, value) => `${translateExact(value)} -------------.`);
-      repl(/^(.+?)\s+is a placeholder\.?$/i, (_, value) => `${translateExact(value)} - --------.`);
-      return translateCountPhrase(out);
+      let out =
+        String(core).trim();
+
+      const repl =
+        (pattern, replacement) => {
+          out = out.replace(
+            pattern,
+            replacement
+          );
+        };
+
+      const formatNumber =
+        value => {
+          const number =
+            Number(
+              String(value)
+                .replace(
+                  /[\s,]/g,
+                  ''
+                )
+            );
+
+          return Number.isFinite(number)
+            ? new Intl.NumberFormat('ru')
+                .format(number)
+            : String(value);
+        };
+
+      /*
+        Translate an exact dynamic value when possible.
+
+        This is important for database values such as:
+        - project names
+        - person names
+        - places
+        - modules
+        - statuses
+        - sample-data labels
+
+        If a lowercase dynamic value such as "projects"
+        is received, also try the capitalized RU_UI key.
+      */
+      const translateValue =
+        value => {
+          const source =
+            String(value || '').trim();
+
+          if (!source) {
+            return source;
+          }
+
+          const exact =
+            translateExact(source);
+
+          if (exact !== source) {
+            return exact;
+          }
+
+          const capitalized =
+            source.charAt(0)
+              .toUpperCase()
+            + source.slice(1);
+
+          const capitalizedTranslation =
+            translateExact(
+              capitalized
+            );
+
+          if (
+            capitalizedTranslation
+              !== capitalized
+          ) {
+            return capitalizedTranslation;
+          }
+
+          return source;
+        };
+
+      /*
+        formatProjectDate() currently produces English
+        month abbreviations. Translate them when they occur
+        inside generated date phrases.
+      */
+      const translateDateValue =
+        value => {
+          const translated =
+            translateValue(value);
+
+          const monthNames = {
+            jan: 'янв.',
+            feb: 'февр.',
+            mar: 'мар.',
+            apr: 'апр.',
+            may: 'мая',
+            jun: 'июн.',
+            jul: 'июл.',
+            aug: 'авг.',
+            sep: 'сент.',
+            oct: 'окт.',
+            nov: 'нояб.',
+            dec: 'дек.'
+          };
+
+          return String(translated)
+            .replace(
+              /\btoday at\b/gi,
+              'сегодня в'
+            )
+            .replace(
+              /\byesterday at\b/gi,
+              'вчера в'
+            )
+            .replace(
+              /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/gi,
+              match =>
+                monthNames[
+                  match.toLowerCase()
+                ] || match
+            );
+        };
+
+      const pluralWord =
+        (noun, count) => {
+          const source =
+            String(noun || '');
+
+          const forms =
+            RU_PLURALS[source]
+            || RU_PLURALS[
+              source.toLowerCase()
+            ];
+
+          if (!forms) {
+            return translateValue(
+              source
+            );
+          }
+
+          const numericCount =
+            Number(count);
+
+          const rule =
+            new Intl.PluralRules('ru')
+              .select(
+                Number.isFinite(
+                  numericCount
+                )
+                  ? numericCount
+                  : 0
+              );
+
+          return forms[rule]
+            || forms.other;
+        };
+
+      const countPhrase =
+        (count, noun) => {
+          const numericCount =
+            Number(
+              String(count)
+                .replace(
+                  /[\s,]/g,
+                  ''
+                )
+            );
+
+          if (
+            !Number.isFinite(
+              numericCount
+            )
+          ) {
+            return `${count} ${translateValue(noun)}`;
+          }
+
+          return `${
+            new Intl.NumberFormat('ru')
+              .format(numericCount)
+          } ${
+            pluralWord(
+              noun,
+              numericCount
+            )
+          }`;
+        };
+
+      const countNouns =
+        'people|person|places|place|stops|stop|photos|photo|files|file|notes|note|events|event|sources|source|questions|question|projects|project|objects|object';
+
+      /*
+        Sorting / searching / pagination
+      */
+
+      repl(
+        /^Sort:\s*(.+)$/i,
+        (_, value) =>
+          `Сортировка: ${
+            translateValue(value)
+          }`
+      );
+
+      repl(
+        /^Search\s+(.+?)(\.{3})?$/i,
+        (_, value, ellipsis) =>
+          `Поиск: ${
+            translateValue(value)
+          }${ellipsis || ''}`
+      );
+
+      repl(
+        /^Rows per page:\s*(\d+)$/i,
+        (_, number) =>
+          `Строк на странице: ${
+            formatNumber(number)
+          }`
+      );
+
+      repl(
+        new RegExp(
+          `^Showing\\s+(.+?)\\s+of\\s+(\\d+)\\s+(${countNouns})$`,
+          'i'
+        ),
+        (
+          _,
+          range,
+          total,
+          noun
+        ) =>
+          `Показано ${range} из ${
+            formatNumber(total)
+          } ${
+            pluralWord(
+              noun,
+              Number(total)
+            )
+          }`
+      );
+
+      /*
+        Example:
+        1 of 4 projects
+      */
+      repl(
+        new RegExp(
+          `^(\\d+)\\s+of\\s+(\\d+)\\s+(${countNouns})$`,
+          'i'
+        ),
+        (
+          _,
+          current,
+          total,
+          noun
+        ) =>
+          `${
+            formatNumber(current)
+          } из ${
+            formatNumber(total)
+          } ${
+            pluralWord(
+              noun,
+              Number(total)
+            )
+          }`
+      );
+
+      repl(
+        /^(\d+)\s+selected$/i,
+        (_, number) =>
+          `Выбрано: ${
+            formatNumber(number)
+          }`
+      );
+
+      /*
+        Notification count.
+      */
+      repl(
+        /^(\d+)\s+items?\s+need\s+attention$/i,
+        (_, number) =>
+          `Требуют внимания: ${
+            formatNumber(number)
+          }`
+      );
+
+      /*
+        Relative dates and timestamps
+      */
+
+      repl(
+        /^today at\s+(.+)$/i,
+        (_, value) =>
+          `сегодня в ${value}`
+      );
+
+      repl(
+        /^yesterday at\s+(.+)$/i,
+        (_, value) =>
+          `вчера в ${value}`
+      );
+
+      repl(
+        /^Last opened\s+(.+)$/i,
+        (_, value) =>
+          `Открыто: ${
+            translateDateValue(value)
+          }`
+      );
+
+      repl(
+        /^Last modified\s+(.+)$/i,
+        (_, value) =>
+          `Последнее изменение: ${
+            translateDateValue(value)
+          }`
+      );
+
+      repl(
+        /^Modified\s+(.+)$/i,
+        (_, value) =>
+          `Изменено: ${
+            translateDateValue(value)
+          }`
+      );
+
+      repl(
+        /^Created\s+(.+)$/i,
+        (_, value) =>
+          `Создано: ${
+            translateDateValue(value)
+          }`
+      );
+
+      repl(
+        /^Added\s+(.+)$/i,
+        (_, value) =>
+          `Добавлено: ${
+            translateDateValue(value)
+          }`
+      );
+
+      repl(
+        /^Updated\s+(.+)$/i,
+        (_, value) =>
+          `Обновлено: ${
+            translateDateValue(value)
+          }`
+      );
+
+      /*
+        Count + action.
+
+        Examples:
+        4 photos added
+        17 people added
+      */
+      repl(
+        new RegExp(
+          `^(\\d+)\\s+(${countNouns})\\s+added$`,
+          'i'
+        ),
+        (
+          _,
+          number,
+          noun
+        ) =>
+          `Добавлено ${
+            countPhrase(
+              number,
+              noun
+            )
+          }`
+      );
+
+      /*
+        Person / genealogy phrases
+      */
+
+      repl(
+        /^Born\s+(.+?)\s*\((living person|deceased)\)$/i,
+        (
+          _,
+          date,
+          status
+        ) => {
+          const statusKey =
+            status.toLowerCase()
+              === 'deceased'
+              ? 'Deceased'
+              : 'Living';
+
+          return `Рождение: ${
+            translateDateValue(date)
+          } · ${
+            translateValue(
+              statusKey
+            )
+          }`;
+        }
+      );
+
+      repl(
+        /^Born\s+(.+)$/i,
+        (_, value) =>
+          `Рождение: ${
+            translateDateValue(value)
+          }`
+      );
+
+      repl(
+        /^Child of\s+(.+)\s+and\s+(.+)$/i,
+        (_, first, second) =>
+          `Родители: ${
+            translateValue(first)
+          } и ${
+            translateValue(second)
+          }`
+      );
+
+      repl(
+        /^Father of\s+(.+)$/i,
+        (_, person) =>
+          `Отец: ${
+            translateValue(person)
+          }`
+      );
+
+      repl(
+        /^Mother of\s+(.+)$/i,
+        (_, person) =>
+          `Мать: ${
+            translateValue(person)
+          }`
+      );
+
+      repl(
+        /^Parent of\s+(.+)$/i,
+        (_, person) =>
+          `Родитель: ${
+            translateValue(person)
+          }`
+      );
+
+      /*
+        Project-copy names.
+      */
+
+      repl(
+        /^(.+?)\s+copy(?:\s+(\d+))?$/i,
+        (
+          _,
+          value,
+          suffix
+        ) =>
+          `Копия «${
+            translateValue(value)
+          }»${
+            suffix
+              ? ` ${suffix}`
+              : ''
+          }`
+      );
+
+      /*
+        Dynamic accessible labels / actions.
+      */
+
+      repl(
+        /^Preview of\s+(.+?)\s+cover$/i,
+        (_, value) =>
+          `Предпросмотр обложки проекта «${
+            translateValue(value)
+          }»`
+      );
+
+      repl(
+        /^Open\s+(.+?)\s+(Projects|Family Tree|People|Geneograph|Albums|Archive|Notes|Places|Publish)\s+activity$/i,
+        (
+          _,
+          project,
+          module
+        ) =>
+          `Открыть действия: ${
+            translateValue(project)
+          } · ${
+            translateValue(module)
+          }`
+      );
+
+      repl(
+        /^Open\s+(Projects|Family Tree|People|Geneograph|Albums|Archive|Notes|Places|Publish)\s+for\s+(.+)$/i,
+        (
+          _,
+          module,
+          context
+        ) =>
+          `Открыть ${
+            translateValue(module)
+          }: ${
+            translateValue(context)
+          }`
+      );
+
+      /*
+        Generic CRUD fallbacks.
+
+        Common UI actions should still have exact RU_UI
+        pairs. These rules cover dynamically constructed
+        labels that do not have an exact pair.
+      */
+
+      repl(
+        /^Create\s+(.+)$/i,
+        (_, value) =>
+          `Создать: ${
+            translateValue(value)
+          }`
+      );
+
+      repl(
+        /^Add\s+(.+)$/i,
+        (_, value) =>
+          `Добавить: ${
+            translateValue(value)
+          }`
+      );
+
+      repl(
+        /^Edit\s+(.+)$/i,
+        (_, value) =>
+          `Изменить: ${
+            translateValue(value)
+          }`
+      );
+
+      repl(
+        /^Open\s+(.+)$/i,
+        (_, value) =>
+          `Открыть: ${
+            translateValue(value)
+          }`
+      );
+
+      repl(
+        /^Delete\s+(.+)\?$/i,
+        (_, value) =>
+          `Удалить «${
+            translateValue(value)
+          }»?`
+      );
+
+      /*
+        Empty states
+      */
+
+      repl(
+        /^No\s+(.+?)\s+found\.?$/i,
+        (_, value) =>
+          `Не найдено: ${
+            translateValue(value)
+          }`
+      );
+
+      repl(
+        /^No\s+(.+?)\s+match(?:es)?\.?$/i,
+        (_, value) =>
+          `Нет совпадений: ${
+            translateValue(value)
+          }`
+      );
+
+      repl(
+        /^No\s+(.+?)\s+yet\.?$/i,
+        (_, value) =>
+          `Пока нет: ${
+            translateValue(value)
+          }`
+      );
+
+      /*
+        Prototype / placeholder messages
+      */
+
+      repl(
+        /^(.+?)\s+will be added later\.?$/i,
+        (_, value) =>
+          `Будет добавлено позже: ${
+            translateValue(value)
+          }.`
+      );
+
+      repl(
+        /^(.+?)\s+is simulated\.?$/i,
+        (_, value) =>
+          `Смоделировано: ${
+            translateValue(value)
+          }.`
+      );
+
+      repl(
+        /^(.+?)\s+is a placeholder\.?$/i,
+        (_, value) =>
+          `Заглушка: ${
+            translateValue(value)
+          }.`
+      );
+
+      repl(
+        /^(.+?)\s+flow is a visual placeholder\.?$/i,
+        (_, value) =>
+          `Сценарий «${
+            translateValue(value)
+          }» пока является визуальной заглушкой.`
+      );
+
+      repl(
+        /^(.+?)\s+help would open here\.?$/i,
+        (_, value) =>
+          `Здесь откроется справка «${
+            translateValue(value)
+          }».`
+      );
+
+      repl(
+        /^(.+?)\s+would open here\.?$/i,
+        (_, value) =>
+          `Здесь откроется: ${
+            translateValue(value)
+          }.`
+      );
+
+      return translateCountPhrase(
+        out
+      );
     }
 
-    function translateText(value) {
-      if (state.language !== 'ru' || value == null) return value;
-      const raw = String(value);
-      const leading = raw.match(/^\s*/)[0];
-      const trailing = raw.match(/\s*$/)[0];
-      const core = raw.trim();
-      if (!core) return raw;
-      const exact = Object.prototype.hasOwnProperty.call(RU_UI, core) ? RU_UI[core] : translateDynamicPhrase(core);
-      return leading + exact + trailing;
+    function translateText(
+      value
+    ) {
+      if (
+        state.language !== 'ru'
+        || value == null
+      ) {
+        return value;
+      }
+
+      const raw =
+        String(value);
+
+      const leading =
+        raw.match(/^\s*/)[0];
+
+      const trailing =
+        raw.match(/\s*$/)[0];
+
+      const core =
+        raw.trim();
+
+      if (!core) {
+        return raw;
+      }
+
+      const exact =
+        Object.prototype
+          .hasOwnProperty.call(
+            RU_UI,
+            core
+          )
+          ? RU_UI[core]
+          : translateDynamicPhrase(
+              core
+            );
+
+      return (
+        leading
+        + exact
+        + trailing
+      );
     }
 
-    function translateAttributeValue(value) {
-      if (state.language !== 'ru' || !value) return value;
-      let result = translateText(value);
-      Object.keys(RU_UI).sort((a, b) => b.length - a.length).forEach(key => {
-        if (key.length > 2) result = result.split(key).join(RU_UI[key]);
-      });
-      return translateCountPhrase(result);
+    function translateAttributeValue(
+      value
+    ) {
+      if (
+        state.language !== 'ru'
+        || !value
+      ) {
+        return value;
+      }
+
+      const source =
+        String(value);
+
+      if (
+        isTechnicalLocalizationValue(
+          source
+        )
+      ) {
+        return source;
+      }
+
+      let result =
+        translateText(source);
+
+      /*
+      * translateText() handles exact strings and known
+      * dynamic phrases. This additional pass handles
+      * composed accessible labels and titles containing
+      * database values.
+      */
+      RU_UI_EMBEDDED_RULES
+        .forEach(rule => {
+          rule.pattern.lastIndex =
+            0;
+
+          result =
+            result.replace(
+              rule.pattern,
+              (
+                match,
+                prefix
+              ) =>
+                `${
+                  prefix
+                }${
+                  rule.translation
+                }`
+            );
+        });
+
+      return translateCountPhrase(
+        result
+      );
+    }
+
+    /*
+    * Database-backed editable controls need different
+    * treatment from normal DOM text.
+    *
+    * Display the localized value, but retain the canonical
+    * source value if the user saves without editing it.
+    */
+    function localizedDataFieldValue(
+      value
+    ) {
+      const source =
+        value == null
+          ? ''
+          : String(value);
+
+      return state.language === 'ru'
+        ? translateText(source)
+        : source;
+    }
+
+    function collectLocalizedDataFieldValue(
+      control,
+      sourceValue
+    ) {
+      const source =
+        sourceValue == null
+          ? ''
+          : String(sourceValue);
+
+      if (!control) {
+        return source;
+      }
+
+      const current =
+        String(
+          control.value ?? ''
+        );
+
+      const localizedSource =
+        localizedDataFieldValue(
+          source
+        );
+
+      /*
+      * If the rendered localized value was never changed,
+      * return the original canonical database value.
+      *
+      * If the user actually edited it, return their edit.
+      */
+      return current
+        === localizedSource
+          ? source
+          : current;
     }
 
     function applyLanguage() {
-      state.language = normalizeLang(state.language || localStorage.getItem(LANGUAGE_STORAGE_KEY) || 'en');
-      document.documentElement.lang = state.language;
-    }
+      state.language =
+        normalizeLang(
+          state.language
+          || localStorage.getItem(
+            LANGUAGE_STORAGE_KEY
+          )
+          || 'en'
+        );
 
-    function setLanguage(lang, rerender = true) {
-      const next = normalizeLang(lang);
-      if (state.language === next) return;
-      state.language = next;
-      localStorage.setItem(LANGUAGE_STORAGE_KEY, next);
-      applyLanguage();
-      if (rerender) render();
-    }
+      document.documentElement.lang =
+        state.language;
 
-    function localizeUI(root = document.body) {
-      applyLanguage();
-      if (state.language !== 'ru') return;
-      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-        acceptNode(node) {
-          if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-          const parent = node.parentElement;
-          if (!parent || parent.closest('script, style, svg')) return NodeFilter.FILTER_REJECT;
-          if (parent.closest('input, textarea, [contenteditable="true"]')) return NodeFilter.FILTER_REJECT;
-          if (
-            parent.closest(
-              '[data-user-content]'
+      document.title =
+        state.language === 'ru'
+          ? translateText(
+              DEFAULT_DOCUMENT_TITLE
             )
-          ) {
-            return NodeFilter.FILTER_REJECT;
-          }
-          return NodeFilter.FILTER_ACCEPT;
-        }
-      });
-      const textNodes = [];
-      while (walker.nextNode()) textNodes.push(walker.currentNode);
-      textNodes.forEach(node => {
-        const parent = node.parentElement;
-        if (parent?.tagName === 'OPTION' && !parent.hasAttribute('value')) parent.setAttribute('value', node.nodeValue.trim());
-        node.nodeValue = translateText(node.nodeValue);
-      });
-      root.querySelectorAll?.('[placeholder], [aria-label], [title], [data-toast]').forEach(el => {
-        ['placeholder', 'aria-label', 'title', 'data-toast'].forEach(attr => {
-          if (el.hasAttribute(attr)) el.setAttribute(attr, translateAttributeValue(el.getAttribute(attr)));
-          if (
-            el.closest('[data-user-content]')
-          ) {
-            return;
-          }
-        });
-      });
+          : DEFAULT_DOCUMENT_TITLE;
     }
 
-    function scheduleLocalize(root = document.body) {
+    function setLanguage(
+      lang,
+      rerender = true
+    ) {
+      const next =
+        normalizeLang(lang);
+
+      if (
+        state.language === next
+      ) {
+        return;
+      }
+
+      state.language =
+        next;
+
+      localStorage.setItem(
+        LANGUAGE_STORAGE_KEY,
+        next
+      );
+
       applyLanguage();
-      requestAnimationFrame(() => localizeUI(root));
+
+      if (rerender) {
+        render();
+      }
+    }
+
+    function shouldLocalizeTextNode(
+      node
+    ) {
+      if (
+        !node
+        || node.nodeType
+          !== Node.TEXT_NODE
+        || !node.nodeValue
+          ?.trim()
+      ) {
+        return false;
+      }
+
+      const parent =
+        node.parentElement;
+
+      if (!parent) {
+        return false;
+      }
+
+      /*
+      * Never mutate implementation content.
+      */
+      if (
+        parent.closest(
+          'script, style, svg, [data-i18n-skip]'
+        )
+      ) {
+        return false;
+      }
+
+      /*
+      * Explicit user-authored content remains canonical.
+      *
+      * Geneograph layer names currently use this marker.
+      */
+      if (
+        parent.closest(
+          '[data-user-content]'
+        )
+      ) {
+        return false;
+      }
+
+      /*
+      * Do not rewrite live editor models from the DOM.
+      *
+      * Textareas and rich-text editors must use the
+      * localizedDataFieldValue pattern (or their own
+      * model-level equivalent) instead.
+      */
+      if (
+        parent.closest(
+          'textarea, [contenteditable="true"]'
+        )
+      ) {
+        return false;
+      }
+
+      return true;
+    }
+
+    function localizeTextNode(
+      node
+    ) {
+      if (
+        state.language !== 'ru'
+        || !shouldLocalizeTextNode(
+          node
+        )
+      ) {
+        return;
+      }
+
+      const parent =
+        node.parentElement;
+
+      const source =
+        node.nodeValue;
+
+      /*
+      * An <option> without an explicit value normally
+      * uses its visible text as its value.
+      *
+      * Preserve the original English value before
+      * translating its label so application logic keeps
+      * receiving its canonical enum.
+      */
+      if (
+        parent?.tagName === 'OPTION'
+        && !parent.hasAttribute(
+          'value'
+        )
+      ) {
+        parent.setAttribute(
+          'value',
+          source.trim()
+        );
+      }
+
+      const translated =
+        translateText(source);
+
+      /*
+      * Important because MutationObserver also watches
+      * characterData. Do not create another mutation when
+      * nothing changed.
+      */
+      if (
+        translated !== source
+      ) {
+        node.nodeValue =
+          translated;
+      }
+    }
+
+    function localizeElementAttribute(
+      element,
+      attribute
+    ) {
+      if (
+        state.language !== 'ru'
+        || !(element instanceof Element)
+        || !LOCALIZABLE_DOM_ATTRIBUTES
+          .includes(attribute)
+        || element.closest(
+          '[data-i18n-skip]'
+        )
+        || !element.hasAttribute(
+          attribute
+        )
+      ) {
+        return;
+      }
+
+      const source =
+        element.getAttribute(
+          attribute
+        );
+
+      const translated =
+        translateAttributeValue(
+          source
+        );
+
+      /*
+      * Avoid mutation-observer feedback loops.
+      */
+      if (
+        translated !== source
+      ) {
+        element.setAttribute(
+          attribute,
+          translated
+        );
+      }
+    }
+
+    function localizeElementAttributes(
+      element
+    ) {
+      if (
+        !(element instanceof Element)
+      ) {
+        return;
+      }
+
+      LOCALIZABLE_DOM_ATTRIBUTES
+        .forEach(attribute => {
+          localizeElementAttribute(
+            element,
+            attribute
+          );
+        });
+    }
+
+    function localizeUI(
+      root = document.body
+    ) {
+      applyLanguage();
+
+      if (
+        state.language !== 'ru'
+        || !root
+      ) {
+        return;
+      }
+
+      /*
+      * MutationObserver can pass an individual Text node.
+      * TreeWalker does not process its root as nextNode(),
+      * so handle it explicitly.
+      */
+      if (
+        root.nodeType
+          === Node.TEXT_NODE
+      ) {
+        localizeTextNode(root);
+        return;
+      }
+
+      /*
+      * querySelectorAll() does not include root itself.
+      * The old implementation therefore missed attributes
+      * on newly-added root elements.
+      */
+      if (
+        root instanceof Element
+      ) {
+        localizeElementAttributes(
+          root
+        );
+      }
+
+      const walker =
+        document.createTreeWalker(
+          root,
+          NodeFilter.SHOW_TEXT
+        );
+
+      const textNodes =
+        [];
+
+      while (
+        walker.nextNode()
+      ) {
+        textNodes.push(
+          walker.currentNode
+        );
+      }
+
+      textNodes.forEach(
+        localizeTextNode
+      );
+
+      root.querySelectorAll?.(
+        LOCALIZABLE_DOM_ATTRIBUTE_SELECTOR
+      ).forEach(
+        localizeElementAttributes
+      );
+    }
+
+    function scheduleLocalize(
+      root = document.body
+    ) {
+      applyLanguage();
+
+      requestAnimationFrame(
+        () => localizeUI(root)
+      );
     }
 
     // Centralized GEDCOM-style sample data for the prototype.
@@ -35645,13 +37055,76 @@
       fallbackActive: false
     };
 
-    const localizationObserver = new MutationObserver(records => {
-      if (state.language !== 'ru') return;
-      records.forEach(record => record.addedNodes.forEach(node => {
-        if (node.nodeType === Node.ELEMENT_NODE) localizeUI(node);
-      }));
-    });
-    localizationObserver.observe(document.body, { childList: true, subtree: true });
+    const localizationObserver =
+      new MutationObserver(
+        records => {
+          if (
+            state.language !== 'ru'
+          ) {
+            return;
+          }
+
+          records.forEach(record => {
+            if (
+              record.type
+                === 'childList'
+            ) {
+              record.addedNodes
+                .forEach(node => {
+                  if (
+                    node.nodeType
+                      === Node.ELEMENT_NODE
+                    || node.nodeType
+                      === Node.TEXT_NODE
+                    || node.nodeType
+                      === Node.DOCUMENT_FRAGMENT_NODE
+                  ) {
+                    localizeUI(node);
+                  }
+                });
+
+              return;
+            }
+
+            if (
+              record.type
+                === 'characterData'
+            ) {
+              localizeTextNode(
+                record.target
+              );
+
+              return;
+            }
+
+            if (
+              record.type
+                === 'attributes'
+              && record.target
+                instanceof Element
+              && record.attributeName
+            ) {
+              localizeElementAttribute(
+                record.target,
+                record.attributeName
+              );
+            }
+          });
+        }
+      );
+
+    localizationObserver.observe(
+      document.body,
+      {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: true,
+        attributeFilter: [
+          ...LOCALIZABLE_DOM_ATTRIBUTES
+        ]
+      }
+    );
 
     sampleData.notifications = [
       {
@@ -35792,7 +37265,20 @@
       const signedLabel = state.userSignedIn ? 'SW' : 'IN';
       topbar.innerHTML = `
         <button class="home-tab ${state.activeModule === 'Projects' ? 'active' : ''}" type="button" data-home aria-label="Projects home">${icon.home}</button>
-        ${showModules ? `<nav class="topnav" aria-label="Project modules">${modules.map(module => `<button class="tab ${state.activeModule === module ? 'active' : ''}" type="button" data-module="${module}">${module}</button>`).join('')}</nav>` : '<div style="flex:1"></div>'}
+        ${showModules ? `<nav class="topnav" aria-label="Project modules">
+          ${modules.map(module => `
+            <button
+              class="tab ${
+                state.activeModule === module
+                  ? 'active'
+                  : ''
+              }"
+              type="button"
+              data-module="${escapeHtml(module)}">
+              ${escapeHtml(t(module))}
+            </button>
+          `).join('')}
+          </nav>` : '<div style="flex:1"></div>'}
         <div class="top-actions">
           ${showModules ? `<div class="global-search">${icon.search}<span>Search anything...</span><span class="shortcut">Ctrl + K</span></div>` : ''}
           <button class="top-icon" type="button" data-topbar-help aria-haspopup="dialog" aria-label="Help">${icon.help}</button>
@@ -36024,7 +37510,7 @@
       if (section === 'notifications') return `<h3>Notifications</h3><p>Choose which app reminders appear in the notification overlay.</p><div class="global-settings-section"><div class="global-settings-row"><div><strong>Archive organization reminders</strong><span>Files without folders or genealogy links.</span></div><span class="global-settings-toggle" aria-hidden="true"></span></div><div class="global-settings-row"><div><strong>Backup reminders</strong><span>Remind me when a local backup is recommended.</span></div><span class="global-settings-toggle" aria-hidden="true"></span></div><div class="global-settings-row"><div><strong>Needs review place reminders</strong><span>Imported place names and missing coordinates.</span></div><span class="global-settings-toggle" aria-hidden="true"></span></div><div class="global-settings-row"><div><strong>Photo organization reminders</strong><span>Photos not assigned to albums.</span></div><span class="global-settings-toggle" aria-hidden="true"></span></div><div class="global-settings-row"><div><strong>Product tips</strong><span>Occasional workflow tips inside the app.</span></div><span class="global-settings-toggle off" aria-hidden="true"></span></div></div>`;
       if (section === 'accessibility') return `<h3>Accessibility</h3><p>Adjust interface density, contrast, and motion behavior.</p><div class="global-settings-section"><div class="global-settings-row"><div><strong>Reduce motion</strong><span>Limit non-essential transitions.</span></div><span class="global-settings-toggle off" aria-hidden="true"></span></div><div class="global-settings-row"><div><strong>Increase contrast</strong><span>Strengthen borders and text contrast.</span></div><span class="global-settings-toggle off" aria-hidden="true"></span></div><div class="global-settings-row"><div><strong>Interface density</strong><span>Choose comfortable or compact spacing.</span></div><select class="global-settings-control"><option>Comfortable</option><option>Compact</option></select></div><div class="global-settings-row"><div><strong>Font size</strong><span>Default app text size.</span></div><select class="global-settings-control"><option>Default</option><option>Large</option></select></div><div class="global-settings-row"><div><strong>Always show focus outlines</strong><span>Keep keyboard focus visible.</span></div><span class="global-settings-toggle" aria-hidden="true"></span></div></div>`;
       if (section === 'about') return `<h3>About GeneoGraph</h3><p>Prototype information and reference links.</p><div class="global-settings-section"><div class="global-settings-row"><div><strong>GeneoGraph prototype</strong><span>Version 0.1 prototype - local-first genealogy workspace</span></div><span class="publish-chip good">Active</span></div><div class="global-settings-row"><div><strong>Help center</strong><span>Guides and support documentation placeholder.</span></div><button class="button secondary" type="button" data-toast="Help Center would open here.">Open</button></div><div class="global-settings-row"><div><strong>Release notes</strong><span>Product updates and prototype changes.</span></div><button class="button secondary" type="button" data-toast="Release notes are a placeholder.">View</button></div><div class="global-settings-row"><div><strong>Privacy policy</strong><span>Privacy documentation placeholder.</span></div><button class="button secondary" type="button" data-toast="Privacy policy would open here.">Open</button></div></div>`;
-      return `<h3>General</h3><p>Basic app-wide preferences.</p><div class="global-settings-section"><div class="global-settings-row"><div><strong>Interface theme</strong><span>GeneoGraph currently uses the dark archival theme.</span></div><select class="global-settings-control" disabled><option>Dark archival</option></select></div><div class="global-settings-row"><div><strong>Startup behavior</strong><span>Choose what opens when the app starts.</span></div><select class="global-settings-control"><option>Show project picker</option><option>Open last project</option></select></div><div class="global-settings-row"><div><strong>Language</strong><span>App interface language.</span></div><select class="global-settings-control" id="globalLanguageSelect"><option value="en" ${state.language === 'en' ? 'selected' : ''}>English</option><option value="ru" ${state.language === 'ru' ? 'selected' : ''}>-------</option></select></div><div class="global-settings-row"><div><strong>Date format</strong><span>Default date display across the app.</span></div><select class="global-settings-control"><option>DD.MM.YYYY</option><option>MM/DD/YYYY</option><option>YYYY-MM-DD</option></select></div><div class="global-settings-row"><div><strong>Time zone</strong><span>Used for activity timestamps.</span></div><select class="global-settings-control"><option>System default</option></select></div></div>`;
+      return `<h3>General</h3><p>Basic app-wide preferences.</p><div class="global-settings-section"><div class="global-settings-row"><div><strong>Interface theme</strong><span>GeneoGraph currently uses the dark archival theme.</span></div><select class="global-settings-control" disabled><option>Dark archival</option></select></div><div class="global-settings-row"><div><strong>Startup behavior</strong><span>Choose what opens when the app starts.</span></div><select class="global-settings-control"><option>Show project picker</option><option>Open last project</option></select></div><div class="global-settings-row"><div><strong>Language</strong><span>App interface language.</span></div><select class="global-settings-control" id="globalLanguageSelect"><option value="en" ${state.language === 'en' ? 'selected' : ''}>English</option><option value="ru" ${state.language === 'ru' ? 'selected' : ''}>Русский</option></select></div><div class="global-settings-row"><div><strong>Date format</strong><span>Default date display across the app.</span></div><select class="global-settings-control"><option>DD.MM.YYYY</option><option>MM/DD/YYYY</option><option>YYYY-MM-DD</option></select></div><div class="global-settings-row"><div><strong>Time zone</strong><span>Used for activity timestamps.</span></div><select class="global-settings-control"><option>System default</option></select></div></div>`;
     }
 
     function renderStartup() {
@@ -36035,7 +37521,10 @@
       sidebar.innerHTML = `
         <div class="logo-lockup">
           <div class="large-logo">${icon.logo}</div>
-          <div class="logo-text"><strong>GeneoGraph</strong><span>Family history workspace</span></div>
+          <div class="logo-text">
+            <strong data-i18n-skip>GeneoGraph</strong>
+            <span>Family history workspace</span>
+          </div>
         </div>
         <div class="button-stack">
           <button class="button primary full" type="button" id="createProject">${icon.plus} Create family tree</button>
@@ -36236,40 +37725,180 @@
       </section>`;
     }
 
-    function openProjectNameOverlay(anchor, project) {
+    function openProjectNameOverlay(
+      anchor,
+      project
+    ) {
       closeProjectNameOverlay();
-      const rect = anchor.getBoundingClientRect();
-      const popover = document.createElement('div');
-      popover.className = 'project-name-popover';
-      popover.id = 'projectNamePopover';
-      popover.style.top = `${Math.min(window.innerHeight - 230, rect.bottom + 8)}px`;
-      popover.style.left = `${Math.min(window.innerWidth - 356, Math.max(16, rect.left - 12))}px`;
+
+      const sourceProjectName =
+        project.name.replace(
+          'Tree',
+          'History'
+        );
+
+      const rect =
+        anchor.getBoundingClientRect();
+
+      const popover =
+        document.createElement(
+          'div'
+        );
+
+      popover.className =
+        'project-name-popover';
+
+      popover.id =
+        'projectNamePopover';
+
+      popover.style.top =
+        `${
+          Math.min(
+            window.innerHeight
+              - 230,
+            rect.bottom + 8
+          )
+        }px`;
+
+      popover.style.left =
+        `${
+          Math.min(
+            window.innerWidth
+              - 356,
+            Math.max(
+              16,
+              rect.left - 12
+            )
+          )
+        }px`;
+
       popover.innerHTML = `
         <h3>Edit project name</h3>
-        <label>Project name<input id="projectNameInput" value="${escapeHtml(project.name.replace('Tree', 'History'))}" autocomplete="off"></label>
-        <div class="project-name-popover-actions">
-          <button class="button secondary" type="button" data-project-name-cancel>Cancel</button>
-          <button class="button primary" type="button" data-project-name-save>Save</button>
-        </div>`;
-      document.body.appendChild(popover);
-      const input = popover.querySelector('#projectNameInput');
+
+        <label>
+          Project name
+
+          <input
+            id="projectNameInput"
+            value="${escapeHtml(
+              localizedDataFieldValue(
+                sourceProjectName
+              )
+            )}"
+            autocomplete="off">
+        </label>
+
+        <div
+          class="
+            project-name-popover-actions
+          ">
+          <button
+            class="button secondary"
+            type="button"
+            data-project-name-cancel>
+            Cancel
+          </button>
+
+          <button
+            class="button primary"
+            type="button"
+            data-project-name-save>
+            Save
+          </button>
+        </div>
+      `;
+
+      document.body.appendChild(
+        popover
+      );
+
+      /*
+      * Localize synchronously rather than waiting for
+      * MutationObserver.
+      */
+      localizeUI(popover);
+
+      const input =
+        popover.querySelector(
+          '#projectNameInput'
+        );
+
       input.focus();
       input.select();
+
       const save = () => {
-        const value = input.value.trim();
-        if (!value) { showToast('Project name cannot be empty.'); return; }
-        updateProjectName(project.id, value);
+        const value =
+          collectLocalizedDataFieldValue(
+            input,
+            sourceProjectName
+          ).trim();
+
+        if (!value) {
+          showToast(
+            'Project name cannot be empty.'
+          );
+
+          return;
+        }
+
+        updateProjectName(
+          project.id,
+          value
+        );
+
         closeProjectNameOverlay();
         renderOpenProject();
-        showToast('Project name updated.');
+
+        showToast(
+          'Project name updated.'
+        );
       };
-      popover.querySelector('[data-project-name-save]').addEventListener('click', save);
-      popover.querySelector('[data-project-name-cancel]').addEventListener('click', closeProjectNameOverlay);
-      input.addEventListener('keydown', event => {
-        if (event.key === 'Enter') { event.preventDefault(); save(); }
-        if (event.key === 'Escape') { event.preventDefault(); closeProjectNameOverlay(); }
-      });
-      setTimeout(() => document.addEventListener('click', closeProjectNameOverlayOnOutside), 0);
+
+      popover
+        .querySelector(
+          '[data-project-name-save]'
+        )
+        .addEventListener(
+          'click',
+          save
+        );
+
+      popover
+        .querySelector(
+          '[data-project-name-cancel]'
+        )
+        .addEventListener(
+          'click',
+          closeProjectNameOverlay
+        );
+
+      input.addEventListener(
+        'keydown',
+        event => {
+          if (
+            event.key === 'Enter'
+          ) {
+            event.preventDefault();
+            save();
+          }
+
+          if (
+            event.key === 'Escape'
+          ) {
+            event.preventDefault();
+            closeProjectNameOverlay();
+          }
+        }
+      );
+
+      setTimeout(
+        () =>
+          document.addEventListener(
+            'click',
+            closeProjectNameOverlayOnOutside
+          ),
+        0
+      );
     }
 
     function closeProjectNameOverlayOnOutside(event) {
@@ -36287,7 +37916,10 @@
       sidebar.innerHTML = `
         <div class="logo-lockup">
           <div class="large-logo">${icon.logo}</div>
-          <div class="logo-text"><strong>GeneoGraph</strong><span>Family history workspace</span></div>
+          <div class="logo-text">
+            <strong data-i18n-skip>GeneoGraph</strong>
+            <span>Family history workspace</span>
+          </div>
         </div>
         <div>
           <div class="side-section-title">Project</div>
@@ -36415,6 +38047,16 @@
 
     function renderProjectSettings(project) {
       const title = project.name.replace('Tree', 'History');
+
+      const localizedTitle =
+        localizedDataFieldValue(
+          title
+        );
+
+      const localizedDescription =
+        localizedDataFieldValue(
+          project.desc
+        );
       const coverStyle =
         normalizeProjectCoverStyle(
           project.cover
@@ -36453,8 +38095,19 @@
             <h3>Project identity</h3>
             <div class="project-settings-section-body project-settings-identity-body">
               <div class="project-settings-form project-settings-identity-form">
-                <div class="project-settings-field"><label for="settingsProjectName">Project name</label><input id="settingsProjectName" value="${escapeHtml(title)}"></div>
-                <div class="project-settings-field project-settings-description-field"><label for="settingsProjectDescription">Project description</label><textarea id="settingsProjectDescription">${escapeHtml(project.desc)}</textarea></div>
+                <div class="project-settings-field"><label for="settingsProjectName">Project name</label>
+                <input
+                  id="settingsProjectName"
+                  value="${escapeHtml(
+                    localizedTitle
+                  )}">
+                  </div>
+                <div class="project-settings-field project-settings-description-field"><label for="settingsProjectDescription">Project description</label>
+                <textarea
+                  id="settingsProjectDescription">${escapeHtml(
+                    localizedDescription
+                  )}</textarea>
+                  </div>
               </div>
             </div>
           </section>
@@ -36478,7 +38131,13 @@
               <span class="project-location-status">Local project</span>
               <span class="project-location-muted">Cloud backup disabled</span>
             </div>
-            <div class="project-location-path" title="${escapeHtml(projectPath)}">${escapeHtml(projectPath)}</div>
+            <div
+              class="project-location-path"
+              data-i18n-skip
+              title="${escapeHtml(
+                projectPath
+              )}">
+              </div>
             <div class="project-location-meta">
               <div class="project-settings-kv"><span>Last local backup</span><span>${escapeHtml(lastBackup)}</span></div>
               <div class="project-settings-kv"><span>Cloud backup</span><span>Disabled</span></div>
@@ -36573,14 +38232,63 @@
 
 
     function saveProjectSettings() {
-      const project = currentProject();
-      const name = main.querySelector('#settingsProjectName')?.value.trim();
-      const desc = main.querySelector('#settingsProjectDescription')?.value.trim();
-      if (!name) { showToast('Project name cannot be empty.'); return; }
-      updateProjectName(project.id, name);
-      project.desc = desc || project.desc;
+      const project =
+        currentProject();
+
+      const sourceName =
+        project.name.replace(
+          'Tree',
+          'History'
+        );
+
+      const nameControl =
+        main.querySelector(
+          '#settingsProjectName'
+        );
+
+      const descriptionControl =
+        main.querySelector(
+          '#settingsProjectDescription'
+        );
+
+      const name =
+        cleanEditFieldValue(
+          collectLocalizedDataFieldValue(
+            nameControl,
+            sourceName
+          )
+        );
+
+      const description =
+        cleanEditFieldValue(
+          collectLocalizedDataFieldValue(
+            descriptionControl,
+            project.desc
+          )
+        );
+
+      if (!name) {
+        showToast(
+          'Project name cannot be empty.'
+        );
+
+        return;
+      }
+
+      updateProjectName(
+        project.id,
+        name
+      );
+
+      project.desc =
+        description
+        || project.desc;
+
       renderOpenProject();
-      showToast('Project settings saved.');
+
+      showToast(
+        'Project settings saved.'
+      );
     }
 
     function openMoveProjectModal() {
@@ -36716,34 +38424,184 @@
 
     function renderStartupRecentActivityCard() {
       const items = [
-        { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'Albums', context: 'Albums', icon: icon.image, tone: 'red', title: '4 photos added', detail: 'Whiskerfield family album photos are ready to organize', occurredAt: '2026-05-24T10:42:00Z' },
-        { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'People', context: 'People', icon: icon.people, tone: 'purple', title: 'Profile updated', detail: 'Luna Purrington now has a verified birth place', occurredAt: '2026-05-23T18:20:00Z' },
-        { projectId: 'p1', project: 'Whiskerfield Family Tree', module: 'Family Tree', context: 'Family Tree', icon: icon.import, tone: 'amber', title: 'GEDCOM import reviewed', detail: '17 people were added to the project', occurredAt: '2026-05-22T10:42:00Z' }
-      ].filter(item => sampleData.projects.some(project => project.id === item.projectId));
+        {
+          projectId: 'p1',
+          project: 'Whiskerfield Family Tree',
+          module: 'Albums',
+          context: 'Albums',
+          icon: icon.image,
+          tone: 'red',
+          title: '4 photos added',
+          detail:
+            'Whiskerfield family album photos are ready to organize',
+          occurredAt:
+            '2026-05-24T10:42:00Z'
+        },
+        {
+          projectId: 'p1',
+          project: 'Whiskerfield Family Tree',
+          module: 'People',
+          context: 'People',
+          icon: icon.people,
+          tone: 'purple',
+          title: 'Profile updated',
+          detail:
+            'Luna Purrington now has a verified birth place',
+          occurredAt:
+            '2026-05-23T18:20:00Z'
+        },
+        {
+          projectId: 'p1',
+          project: 'Whiskerfield Family Tree',
+          module: 'Family Tree',
+          context: 'Family Tree',
+          icon: icon.import,
+          tone: 'amber',
+          title: 'GEDCOM import reviewed',
+          detail:
+            '17 people were added to the project',
+          occurredAt:
+            '2026-05-22T10:42:00Z'
+        }
+      ].filter(item =>
+        sampleData.projects.some(
+          project =>
+            project.id ===
+            item.projectId
+        )
+      );
+
       if (!items.length) {
         return '';
       }
-      return `<div class="right-card"><h2>Recent activity</h2><div class="startup-action-list">
-        ${items.map(item => `<button class="startup-action-row startup-activity-row" type="button" data-startup-open-module="${item.module}" data-startup-project="${item.projectId}" aria-label="Open ${escapeHtml(item.project)} ${escapeHtml(item.context)} activity">
-          <span class="startup-action-icon ${item.tone}">${item.icon}</span>
-          <span class="startup-action-copy">
-            <strong>${escapeHtml(item.title)}</strong>
-            <span class="startup-action-project">${escapeHtml(item.project)} · ${escapeHtml(item.context)}</span>
-            <span>
-              ${escapeHtml(
-                item.detail
-              )}
-              ·
-              ${escapeHtml(
-                formatProjectDate(
-                  item.occurredAt
-                )
-              )}
-            </span>
-          </span>
-          <span class="startup-activity-chevron" aria-hidden="true">›</span>
-        </button>`).join('')}
-      </div></div>`;
+
+      return `
+        <div class="right-card">
+          <h2>
+            ${escapeHtml(
+              translateText(
+                'Recent activity'
+              )
+            )}
+          </h2>
+
+          <div
+            class="
+              startup-action-list
+            ">
+
+            ${items
+              .map(item => {
+                const title =
+                  translateText(
+                    item.title
+                  );
+
+                const projectName =
+                  translateText(
+                    item.project
+                  );
+
+                const context =
+                  translateText(
+                    item.context
+                  );
+
+                const detail =
+                  translateText(
+                    item.detail
+                  );
+
+                const date =
+                  formatProjectDate(
+                    item.occurredAt
+                  );
+
+                const ariaLabel =
+                  translateAttributeValue(
+                    `Open ${item.project} ${item.context} activity`
+                  );
+
+                return `
+                  <button
+                    class="
+                      startup-action-row
+                      startup-activity-row
+                    "
+                    type="button"
+                    data-startup-open-module="${
+                      escapeHtml(
+                        item.module
+                      )
+                    }"
+                    data-startup-project="${
+                      escapeHtml(
+                        item.projectId
+                      )
+                    }"
+                    aria-label="${
+                      escapeHtml(
+                        ariaLabel
+                      )
+                    }">
+
+                    <span
+                      class="
+                        startup-action-icon
+                        ${item.tone}
+                      ">
+                      ${item.icon}
+                    </span>
+
+                    <span
+                      class="
+                        startup-action-copy
+                      ">
+
+                      <strong>
+                        ${escapeHtml(
+                          title
+                        )}
+                      </strong>
+
+                      <span
+                        class="
+                          startup-action-project
+                        ">
+                        ${escapeHtml(
+                          projectName
+                        )}
+                        ·
+                        ${escapeHtml(
+                          context
+                        )}
+                      </span>
+
+                      <span>
+                        ${escapeHtml(
+                          detail
+                        )}
+                        ·
+                        ${escapeHtml(
+                          date
+                        )}
+                      </span>
+                    </span>
+
+                    <span
+                      class="
+                        startup-activity-chevron
+                      "
+                      aria-hidden="true">
+                      ›
+                    </span>
+                  </button>
+                `;
+              })
+              .join('')}
+          </div>
+        </div>
+      `;
     }
 
     function renderOfflineProjectsCard() {
@@ -129468,21 +131326,6 @@
       main.innerHTML = `<div class="placeholder"><div class="placeholder-card"><h1>${escapeHtml(state.activeModule)}</h1><p>This module will be built in a later iteration. The Projects tab already exposes it once a project is open.</p></div></div>`;
     }
 
-    const PROJECT_DATE_MONTHS = Object.freeze([
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ]);
-
     function projectDateTimestamp(value) {
       if (value instanceof Date) {
         const timestamp = value.getTime();
@@ -129528,19 +131371,24 @@
       const date =
         new Date(timestamp);
 
-      const day =
-        String(date.getDate())
-          .padStart(2, '0');
+      const locale =
+        state.language === 'ru'
+          ? 'ru-RU'
+          : 'en-GB';
 
-      const month =
-        PROJECT_DATE_MONTHS[
-          date.getMonth()
-        ];
-
-      const year =
-        date.getFullYear();
-
-      return `${day} ${month} ${year}`;
+      return new Intl.DateTimeFormat(
+        locale,
+        {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        }
+      )
+        .format(date)
+        .replace(
+          /\s?г\.$/u,
+          ''
+        );
     }
 
     function projectModifiedTimestamp(project) {
@@ -130179,7 +132027,13 @@
       openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="renameProjectTitle">
         <div class="modal-header"><div><h2 id="renameProjectTitle">Rename project</h2><p>Update the project name shown throughout GeneoGraph.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div>
         <form id="renameProjectForm">
-          <div class="modal-body form-grid"><div class="field"><label for="renameProjectName">Project name</label><input id="renameProjectName" value="${escapeHtml(project.name)}" autocomplete="off" required></div></div>
+          <div class="modal-body form-grid"><div class="field"><label for="renameProjectName">Project name</label><input id="renameProjectName" 
+            value="${escapeHtml(
+              localizedDataFieldValue(
+                project.name
+              )
+            )}"
+             autocomplete="off" required></div></div>
           <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Save changes</button></div>
         </form>
       </div>`);
@@ -130189,7 +132043,13 @@
       input?.select();
       modalBackdrop.querySelector('#renameProjectForm')?.addEventListener('submit', event => {
         event.preventDefault();
-        const name = cleanEditFieldValue(input?.value);
+        const name =
+          cleanEditFieldValue(
+            collectLocalizedDataFieldValue(
+              input,
+              project.name
+            )
+          );
         if (!name) {
           input?.setCustomValidity('Project name cannot be empty.');
           input?.reportValidity();
@@ -130471,7 +132331,7 @@
       if (!project) return;
       openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteProjectTitle">
         <div class="modal-header"><div><h2 id="deleteProjectTitle">Delete project?</h2><p>Delete ${escapeHtml(project.name)} and all people, relationships, media, and research records owned by this project.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div>
-        <div class="modal-body"><div class="panel-muted">This action cannot be undone during this prototype session.</div></div>
+        <div class="modal-body"><div class="panel-muted">This action cannot be undone.</div></div>
         <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-confirm-project-delete>Delete project</button></div>
       </div>`);
       bindProjectActionModalReturnFocus(anchor);
