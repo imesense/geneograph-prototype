@@ -3533,9 +3533,11 @@
     }
     .view-modes {
       height: 38px;
-      display: inline-grid;
-      grid-template-columns: repeat(3, 94px);
+      display: inline-flex;
       align-items: stretch;
+      flex: 0 0 auto;
+      width: max-content;
+      min-width: max-content;
       border: 1px solid var(--border-default);
       border-radius: 5px;
       overflow: hidden;
@@ -3543,10 +3545,11 @@
     }
     .view-mode {
       height: 100%;
-      min-width: 0;
+      min-width: 88px;
+      flex: 0 0 auto;
       border: 0;
       border-right: 1px solid var(--border-default);
-      border-radius: 5;
+      border-radius: 0;
       padding: 0 16px;
       background: transparent;
       color: var(--text-secondary);
@@ -3555,13 +3558,14 @@
       justify-content: center;
       font-weight: 500;
       line-height: 1;
+      white-space: nowrap;
       cursor: default;
     }
     .view-mode:last-child { border-right: 0; }
     .view-mode.active {
       background: var(--surface-selected);
       border: 1px solid #2FAE74;
-      border-radius: 5;
+      border-radius: 5px;
       color: var(--text-primary);
       box-shadow: inset 0 0 0 1px rgba(98,217,154,.22);
     }
@@ -7170,7 +7174,7 @@
     .tree-toolbar-left, .tree-toolbar-right { flex-wrap: nowrap; }
     .tree-control { min-width: 270px; height: 44px; }
     .tree-icon-button, .tree-action { height: 44px; }
-    .view-modes { height: 44px; grid-template-columns: repeat(3, 94px); }
+    .view-modes { height: 44px; }
     .tree-workspace { grid-template-columns: minmax(0, 1fr) 450px; }
     .tree-workspace.inspector-collapsed { grid-template-columns: minmax(0, 1fr) 0; }
     .tree-workspace.inspector-collapsed .tree-inspector { display: none; }
@@ -30011,6 +30015,7 @@
       'Learn more': 'Подробнее',
       'Updated': 'Обновлено',
       'Name': 'Название',
+      'Any': 'Любой',
       'Search results': 'Результаты поиска',
       'Continue': 'Продолжить',
       'Tip of the day':
@@ -30246,7 +30251,7 @@
       'Timeline': 'Хронология',
       'Insights': 'Подсказки',
       'Record Info': 'Сведения о записи',
-      'Quick edit': 'Быстрое редактирование',
+      'Quick edit': 'Изменить',
       'View profile': 'Открыть профиль',
       'Profile': 'Профиль',
       'Statistics': 'Статистика',
@@ -30279,7 +30284,7 @@
       'Historic family places': 'Исторические семейные места',
       'Connected records': 'Связанные записи',
       'Collapse person sidebar': 'Свернуть панель человека',
-      'Connect relative': 'Связать родственника',
+      'Connect relative': 'Установить связь',
       'Selected person details': 'Сведения о выбранном человеке',
       'Added': 'Добавлено',
       'Age': 'Возраст',
@@ -30690,7 +30695,46 @@
         'Родословная',
 
       'Add relative':
-        'Добавить родственника'
+        'Новый родственник',
+
+      'New relative':
+        'Новый родственник',
+
+      'Connect existing person':
+        'Установить связь',
+
+      'Link someone already in this tree':
+        'Присоединить из семейного древа',
+
+      'Open profile':
+        'Открыть профиль',
+
+      'Show in Family Tree':
+        'Показать в семейном древе',
+
+      'Delete person':
+        'Удалить человека',
+
+      'No insights found for this person.':
+        'Для этого человека пока нет подсказок.',
+
+      'Find person':
+        'Найти человека',
+
+      'Select relationship':
+        'Выберите связь',
+
+      'Warning!':
+        'Предупреждение',
+
+      'Can’t find the person?':
+        'Не нашли человека?',
+
+      'No matching people found. Try another name or create a new person.':
+        'Подходящие люди не найдены. Попробуйте другое имя или создайте нового человека.',
+
+      'Connect':
+        'Связать'
     };
     const RU_UI_PEOPLE = {
       'People directory': 'Список людей',
@@ -30698,6 +30742,10 @@
       'Active People filters': 'Активные фильтры людей',
       'Open people filters': 'Открыть фильтры людей',
       'Sort people': 'Сортировать людей',
+      'Person name': 'Имя',
+      'Create and add another': 'Создать и добавить ещё одного',
+      'Add person and reopen this window': 'Добавить человека и снова открыть это окно',
+      'Create': 'Создать',
 
       'Bulk actions for selected people': 'Массовые действия с выбранными людьми',
       'Export selected people': 'Экспортировать выбранных людей',
@@ -33670,7 +33718,7 @@
         'Связь',
 
       'Relationships':
-        'Родственные связи',
+        'Близкие родственники',
 
       'Relative':
         'Родственник',
@@ -34604,6 +34652,7 @@
       'Connect existing Archive files or add new files.': 'Свяжите существующие файлы Архива или добавьте новые.',
       'No archive files linked to this person.': 'С этим человеком не связано ни одного файла Архива.',
       'No notes linked to this person.': 'С этим человеком не связано ни одной заметки.',
+      'No photos linked to this person.':'С этим человеком не связано ни одной фотографии',
       'Already linked': 'Уже связано',
       'The person is no longer available.': 'Этот человек больше недоступен.',
       'Archive item preview is simulated.': 'Предпросмотр элемента Архива имитируется в прототипе.',
@@ -35968,7 +36017,7 @@
       repl(
         /^Child of\s+(.+)\s+and\s+(.+)$/i,
         (_, first, second) =>
-          `Родители: ${
+          `Родители ${
             translateValue(first)
           } и ${
             translateValue(second)
@@ -35984,7 +36033,7 @@
       repl(
         /^Father of\s+(.+)$/i,
         (_, person) =>
-          `Отец: ${
+          `Отец ${
             translateValue(person)
           }`
       );
@@ -35992,7 +36041,7 @@
       repl(
         /^Mother of\s+(.+)$/i,
         (_, person) =>
-          `Мать: ${
+          `Мать ${
             translateValue(person)
           }`
       );
@@ -36000,7 +36049,7 @@
       repl(
         /^Parent of\s+(.+)$/i,
         (_, person) =>
-          `Родитель: ${
+          `Родитель ${
             translateValue(person)
           }`
       );
@@ -36102,13 +36151,13 @@
       repl(
         /^Open profile for\s+(.+)$/i,
         (_, value) =>
-          `Открыть профиль: ${translateValue(value)}`
+          `Открыть профиль ${translateValue(value)}`
       );
 
       repl(
         /^Open\s+(.+?)\s+profile$/i,
         (_, value) =>
-          `Открыть профиль: ${translateValue(value)}`
+          `Открыть профиль ${translateValue(value)}`
       );
 
       repl(
@@ -36290,6 +36339,58 @@
       );
 
       repl(
+        /^to\s+(.+)$/i,
+        (_, value) =>
+          `для ${translateValue(value)}`
+      );
+
+      repl(
+        /^Create a new person and add as\s+(.+?)[\u2019']s\s+(father|mother|parent|son|daughter|child|brother|sister|partner|spouse|relative)$/i,
+        (_, personName, relationship) => {
+          const labels = {
+            father: 'отца',
+            mother: 'мать',
+            parent: 'родителя',
+            son: 'сына',
+            daughter: 'дочь',
+            child: 'ребёнка',
+            brother: 'брата',
+            sister: 'сестру',
+            partner: 'партнёра',
+            spouse: 'супруга',
+            relative: 'родственника'
+          };
+
+          return `Создать нового человека и добавить как ${labels[relationship.toLowerCase()]} для ${translateValue(personName)}`;
+        }
+      );
+
+      repl(
+        /^Find a person in this project and connect them to\s+(.+)\.$/i,
+        (_, value) =>
+          `Найдите человека в этом проекте и свяжите его с ${translateValue(value)}.`
+      );
+
+      repl(
+        /^(.+?)\s+already has recorded parents\. The selected person will be connected as an additional parent\.$/i,
+        (_, value) =>
+          `У ${translateValue(value)} уже указаны родители. Выбранный человек будет добавлен как ещё один родитель.`
+      );
+
+      repl(
+        /^Create a new person and connect as\s+(parent|child|partner)$/i,
+        (_, relationship) => {
+          const labels = {
+            parent: 'родителя',
+            child: 'ребёнка',
+            partner: 'партнёра'
+          };
+
+          return `Создать нового человека и привязать в качестве ${labels[relationship.toLowerCase()]}`;
+        }
+      );
+
+      repl(
         /^(?:Change|Edit) Family Tree link for\s+(.+)$/i,
         (_, value) =>
           `Изменить связь с семейным древом: ${translateValue(value)}`
@@ -36397,7 +36498,7 @@
       repl(
         /^View\s+(.+?)\s+profile$/i,
         (_, value) =>
-          `Открыть профиль: ${translateValue(value)}`
+          `Открыть профиль ${translateValue(value)}`
       );
 
       repl(
@@ -36415,7 +36516,7 @@
       repl(
         /^(Son|Daughter)\s+(.+)$/i,
         (_, relation, value) =>
-          `${translateValue(relation)}: ${translateValue(value)}`
+          `${translateValue(relation)} ${translateValue(value)}`
       );
 
       /*
@@ -44903,7 +45004,8 @@
 
     function renderTreeParentPlaceholder(placeholder) {
       const target = personById(placeholder.personId);
-      return `<button class="add-parent-card" type="button" style="left:${placeholder.x}px;top:${placeholder.y}px" data-person-id="${placeholder.personId}" data-add-relative="${placeholder.rel}" aria-label="${escapeHtml(placeholder.label)} for ${escapeHtml(target.name)}"><span><span class="add-plus">${icon.plus}</span><span class="add-label">${placeholder.label.replace(' ', '<br>')}</span></span></button>`;
+      const displayLabel = translateText(placeholder.label);
+      return `<button class="add-parent-card" type="button" style="left:${placeholder.x}px;top:${placeholder.y}px" data-person-id="${placeholder.personId}" data-add-relative="${placeholder.rel}" aria-label="${escapeHtml(placeholder.label)} for ${escapeHtml(target.name)}"><span><span class="add-plus">${icon.plus}</span><span class="add-label">${escapeHtml(displayLabel).replace(' ', '<br>')}</span></span></button>`;
     }
 
     function renderTreePersonCard(person) {
@@ -45893,11 +45995,10 @@
                   : 'photos'
               }">
 
-              ${photoCount}
               ${
-                photoCount === 1
-                  ? 'photo'
-                  : 'photos'
+                state.language === 'ru'
+                  ? `${photoCount} фото`
+                  : `${photoCount} ${photoCount === 1 ? 'photo' : 'photos'}`
               }
             </button>
 
@@ -46111,11 +46212,9 @@
         ${renderInspectorSection(
           'photos',
           'Photos',
-          `${photoCount} ${
-            photoCount === 1
-              ? 'photo'
-              : 'photos'
-          }`,
+          state.language === 'ru'
+            ? `${photoCount} фото`
+            : `${photoCount} ${photoCount === 1 ? 'photo' : 'photos'}`,
           photosContent,
           `
             <button
@@ -47484,7 +47583,7 @@
       popover.className = 'relative-popover';
       popover.id = 'relativePopover';
 
-      popover.innerHTML = `<div class="relative-popover-body"><h2>Add relative</h2><p>to ${escapeHtml(person.name)}</p>
+      popover.innerHTML = `<div class="relative-popover-body"><h2>New relative</h2><p>to ${escapeHtml(person.name)}</p>
         <div class="relative-group">Parents</div><div class="relative-grid"><button class="relative-choice" data-rel="father"><span class="gender-icon">${icon.male}</span>Father</button><button class="relative-choice female" data-rel="mother"><span class="gender-icon">${icon.female}</span>Mother</button></div>
         <div class="relative-group">Partner</div><div class="relative-grid" style="grid-template-columns:1fr"><button class="relative-choice" data-rel="partner"><span class="relative-choice-icon marriage-icon">${icon.marriage}</span>Partner / Spouse</button></div>
         <div class="relative-group">Children</div><div class="relative-grid"><button class="relative-choice" data-rel="son"><span class="gender-icon">${icon.male}</span>Son</button><button class="relative-choice female" data-rel="daughter"><span class="gender-icon">${icon.female}</span>Daughter</button></div>
@@ -53153,7 +53252,7 @@
                   'name',
 
                 label:
-                  'Name'
+                  'Person name'
               },
               {
                 value:
@@ -86112,7 +86211,7 @@
 
       popover.innerHTML = `
         <div class="relative-popover-body">
-          <h2>Add relative</h2>
+          <h2>New relative</h2>
           <p>to ${escapeHtml(displayName)}</p>
 
           <div class="relative-group">
