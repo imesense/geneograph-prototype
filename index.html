@@ -35319,6 +35319,43 @@
       }
     };
 
+    const RU_PLURAL_RULES_FORMATTER =
+      new Intl.PluralRules('ru');
+
+    const RU_NUMBER_FORMATTER =
+      new Intl.NumberFormat('ru');
+
+    const LOCALIZATION_TEXT_CACHE_LIMIT =
+      4096;
+
+    const localizationTextCache =
+      new Map();
+
+    function cacheLocalizedText(
+      source,
+      translated
+    ) {
+      if (
+        !localizationTextCache.has(source)
+        && localizationTextCache.size
+          >= LOCALIZATION_TEXT_CACHE_LIMIT
+      ) {
+        localizationTextCache.delete(
+          localizationTextCache
+            .keys()
+            .next()
+            .value
+        );
+      }
+
+      localizationTextCache.set(
+        source,
+        translated
+      );
+
+      return translated;
+    }
+
     const RU_LOCALIZATION = Object.freeze({
       ui: RU_UI_MODULE_BLOCKS,
       terms: RU_TERM_BLOCKS,
@@ -35506,7 +35543,7 @@
           }
 
           const rule =
-            new Intl.PluralRules('ru')
+            RU_PLURAL_RULES_FORMATTER
               .select(number);
 
           const word =
@@ -35514,7 +35551,7 @@
             || forms.other;
 
           return `${
-            new Intl.NumberFormat('ru')
+            RU_NUMBER_FORMATTER
               .format(number)
           } ${word}`;
         }
@@ -35553,7 +35590,7 @@
             );
 
           return Number.isFinite(number)
-            ? new Intl.NumberFormat('ru')
+            ? RU_NUMBER_FORMATTER
                 .format(number)
             : String(value);
         };
@@ -35683,7 +35720,7 @@
             Number(count);
 
           const rule =
-            new Intl.PluralRules('ru')
+            RU_PLURAL_RULES_FORMATTER
               .select(
                 Number.isFinite(
                   numericCount
@@ -35716,7 +35753,7 @@
           }
 
           return `${
-            new Intl.NumberFormat('ru')
+            RU_NUMBER_FORMATTER
               .format(numericCount)
           } ${
             pluralWord(
@@ -36705,16 +36742,28 @@
         return raw;
       }
 
-      const exact =
-        Object.prototype
-          .hasOwnProperty.call(
-            RU_EXACT,
-            core
-          )
-          ? RU_EXACT[core]
-          : translateDynamicPhrase(
+      let exact =
+        localizationTextCache.get(
+          core
+        );
+
+      if (exact === undefined) {
+        exact =
+          Object.prototype
+            .hasOwnProperty.call(
+              RU_EXACT,
               core
-            );
+            )
+            ? RU_EXACT[core]
+            : translateDynamicPhrase(
+                core
+              );
+
+        cacheLocalizedText(
+          core,
+          exact
+        );
+      }
 
       return (
         leading
@@ -36744,38 +36793,7 @@
         return source;
       }
 
-      let result =
-        translateText(source);
-
-      /*
-      * translateText() handles exact strings and known
-      * dynamic phrases. This additional pass handles
-      * composed accessible labels and titles containing
-      * database values.
-      */
-      RU_EXACT_EMBEDDED_RULES
-        .forEach(rule => {
-          rule.pattern.lastIndex =
-            0;
-
-          result =
-            result.replace(
-              rule.pattern,
-              (
-                match,
-                prefix
-              ) =>
-                `${
-                  prefix
-                }${
-                  rule.translation
-                }`
-            );
-        });
-
-      return translateCountPhrase(
-        result
-      );
+      return translateText(source);
     }
 
     /*
@@ -37055,8 +37073,64 @@
         });
     }
 
+    const explicitlyLocalizedRoots =
+      new Set();
+
+    function markLocalizationRootHandled(
+      root
+    ) {
+      if (
+        !root
+        || root.nodeType
+          === Node.TEXT_NODE
+      ) {
+        return;
+      }
+
+      explicitlyLocalizedRoots.add(
+        root
+      );
+
+      queueMicrotask(() => {
+        explicitlyLocalizedRoots.delete(
+          root
+        );
+      });
+    }
+
+    function localizationMutationIsHandled(
+      node
+    ) {
+      if (!node) return false;
+
+      const target =
+        node.nodeType
+          === Node.TEXT_NODE
+          ? node.parentNode
+          : node;
+
+      if (!target) return false;
+
+      for (
+        const root
+        of explicitlyLocalizedRoots
+      ) {
+        if (
+          root === target
+          || root.contains?.(target)
+        ) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
     function localizeUI(
-      root = document.body
+      root = document.body,
+      {
+        suppressObserverReplay = false
+      } = {}
     ) {
       applyLanguage();
 
@@ -37065,6 +37139,12 @@
         || !root
       ) {
         return;
+      }
+
+      if (suppressObserverReplay) {
+        markLocalizationRootHandled(
+          root
+        );
       }
 
       /*
@@ -37118,16 +37198,6 @@
         LOCALIZABLE_DOM_ATTRIBUTE_SELECTOR
       ).forEach(
         localizeElementAttributes
-      );
-    }
-
-    function scheduleLocalize(
-      root = document.body
-    ) {
-      applyLanguage();
-
-      requestAnimationFrame(
-        () => localizeUI(root)
       );
     }
 
@@ -42450,6 +42520,14 @@
 
           records.forEach(record => {
             if (
+              localizationMutationIsHandled(
+                record.target
+              )
+            ) {
+              return;
+            }
+
+            if (
               record.type
                 === 'childList'
             ) {
@@ -42684,7 +42762,12 @@
       topbar.querySelector('[data-topbar-notifications]')?.addEventListener('click', event => { event.stopPropagation(); openTopbarPopover('notifications', event.currentTarget); });
       topbar.querySelector('[data-topbar-settings]')?.addEventListener('click', event => { event.stopPropagation(); closeTopbarPopover(); openGlobalSettingsModal(); });
       topbar.querySelector('[data-topbar-profile]')?.addEventListener('click', event => { event.stopPropagation(); openTopbarPopover('profile', event.currentTarget); });
-      scheduleLocalize();
+      localizeUI(
+        topbar,
+        {
+          suppressObserverReplay: true
+        }
+      );
     }
 
 
@@ -43011,7 +43094,19 @@
       `;
       bindProjectControls();
       bindStartupRightColumn();
-      scheduleLocalize();
+      localizeUI(
+        sidebar,
+        {
+          suppressObserverReplay: true
+        }
+      );
+
+      localizeUI(
+        main,
+        {
+          suppressObserverReplay: true
+        }
+      );
     }
 
     function renderStartupContinuation(context) {
@@ -69485,7 +69580,9 @@
         pendingEdgeExpansion: false,
         suppressEdgeExpansion: false,
         zooming: false,
-        suppressNodeClick: false
+        suppressNodeClick: false,
+        autoPersonHeightSignatures:
+          new Map()
       };
     }
 
@@ -70884,12 +70981,77 @@
       );
     }
 
+    function geneoAutoPersonHeightSignature(
+      node,
+      content,
+      diagram
+    ) {
+      const settings =
+        geneoPersonCardEffectiveSettings(
+          node,
+          diagram
+        );
+
+      const person =
+        getGeneographPerson(
+          node.personId
+        );
+
+      return JSON.stringify([
+        state.language,
+        Math.round(
+          geneoNumber(
+            node.width,
+            0
+          ) * 100
+        ) / 100,
+        settings,
+        person?.treePersonId || '',
+        person?.photoId || '',
+        String(
+          content.textContent || ''
+        )
+          .trim()
+          .replace(/\s+/g, ' ')
+      ]);
+    }
+
     function syncGeneographAutoPersonCardHeights() {
       const diagram = selectedGeneographDiagram();
 
       if (!diagram) return false;
 
       const changed = [];
+
+      const signatureCache =
+        geneoCanvasRuntime
+          .autoPersonHeightSignatures
+        || new Map();
+
+      geneoCanvasRuntime
+        .autoPersonHeightSignatures =
+          signatureCache;
+
+      const autoNodeIds =
+        new Set(
+          diagram.nodes
+            .filter(node =>
+              geneoPersonCardUsesAutoHeight(
+                node,
+                diagram
+              )
+            )
+            .map(node => node.id)
+        );
+
+      for (
+        const nodeId
+        of signatureCache.keys()
+      ) {
+        if (!autoNodeIds.has(nodeId)) {
+          signatureCache.delete(nodeId);
+        }
+      }
 
       diagram.nodes
         .filter(node =>
@@ -70908,6 +71070,25 @@
           );
 
           if (!element || !content) return;
+
+          const signature =
+            geneoAutoPersonHeightSignature(
+              node,
+              content,
+              diagram
+            );
+
+          if (
+            signatureCache.get(node.id)
+            === signature
+          ) {
+            return;
+          }
+
+          signatureCache.set(
+            node.id,
+            signature
+          );
 
           const geometry =
             geneoPersonCardGeometry(
@@ -78850,6 +79031,13 @@
         <section class="geneo-sidebar-section geneo-layers"><button class="geneo-sidebar-disclosure" type="button" data-geneo-sidebar-section="layers" aria-expanded="${layersExpanded}"><span>Layers</span><span class="geneo-sidebar-disclosure-meta"><span>${diagram.nodes.length}</span>${icon.chevron}</span></button>${layersExpanded ? `<div class="geneo-sidebar-section-body"><div class="geneo-layer-tools"><input class="geneo-object-search" id="geneoLayerSearch" placeholder="Search layers" value="${escapeHtml(state.geneoLayerSearch)}"></div><div class="geneo-layer-list">${panels.map(panel => { const collapsed = Boolean(state.geneoCollapsedPanels[panel.id]); const children = diagram.nodes.filter(node => node.parentPanelId === panel.id && matches(node)).sort((a, b) => b.order - a.order); return `<div class="geneo-layer-panel"><div class="geneo-layer-panel-head"><button class="geneo-layer-disclosure" type="button" data-geneo-collapse-panel="${escapeHtml(panel.id)}" aria-expanded="${!collapsed}">${icon.chevron}</button>${row(panel)}</div>${collapsed ? '' : children.map(node => row(node, 1)).join('')}</div>`; }).join('')}${rootNodes.map(node => row(node)).join('')}</div></div>` : ''}</section>
         <section class="geneo-sidebar-section"><button class="geneo-sidebar-disclosure" type="button" data-geneo-sidebar-section="connections" aria-expanded="${connectionsExpanded}"><span>Connections</span><span class="geneo-sidebar-disclosure-meta"><span>${diagram.connections.length}</span>${icon.chevron}</span></button>${connectionsExpanded ? `<div class="geneo-sidebar-section-body"><div class="geneo-layer-list">${diagram.connections.map(connectionRow).join('')}</div></div>` : ''}</section>
       </nav>`;
+
+      localizeUI(
+        sidebar,
+        {
+          suppressObserverReplay: true
+        }
+      );
     }
 
     function geneoDefaultConnectionLabel(
@@ -83283,8 +83471,27 @@
           ${renderGeneographConnectors()}<div class="geneo-panel-draft" data-geneo-panel-draft hidden><span data-geneo-panel-draft-size></span></div><div class="geneo-selection-marquee" data-geneo-marquee hidden></div>${ordered.map(renderGeneographObject).join('')}
           </div></div></div><div class="geneo-zoom-overlay canvas-zoom"><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="out" aria-label="Zoom out">${icon.zoomOut}</button><span class="geneo-zoom-value zoom-value">${state.geneoZoom}%</span><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="in" aria-label="Zoom in">${icon.zoomIn}</button><button class="geneo-zoom-button zoom-button" type="button" data-geneo-zoom="fit" aria-label="Fit board">${icon.home}</button></div></div>${renderGeneographInspector()}</div>
           </section>`;
-      localizeUI(main);
-      syncGeneographAutoPersonCardHeights();
+      localizeUI(
+        main,
+        {
+          suppressObserverReplay: true
+        }
+      );
+
+      const autoHeightsChanged =
+        syncGeneographAutoPersonCardHeights();
+
+      if (autoHeightsChanged) {
+        localizeUI(
+          main.querySelector(
+            '.geneo-connections'
+          ),
+          {
+            suppressObserverReplay: true
+          }
+        );
+      }
+
       bindGeneographEditor();
       ensureGeneographKeyboardBinding();
       const editingNode =
