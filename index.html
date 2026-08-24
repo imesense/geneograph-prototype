@@ -43559,7 +43559,9 @@
 
       const projectPath =
         project.projectPath
-        || `C:\\Users\\Silver\\Documents\\GeneoGraph\\${safeFileTitle}.ggproj`;
+        || `C:\\Users\\Username\\Documents\\GeneoGraph\\${
+          safeFileTitle || 'Family History'
+        }.ggproj`;
 
       const lastBackup =
         project.lastBackupAt
@@ -43620,7 +43622,10 @@
               title="${escapeHtml(
                 projectPath
               )}">
-              </div>
+              ${escapeHtml(
+                projectPath
+              )}
+            </div>
             <div class="project-location-meta">
               <div class="project-settings-kv"><span>Last local backup</span><span>${escapeHtml(lastBackup)}</span></div>
               <div class="project-settings-kv"><span>Cloud backup</span><span>Disabled</span></div>
