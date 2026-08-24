@@ -2581,7 +2581,6 @@
       justify-content: flex-end;
       padding-top: var(--space-3);
       margin-top: var(--space-3);
-      border-top: 1px solid var(--border-default);
     }
     .overview-grid {
       gap: var(--space-6);
@@ -2686,7 +2685,6 @@
     .project-activity-footer {
       padding-top: var(--space-3);
       margin-top: var(--space-2);
-      border-top: 1px solid var(--border-default);
       text-align: right;
     }
     .overview-grid .module-shortcuts {
@@ -11639,9 +11637,6 @@
       display: flex;
       padding: var(--space-4);
       margin-top: var(--space-2);
-      border-top:
-        1px solid
-        var(--border-default);
     }
 
     .geneo-inspector-danger .button {
@@ -12224,7 +12219,8 @@
     .geneo-field {
       min-width: 0;
     }
-    .geneo-person-size-controls {
+    .geneo-person-size-controls,
+    .geneo-place-size-controls {
       display: grid;
       gap: 7px;
     }
@@ -30525,7 +30521,7 @@
       'Surname origin note updated': 'Заметка о происхождении фамилии обновлена',
       'Relationship connected': 'Добавлена родственная связь',
       'Luna Purrington was connected to the tree': 'Луна Пуррингтон добавлена в семейное древо',
-      'Archive file linked': 'Архивный файл связан',
+      'Archive file linked': 'Архивный файл привязан',
       'Pawford household register linked to Silver Whiskerfield': 'Домовая ведомость Поуфорда связана с Сильвером Уискерфилдом',
       'Duplicate reviewed': 'Возможный дубликат проверен',
       'Possible duplicate was marked reviewed': 'Возможный дубликат отмечен как проверенный',
@@ -71166,6 +71162,218 @@
       return true;
     }
 
+    function geneoPlaceUsesAutoSize(node) {
+      return (
+        node?.type === 'place'
+        && node.placeSizeMode !== 'manual'
+      );
+    }
+
+    function syncGeneographAutoPlaceSizes() {
+      const diagram =
+        selectedGeneographDiagram();
+
+      if (!diagram) {
+        return false;
+      }
+
+      const changed = [];
+
+      /*
+       * Text is measured using the Place label's actual
+       * computed font, independently of the current node
+       * width. This lets auto-sized nodes both grow and
+       * shrink correctly.
+       */
+      const measurementCanvas =
+        document.createElement('canvas');
+
+      const measurementContext =
+        measurementCanvas.getContext('2d');
+
+      const cssPixels = value =>
+        Number.parseFloat(value) || 0;
+
+      diagram.nodes
+        .filter(geneoPlaceUsesAutoSize)
+        .forEach(node => {
+          const element =
+            main.querySelector(
+              `article[data-geneo-node="${
+                CSS.escape(node.id)
+              }"]`
+            );
+
+          const content =
+            element?.querySelector(
+              '.geneo-place-node-content'
+            );
+
+          const iconElement =
+            content?.querySelector(
+              '.geneo-place-node-icon'
+            );
+
+          const nameElement =
+            content?.querySelector(
+              '.geneo-place-node-name'
+            );
+
+          if (
+            !element
+            || !content
+            || !iconElement
+            || !nameElement
+          ) {
+            return;
+          }
+
+          const contentStyle =
+            getComputedStyle(content);
+
+          const elementStyle =
+            getComputedStyle(element);
+
+          const nameStyle =
+            getComputedStyle(nameElement);
+
+          let nameWidth =
+            nameElement.scrollWidth;
+
+          if (measurementContext) {
+            measurementContext.font = [
+              nameStyle.fontStyle,
+              nameStyle.fontWeight,
+              nameStyle.fontSize,
+              nameStyle.fontFamily
+            ]
+              .filter(Boolean)
+              .join(' ');
+
+            nameWidth =
+              measurementContext.measureText(
+                nameElement.textContent || ''
+              ).width;
+          }
+
+          const naturalWidth =
+            Math.ceil(
+              cssPixels(
+                contentStyle.paddingLeft
+              )
+              + iconElement.offsetWidth
+              + cssPixels(
+                contentStyle.columnGap
+                || contentStyle.gap
+              )
+              + nameWidth
+              + cssPixels(
+                contentStyle.paddingRight
+              )
+              + cssPixels(
+                elementStyle.borderLeftWidth
+              )
+              + cssPixels(
+                elementStyle.borderRightWidth
+              )
+              + 2
+            );
+
+          const defaults =
+            geneoNodeDefaults('place');
+
+          const minimumSize =
+            geneoNodeMinimumSize(node);
+
+          const maximumSize =
+            geneoNodeMaximumSize(node);
+
+          const nextWidth =
+            Math.round(
+              geneoNumber(
+                naturalWidth,
+                defaults.width,
+                minimumSize.width,
+                maximumSize.width
+              )
+            );
+
+          /*
+           * Place content is deliberately one line.
+           * Automatic sizing therefore restores its
+           * canonical natural height.
+           */
+          const nextHeight =
+            Math.round(
+              geneoNumber(
+                defaults.height,
+                defaults.height,
+                minimumSize.height,
+                maximumSize.height
+              )
+            );
+
+          if (
+            nextWidth === node.width
+            && nextHeight === node.height
+          ) {
+            return;
+          }
+
+          node.width = nextWidth;
+          node.height = nextHeight;
+
+          element.style.width =
+            `${nextWidth}px`;
+
+          element.style.height =
+            `${nextHeight}px`;
+
+          changed.push(node);
+        });
+
+      if (!changed.length) {
+        return false;
+      }
+
+      updateGeneographLiveGeometry(
+        changed[0],
+        changed
+      );
+
+      const selected =
+        selectedGeneographNode();
+
+      if (
+        selected
+        && changed.some(
+          node => node.id === selected.id
+        )
+      ) {
+        const widthInput =
+          main.querySelector(
+            '[data-geneo-layout="width"]'
+          );
+
+        const heightInput =
+          main.querySelector(
+            '[data-geneo-layout="height"]'
+          );
+
+        if (widthInput) {
+          widthInput.value =
+            Math.round(selected.width);
+        }
+
+        if (heightInput) {
+          heightInput.value =
+            Math.round(selected.height);
+        }
+      }
+
+      return true;
+    }
+
     function geneoNodeCornerRadius(node) {
       if (node?.type === 'person') {
         return (
@@ -75224,6 +75432,18 @@
               ) {
                 warn(`Place node ${node.id} has an invalid place reference`);
               }
+              if (
+                ![
+                  'auto',
+                  'manual'
+                ].includes(
+                  node.placeSizeMode
+                )
+              ) {
+                warn(
+                  `Place node ${node.id} has an invalid size mode`
+                );
+              }
             }
           });
 
@@ -76742,13 +76962,27 @@
               delete normalizedNode.points;
             }
             if (node.type === 'place') {
-              normalizedNode.placeRef = normalizeGeneographPlaceRef(node, board.projectId);
-              if (!normalizedNode.placeRef) return;
+              normalizedNode.placeRef =
+                normalizeGeneographPlaceRef(
+                  node,
+                  board.projectId
+                );
+
+              if (!normalizedNode.placeRef) {
+                return;
+              }
+
+              normalizedNode.placeSizeMode =
+                node.placeSizeMode === 'manual'
+                  ? 'manual'
+                  : 'auto';
+
               delete normalizedNode.placeId;
               delete normalizedNode.placeName;
               delete normalizedNode.title;
             } else {
               delete normalizedNode.placeRef;
+              delete normalizedNode.placeSizeMode;
             }
             if (node.type === 'panel') {
               normalizedNode.title =
@@ -77053,7 +77287,7 @@
           ...common,
           width: 240,
           height: 54,
-          minWidth: 160,
+          minWidth: 96,
           minHeight: 44,
           appearance: {
             ...common.appearance,
@@ -78672,7 +78906,10 @@
         'se',
         'sw',
         ...(
-          node.type === 'person'
+          [
+            'person',
+            'place'
+          ].includes(node.type)
             ? ['n', 'e', 's', 'w']
             : []
         )
@@ -82655,6 +82892,9 @@
           node
         );
 
+      const autoPlaceSize =
+        geneoPlaceUsesAutoSize(node);
+
       return renderGeneographInspectorSection({
         context:
           geneoInspectorContextForNode(
@@ -82745,6 +82985,35 @@
                 )}">
             </div>
           </div>
+
+          ${
+            node.type === 'place'
+              ? `
+                <div class="geneo-place-size-controls">
+                  <span class="geneo-selection-help">
+                    ${
+                      autoPlaceSize
+                        ? 'Size fits the place name automatically'
+                        : 'Manual size'
+                    }
+                  </span>
+
+                  ${
+                    autoPlaceSize
+                      ? ''
+                      : `
+                        <button
+                          class="button ghost compact"
+                          type="button"
+                          data-geneo-place-fit-content>
+                          Fit to content
+                        </button>
+                      `
+                  }
+                </div>
+              `
+              : ''
+          }
 
           ${
             isPerson
@@ -83497,7 +83766,13 @@
       const autoHeightsChanged =
         syncGeneographAutoPersonCardHeights();
 
-      if (autoHeightsChanged) {
+      const autoPlaceSizesChanged =
+        syncGeneographAutoPlaceSizes();
+
+      if (
+        autoHeightsChanged
+        || autoPlaceSizesChanged
+      ) {
         localizeUI(
           main.querySelector(
             '.geneo-connections'
@@ -84956,6 +85231,7 @@
         id: createRuntimeId('geneo-node'),
         type: 'place',
         placeRef: structuredClone(placeRef),
+        placeSizeMode: 'auto',
         x: position.x,
         y: position.y,
         width: defaults.width,
@@ -90828,6 +91104,14 @@
             'manual';
         }
 
+        if (
+          node.type === 'place'
+          && geneoPointerState.moved
+        ) {
+          node.placeSizeMode =
+            'manual';
+        }
+
         const fixedLeft =
           geneoPointerState.x;
 
@@ -93198,6 +93482,17 @@
                   'manual';
               }
 
+              if (
+                node.type === 'place'
+                && [
+                  'width',
+                  'height'
+                ].includes(field)
+              ) {
+                node.placeSizeMode =
+                  'manual';
+              }
+
               node[field] =
                 nextValue;
 
@@ -93219,6 +93514,36 @@
           );
         });
 
+      main
+        .querySelector(
+          '[data-geneo-place-fit-content]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const node =
+              selectedGeneographNode();
+
+            if (
+              node?.type !== 'place'
+              || geneoPlaceUsesAutoSize(node)
+            ) {
+              return;
+            }
+
+            geneoPushHistory();
+
+            node.placeSizeMode =
+              'auto';
+
+            touchGeneographBoard();
+
+            renderGeneographEditorPreserveScroll({
+              preserveInspectorScroll: true,
+              preserveSidebarScroll: true
+            });
+          }
+        );
       main
         .querySelector(
           '[data-geneo-person-fit-height]'
