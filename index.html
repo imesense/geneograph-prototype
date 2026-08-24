@@ -3787,9 +3787,9 @@
     .tree-focus-control {
       position: absolute;
       z-index: 24;
-      width: 92px;
+      width: 84px;
       height: 32px;
-      padding: 0 10px;
+      padding: 0 8px;
       border: 1px solid var(--border-default);
       border-radius: 8px;
       background: rgba(26,32,31,.98);
@@ -3797,7 +3797,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 5px;
       font-size: 12px;
       font-weight: 800;
       line-height: 1;
@@ -3809,7 +3809,7 @@
       content: "";
       position: absolute;
       top: 100%;
-      left: 72%;
+      left: 50%;
       width: 2px;
       height: 8px;
       background: rgba(242,244,243,.72);
@@ -40440,6 +40440,18 @@
         .filter(family => !projectId || family.projectId === projectId)
         .map(family => {
           const pair = normalizedFamilyPair(family);
+          const partnerIds = [...new Set([familyPartnerAId(family), familyPartnerBId(family)].filter(Boolean))];
+          let leftId = pair.fatherId || null;
+          let rightId = pair.motherId || null;
+
+          if (!leftId && !rightId) {
+            [leftId, rightId = null] = partnerIds;
+          } else if (!leftId) {
+            leftId = partnerIds.find(id => id !== rightId) || null;
+          } else if (!rightId) {
+            rightId = partnerIds.find(id => id !== leftId) || null;
+          }
+
           const children = [...new Set([...(family.childIds || []), ...(family.childrenIds || [])].filter(Boolean))]
             .filter(childId => {
               if (childOwner.has(childId)) return false;
@@ -40451,8 +40463,8 @@
             sourceFamilyId: family.id,
             fatherId: pair.fatherId || null,
             motherId: pair.motherId || null,
-            left: pair.fatherId || null,
-            right: pair.motherId || null,
+            left: leftId,
+            right: rightId,
             children,
             missingFather: !pair.fatherId,
             missingMother: !pair.motherId,
@@ -42779,7 +42791,13 @@
       });
     }
 
-    function deriveTreeBranchRoles(people, families, focusPersonId, visiblePersonIds = null) {
+    function deriveTreeBranchRoles(
+      people,
+      families,
+      focusPersonId,
+      visiblePersonIds = null,
+      visibleFamilyIds = null
+    ) {
       const projectPersonIds = new Set((people || []).map(person => person.id));
       const visibleIds = visiblePersonIds instanceof Set
         ? new Set([...visiblePersonIds].filter(id => projectPersonIds.has(id)))
@@ -42840,6 +42858,23 @@
           .filter(Boolean)
       ]);
       const focusPartnerIds = new Set(partnerIdsByPerson.get(focusPersonId) || []);
+      const directSiblingIds = new Set(
+        (parentFamiliesByChild.get(focusPersonId) || [])
+          .flatMap(family => family.children || [])
+          .filter(id => id !== focusPersonId && projectPersonIds.has(id))
+      );
+      const householdSiblingIds = new Set(
+        [...directSiblingIds].filter(personId =>
+          (childFamiliesByParent.get(personId) || []).some(family => {
+            if (visibleFamilyIds instanceof Set && !visibleFamilyIds.has(family.id)) return false;
+            const hasVisiblePartner = [family.left, family.right]
+              .some(id => id && id !== personId && visibleIds.has(id));
+            const hasVisibleChild = (family.children || [])
+              .some(id => visibleIds.has(id));
+            return hasVisiblePartner || hasVisibleChild;
+          })
+        )
+      );
       const visibleRelativePartnerIds = new Set();
       lineageRelativeIds.forEach(personId => {
         if (!visibleIds.has(personId)) return;
@@ -42857,6 +42892,7 @@
         ...directAncestorIds,
         ...directDescendantIds,
         ...focusPartnerIds,
+        ...householdSiblingIds,
         ...visibleRelativePartnerIds
       ]);
       focusActionPersonIds.delete(focusPersonId);
@@ -42876,6 +42912,8 @@
       return {
         directAncestorIds,
         directDescendantIds,
+        directSiblingIds,
+        householdSiblingIds,
         lineageRelativeIds,
         focusPartnerIds,
         visibleRelativePartnerIds,
@@ -42953,6 +42991,24 @@
         includeFamily(family, { children: descendantGenerations > 0 });
       });
 
+      if (ancestorGenerations > 0) {
+        const focusSiblingIds = new Set(
+          (parentFamiliesByChild.get(focusPersonId) || [])
+            .flatMap(family => family.children || [])
+            .filter(id => id !== focusPersonId && peopleById.has(id))
+        );
+        focusSiblingIds.forEach(siblingId => {
+          (childFamiliesByParent.get(siblingId) || []).forEach(family => {
+            const hasPartner = [family.left, family.right]
+              .some(id => id && id !== siblingId && peopleById.has(id));
+            const hasChildren = (family.children || [])
+              .some(id => peopleById.has(id));
+            if (!hasPartner && !hasChildren) return;
+            includeFamily(family, { children: descendantGenerations > 0 });
+          });
+        });
+      }
+
       if (options.showCousins && ancestorGenerations >= 2) {
         const focusParentIds = new Set(
           (parentFamiliesByChild.get(focusPersonId) || [])
@@ -42991,7 +43047,8 @@
         people,
         families,
         focusPersonId,
-        coherentPersonIds
+        coherentPersonIds,
+        visibleFamilyIds
       );
 
       return {
@@ -45168,7 +45225,7 @@
     const TREE_CONNECTOR_RAIL_OFFSET = 56;
     const PLACEHOLDER_W = 150;
     const PLACEHOLDER_H = 110;
-    const TREE_FOCUS_CONTROL_W = 92;
+    const TREE_FOCUS_CONTROL_W = 84;
     const TREE_FOCUS_CONTROL_H = 32;
     const TREE_FOCUS_CONTROL_GAP = 8;
 
@@ -45197,6 +45254,16 @@
           if (!parentFamilyByChild.has(cid)) parentFamilyByChild.set(cid, family);
         });
       });
+
+      const layoutFamilyForPerson = personId => {
+        const personFamilies = childFamiliesByParent.get(personId) || [];
+        return personFamilies.find(family => (family.children || []).length)
+          || personFamilies.find(family =>
+            [family.left, family.right]
+              .some(id => id && id !== personId && peopleByRawId.has(id))
+          )
+          || null;
+      };
 
       // --- Generation assignment around the active focus person ---
       const generationByPerson = new Map();
@@ -45283,8 +45350,7 @@
       }
 
       function descendantRowUnit(personId) {
-        const fams = childFamiliesByParent.get(personId) || [];
-        const childFam = fams.find(f => (f.children || []).length) || null;
+        const childFam = layoutFamilyForPerson(personId);
         const spouseId = childFam
           ? (childFam.left === personId ? childFam.right : childFam.left)
           : null;
@@ -45373,8 +45439,7 @@
       }
 
       function placeDescendants(personId, centerX, gen, options = {}) {
-        const fams = childFamiliesByParent.get(personId) || [];
-        const childFam = fams.find(f => (f.children || []).length) || null;
+        const childFam = layoutFamilyForPerson(personId);
         if (!childFam) {
           if (!options.skipAncestors) placeAncestors(personId, centerX, gen);
           return;
@@ -50574,15 +50639,17 @@
 
       return `<section class="add-person-parent-family" data-parent-family-selector>
         <h3 class="form-section-title">Parent family</h3>
-        <div class="field add-person-select-field">
+        <div class="field">
           <label for="${escapeHtml(controlId)}">${isSibling ? 'Shared parent family' : 'Family for this child'}</label>
-          <select class="compact-select add-person-select" id="${escapeHtml(controlId)}" data-parent-family-selection ${choices.length ? '' : 'disabled'}>
-            ${selected ? '' : `<option value="">Select a parent family</option>`}
-            ${choices.length
-              ? choices.map(choice => `<option value="${escapeHtml(choice.value)}" ${choice.value === selected ? 'selected' : ''}>${escapeHtml(choice.label)}</option>`).join('')
-              : `<option value="">No parent family available</option>`}
-          </select>
-          <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
+          <div class="add-person-select-field">
+            <select class="compact-select add-person-select" id="${escapeHtml(controlId)}" data-parent-family-selection ${choices.length ? '' : 'disabled'}>
+              ${selected ? '' : `<option value="">Select a parent family</option>`}
+              ${choices.length
+                ? choices.map(choice => `<option value="${escapeHtml(choice.value)}" ${choice.value === selected ? 'selected' : ''}>${escapeHtml(choice.label)}</option>`).join('')
+                : `<option value="">No parent family available</option>`}
+            </select>
+            <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
+          </div>
           <span class="field-help">${isSibling
             ? 'The new sibling will be added to this existing parent family.'
             : 'This determines which parent or partner family receives the child.'}</span>
