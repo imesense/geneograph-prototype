@@ -14868,27 +14868,30 @@
     .geneo-person-summary dt { color:var(--text-tertiary); font-size:12px; font-weight:800; }
     .geneo-person-summary dd { margin:0; min-width:0; color:var(--text-primary); overflow-wrap:anywhere; }
     .geneo-person-modal { width:min(940px,100%); }
-    .geneo-person-form { display:grid; gap:var(--space-5); }
-    .geneo-person-form-row,
-    .geneo-person-date-row { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--space-4); align-items:start; }
-    .geneo-person-form-row > *,
-    .geneo-person-date-cell { min-width:0; }
-    .geneo-person-date-cell .genealogy-date-field {
-      width:100%;
-      --genealogy-date-type-column:minmax(118px,140px);
-      --genealogy-date-column-gap:var(--space-2);
+    .geneo-person-grid.is-editing {
+      grid-template-columns:minmax(0,1fr);
     }
-    .geneo-person-date-cell[hidden],
-    [data-geneo-maiden-name][hidden],
-    [data-geneo-death-place][hidden] { display:none !important; }
-    .geneo-person-advanced { border:1px solid var(--border-default); border-radius:var(--radius-sm); background:var(--surface-card); overflow:visible; }
-    .geneo-person-advanced-toggle { width:100%; min-height:44px; padding:0 var(--space-3); border:0; border-radius:inherit; background:transparent; color:var(--text-primary); display:flex; align-items:center; justify-content:space-between; gap:var(--space-3); font-weight:800; text-align:left; }
-    .geneo-person-advanced-toggle:hover { background:var(--surface-card-hover); }
-    .geneo-person-advanced-toggle:focus-visible { outline:2px solid var(--brand-green-300); outline-offset:2px; }
-    .geneo-person-advanced-toggle svg { width:16px; height:16px; display:block; transform:rotate(90deg); transition:transform var(--ease); }
-    .geneo-person-advanced-toggle[aria-expanded="true"] svg { transform:rotate(-90deg); }
-    .geneo-person-advanced-body { padding:var(--space-4); border-top:1px solid var(--border-default); display:grid; gap:var(--space-4); }
-    .geneo-person-advanced-body[hidden] { display:none; }
+    .geneo-person-form {
+      display:grid;
+      gap:var(--space-6);
+      min-width:0;
+    }
+    .geneo-person-match-rail { min-width:0; }
+    .geneo-person-modal .genealogy-date-field {
+      width:100%;
+      --genealogy-date-input-column:minmax(260px,1fr);
+    }
+    .geneo-person-modal .add-person-match-list {
+      padding:var(--space-2);
+    }
+    .geneo-person-modal .add-person-match-action {
+      width:calc(100% - (var(--space-3) * 2));
+      margin:0 var(--space-3) var(--space-3);
+    }
+    .geneo-person-modal .add-person-match-empty {
+      min-height:132px;
+    }
+    [data-geneo-maiden-name][hidden] { display:none !important; }
     .geneo-person-modal .place-combobox-list { z-index:180; }
     @media (max-width: 1450px) {
       .geneo-toolbar-object { width:36px; padding:0; justify-content:center; }
@@ -15409,12 +15412,6 @@
       .geneo-inspector { position:absolute; z-index:50; right:0; top:0; bottom:0; width:min(var(--inspector-width),90vw); min-width:0; box-shadow:-14px 0 36px rgba(0,0,0,.35); }
       .geneo-inspector.collapsed { width:var(--inspector-collapsed-width); min-width:var(--inspector-collapsed-width); }
     }
-    @media (max-width: 720px) {
-      .geneo-person-form-row,
-      .geneo-person-date-row { grid-template-columns:minmax(0,1fr); }
-      .geneo-person-date-cell .genealogy-date-field { --genealogy-date-type-column:minmax(110px,150px); }
-    }
-
     /* Albums module */
     .albums-shell {
       height: 100%;
@@ -34686,7 +34683,12 @@
       'Person created.': 'Человек создан.',
       'Create a new person in this project': 'Создать нового человека в этом проекте',
       'Connect selected': 'Связать выбранного',
+      'Add selected': 'Добавить выбранного',
       'Open selected': 'Открыть выбранного',
+      'Possible matches': 'Возможные совпадения',
+      'Similar people in Family Tree': 'Похожие люди в семейном древе',
+      'Enter a name, date, or place to check the Family Tree.': 'Введите имя, дату или место, чтобы проверить семейное древо.',
+      'No strong matches found in the Family Tree.': 'В семейном древе не найдено достаточно близких совпадений.',
       'New person': 'Новый человек',
       'File picker will be added in a later step.': 'Выбор файла будет добавлен позже.',
       'Note picker will be added in a later step.': 'Выбор заметки будет добавлен позже.',
@@ -49801,14 +49803,28 @@
         .join('<br>');
     }
 
-    function renderAddPersonPossibleMatchRow(item) {
+    function renderAddPersonPossibleMatchRow(
+      item,
+      {
+        context = 'family-tree',
+        selectedPersonId =
+          addPersonPossibleMatchState
+            .selectedPersonId
+      } = {}
+    ) {
       const person = item.person;
-      const selected = person.id === addPersonPossibleMatchState.selectedPersonId;
+      const selected =
+        person.id === selectedPersonId;
+
+      const selectionAttribute =
+        context === 'geneograph'
+          ? 'data-geneo-person-possible-match'
+          : 'data-add-person-possible-match';
 
       return `<button
         class="match-row is-possible-duplicate ${selected ? 'is-selected' : ''}"
         type="button"
-        data-add-person-possible-match="${escapeHtml(person.id)}"
+        ${selectionAttribute}="${escapeHtml(person.id)}"
         aria-pressed="${selected ? 'true' : 'false'}">
         ${renderPersonAvatar(person, 'small-avatar')}
         <div>
@@ -86672,6 +86688,368 @@
       });
     }
 
+    let geneoPersonPossibleMatchState = {
+      selectedPersonId: '',
+      refreshFrame: null
+    };
+
+    function collectGeneographPersonDraftForMatching() {
+      const value =
+        selector =>
+          modalBackdrop
+            ?.querySelector(selector)
+            ?.value
+          || '';
+
+      const firstName =
+        normalizeAddPersonMatchText(
+          value('#geneoPersonFirstName')
+        );
+
+      const middleName =
+        normalizeAddPersonMatchText(
+          value('#geneoPersonMiddleName')
+        );
+
+      const lastName =
+        normalizeAddPersonMatchText(
+          value('#geneoPersonLastName')
+        );
+
+      const maidenName =
+        normalizeAddPersonMatchText(
+          value('#geneoPersonMaidenName')
+        );
+
+      const birthDate =
+        normalizeAddPersonMatchText(
+          value('#geneoPersonBirthDate')
+        );
+
+      const deathDate =
+        normalizeAddPersonMatchText(
+          value('#geneoPersonDeathDate')
+        );
+
+      const birthPlace =
+        normalizeAddPersonMatchText(
+          value('#geneoPersonBirthPlace')
+        );
+
+      const deathPlace =
+        normalizeAddPersonMatchText(
+          value('#geneoPersonDeathPlace')
+        );
+
+      return {
+        firstName,
+        middleName,
+        lastName,
+        maidenName,
+        birthDate,
+        deathDate,
+        birthPlace,
+        deathPlace,
+        hasSignal: Boolean(
+          firstName
+          || middleName
+          || lastName
+          || maidenName
+          || birthDate
+          || deathDate
+          || birthPlace
+          || deathPlace
+        )
+      };
+    }
+
+    function geneoPossibleMatchScoreOptions(
+      options = {}
+    ) {
+      const anchorNode =
+        options.relative?.anchorNodeId
+          ? getGeneographNode(
+              options.relative.anchorNodeId
+            )
+          : null;
+
+      const anchorPerson =
+        anchorNode?.type === 'person'
+          ? getGeneographPerson(
+              anchorNode.personId
+            )
+          : null;
+
+      return {
+        connectToPersonId:
+          anchorPerson?.treePersonId
+          || ''
+      };
+    }
+
+    function findGeneographPersonPossibleMatches(
+      options = {}
+    ) {
+      const draft =
+        collectGeneographPersonDraftForMatching();
+
+      if (!draft.hasSignal) return [];
+
+      const projectId =
+        selectedGeneographBoard()?.projectId
+        || currentProjectId();
+
+      const scoreOptions =
+        geneoPossibleMatchScoreOptions(
+          options
+        );
+
+      return getPeople(projectId)
+        .filter(person =>
+          person?.id
+          && !person.deleted
+        )
+        .map(person => ({
+          person,
+          score:
+            scoreAddPersonPossibleMatch(
+              person,
+              draft,
+              scoreOptions
+            )
+        }))
+        .filter(item => item.score >= 24)
+        .sort(
+          (first, second) =>
+            second.score - first.score
+            || connectPersonName(
+              first.person
+            ).localeCompare(
+              connectPersonName(
+                second.person
+              )
+            )
+        )
+        .slice(0, 2);
+    }
+
+    function renderGeneographPersonPossibleMatchesCard(
+      options = {},
+      {
+        initial = false
+      } = {}
+    ) {
+      const draft =
+        initial
+          ? { hasSignal: false }
+          : collectGeneographPersonDraftForMatching();
+
+      const matches =
+        initial
+          ? []
+          : findGeneographPersonPossibleMatches(
+              options
+            );
+
+      const selectedStillVisible =
+        matches.some(item =>
+          item.person.id
+          === geneoPersonPossibleMatchState
+            .selectedPersonId
+        );
+
+      if (
+        geneoPersonPossibleMatchState
+          .selectedPersonId
+        && !selectedStillVisible
+      ) {
+        geneoPersonPossibleMatchState
+          .selectedPersonId = '';
+      }
+
+      const header = `
+        <h3>
+          Possible matches<br>
+          <span class="panel-muted">
+            Similar people in Family Tree
+          </span>
+        </h3>
+      `;
+
+      if (!draft.hasSignal) {
+        return `<div class="modal-side-card" data-geneo-person-possible-matches>
+          ${header}
+          <div class="add-person-match-empty">
+            Enter a name, date, or place to check the Family Tree.
+          </div>
+        </div>`;
+      }
+
+      if (!matches.length) {
+        return `<div class="modal-side-card" data-geneo-person-possible-matches>
+          ${header}
+          <div class="add-person-match-empty">
+            No strong matches found in the Family Tree.
+          </div>
+        </div>`;
+      }
+
+      const relative =
+        Boolean(
+          options.relative
+        );
+
+      return `<div class="modal-side-card" data-geneo-person-possible-matches>
+        ${header}
+        <div class="add-person-match-list">
+          ${matches.map(item =>
+            renderAddPersonPossibleMatchRow(
+              item,
+              {
+                context: 'geneograph',
+                selectedPersonId:
+                  geneoPersonPossibleMatchState
+                    .selectedPersonId
+              }
+            )
+          ).join('')}
+        </div>
+        <button
+          class="button primary add-person-match-action"
+          type="button"
+          data-geneo-person-match-action
+          ${selectedStillVisible ? '' : 'disabled'}>
+          ${icon.link}
+          <span>
+            ${relative ? 'Connect selected' : 'Add selected'}
+          </span>
+        </button>
+      </div>`;
+    }
+
+    function bindGeneographPersonPossibleMatchCard(
+      options = {}
+    ) {
+      modalBackdrop
+        ?.querySelectorAll(
+          '[data-geneo-person-possible-match]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              geneoPersonPossibleMatchState
+                .selectedPersonId =
+                  button.dataset
+                    .geneoPersonPossibleMatch
+                  || '';
+
+              refreshGeneographPersonPossibleMatches(
+                options,
+                {
+                  focusSelected: true
+                }
+              );
+            }
+          );
+        });
+
+      modalBackdrop
+        ?.querySelector(
+          '[data-geneo-person-match-action]'
+        )
+        ?.addEventListener(
+          'click',
+          () =>
+            commitGeneographPersonPossibleMatch(
+              options
+            )
+        );
+    }
+
+    function refreshGeneographPersonPossibleMatches(
+      options = {},
+      {
+        focusSelected = false
+      } = {}
+    ) {
+      const current =
+        modalBackdrop?.querySelector(
+          '[data-geneo-person-possible-matches]'
+        );
+
+      if (!current) return;
+
+      const body =
+        modalBackdrop.querySelector(
+          '.modal-body'
+        );
+
+      const scrollTop =
+        body?.scrollTop || 0;
+
+      current.outerHTML =
+        renderGeneographPersonPossibleMatchesCard(
+          options
+        );
+
+      const refreshed =
+        modalBackdrop.querySelector(
+          '[data-geneo-person-possible-matches]'
+        );
+
+      localizeUI(refreshed);
+      bindGeneographPersonPossibleMatchCard(
+        options
+      );
+
+      if (body) {
+        body.scrollTop = scrollTop;
+      }
+
+      if (
+        focusSelected
+        && geneoPersonPossibleMatchState
+          .selectedPersonId
+      ) {
+        refreshed
+          ?.querySelector(
+            `[data-geneo-person-possible-match="${CSS.escape(
+              geneoPersonPossibleMatchState
+                .selectedPersonId
+            )}"]`
+          )
+          ?.focus({
+            preventScroll: true
+          });
+      }
+    }
+
+    function scheduleGeneographPersonPossibleMatchesRefresh(
+      options = {}
+    ) {
+      if (
+        geneoPersonPossibleMatchState
+          .refreshFrame
+      ) {
+        cancelAnimationFrame(
+          geneoPersonPossibleMatchState
+            .refreshFrame
+        );
+      }
+
+      geneoPersonPossibleMatchState
+        .refreshFrame =
+          requestAnimationFrame(() => {
+            geneoPersonPossibleMatchState
+              .refreshFrame = null;
+
+            refreshGeneographPersonPossibleMatches(
+              options
+            );
+          });
+    }
+
     function renderGeneographPersonStatusField(status) {
       return `<div class="field add-person-status-field"><label>Living status</label><button class="add-person-status-button" type="button" id="geneoPersonStatusButton" aria-haspopup="listbox" aria-expanded="false"><span class="add-person-status-current"><span class="add-person-status-dot ${statusDotClass(status)}"></span><span id="geneoPersonStatusLabel">${escapeHtml(status)}</span></span><span class="add-person-status-chevron" aria-hidden="true">${icon.chevron}</span></button><input type="hidden" id="geneoPersonLivingStatus" value="${escapeHtml(status)}"><div class="add-person-status-menu" id="geneoPersonStatusMenu" role="listbox" hidden>${['Living', 'Deceased', 'Unknown'].map(value => `<button class="add-person-status-option ${value === status ? 'active' : ''}" type="button" role="option" aria-selected="${value === status}" data-geneo-person-status="${value}"><span><span class="add-person-status-dot ${statusDotClass(value)}"></span>${value}</span><span data-status-check>${value === status ? icon.check : ''}</span></button>`).join('')}</div></div>`;
     }
@@ -86728,37 +87106,598 @@
             : 'Create a board-local person. You can link them to Family Tree later.';
       const birth = person?.birth || { ...emptyGenealogyDate('Exact date'), placeId: null, placeText: '' };
       const death = person?.death || { ...emptyGenealogyDate('Exact date'), placeId: null, placeText: '' };
-      return `<div class="modal geneo-person-modal" role="dialog" aria-modal="true" aria-labelledby="geneoPersonModalTitle"><div class="modal-header"><div>
-        <h2 id="geneoPersonModalTitle">${escapeHtml(modalTitle)}</h2><p>${escapeHtml(modalDescription)}</p>
-        </div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><form id="geneoPersonForm"><div class="modal-body geneo-person-form">
-        <div class="geneo-person-form-row"><div class="field add-person-select-field"><label for="geneoPersonGender">Gender</label><select class="compact-select add-person-select" id="geneoPersonGender"><option value="male" ${gender === 'male' ? 'selected' : ''}>Male</option><option value="female" ${gender === 'female' ? 'selected' : ''}>Female</option><option value="unknown" ${gender === 'unknown' ? 'selected' : ''}>Unknown</option></select><span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span></div>${renderGeneographPersonStatusField(status)}</div>
-        <div class="geneo-person-form-row"><div class="field"><label for="geneoPersonFirstName">First name</label><input id="geneoPersonFirstName" value="${escapeHtml(names.first)}" placeholder="e.g. Silver" autofocus></div><div class="field"><label for="geneoPersonLastName">Last name</label><input id="geneoPersonLastName" value="${escapeHtml(names.last)}" placeholder="e.g. Whiskerfield"></div></div>
-        <div class="geneo-person-date-row"><div class="geneo-person-date-cell">${renderGenealogyDateField('geneoPersonBirth', 'Birth date', birth, { inputId: 'geneoPersonBirthDate', typeId: 'geneoPersonBirthDateType', placeholder: 'e.g. 14 Feb 1946', defaultDateType: 'Exact date', className: 'genealogy-date-inline-range' })}</div><div class="geneo-person-date-cell" data-geneo-death-date ${status === 'Deceased' ? '' : 'hidden'}>${renderGenealogyDateField('geneoPersonDeath', 'Death date', death, { inputId: 'geneoPersonDeathDate', typeId: 'geneoPersonDeathDateType', placeholder: 'e.g. 20 Oct 2020', defaultDateType: 'Exact date', className: 'genealogy-date-inline-range' })}</div></div>
-        <section class="geneo-person-advanced"><button class="geneo-person-advanced-toggle" type="button" data-geneo-person-advanced aria-expanded="false"><span>Advanced</span><span aria-hidden="true">${icon.chevron}</span></button><div class="geneo-person-advanced-body" data-geneo-person-advanced-body hidden><div class="geneo-person-form-row"><div class="field"><label for="geneoPersonMiddleName">Middle name / Patronym</label><input id="geneoPersonMiddleName" value="${escapeHtml(names.middle)}"></div><div class="field" data-geneo-maiden-name ${gender === 'female' ? '' : 'hidden'}><label for="geneoPersonMaidenName">Maiden surname</label><input id="geneoPersonMaidenName" value="${escapeHtml(names.maiden)}"></div></div><div class="geneo-person-form-row">${renderPlaceCombobox({ id: 'geneoPersonBirthPlace', label: 'Birth place', value: placeInputDisplayValue(birth.placeId, birth.placeText), selectedPlaceId: birth.placeId || '', showAddress: false, placeholder: 'Search or type a place', inputAttrs: `data-place-project-id="${escapeHtml(selectedGeneographBoard()?.projectId || currentProjectId())}"` })}<div data-geneo-death-place ${status === 'Deceased' ? '' : 'hidden'}>${renderPlaceCombobox({ id: 'geneoPersonDeathPlace', label: 'Death place', value: placeInputDisplayValue(death.placeId, death.placeText), selectedPlaceId: death.placeId || '', showAddress: false, placeholder: 'Search or type a place', inputAttrs: `data-place-project-id="${escapeHtml(selectedGeneographBoard()?.projectId || currentProjectId())}"` })}</div></div></div></section>
-      </div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">
-      ${
-        editing
-          ? 'Save changes'
-          : relative
-            ? `Add ${escapeHtml(relativeLabel)}`
-            : 'Add person'
-      }</button></div></form></div>`;
+      return `<div class="modal add-person-modal geneo-person-modal" role="dialog" aria-modal="true" aria-labelledby="geneoPersonModalTitle">
+        <div class="modal-header add-person-header">
+          <div class="add-person-icon" aria-hidden="true">
+            ${icon.people}
+          </div>
+          <div>
+            <h2 id="geneoPersonModalTitle">${escapeHtml(modalTitle)}</h2>
+            <p>${escapeHtml(modalDescription)}</p>
+          </div>
+          <button class="close-button" type="button" data-close aria-label="Close">
+            ${icon.close}
+          </button>
+        </div>
+
+        <form id="geneoPersonForm">
+          <div class="modal-body add-person-grid geneo-person-grid ${editing ? 'is-editing' : ''}">
+            <div class="form-grid geneo-person-form">
+              <section>
+                <h3 class="form-section-title">Identity</h3>
+                <div class="two-col-form">
+                  <div class="field add-person-select-field">
+                    <label for="geneoPersonGender">Gender</label>
+                    <select class="compact-select add-person-select" id="geneoPersonGender">
+                      <option value="male" ${gender === 'male' ? 'selected' : ''}>Male</option>
+                      <option value="female" ${gender === 'female' ? 'selected' : ''}>Female</option>
+                      <option value="unknown" ${gender === 'unknown' ? 'selected' : ''}>Unknown</option>
+                    </select>
+                    <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
+                  </div>
+
+                  ${renderGeneographPersonStatusField(status)}
+
+                  <div class="field">
+                    <label for="geneoPersonFirstName">First name</label>
+                    <input id="geneoPersonFirstName" value="${escapeHtml(names.first)}" placeholder="e.g. Silver" autofocus>
+                  </div>
+
+                  <div class="field">
+                    <label for="geneoPersonLastName">Last name</label>
+                    <input id="geneoPersonLastName" value="${escapeHtml(names.last)}" placeholder="e.g. Whiskerfield">
+                  </div>
+
+                  <div class="field">
+                    <label for="geneoPersonMiddleName">Middle name / Patronym</label>
+                    <input id="geneoPersonMiddleName" value="${escapeHtml(names.middle)}">
+                  </div>
+
+                  <div class="field" data-geneo-maiden-name ${gender === 'female' ? '' : 'hidden'}>
+                    <label for="geneoPersonMaidenName">Maiden name</label>
+                    <input id="geneoPersonMaidenName" value="${escapeHtml(names.maiden)}">
+                  </div>
+                </div>
+              </section>
+
+              <section>
+                <h3 class="form-section-title">Life events</h3>
+                <div class="add-person-life-grid">
+                  <div class="add-person-life-event-block">
+                    ${renderGenealogyDateField('geneoPersonBirth', 'Birth date', birth, {
+                      inputId: 'geneoPersonBirthDate',
+                      typeId: 'geneoPersonBirthDateType',
+                      placeholder: 'e.g. 14 Feb 1946',
+                      defaultDateType: 'Exact date',
+                      className: 'genealogy-date-inline-range'
+                    })}
+
+                    ${renderPlaceCombobox({
+                      id: 'geneoPersonBirthPlace',
+                      label: 'Birth place',
+                      value: placeInputDisplayValue(birth.placeId, birth.placeText),
+                      selectedPlaceId: birth.placeId || '',
+                      showAddress: false,
+                      placeholder: 'Search or type a place',
+                      inputAttrs: `data-place-project-id="${escapeHtml(selectedGeneographBoard()?.projectId || currentProjectId())}"`
+                    })}
+                  </div>
+
+                  <div class="add-person-life-event-block add-person-death-fields" data-geneo-death-fields ${status === 'Deceased' ? '' : 'hidden'}>
+                    ${renderGenealogyDateField('geneoPersonDeath', 'Death date', death, {
+                      inputId: 'geneoPersonDeathDate',
+                      typeId: 'geneoPersonDeathDateType',
+                      placeholder: 'e.g. 20 Oct 2020',
+                      defaultDateType: 'Exact date',
+                      className: 'genealogy-date-inline-range'
+                    })}
+
+                    ${renderPlaceCombobox({
+                      id: 'geneoPersonDeathPlace',
+                      label: 'Death place',
+                      value: placeInputDisplayValue(death.placeId, death.placeText),
+                      selectedPlaceId: death.placeId || '',
+                      showAddress: false,
+                      placeholder: 'Search or type a place',
+                      inputAttrs: `data-place-project-id="${escapeHtml(selectedGeneographBoard()?.projectId || currentProjectId())}"`
+                    })}
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            ${editing ? '' : `
+              <aside class="geneo-person-match-rail">
+                ${renderGeneographPersonPossibleMatchesCard({ relative }, { initial: true })}
+              </aside>
+            `}
+          </div>
+
+          <div class="modal-footer add-person-footer">
+            <div class="add-person-footer-left"></div>
+            <div class="add-person-footer-actions">
+              <button class="button secondary" type="button" data-close>Cancel</button>
+              <button class="button primary" type="submit">
+                ${
+                  editing
+                    ? 'Save changes'
+                    : relative
+                      ? `Add ${escapeHtml(relativeLabel)}`
+                      : 'Add person'
+                }
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>`;
     }
 
     function updateGeneographPersonModalConditionalFields({ clearDeath = false } = {}) {
       const gender = modalBackdrop.querySelector('#geneoPersonGender')?.value || 'unknown';
       const status = modalBackdrop.querySelector('#geneoPersonLivingStatus')?.value || 'Living';
-      const deathDate = modalBackdrop.querySelector('[data-geneo-death-date]');
-      const deathPlace = modalBackdrop.querySelector('[data-geneo-death-place]');
+      const deathFields = modalBackdrop.querySelector('[data-geneo-death-fields]');
       const maiden = modalBackdrop.querySelector('[data-geneo-maiden-name]');
       if (maiden) maiden.hidden = gender !== 'female';
-      if (deathDate) deathDate.hidden = status !== 'Deceased';
-      if (deathPlace) deathPlace.hidden = status !== 'Deceased';
+      if (deathFields) deathFields.hidden = status !== 'Deceased';
       if (clearDeath && status !== 'Deceased') {
         applyGenealogyDateToField('geneoPersonDeath', emptyGenealogyDate('Exact date'));
         const input = modalBackdrop.querySelector('#geneoPersonDeathPlace');
         if (input) { input.value = ''; input.dataset.placeId = ''; }
       }
+    }
+
+    function geneoBoardRepresentationForTreePerson(
+      treePersonId
+    ) {
+      const diagram =
+        selectedGeneographDiagram();
+
+      if (!diagram || !treePersonId) {
+        return {
+          person: null,
+          node: null
+        };
+      }
+
+      const person =
+        diagram.people.find(item =>
+          item.treePersonId === treePersonId
+        ) || null;
+
+      const node =
+        person
+          ? diagram.nodes.find(item =>
+              item.type === 'person'
+              && item.personId === person.id
+            ) || null
+          : null;
+
+      return {
+        person,
+        node
+      };
+    }
+
+    function createGeneographLinkedBoardPerson(
+      treePerson,
+      projectId
+    ) {
+      const gender =
+        String(
+          treePerson?.gender || ''
+        ).toLowerCase();
+
+      const recordedDeath =
+        geneoPersonHasRecordedDeath(
+          treePerson
+        );
+
+      const livingStatus =
+        [
+          'Living',
+          'Deceased',
+          'Unknown'
+        ].includes(
+          treePerson?.livingStatus
+        )
+          ? treePerson.livingStatus
+          : recordedDeath
+            ? 'Deceased'
+            : 'Living';
+
+      return {
+        id:
+          createRuntimeId(
+            'geneo-person'
+          ),
+        treePersonId:
+          treePerson.id,
+        syncState: 'linked',
+        names:
+          normalizeGeneographPersonNames(
+            treePerson
+          ),
+        gender:
+          [
+            'male',
+            'female',
+            'unknown'
+          ].includes(gender)
+            ? gender
+            : 'unknown',
+        livingStatus,
+        birth:
+          normalizeGeneographPersonVital(
+            treePerson.birth,
+            projectId
+          ),
+        death:
+          livingStatus === 'Deceased'
+            ? normalizeGeneographPersonVital(
+                treePerson.death,
+                projectId
+              )
+            : {
+                ...emptyGenealogyDate(
+                  'Exact date'
+                ),
+                placeId: null,
+                placeText: ''
+              },
+        photoId: null,
+        photoCrop: null
+      };
+    }
+
+    function createGeneographPersonNodeForBoardPerson(
+      boardPerson,
+      {
+        relative = null
+      } = {}
+    ) {
+      const diagram =
+        selectedGeneographDiagram();
+
+      if (!diagram || !boardPerson) {
+        return null;
+      }
+
+      const anchorNode =
+        relative?.anchorNodeId
+          ? getGeneographNode(
+              relative.anchorNodeId
+            )
+          : null;
+
+      const defaults =
+        geneoNodeDefaults('person');
+
+      const personCard =
+        geneoEmptyPersonCardOverrides(
+          false
+        );
+
+      const draftNode = {
+        type: 'person',
+        personId: boardPerson.id,
+        width: defaults.width,
+        height: defaults.height,
+        personCard
+      };
+
+      const reference =
+        geneoPersonCardReferenceSize(
+          draftNode,
+          diagram
+        );
+
+      const placement =
+        anchorNode && relative
+          ? geneoRelativeNodePlacement(
+              anchorNode,
+              relative.type,
+              reference.width,
+              reference.height
+            )
+          : {
+              ...nextGeneoObjectPosition(
+                reference.width,
+                reference.height
+              ),
+              parentPanelId: null
+            };
+
+      const node = {
+        id:
+          createRuntimeId(
+            'geneo-node'
+          ),
+        type: 'person',
+        personId: boardPerson.id,
+        x: placement.x,
+        y: placement.y,
+        width: reference.width,
+        height: reference.height,
+        parentPanelId:
+          placement.parentPanelId
+          || null,
+        order:
+          Math.max(
+            0,
+            ...diagram.nodes.map(item =>
+              item.order || 0
+            )
+          ) + 1,
+        visible: true,
+        locked: false,
+        personCard,
+        appearance: {
+          ...defaults.appearance,
+          fill: {
+            color: '#173029',
+            opacity: 100,
+            enabled: true
+          },
+          stroke: {
+            color: '#62D99A',
+            opacity: 100,
+            enabled: true
+          },
+          strokeWidth: 2
+        }
+      };
+
+      diagram.nodes.push(node);
+      return node;
+    }
+
+    function geneoRelativeConnectionEndpoints(
+      anchorNode,
+      relativeNode,
+      relativeType
+    ) {
+      const category =
+        geneoRelativeCategory(
+          relativeType
+        );
+
+      if (category === 'parent') {
+        return {
+          source: {
+            nodeId: relativeNode.id,
+            port: 'bottom'
+          },
+          target: {
+            nodeId: anchorNode.id,
+            port: 'top'
+          }
+        };
+      }
+
+      if (category === 'child') {
+        return {
+          source: {
+            nodeId: anchorNode.id,
+            port: 'bottom'
+          },
+          target: {
+            nodeId: relativeNode.id,
+            port: 'top'
+          }
+        };
+      }
+
+      if (category === 'sibling') {
+        return {
+          source: {
+            nodeId: anchorNode.id,
+            port: 'top'
+          },
+          target: {
+            nodeId: relativeNode.id,
+            port: 'top'
+          }
+        };
+      }
+
+      const relativeIsRight =
+        relativeNode.x >= anchorNode.x;
+
+      return {
+        source: {
+          nodeId: anchorNode.id,
+          port:
+            relativeIsRight
+              ? 'right'
+              : 'left'
+        },
+        target: {
+          nodeId: relativeNode.id,
+          port:
+            relativeIsRight
+              ? 'left'
+              : 'right'
+        }
+      };
+    }
+
+    function commitGeneographPersonPossibleMatch(
+      options = {}
+    ) {
+      const treePerson =
+        getPerson(
+          geneoPersonPossibleMatchState
+            .selectedPersonId
+        );
+
+      const board =
+        selectedGeneographBoard();
+
+      const diagram =
+        selectedGeneographDiagram();
+
+      if (
+        !treePerson
+        || !board
+        || !diagram
+        || treePerson.projectId
+          !== board.projectId
+        || treePerson.deleted
+      ) {
+        showToast(
+          'Select a possible match first.'
+        );
+        return;
+      }
+
+      const relative =
+        options.relative || null;
+
+      const anchorNode =
+        relative?.anchorNodeId
+          ? getGeneographNode(
+              relative.anchorNodeId
+            )
+          : null;
+
+      if (
+        relative
+        && anchorNode?.type !== 'person'
+      ) {
+        showToast(
+          'The original person card is no longer available.'
+        );
+        return;
+      }
+
+      let {
+        person: boardPerson,
+        node
+      } = geneoBoardRepresentationForTreePerson(
+        treePerson.id
+      );
+
+      if (relative && node) {
+        const endpoints =
+          geneoRelativeConnectionEndpoints(
+            anchorNode,
+            node,
+            relative.type
+          );
+
+        const validation =
+          canCreateGeneographConnection(
+            endpoints.source,
+            endpoints.target
+          );
+
+        if (!validation.valid) {
+          showToast(
+            validation.reason
+            || 'This relationship cannot be created.'
+          );
+          return;
+        }
+      }
+
+      const creatingPerson =
+        !boardPerson;
+
+      const creatingNode =
+        !node;
+
+      const connecting =
+        Boolean(relative);
+
+      const mutating =
+        creatingPerson
+        || creatingNode
+        || connecting;
+
+      if (mutating) {
+        geneoPushHistory();
+      }
+
+      if (!boardPerson) {
+        boardPerson =
+          createGeneographLinkedBoardPerson(
+            treePerson,
+            board.projectId
+          );
+
+        diagram.people.push(
+          boardPerson
+        );
+      }
+
+      if (!node) {
+        node =
+          createGeneographPersonNodeForBoardPerson(
+            boardPerson,
+            {
+              relative
+            }
+          );
+      }
+
+      if (!node) return;
+
+      if (relative) {
+        connectGeneographCreatedRelative(
+          anchorNode,
+          node,
+          relative.type
+        );
+      }
+
+      selectGeneographNode(
+        node.id
+      );
+
+      if (mutating) {
+        touchGeneographBoard();
+      }
+
+      closeModal();
+
+      if (
+        !mutating
+        && node
+      ) {
+        renderGeneographEditorPreserveCenter(
+          geneoNodeCenter(node)
+        );
+      } else {
+        renderGeneographEditorPreserveScroll();
+      }
+
+      requestAnimationFrame(() => {
+        main
+          .querySelector(
+            `[data-geneo-node="${CSS.escape(node.id)}"]`
+          )
+          ?.focus({
+            preventScroll: true
+          });
+      });
+
+      const name =
+        connectPersonName(
+          treePerson
+        );
+
+      if (relative) {
+        showToast(
+          `${name} connected as ${geneoRelativeLabel(relative.type)}.`
+        );
+        return;
+      }
+
+      showToast(
+        creatingNode
+          ? `${name} added to board.`
+          : `${name} is already on this board.`
+      );
     }
 
     function saveGeneographPersonModal(
@@ -87157,7 +88096,10 @@
       const statusMenu = modalBackdrop.querySelector('#geneoPersonStatusMenu');
       bindGenealogyDateFields(modalBackdrop);
       bindPlaceComboboxes(modalBackdrop);
-      modalBackdrop.querySelector('#geneoPersonGender')?.addEventListener('change', () => updateGeneographPersonModalConditionalFields());
+      modalBackdrop.querySelector('#geneoPersonGender')?.addEventListener('change', () => {
+        updateGeneographPersonModalConditionalFields();
+        scheduleGeneographPersonPossibleMatchesRefresh(options);
+      });
       statusButton?.addEventListener('click', event => {
         event.stopPropagation();
         const open = Boolean(statusMenu?.hidden);
@@ -87180,14 +88122,47 @@
           if (check) check.innerHTML = selected ? icon.check : '';
         });
         updateGeneographPersonModalConditionalFields({ clearDeath: true });
+        scheduleGeneographPersonPossibleMatchesRefresh(options);
       }));
-      modalBackdrop.querySelector('[data-geneo-person-advanced]')?.addEventListener('click', event => {
-        const button = event.currentTarget;
-        const body = modalBackdrop.querySelector('[data-geneo-person-advanced-body]');
-        const open = button.getAttribute('aria-expanded') !== 'true';
-        button.setAttribute('aria-expanded', open ? 'true' : 'false');
-        if (body) body.hidden = !open;
+
+      bindGeneographPersonPossibleMatchCard(
+        options
+      );
+
+      [
+        '#geneoPersonFirstName',
+        '#geneoPersonMiddleName',
+        '#geneoPersonLastName',
+        '#geneoPersonMaidenName',
+        '#geneoPersonBirthDate',
+        '#geneoPersonDeathDate',
+        '#geneoPersonBirthPlace',
+        '#geneoPersonDeathPlace'
+      ].forEach(selector => {
+        const input =
+          modalBackdrop.querySelector(
+            selector
+          );
+
+        if (!input) return;
+
+        input.addEventListener(
+          'input',
+          () =>
+            scheduleGeneographPersonPossibleMatchesRefresh(
+              options
+            )
+        );
+
+        input.addEventListener(
+          'change',
+          () =>
+            scheduleGeneographPersonPossibleMatchesRefresh(
+              options
+            )
+        );
       });
+
       form?.addEventListener(
         'submit',
         event => {
@@ -87212,6 +88187,21 @@
           : null;
 
       if (personId && !person) return;
+
+      if (
+        geneoPersonPossibleMatchState
+          .refreshFrame
+      ) {
+        cancelAnimationFrame(
+          geneoPersonPossibleMatchState
+            .refreshFrame
+        );
+      }
+
+      geneoPersonPossibleMatchState = {
+        selectedPersonId: '',
+        refreshFrame: null
+      };
 
       openModal(
         renderGeneographPersonModal(
