@@ -3458,7 +3458,7 @@
       padding: 0 12px;
       text-align: left;
       display: grid;
-      grid-template-columns: 18px minmax(0, 1fr) 18px;
+      grid-template-columns: 18px minmax(0, 1fr) auto;
       align-items: center;
       column-gap: 8px;
       justify-content: stretch;
@@ -3513,6 +3513,55 @@
 
     .tree-control-select:hover .tree-control-chevron {
       color: var(--text-primary);
+    }
+    .tree-recent-people-menu {
+      width: min(332px, calc(100vw - 24px));
+      max-height: min(520px, calc(100vh - 24px));
+      overflow-y: auto;
+      padding: 6px;
+    }
+    .tree-recent-people-head {
+      padding: 8px 10px 7px;
+      color: var(--text-tertiary);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .tree-recent-person {
+      width: 100%;
+      min-height: 52px;
+      display: grid !important;
+      grid-template-columns: 38px minmax(0, 1fr) 18px;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 8px !important;
+      text-align: left;
+    }
+    .tree-recent-person .small-avatar {
+      width: 38px;
+      height: 38px;
+      font-size: 13px;
+    }
+    .tree-recent-person > span:nth-child(2) {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+    }
+    .tree-recent-person strong,
+    .tree-recent-person small {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .tree-recent-person strong { color: var(--text-primary); font-size: 13px; }
+    .tree-recent-person small { color: var(--text-tertiary); font-size: 11px; }
+    .tree-recent-current { color: var(--brand-green-300); }
+    .tree-recent-current svg { width: 16px; height: 16px; }
+    .tree-recent-people-empty {
+      padding: 18px 10px;
+      color: var(--text-tertiary);
+      font-size: 13px;
+      text-align: center;
     }
     .tree-icon-button { width: 38px; padding: 0; }
     .tree-icon-button svg,
@@ -3661,6 +3710,44 @@
       box-shadow: 0 0 0 1px rgba(47,174,116,.24), 0 18px 50px rgba(0,0,0,.28);
     }
 
+    .tree-person-card.is-focus-person {
+      box-shadow: inset 0 0 0 1px rgba(98,217,154,.34), 0 12px 36px rgba(0,0,0,.18);
+    }
+
+    .tree-person-card.is-focus-person.selected {
+      box-shadow: 0 0 0 2px rgba(98,217,154,.95), 0 0 0 6px rgba(98,217,154,.16), 0 18px 50px rgba(0,0,0,.28);
+    }
+
+    .tree-card-avatar-stack {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .tree-focus-badge {
+      min-height: 17px;
+      max-width: 100%;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border: 1px solid rgba(98,217,154,.42);
+      border-radius: 999px;
+      background: rgba(47,174,116,.1);
+      color: var(--brand-green-300);
+      padding: 1px 6px;
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .tree-focus-badge svg {
+      width: 11px;
+      height: 11px;
+    }
+
     .tree-person-card.female {
       border-color: rgba(141,108,232,.5);
     }
@@ -3680,7 +3767,7 @@
     .tree-person-card.unknown-gender.selected {
       border-color: var(--brand-green-500);
     }
-    .tree-card-content { min-width: 0; }
+    .tree-card-content { min-width: 0; padding-bottom: 28px; }
     .tree-name { margin: 0 0 6px; font-size: 15px; line-height: 1.18; letter-spacing: .01em; }
     .tree-dates { color: var(--text-secondary); font-size: 13px; display: grid; gap: 2px; margin-bottom: 8px; }
     .status-dot { display: inline-flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 12px; }
@@ -3693,6 +3780,55 @@
     .card-action { width: 26px; height: 26px; border: 0; border-radius: 6px; background: transparent; color: var(--text-secondary); display: grid; place-items: center; }
     .card-action svg { width: 16px; height: 16px; }
     .card-action:hover { background: rgba(255,255,255,.06); color: var(--text-primary); }
+    .card-action:focus-visible {
+      outline: 2px solid var(--brand-green-300);
+      outline-offset: 1px;
+    }
+    .tree-focus-control {
+      position: absolute;
+      z-index: 24;
+      width: 92px;
+      height: 32px;
+      padding: 0 10px;
+      border: 1px solid var(--border-default);
+      border-radius: 8px;
+      background: rgba(26,32,31,.98);
+      color: var(--text-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+      box-shadow: 0 6px 18px rgba(0,0,0,.26);
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .tree-focus-control::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 72%;
+      width: 2px;
+      height: 8px;
+      background: rgba(242,244,243,.72);
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+    .tree-focus-control svg {
+      width: 14px;
+      height: 14px;
+      flex: 0 0 14px;
+    }
+    .tree-focus-control:hover {
+      border-color: var(--border-strong);
+      background: var(--surface-card-hover);
+    }
+    .tree-focus-control:focus-visible {
+      outline: 2px solid var(--brand-green-300);
+      outline-offset: 2px;
+    }
     .add-parent-card {
       width: 150px;
       min-height: 110px;
@@ -3802,6 +3938,51 @@
       order: 1;
       margin-left: auto;
     }
+    .tree-person-hero-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tree-person-hero-focus,
+    .tree-focus-status {
+      min-height: 30px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: var(--radius-sm);
+      padding: 0 8px;
+      font-size: 12px;
+      font-weight: 750;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .tree-person-hero-focus {
+      border: 1px solid var(--border-default);
+      background: var(--surface-card);
+      color: var(--text-secondary);
+    }
+    .tree-person-hero-focus:hover {
+      border-color: rgba(98,217,154,.38);
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
+    }
+    .tree-person-hero-focus:focus-visible {
+      outline: 2px solid var(--brand-green-300);
+      outline-offset: 2px;
+    }
+    .tree-focus-status {
+      border: 1px solid rgba(98,217,154,.28);
+      background: rgba(47,174,116,.10);
+      color: var(--brand-green-300);
+    }
+    .tree-person-hero-focus svg,
+    .tree-focus-status svg {
+      width: 15px;
+      height: 15px;
+    }
     .tree-person-hero-profile {
       border: 1px solid transparent;
       background: transparent;
@@ -3823,6 +4004,55 @@
       outline: none;
     }
     .tree-person-hero-profile svg { width: 16px; height: 16px; display: block; }
+    .tree-settings-modal { width: min(620px, 100%); }
+    .tree-settings-body { display: grid; gap: var(--space-5); }
+    .tree-settings-focus {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      min-height: 44px;
+      border-bottom: 1px solid var(--border-default);
+      padding-bottom: var(--space-3);
+      color: var(--text-secondary);
+    }
+    .tree-settings-focus strong {
+      color: var(--text-primary);
+      text-align: right;
+    }
+    .tree-settings-generation-grid { align-items: start; }
+    .tree-settings-generation-grid .field-help {
+      display: block;
+      margin-top: 6px;
+      color: var(--text-tertiary);
+      font-size: 12px;
+    }
+    .tree-settings-check {
+      min-height: 54px;
+      display: grid;
+      grid-template-columns: 20px minmax(0,1fr);
+      align-items: start;
+      gap: 10px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,.018);
+      padding: 12px;
+      cursor: pointer;
+    }
+    .tree-settings-check:hover { border-color: var(--border-strong); }
+    .tree-settings-check:focus-within {
+      border-color: var(--brand-green-300);
+      box-shadow: 0 0 0 2px rgba(98,217,154,.14);
+    }
+    .tree-settings-check input {
+      width: 18px;
+      height: 18px;
+      margin: 1px 0 0;
+      accent-color: var(--brand-green-500);
+    }
+    .tree-settings-check span { display: grid; gap: 4px; }
+    .tree-settings-check strong { color: var(--text-primary); font-size: 13px; }
+    .tree-settings-check small { color: var(--text-tertiary); font-size: 12px; line-height: 1.4; }
     .tree-person-hero-main {
       position: relative;
       z-index: 1;
@@ -6413,6 +6643,28 @@
       display: grid;
       gap: var(--space-4);
       min-width: 0;
+    }
+    .add-person-parent-family {
+      display: grid;
+      gap: var(--space-3);
+      min-width: 0;
+      border-top: 1px solid var(--border-default);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-4) 0;
+    }
+    .add-person-parent-family .form-section-title {
+      margin: 0;
+    }
+    .add-person-parent-family .field-help {
+      display: block;
+      margin-top: 6px;
+      color: var(--text-tertiary);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .connect-person-left .add-person-parent-family {
+      border-top: 0;
+      padding-top: 0;
     }
     .add-person-life-event-block.add-person-death-fields {
       display: grid;
@@ -30664,6 +30916,90 @@
       'Tree Settings':
         'Настройки древа',
 
+      'Focus':
+        'Фокус',
+
+      'Current focus':
+        'Текущий фокус',
+
+      'Current focus person':
+        'Текущий основной человек',
+
+      'Focus person':
+        'Основной человек',
+
+      'Focus branch':
+        'Показать ветвь',
+
+      'Recently selected people':
+        'Недавно выбранные люди',
+
+      'No recently selected people':
+        'Недавно выбранных людей нет',
+
+      'Selected':
+        'Выбрано',
+
+      'Return to main person':
+        'Вернуться к основному человеку',
+
+      'Parent family':
+        'Родительская семья',
+
+      'Shared parent family':
+        'Общая родительская семья',
+
+      'Family for this child':
+        'Семья для этого ребёнка',
+
+      'Select a parent family':
+        'Выберите родительскую семью',
+
+      'No parent family available':
+        'Нет доступной родительской семьи',
+
+      'The new sibling will be added to this existing parent family.':
+        'Новый брат или сестра будет добавлен в эту родительскую семью.',
+
+      'This determines which parent or partner family receives the child.':
+        'Здесь выбирается семья родителя или партнёров, в которую будет добавлен ребёнок.',
+
+      'Choose the parent family the siblings share.':
+        'Выберите общую родительскую семью для братьев и сестёр.',
+
+      'Choose the family this child will be added to.':
+        'Выберите семью, в которую будет добавлен ребёнок.',
+
+      'Add or connect a parent before creating a sibling.':
+        'Сначала добавьте или свяжите родителя, затем создайте брата или сестру.',
+
+      'The selected parent family is no longer available.':
+        'Выбранная родительская семья больше недоступна.',
+
+      'Choose how much of the branch around the focus person is shown.':
+        'Выберите, какая часть ветви вокруг основного человека будет показана.',
+
+      'Ancestor generations':
+        'Поколения предков',
+
+      'Descendant generations':
+        'Поколения потомков',
+
+      '0–6 generations':
+        '0–6 поколений',
+
+      '0–5 generations':
+        '0–5 поколений',
+
+      'Show cousins of the focus person':
+        'Показывать двоюродных родственников основного человека',
+
+      'Collateral branches are limited to cousins of the current focus person.':
+        'Боковые ветви ограничены двоюродными родственниками текущего основного человека.',
+
+      'Apply settings':
+        'Применить настройки',
+
       'Family tree canvas':
         'Холст семейного древа',
 
@@ -37282,7 +37618,7 @@
     */
     const sampleData = {
       projects: [
-        { id: 'p1', name: 'Whiskerfield Family Tree', created: '01 May 2026', modified: '24 May 2026', modifiedAt: '2026-05-24T10:42:00Z', status: 'Local project', cover: 'paper', files: 5, notes: 7, desc: 'Research into the Whiskerfield and Purrington family lines from Pawford, Meowbridge, Fishmarket Row, and Old Cattery.' }
+        { id: 'p1', name: 'Whiskerfield Family Tree', defaultPersonId: 'silver', created: '01 May 2026', modified: '24 May 2026', modifiedAt: '2026-05-24T10:42:00Z', status: 'Local project', cover: 'paper', files: 5, notes: 7, desc: 'Research into the Whiskerfield and Purrington family lines from Pawford, Meowbridge, Fishmarket Row, and Old Cattery.' }
       ],
       projectContinuation: {
         projectId: 'p1',
@@ -41901,6 +42237,7 @@
       treeView: 'Classic',
       treeZoom: 100,
       selectedPersonId: 'silver',
+      treeProjectViews: {},
       treeCenterTargetId: 'silver',
       treeInspectorCollapsed: false,
       inspectorSections: { insights: false, timeline: false, relationships: false, photos: false, archive: false, notes: false, record: false },
@@ -42218,6 +42555,453 @@
       const projectFamilies = getTreeFamiliesFromSampleData(currentFamilyTreeProjectId());
       if (projectFamilies?.length) return projectFamilies;
       return getTreeFamiliesFromSampleData(DEMO_TREE_PROJECT_ID);
+    }
+
+    const TREE_ANCESTOR_GENERATION_MIN = 0;
+    const TREE_ANCESTOR_GENERATION_MAX = 6;
+    const TREE_DESCENDANT_GENERATION_MIN = 0;
+    const TREE_DESCENDANT_GENERATION_MAX = 5;
+
+    function treeDefaultPersonId(projectId = currentFamilyTreeProjectId()) {
+      const project = sampleData.projects.find(item => item.id === projectId);
+      const people = getPeople(projectId);
+      return people.some(person => person.id === project?.defaultPersonId)
+        ? project.defaultPersonId
+        : people[0]?.id || '';
+    }
+
+    function treeProjectViewState(projectId = currentFamilyTreeProjectId()) {
+      if (!state.treeProjectViews[projectId]) {
+        const defaultPersonId = treeDefaultPersonId(projectId);
+        state.treeProjectViews[projectId] = {
+          focusPersonId: defaultPersonId,
+          ancestorGenerations: 4,
+          descendantGenerations: 3,
+          showCousins: true,
+          recentPersonIds: defaultPersonId ? [defaultPersonId] : []
+        };
+      }
+
+      const view = state.treeProjectViews[projectId];
+      view.recentPersonIds = Array.isArray(view.recentPersonIds)
+        ? view.recentPersonIds
+        : [];
+
+      return view;
+    }
+
+    function rememberTreeSelectedPerson(
+      personId,
+      projectId = currentFamilyTreeProjectId()
+    ) {
+      const person = getPerson(personId);
+      if (!person || person.projectId !== projectId) return [];
+
+      const view = treeProjectViewState(projectId);
+      view.recentPersonIds = [
+        personId,
+        ...view.recentPersonIds.filter(id => id !== personId)
+      ]
+        .filter(id => {
+          const candidate = getPerson(id);
+          return candidate && candidate.projectId === projectId && !candidate.deleted;
+        })
+        .slice(0, 10);
+
+      return view.recentPersonIds;
+    }
+
+    function treeRecentPeople(projectId = currentFamilyTreeProjectId()) {
+      const view = treeProjectViewState(projectId);
+      return view.recentPersonIds
+        .map(id => getPerson(id))
+        .filter(person => person && person.projectId === projectId && !person.deleted)
+        .slice(0, 10);
+    }
+
+    function resolveTreeFocusPersonId(people, projectId = currentFamilyTreeProjectId()) {
+      const ids = new Set((people || []).map(person => person.id));
+      const view = treeProjectViewState(projectId);
+      if (!ids.has(view.focusPersonId)) {
+        view.focusPersonId = ids.has(treeDefaultPersonId(projectId))
+          ? treeDefaultPersonId(projectId)
+          : people?.[0]?.id || '';
+      }
+      return view.focusPersonId;
+    }
+
+    function setTreeFocusPerson(personId, { center = true } = {}) {
+      const people = currentTreePeople();
+      if (!people.some(person => person.id === personId)) return false;
+      const view = treeProjectViewState();
+      view.focusPersonId = personId;
+      state.selectedPersonId = personId;
+      rememberTreeSelectedPerson(personId);
+      state.treeInspectorCollapsed = false;
+      state.treeCenterTargetId = center ? personId : '';
+      renderFamilyTree();
+      return true;
+    }
+
+    function focusTreeBranchForRelative(personId) {
+      if (state.activeModule !== 'Family Tree' || !getPerson(personId)) return;
+
+      const view = treeProjectViewState();
+      view.focusPersonId = personId;
+      state.selectedPersonId = personId;
+      state.treeInspectorCollapsed = false;
+      state.treeCenterTargetId = personId;
+      rememberTreeSelectedPerson(personId);
+      renderFamilyTree();
+    }
+
+    function openTreeRecentPeopleMenu(anchor) {
+      closeMenu();
+      if (!anchor) return;
+      anchor.setAttribute('aria-expanded', 'true');
+
+      const people = treeRecentPeople();
+      const rect = anchor.getBoundingClientRect();
+      const menu = document.createElement('div');
+      menu.className = 'menu-popover tree-recent-people-menu';
+      menu.id = 'projectMenu';
+      menu.setAttribute('role', 'menu');
+      menu.setAttribute('aria-label', 'Recently selected people');
+      menu.style.top = `${rect.bottom + 6}px`;
+      menu.style.left = `${Math.max(12, Math.min(rect.left, window.innerWidth - 344))}px`;
+      menu.innerHTML = `<div class="tree-recent-people-head">Recently selected people</div>
+        ${people.length
+          ? people.map(person => `<button class="tree-recent-person" type="button" role="menuitem" data-tree-recent-person="${escapeHtml(person.id)}">
+              ${renderPersonAvatar(person, 'small-avatar')}
+              <span><strong>${escapeHtml(connectPersonName(person))}</strong><small>${escapeHtml(connectPersonLifeLine(person))}</small></span>
+              ${person.id === state.selectedPersonId ? `<span class="tree-recent-current" aria-label="Selected">${icon.check}</span>` : ''}
+            </button>`).join('')
+          : `<div class="tree-recent-people-empty">No recently selected people</div>`}`;
+
+      document.body.appendChild(menu);
+      localizeUI(menu, { suppressObserverReplay: true });
+
+      menu.querySelectorAll('[data-tree-recent-person]').forEach(button => {
+        button.addEventListener('click', () => {
+          const personId = button.dataset.treeRecentPerson;
+          closeMenu();
+          if (!getPerson(personId)) return;
+          const view = treeProjectViewState();
+          const projection = buildFamilyTreeProjection(
+            currentTreePeople(),
+            currentTreeFamilies(),
+            {
+              focusPersonId: view.focusPersonId,
+              ancestorGenerations: view.ancestorGenerations,
+              descendantGenerations: view.descendantGenerations,
+              showCousins: view.showCousins
+            }
+          );
+          if (!projection.visiblePersonIds.has(personId)) {
+            view.focusPersonId = personId;
+          }
+          state.selectedPersonId = personId;
+          state.treeInspectorCollapsed = false;
+          state.treeCenterTargetId = personId;
+          rememberTreeSelectedPerson(personId);
+          renderFamilyTree();
+        });
+      });
+
+      bindMenuLifecycle(anchor);
+      requestAnimationFrame(() => menu.querySelector('[role="menuitem"]')?.focus({ preventScroll: true }));
+    }
+
+    function openTreeSettingsModal() {
+      const projectId = currentFamilyTreeProjectId();
+      const view = treeProjectViewState(projectId);
+      const focusPerson = getPerson(view.focusPersonId);
+
+      openModal(`<div class="modal tree-settings-modal" role="dialog" aria-modal="true" aria-labelledby="treeSettingsTitle">
+        <div class="modal-header">
+          <div>
+            <h2 id="treeSettingsTitle">Tree Settings</h2>
+            <p>Choose how much of the branch around the focus person is shown.</p>
+          </div>
+          <button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button>
+        </div>
+        <form id="treeSettingsForm">
+          <div class="modal-body tree-settings-body">
+            <div class="tree-settings-focus">
+              <span>Focus person</span>
+              <strong>${escapeHtml(focusPerson?.names?.display || focusPerson?.name || 'Unknown')}</strong>
+            </div>
+            <div class="two-col-form tree-settings-generation-grid">
+              <div class="field">
+                <label for="treeAncestorGenerations">Ancestor generations</label>
+                <input id="treeAncestorGenerations" type="number" min="${TREE_ANCESTOR_GENERATION_MIN}" max="${TREE_ANCESTOR_GENERATION_MAX}" step="1" value="${view.ancestorGenerations}">
+                <span class="field-help">${TREE_ANCESTOR_GENERATION_MIN}–${TREE_ANCESTOR_GENERATION_MAX} generations</span>
+              </div>
+              <div class="field">
+                <label for="treeDescendantGenerations">Descendant generations</label>
+                <input id="treeDescendantGenerations" type="number" min="${TREE_DESCENDANT_GENERATION_MIN}" max="${TREE_DESCENDANT_GENERATION_MAX}" step="1" value="${view.descendantGenerations}">
+                <span class="field-help">${TREE_DESCENDANT_GENERATION_MIN}–${TREE_DESCENDANT_GENERATION_MAX} generations</span>
+              </div>
+            </div>
+            <label class="tree-settings-check">
+              <input id="treeShowCousins" type="checkbox" ${view.showCousins ? 'checked' : ''}>
+              <span>
+                <strong>Show cousins of the focus person</strong>
+                <small>Collateral branches are limited to cousins of the current focus person.</small>
+              </span>
+            </label>
+          </div>
+          <div class="modal-footer">
+            <button class="button secondary" type="button" data-close>Cancel</button>
+            <button class="button primary" type="submit">Apply settings</button>
+          </div>
+        </form>
+      </div>`);
+
+      modalBackdrop.querySelector('#treeSettingsForm')?.addEventListener('submit', event => {
+        event.preventDefault();
+        const ancestorValue = Number(modalBackdrop.querySelector('#treeAncestorGenerations')?.value);
+        const descendantValue = Number(modalBackdrop.querySelector('#treeDescendantGenerations')?.value);
+        view.ancestorGenerations = clampNumber(
+          Number.isFinite(ancestorValue) ? Math.round(ancestorValue) : view.ancestorGenerations,
+          TREE_ANCESTOR_GENERATION_MIN,
+          TREE_ANCESTOR_GENERATION_MAX
+        );
+        view.descendantGenerations = clampNumber(
+          Number.isFinite(descendantValue) ? Math.round(descendantValue) : view.descendantGenerations,
+          TREE_DESCENDANT_GENERATION_MIN,
+          TREE_DESCENDANT_GENERATION_MAX
+        );
+        view.showCousins = Boolean(modalBackdrop.querySelector('#treeShowCousins')?.checked);
+        state.treeCenterTargetId = view.focusPersonId;
+        closeModal();
+        renderFamilyTree();
+      });
+    }
+
+    function deriveTreeBranchRoles(people, families, focusPersonId, visiblePersonIds = null) {
+      const projectPersonIds = new Set((people || []).map(person => person.id));
+      const visibleIds = visiblePersonIds instanceof Set
+        ? new Set([...visiblePersonIds].filter(id => projectPersonIds.has(id)))
+        : new Set(projectPersonIds);
+      const parentFamiliesByChild = new Map();
+      const childFamiliesByParent = new Map();
+      const partnerIdsByPerson = new Map();
+
+      (families || []).forEach(family => {
+        const partners = [family.left, family.right].filter(id => projectPersonIds.has(id));
+        const children = (family.children || []).filter(id => projectPersonIds.has(id));
+
+        children.forEach(childId => {
+          if (!parentFamiliesByChild.has(childId)) parentFamiliesByChild.set(childId, []);
+          parentFamiliesByChild.get(childId).push(family);
+        });
+
+        partners.forEach(parentId => {
+          if (!childFamiliesByParent.has(parentId)) childFamiliesByParent.set(parentId, []);
+          childFamiliesByParent.get(parentId).push(family);
+          if (!partnerIdsByPerson.has(parentId)) partnerIdsByPerson.set(parentId, new Set());
+          partners.filter(id => id !== parentId).forEach(id => partnerIdsByPerson.get(parentId).add(id));
+        });
+      });
+
+      const collectRelatives = (startId, nextIds) => {
+        const collected = new Set();
+        const queue = startId ? [startId] : [];
+        const visited = new Set(queue);
+        while (queue.length) {
+          const personId = queue.shift();
+          nextIds(personId).forEach(relativeId => {
+            if (!projectPersonIds.has(relativeId) || visited.has(relativeId)) return;
+            visited.add(relativeId);
+            collected.add(relativeId);
+            queue.push(relativeId);
+          });
+        }
+        return collected;
+      };
+
+      const directAncestorIds = collectRelatives(focusPersonId, personId =>
+        (parentFamiliesByChild.get(personId) || [])
+          .flatMap(family => [family.left, family.right])
+          .filter(Boolean)
+      );
+      const directDescendantIds = collectRelatives(focusPersonId, personId =>
+        (childFamiliesByParent.get(personId) || [])
+          .flatMap(family => family.children || [])
+          .filter(Boolean)
+      );
+      const lineageRelativeIds = collectRelatives(focusPersonId, personId => [
+        ...(parentFamiliesByChild.get(personId) || [])
+          .flatMap(family => [family.left, family.right])
+          .filter(Boolean),
+        ...(childFamiliesByParent.get(personId) || [])
+          .flatMap(family => family.children || [])
+          .filter(Boolean)
+      ]);
+      const focusPartnerIds = new Set(partnerIdsByPerson.get(focusPersonId) || []);
+      const visibleRelativePartnerIds = new Set();
+      lineageRelativeIds.forEach(personId => {
+        if (!visibleIds.has(personId)) return;
+        (partnerIdsByPerson.get(personId) || []).forEach(partnerId => {
+          if (visibleIds.has(partnerId)) visibleRelativePartnerIds.add(partnerId);
+        });
+      });
+
+      const placeholderPersonIds = new Set([focusPersonId, ...directAncestorIds]);
+      [...placeholderPersonIds].forEach(id => {
+        if (!visibleIds.has(id)) placeholderPersonIds.delete(id);
+      });
+
+      const focusActionPersonIds = new Set([
+        ...directAncestorIds,
+        ...directDescendantIds,
+        ...focusPartnerIds,
+        ...visibleRelativePartnerIds
+      ]);
+      focusActionPersonIds.delete(focusPersonId);
+      [...focusActionPersonIds].forEach(id => {
+        if (!visibleIds.has(id)) focusActionPersonIds.delete(id);
+      });
+
+      const parentPresenceByPerson = new Map();
+      placeholderPersonIds.forEach(personId => {
+        const parentFamilies = parentFamiliesByChild.get(personId) || [];
+        parentPresenceByPerson.set(personId, {
+          father: parentFamilies.some(family => Boolean(family.left)),
+          mother: parentFamilies.some(family => Boolean(family.right))
+        });
+      });
+
+      return {
+        directAncestorIds,
+        directDescendantIds,
+        lineageRelativeIds,
+        focusPartnerIds,
+        visibleRelativePartnerIds,
+        placeholderPersonIds,
+        focusActionPersonIds,
+        parentPresenceByPerson
+      };
+    }
+
+    function buildFamilyTreeProjection(people, families, options = {}) {
+      const peopleById = new Map((people || []).map(person => [person.id, person]));
+      const familyById = new Map((families || []).map(family => [family.id, family]));
+      const parentFamiliesByChild = new Map();
+      const childFamiliesByParent = new Map();
+
+      familyById.forEach(family => {
+        (family.children || []).forEach(childId => {
+          if (!parentFamiliesByChild.has(childId)) parentFamiliesByChild.set(childId, []);
+          parentFamiliesByChild.get(childId).push(family);
+        });
+        [family.left, family.right].filter(Boolean).forEach(parentId => {
+          if (!childFamiliesByParent.has(parentId)) childFamiliesByParent.set(parentId, []);
+          childFamiliesByParent.get(parentId).push(family);
+        });
+      });
+
+      const focusPersonId = peopleById.has(options.focusPersonId)
+        ? options.focusPersonId
+        : people?.[0]?.id || '';
+      const ancestorGenerations = clampNumber(
+        Number(options.ancestorGenerations) || 0,
+        TREE_ANCESTOR_GENERATION_MIN,
+        TREE_ANCESTOR_GENERATION_MAX
+      );
+      const descendantGenerations = clampNumber(
+        Number(options.descendantGenerations) || 0,
+        TREE_DESCENDANT_GENERATION_MIN,
+        TREE_DESCENDANT_GENERATION_MAX
+      );
+      const visiblePersonIds = new Set(focusPersonId ? [focusPersonId] : []);
+      const visibleFamilyIds = new Set();
+
+      const includeFamily = (family, { children = true } = {}) => {
+        if (!family) return;
+        visibleFamilyIds.add(family.id);
+        [family.left, family.right].filter(Boolean).forEach(id => visiblePersonIds.add(id));
+        if (children) (family.children || []).forEach(id => visiblePersonIds.add(id));
+      };
+
+      let ancestorFrontier = focusPersonId ? [focusPersonId] : [];
+      for (let depth = 1; depth <= ancestorGenerations && ancestorFrontier.length; depth += 1) {
+        const next = [];
+        ancestorFrontier.forEach(childId => {
+          (parentFamiliesByChild.get(childId) || []).forEach(family => {
+            includeFamily(family, { children: depth === 1 });
+            [family.left, family.right].filter(Boolean).forEach(parentId => next.push(parentId));
+          });
+        });
+        ancestorFrontier = [...new Set(next)];
+      }
+
+      let descendantFrontier = focusPersonId ? [focusPersonId] : [];
+      for (let depth = 1; depth <= descendantGenerations && descendantFrontier.length; depth += 1) {
+        const next = [];
+        descendantFrontier.forEach(parentId => {
+          (childFamiliesByParent.get(parentId) || []).forEach(family => {
+            includeFamily(family);
+            (family.children || []).forEach(childId => next.push(childId));
+          });
+        });
+        descendantFrontier = [...new Set(next)];
+      }
+
+      (childFamiliesByParent.get(focusPersonId) || []).forEach(family => {
+        includeFamily(family, { children: descendantGenerations > 0 });
+      });
+
+      if (options.showCousins && ancestorGenerations >= 2) {
+        const focusParentIds = new Set(
+          (parentFamiliesByChild.get(focusPersonId) || [])
+            .flatMap(family => [family.left, family.right])
+            .filter(Boolean)
+        );
+
+        focusParentIds.forEach(parentId => {
+          (parentFamiliesByChild.get(parentId) || []).forEach(grandparentFamily => {
+            includeFamily(grandparentFamily);
+            (grandparentFamily.children || [])
+              .filter(relativeId => relativeId !== parentId)
+              .forEach(auntOrUncleId => {
+                (childFamiliesByParent.get(auntOrUncleId) || []).forEach(cousinFamily => {
+                  includeFamily(cousinFamily);
+                });
+              });
+          });
+        });
+      }
+
+      const projectedFamilies = (families || [])
+        .filter(family => visibleFamilyIds.has(family.id))
+        .map(family => ({
+          ...family,
+          children: (family.children || []).filter(childId => visiblePersonIds.has(childId))
+        }));
+      const coherentPersonIds = new Set(visiblePersonIds);
+      projectedFamilies.forEach(family => {
+        [family.left, family.right, ...(family.children || [])]
+          .filter(Boolean)
+          .forEach(id => coherentPersonIds.add(id));
+      });
+
+      const branchRoles = deriveTreeBranchRoles(
+        people,
+        families,
+        focusPersonId,
+        coherentPersonIds
+      );
+
+      return {
+        focusPersonId,
+        people: (people || []).filter(person => coherentPersonIds.has(person.id)),
+        families: projectedFamilies,
+        visiblePersonIds: coherentPersonIds,
+        visibleFamilyIds,
+        branchRoles
+      };
     }
 
     function currentPeopleRecords() {
@@ -42946,7 +43730,12 @@
       popover.style.top = `${rect.bottom + 8}px`;
       popover.style.left = `${Math.min(window.innerWidth - width - 12, Math.max(12, rect.right - width))}px`;
       bindTopbarPopover(popover, type);
-      localizeUI(popover);
+      localizeUI(
+        popover,
+        {
+          suppressObserverReplay: true
+        }
+      );
       setTimeout(() => document.addEventListener('click', closeTopbarPopoverOnOutside), 0);
     }
 
@@ -44379,6 +45168,9 @@
     const TREE_CONNECTOR_RAIL_OFFSET = 56;
     const PLACEHOLDER_W = 150;
     const PLACEHOLDER_H = 110;
+    const TREE_FOCUS_CONTROL_W = 92;
+    const TREE_FOCUS_CONTROL_H = 32;
+    const TREE_FOCUS_CONTROL_GAP = 8;
 
     function personById(id) {
       const centralPerson = getPerson(id);
@@ -44386,8 +45178,11 @@
       return currentTreePeople()[0] || null;
     }
 
-    function calculateTreeLayout(people, families) {
-      const FOCAL_ID = 'silver';
+    function calculateTreeLayout(people, families, focusPersonId = '', options = {}) {
+      const focalPersonId = people.some(person => person.id === focusPersonId)
+        ? focusPersonId
+        : people[0]?.id || '';
+      const branchRoles = options.branchRoles || {};
       const peopleByRawId = new Map(people.map((person, index) => [person.id, { ...person, sourceIndex: index }]));
 
       // --- Indexes ---
@@ -44403,7 +45198,7 @@
         });
       });
 
-      // --- Generation assignment (Silver=0, ancestors negative, descendants positive) ---
+      // --- Generation assignment around the active focus person ---
       const generationByPerson = new Map();
       const visitGenQueue = [];
       const seedGen = (id, gen) => {
@@ -44412,7 +45207,7 @@
         generationByPerson.set(id, gen);
         visitGenQueue.push(id);
       };
-      seedGen(peopleByRawId.has(FOCAL_ID) ? FOCAL_ID : people[0]?.id, 0);
+      seedGen(focalPersonId, 0);
       while (visitGenQueue.length) {
         const id = visitGenQueue.shift();
         const gen = generationByPerson.get(id);
@@ -44432,6 +45227,14 @@
 
       // --- Placeholders ---
       const missingParentRoles = personId => {
+        if (!branchRoles.placeholderPersonIds?.has(personId)) return [];
+        const canonicalPresence = branchRoles.parentPresenceByPerson?.get(personId);
+        if (canonicalPresence) {
+          const missing = [];
+          if (!canonicalPresence.father) missing.push('father');
+          if (!canonicalPresence.mother) missing.push('mother');
+          return missing;
+        }
         const fam = parentFamilyByChild.get(personId);
         const missing = [];
         if (!fam) return ['father', 'mother'];
@@ -44467,7 +45270,10 @@
         const fH = fatherId ? ancestorHalves(fatherId) : { left: PLACEHOLDER_W / 2, right: PLACEHOLDER_W / 2 };
         const mH = motherId ? ancestorHalves(motherId) : { left: PLACEHOLDER_W / 2, right: PLACEHOLDER_W / 2 };
         // Distance between father and mother card centers must fit both their inner ancestor extents
-        const dist = Math.max(TREE_CARD_W + TREE_SPOUSE_GAP, fH.right + TREE_SPOUSE_GAP + mH.left);
+        const dist = Math.max(
+          TREE_CARD_W + TREE_SPOUSE_GAP,
+          fH.right + TREE_SPOUSE_GAP + mH.left
+        );
         // person is centered between father and mother
         const left = Math.max(selfHalf, dist / 2 + fH.left);
         const right = Math.max(selfHalf, dist / 2 + mH.right);
@@ -44519,15 +45325,18 @@
         const h = ancestorHalves(personId);
         if (!h.fam) return;
         const parentGen = gen - 1;
-        const fatherCenter = centerX - (h.dist || 0) / 2;
-        const motherCenter = centerX + (h.dist || 0) / 2;
+        const compactDistance = TREE_CARD_W + TREE_SPOUSE_GAP;
+        const requiredDistance = Math.max(compactDistance, h.dist || compactDistance);
+        const branchOffset = Math.max(0, requiredDistance - compactDistance) / 2;
+        const fatherCenter = centerX - compactDistance / 2;
+        const motherCenter = centerX + compactDistance / 2;
         if (h.fatherId && !placedIds.has(h.fatherId)) {
           placePerson(h.fatherId, fatherCenter, parentGen);
-          placeAncestors(h.fatherId, fatherCenter, parentGen);
+          placeAncestors(h.fatherId, fatherCenter - branchOffset, parentGen);
         }
         if (h.motherId && !placedIds.has(h.motherId)) {
           placePerson(h.motherId, motherCenter, parentGen);
-          placeAncestors(h.motherId, motherCenter, parentGen);
+          placeAncestors(h.motherId, motherCenter + branchOffset, parentGen);
         }
         familyAnchors[h.fam.id] = familyAnchors[h.fam.id] || { family: h.fam, generation: parentGen };
       }
@@ -44535,20 +45344,35 @@
       function placeDescendants(personId, centerX, gen) {
         const fams = childFamiliesByParent.get(personId) || [];
         const childFam = fams.find(f => (f.children || []).length) || null;
-        if (!childFam) return;
+        if (!childFam) {
+          placeAncestors(personId, centerX, gen);
+          return;
+        }
         const spouseId = childFam.left === personId ? childFam.right : childFam.left;
         let pairCenter = centerX;
         if (spouseId && peopleByRawId.has(spouseId)) {
-          // Spouse distance widened to fit spouse's own ancestor block inner half
           const selfH = ancestorHalves(personId);
           const spouseH = ancestorHalves(spouseId);
-          const pairDist = Math.max(TREE_CARD_W + TREE_SPOUSE_GAP, selfH.right + TREE_SPOUSE_GAP + spouseH.left);
-          const spouseCenter = centerX + pairDist;
+          const spouseIsLeft = childFam.right === personId;
+          const requiredAncestorDistance = spouseIsLeft
+            ? spouseH.right + TREE_SPOUSE_GAP + selfH.left
+            : selfH.right + TREE_SPOUSE_GAP + spouseH.left;
+          const pairDist = TREE_CARD_W + TREE_SPOUSE_GAP;
+          const spouseCenter = spouseIsLeft ? centerX - pairDist : centerX + pairDist;
           if (!placedIds.has(spouseId)) {
             placePerson(spouseId, spouseCenter, gen);
-            placeAncestors(spouseId, spouseCenter, gen);
+          }
+          const branchOffset = Math.max(0, requiredAncestorDistance - pairDist) / 2;
+          if (spouseIsLeft) {
+            placeAncestors(spouseId, spouseCenter - branchOffset, gen);
+            placeAncestors(personId, centerX + branchOffset, gen);
+          } else {
+            placeAncestors(personId, centerX - branchOffset, gen);
+            placeAncestors(spouseId, spouseCenter + branchOffset, gen);
           }
           pairCenter = (centerX + spouseCenter) / 2;
+        } else {
+          placeAncestors(personId, centerX, gen);
         }
         familyAnchors[childFam.id] = familyAnchors[childFam.id] || { family: childFam, generation: gen };
         const children = (childFam.children || []).filter(cid => peopleByRawId.has(cid));
@@ -44565,15 +45389,14 @@
         });
       }
 
-      // Layout starting from focal (Silver)
-      const focalId = peopleByRawId.has(FOCAL_ID) ? FOCAL_ID : people[0]?.id;
+      // Layout starts from the active focus person.
+      const focalId = focalPersonId;
       if (focalId) {
         const focalGen = generationByPerson.get(focalId) ?? 0;
         // Enough left padding for focal's ancestor block
         const focalH = ancestorHalves(focalId);
         const focalX = TREE_PADDING_X + Math.max(focalH.left, TREE_CARD_W / 2);
         placePerson(focalId, focalX, focalGen);
-        placeAncestors(focalId, focalX, focalGen);
         placeDescendants(focalId, focalX, focalGen);
       }
 
@@ -44619,8 +45442,25 @@
         });
       });
 
+      // A known parent and its missing partner are one visual family unit. Position
+      // that placeholder beside the known parent before collision resolution so the
+      // partner line can never span unrelated cards in the row.
+      const initialPeopleById = new Map(positionedPeople.map(person => [person.id, person]));
+      parentPlaceholders.forEach(placeholder => {
+        const parentFamily = parentFamilyByChild.get(placeholder.personId);
+        if (!parentFamily) return;
+        const father = parentFamily.left ? initialPeopleById.get(parentFamily.left) : null;
+        const mother = parentFamily.right ? initialPeopleById.get(parentFamily.right) : null;
+        if (placeholder.rel === 'father' && !father && mother) {
+          placeholder.x = mother.x - TREE_PARENT_PLACEHOLDER_GAP - PLACEHOLDER_W;
+        }
+        if (placeholder.rel === 'mother' && !mother && father) {
+          placeholder.x = father.x + TREE_CARD_W + TREE_PARENT_PLACEHOLDER_GAP;
+        }
+      });
+
       // Collision pass: all layout nodes per visual row; shift branch groups right on overlap
-      preventTreeCollisions(positionedPeople, parentPlaceholders, familyAnchors);
+      preventTreeCollisions(positionedPeople, parentPlaceholders, familyAnchors, families);
 
       // Recompute geometry
       positionedPeople.forEach(person => {
@@ -44643,6 +45483,16 @@
         pl.centerX = pl.x + pl.width / 2; pl.centerY = pl.y + pl.height / 2;
       });
 
+      const focusControls = positionedPeople
+        .filter(person => branchRoles.focusActionPersonIds?.has(person.id))
+        .map(person => ({
+          personId: person.id,
+          x: Math.round(person.rightX - TREE_FOCUS_CONTROL_W),
+          y: Math.round(person.topY - TREE_FOCUS_CONTROL_H - TREE_FOCUS_CONTROL_GAP),
+          width: TREE_FOCUS_CONTROL_W,
+          height: TREE_FOCUS_CONTROL_H
+        }));
+
       refreshTreeFamilyAnchors(families, positionedById, familyAnchors);
 
       const parentPlaceholdersByPerson = {};
@@ -44651,7 +45501,14 @@
         parentPlaceholdersByPerson[pl.personId].push(pl);
       });
 
-      const layoutNodes = [...positionedPeople, ...parentPlaceholders];
+      const focusControlLayoutNodes = focusControls.map(control => ({
+        control,
+        get leftX() { return this.control.x; },
+        get rightX() { return this.control.x + this.control.width; },
+        get topY() { return this.control.y; },
+        get bottomY() { return this.control.y + this.control.height; }
+      }));
+      const layoutNodes = [...positionedPeople, ...parentPlaceholders, ...focusControlLayoutNodes];
       const leftEdge = Math.min(TREE_PADDING_X, ...layoutNodes.map(n => n.leftX ?? n.x));
       // If any node is negative, shift everything right
       if (leftEdge < TREE_PADDING_X) {
@@ -44663,6 +45520,7 @@
         parentPlaceholders.forEach(pl => {
           pl.x += shift; pl.leftX = pl.x; pl.rightX = pl.x + pl.width; pl.centerX = pl.x + pl.width / 2;
         });
+        focusControls.forEach(control => { control.x += shift; });
         refreshTreeFamilyAnchors(families, positionedById, familyAnchors);
       }
       const rightEdge = Math.max(TREE_MIN_STAGE_W - TREE_PADDING_X, ...layoutNodes.map(n => n.rightX ?? n.x + n.width));
@@ -44675,28 +45533,105 @@
       const peopleById = Object.fromEntries(positionedPeople.map(p => [p.id, p]));
       const positionedLayoutById = new Map(positionedPeople.map(p => [p.id, p]));
 
-      return { positionedPeople, positionedById: positionedLayoutById, peopleById, families, familyAnchors, parentPlaceholders, parentPlaceholdersByPerson, stageWidth, stageHeight };
+      const layout = { positionedPeople, positionedById: positionedLayoutById, peopleById, families, familyAnchors, parentPlaceholders, parentPlaceholdersByPerson, focusControls, stageWidth, stageHeight };
+      layout.connectorDescriptors = buildTreeConnectorDescriptors(layout);
+      return layout;
     }
 
-    function preventTreeCollisions(positionedPeople, parentPlaceholders, familyAnchors) {
-      const nodes = [];
-      positionedPeople.forEach(p => nodes.push({ kind: 'person', ref: p, y: p.y, get left() { return this.ref.x; }, get right() { return this.ref.x + TREE_CARD_W; } }));
-      (parentPlaceholders || []).forEach(pl => nodes.push({ kind: 'placeholder', ref: pl, y: pl.y, get left() { return this.ref.x; }, get right() { return this.ref.x + pl.width; } }));
-      const byY = new Map();
-      nodes.forEach(n => {
-        if (!byY.has(n.y)) byY.set(n.y, []);
-        byY.get(n.y).push(n);
+    function preventTreeCollisions(positionedPeople, parentPlaceholders, familyAnchors, families = []) {
+      const peopleById = new Map(positionedPeople.map(person => [person.id, person]));
+      const placeholdersByPerson = new Map();
+      (parentPlaceholders || []).forEach(placeholder => {
+        if (!placeholdersByPerson.has(placeholder.personId)) placeholdersByPerson.set(placeholder.personId, []);
+        placeholdersByPerson.get(placeholder.personId).push(placeholder);
       });
-      byY.forEach(row => {
+
+      const members = [
+        ...positionedPeople.map(person => ({
+          id: `person:${person.id}`,
+          kind: 'person',
+          ref: person,
+          y: person.y,
+          width: TREE_CARD_W
+        })),
+        ...(parentPlaceholders || []).map(placeholder => ({
+          id: `placeholder:${placeholder.id}`,
+          kind: 'placeholder',
+          ref: placeholder,
+          y: placeholder.y,
+          width: placeholder.width
+        }))
+      ];
+      const parentById = new Map(members.map(member => [member.id, member.id]));
+      const find = id => {
+        const parentId = parentById.get(id);
+        if (!parentId || parentId === id) return parentId || id;
+        const rootId = find(parentId);
+        parentById.set(id, rootId);
+        return rootId;
+      };
+      const union = (leftId, rightId) => {
+        const leftRoot = find(leftId);
+        const rightRoot = find(rightId);
+        if (leftRoot && rightRoot && leftRoot !== rightRoot) parentById.set(rightRoot, leftRoot);
+      };
+
+      // Existing partners are atomic. Missing-parent placeholders join the same
+      // atomic unit as the known parent, or one another when both are missing.
+      (families || []).forEach(family => {
+        const left = peopleById.get(family.left);
+        const right = peopleById.get(family.right);
+        if (left && right && left.y === right.y) union(`person:${left.id}`, `person:${right.id}`);
+        (family.children || []).forEach(childId => {
+          const placeholders = placeholdersByPerson.get(childId) || [];
+          const knownParentIds = [family.left, family.right]
+            .filter(parentId => peopleById.has(parentId));
+          const unitIds = [
+            ...knownParentIds.map(parentId => `person:${parentId}`),
+            ...placeholders.map(placeholder => `placeholder:${placeholder.id}`)
+          ];
+          unitIds.slice(1).forEach(id => union(unitIds[0], id));
+        });
+      });
+      placeholdersByPerson.forEach(placeholders => {
+        const ids = placeholders.map(placeholder => `placeholder:${placeholder.id}`);
+        ids.slice(1).forEach(id => union(ids[0], id));
+      });
+
+      const groups = new Map();
+      members.forEach(member => {
+        const rootId = find(member.id);
+        if (!groups.has(rootId)) groups.set(rootId, []);
+        groups.get(rootId).push(member);
+      });
+
+      const nodes = [];
+      groups.forEach(groupMembers => {
+        const rowY = groupMembers[0]?.y || 0;
+        const sameRowMembers = groupMembers.filter(member => member.y === rowY);
+        if (!sameRowMembers.length) return;
+        nodes.push({
+          kind: 'family-unit',
+          members: sameRowMembers,
+          y: rowY,
+          get left() { return Math.min(...this.members.map(member => member.ref.x)); },
+          get right() { return Math.max(...this.members.map(member => member.ref.x + member.width)); },
+          shift(delta) { this.members.forEach(member => { member.ref.x += delta; }); }
+        });
+      });
+
+      const byY = new Map();
+      nodes.forEach(node => {
+        if (!byY.has(node.y)) byY.set(node.y, []);
+        byY.get(node.y).push(node);
+      });
+      [...byY.keys()].sort((a, b) => a - b).forEach(y => {
+        const row = byY.get(y);
         row.sort((a, b) => a.left - b.left);
         let minLeft = TREE_PADDING_X;
-        row.forEach(n => {
-          if (n.left < minLeft) {
-            const delta = minLeft - n.left;
-            n.ref.x += delta;
-          }
-          const gap = n.kind === 'person' ? TREE_SIBLING_GAP : TREE_PARENT_PLACEHOLDER_GAP;
-          minLeft = n.right + gap;
+        row.forEach(node => {
+          if (node.left < minLeft) node.shift(minLeft - node.left);
+          minLeft = node.right + TREE_SIBLING_GAP;
         });
       });
     }
@@ -44714,7 +45649,7 @@
       });
     }
 
-    function centerTreeOnPerson(personId = 'silver') {
+    function centerTreeOnPerson(personId = treeProjectViewState().focusPersonId) {
       const canvas = main.querySelector('.tree-canvas');
       const card = main.querySelector(`.tree-person-card[data-person-id="${CSS.escape(personId)}"]`);
       if (!canvas || !card) return;
@@ -45004,25 +45939,41 @@
         currentFamilyTreeProjectId();
       const treePeopleSource = currentTreePeople();
       const treeFamiliesSource = currentTreeFamilies();
+      const treeViewState = treeProjectViewState(treeProjectId);
+      const focusPersonId = resolveTreeFocusPersonId(treePeopleSource, treeProjectId);
+      const projection = buildFamilyTreeProjection(treePeopleSource, treeFamiliesSource, {
+        focusPersonId,
+        ancestorGenerations: treeViewState.ancestorGenerations,
+        descendantGenerations: treeViewState.descendantGenerations,
+        showCousins: treeViewState.showCousins
+      });
       const familyPeopleCountLabel =
         formatProjectPeopleCount(
           treeProjectId
         );
       
-      if (!treePeopleSource.some(person => person.id === state.selectedPersonId)) {
-        state.selectedPersonId = treePeopleSource.find(person => person.id === 'silver')?.id || treePeopleSource[0]?.id || '';
+      if (!projection.people.some(person => person.id === state.selectedPersonId)) {
+        state.selectedPersonId = projection.focusPersonId;
       }
-      const selected = personById(state.selectedPersonId) || treePeopleSource[0];
-      const treeLayout = calculateTreeLayout(treePeopleSource, treeFamiliesSource);
+      const selected = projection.people.find(person => person.id === state.selectedPersonId)
+        || projection.people.find(person => person.id === projection.focusPersonId)
+        || projection.people[0];
+      if (selected?.id) rememberTreeSelectedPerson(selected.id, treeProjectId);
+      const treeLayout = calculateTreeLayout(
+        projection.people,
+        projection.families,
+        projection.focusPersonId,
+        { branchRoles: projection.branchRoles }
+      );
       main.innerHTML = `
         <div class="tree-shell">
           <div class="tree-toolbar">
             <div class="tree-toolbar-left">
               <button class="tree-icon-button tree-arrow-button" type="button" data-toast="Back navigation is simulated in this prototype." aria-label="Back">${icon.arrow}</button>
               <button class="tree-icon-button tree-arrow-button tree-arrow-button-forward" type="button" data-toast="Forward navigation is simulated in this prototype." aria-label="Forward">${icon.arrow}</button>
-              <button class="tree-control tree-control-select" type="button" data-toast="Recently viewed people selector will open here.">
-                <span class="tree-control-focus-icon" aria-hidden="true">${icon.focus}</span>
-                <span class="tree-control-name">${escapeHtml(selected.name)}</span>
+              <button class="tree-control tree-control-select" type="button" data-tree-recent-toggle aria-haspopup="menu" aria-expanded="false" aria-label="Recently selected people. Current person: ${escapeHtml(selected?.name || '')}">
+                <span class="tree-control-focus-icon" aria-hidden="true">${icon.profile}</span>
+                <span class="tree-control-name">${escapeHtml(selected?.name || '')}</span>
                 <span class="tree-control-chevron" aria-hidden="true">${icon.chevron}</span>
               </button>
               <div class="view-modes" role="tablist" aria-label="Tree view mode">
@@ -45049,7 +46000,7 @@
               <label class="app-search-field">${icon.search}<input type="search" placeholder="Search people..." id="treeSearch"></label>
               <button class="tree-action" type="button" data-toast="Export is planned for the Publish iteration.">${icon.export} Export</button>
               <button class="tree-action" type="button" data-toast="Print preview will be added later.">${icon.print} Print</button>
-              <button class="tree-action" type="button" data-toast="Tree settings are not part of this build yet.">${icon.settings} Tree Settings</button>
+              <button class="tree-action" type="button" data-tree-settings>${icon.settings} Tree Settings</button>
             </div>
           </div>
           <div class="tree-workspace ${state.treeInspectorCollapsed ? 'inspector-collapsed' : ''}">
@@ -45060,6 +46011,7 @@
                   ${renderTreeLines(treeLayout)}
                   ${treeLayout.parentPlaceholders.map(renderTreeParentPlaceholder).join('')}
                   ${treeLayout.positionedPeople.map(renderTreePersonCard).join('')}
+                  ${treeLayout.focusControls.map(renderTreeFocusControl).join('')}
                 </div>
               </div>
               <div class="tree-zoom">
@@ -45080,6 +46032,7 @@
         .forEach(card => {
           const selectCard = () => {
             state.selectedPersonId = card.dataset.personId;
+            rememberTreeSelectedPerson(state.selectedPersonId);
             state.treeInspectorCollapsed = false;
             renderFamilyTreePreserveScroll();
           };
@@ -45120,8 +46073,21 @@
 
               if (!anchorPersonId) return;
 
-              state.selectedPersonId =
-                anchorPersonId;
+              const currentFocusId = treeProjectViewState().focusPersonId;
+              if (currentFocusId !== anchorPersonId) {
+                focusTreeBranchForRelative(anchorPersonId);
+                requestAnimationFrame(() => {
+                  requestAnimationFrame(() => {
+                    const refreshedButton = main.querySelector(
+                      `.tree-person-card[data-person-id="${CSS.escape(anchorPersonId)}"] [data-card-add="relative"]`
+                    );
+                    openRelativePopover(refreshedButton || button, anchorPersonId);
+                  });
+                });
+                return;
+              }
+
+              state.selectedPersonId = anchorPersonId;
 
               openRelativePopover(
                 button,
@@ -45134,9 +46100,14 @@
         e.stopPropagation();
         openEditPersonModal(button.dataset.cardEdit);
       }));
+      main.querySelectorAll('[data-tree-card-focus]').forEach(button => button.addEventListener('click', event => {
+        event.stopPropagation();
+        const personId = button.dataset.treeCardFocus;
+        if (personId) setTreeFocusPerson(personId);
+      }));
       main.querySelectorAll('[data-add-relative]').forEach(button => button.addEventListener('click', () => {
         const target = personById(button.dataset.personId || state.selectedPersonId);
-        if (target?.id) state.selectedPersonId = target.id;
+        if (target?.id) focusTreeBranchForRelative(target.id);
         openAddPersonModal(`Add ${button.dataset.addRelative}`, `Create a new person and add as ${target.name.split(' ')[0]}'s ${button.dataset.addRelative}`, { relativeType: button.dataset.addRelative, personId: target.id });
       }));
       main.querySelectorAll('[data-tree-view]').forEach(button => button.addEventListener('click', () => {
@@ -45150,11 +46121,16 @@
       main.querySelectorAll('[data-zoom]').forEach(button => button.addEventListener('click', () => {
         if (button.dataset.zoom === 'fit') {
           setTreeZoom(100);
-          centerTreeOnPerson(state.selectedPersonId || 'silver');
+          centerTreeOnPerson(treeProjectViewState().focusPersonId);
           return;
         }
         setTreeZoom(state.treeZoom + (button.dataset.zoom === 'in' ? 10 : -10));
       }));
+      main.querySelector('[data-tree-recent-toggle]')?.addEventListener('click', event => {
+        event.stopPropagation();
+        openTreeRecentPeopleMenu(event.currentTarget);
+      });
+      main.querySelector('[data-tree-settings]')?.addEventListener('click', openTreeSettingsModal);
       bindPersonSidebar(main, 'tree');
       if (state.treeCenterTargetId) {
         const targetId = state.treeCenterTargetId;
@@ -45167,98 +46143,182 @@
       return id ? layout?.peopleById?.[id] || null : null;
     }
 
-    function renderParentPlaceholderLines(layout) {
-      const paths = [];
+    function treeConnectorPath(points) {
+      const normalized = (points || [])
+        .map(point => ({ x: Math.round(Number(point.x)), y: Math.round(Number(point.y)) }))
+        .filter(point => Number.isFinite(point.x) && Number.isFinite(point.y))
+        .filter((point, index, list) => !index || point.x !== list[index - 1].x || point.y !== list[index - 1].y);
+      if (normalized.length < 2) return '';
+      return normalized.slice(1).reduce((path, point, index) => {
+        const previous = normalized[index];
+        if (point.y === previous.y) return `${path} H${point.x}`;
+        if (point.x === previous.x) return `${path} V${point.y}`;
+        return `${path} L${point.x} ${point.y}`;
+      }, `M${normalized[0].x} ${normalized[0].y}`);
+    }
+
+    function buildTreeConnectorDescriptors(layout) {
+      const descriptors = [];
+      const descendantDrafts = [];
+      const handledChildren = new Set(Object.keys(layout.parentPlaceholdersByPerson || {}));
+      const addDescriptor = descriptor => {
+        const d = treeConnectorPath(descriptor.points);
+        if (!d) return;
+        const key = `${descriptor.familyId}|${descriptor.role}|${descriptor.childId || ''}|${d}`;
+        if (descriptors.some(item => item.key === key)) return;
+        descriptors.push({ ...descriptor, d, key });
+      };
 
       Object.entries(layout.parentPlaceholdersByPerson || {}).forEach(([personId, placeholders]) => {
         const child = treeLayoutNode(layout, personId);
         if (!child || !placeholders?.length) return;
-
-        const childFamilies = (layout.families || []).filter(family =>
-          family.children?.includes(personId)
-        );
-
-        const knownParents = childFamilies
-          .flatMap(family => [treeLayoutNode(layout, family.left), treeLayoutNode(layout, family.right)])
-          .filter(Boolean);
-
+        const parentFamily = (layout.families || []).find(family => family.children?.includes(personId));
+        const knownParents = parentFamily
+          ? [treeLayoutNode(layout, parentFamily.left), treeLayoutNode(layout, parentFamily.right)].filter(Boolean)
+          : [];
         const parentNodes = [...knownParents, ...placeholders]
           .filter(Boolean)
           .sort((a, b) => a.leftX - b.leftX);
-
         if (!parentNodes.length) return;
 
+        const familyId = parentFamily?.id || `missing-parents:${personId}`;
         const firstParent = parentNodes[0];
         const lastParent = parentNodes[parentNodes.length - 1];
-
-        const partnerY = Math.round(
-          parentNodes.reduce((sum, parent) => sum + parent.centerY, 0) / parentNodes.length
-        );
-
+        const partnerY = parentNodes.length > 1
+          ? Math.round(parentNodes.reduce((sum, parent) => sum + parent.centerY, 0) / parentNodes.length)
+          : Math.round(firstParent.bottomY);
         const anchorX = parentNodes.length > 1
           ? Math.round((firstParent.rightX + lastParent.leftX) / 2)
           : Math.round(firstParent.centerX);
 
-        const railY = Math.round(child.topY - TREE_CONNECTOR_RAIL_OFFSET);
-
         if (parentNodes.length > 1) {
-          paths.push(`<path class="tree-line partner" d="M${Math.round(firstParent.rightX)} ${partnerY} H${Math.round(lastParent.leftX)}"/>`);
+          addDescriptor({
+            familyId,
+            role: 'placeholder-partner',
+            childId: personId,
+            className: 'tree-line partner',
+            points: [
+              { x: firstParent.rightX, y: partnerY },
+              { x: lastParent.leftX, y: partnerY }
+            ]
+          });
         }
-
-        paths.push(`<path class="tree-line descendant" d="M${anchorX} ${partnerY} V${railY} H${Math.round(child.centerX)} V${Math.round(child.topY)}"/>`);
+        descendantDrafts.push({
+          familyId,
+          role: 'placeholder-descendant',
+          anchorX,
+          partnerY,
+          childTopY: child.topY,
+          children: [child]
+        });
       });
-
-      return paths;
-    }
-
-    function renderTreeLines(layout) {
-      const familyPaths = renderParentPlaceholderLines(layout);
-      const placeholderHandledChildren = new Set(Object.keys(layout.parentPlaceholdersByPerson || {}));
 
       (layout.families || []).forEach(family => {
         const parents = [treeLayoutNode(layout, family.left), treeLayoutNode(layout, family.right)]
           .filter(Boolean)
           .sort((a, b) => a.leftX - b.leftX);
-
         if (!parents.length) return;
 
-        const partnerY = Math.round(
-          parents.reduce((sum, parent) => sum + parent.centerY, 0) / parents.length
-        );
-
+        const partnerY = parents.length > 1
+          ? Math.round(parents.reduce((sum, parent) => sum + parent.centerY, 0) / parents.length)
+          : Math.round(parents[0].bottomY);
         const anchorX = parents.length > 1
           ? Math.round((parents[0].rightX + parents[parents.length - 1].leftX) / 2)
           : Math.round(parents[0].centerX);
 
         if (parents.length > 1) {
-          familyPaths.push(`<path class="tree-line partner" d="M${Math.round(parents[0].rightX)} ${partnerY} H${Math.round(parents[parents.length - 1].leftX)}"/>`);
+          addDescriptor({
+            familyId: family.id,
+            role: 'partner',
+            className: 'tree-line partner',
+            points: [
+              { x: parents[0].rightX, y: partnerY },
+              { x: parents[parents.length - 1].leftX, y: partnerY }
+            ]
+          });
         }
 
-        const childNodes = (family.children || [])
-          .filter(childId => !placeholderHandledChildren.has(childId))
+        const children = (family.children || [])
+          .filter(childId => !handledChildren.has(childId))
           .map(childId => treeLayoutNode(layout, childId))
           .filter(Boolean)
           .sort((a, b) => a.centerX - b.centerX);
-
-        if (!childNodes.length) return;
-
-        const childTopY = Math.min(...childNodes.map(child => child.topY));
-        const railY = Math.round(childTopY - TREE_CONNECTOR_RAIL_OFFSET);
-
-        const childCenters = childNodes.map(child => Math.round(child.centerX));
-        const minChildX = Math.min(...childCenters);
-        const maxChildX = Math.max(...childCenters);
-
-        familyPaths.push(`<path class="tree-line descendant" d="M${anchorX} ${partnerY} V${railY}"/>`);
-        familyPaths.push(`<path class="tree-line descendant" d="M${Math.min(anchorX, minChildX)} ${railY} H${Math.max(anchorX, maxChildX)}"/>`);
-
-        childNodes.forEach(child => {
-          familyPaths.push(`<path class="tree-line descendant" d="M${Math.round(child.centerX)} ${railY} V${Math.round(child.topY)}"/>`);
+        if (!children.length) return;
+        descendantDrafts.push({
+          familyId: family.id,
+          role: 'descendant',
+          anchorX,
+          partnerY,
+          childTopY: Math.min(...children.map(child => child.topY)),
+          children
         });
       });
 
+      const laneGroups = new Map();
+      descendantDrafts.forEach(draft => {
+        const childCenters = draft.children.map(child => Math.round(child.centerX));
+        draft.minX = Math.min(draft.anchorX, ...childCenters);
+        draft.maxX = Math.max(draft.anchorX, ...childCenters);
+        const key = `${draft.partnerY}:${draft.childTopY}`;
+        if (!laneGroups.has(key)) laneGroups.set(key, []);
+        laneGroups.get(key).push(draft);
+      });
+
+      laneGroups.forEach(group => {
+        const lanes = [];
+        group.sort((a, b) => a.minX - b.minX || a.maxX - b.maxX || String(a.familyId).localeCompare(String(b.familyId)));
+        group.forEach(draft => {
+          let laneIndex = lanes.findIndex(spans => spans.every(span => draft.maxX + 8 <= span.minX || draft.minX >= span.maxX + 8));
+          if (laneIndex < 0) {
+            laneIndex = lanes.length;
+            lanes.push([]);
+          }
+          lanes[laneIndex].push({ minX: draft.minX, maxX: draft.maxX });
+          const availableHeight = Math.max(24, draft.childTopY - draft.partnerY);
+          const maximumLane = Math.max(0, Math.floor((availableHeight - 32) / 12));
+          const railY = Math.round(draft.childTopY - TREE_CONNECTOR_RAIL_OFFSET - Math.min(laneIndex, maximumLane) * 12);
+
+          addDescriptor({
+            familyId: draft.familyId,
+            role: `${draft.role}-trunk`,
+            className: 'tree-line descendant',
+            points: [
+              { x: draft.anchorX, y: draft.partnerY },
+              { x: draft.anchorX, y: railY }
+            ]
+          });
+          addDescriptor({
+            familyId: draft.familyId,
+            role: `${draft.role}-rail`,
+            className: 'tree-line descendant',
+            points: [
+              { x: draft.minX, y: railY },
+              { x: draft.maxX, y: railY }
+            ]
+          });
+          draft.children.forEach(child => {
+            addDescriptor({
+              familyId: draft.familyId,
+              role: `${draft.role}-child`,
+              childId: child.id,
+              className: 'tree-line descendant',
+              points: [
+                { x: child.centerX, y: railY },
+                { x: child.centerX, y: child.topY }
+              ]
+            });
+          });
+        });
+      });
+
+      return descriptors.map(({ key, points, ...descriptor }) => descriptor);
+    }
+
+    function renderTreeLines(layout) {
+      const descriptors = layout.connectorDescriptors || buildTreeConnectorDescriptors(layout);
+      const paths = descriptors.map(descriptor => `<path class="${descriptor.className}" data-tree-family-id="${escapeHtml(String(descriptor.familyId || ''))}" data-tree-connection-role="${escapeHtml(descriptor.role)}" ${descriptor.childId ? `data-tree-child-id="${escapeHtml(descriptor.childId)}"` : ''} d="${descriptor.d}"/>`);
       return `<svg class="tree-lines" viewBox="0 0 ${layout.stageWidth} ${layout.stageHeight}" width="${layout.stageWidth}" height="${layout.stageHeight}" aria-hidden="true">
-        ${familyPaths.join('\n        ')}
+        ${paths.join('\n        ')}
       </svg>`;
     }
 
@@ -45268,10 +46328,25 @@
       return `<button class="add-parent-card" type="button" style="left:${placeholder.x}px;top:${placeholder.y}px" data-person-id="${placeholder.personId}" data-add-relative="${placeholder.rel}" aria-label="${escapeHtml(placeholder.label)} for ${escapeHtml(target.name)}"><span><span class="add-plus">${icon.plus}</span><span class="add-label">${escapeHtml(displayLabel).replace(' ', '<br>')}</span></span></button>`;
     }
 
+    function renderTreeFocusControl(control) {
+      const person = personById(control.personId);
+      if (!person) return '';
+      const localizedName = translateText(person.name);
+      const accessibleLabel = state.language === 'ru'
+        ? `Показать ветвь для ${localizedName}`
+        : `Focus branch for ${localizedName}`;
+      const visibleLabel = state.language === 'ru' ? 'Фокус' : 'Focus';
+      return `<button class="tree-focus-control" type="button" style="left:${control.x}px;top:${control.y}px" data-tree-card-focus="${escapeHtml(person.id)}" data-i18n-skip aria-label="${escapeHtml(accessibleLabel)}">${icon.focus}<span>${visibleLabel}</span></button>`;
+    }
+
     function renderTreePersonCard(person) {
       const selected = person.id === state.selectedPersonId;
-      return `<article class="tree-person-card ${treePersonGenderClass(person)} ${selected ? 'selected' : ''}" style="left:${person.layoutX}px;top:${person.layoutY}px" data-person-id="${person.id}" tabindex="0">
-        ${renderPersonAvatar(person, 'tree-avatar')}
+      const focused = person.id === treeProjectViewState().focusPersonId;
+      return `<article class="tree-person-card ${treePersonGenderClass(person)} ${selected ? 'selected' : ''} ${focused ? 'is-focus-person' : ''}" style="left:${person.layoutX}px;top:${person.layoutY}px" data-person-id="${person.id}" tabindex="0" ${focused ? 'aria-current="true"' : ''}>
+        <div class="tree-card-avatar-stack">
+          ${renderPersonAvatar(person, 'tree-avatar')}
+          ${focused ? `<span class="tree-focus-badge">${icon.focus}<span>Focus</span></span>` : ''}
+        </div>
         <div class="tree-card-content">
           <h3 class="tree-name">${escapeHtml(person.name)}</h3>
           ${renderTreeCardDateLines(person)}
@@ -46169,6 +47244,8 @@
         getNotesForPerson(
           person.id
         ).length;
+      const viewState = treeProjectViewState();
+      const isFocusPerson = viewState.focusPersonId === person.id;
 
       return `
         <div
@@ -46191,24 +47268,18 @@
               ${icon.doublechevronSidebar}
             </button>
 
-            <button
-              class="tree-person-hero-profile"
-              type="button"
-              data-tree-view-profile="${
-                escapeHtml(
-                  person.id
-                )
-              }"
-              aria-label="View ${
-                escapeHtml(
-                  person.name
-                )
-              } profile">
-
-              <span>
-                View profile
-              </span>
-            </button>
+            <div class="tree-person-hero-actions">
+              ${isFocusPerson
+                ? `<span class="tree-focus-status" aria-label="Current focus person">${icon.focus}<span>Current focus</span></span>`
+                : `<button class="tree-person-hero-focus" type="button" data-tree-focus-person="${escapeHtml(person.id)}">${icon.focus}<span>Focus branch</span></button>`}
+              <button
+                class="tree-person-hero-profile"
+                type="button"
+                data-tree-view-profile="${escapeHtml(person.id)}"
+                aria-label="View ${escapeHtml(person.name)} profile">
+                <span>View profile</span>
+              </button>
+            </div>
           </div>
 
           <div class="tree-person-hero-main">
@@ -47404,6 +48475,7 @@
 
       if (['father', 'mother', 'parent'].includes(value)) return 'parent';
       if (['son', 'daughter', 'child'].includes(value)) return 'child';
+      if (['brother', 'sister', 'sibling'].includes(value)) return 'sibling';
       if (['partner', 'spouse', 'husband', 'wife'].includes(value)) return 'partner';
 
       return 'parent';
@@ -47413,6 +48485,7 @@
       const map = {
         parent: 'Parent',
         child: 'Child',
+        sibling: 'Sibling',
         partner: 'Partner'
       };
 
@@ -47423,6 +48496,7 @@
       const map = {
         parent: 'parent',
         child: 'child',
+        sibling: 'sibling',
         partner: 'partner'
       };
 
@@ -47485,6 +48559,16 @@
 
       if (type === 'child') {
         return getChildren(anchorPersonId).some(child => child.id === candidatePersonId);
+      }
+
+      if (type === 'sibling') {
+        const anchorFamilies = centralFamilyRecords().filter(family =>
+          unlinkFamilyChildrenIds(family).includes(anchorPersonId)
+        );
+
+        return anchorFamilies.some(family =>
+          unlinkFamilyChildrenIds(family).includes(candidatePersonId)
+        );
       }
 
       return getPartnerRelationships(anchorPersonId)
@@ -47557,7 +48641,8 @@
       return validateRelationshipConnection({
         anchorPersonId: connectPersonModalState.anchorPersonId,
         relativePersonId: connectPersonModalState.selectedPersonId,
-        relationshipType: connectPersonModalState.relationshipType
+        relationshipType: connectPersonModalState.relationshipType,
+        parentFamilySelection: connectPersonModalState.parentFamilySelection
       });
     }
 
@@ -47666,10 +48751,17 @@
             <div class="field add-person-select-field">
               <label for="connectPersonRelationship">Select relationship</label>
               <select class="compact-select add-person-select" id="connectPersonRelationship" data-connect-relationship>
-                ${['parent', 'child', 'partner'].map(value => `<option value="${value}" ${value === relationshipType ? 'selected' : ''}>${connectRelationshipLabel(value)}</option>`).join('')}
+                ${['parent', 'child', 'sibling', 'partner'].map(value => `<option value="${value}" ${value === relationshipType ? 'selected' : ''}>${connectRelationshipLabel(value)}</option>`).join('')}
               </select>
               <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
             </div>
+
+            ${renderParentFamilySelector({
+              anchorPersonId: anchor?.id || '',
+              relationshipType,
+              selectedValue: connectPersonModalState.parentFamilySelection,
+              controlId: 'connectPersonParentFamily'
+            })}
 
             ${connectPersonWarningHtml()}
           </aside>
@@ -47728,6 +48820,15 @@
       modal.querySelector('[data-connect-relationship]')?.addEventListener('change', event => {
         connectPersonModalState.relationshipType = normalizeConnectRelationshipType(event.currentTarget.value);
         connectPersonModalState.selectedPersonId = '';
+        connectPersonModalState.parentFamilySelection = defaultParentFamilySelection(
+          connectPersonModalState.anchorPersonId,
+          connectPersonModalState.relationshipType
+        );
+        refreshConnectPersonModal();
+      });
+
+      modal.querySelector('#connectPersonParentFamily')?.addEventListener('change', event => {
+        connectPersonModalState.parentFamilySelection = event.currentTarget.value;
         refreshConnectPersonModal();
       });
 
@@ -47759,7 +48860,8 @@
             connectRelationshipType: relationshipType,
             connectAfterCreate: true,
             personId: anchor?.id || connectPersonModalState.anchorPersonId,
-            connectToPersonId: anchor?.id || connectPersonModalState.anchorPersonId
+            connectToPersonId: anchor?.id || connectPersonModalState.anchorPersonId,
+            parentFamilySelection: connectPersonModalState.parentFamilySelection
           }
         );
       });
@@ -47781,7 +48883,8 @@
         const result = connectPeopleByRelationship({
           anchorPersonId: anchor.id,
           relativePersonId: selected.id,
-          relationshipType: connectPersonModalState.relationshipType
+          relationshipType: connectPersonModalState.relationshipType,
+          parentFamilySelection: connectPersonModalState.parentFamilySelection
         });
 
         if (!result.ok) {
@@ -47820,7 +48923,12 @@
         anchorPersonId: anchor.id,
         relationshipType: normalizeConnectRelationshipType(options.relationshipType || 'parent'),
         query: '',
-        selectedPersonId: ''
+        selectedPersonId: '',
+        parentFamilySelection: defaultParentFamilySelection(
+          anchor.id,
+          normalizeConnectRelationshipType(options.relationshipType || 'parent'),
+          options.parentFamilyId || options.parentFamilySelection || ''
+        )
       };
 
       openModal(renderConnectPersonModalHtml());
@@ -47857,6 +48965,7 @@
         button.addEventListener('click', () => {
           const rel = button.dataset.rel;
           closeMenu();
+          focusTreeBranchForRelative(person.id);
           openAddPersonModal(`Add ${rel}`, `Create a new person and add as ${person.name.split(' ')[0]}'s ${rel}`, {
             relativeType: rel,
             connectRelationshipType: addPersonConnectionTypeFromRelativeType(rel),
@@ -47869,6 +48978,7 @@
 
       popover.querySelector('[data-connect-existing]')?.addEventListener('click', () => {
         closeMenu();
+        focusTreeBranchForRelative(person.id);
         openConnectRelativeModal(person.id, { relationshipType: 'parent' });
       });
 
@@ -49256,6 +50366,182 @@
       };
     }
 
+    const SINGLE_PARENT_FAMILY_CHOICE = '__single_parent__';
+
+    function activeProjectFamiliesForPerson(personId) {
+      const person = getPerson(personId);
+      const projectId = person?.projectId || currentProjectId();
+
+      return centralFamilyRecords().filter(family =>
+        family
+          && family.projectId === projectId
+          && family.relationshipStatus !== 'deleted'
+      );
+    }
+
+    function partnerFamiliesForPerson(personId) {
+      return activeProjectFamiliesForPerson(personId)
+        .filter(family => familyIncludesPerson(family, personId));
+    }
+
+    function parentFamiliesForPerson(personId) {
+      return activeProjectFamiliesForPerson(personId)
+        .filter(family => unlinkFamilyChildrenIds(family).includes(personId));
+    }
+
+    function familyHasSecondPartner(family, personId) {
+      return Boolean(familyPartnerId(family, personId));
+    }
+
+    function parentFamilyDisplayLabel(family) {
+      const names = [
+        familyPartnerAId(family),
+        familyPartnerBId(family)
+      ]
+        .filter(Boolean)
+        .map(personDisplayName)
+        .map(translateText)
+        .filter(Boolean);
+
+      return names.length > 1
+        ? `${names[0]} ${t('and')} ${names[1]}`
+        : names[0] || 'Unknown family';
+    }
+
+    function parentFamilyChoices(anchorPersonId, relationshipType) {
+      const type = normalizeConnectRelationshipType(relationshipType);
+
+      if (type === 'sibling') {
+        return parentFamiliesForPerson(anchorPersonId).map(family => ({
+          value: family.id,
+          label: parentFamilyDisplayLabel(family),
+          family
+        }));
+      }
+
+      if (type !== 'child') return [];
+
+      const existing = partnerFamiliesForPerson(anchorPersonId)
+        .filter(family => familyHasSecondPartner(family, anchorPersonId))
+        .map(family => ({
+          value: family.id,
+          label: parentFamilyDisplayLabel(family),
+          family
+        }));
+
+      return [
+        ...existing,
+        {
+          value: SINGLE_PARENT_FAMILY_CHOICE,
+          label: `${t('Single parent')} — ${translateText(personDisplayName(anchorPersonId))}`,
+          family: null
+        }
+      ];
+    }
+
+    function defaultParentFamilySelection(
+      anchorPersonId,
+      relationshipType,
+      preferredFamilyId = ''
+    ) {
+      const type = normalizeConnectRelationshipType(relationshipType);
+      const choices = parentFamilyChoices(anchorPersonId, type);
+      const preferred = String(preferredFamilyId || '');
+
+      if (choices.some(choice => choice.value === preferred)) {
+        return preferred;
+      }
+
+      if (type === 'sibling') {
+        return choices.length === 1 ? choices[0].value : '';
+      }
+
+      const partnerChoices = choices.filter(choice =>
+        choice.value !== SINGLE_PARENT_FAMILY_CHOICE
+      );
+
+      if (partnerChoices.length === 1) {
+        return partnerChoices[0].value;
+      }
+
+      if (!partnerChoices.length) {
+        return SINGLE_PARENT_FAMILY_CHOICE;
+      }
+
+      return '';
+    }
+
+    function validateParentFamilySelection({
+      anchorPersonId,
+      relationshipType,
+      selection
+    } = {}) {
+      const type = normalizeConnectRelationshipType(relationshipType);
+
+      if (!['child', 'sibling'].includes(type)) {
+        return { ok: true };
+      }
+
+      const choices = parentFamilyChoices(anchorPersonId, type);
+      const selected = String(selection || '');
+
+      if (!selected) {
+        return {
+          ok: false,
+          title: 'Select a parent family',
+          message: type === 'sibling'
+            ? 'Choose the parent family the siblings share.'
+            : 'Choose the family this child will be added to.'
+        };
+      }
+
+      if (!choices.some(choice => choice.value === selected)) {
+        return {
+          ok: false,
+          title: 'Parent family unavailable',
+          message: type === 'sibling'
+            ? 'Add or connect a parent before creating a sibling.'
+            : 'The selected parent family is no longer available.'
+        };
+      }
+
+      return { ok: true };
+    }
+
+    function renderParentFamilySelector({
+      anchorPersonId,
+      relationshipType,
+      selectedValue = '',
+      controlId = 'addPersonParentFamily'
+    } = {}) {
+      const type = normalizeConnectRelationshipType(relationshipType);
+      if (!['child', 'sibling'].includes(type)) return '';
+
+      const choices = parentFamilyChoices(anchorPersonId, type);
+      const selected = selectedValue || defaultParentFamilySelection(
+        anchorPersonId,
+        type
+      );
+      const isSibling = type === 'sibling';
+
+      return `<section class="add-person-parent-family" data-parent-family-selector>
+        <h3 class="form-section-title">Parent family</h3>
+        <div class="field add-person-select-field">
+          <label for="${escapeHtml(controlId)}">${isSibling ? 'Shared parent family' : 'Family for this child'}</label>
+          <select class="compact-select add-person-select" id="${escapeHtml(controlId)}" data-parent-family-selection ${choices.length ? '' : 'disabled'}>
+            ${selected ? '' : `<option value="">Select a parent family</option>`}
+            ${choices.length
+              ? choices.map(choice => `<option value="${escapeHtml(choice.value)}" ${choice.value === selected ? 'selected' : ''}>${escapeHtml(choice.label)}</option>`).join('')
+              : `<option value="">No parent family available</option>`}
+          </select>
+          <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
+          <span class="field-help">${isSibling
+            ? 'The new sibling will be added to this existing parent family.'
+            : 'This determines which parent or partner family receives the child.'}</span>
+        </div>
+      </section>`;
+    }
+
     function connectionPairForRelationship(anchorPersonId, relativePersonId, relationshipType) {
       const anchorId = String(anchorPersonId || '');
       const relativeId = String(relativePersonId || '');
@@ -49277,6 +50563,14 @@
         };
       }
 
+      if (type === 'sibling') {
+        return {
+          type,
+          anchorPersonId: anchorId,
+          siblingPersonId: relativeId
+        };
+      }
+
       return {
         type,
         personAId: anchorId,
@@ -49284,11 +50578,33 @@
       };
     }
 
-    function validateRelationshipConnection({ anchorPersonId, relativePersonId, relationshipType } = {}) {
+    function validateRelationshipConnection({
+      anchorPersonId,
+      relativePersonId,
+      relationshipType,
+      parentFamilySelection = ''
+    } = {}) {
       const pair = connectionPairForRelationship(anchorPersonId, relativePersonId, relationshipType);
 
       if (pair.type === 'parent' || pair.type === 'child') {
-        return validateParentChildConnection(pair.parentId, pair.childId);
+        const parentChildValidation = validateParentChildConnection(pair.parentId, pair.childId);
+        if (!parentChildValidation.ok) return parentChildValidation;
+
+        return pair.type === 'child'
+          ? validateParentFamilySelection({
+              anchorPersonId: pair.parentId,
+              relationshipType: 'child',
+              selection: parentFamilySelection
+            })
+          : parentChildValidation;
+      }
+
+      if (pair.type === 'sibling') {
+        return validateSiblingConnection(
+          pair.anchorPersonId,
+          pair.siblingPersonId,
+          parentFamilySelection
+        );
       }
 
       return validatePartnerConnection(pair.personAId, pair.personBId);
@@ -49409,6 +50725,181 @@
       return family;
     }
 
+    function findOrCreateSingleParentFamily(parentId) {
+      const existing = partnerFamiliesForPerson(parentId).find(family =>
+        !familyHasSecondPartner(family, parentId)
+      );
+
+      if (existing) {
+        syncFamilyPartnerAliases(existing);
+        return existing;
+      }
+
+      const parent = getPerson(parentId);
+      const family = {
+        id: uniqueFamilyId(`fam-${parentId}-single-parent`),
+        projectId: parent?.projectId || currentProjectId(),
+        type: 'family',
+        fatherId: '',
+        motherId: '',
+        partnerAId: '',
+        partnerBId: '',
+        partner1Id: '',
+        partner2Id: '',
+        personAId: '',
+        personBId: '',
+        partnerARoleHint: '',
+        partnerBRoleHint: '',
+        relationshipType: 'Unknown relationship',
+        relationshipStatus: 'active',
+        childIds: [],
+        childrenIds: [],
+        events: [],
+        attributes: [],
+        notes: [],
+        citations: [],
+        mediaIds: [],
+        createdAt: 'Just now',
+        updatedAt: 'Just now'
+      };
+
+      assignParentToFamily(family, parentId);
+      syncFamilyPartnerAliases(family);
+      centralFamilyRecords().push(family);
+      return family;
+    }
+
+    function addChildToFamily(family, parentId, childId) {
+      if (!family || !familyIncludesPerson(family, parentId)) {
+        return {
+          ok: false,
+          title: 'Parent family unavailable',
+          message: 'The selected person is not a parent in this family.'
+        };
+      }
+
+      const existingChildren = unlinkFamilyChildrenIds(family);
+
+      if (existingChildren.includes(childId)) {
+        return {
+          ok: true,
+          family,
+          relationshipType: 'parentChild',
+          warning: null,
+          reused: true
+        };
+      }
+
+      const validation = validateParentChildConnection(parentId, childId);
+      if (!validation.ok) return validation;
+
+      unlinkSetFamilyChildren(family, [...existingChildren, childId]);
+      syncFamilyPartnerAliases(family);
+      family.updatedAt = 'Just now';
+
+      return {
+        ok: true,
+        family,
+        relationshipType: 'parentChild',
+        warning: parentWarningForConnection(parentId, childId)
+      };
+    }
+
+    function connectChildToParentFamily(parentId, childId, selection) {
+      const familySelection = String(selection || '');
+      const selectionValidation = validateParentFamilySelection({
+        anchorPersonId: parentId,
+        relationshipType: 'child',
+        selection: familySelection
+      });
+
+      if (!selectionValidation.ok) return selectionValidation;
+
+      const family = familySelection === SINGLE_PARENT_FAMILY_CHOICE
+        ? findOrCreateSingleParentFamily(parentId)
+        : centralFamilyRecords().find(candidate => candidate.id === familySelection);
+
+      return addChildToFamily(family, parentId, childId);
+    }
+
+    function validateSiblingConnection(anchorPersonId, siblingPersonId, familyId) {
+      if (!anchorPersonId || !siblingPersonId || anchorPersonId === siblingPersonId) {
+        return {
+          ok: false,
+          title: 'Invalid relationship',
+          message: 'A person cannot be connected as their own sibling.'
+        };
+      }
+
+      const selectionValidation = validateParentFamilySelection({
+        anchorPersonId,
+        relationshipType: 'sibling',
+        selection: familyId
+      });
+
+      if (!selectionValidation.ok) return selectionValidation;
+
+      const family = centralFamilyRecords().find(candidate => candidate.id === familyId);
+      if (!family || !unlinkFamilyChildrenIds(family).includes(anchorPersonId)) {
+        return {
+          ok: false,
+          title: 'Parent family unavailable',
+          message: 'The selected parent family does not contain the reference person.'
+        };
+      }
+
+      if (unlinkFamilyChildrenIds(family).includes(siblingPersonId)) {
+        return {
+          ok: false,
+          title: 'Already connected',
+          message: `${personDisplayName(anchorPersonId)} and ${personDisplayName(siblingPersonId)} are already siblings in this family.`
+        };
+      }
+
+      if (
+        collectAncestorIds(anchorPersonId).has(siblingPersonId)
+        || collectDescendantIds(anchorPersonId).has(siblingPersonId)
+      ) {
+        return {
+          ok: false,
+          title: 'Relationship loop',
+          message: 'An ancestor or descendant cannot also be added as a sibling.'
+        };
+      }
+
+      for (const parentId of [familyPartnerAId(family), familyPartnerBId(family)].filter(Boolean)) {
+        const validation = validateParentChildConnection(parentId, siblingPersonId);
+        if (!validation.ok) return validation;
+      }
+
+      return { ok: true, family };
+    }
+
+    function connectSiblingsThroughFamily(anchorPersonId, siblingPersonId, familyId) {
+      const validation = validateSiblingConnection(
+        anchorPersonId,
+        siblingPersonId,
+        familyId
+      );
+
+      if (!validation.ok) return validation;
+
+      const family = validation.family;
+      unlinkSetFamilyChildren(family, [
+        ...unlinkFamilyChildrenIds(family),
+        siblingPersonId
+      ]);
+      syncFamilyPartnerAliases(family);
+      family.updatedAt = 'Just now';
+
+      return {
+        ok: true,
+        family,
+        relationshipType: 'sibling',
+        warning: null
+      };
+    }
+
     function connectParentToChild(parentId, childId) {
       const validation = validateParentChildConnection(parentId, childId);
 
@@ -49501,7 +50992,12 @@
       };
     }
 
-    function connectPeopleByRelationship({ anchorPersonId, relativePersonId, relationshipType } = {}) {
+    function connectPeopleByRelationship({
+      anchorPersonId,
+      relativePersonId,
+      relationshipType,
+      parentFamilySelection = ''
+    } = {}) {
       const anchorId = String(anchorPersonId || '');
       const relativeId = String(relativePersonId || '');
       const type = normalizeConnectRelationshipType(relationshipType);
@@ -49509,7 +51005,8 @@
       const validation = validateRelationshipConnection({
         anchorPersonId: anchorId,
         relativePersonId: relativeId,
-        relationshipType: type
+        relationshipType: type,
+        parentFamilySelection
       });
 
       if (!validation.ok) {
@@ -49521,7 +51018,17 @@
       if (type === 'parent') {
         result = connectParentToChild(relativeId, anchorId);
       } else if (type === 'child') {
-        result = connectParentToChild(anchorId, relativeId);
+        result = connectChildToParentFamily(
+          anchorId,
+          relativeId,
+          parentFamilySelection
+        );
+      } else if (type === 'sibling') {
+        result = connectSiblingsThroughFamily(
+          anchorId,
+          relativeId,
+          parentFamilySelection
+        );
       } else {
         result = connectPartners(anchorId, relativeId);
       }
@@ -49544,6 +51051,7 @@
 
       if (['father', 'mother', 'parent'].includes(value)) return 'parent';
       if (['son', 'daughter', 'child'].includes(value)) return 'child';
+      if (['brother', 'sister', 'sibling'].includes(value)) return 'sibling';
       if (['partner', 'spouse'].includes(value)) return 'partner';
 
       return '';
@@ -49568,10 +51076,27 @@
       };
     }
 
+    function addPersonParentFamilySelection(options = {}) {
+      const intent = addPersonCreateConnectionIntent(options);
+      if (!['child', 'sibling'].includes(intent.relationshipType)) return '';
+
+      return modalBackdrop
+        ?.querySelector('#addPersonParentFamily')
+        ?.value
+        || defaultParentFamilySelection(
+          intent.anchorPersonId,
+          intent.relationshipType,
+          options.parentFamilyId
+            || options.parentFamilySelection
+            || ''
+        );
+    }
+
     function addPersonConnectionToastLabel(relationshipType) {
       const map = {
         parent: 'parent',
         child: 'child',
+        sibling: 'sibling',
         partner: 'partner'
       };
 
@@ -49717,17 +51242,33 @@
         return null;
       }
 
+      const connectionIntent = addPersonCreateConnectionIntent(options);
+      const parentFamilySelection = addPersonParentFamilySelection(options);
+      const familySelectionValidation = validateParentFamilySelection({
+        anchorPersonId: connectionIntent.anchorPersonId,
+        relationshipType: connectionIntent.relationshipType,
+        selection: parentFamilySelection
+      });
+
+      if (!familySelectionValidation.ok) {
+        showToast(familySelectionValidation.message);
+        modalBackdrop.querySelector('#addPersonParentFamily')?.focus({
+          preventScroll: true
+        });
+        return null;
+      }
+
       const photoIds = readAddPersonPhotoIds();
       const newPerson = createPersonFromAddPersonModal(options, additionalFacts);
       setPersonPhotoIds(newPerson.id, photoIds, { rerender: false });
-      const connectionIntent = addPersonCreateConnectionIntent(options);
       let connectionResult = null;
 
       if (connectionIntent.shouldConnect) {
         connectionResult = connectPeopleByRelationship({
           anchorPersonId: connectionIntent.anchorPersonId,
           relativePersonId: newPerson.id,
-          relationshipType: connectionIntent.relationshipType
+          relationshipType: connectionIntent.relationshipType,
+          parentFamilySelection
         });
 
         if (connectionResult.ok) {
@@ -49777,7 +51318,8 @@
               personId: connectionIntent.anchorPersonId,
               connectToPersonId: connectionIntent.anchorPersonId,
               connectAfterCreate: true,
-              connectRelationshipType: connectionIntent.relationshipType
+              connectRelationshipType: connectionIntent.relationshipType,
+              parentFamilySelection
             });
           } else {
             openAddPersonModal('Add person', 'Create a new person in this project');
@@ -49798,6 +51340,21 @@
         .toLowerCase();
     }
 
+    function addPersonMatchTextVariants(value) {
+      const source = value == null ? '' : String(value);
+
+      return [...new Set([
+        source,
+        localizedDataFieldValue(source)
+      ]
+        .map(normalizeAddPersonMatchText)
+        .filter(Boolean))];
+    }
+
+    function addPersonMatchValues(...values) {
+      return [...new Set(values.flatMap(addPersonMatchTextVariants))];
+    }
+
     function addPersonDraftDateValue(selector) {
       return normalizeAddPersonMatchText(modalBackdrop?.querySelector(selector)?.value || '');
     }
@@ -49807,24 +51364,20 @@
     }
 
     function addPersonPersonDateValues(event) {
-      return [
+      return addPersonMatchValues(
         event?.date,
         event?.dateLabel,
         event?.originalText,
         event?.sortDate
-      ]
-        .map(normalizeAddPersonMatchText)
-        .filter(Boolean);
+      );
     }
 
     function addPersonPersonPlaceValues(event) {
-      return [
+      return addPersonMatchValues(
         getPlaceEventDisplay(event),
         getPlaceDisplay(event?.placeId),
         event?.placeText
-      ]
-        .map(normalizeAddPersonMatchText)
-        .filter(Boolean);
+      );
     }
 
     function collectAddPersonDraftForMatching() {
@@ -49878,43 +51431,43 @@
     function scoreAddPersonPossibleMatch(person, draft, options = {}) {
       let score = 0;
       const names = person?.names || {};
-      const personFirst = normalizeAddPersonMatchText(names.first);
-      const personMiddle = normalizeAddPersonMatchText(names.middle);
-      const personLast = normalizeAddPersonMatchText(names.last);
-      const personMaiden = normalizeAddPersonMatchText(names.maiden);
-      const personDisplay = normalizeAddPersonMatchText(names.display || person?.name);
+      const personFirst = addPersonMatchTextVariants(names.first);
+      const personMiddle = addPersonMatchTextVariants(names.middle);
+      const personLast = addPersonMatchTextVariants(names.last);
+      const personMaiden = addPersonMatchTextVariants(names.maiden);
+      const personDisplay = addPersonMatchTextVariants(names.display || person?.name);
       const birthDates = addPersonPersonDateValues(person?.birth);
       const deathDates = addPersonPersonDateValues(person?.death);
       const birthPlaces = addPersonPersonPlaceValues(person?.birth);
       const deathPlaces = addPersonPersonPlaceValues(person?.death);
 
-      if (draft.firstName && personFirst === draft.firstName) score += 34;
-      else if (draft.firstName && personFirst.startsWith(draft.firstName)) score += 18;
-      else if (draft.firstName && personDisplay.includes(draft.firstName)) score += 12;
+      if (draft.firstName && personFirst.includes(draft.firstName)) score += 34;
+      else if (draft.firstName && personFirst.some(value => value.startsWith(draft.firstName))) score += 18;
+      else if (draft.firstName && personDisplay.some(value => value.includes(draft.firstName))) score += 12;
 
-      if (draft.middleName && personMiddle === draft.middleName) score += 10;
+      if (draft.middleName && personMiddle.includes(draft.middleName)) score += 10;
 
-      if (draft.lastName && personLast === draft.lastName) score += 32;
-      else if (draft.lastName && personDisplay.includes(draft.lastName)) score += 16;
+      if (draft.lastName && personLast.includes(draft.lastName)) score += 32;
+      else if (draft.lastName && personDisplay.some(value => value.includes(draft.lastName))) score += 16;
 
-      if (draft.maidenName && (personMaiden === draft.maidenName || personLast === draft.maidenName)) score += 22;
+      if (draft.maidenName && (personMaiden.includes(draft.maidenName) || personLast.includes(draft.maidenName))) score += 22;
 
       if (draft.birthDate && birthDates.includes(draft.birthDate)) score += 34;
-      else if (draft.birthDate && birthDates.some(value => value.includes(draft.birthDate) || draft.birthDate.includes(value))) score += 18;
+      else if (draft.birthDate && birthDates.some(value => value.includes(draft.birthDate) || draft.birthDate.includes(value))) score += 24;
 
       if (draft.deathDate && deathDates.includes(draft.deathDate)) score += 26;
-      else if (draft.deathDate && deathDates.some(value => value.includes(draft.deathDate) || draft.deathDate.includes(value))) score += 12;
+      else if (draft.deathDate && deathDates.some(value => value.includes(draft.deathDate) || draft.deathDate.includes(value))) score += 24;
 
       if (draft.birthPlace && birthPlaces.some(value => value === draft.birthPlace)) score += 24;
-      else if (draft.birthPlace && birthPlaces.some(value => value.includes(draft.birthPlace) || draft.birthPlace.includes(value))) score += 12;
+      else if (draft.birthPlace && birthPlaces.some(value => value.includes(draft.birthPlace) || draft.birthPlace.includes(value))) score += 24;
 
-      if (draft.deathPlace && deathPlaces.some(value => value === draft.deathPlace)) score += 18;
-      else if (draft.deathPlace && deathPlaces.some(value => value.includes(draft.deathPlace) || draft.deathPlace.includes(value))) score += 8;
+      if (draft.deathPlace && deathPlaces.some(value => value === draft.deathPlace)) score += 24;
+      else if (draft.deathPlace && deathPlaces.some(value => value.includes(draft.deathPlace) || draft.deathPlace.includes(value))) score += 24;
 
       const anchor = getPerson(options.connectToPersonId || options.personId || '');
       if (anchor) {
-        const anchorLast = normalizeAddPersonMatchText(anchor.names?.last);
-        if (anchorLast && personLast && anchorLast === personLast) score += 8;
+        const anchorLast = addPersonMatchTextVariants(anchor.names?.last);
+        if (anchorLast.some(value => personLast.includes(value))) score += 8;
       }
 
       return score;
@@ -49962,6 +51515,7 @@
         place
       ]
         .filter(Boolean)
+        .map(escapeHtml)
         .join('<br>');
     }
 
@@ -51333,6 +52887,14 @@
       const editValues = editPersonFormValues(editPerson);
       const isPartnerMode = options.relativeType === 'partner';
       const showRelationshipBlock = relationshipBlockShouldShow(options, editPerson);
+      const connectionIntent = addPersonCreateConnectionIntent(options);
+      const initialParentFamilySelection = defaultParentFamilySelection(
+        connectionIntent.anchorPersonId,
+        connectionIntent.relationshipType,
+        options.parentFamilyId
+          || options.parentFamilySelection
+          || ''
+      );
 
       const relativeGender = getGenderForRelativeType(options.relativeType);
 
@@ -51377,6 +52939,12 @@
                 <input id="addPersonMaidenName" data-source-value="${escapeHtml(editValues.maidenName)}" value="${escapeHtml(localizedDataFieldValue(editValues.maidenName))}" placeholder="e.g. Milkpaw">
               </div>
             </div></section>
+          ${isEditMode ? '' : renderParentFamilySelector({
+            anchorPersonId: connectionIntent.anchorPersonId,
+            relationshipType: connectionIntent.relationshipType,
+            selectedValue: initialParentFamilySelection,
+            controlId: 'addPersonParentFamily'
+          })}
           <section>
             <h3 class="form-section-title">Life events</h3>
             <div class="add-person-life-grid">
@@ -51513,7 +53081,8 @@
       const result = connectPeopleByRelationship({
         anchorPersonId: connectionIntent.anchorPersonId,
         relativePersonId: selectedPerson.id,
-        relationshipType: connectionIntent.relationshipType
+        relationshipType: connectionIntent.relationshipType,
+        parentFamilySelection: addPersonParentFamilySelection(options)
       });
 
       if (!result.ok) {
@@ -57958,6 +59527,7 @@
       if (!getPerson(personId)) { showToast('This person is not currently shown in the sample Family Tree.'); return; }
       state.activeModule = 'Family Tree';
       state.selectedPersonId = personId;
+      rememberTreeSelectedPerson(personId);
       state.treeCenterTargetId = personId;
       state.treeInspectorCollapsed = false;
       render();
@@ -57974,6 +59544,7 @@
     function syncPersonSidebarSelection(personId, context) {
       if (!personId) return;
       state.selectedPersonId = personId;
+      if (context === 'tree') rememberTreeSelectedPerson(personId);
       if (context === 'people') state.selectedPeopleId = personId;
     }
 
@@ -58604,6 +60175,12 @@
         const personId = event.currentTarget.dataset.treeViewProfile;
         if (personId) openPeopleProfileFromRow(personId);
       });
+      if (context === 'tree') {
+        root.querySelector('[data-tree-focus-person]')?.addEventListener('click', event => {
+          const personId = event.currentTarget.dataset.treeFocusPerson;
+          if (personId) setTreeFocusPerson(personId);
+        });
+      }
       root
         .querySelectorAll(
           '[data-toggle-section]'
@@ -58687,6 +60264,16 @@
 
       sampleData.people = sampleData.people.filter(person => !deletedIds.has(person.id));
 
+      sampleData.projects.forEach(project => {
+        if (!deletedIds.has(project.defaultPersonId)) return;
+        project.defaultPersonId = getPeople(project.id)[0]?.id || '';
+      });
+
+      Object.entries(state.treeProjectViews || {}).forEach(([projectId, view]) => {
+        if (!deletedIds.has(view.focusPersonId)) return;
+        view.focusPersonId = treeDefaultPersonId(projectId);
+      });
+
       sampleData.families = centralFamilyRecords().map(family => {
         const removedPartnerA = partnerAFields.some(field => deletedIds.has(family[field]));
         const removedPartnerB = partnerBFields.some(field => deletedIds.has(family[field]));
@@ -58740,7 +60327,7 @@
       );
 
       clearPeopleSelection();
-      const fallbackId = getPeople(currentProjectId())[0]?.id || '';
+      const fallbackId = treeDefaultPersonId(currentProjectId());
       if (!getPerson(state.selectedPeopleId)) state.selectedPeopleId = fallbackId;
       if (!getPerson(state.selectedPersonId)) state.selectedPersonId = fallbackId;
       if (deletedIds.has(state.treeCenterTargetId)) state.treeCenterTargetId = fallbackId;
@@ -81205,7 +82792,12 @@
       wrapper.innerHTML = renderGeneoPaintPopover(target).trim();
       const popover = wrapper.firstElementChild;
       document.body.appendChild(popover);
-      localizeUI(popover);
+      localizeUI(
+        popover,
+        {
+          suppressObserverReplay: true
+        }
+      );
       const controller = new AbortController();
       geneoPaintRuntime.target = { scope: target.scope, id: target.id, property: target.property };
       geneoPaintRuntime.opener = opener;
@@ -87250,6 +88842,8 @@
         .filter(person =>
           person?.id
           && !person.deleted
+          && person.id
+            !== scoreOptions.connectToPersonId
         )
         .map(person => ({
           person,
@@ -87319,7 +88913,7 @@
       `;
 
       if (!draft.hasSignal) {
-        return `<div class="modal-side-card" data-geneo-person-possible-matches>
+        return `<div class="modal-side-card" data-geneo-person-possible-matches aria-live="polite">
           ${header}
           <div class="add-person-match-empty">
             Enter a name, date, or place to check the Family Tree.
@@ -87328,7 +88922,7 @@
       }
 
       if (!matches.length) {
-        return `<div class="modal-side-card" data-geneo-person-possible-matches>
+        return `<div class="modal-side-card" data-geneo-person-possible-matches aria-live="polite">
           ${header}
           <div class="add-person-match-empty">
             No strong matches found in the Family Tree.
@@ -87341,7 +88935,7 @@
           options.relative
         );
 
-      return `<div class="modal-side-card" data-geneo-person-possible-matches>
+      return `<div class="modal-side-card" data-geneo-person-possible-matches aria-live="polite">
         ${header}
         <div class="add-person-match-list">
           ${matches.map(item =>
@@ -87440,7 +89034,12 @@
           '[data-geneo-person-possible-matches]'
         );
 
-      localizeUI(refreshed);
+      localizeUI(
+        refreshed,
+        {
+          suppressObserverReplay: true
+        }
+      );
       bindGeneographPersonPossibleMatchCard(
         options
       );
@@ -87582,22 +89181,22 @@
 
                   <div class="field">
                     <label for="geneoPersonFirstName">First name</label>
-                    <input id="geneoPersonFirstName" value="${escapeHtml(names.first)}" placeholder="e.g. Silver" autofocus>
+                    <input id="geneoPersonFirstName" data-source-value="${escapeHtml(names.first)}" value="${escapeHtml(localizedDataFieldValue(names.first))}" placeholder="e.g. Silver" autofocus>
                   </div>
 
                   <div class="field">
                     <label for="geneoPersonLastName">Last name</label>
-                    <input id="geneoPersonLastName" value="${escapeHtml(names.last)}" placeholder="e.g. Whiskerfield">
+                    <input id="geneoPersonLastName" data-source-value="${escapeHtml(names.last)}" value="${escapeHtml(localizedDataFieldValue(names.last))}" placeholder="e.g. Whiskerfield">
                   </div>
 
                   <div class="field">
                     <label for="geneoPersonMiddleName">Middle name / Patronym</label>
-                    <input id="geneoPersonMiddleName" value="${escapeHtml(names.middle)}">
+                    <input id="geneoPersonMiddleName" data-source-value="${escapeHtml(names.middle)}" value="${escapeHtml(localizedDataFieldValue(names.middle))}">
                   </div>
 
                   <div class="field" data-geneo-maiden-name ${gender === 'female' ? '' : 'hidden'}>
                     <label for="geneoPersonMaidenName">Maiden name</label>
-                    <input id="geneoPersonMaidenName" value="${escapeHtml(names.maiden)}">
+                    <input id="geneoPersonMaidenName" data-source-value="${escapeHtml(names.maiden)}" value="${escapeHtml(localizedDataFieldValue(names.maiden))}">
                   </div>
                 </div>
               </section>
@@ -88241,12 +89840,12 @@
         || 'unknown';
 
       const enteredFirstName =
-        modalBackdrop
-          .querySelector(
+        collectLocalizedDataFieldValue(
+          modalBackdrop.querySelector(
             '#geneoPersonFirstName'
-          )?.value
-          .trim()
-        || '';
+          ),
+          existing?.names?.first || ''
+        ).trim();
 
       const values = {
         names: {
@@ -88259,29 +89858,29 @@
             ),
 
           middle:
-            modalBackdrop
-              .querySelector(
+            collectLocalizedDataFieldValue(
+              modalBackdrop.querySelector(
                 '#geneoPersonMiddleName'
-              )?.value
-              .trim()
-            || '',
+              ),
+              existing?.names?.middle || ''
+            ).trim(),
 
           last:
-            modalBackdrop
-              .querySelector(
+            collectLocalizedDataFieldValue(
+              modalBackdrop.querySelector(
                 '#geneoPersonLastName'
-              )?.value
-              .trim()
-            || '',
+              ),
+              existing?.names?.last || ''
+            ).trim(),
 
           maiden:
             gender === 'female'
-              ? modalBackdrop
-                  .querySelector(
+              ? collectLocalizedDataFieldValue(
+                  modalBackdrop.querySelector(
                     '#geneoPersonMaidenName'
-                  )?.value
-                  .trim()
-                || ''
+                  ),
+                  existing?.names?.maiden || ''
+                ).trim()
               : ''
         },
 
@@ -90560,7 +92159,12 @@
             .disabled =
               !selectionChanged();
 
-          localizeUI(modal);
+          localizeUI(
+            modal,
+            {
+              suppressObserverReplay: true
+            }
+          );
         };
 
       const saveSelection =
@@ -140321,7 +141925,10 @@
       );
 
       localizeUI(
-        modalBackdrop
+        modalBackdrop,
+        {
+          suppressObserverReplay: true
+        }
       );
 
       validateRenderedSemanticReferences(
