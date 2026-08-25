@@ -6075,6 +6075,19 @@
       overflow: auto;
     }
 
+    .connect-partner-children-selector {
+      min-width: 0;
+      margin-top: var(--space-4);
+    }
+
+    .connect-partner-children-selector .field-help {
+      display: block;
+      margin-top: 6px;
+      color: var(--text-tertiary);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
     .connect-person-main {
       min-width: 0;
       min-height: 0;
@@ -6906,6 +6919,12 @@
 
     .add-person-relationship-card .add-person-relationship-type-field {
       grid-column: 1;
+    }
+
+    .add-person-relationship-card
+    .connect-partner-children-selector {
+      grid-column: 1 / -1;
+      margin-top: 0;
     }
 
     .add-person-relationship-card .add-person-partner-field,
@@ -30572,7 +30591,7 @@
       'Marriage date': 'Дата брака',
       'Marriage place': 'Место брака',
       'Marriage type': 'Тип брака',
-      'Relationship type': 'Тип связи',
+      'Relationship type': 'Тип отношений',
       'Death reason': 'Причина смерти',
       'Cause of Death': 'Причина смерти',
       'No partners recorded': 'Партнёры не указаны',
@@ -31048,6 +31067,24 @@
       'Select relationship':
         'Выберите связь',
 
+      'Existing children':
+        'Существующие дети',
+
+      'Add new partner as the children\'s father':
+        'Добавить нового партнёра как отца детей',
+
+      'Add new partner as the children\'s mother':
+        'Добавить нового партнёра как мать детей',
+
+      'Add new partner as the children\'s parent':
+        'Добавить нового партнёра как родителя детей',
+
+      'Keep the children with the single parent only':
+        'Оставить детей связанными только с текущим родителем',
+
+      'Choose whether the new partner becomes a parent of the existing children.':
+        'Выберите, станет ли новый партнёр родителем существующих детей.',
+
       'Warning!':
         'Предупреждение',
 
@@ -31140,7 +31177,7 @@
       'Research context or additional details': 'Исследовательский контекст или дополнительные сведения',
       'Company name': 'Название организации',
       'e.g. Pawford School': 'Например, Школа Поуфорда',
-      'e.g. Teacher': 'Например, Школа Поуфорда',
+      'e.g. Teacher': 'Например, Учитель',
       'Work notes': 'Заметки о работе',
       'Baptism place': 'Место крещения',
       'Baptism date': 'Дата крещения',
@@ -34047,7 +34084,7 @@
     const RU_TERMS_RELATIONSHIPS = {
       // General relationship vocabulary
       'Relationship':
-        'Связь',
+        'Отношения',
 
       'Relationships':
         'Близкие родственники',
@@ -35097,6 +35134,16 @@
       'File picker will be added in a later step.': 'Выбор файла будет добавлен позже.',
       'Note picker will be added in a later step.': 'Выбор заметки будет добавлен позже.',
       'Attachment picker will be added in a later step.': 'Выбор вложения будет добавлен позже.',
+      'Remove relationship?':
+        'Удалить родственную связь?',
+      'This changes the relationship only. People records will remain in the project.':
+        'Изменится только родственная связь. Записи людей останутся в проекте.',
+      'Unlink relationship':
+        'Удалить связь',
+      'Children connected through this relationship':
+        'Дети, связанные через эту родственную связь',
+      'Choose which parent should keep the children after unlinking.':
+        'Выберите родителя, с которым останутся дети после удаления связи.',
       'Relationship information is missing.': 'Сведения о родственной связи отсутствуют.',
       'Relationship record not found.': 'Запись родственной связи не найдена.',
       'This parent-child relationship has already been removed.': 'Эта связь родителя и ребёнка уже удалена.',
@@ -36373,6 +36420,64 @@
       */
 
       repl(
+        /^Keep children with\s+(.+)$/i,
+        (
+          _,
+          person
+        ) =>
+          `Оставить детей с: ${
+            translateValue(person)
+          }`
+      );
+
+      repl(
+        /^This will remove\s+(.+?)\s+as\s+(.+?)[’']s parent\. Neither person will be deleted\.$/i,
+        (
+          _,
+          parent,
+          child
+        ) =>
+          `Будет удалена связь «${
+            translateValue(parent)
+          } — родитель ${
+            translateValue(child)
+          }». Записи людей останутся в проекте.`
+      );
+
+      repl(
+        /^This will remove\s+(.+?)\s+as\s+(.+?)[’']s child\. Neither person will be deleted\.$/i,
+        (
+          _,
+          child,
+          parent
+        ) =>
+          `Будет удалена связь «${
+            translateValue(child)
+          } — ребёнок ${
+            translateValue(parent)
+          }». Записи людей останутся в проекте.`
+      );
+
+      repl(
+        /^This will remove the partner relationship between\s+(.+?)\s+and\s+(.+?)\. Neither person will be deleted\.(?:\s+(Choose which parent should keep the children after unlinking\.))?$/i,
+        (
+          _,
+          firstPerson,
+          secondPerson,
+          childDecision
+        ) =>
+          `Партнёрская связь между «${
+            translateValue(firstPerson)
+          }» и «${
+            translateValue(secondPerson)
+          }» будет удалена. Записи людей останутся в проекте.${
+            childDecision
+              ? ' Выберите родителя, с которым останутся дети после удаления связи.'
+              : ''
+          }`
+      );
+
+      repl(
         /^Born:?\s+(.+?)\s*\((living person|deceased)\)$/i,
         (
           _,
@@ -36643,7 +36748,7 @@
       repl(
         /^Unlink\s+(?!.*\s+from this board person$)(.+)$/i,
         (_, value) =>
-          `Удалить связь: ${translateValue(value)}`
+          `Удалить связь ${translateValue(value)}`
       );
 
       repl(
@@ -37626,23 +37731,23 @@
         openedAt: '2026-06-16T10:42:00Z'
       },
       people: [
-        { id: 'silver', projectId: 'p1', primaryPhotoId: 'photo-silver-portrait', names: { first: 'Silver', middle: '', last: 'Whiskerfield', maiden: '', display: 'Silver Whiskerfield', initials: 'SW' }, gender: 'male', livingStatus: 'Living', role: 'Self', avatarClass: 'avatar-green', birth: { date: '03.03.1998', dateLabel: '03 Mar 1998', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 5, notes: 7 }, meta: { updated: '10 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'luna', projectId: 'p1', primaryPhotoId: 'photo-luna-portrait', names: { first: 'Luna', middle: '', last: 'Purrington', maiden: 'Purrington', display: 'Luna Purrington', initials: 'LP' }, gender: 'female', livingStatus: 'Living', role: 'Spouse', avatarClass: 'avatar-purple', birth: { date: '12.08.1999', dateLabel: '12 Aug 1999', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 3 }, meta: { updated: '10 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'oliver', projectId: 'p1', primaryPhotoId: 'photo-oliver-portrait', names: { first: 'Oliver', middle: '', last: 'Whiskerfield', maiden: '', display: 'Oliver Whiskerfield', initials: 'OW' }, gender: 'male', livingStatus: 'Living', role: 'Son', avatarClass: 'avatar-amber', birth: { date: '18.05.2024', dateLabel: '18 May 2024', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: '09 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing source' } },
+        { id: 'silver', projectId: 'p1', primaryPhotoId: 'photo-silver-portrait', names: { first: 'Silver', middle: '', last: 'Whiskerfield', maiden: '', display: 'Silver Whiskerfield', initials: 'SW' }, gender: 'male', livingStatus: 'Living', role: 'Self', avatarClass: 'avatar-green', birth: { date: '03.03.1998', dateLabel: '03 Mar 1998', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 5, notes: 7 }, meta: { updated: 'May 10, 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'luna', projectId: 'p1', primaryPhotoId: 'photo-luna-portrait', names: { first: 'Luna', middle: '', last: 'Purrington', maiden: 'Purrington', display: 'Luna Purrington', initials: 'LP' }, gender: 'female', livingStatus: 'Living', role: 'Spouse', avatarClass: 'avatar-purple', birth: { date: '12.08.1999', dateLabel: '12 Aug 1999', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 3 }, meta: { updated: 'May 10, 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'oliver', projectId: 'p1', primaryPhotoId: 'photo-oliver-portrait', names: { first: 'Oliver', middle: '', last: 'Whiskerfield', maiden: '', display: 'Oliver Whiskerfield', initials: 'OW' }, gender: 'male', livingStatus: 'Living', role: 'Son', avatarClass: 'avatar-amber', birth: { date: '18.05.2024', dateLabel: '18 May 2024', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: 'May 9, 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing source' } },
         { id: 'mochi', projectId: 'p1', names: { first: 'Mochi', middle: '', last: 'Whiskerfield', maiden: '', display: 'Mochi Whiskerfield', initials: 'MO' }, gender: 'female', livingStatus: 'Living', role: 'Daughter', avatarClass: 'avatar-purple', birth: { date: '07.09.2026', dateLabel: '07 Sep 2026', dateType: 'Exact date', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: '09 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing source' } },
         { id: 'cleo', projectId: 'p1', names: { first: 'Cleo', middle: '', last: 'Whiskerfield', maiden: '', display: 'Cleo Whiskerfield', initials: 'CW' }, gender: 'female', livingStatus: 'Living', role: 'Daughter', avatarClass: 'avatar-purple', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 0, notes: 1 }, meta: { updated: '04 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing facts' } },
-        { id: 'barnaby', projectId: 'p1', primaryPhotoId: 'photo-barnaby-portrait', names: { first: 'Barnaby', middle: '', last: 'Whiskerfield', maiden: '', display: 'Barnaby Whiskerfield', initials: 'BW' }, gender: 'male', livingStatus: 'Deceased', role: 'Paternal grandfather', avatarClass: '', birth: { date: '14.02.1946', dateLabel: '14 Feb 1946', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '22.11.2018', dateLabel: '22 Nov 2018', dateType: 'Exact date', placeId: 'place-pawford', reason: '', burialPlaceId: 'place-pawford' }, counts: { files: 3, notes: 2 }, meta: { updated: '04 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'daisy', projectId: 'p1', primaryPhotoId: 'photo-daisy-school', names: { first: 'Daisy', middle: '', last: 'Milkpaw', maiden: 'Milkpaw', display: 'Daisy Milkpaw', initials: 'DM' }, gender: 'female', livingStatus: 'Deceased', role: 'Paternal grandmother', avatarClass: 'avatar-purple', birth: { date: '03.06.1949', dateLabel: '03 Jun 1949', dateType: 'Exact date', placeId: null }, death: { date: '04.01.2020', dateLabel: '04 Jan 2020', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 3, notes: 1 }, meta: { updated: '04 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'rupert', projectId: 'p1', names: { first: 'Rupert', middle: '', last: 'Purrington', maiden: '', display: 'Rupert Purrington', initials: 'RP' }, gender: 'male', livingStatus: 'Deceased', role: 'Maternal grandfather', avatarClass: '', birth: { date: '19.10.1951', dateLabel: '19 Oct 1951', dateType: 'Exact date', placeId: 'place-fishmarket-row' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 1 }, meta: { updated: '28 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Missing facts' } },
-        { id: 'mabel', projectId: 'p1', names: { first: 'Mabel', middle: '', last: 'Softtail', maiden: '', display: 'Mabel Softtail', initials: 'MS' }, gender: 'female', livingStatus: 'Living', role: 'Maternal grandmother', avatarClass: 'avatar-purple', birth: { date: '28.04.1955', dateLabel: '28 Apr 1955', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 2 }, meta: { updated: '28 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'archibald', projectId: 'p1', names: { first: 'Archibald', middle: '', last: 'Whiskerfield', maiden: '', display: 'Archibald Whiskerfield', initials: 'AW' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '02.01.1915', dateLabel: '02 Jan 1915', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '17.07.1982', dateLabel: '17 Jul 1982', dateType: 'Exact date', placeId: 'place-pawford', reason: '', burialPlaceId: 'place-pawford' }, counts: { files: 2, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'edith', projectId: 'p1', names: { first: 'Edith', middle: '', last: 'Mackerelton', maiden: 'Mackerelton', display: 'Edith Mackerelton', initials: 'EM' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '21.09.1918', dateLabel: '21 Sep 1918', dateType: 'Exact date', placeId: 'place-old-cattery' }, death: { date: '03.03.1991', dateLabel: '03 Mar 1991', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
-        { id: 'percival', projectId: 'p1', names: { first: 'Percival', middle: '', last: 'Milkpaw', maiden: '', display: 'Percival Milkpaw', initials: 'PM' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '1968', dateLabel: '1968', dateType: 'Year only', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 1, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
-        { id: 'nora', projectId: 'p1', names: { first: 'Nora', middle: '', last: 'Creamfur', maiden: 'Creamfur', display: 'Nora Creamfur', initials: 'NC' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '11.11.1922', dateLabel: '11 Nov 1922', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
-        { id: 'algernon', projectId: 'p1', names: { first: 'Algernon', middle: '', last: 'Purrington', maiden: '', display: 'Algernon Purrington', initials: 'AP' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '08.05.1920', dateLabel: '08 May 1920', dateType: 'Exact date', placeId: 'place-fishmarket-row' }, death: { date: '09.12.1999', dateLabel: '09 Dec 1999', dateType: 'Exact date', placeId: 'place-fishmarket-row', reason: '', burialPlaceId: 'place-fishmarket-row' }, counts: { files: 2, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
-        { id: 'beatrice', projectId: 'p1', names: { first: 'Beatrice', middle: '', last: 'Threadtail', maiden: 'Threadtail', display: 'Beatrice Threadtail', initials: 'BT' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '30.03.1924', dateLabel: '30 Mar 1924', dateType: 'Exact date', placeId: null }, death: { date: '15.06.2004', dateLabel: '15 Jun 2004', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 2, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
+        { id: 'barnaby', projectId: 'p1', primaryPhotoId: 'photo-barnaby-portrait', names: { first: 'Barnaby', middle: '', last: 'Whiskerfield', maiden: '', display: 'Barnaby Whiskerfield', initials: 'BW' }, gender: 'male', livingStatus: 'Deceased', role: 'Paternal grandfather', avatarClass: '', birth: { date: '14.02.1946', dateLabel: '14 Feb 1946', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '22.11.2018', dateLabel: '22 Nov 2018', dateType: 'Exact date', placeId: 'place-pawford', reason: '', burialPlaceId: 'place-pawford' }, counts: { files: 3, notes: 2 }, meta: { updated: 'May 4, 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'daisy', projectId: 'p1', primaryPhotoId: 'photo-daisy-school', names: { first: 'Daisy', middle: '', last: 'Milkpaw', maiden: 'Milkpaw', display: 'Daisy Milkpaw', initials: 'DM' }, gender: 'female', livingStatus: 'Deceased', role: 'Paternal grandmother', avatarClass: 'avatar-purple', birth: { date: '03.06.1949', dateLabel: '03 Jun 1949', dateType: 'Exact date', placeId: null }, death: { date: '04.01.2020', dateLabel: '04 Jan 2020', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 3, notes: 1 }, meta: { updated: 'May 4, 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'rupert', projectId: 'p1', names: { first: 'Rupert', middle: '', last: 'Purrington', maiden: '', display: 'Rupert Purrington', initials: 'RP' }, gender: 'male', livingStatus: 'Deceased', role: 'Maternal grandfather', avatarClass: '', birth: { date: '19.10.1951', dateLabel: '19 Oct 1951', dateType: 'Exact date', placeId: 'place-fishmarket-row' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 1 }, meta: { updated: 'Apr 28, 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Missing facts' } },
+        { id: 'mabel', projectId: 'p1', names: { first: 'Mabel', middle: '', last: 'Softtail', maiden: '', display: 'Mabel Softtail', initials: 'MS' }, gender: 'female', livingStatus: 'Living', role: 'Maternal grandmother', avatarClass: 'avatar-purple', birth: { date: '28.04.1955', dateLabel: '28 Apr 1955', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 2 }, meta: { updated: 'Apr 28, 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'archibald', projectId: 'p1', names: { first: 'Archibald', middle: '', last: 'Whiskerfield', maiden: '', display: 'Archibald Whiskerfield', initials: 'AW' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '02.01.1915', dateLabel: '02 Jan 1915', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '17.07.1982', dateLabel: '17 Jul 1982', dateType: 'Exact date', placeId: 'place-pawford', reason: '', burialPlaceId: 'place-pawford' }, counts: { files: 2, notes: 1 }, meta: { updated: 'Apr 24, 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'edith', projectId: 'p1', names: { first: 'Edith', middle: '', last: 'Mackerelton', maiden: 'Mackerelton', display: 'Edith Mackerelton', initials: 'EM' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '21.09.1918', dateLabel: '21 Sep 1918', dateType: 'Exact date', placeId: 'place-old-cattery' }, death: { date: '03.03.1991', dateLabel: '03 Mar 1991', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 1 }, meta: { updated: 'Apr 24, 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
+        { id: 'percival', projectId: 'p1', names: { first: 'Percival', middle: '', last: 'Milkpaw', maiden: '', display: 'Percival Milkpaw', initials: 'PM' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '1968', dateLabel: '1968', dateType: 'Year only', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 1, notes: 0 }, meta: { updated: 'Apr 24, 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
+        { id: 'nora', projectId: 'p1', names: { first: 'Nora', middle: '', last: 'Creamfur', maiden: 'Creamfur', display: 'Nora Creamfur', initials: 'NC' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '11.11.1922', dateLabel: '11 Nov 1922', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: 'Apr 24, 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
+        { id: 'algernon', projectId: 'p1', names: { first: 'Algernon', middle: '', last: 'Purrington', maiden: '', display: 'Algernon Purrington', initials: 'AP' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '08.05.1920', dateLabel: '08 May 1920', dateType: 'Exact date', placeId: 'place-fishmarket-row' }, death: { date: '09.12.1999', dateLabel: '09 Dec 1999', dateType: 'Exact date', placeId: 'place-fishmarket-row', reason: '', burialPlaceId: 'place-fishmarket-row' }, counts: { files: 2, notes: 1 }, meta: { updated: 'Apr 24, 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
+        { id: 'beatrice', projectId: 'p1', names: { first: 'Beatrice', middle: '', last: 'Threadtail', maiden: 'Threadtail', display: 'Beatrice Threadtail', initials: 'BT' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '30.03.1924', dateLabel: '30 Mar 1924', dateType: 'Exact date', placeId: null }, death: { date: '15.06.2004', dateLabel: '15 Jun 2004', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 2, notes: 0 }, meta: { updated: 'Apr 24, 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
         { id: 'felix', projectId: 'p1', names: { first: 'Felix', middle: '', last: 'Softtail', maiden: '', display: 'Felix Softtail', initials: 'FS' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '1919', dateLabel: '1919', dateType: 'Year only', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
-        { id: 'pearl', projectId: 'p1', names: { first: 'Pearl', middle: '', last: 'Velvetpaw', maiden: 'Velvetpaw', display: 'Pearl Velvetpaw', initials: 'PV' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '27.12.1927', dateLabel: '27 Dec 1927', dateType: 'Exact date', placeId: 'place-old-cattery' }, death: { date: '02.02.2011', dateLabel: '02 Feb 2011', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { files: 1, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
+        { id: 'pearl', projectId: 'p1', names: { first: 'Pearl', middle: '', last: 'Velvetpaw', maiden: 'Velvetpaw', display: 'Pearl Velvetpaw', initials: 'PV' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '27.12.1927', dateLabel: '27 Dec 1927', dateType: 'Exact date', placeId: 'place-old-cattery' }, death: { date: '02.02.2011', dateLabel: '02 Feb 2011', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { files: 1, notes: 1 }, meta: { updated: 'Apr 24, 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
         { id: 'solomon', projectId: 'p1', names: { first: 'Solomon', middle: '', last: 'Velvetpaw', maiden: '', display: 'Solomon Velvetpaw', initials: 'SV' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Pearl Velvetpaw', avatarClass: 'avatar-amber', birth: { date: '1896', dateLabel: '1896', dateType: 'Year only', placeId: 'place-old-cattery' }, death: { date: '14.04.1961', dateLabel: '14 Apr 1961', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { files: 1, notes: 1 }, meta: { updated: 'May 24, 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
         { id: 'opal', projectId: 'p1', names: { first: 'Opal', middle: '', last: 'Silktail', maiden: '', display: 'Opal Silktail', initials: 'OS' }, gender: 'female', livingStatus: 'Deceased', role: 'Mother of Pearl Velvetpaw', avatarClass: 'avatar-purple', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '09.09.1970', dateLabel: '09 Sep 1970', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { files: 1, notes: 1 }, meta: { updated: 'May 24, 2026', sourceStatus: 'Needs source', reviewStatus: 'Check birth details' } },
         { id: 'horatio', projectId: 'p1', names: { first: 'Horatio', middle: '', last: 'Threadtail', maiden: '', display: 'Horatio Threadtail', initials: 'HT' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Beatrice Threadtail', avatarClass: 'avatar-blue', birth: { date: '1898', dateLabel: '1898', dateType: 'Year only', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 0, notes: 1 }, meta: { updated: 'May 24, 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing death details' } },
@@ -48869,6 +48974,15 @@
               <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
             </div>
 
+            ${renderPartnerChildrenSelector({
+              anchorPersonId: anchor?.id || '',
+              relationshipType,
+              selectedPersonId: connectPersonModalState.selectedPersonId,
+              selectedValue: connectPersonModalState.partnerChildrenMode,
+              controlId: 'connectPersonPartnerChildrenMode'
+            })}
+
+
             ${renderParentFamilySelector({
               anchorPersonId: anchor?.id || '',
               relationshipType,
@@ -48933,6 +49047,9 @@
       modal.querySelector('[data-connect-relationship]')?.addEventListener('change', event => {
         connectPersonModalState.relationshipType = normalizeConnectRelationshipType(event.currentTarget.value);
         connectPersonModalState.selectedPersonId = '';
+        connectPersonModalState.partnerChildrenMode =
+          PARTNER_CHILDREN_ADD_PARENT;
+
         connectPersonModalState.parentFamilySelection = defaultParentFamilySelection(
           connectPersonModalState.anchorPersonId,
           connectPersonModalState.relationshipType
@@ -48944,6 +49061,12 @@
         connectPersonModalState.parentFamilySelection = event.currentTarget.value;
         refreshConnectPersonModal();
       });
+
+      modal.querySelector('#connectPersonPartnerChildrenMode')
+        ?.addEventListener('change', event => {
+          connectPersonModalState.partnerChildrenMode =
+            normalizePartnerChildrenMode(event.currentTarget.value);
+        });
 
       modal.querySelector('[data-connect-search]')?.addEventListener('input', event => {
         connectPersonModalState.query = event.currentTarget.value;
@@ -48974,7 +49097,8 @@
             connectAfterCreate: true,
             personId: anchor?.id || connectPersonModalState.anchorPersonId,
             connectToPersonId: anchor?.id || connectPersonModalState.anchorPersonId,
-            parentFamilySelection: connectPersonModalState.parentFamilySelection
+            parentFamilySelection: connectPersonModalState.parentFamilySelection,
+            partnerChildrenMode: connectPersonModalState.partnerChildrenMode
           }
         );
       });
@@ -48997,7 +49121,8 @@
           anchorPersonId: anchor.id,
           relativePersonId: selected.id,
           relationshipType: connectPersonModalState.relationshipType,
-          parentFamilySelection: connectPersonModalState.parentFamilySelection
+          parentFamilySelection: connectPersonModalState.parentFamilySelection,
+          partnerChildrenMode: connectPersonModalState.partnerChildrenMode
         });
 
         if (!result.ok) {
@@ -49032,15 +49157,25 @@
       const anchor = getPerson(anchorPersonId);
       if (!anchor) return;
 
+      const relationshipType =
+        normalizeConnectRelationshipType(
+          options.relationshipType || 'parent'
+        );
+
       connectPersonModalState = {
         anchorPersonId: anchor.id,
-        relationshipType: normalizeConnectRelationshipType(options.relationshipType || 'parent'),
+        relationshipType,
         query: '',
         selectedPersonId: '',
         parentFamilySelection: defaultParentFamilySelection(
           anchor.id,
-          normalizeConnectRelationshipType(options.relationshipType || 'parent'),
-          options.parentFamilyId || options.parentFamilySelection || ''
+          relationshipType,
+          options.parentFamilyId
+            || options.parentFamilySelection
+            || ''
+        ),
+        partnerChildrenMode: normalizePartnerChildrenMode(
+          options.partnerChildrenMode
         )
       };
 
@@ -49857,7 +49992,14 @@
       return false;
     }
 
-    function renderAddPersonRelationshipCard({ relationship = null, personId = '', partner = null, index = 0, mode = 'edit' } = {}) {
+    function renderAddPersonRelationshipCard({
+      relationship = null,
+      personId = '',
+      partner = null,
+      index = 0,
+      mode = 'edit',
+      partnerChildrenMode = PARTNER_CHILDREN_ADD_PARENT
+    } = {}) {
       const relationshipType = relationship
         ? relationshipTypeFromLegacy(relationship)
         : mode === 'addPartner'
@@ -49895,7 +50037,7 @@
                   class="add-person-relationship-partner-unlink"
                   type="button"
                   aria-label="Unlink ${escapeHtml(partnerName)}"
-                  data-add-person-unlink-partner-toast
+                  data-add-person-unlink-partner
                   data-person-id="${escapeHtml(personId)}"
                   data-partner-id="${escapeHtml(partner?.id || '')}"
                   data-relationship-id="${escapeHtml(relationship?.id || '')}">
@@ -49914,6 +50056,15 @@
             </select>
             <span class="add-person-select-chevron" aria-hidden="true">${icon.chevron}</span>
           </div>
+          ${mode === 'addPartner'
+            ? renderPartnerChildrenSelector({
+                anchorPersonId: partner?.id || '',
+                relationshipType: 'partner',
+                selectedPersonId: '',
+                selectedValue: partnerChildrenMode,
+                controlId: 'addPersonPartnerChildrenMode'
+              })
+            : ''}
         </div>
       </div>`;
     }
@@ -49923,7 +50074,19 @@
       const anchorPerson = isPartnerMode ? getPerson(options.personId || state.selectedPersonId) : null;
       const relationships = editPerson ? getPartnerRelationships(editPerson.id) : [];
       const cards = isPartnerMode
-        ? [renderAddPersonRelationshipCard({ relationship: null, personId: '', partner: anchorPerson, index: 0, mode: 'addPartner' })]
+        ? [
+            renderAddPersonRelationshipCard({
+              relationship: null,
+              personId: '',
+              partner: anchorPerson,
+              index: 0,
+              mode: 'addPartner',
+              partnerChildrenMode:
+                normalizePartnerChildrenMode(
+                  options.partnerChildrenMode
+                )
+            })
+          ]
         : relationships.map((relationship, index) => renderAddPersonRelationshipCard({
           relationship,
           personId: editPerson?.id || '',
@@ -49950,22 +50113,88 @@
       </section>`;
     }
 
-    function updatePartnerRelationshipFields(card, relationshipType) {
-      const definition = partnerRelationshipDefinition(relationshipType);
-      const start = card?.querySelector('[data-partner-relationship-start]');
-      const end = card?.querySelector('[data-partner-relationship-end]');
-      const marriageTypeField = card?.querySelector('[data-add-person-marriage-type-field], [data-relationship-edit-marriage-type]');
-      const startDateLabel = start?.querySelector('.genealogy-date-field > label');
-      const startPlaceLabel = start?.querySelector('.place-combobox-field > label');
-      const endDateLabel = end?.querySelector('.genealogy-date-field > label');
-      const endPlaceLabel = end?.querySelector('.place-combobox-field > label');
+    function updatePartnerRelationshipFields(
+      card,
+      relationshipType
+    ) {
+      const definition =
+        partnerRelationshipDefinition(
+          relationshipType
+        );
 
-      if (startDateLabel) startDateLabel.textContent = definition.startLabel;
-      if (startPlaceLabel) startPlaceLabel.textContent = definition.startPlaceLabel;
-      if (endDateLabel) endDateLabel.textContent = definition.endLabel || 'To';
-      if (endPlaceLabel) endPlaceLabel.textContent = definition.endPlaceLabel || 'To place';
-      if (end) end.hidden = !definition.hasEnd;
-      if (marriageTypeField) marriageTypeField.hidden = !definition.showsMarriageType;
+      const start =
+        card?.querySelector(
+          '[data-partner-relationship-start]'
+        );
+
+      const end =
+        card?.querySelector(
+          '[data-partner-relationship-end]'
+        );
+
+      const marriageTypeField =
+        card?.querySelector(
+          [
+            '[data-add-person-marriage-type-field]',
+            '[data-relationship-edit-marriage-type]'
+          ].join(', ')
+        );
+
+      const startDateLabel =
+        start?.querySelector(
+          '.genealogy-date-field > label'
+        );
+
+      const startPlaceLabel =
+        start?.querySelector(
+          '.place-combobox-field > label'
+        );
+
+      const endDateLabel =
+        end?.querySelector(
+          '.genealogy-date-field > label'
+        );
+
+      const endPlaceLabel =
+        end?.querySelector(
+          '.place-combobox-field > label'
+        );
+
+      if (startDateLabel) {
+        startDateLabel.textContent =
+          t(definition.startLabel);
+      }
+
+      if (startPlaceLabel) {
+        startPlaceLabel.textContent =
+          t(definition.startPlaceLabel);
+      }
+
+      if (endDateLabel) {
+        endDateLabel.textContent =
+          t(
+            definition.endLabel
+            || 'To'
+          );
+      }
+
+      if (endPlaceLabel) {
+        endPlaceLabel.textContent =
+          t(
+            definition.endPlaceLabel
+            || 'To place'
+          );
+      }
+
+      if (end) {
+        end.hidden =
+          !definition.hasEnd;
+      }
+
+      if (marriageTypeField) {
+        marriageTypeField.hidden =
+          !definition.showsMarriageType;
+      }
     }
 
     function partnerRelationshipDateOrderIsValid(startDate, endDate) {
@@ -49977,6 +50206,30 @@
       if (!comparableTypes.has(start.dateType) || !comparableTypes.has(end.dateType)) return true;
 
       return Number(end.sortDate) >= Number(start.sortDate);
+    }
+
+    function updateAddPersonPartnerChildrenLabel() {
+      const selector =
+        modalBackdrop?.querySelector(
+          '#addPersonPartnerChildrenMode'
+        );
+
+      if (!selector) return;
+
+      const addParentOption =
+        selector.querySelector(
+          `option[value="${PARTNER_CHILDREN_ADD_PARENT}"]`
+        );
+
+      if (!addParentOption) return;
+
+      const gender =
+        modalBackdrop?.querySelector('#addPersonGender')?.value
+        || 'Unknown';
+
+      addParentOption.textContent = t(
+        partnerChildrenAddLabel('', gender)
+      );
     }
 
     function bindAddPersonRelationshipBlock() {
@@ -50007,20 +50260,92 @@
         updateRelationshipFields();
       });
 
-      modalBackdrop?.querySelectorAll('[data-add-person-unlink-partner-toast]').forEach(button => {
-        if (button.dataset.unlinkToastBound === 'true') return;
-        button.dataset.unlinkToastBound = 'true';
+      const partnerChildrenSelector =
+        modalBackdrop?.querySelector(
+          '#addPersonPartnerChildrenMode'
+        );
 
-        button.addEventListener('click', event => {
-          event.preventDefault();
-          event.stopPropagation();
+      const addPersonGender =
+        modalBackdrop?.querySelector('#addPersonGender');
 
-          const partner = getPerson(button.dataset.partnerId || '');
-          const partnerName = partner?.names?.display || partner?.name || 'this spouse';
+      if (
+        partnerChildrenSelector
+        && addPersonGender
+        && addPersonGender.dataset.partnerChildrenLabelBound !== 'true'
+      ) {
+        addPersonGender.dataset.partnerChildrenLabelBound = 'true';
 
-          showToast(`To unlink ${partnerName}, use the unlink action in the right-side Relationships panel.`);
+        addPersonGender.addEventListener(
+          'change',
+          updateAddPersonPartnerChildrenLabel
+        );
+      }
+
+      updateAddPersonPartnerChildrenLabel();
+
+      modalBackdrop
+        ?.querySelectorAll(
+          '[data-add-person-unlink-partner]'
+        )
+        .forEach(button => {
+          if (
+            button.dataset
+              .unlinkPartnerBound === 'true'
+          ) {
+            return;
+          }
+
+          button.dataset
+            .unlinkPartnerBound = 'true';
+
+          button.addEventListener(
+            'click',
+            event => {
+              event.preventDefault();
+              event.stopPropagation();
+
+              const personId =
+                button.dataset.personId
+                || '';
+
+              const partnerId =
+                button.dataset.partnerId
+                || '';
+
+              const familyId =
+                button.dataset.relationshipId
+                || '';
+
+              if (
+                !personId
+                || !partnerId
+                || !familyId
+              ) {
+                showToast(
+                  'Relationship information is missing.'
+                );
+
+                return;
+              }
+
+              const sidebarContext =
+                state.activeModule === 'People'
+                  ? state.peopleView === 'profile'
+                    ? 'profile'
+                    : 'people'
+                  : 'tree';
+
+              openUnlinkRelationshipModal({
+                kind: 'partner',
+                personId,
+                relatedPersonId:
+                  partnerId,
+                familyId,
+                sidebarContext
+              });
+            }
+          );
         });
-      });
     }
 
     function collectAddPersonRelationshipBlock() {
@@ -50657,6 +50982,112 @@
       </section>`;
     }
 
+    const PARTNER_CHILDREN_ADD_PARENT = 'add-parent';
+    const PARTNER_CHILDREN_KEEP_SINGLE = 'keep-single-parent';
+
+    function normalizePartnerChildrenMode(value) {
+      return value === PARTNER_CHILDREN_KEEP_SINGLE
+        ? PARTNER_CHILDREN_KEEP_SINGLE
+        : PARTNER_CHILDREN_ADD_PARENT;
+    }
+
+    function singleParentFamilyWithChildrenForPerson(personId) {
+      return partnerFamiliesForPerson(personId).find(family =>
+        !familyHasSecondPartner(family, personId)
+          && unlinkFamilyChildrenIds(family).length > 0
+      ) || null;
+    }
+
+    function partnerChildrenParentRole(personId) {
+      const gender = String(getPerson(personId)?.gender || '').toLowerCase();
+
+      if (gender === 'male') return 'father';
+      if (gender === 'female') return 'mother';
+
+      return 'parent';
+    }
+
+    function partnerChildrenAddLabel(
+      selectedPersonId = '',
+      genderValue = ''
+    ) {
+      const normalizedGender =
+        String(genderValue || '').trim().toLowerCase();
+
+      const role = selectedPersonId
+        ? partnerChildrenParentRole(selectedPersonId)
+        : normalizedGender === 'male'
+          ? 'father'
+          : normalizedGender === 'female'
+            ? 'mother'
+            : 'parent';
+
+      if (role === 'father') {
+        return 'Add new partner as the children\'s father';
+      }
+
+      if (role === 'mother') {
+        return 'Add new partner as the children\'s mother';
+      }
+
+      return 'Add new partner as the children\'s parent';
+    }
+
+    function renderPartnerChildrenSelector({
+      anchorPersonId,
+      relationshipType,
+      selectedPersonId = '',
+      selectedValue = PARTNER_CHILDREN_ADD_PARENT,
+      controlId = 'connectPersonPartnerChildrenMode'
+    } = {}) {
+      const type = normalizeConnectRelationshipType(relationshipType);
+      const singleParentFamily =
+        singleParentFamilyWithChildrenForPerson(anchorPersonId);
+
+      if (type !== 'partner' || !singleParentFamily) {
+        return '';
+      }
+
+      const selectedMode =
+        normalizePartnerChildrenMode(selectedValue);
+
+      const addParentLabel =
+        partnerChildrenAddLabel(selectedPersonId);
+
+      return `<div class="connect-partner-children-selector" data-partner-children-selector>
+        <div class="field">
+          <label for="${escapeHtml(controlId)}">${escapeHtml(t('Existing children'))}</label>
+
+          <div class="add-person-select-field">
+            <select
+              class="compact-select add-person-select"
+              id="${escapeHtml(controlId)}"
+              data-partner-children-mode>
+              <option
+                value="${PARTNER_CHILDREN_ADD_PARENT}"
+                ${selectedMode === PARTNER_CHILDREN_ADD_PARENT ? 'selected' : ''}>
+                ${escapeHtml(t(addParentLabel))}
+              </option>
+
+              <option
+                value="${PARTNER_CHILDREN_KEEP_SINGLE}"
+                ${selectedMode === PARTNER_CHILDREN_KEEP_SINGLE ? 'selected' : ''}>
+                ${escapeHtml(t('Keep the children with the single parent only'))}
+              </option>
+            </select>
+
+            <span class="add-person-select-chevron" aria-hidden="true">
+              ${icon.chevron}
+            </span>
+          </div>
+
+          <span class="field-help">
+            ${escapeHtml(t('Choose whether the new partner becomes a parent of the existing children.'))}
+          </span>
+        </div>
+      </div>`;
+    }
+
     function connectionPairForRelationship(anchorPersonId, relativePersonId, relationshipType) {
       const anchorId = String(anchorPersonId || '');
       const relativeId = String(relativePersonId || '');
@@ -51056,8 +51487,9 @@
       }) || null;
     }
 
-    function connectPartners(personAId, personBId) {
-      const validation = validatePartnerConnection(personAId, personBId);
+    function connectPartners(personAId, personBId, options = {}) {
+      const validation =
+        validatePartnerConnection(personAId, personBId);
 
       if (!validation.ok) {
         return validation;
@@ -51065,13 +51497,61 @@
 
       const personA = getPerson(personAId);
       const personB = getPerson(personBId);
-      const id = uniqueFamilyId(relationshipIdForPartners(personAId, personBId));
+
+      const existingChildrenFamilyId =
+        String(options.existingChildrenFamilyId || '');
+
+      const existingChildrenFamily = existingChildrenFamilyId
+        ? centralFamilyRecords().find(family =>
+            family.id === existingChildrenFamilyId
+              && familyIncludesPerson(family, personAId)
+              && !familyHasSecondPartner(family, personAId)
+              && unlinkFamilyChildrenIds(family).length > 0
+          )
+        : null;
+
+      if (existingChildrenFamily) {
+        const assigned =
+          assignParentToFamily(existingChildrenFamily, personBId);
+
+        if (!assigned) {
+          return {
+            ok: false,
+            title: 'Family cannot accept another parent',
+            message: 'The selected family already has two recorded parents.'
+          };
+        }
+
+        existingChildrenFamily.relationshipType = 'Partner';
+        existingChildrenFamily.relationshipStatus = 'active';
+        existingChildrenFamily.updatedAt = 'Just now';
+
+        syncFamilyPartnerAliases(existingChildrenFamily);
+
+        return {
+          ok: true,
+          family: existingChildrenFamily,
+          relationshipType: 'partner',
+          warning: null,
+          reused: true,
+          inheritedChildren: true
+        };
+      }
+
+      const id =
+        uniqueFamilyId(
+          relationshipIdForPartners(personAId, personBId)
+        );
 
       const family = {
         id,
-        projectId: personA.projectId || personB.projectId || currentProjectId(),
+        projectId:
+          personA.projectId
+          || personB.projectId
+          || currentProjectId(),
         type: 'family',
-        gedcomXref: `@F${id.replace(/[^a-z0-9]/gi, '').toUpperCase()}@`,
+        gedcomXref:
+          `@F${id.replace(/[^a-z0-9]/gi, '').toUpperCase()}@`,
         partnerAId: personAId,
         partnerBId: personBId,
         partner1Id: personAId,
@@ -51080,8 +51560,10 @@
         personBId,
         fatherId: '',
         motherId: '',
-        partnerARoleHint: relationshipRoleHintForPerson(personAId),
-        partnerBRoleHint: relationshipRoleHintForPerson(personBId),
+        partnerARoleHint:
+          relationshipRoleHintForPerson(personAId),
+        partnerBRoleHint:
+          relationshipRoleHintForPerson(personBId),
         relationshipType: 'Partner',
         relationshipStatus: 'active',
         childIds: [],
@@ -51111,11 +51593,16 @@
       anchorPersonId,
       relativePersonId,
       relationshipType,
-      parentFamilySelection = ''
+      parentFamilySelection = '',
+      partnerChildrenMode = PARTNER_CHILDREN_ADD_PARENT
     } = {}) {
       const anchorId = String(anchorPersonId || '');
       const relativeId = String(relativePersonId || '');
-      const type = normalizeConnectRelationshipType(relationshipType);
+      const type =
+        normalizeConnectRelationshipType(relationshipType);
+
+      const normalizedPartnerChildrenMode =
+        normalizePartnerChildrenMode(partnerChildrenMode);
 
       const validation = validateRelationshipConnection({
         anchorPersonId: anchorId,
@@ -51145,7 +51632,20 @@
           parentFamilySelection
         );
       } else {
-        result = connectPartners(anchorId, relativeId);
+        const existingChildrenFamily =
+          normalizedPartnerChildrenMode ===
+            PARTNER_CHILDREN_ADD_PARENT
+            ? singleParentFamilyWithChildrenForPerson(anchorId)
+            : null;
+
+        result = connectPartners(
+          anchorId,
+          relativeId,
+          {
+            existingChildrenFamilyId:
+              existingChildrenFamily?.id || ''
+          }
+        );
       }
 
       if (!result.ok) return result;
@@ -51157,7 +51657,11 @@
         ...result,
         anchorPersonId: anchorId,
         relativePersonId: relativeId,
-        connectType: type
+        connectType: type,
+        partnerChildrenMode:
+          type === 'partner'
+            ? normalizedPartnerChildrenMode
+            : ''
       };
     }
 
@@ -51189,6 +51693,17 @@
         anchorPersonId,
         relationshipType
       };
+    }
+
+    function addPersonPartnerChildrenMode(options = {}) {
+      const liveValue =
+        modalBackdrop
+          ?.querySelector('#addPersonPartnerChildrenMode')
+          ?.value;
+
+      return normalizePartnerChildrenMode(
+        liveValue || options.partnerChildrenMode
+      );
     }
 
     function addPersonParentFamilySelection(options = {}) {
@@ -51383,7 +51898,9 @@
           anchorPersonId: connectionIntent.anchorPersonId,
           relativePersonId: newPerson.id,
           relationshipType: connectionIntent.relationshipType,
-          parentFamilySelection
+          parentFamilySelection,
+          partnerChildrenMode:
+            addPersonPartnerChildrenMode(options)
         });
 
         if (connectionResult.ok) {
@@ -52453,7 +52970,13 @@
             <h2 id="unlinkRelationshipTitle">Remove relationship?</h2>
             <p>This changes the relationship only. People records will remain in the project.</p>
           </div>
-          <button class="close-button" type="button" data-close>${icon.close}</button>
+          <button
+            class="close-button"
+            type="button"
+            data-close
+            aria-label="Close">
+            ${icon.close}
+          </button>
         </div>
 
         <div class="modal-body unlink-relationship-body">
@@ -53197,7 +53720,9 @@
         anchorPersonId: connectionIntent.anchorPersonId,
         relativePersonId: selectedPerson.id,
         relationshipType: connectionIntent.relationshipType,
-        parentFamilySelection: addPersonParentFamilySelection(options)
+        parentFamilySelection: addPersonParentFamilySelection(options),
+        partnerChildrenMode:
+          addPersonPartnerChildrenMode(options)
       });
 
       if (!result.ok) {
