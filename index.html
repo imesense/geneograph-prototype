@@ -3482,12 +3482,14 @@
     .tree-control-name {
       min-width: 0;
       display: block;
-      color: var(--text-primary);
-      font-weight: 700;
-      line-height: 1;
       width: 100%;
       justify-self: stretch;
+
+      color: var(--text-primary);
+      font-weight: 700;
+      line-height: 1.25;
       text-align: left;
+
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -3546,6 +3548,7 @@
       min-width: 0;
       display: grid;
       gap: 3px;
+      margin-left: 4px;
     }
     .tree-recent-person strong,
     .tree-recent-person small {
@@ -3564,6 +3567,14 @@
       text-align: center;
     }
     .tree-icon-button { width: 38px; padding: 0; }
+    .tree-icon-button:disabled {
+      opacity: 0.38;
+      cursor: default;
+    }
+
+    .tree-icon-button:disabled:hover {
+      background: inherit;
+    }
     .tree-icon-button svg,
     .tree-action svg,
     .tree-control svg { width: 18px; height: 18px; }
@@ -9961,6 +9972,8 @@
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
+      line-clamp:
+        2;
 
       overflow: hidden;
 
@@ -9987,7 +10000,8 @@
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 3;
-
+      line-clamp:
+        2;
       overflow: hidden;
     }
 
@@ -12750,7 +12764,8 @@
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
-
+      line-clamp:
+        2;
       overflow-wrap: anywhere;
 
       color: inherit;
@@ -13025,6 +13040,8 @@
       font-weight: 850;
       line-height: 1.18;
       -webkit-line-clamp: 3;
+      line-clamp:
+        3;
     }
 
     .geneo-node-person[
@@ -25274,6 +25291,9 @@
       -webkit-box-orient:
         vertical;
 
+      line-clamp:
+        2;
+
       -webkit-line-clamp:
         2;
     }
@@ -30321,8 +30341,6 @@
 
       'Unnamed place':
         'Место без названия',
-      'added':'добавлено',
-
       'across':
         'в',
 
@@ -30612,6 +30630,13 @@
       'Upload new': 'Загрузить новые',
       'Search project photos': 'Поиск фотографий проекта',
       'selected': 'выбрано',
+      'file from person':'файла с человеком',
+      'note from person':'заметки с человеком',
+      'The file will not be deleted.':'Файл не будет удален.',
+      'Only the connection between':'Только связь между',
+      'will be removed.':'будет удалена.',
+      'The file will remain available in Archive and keep all its other connections.':'Файл останется доступен в архиве и сохранит остальные связи.',
+      'The note will remain available in Notes and keep all its other links.':'Заметка останется доступна в Заметках и сохранит остальные связи.',
       'Similar people in this project': 'Похожие люди в этом проекте',
       'Enter a name, date, or place to check for existing people.': 'Введите имя, дату или место для запуска проверки.',
       'on': 'вкл.'
@@ -30894,12 +30919,6 @@
     });
 
     const RU_UI_FAMILY_TREE = {
-      'Back navigation is simulated in this prototype.':
-        'Навигация назад смоделирована в этом прототипе.',
-
-      'Forward navigation is simulated in this prototype.':
-        'Навигация вперёд смоделирована в этом прототипе.',
-
       'Recently viewed people selector will open here.':
         'Здесь откроется список недавно просмотренных людей.',
 
@@ -31104,6 +31123,7 @@
       'Removing this fact will clear the saved custom fact data when you save the person.':'Это действие удалит факт при сохранении данных.',
       'Removing this fact will clear the saved baptism data when you save the person.':'Это действие удалит факт при сохранении данных.',
       'Removing this fact will clear the saved alternative names data when you save the person.':'Это действие удалит факт при сохранении данных.',
+      'Record an attribute or characteristic for': 'Добавьте факт или характеристику для',
       'Connect':
         'Связать'
     };
@@ -37113,13 +37133,13 @@
       repl(
         /^Link existing notes to\s+[“"](.+)[”"]\.$/i,
         (_, personName) =>
-          `Привязать существующие заметки: «${translateValue(personName)}».`
+          `Связать существующие заметки с «${translateValue(personName)}».`
       );
 
       repl(
         /^Link existing notes to\s+(.+)\.$/i,
         (_, personName) =>
-          `Привязать существующие заметки: «${translateValue(personName)}».`
+          `Связать существующие заметки с «${translateValue(personName)}».`
       );
 
       /*
@@ -37133,7 +37153,7 @@
       repl(
         /^Create\s+(.+)$/i,
         (_, value) =>
-          `Создать: ${
+          `Создать ${
             translateValue(value)
           }`
       );
@@ -37141,7 +37161,7 @@
       repl(
         /^Add\s+(.+)$/i,
         (_, value) =>
-          `Добавить: ${
+          `Добавить ${
             translateValue(value)
           }`
       );
@@ -37149,7 +37169,7 @@
       repl(
         /^Edit\s+(.+)$/i,
         (_, value) =>
-          `Изменить: ${
+          `Изменить ${
             translateValue(value)
           }`
       );
@@ -37157,7 +37177,7 @@
       repl(
         /^Open\s+(.+)$/i,
         (_, value) =>
-          `Открыть: ${
+          `Открыть ${
             translateValue(value)
           }`
       );
@@ -42732,6 +42752,7 @@
     const TREE_ANCESTOR_GENERATION_MAX = 6;
     const TREE_DESCENDANT_GENERATION_MIN = 0;
     const TREE_DESCENDANT_GENERATION_MAX = 5;
+    const TREE_NAVIGATION_HISTORY_LIMIT = 50;
 
     function treeDefaultPersonId(projectId = currentFamilyTreeProjectId()) {
       const project = sampleData.projects.find(item => item.id === projectId);
@@ -42744,18 +42765,30 @@
     function treeProjectViewState(projectId = currentFamilyTreeProjectId()) {
       if (!state.treeProjectViews[projectId]) {
         const defaultPersonId = treeDefaultPersonId(projectId);
+
         state.treeProjectViews[projectId] = {
           focusPersonId: defaultPersonId,
           ancestorGenerations: 4,
           descendantGenerations: 3,
           showCousins: true,
-          recentPersonIds: defaultPersonId ? [defaultPersonId] : []
+          recentPersonIds: defaultPersonId ? [defaultPersonId] : [],
+          navigationBackStack: [],
+          navigationForwardStack: []
         };
       }
 
       const view = state.treeProjectViews[projectId];
+
       view.recentPersonIds = Array.isArray(view.recentPersonIds)
         ? view.recentPersonIds
+        : [];
+
+      view.navigationBackStack = Array.isArray(view.navigationBackStack)
+        ? view.navigationBackStack
+        : [];
+
+      view.navigationForwardStack = Array.isArray(view.navigationForwardStack)
+        ? view.navigationForwardStack
         : [];
 
       return view;
@@ -42790,6 +42823,255 @@
         .slice(0, 10);
     }
 
+    function normalizeTreeNavigationEntry(
+      entry,
+      projectId = currentFamilyTreeProjectId()
+    ) {
+      if (!entry || typeof entry !== 'object') return null;
+
+      const projectPeople = getPeople(projectId)
+        .filter(person => person && !person.deleted);
+
+      const peopleById = new Map(
+        projectPeople.map(person => [person.id, person])
+      );
+
+      if (!peopleById.has(entry.focusPersonId)) return null;
+
+      const selectedPersonId = peopleById.has(entry.selectedPersonId)
+        ? entry.selectedPersonId
+        : entry.focusPersonId;
+
+      const zoom = Number.isFinite(Number(entry.zoom))
+        ? Math.max(70, Math.min(130, Math.round(Number(entry.zoom))))
+        : 100;
+
+      const hasValidScroll =
+        Number.isFinite(Number(entry.scroll?.left))
+        && Number.isFinite(Number(entry.scroll?.top));
+
+      return {
+        focusPersonId: entry.focusPersonId,
+        selectedPersonId,
+        zoom,
+        scroll: hasValidScroll
+          ? {
+              left: Math.max(0, Number(entry.scroll.left)),
+              top: Math.max(0, Number(entry.scroll.top))
+            }
+          : null
+      };
+    }
+
+    function treeNavigationSnapshot(
+      projectId = currentFamilyTreeProjectId()
+    ) {
+      const view = treeProjectViewState(projectId);
+
+      return normalizeTreeNavigationEntry(
+        {
+          focusPersonId: view.focusPersonId,
+          selectedPersonId: state.selectedPersonId || view.focusPersonId,
+          zoom: state.treeZoom,
+          scroll: getTreeCanvasScroll()
+        },
+        projectId
+      );
+    }
+
+    function treeNavigationEntriesMatch(first, second) {
+      if (!first || !second) return false;
+
+      return (
+        first.focusPersonId === second.focusPersonId
+        && first.selectedPersonId === second.selectedPersonId
+        && first.zoom === second.zoom
+        && Math.round(first.scroll?.left || 0)
+          === Math.round(second.scroll?.left || 0)
+        && Math.round(first.scroll?.top || 0)
+          === Math.round(second.scroll?.top || 0)
+      );
+    }
+
+    function pushTreeNavigationEntry(stack, entry) {
+      if (!Array.isArray(stack) || !entry) return;
+
+      const previous = stack[stack.length - 1];
+
+      if (!treeNavigationEntriesMatch(previous, entry)) {
+        stack.push(entry);
+      }
+
+      if (stack.length > TREE_NAVIGATION_HISTORY_LIMIT) {
+        stack.splice(
+          0,
+          stack.length - TREE_NAVIGATION_HISTORY_LIMIT
+        );
+      }
+    }
+
+    function treeNavigationCanGo(
+      direction,
+      projectId = currentFamilyTreeProjectId()
+    ) {
+      const view = treeProjectViewState(projectId);
+      const stack = direction === 'forward'
+        ? view.navigationForwardStack
+        : view.navigationBackStack;
+
+      return stack.some(entry =>
+        Boolean(normalizeTreeNavigationEntry(entry, projectId))
+      );
+    }
+
+    function treeNavigationFocusForPerson(
+      personId,
+      {
+        focusBranch = false,
+        projectId = currentFamilyTreeProjectId()
+      } = {}
+    ) {
+      const view = treeProjectViewState(projectId);
+
+      if (focusBranch) return personId;
+
+      const projection = buildFamilyTreeProjection(
+        currentTreePeople(),
+        currentTreeFamilies(),
+        {
+          focusPersonId: view.focusPersonId,
+          ancestorGenerations: view.ancestorGenerations,
+          descendantGenerations: view.descendantGenerations,
+          showCousins: view.showCousins
+        }
+      );
+
+      return projection.visiblePersonIds.has(personId)
+        ? view.focusPersonId
+        : personId;
+    }
+
+    function navigateFamilyTreeToPerson(
+      personId,
+      {
+        focusBranch = false,
+        center = true,
+        recordHistory = true
+      } = {}
+    ) {
+      const projectId = currentFamilyTreeProjectId();
+      const person = getPerson(personId);
+
+      if (
+        state.activeModule !== 'Family Tree'
+        || !person
+        || person.deleted
+        || person.projectId !== projectId
+      ) {
+        return false;
+      }
+
+      const view = treeProjectViewState(projectId);
+      const nextFocusPersonId = treeNavigationFocusForPerson(
+        personId,
+        {
+          focusBranch,
+          projectId
+        }
+      );
+
+      const selectionChanged =
+        state.selectedPersonId !== personId;
+
+      const focusChanged =
+        view.focusPersonId !== nextFocusPersonId;
+
+      if (!selectionChanged && !focusChanged) {
+        if (center) centerTreeOnPerson(personId);
+        return false;
+      }
+
+      if (recordHistory) {
+        const currentEntry = treeNavigationSnapshot(projectId);
+
+        pushTreeNavigationEntry(
+          view.navigationBackStack,
+          currentEntry
+        );
+
+        view.navigationForwardStack = [];
+      }
+
+      view.focusPersonId = nextFocusPersonId;
+      state.selectedPersonId = personId;
+      state.treeInspectorCollapsed = false;
+      state.treeCenterTargetId = center ? personId : '';
+
+      rememberTreeSelectedPerson(personId, projectId);
+
+      if (center) {
+        renderFamilyTree();
+      } else {
+        renderFamilyTreePreserveScroll();
+      }
+
+      return true;
+    }
+
+    function navigateTreeHistory(direction) {
+      const projectId = currentFamilyTreeProjectId();
+      const view = treeProjectViewState(projectId);
+
+      const sourceStack = direction === 'forward'
+        ? view.navigationForwardStack
+        : view.navigationBackStack;
+
+      const destinationStack = direction === 'forward'
+        ? view.navigationBackStack
+        : view.navigationForwardStack;
+
+      let targetEntry = null;
+
+      while (sourceStack.length && !targetEntry) {
+        targetEntry = normalizeTreeNavigationEntry(
+          sourceStack.pop(),
+          projectId
+        );
+      }
+
+      if (!targetEntry) return false;
+
+      const currentEntry = treeNavigationSnapshot(projectId);
+
+      pushTreeNavigationEntry(
+        destinationStack,
+        currentEntry
+      );
+
+      view.focusPersonId = targetEntry.focusPersonId;
+      state.selectedPersonId = targetEntry.selectedPersonId;
+      state.treeZoom = targetEntry.zoom;
+      state.treeInspectorCollapsed = false;
+      state.treeCenterTargetId = '';
+
+      rememberTreeSelectedPerson(
+        targetEntry.selectedPersonId,
+        projectId
+      );
+
+      renderFamilyTree();
+
+      if (targetEntry.scroll) {
+        restoreTreeCanvasScroll(targetEntry.scroll);
+      } else {
+        requestAnimationFrame(() =>
+          centerTreeOnPerson(targetEntry.selectedPersonId)
+        );
+      }
+
+      return true;
+    }
+
     function resolveTreeFocusPersonId(people, projectId = currentFamilyTreeProjectId()) {
       const ids = new Set((people || []).map(person => person.id));
       const view = treeProjectViewState(projectId);
@@ -42802,28 +43084,23 @@
     }
 
     function setTreeFocusPerson(personId, { center = true } = {}) {
-      const people = currentTreePeople();
-      if (!people.some(person => person.id === personId)) return false;
-      const view = treeProjectViewState();
-      view.focusPersonId = personId;
-      state.selectedPersonId = personId;
-      rememberTreeSelectedPerson(personId);
-      state.treeInspectorCollapsed = false;
-      state.treeCenterTargetId = center ? personId : '';
-      renderFamilyTree();
-      return true;
+      return navigateFamilyTreeToPerson(
+        personId,
+        {
+          focusBranch: true,
+          center
+        }
+      );
     }
 
     function focusTreeBranchForRelative(personId) {
-      if (state.activeModule !== 'Family Tree' || !getPerson(personId)) return;
-
-      const view = treeProjectViewState();
-      view.focusPersonId = personId;
-      state.selectedPersonId = personId;
-      state.treeInspectorCollapsed = false;
-      state.treeCenterTargetId = personId;
-      rememberTreeSelectedPerson(personId);
-      renderFamilyTree();
+      return navigateFamilyTreeToPerson(
+        personId,
+        {
+          focusBranch: true,
+          center: true
+        }
+      );
     }
 
     function openTreeRecentPeopleMenu(anchor) {
@@ -42855,27 +43132,16 @@
       menu.querySelectorAll('[data-tree-recent-person]').forEach(button => {
         button.addEventListener('click', () => {
           const personId = button.dataset.treeRecentPerson;
+
           closeMenu();
-          if (!getPerson(personId)) return;
-          const view = treeProjectViewState();
-          const projection = buildFamilyTreeProjection(
-            currentTreePeople(),
-            currentTreeFamilies(),
+
+          navigateFamilyTreeToPerson(
+            personId,
             {
-              focusPersonId: view.focusPersonId,
-              ancestorGenerations: view.ancestorGenerations,
-              descendantGenerations: view.descendantGenerations,
-              showCousins: view.showCousins
+              focusBranch: false,
+              center: true
             }
           );
-          if (!projection.visiblePersonIds.has(personId)) {
-            view.focusPersonId = personId;
-          }
-          state.selectedPersonId = personId;
-          state.treeInspectorCollapsed = false;
-          state.treeCenterTargetId = personId;
-          rememberTreeSelectedPerson(personId);
-          renderFamilyTree();
         });
       });
 
@@ -46230,7 +46496,19 @@
       const selected = projection.people.find(person => person.id === state.selectedPersonId)
         || projection.people.find(person => person.id === projection.focusPersonId)
         || projection.people[0];
-      if (selected?.id) rememberTreeSelectedPerson(selected.id, treeProjectId);
+      if (selected?.id) {
+        rememberTreeSelectedPerson(
+          selected.id,
+          treeProjectId
+        );
+      }
+
+      const canNavigateTreeBack =
+        treeNavigationCanGo('back', treeProjectId);
+
+      const canNavigateTreeForward =
+        treeNavigationCanGo('forward', treeProjectId);
+
       const treeLayout = calculateTreeLayout(
         projection.people,
         projection.families,
@@ -46241,8 +46519,27 @@
         <div class="tree-shell">
           <div class="tree-toolbar">
             <div class="tree-toolbar-left">
-              <button class="tree-icon-button tree-arrow-button" type="button" data-toast="Back navigation is simulated in this prototype." aria-label="Back">${icon.arrow}</button>
-              <button class="tree-icon-button tree-arrow-button tree-arrow-button-forward" type="button" data-toast="Forward navigation is simulated in this prototype." aria-label="Forward">${icon.arrow}</button>
+              <button
+                class="tree-icon-button tree-arrow-button"
+                type="button"
+                data-tree-navigation="back"
+                aria-label="Back"
+                title="Back"
+                ${canNavigateTreeBack ? '' : 'disabled'}
+              >
+                ${icon.arrow}
+              </button>
+
+              <button
+                class="tree-icon-button tree-arrow-button tree-arrow-button-forward"
+                type="button"
+                data-tree-navigation="forward"
+                aria-label="Forward"
+                title="Forward"
+                ${canNavigateTreeForward ? '' : 'disabled'}
+              >
+                ${icon.arrow}
+              </button>
               <button class="tree-control tree-control-select" type="button" data-tree-recent-toggle aria-haspopup="menu" aria-expanded="false" aria-label="Recently selected people. Current person: ${escapeHtml(selected?.name || '')}">
                 <span class="tree-control-focus-icon" aria-hidden="true">${icon.profile}</span>
                 <span class="tree-control-name">${escapeHtml(selected?.name || '')}</span>
@@ -46300,13 +46597,25 @@
       bindTreeCanvasPan();
       main.querySelector('.tree-canvas')?.addEventListener('wheel', queueTreeWheelZoom, { passive: false });
       main
+        .querySelectorAll('[data-tree-navigation]')
+        .forEach(button => {
+          button.addEventListener('click', () => {
+            navigateTreeHistory(
+              button.dataset.treeNavigation
+            );
+          });
+        });
+      main
         .querySelectorAll('.tree-person-card[data-person-id]')
         .forEach(card => {
           const selectCard = () => {
-            state.selectedPersonId = card.dataset.personId;
-            rememberTreeSelectedPerson(state.selectedPersonId);
-            state.treeInspectorCollapsed = false;
-            renderFamilyTreePreserveScroll();
+            navigateFamilyTreeToPerson(
+              card.dataset.personId,
+              {
+                focusBranch: false,
+                center: false
+              }
+            );
           };
 
           card.addEventListener('click', event => {
@@ -60800,6 +61109,17 @@
         return;
       }
 
+      if (context === 'tree') {
+        navigateFamilyTreeToPerson(
+          personId,
+          {
+            focusBranch: false,
+            center: true
+          }
+        );
+        return;
+      }
+
       syncPersonSidebarSelection(
         personId,
         context
@@ -60808,14 +61128,7 @@
       if (context === 'people') {
         state.peoplePreviewCollapsed = false;
         renderPeople();
-        return;
       }
-
-      state.treeCenterTargetId = personId;
-      state.treeInspectorCollapsed = false;
-
-      renderFamilyTreePreserveScroll?.()
-        || renderFamilyTree();
     }
 
     function bindRelationshipList(
@@ -61256,10 +61569,31 @@
         project.defaultPersonId = getPeople(project.id)[0]?.id || '';
       });
 
-      Object.entries(state.treeProjectViews || {}).forEach(([projectId, view]) => {
-        if (!deletedIds.has(view.focusPersonId)) return;
-        view.focusPersonId = treeDefaultPersonId(projectId);
-      });
+      Object.entries(state.treeProjectViews || {}).forEach(
+        ([projectId, view]) => {
+          if (deletedIds.has(view.focusPersonId)) {
+            view.focusPersonId = treeDefaultPersonId(projectId);
+          }
+
+          view.navigationBackStack = Array.isArray(
+            view.navigationBackStack
+          )
+            ? view.navigationBackStack.filter(entry =>
+                !deletedIds.has(entry?.focusPersonId)
+                && !deletedIds.has(entry?.selectedPersonId)
+              )
+            : [];
+
+          view.navigationForwardStack = Array.isArray(
+            view.navigationForwardStack
+          )
+            ? view.navigationForwardStack.filter(entry =>
+                !deletedIds.has(entry?.focusPersonId)
+                && !deletedIds.has(entry?.selectedPersonId)
+              )
+            : [];
+        }
+      );
 
       sampleData.families = centralFamilyRecords().map(family => {
         const removedPartnerA = partnerAFields.some(field => deletedIds.has(family[field]));
