@@ -30321,6 +30321,7 @@
 
       'Unnamed place':
         'Место без названия',
+      'added':'добавлено',
 
       'across':
         'в',
@@ -30575,7 +30576,7 @@
       'e.g. Dr., Sir, Lady': 'Например, д-р, сэр, леди',
       'e.g. Jr., III, PhD': 'Например, мл., III, PhD',
       'e.g. 14 Feb 1946': 'Например, 14 февр. 1946',
-      'e.g. 18 Aug 2023': 'Например, 18 авг. 2023',
+      'e.g. 18 Aug 1923': 'Например, 18 авг. 1923',
       'e.g. Pawford, England': 'Например, Поуфорд, Англия',
       'e.g. Meowbridge, England': 'Например, Мяубридж, Англия',
       'Month': 'Месяц',
@@ -30608,7 +30609,7 @@
       'Items': 'Элементы',
       'Advanced': 'Дополнительно',
       'Project photos': 'Фотографии проекта',
-      'Upload new': 'Загрузить новую',
+      'Upload new': 'Загрузить новые',
       'Search project photos': 'Поиск фотографий проекта',
       'selected': 'выбрано',
       'Similar people in this project': 'Похожие люди в этом проекте',
@@ -33135,7 +33136,7 @@
         'Свяжите существующие заметки.',
 
       'Search by title, content, person, place, or source':
-        'Поиск по названию, содержимому, человеку, месту или источнику',
+        'Поиск по названию или содержимому',
 
       'No notes available':
         'Нет доступных заметок',
@@ -35052,9 +35053,6 @@
       'YYYY':
         'ГГГГ',
 
-      'e.g. Between 1910 and 1915':
-        'например, между 1910 и 1915 годами',
-
       'Julian calendar can be stored; conversion is not implemented in this prototype.':
         'Можно сохранить дату по юлианскому календарю; преобразование календарей в этом прототипе не реализовано.',
 
@@ -35088,7 +35086,18 @@
       'Link is missing an ID': 'У связи отсутствует идентификатор',
       'Show person sidebar': 'Показать панель человека',
       'Person record not found.': 'Запись человека не найдена.',
-      'Connect existing Archive files or add new files.': 'Свяжите существующие файлы Архива или добавьте новые.',
+      'Connect existing Archive files or add new files.': 'Установите связь с существующими файлами Архива или добавьте новые.',
+      'Selected and uploaded photos will be tagged with this person.':
+        'Выбранные и загруженные фотографии будут связаны с этим человеком.',
+
+      'Add new':
+        'Добавить новые',
+
+      'Add new files to Archive, then connect them to this record. File upload is simulated in this prototype.':
+        'Добавьте новые файлы в Архив, затем свяжите их с этой записью. Загрузка файлов имитируется в прототипе.',
+
+      'Already selected':
+        'Уже выбрано',
       'No archive files linked to this person.': 'С этим человеком не связано ни одного файла Архива.',
       'No notes linked to this person.': 'С этим человеком не связано ни одной заметки.',
       'No photos linked to this person.':'С этим человеком не связано ни одной фотографии',
@@ -36302,6 +36311,15 @@
       );
 
       repl(
+        new RegExp(
+          `^(\\d+)\\s+(${countNouns})\\s+selected$`,
+          'i'
+        ),
+        (_, number, noun) =>
+          `Выбрано: ${countPhrase(number, noun)}`
+      );
+
+      repl(
         /^(\d+)\s+selected$/i,
         (_, number) =>
           `Выбрано: ${
@@ -37000,9 +37018,13 @@
       );
 
       repl(
-        /^(\d+)\s+notes available\s+·\s+(\d+)\s+already linked$/i,
-        (_, available, linked) =>
-          `Доступно заметок: ${formatNumber(available)} · уже связано: ${formatNumber(linked)}`
+        /^(\d+)\s+notes available\s+·\s+(\d+)\s+already\s+(linked|selected)$/i,
+        (_, available, existing, status) =>
+          `Доступно заметок: ${formatNumber(available)} · ${
+            status.toLowerCase() === 'selected'
+              ? 'уже выбрано'
+              : 'уже связано'
+          }: ${formatNumber(existing)}`
       );
 
       repl(
@@ -37066,6 +37088,38 @@
         /^(Son|Daughter)\s+(.+)$/i,
         (_, relation, value) =>
           `${translateValue(relation)} ${translateValue(value)}`
+      );
+
+      /*
+        Person-resource modal titles and descriptions.
+
+        These rules must run before the generic /^Add ...$/
+        fallback. Otherwise "Add photos for Name" becomes the
+        mixed-language "Добавить: photos for Name".
+      */
+
+      repl(
+        /^Add photos for\s+(.+)$/i,
+        (_, personName) =>
+          `Добавить фотографии — ${translateValue(personName)}`
+      );
+
+      repl(
+        /^Add files to\s+(.+)$/i,
+        (_, personName) =>
+          `Добавить файлы — ${translateValue(personName)}`
+      );
+
+      repl(
+        /^Link existing notes to\s+[“"](.+)[”"]\.$/i,
+        (_, personName) =>
+          `Привязать существующие заметки: «${translateValue(personName)}».`
+      );
+
+      repl(
+        /^Link existing notes to\s+(.+)\.$/i,
+        (_, personName) =>
+          `Привязать существующие заметки: «${translateValue(personName)}».`
       );
 
       /*
@@ -38504,7 +38558,7 @@
       sampleData.people.forEach(person => {
         if (!person.primaryPhotoId || (ids.size && !ids.has(person.primaryPhotoId))) return;
         const photo = getPhoto(person.primaryPhotoId, { projectId: person.projectId });
-        if (!photo || !(photo.personIds || []).includes(person.id)) {
+        if (!photo || !personPhotosAdderPhotoAlreadyAdded(photo)) {
           person.primaryPhotoId = '';
           person.primaryPhotoCrop = null;
         }
@@ -39994,7 +40048,7 @@
             </div>
             <div class="genealogy-date-range-cell" data-genealogy-date-to-cell>
               <span>To</span>
-              <input class="genealogy-date-input" id="${escapeHtml(inputToId)}" data-genealogy-date-input-to data-source-value="${escapeHtml(endValue)}" value="${escapeHtml(localizedDataFieldValue(endValue))}" placeholder="e.g. 1915">
+              <input class="genealogy-date-input" id="${escapeHtml(inputToId)}" data-genealogy-date-input-to data-source-value="${escapeHtml(endValue)}" value="${escapeHtml(localizedDataFieldValue(endValue))}" placeholder="e.g. 1925">
             </div>
           </div>
           <button class="genealogy-date-details-button" type="button" data-genealogy-date-details="${escapeHtml(fieldId)}" aria-label="Edit ${escapeHtml(label)} details" aria-expanded="false">${icon.calendar}</button>
@@ -40172,7 +40226,7 @@
       popover.setAttribute('aria-label', 'Genealogy date details');
       popover.innerHTML = `<div class="genealogy-date-popover-header"><div><strong>Date details</strong></div><button class="close-button" type="button" data-genealogy-date-close aria-label="Close date details">${icon.close}</button></div>
         <div class="genealogy-date-editor-grid">
-          <div class="genealogy-date-part-field full"><label>Smart date</label><input data-editor-smart value="${escapeHtml(formatGenealogyDateLabel(model) || model.originalText || '')}" placeholder="e.g. Between 1910 and 1915"></div>
+          <div class="genealogy-date-part-field full"><label>Smart date</label><input data-editor-smart value="${escapeHtml(formatGenealogyDateLabel(model) || model.originalText || '')}" placeholder="e.g. 18 Aug 1923"></div>
           <div class="genealogy-date-part-field"><label>Date type</label><select class="compact-select" data-editor-type>${genealogyDateTypeOptions(model.dateType)}</select></div>
           <div class="genealogy-date-part-field">
             <label>Calendar</label>
@@ -49974,7 +50028,7 @@
 
       return `<div class="partner-relationship-start" data-partner-relationship-start>
         ${renderGenealogyDateField(`${prefix}StartDate`, definition.startLabel, startEvent?.date || emptyGenealogyDate('Exact date'), {
-          inputId: `${prefix}StartDateInput`, typeId: `${prefix}StartDateType`, placeholder: 'e.g. 18 Aug 2023', defaultDateType: 'Exact date', className: 'full genealogy-date-inline-range'
+          inputId: `${prefix}StartDateInput`, typeId: `${prefix}StartDateType`, placeholder: 'e.g. 18 Aug 1923', defaultDateType: 'Exact date', className: 'full genealogy-date-inline-range'
         })}
         ${renderPlaceCombobox({ id: `${prefix}StartPlace`, label: definition.startPlaceLabel, value: startPlace, selectedPlaceId: startEvent?.placeId || family?.startPlaceId || '', addressValue: startEvent?.address || family?.startAddress || '', placeholder: 'e.g. Meowbridge, England', className: 'full', inputAttrs: 'data-partner-relationship-start-place' })}
       </div>
@@ -51848,6 +51902,63 @@
       };
     }
 
+    function applyAddPersonAttachmentDrafts(personId) {
+      const person =
+        getPerson(personId);
+
+      if (!person) return;
+
+      setPersonPhotoIds(
+        person.id,
+        readAddPersonPhotoIds(),
+        {
+          rerender: false
+        }
+      );
+
+      const fileWrites =
+        readAddPersonFileIds().map(fileId => ({
+          ownerType: 'file',
+          ownerId: fileId,
+          entityType: 'person',
+          entityId: person.id,
+          shouldLink: true
+        }));
+
+      if (fileWrites.length) {
+        archiveSetConnectionsAtomically(
+          fileWrites
+        );
+      }
+
+      readAddPersonNoteIds().forEach(noteId => {
+        const note =
+          getNote(noteId, {
+            projectId:
+              person.projectId,
+            includeArchived:
+              true
+          });
+
+        if (!note) return;
+
+        setNoteEntityLinks(
+          note.id,
+          'person',
+          [
+            ...new Set([
+              ...(note.linkedPersonIds || []),
+              person.id
+            ])
+          ],
+          {
+            projectId:
+              note.projectId
+          }
+        );
+      });
+    }
+
     function commitAddPersonModalCreate(title, subtitle, options = {}) {
       const createAnother = modalBackdrop.querySelector('#addPersonCreateAnother')?.checked;
       const additionalFacts = collectAddPersonAdditionalFacts('');
@@ -51888,9 +51999,10 @@
         return null;
       }
 
-      const photoIds = readAddPersonPhotoIds();
       const newPerson = createPersonFromAddPersonModal(options, additionalFacts);
-      setPersonPhotoIds(newPerson.id, photoIds, { rerender: false });
+      applyAddPersonAttachmentDrafts(
+        newPerson.id
+      );
       let connectionResult = null;
 
       if (connectionIntent.shouldConnect) {
@@ -52229,42 +52341,172 @@
       </div>`;
     }
 
-    function renderAddPersonAttachmentSideCard(editPerson = null) {
-      const photoIds = editPerson ? getPhotosForPerson(editPerson.id).map(photo => photo.id) : [];
-      const row = (type, title, subtitle, svg, extraClass = '', attrs = '') => `<button class="attach-row" type="button" ${attrs || `data-add-person-attachment-info="${escapeHtml(type)}"`}>
-        <div class="attach-icon ${escapeHtml(extraClass)}" aria-hidden="true">${svg}</div>
-        <div>
-          <strong>${escapeHtml(title)}</strong><br>
-          <span>${escapeHtml(subtitle)}</span>
-        </div>
-      </button>`;
+    let addPersonAttachmentDraftState = {
+      photoIds: [],
+      fileIds: [],
+      noteIds: []
+    };
 
-      return `<div class="modal-side-card">
-        <h3>Attach to this person</h3>
-        <input type="hidden" id="addPersonPhotoIds" value="${escapeHtml(JSON.stringify(photoIds))}">
-        ${row('photo', 'Photos', `${photoIds.length} selected`, icon.image, 'photo', 'data-add-person-photos')}
-        ${row('file', 'Add File', 'Choose or connect a file', icon.file, 'file')}
-        ${row('note', 'Add Note', 'Create or connect a note', icon.note, 'note')}
-      </div>`;
+    function initializeAddPersonAttachmentDraft(editPerson = null) {
+      addPersonAttachmentDraftState = {
+        photoIds:
+          editPerson
+            ? getPhotosForPerson(editPerson.id)
+                .map(photo => photo.id)
+            : [],
+
+        fileIds:
+          editPerson
+            ? getArchiveFilesForPerson(editPerson.id)
+                .map(file => file.id)
+            : [],
+
+        noteIds:
+          editPerson
+            ? getNotesForPerson(editPerson.id)
+                .map(note => note.id)
+            : []
+      };
     }
 
     function readAddPersonPhotoIds() {
-      try {
-        const value = JSON.parse(modalBackdrop?.querySelector('#addPersonPhotoIds')?.value || '[]');
-        return Array.isArray(value) ? [...new Set(value)] : [];
-      } catch {
-        return [];
-      }
+      return [
+        ...addPersonAttachmentDraftState.photoIds
+      ];
+    }
+
+    function readAddPersonFileIds() {
+      return [
+        ...addPersonAttachmentDraftState.fileIds
+      ];
+    }
+
+    function readAddPersonNoteIds() {
+      return [
+        ...addPersonAttachmentDraftState.noteIds
+      ];
+    }
+
+    function refreshAddPersonAttachmentCounts() {
+      const counts = {
+        photo:
+          addPersonAttachmentDraftState.photoIds.length,
+
+        file:
+          addPersonAttachmentDraftState.fileIds.length,
+
+        note:
+          addPersonAttachmentDraftState.noteIds.length
+      };
+
+      Object.entries(counts).forEach(
+        ([type, count]) => {
+          const element =
+            modalBackdrop.querySelector(
+              `[data-add-person-attachment-count="${type}"]`
+            );
+
+          if (element) {
+            element.textContent =
+              `${count} selected`;
+          }
+        }
+      );
     }
 
     function setAddPersonPhotoDraftIds(photoIds) {
-      const input = modalBackdrop?.querySelector('#addPersonPhotoIds');
-      if (!input) return;
-      const validIds = [...new Set(photoIds || [])].filter(id => getPhoto(id));
-      input.value = JSON.stringify(validIds);
-      const button = modalBackdrop.querySelector('[data-add-person-photos]');
-      const subtitle = button?.querySelector('span');
-      if (subtitle) subtitle.textContent = `${validIds.length} selected`;
+      addPersonAttachmentDraftState.photoIds = [
+        ...new Set(photoIds || [])
+      ].filter(id => Boolean(getPhoto(id)));
+
+      refreshAddPersonAttachmentCounts();
+    }
+
+    function setAddPersonFileDraftIds(fileIds) {
+      addPersonAttachmentDraftState.fileIds = [
+        ...new Set(fileIds || [])
+      ].filter(id =>
+        Boolean(archiveFileById(id))
+      );
+
+      refreshAddPersonAttachmentCounts();
+    }
+
+    function setAddPersonNoteDraftIds(noteIds) {
+      addPersonAttachmentDraftState.noteIds = [
+        ...new Set(noteIds || [])
+      ].filter(id =>
+        Boolean(
+          getNote(id, {
+            includeArchived: true
+          })
+        )
+      );
+
+      refreshAddPersonAttachmentCounts();
+    }
+
+    function renderAddPersonAttachmentSideCard() {
+      const row = ({
+        type,
+        title,
+        iconHtml,
+        extraClass = '',
+        attribute
+      }) => {
+        const count =
+          addPersonAttachmentDraftState[
+            `${type}Ids`
+          ]?.length || 0;
+
+        return `<button
+          class="attach-row"
+          type="button"
+          ${attribute}>
+          <div
+            class="attach-icon ${escapeHtml(extraClass)}"
+            aria-hidden="true">
+            ${iconHtml}
+          </div>
+
+          <div>
+            <strong>${escapeHtml(title)}</strong><br>
+
+            <span
+              data-add-person-attachment-count="${escapeHtml(type)}">
+              ${count} selected
+            </span>
+          </div>
+        </button>`;
+      };
+
+      return `<div class="modal-side-card">
+        <h3>Attach to this person</h3>
+
+        ${row({
+          type: 'photo',
+          title: 'Add photos',
+          iconHtml: icon.image,
+          extraClass: 'photo',
+          attribute: 'data-add-person-photos'
+        })}
+
+        ${row({
+          type: 'file',
+          title: 'Add file',
+          iconHtml: icon.file,
+          extraClass: 'file',
+          attribute: 'data-add-person-files'
+        })}
+
+        ${row({
+          type: 'note',
+          title: 'Add note',
+          iconHtml: icon.note,
+          extraClass: 'note',
+          attribute: 'data-add-person-note'
+        })}
+      </div>`;
     }
 
     function refreshAddPersonPossibleMatchesCard(options = {}, editPerson = null) {
@@ -52320,43 +52562,143 @@
     }
 
     function bindAddPersonSideCards(options = {}, editPerson = null) {
+      const projectId =
+        editPerson?.projectId
+        || currentProjectId();
+
+      const subjectLabel =
+        editPerson?.names?.display
+        || 'New person';
+
       modalBackdrop
-        ?.querySelector(
-          '[data-add-person-photos]'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            openAddPersonPhotoDraftModal({
-              projectId:
-                editPerson?.projectId
-                || currentProjectId(),
+        ?.querySelector('[data-add-person-photos]')
+        ?.addEventListener('click', () => {
+          openAddPhotosForPersonDraftModal({
+            projectId,
+            subjectLabel,
+            existingPhotoIds:
+              readAddPersonPhotoIds(),
 
-              selectedPhotoIds:
-                readAddPersonPhotoIds(),
-
-              subjectLabel:
-                editPerson?.names
-                  ?.display
-                || 'New person',
-
-              onSave:
-                setAddPersonPhotoDraftIds
-            });
-          }
-        );
-      modalBackdrop?.querySelectorAll('[data-add-person-attachment-info]').forEach(button => {
-        button.addEventListener('click', () => {
-          const type = button.dataset.addPersonAttachmentInfo || '';
-
-          const messages = {
-            file: 'File picker will be added in a later step.',
-            note: 'Note picker will be added in a later step.'
-          };
-
-          showToast(messages[type] || 'Attachment picker will be added in a later step.');
+            onSave:
+              setAddPersonPhotoDraftIds
+          });
         });
-      });
+
+      modalBackdrop
+        ?.querySelector('[data-add-person-files]')
+        ?.addEventListener('click', () => {
+          openConnectedFilesModal({
+            projectId,
+
+            title:
+              `Add files to ${subjectLabel}`,
+
+            subtitle:
+              'Connect existing Archive files or add new files.',
+
+            existingFileIds:
+              readAddPersonFileIds(),
+
+            modalOpener:
+              openNestedModal,
+
+            onSave:
+              fileIds => {
+                setAddPersonFileDraftIds([
+                  ...readAddPersonFileIds(),
+                  ...fileIds
+                ]);
+
+                return {
+                  ok: true,
+                  addedLinkCount:
+                    fileIds.length
+                };
+              },
+
+            afterSave:
+              refreshAddPersonAttachmentCounts,
+
+            successMessage:
+              null
+          });
+        });
+
+      modalBackdrop
+        ?.querySelector('[data-add-person-note]')
+        ?.addEventListener('click', () => {
+          openNoteLinkPickerModal({
+            projectId,
+
+            title:
+              'Add note',
+
+            description:
+              `Link existing notes to “${subjectLabel}”.`,
+
+            existingNoteIds:
+              readAddPersonNoteIds(),
+
+            includeArchived:
+              false,
+
+            existingStatus:
+              'Already selected',
+
+            existingMetaLabel:
+              'already selected',
+
+            createLabel:
+              'Create note',
+
+            modalOpener:
+              openNestedModal,
+
+            onCreate:
+              () => {
+                const note =
+                  createCentralNote({
+                    projectId,
+                    activate: false,
+                    renderAfterCreate: false,
+                    focusTitleAfterCreate: false,
+                    showCreatedToast: false,
+                    inheritActiveContext: false,
+                    inheritActiveCollection: false
+                  });
+
+                if (!note) return;
+
+                setAddPersonNoteDraftIds([
+                  ...readAddPersonNoteIds(),
+                  note.id
+                ]);
+
+                showToast(
+                  'Note created and selected.'
+                );
+              },
+
+            onSave:
+              noteIds => {
+                setAddPersonNoteDraftIds([
+                  ...readAddPersonNoteIds(),
+                  ...noteIds
+                ]);
+
+                return {
+                  addedLinkCount:
+                    noteIds.length
+                };
+              },
+
+            afterSave:
+              refreshAddPersonAttachmentCounts,
+
+            successMessage:
+              null
+          });
+        });
 
       bindAddPersonPossibleMatchRows(options, editPerson);
 
@@ -53519,6 +53861,9 @@
     function openAddPersonModal(title, subtitle, options = {}) {
       const isEditMode = options.mode === 'edit';
       const editPerson = isEditMode ? getPerson(options.personId) : null;
+      initializeAddPersonAttachmentDraft(
+        editPerson
+      );
       addPersonPossibleMatchState = {
         selectedPersonId: ''
       };
@@ -54385,7 +54730,9 @@
 
       applyAddPersonAdditionalFacts(person, additionalFacts);
       savePersonRelationshipBlock(personId, relationshipValues);
-      setPersonPhotoIds(personId, readAddPersonPhotoIds(), { rerender: false });
+      applyAddPersonAttachmentDrafts(
+        personId
+      );
       syncFamilyReciprocalLinks();
 
       person.meta.updated = 'Just now';
@@ -61558,7 +61905,7 @@
       return getProjectPhotos(person.projectId).filter(photo => {
         if (
           state.personPhotoPicker.projectScope === 'tagged'
-          && !(photo.personIds || []).includes(person.id)
+          && !personPhotosAdderPhotoAlreadyAdded(photo)
         ) {
           return false;
         }
@@ -61573,7 +61920,7 @@
     function renderPersonPhotoCandidate(photo, person) {
       const selected = photo.id === state.personPhotoPicker.selectedPhotoId;
       const current = photo.id === person.primaryPhotoId;
-      const tagged = (photo.personIds || []).includes(person.id);
+      const tagged = personPhotosAdderPhotoAlreadyAdded(photo);
       return `<button class="person-photo-candidate" type="button" data-person-photo-candidate="${escapeHtml(photo.id)}" aria-pressed="${selected}">
         <span class="person-photo-candidate-preview">
           ${renderPhotoThumbnail(photo, { label: photo.title || photo.filename })}
@@ -62400,14 +62747,39 @@
         search: '',
         selectedProjectPhotoIds: [],
         uploadDrafts: [],
-        uploadErrors: []
+        uploadErrors: [],
+        nested: false,
+        draftTarget: null
       };
     }
 
     function personPhotosAdderPerson() {
+      if (state.personPhotosAdder?.draftTarget?.person) {
+        return state.personPhotosAdder.draftTarget.person;
+      }
+
       return getPerson(
         state.personPhotosAdder?.personId
       ) || null;
+    }
+
+    function personPhotosAdderPhotoAlreadyAdded(photo) {
+      const draftTarget =
+        state.personPhotosAdder?.draftTarget;
+
+      if (draftTarget) {
+        return (
+          draftTarget.existingPhotoIds || []
+        ).includes(photo?.id);
+      }
+
+      const person =
+        personPhotosAdderPerson();
+
+      return Boolean(
+        person?.id
+        && (photo?.personIds || []).includes(person.id)
+      );
     }
 
     function personPhotosAdderSelectedIds() {
@@ -63043,7 +63415,15 @@
         person.names?.display
         || 'Person';
 
-      openModal(`
+      const presentModal =
+        state.personPhotosAdder.nested
+        && !modalBackdrop.querySelector(
+          '[data-person-photos-adder]'
+        )
+          ? openNestedModal
+          : openModal;
+
+      presentModal(`
         <div
           class="
             modal
@@ -63218,8 +63598,10 @@
 
       if (countElement) {
         countElement.textContent =
-          personPhotosAdderCountLabel(
-            count
+          translateText(
+            personPhotosAdderCountLabel(
+              count
+            )
           );
       }
 
@@ -63233,8 +63615,10 @@
           count === 0;
 
         saveButton.textContent =
-          personPhotosAdderActionLabel(
-            count
+          translateText(
+            personPhotosAdderActionLabel(
+              count
+            )
           );
       }
     }
@@ -63412,68 +63796,98 @@
       const person =
         personPhotosAdderPerson();
 
-      if (!person) {
-        return;
-      }
+      if (!person) return;
 
-      const selectedIds =
-        personPhotosAdderSelectedIds();
+      const draftTarget =
+        state.personPhotosAdder.draftTarget;
 
-      const projectPhotos = [
-        ...selectedIds
+      const selectedProjectPhotos = [
+        ...personPhotosAdderSelectedIds()
       ]
         .map(photoId =>
-          getPhoto(
-            photoId,
-            {
-              projectId:
-                person.projectId
-            }
-          )
+          getPhoto(photoId, {
+            projectId: person.projectId
+          })
         )
         .filter(photo =>
           photo
-          && !(
-            photo.personIds || []
-          ).includes(person.id)
+          && !personPhotosAdderPhotoAlreadyAdded(photo)
         );
 
       const uploadDrafts = [
-        ...(
-          state.personPhotosAdder
-            .uploadDrafts || []
-        )
+        ...(state.personPhotosAdder.uploadDrafts || [])
       ];
 
       if (
         uploadDrafts.some(
           draft =>
-            !photoUploadDraftIsValid(
-              draft
-            )
+            !photoUploadDraftIsValid(draft)
         )
       ) {
-        state.personPhotosAdder
-          .uploadErrors = [
-            'One or more uploaded photos are no longer valid. Remove them and choose the files again.'
-          ];
+        state.personPhotosAdder.uploadErrors = [
+          'One or more uploaded photos are no longer valid. Remove them and choose the files again.'
+        ];
 
-        state.personPhotosAdder
-          .sourceTab = 'upload';
+        state.personPhotosAdder.sourceTab =
+          'upload';
 
         renderPersonPhotosAdderModal();
         return;
       }
 
       const totalAdded =
-        projectPhotos.length
+        selectedProjectPhotos.length
         + uploadDrafts.length;
 
-      if (!totalAdded) {
+      if (!totalAdded) return;
+
+      if (draftTarget) {
+        const uploadedPhotos =
+          uploadDrafts
+            .map(draft =>
+              createMediaFromPhotoUpload({
+                projectId:
+                  person.projectId,
+
+                draft,
+
+                personIds: [],
+
+                originLabel:
+                  'Person photo upload',
+
+                idPrefix:
+                  'photo-person-draft'
+              })
+            )
+            .filter(Boolean);
+
+        const nextPhotoIds = [
+          ...new Set([
+            ...(draftTarget.existingPhotoIds || []),
+
+            ...selectedProjectPhotos.map(
+              photo => photo.id
+            ),
+
+            ...uploadedPhotos.map(
+              photo => photo.id
+            )
+          ])
+        ];
+
+        const onSave =
+          draftTarget.onSave;
+
+        closeModal({
+          force: true
+        });
+
+        onSave?.(nextPhotoIds);
         return;
       }
 
-      projectPhotos.forEach(photo => {
+      selectedProjectPhotos.forEach(photo => {
         ensurePhotoPersonTag(
           photo,
           person
@@ -63865,6 +64279,59 @@
           }
         }
       );
+    }
+
+    function openAddPhotosForPersonDraftModal({
+      projectId = currentProjectId(),
+      subjectLabel = 'New person',
+      existingPhotoIds = [],
+      onSave = null
+    } = {}) {
+      if (!projectId || typeof onSave !== 'function') {
+        return;
+      }
+
+      const validExistingIds = [
+        ...new Set(existingPhotoIds || [])
+      ].filter(photoId =>
+        Boolean(
+          getPhoto(photoId, {
+            projectId
+          })
+        )
+      );
+
+      resetPersonPhotosAdderState();
+
+      Object.assign(
+        state.personPhotosAdder,
+        {
+          open: true,
+          nested: true,
+          personId: null,
+          sourceTab:
+            getProjectPhotos(projectId).length
+              ? 'project'
+              : 'upload',
+
+          draftTarget: {
+            existingPhotoIds:
+              validExistingIds,
+
+            onSave,
+
+            person: {
+              id: '',
+              projectId,
+              names: {
+                display: subjectLabel
+              }
+            }
+          }
+        }
+      );
+
+      renderPersonPhotosAdderModal();
     }
 
     function openAddPhotosToPersonModal(
@@ -105391,7 +105858,10 @@
         null,
 
       successMessage =
-        null
+        null,
+
+      modalOpener =
+        openModal
     } = {}) {
       const allFiles =
         connectedFilesForProject(
@@ -105427,7 +105897,7 @@
           ? 'archive'
           : 'new';
 
-      openModal(`
+      modalOpener(`
         <div
           class="
             modal
@@ -105960,8 +106430,10 @@
 
           if (countElement) {
             countElement.textContent =
-              connectedFilesSelectionLabel(
-                count
+              translateText(
+                connectedFilesSelectionLabel(
+                  count
+                )
               );
           }
 
@@ -105970,8 +106442,10 @@
               count === 0;
 
             saveButton.textContent =
-              connectedFilesActionLabel(
-                count
+              translateText(
+                connectedFilesActionLabel(
+                  count
+                )
               );
           }
         };
@@ -126473,7 +126947,10 @@
         null,
 
       successMessage =
-        null
+        null,
+
+      modalOpener =
+        openModal
     } = {}) {
       if (
         !projectId
@@ -126980,7 +127457,7 @@
           `;
         };
 
-      openModal(`
+      modalOpener(`
         <div
           class="
             modal
@@ -142473,6 +142950,68 @@
         });
     }
 
+    const nestedModalFrames = [];
+
+    function openNestedModal(html) {
+      if (!modalBackdrop.classList.contains('open')) {
+        openModal(html);
+        return;
+      }
+
+      const content =
+        document.createDocumentFragment();
+
+      while (modalBackdrop.firstChild) {
+        content.appendChild(
+          modalBackdrop.firstChild
+        );
+      }
+
+      nestedModalFrames.push({
+        content,
+        activeElement:
+          document.activeElement instanceof HTMLElement
+            ? document.activeElement
+            : null
+      });
+
+      openModal(html);
+    }
+
+    function restoreNestedModalFrame() {
+      const frame =
+        nestedModalFrames.pop();
+
+      if (!frame) return false;
+
+      modalBackdropDismissBinding?.destroy();
+      modalBackdropDismissBinding = null;
+
+      modalBackdrop.innerHTML = '';
+      modalBackdrop.appendChild(frame.content);
+
+      modalBackdropDismissBinding =
+        bindIntentionalBackdropDismiss(
+          modalBackdrop,
+          () => closeModal()
+        );
+
+      requestAnimationFrame(() => {
+        if (frame.activeElement?.isConnected) {
+          frame.activeElement.focus({
+            preventScroll: true
+          });
+          return;
+        }
+
+        modalFocusableElements()[0]?.focus({
+          preventScroll: true
+        });
+      });
+
+      return true;
+    }
+
     function openModal(
       html
     ) {
@@ -142725,6 +143264,12 @@
       ) {
         resetPlaceEditorDraft();
       }
+      if (nestedModalFrames.length) {
+        restoreNestedModalFrame();
+        return;
+      }
+
+      nestedModalFrames.length = 0;
       document.getElementById('personPhotoDiscardOverlay')?.remove();
       document.getElementById('addPersonMiniOverlay')?.remove();
 
