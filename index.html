@@ -8050,6 +8050,30 @@
     }
     .people-save-view:hover { background: var(--surface-card-hover); color: var(--text-primary); border-color: var(--border-strong); }
 
+    .people-nav-unavailable {
+      color: var(--text-tertiary);
+      opacity: .58;
+      cursor: default;
+    }
+
+    .people-nav-unavailable svg {
+      color: var(--text-tertiary);
+    }
+
+    .people-nav-unavailable:hover {
+      background: transparent;
+      color: var(--text-tertiary);
+    }
+
+    .people-nav-unavailable:hover svg {
+      color: var(--text-tertiary);
+    }
+
+    .people-nav-unavailable .people-review-count {
+      background: rgba(127, 138, 134, .10);
+      border-color: rgba(127, 138, 134, .18);
+      color: var(--text-tertiary);
+    }
 
     .people-review-count {
       margin-left: auto;
@@ -24687,7 +24711,6 @@
     .notes-sidebar-tip .tip-card { padding: var(--space-3); }
     .notes-sidebar-tip .tip-card p {
       margin-bottom: var(--space-3);
-      font-size: 12px;
       line-height: 1.5;
     }
 
@@ -31956,7 +31979,7 @@
         'Сортировать фотографии',
 
       'Oldest added':
-        'Добавленные раньше',
+        'Дата добавления',
 
       'Photo pages':
         'Страницы фотографий',
@@ -56590,7 +56613,7 @@
             </button>
 
             <button
-              class="side-link"
+              class="side-link people-nav-unavailable"
               type="button"
               data-placeholder-view="Review center">
               ${icon.search}
@@ -56599,7 +56622,7 @@
             </button>
 
             <button
-              class="side-link"
+              class="side-link people-nav-unavailable"
               type="button"
               data-placeholder-view="Statistics">
               ${icon.grid}
