@@ -2173,25 +2173,47 @@
     .place-address-disclosure {
       margin-top: 7px;
       color: var(--text-tertiary);
-      font-size: 12px;
     }
 
-    .place-address-disclosure summary {
+    .place-address-toggle {
       width: fit-content;
-      cursor: pointer;
+      min-height: 28px;
+      display: inline-flex;
+      align-items: center;
+      border: 0;
+      border-radius: var(--radius-xs);
+      background: transparent;
       color: var(--brand-green-500);
+      padding: 2px 0;
+      font: inherit;
+      font-size: 12px;
       font-weight: 600;
-      list-style: none;
+      line-height: 1.35;
+      text-align: left;
+      cursor: pointer;
     }
 
-    .place-address-disclosure summary::-webkit-details-marker {
-      display: none;
+    .place-address-toggle:hover {
+      color: var(--brand-green-300);
     }
 
-    .place-address-disclosure label {
+    .place-address-toggle.is-remove {
+      color: var(--red);
+    }
+
+    .place-address-toggle.is-remove:hover {
+      color: #F2B3B3;
+    }
+
+    .place-address-fields label {
       display: block;
       margin-top: 8px;
-      margin-bottom: 5px;
+      margin-bottom: var(--space-2);
+    }
+
+    .place-address-fields input,
+    .place-address-fields input::placeholder {
+      font-size: inherit;
     }
 
     .place-combobox-option {
@@ -5477,6 +5499,9 @@
 
       line-height:
         1.5;
+    }
+    .connected-files-footer {
+      align-items: center;
     }
 
     .connected-files-footer-count {
@@ -10461,6 +10486,19 @@
     }
 
     /* Archive */
+
+    .profile-resource-card--archive
+    .profile-resource-card__body {
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+    }
+
+    .profile-resource-card--archive
+    .connected-file-list {
+      gap: 0;
+    }
 
     .profile-file-row {
       padding: 5px 8px;
@@ -16452,6 +16490,109 @@
     .connected-photo-button > .photo-thumbnail {
       position: absolute;
       inset: 0;
+    }
+
+    .person-connected-photo-item {
+      position: relative;
+      isolation: isolate;
+      min-width: 0;
+    }
+
+    .connected-photo-grid
+    > .person-connected-photo-item {
+      aspect-ratio: 1;
+    }
+
+    .connected-photo-grid
+    > .person-connected-photo-item
+    > .connected-photo-button {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: auto;
+    }
+
+    .profile-photo-item {
+      width: 118px;
+      min-width: 118px;
+      height: 118px;
+      flex: 0 0 118px;
+      scroll-snap-align: start;
+    }
+
+    .profile-photo-item
+    > .profile-photo-thumb {
+      width: 100%;
+      min-width: 0;
+      height: 100%;
+      flex: 0 0 auto;
+      scroll-snap-align: none;
+    }
+
+    .person-connected-photo-item
+    > .connected-photo-unlink {
+      z-index: 4;
+      top: 8px;
+      right: 8px;
+      width: 30px;
+      height: 30px;
+
+      border-color:
+        rgba(255, 255, 255, .18);
+
+      background:
+        rgba(8, 12, 11, .78);
+
+      color:
+        rgba(255, 255, 255, .94);
+
+      box-shadow:
+        0 2px 8px rgba(0, 0, 0, .34);
+
+      backdrop-filter:
+        blur(4px);
+
+      transform:
+        translateY(-2px)
+        scale(.96);
+    }
+
+    .person-connected-photo-item
+    > .connected-photo-unlink:hover,
+    .person-connected-photo-item
+    > .connected-photo-unlink:focus-visible {
+      border-color:
+        rgba(255, 140, 140, .58);
+
+      background:
+        rgba(112, 32, 32, .9);
+
+      color:
+        #fff;
+
+      box-shadow:
+        0 3px 10px rgba(0, 0, 0, .42);
+    }
+
+    .person-connected-photo-item:hover
+    > .connected-photo-unlink,
+    .person-connected-photo-item:focus-within
+    > .connected-photo-unlink {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform:
+        translateY(0)
+        scale(1);
+    }
+
+    @media (hover: none) {
+      .person-connected-photo-item
+      > .connected-photo-unlink {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: none;
+      }
     }
 
     /* Shared photo-preview containers */
@@ -30967,6 +31108,7 @@
       'Cancel editing': 'Отменить редактирование',
       'Change photo': 'Изменить фотографию',
       '+ Add address': '+ Добавить адрес',
+      '- Remove address': '- Удалить адрес',
       'Address': 'Адрес',
       'Street, house, parish, or site details': 'Улица, дом, приход или описание места',
       'Search or type a place': 'Найдите или введите место',
@@ -31014,6 +31156,8 @@
       'The file will not be deleted.':'Файл не будет удален.',
       'Only the connection between':'Только связь между',
       'will be removed.':'будет удалена.',
+      'Deleting this person will also remove their relationship references.': 'Удаление этого человека удалит его связь с другими людьми.',
+      'Linked photos, archive files, notes, и other research material will remain in the project.': 'Связанные фотографии, архивные файлы, заметки и прочие материалы остануться в проекте.',
       'The file will remain available in Archive and keep all its other connections.':'Файл останется доступен в архиве и сохранит остальные связи.',
       'The note will remain available in Notes and keep all its other links.':'Заметка останется доступна в Заметках и сохранит остальные связи.',
       'Similar people in this project': 'Похожие люди в этом проекте',
@@ -31574,7 +31718,7 @@
       'Fact name *': 'Название факта *',
       'Fact details': 'Сведения о факте',
       'Date or period': 'Дата или период',
-      'Use a short category that describes the fact.': 'Укажите короткую категорию, описывающую факт.',
+      'Required. Use a short category that describes the fact.': 'Обязательное поле. Укажите короткую категорию, описывающую факт.',
       'Research context or additional details': 'Исследовательский контекст или дополнительные сведения',
       'Company name': 'Название организации',
       'e.g. Pawford School': 'Например, Школа Поуфорда',
@@ -40750,14 +40894,177 @@
       popover.querySelector('[data-editor-smart]')?.focus({ preventScroll: true });
     }
 
+    function setPlaceAddressDisclosureState(
+      field,
+      expanded,
+      {
+        clear = false,
+        focus = false
+      } = {}
+    ) {
+      const disclosure =
+        field?.querySelector(
+          '[data-place-address-disclosure]'
+        );
+
+      const toggle =
+        disclosure?.querySelector(
+          '[data-place-address-toggle]'
+        );
+
+      const toggleLabel =
+        disclosure?.querySelector(
+          '[data-place-address-toggle-label]'
+        );
+
+      const addressFields =
+        disclosure?.querySelector(
+          '[data-place-address-fields]'
+        );
+
+      const addressInput =
+        disclosure?.querySelector(
+          '[data-place-address]'
+        );
+
+      if (
+        !disclosure
+        || !toggle
+        || !addressFields
+      ) {
+        return;
+      }
+
+      const isExpanded =
+        Boolean(expanded);
+
+      if (
+        clear
+        && addressInput
+      ) {
+        addressInput.value = '';
+        addressInput.dataset.sourceValue = '';
+
+        addressInput.dispatchEvent(
+          new Event(
+            'input',
+            {
+              bubbles: true
+            }
+          )
+        );
+
+        addressInput.dispatchEvent(
+          new Event(
+            'change',
+            {
+              bubbles: true
+            }
+          )
+        );
+      }
+
+      disclosure.classList.toggle(
+        'has-address',
+        isExpanded
+      );
+
+      toggle.classList.toggle(
+        'is-remove',
+        isExpanded
+      );
+
+      toggle.setAttribute(
+        'aria-expanded',
+        isExpanded
+          ? 'true'
+          : 'false'
+      );
+
+      addressFields.hidden =
+        !isExpanded;
+
+      if (toggleLabel) {
+        toggleLabel.textContent =
+          t(
+            isExpanded
+              ? '- Remove address'
+              : '+ Add address'
+          );
+      }
+
+      if (
+        isExpanded
+        && focus
+        && addressInput
+      ) {
+        requestAnimationFrame(
+          () => {
+            addressInput.focus({
+              preventScroll: true
+            });
+          }
+        );
+      }
+    }
+
     function bindPlaceComboboxes(root = document) {
       if (!root || typeof root.querySelectorAll !== 'function') return;
       const fields = root.querySelectorAll('[data-place-combobox]');
       fields.forEach(field => {
         if (field.dataset.placeBound) return;
+
         field.dataset.placeBound = 'true';
-        const input = field.querySelector('[data-place-input]');
-        const list = field.querySelector('.place-combobox-list');
+
+        const addressToggle =
+          field.querySelector(
+            '[data-place-address-toggle]'
+          );
+
+        const addressFields =
+          field.querySelector(
+            '[data-place-address-fields]'
+          );
+
+        if (
+          addressToggle
+          && addressFields
+        ) {
+          setPlaceAddressDisclosureState(
+            field,
+            !addressFields.hidden
+          );
+
+          addressToggle.addEventListener(
+            'click',
+            () => {
+              const expanded =
+                addressToggle.getAttribute(
+                  'aria-expanded'
+                ) === 'true';
+
+              setPlaceAddressDisclosureState(
+                field,
+                !expanded,
+                {
+                  clear: expanded,
+                  focus: !expanded
+                }
+              );
+            }
+          );
+        }
+
+        const input =
+          field.querySelector(
+            '[data-place-input]'
+          );
+
+        const list =
+          field.querySelector(
+            '.place-combobox-list'
+          );
+
         if (!input || !list) return;
 
         let activeIndex = -1;
@@ -40962,7 +41269,10 @@
         avatar: person.avatarClass,
         primaryPhotoId: person.primaryPhotoId || '',
         photos: getPersonPhotoCount(person.id),
-        files: person.counts.files,
+        files:
+          getArchiveFilesForPerson(
+            person.id
+          ).length,
         notes:
           getNotesForPerson(
             person.id
@@ -40986,7 +41296,7 @@
         gender: person.gender,
         relation: person.role,
         photos: getPersonPhotoCount(person.id),
-        files: person.counts.files,
+        files: getArchiveFilesForPerson(person.id).length,
         notes:
           getNotesForPerson(
             person.id
@@ -45222,6 +45532,21 @@
     function renderOpenProject() {
       const project = currentProject();
       const projectTitle = project.name.replace('Tree', 'History');
+
+      const projectPhotoCount =
+        getProjectPhotos(
+          project.id
+        ).length;
+
+      const projectFileCount =
+        connectedFilesForProject(
+          project.id
+        ).length;
+
+      const projectNoteCount =
+        getProjectNotes(
+          project.id
+        ).length;
       sidebar.innerHTML = `
         <div class="logo-lockup">
           <div class="large-logo">${icon.logo}</div>
@@ -45290,9 +45615,21 @@
                         )
                       )}
                     </span>
-                    <span class="app-chip app-chip--photos">${getProjectPhotos(project.id).length} photos</span>
-                    <span class="app-chip app-chip--files">${project.files} files</span>
-                    <span class="app-chip app-chip--notes">${project.notes} notes</span>
+
+                    <span class="app-chip app-chip--photos">
+                      ${projectPhotoCount}
+                      ${projectPhotoCount === 1 ? 'photo' : 'photos'}
+                    </span>
+
+                    <span class="app-chip app-chip--files">
+                      ${projectFileCount}
+                      ${projectFileCount === 1 ? 'file' : 'files'}
+                    </span>
+
+                    <span class="app-chip app-chip--notes">
+                      ${projectNoteCount}
+                      ${projectNoteCount === 1 ? 'note' : 'notes'}
+                    </span>
                   </div>
                 </div>
                 <div class="project-hero-actions" aria-label="Project actions">
@@ -47812,14 +48149,58 @@
       );
     }
 
+    function renderPersonPhotoUnlinkButton(
+      photo,
+      personId
+    ) {
+      if (!photo?.id || !personId) {
+        return '';
+      }
+
+      const photoLabel =
+        photo.title
+        || photo.filename
+        || 'Photo';
+
+      const personLabel =
+        getPerson(personId)
+          ?.names?.display
+        || 'this person';
+
+      return `
+        <button
+          class="
+            connected-note-unlink
+            connected-photo-unlink
+          "
+          type="button"
+          data-person-photo-unlink="${escapeHtml(
+            photo.id
+          )}"
+          data-person-photo-unlink-person="${escapeHtml(
+            personId
+          )}"
+          aria-label="Unlink ${escapeHtml(
+            photoLabel
+          )} from ${escapeHtml(
+            personLabel
+          )}"
+          title="Unlink photo">
+
+          ${icon.unlink}
+        </button>
+      `;
+    }
+
     function renderFamilyPhotos(person) {
       const photos =
-        getPhotosForPerson(person?.id)
-          .slice(
-            0,
-            PERSON_PANEL_PREVIEW_LIMITS
-              .photos
-          );
+        getPhotosForPerson(
+          person?.id
+        ).slice(
+          0,
+          PERSON_PANEL_PREVIEW_LIMITS
+            .photos
+        );
 
       if (!photos.length) {
         return `
@@ -47839,24 +48220,36 @@
                 || 'Photo';
 
               return `
-                <button
-                  class="connected-photo-button"
-                  type="button"
-                  data-family-photo="${
-                    escapeHtml(photo.id)
-                  }"
-                  title="${
-                    escapeHtml(label)
-                  }"
-                  aria-label="Open ${
-                    escapeHtml(label)
-                  }">
+                <div
+                  class="
+                    person-connected-photo-item
+                    family-connected-photo-item
+                  ">
 
-                  ${renderPhotoThumbnail(
+                  <button
+                    class="connected-photo-button"
+                    type="button"
+                    data-family-photo="${escapeHtml(
+                      photo.id
+                    )}"
+                    title="${escapeHtml(
+                      label
+                    )}"
+                    aria-label="Open ${escapeHtml(
+                      label
+                    )}">
+
+                    ${renderPhotoThumbnail(
+                      photo,
+                      { label }
+                    )}
+                  </button>
+
+                  ${renderPersonPhotoUnlinkButton(
                     photo,
-                    { label }
+                    person.id
                   )}
-                </button>
+                </div>
               `;
             })
             .join('')}
@@ -50257,16 +50650,32 @@
       inputAttrs = '',
       createOptionLabel = 'Create new place'
     } = {}) {
-      const listId = `${id}PlaceList`;
+      const listId =
+        `${id}PlaceList`;
 
-      return `<div class="field ${escapeHtml(className)} place-combobox-field" data-place-combobox data-place-create-label="${escapeHtml(createOptionLabel)}">
+      const addressFieldsId =
+        `${id}AddressFields`;
+
+      const hasAddress =
+        Boolean(
+          String(addressValue || '').trim()
+        );
+
+      const addressAction =
+        hasAddress
+          ? '- Remove address'
+          : '+ Add address';
+
+      return `<div class="field place-combobox-field ${escapeHtml(className)}" data-place-combobox data-place-create-label="${escapeHtml(createOptionLabel)}">
         <label for="${escapeHtml(id)}">${escapeHtml(label)}</label>
+
         <div class="place-combobox-shell">
           <input
             id="${escapeHtml(id)}"
-            data-source-value="${escapeHtml(value)}"
             value="${escapeHtml(localizedDataFieldValue(value))}"
+            data-source-value="${escapeHtml(value)}"
             placeholder="${escapeHtml(placeholder)}"
+            autocomplete="off"
             role="combobox"
             aria-autocomplete="list"
             aria-expanded="false"
@@ -50274,13 +50683,51 @@
             data-place-input
             data-place-id="${escapeHtml(selectedPlaceId || '')}"
             ${inputAttrs}>
-          <div class="place-combobox-list" id="${escapeHtml(listId)}" role="listbox" hidden></div>
+
+          <div
+            class="place-combobox-list"
+            id="${escapeHtml(listId)}"
+            role="listbox"
+            hidden>
+          </div>
         </div>
-        ${showAddress ? `<details class="place-address-disclosure">
-          <summary>+ Add address</summary>
-          <label for="${escapeHtml(id)}Address">Address</label>
-          <input id="${escapeHtml(id)}Address" data-place-address data-source-value="${escapeHtml(addressValue)}" value="${escapeHtml(localizedDataFieldValue(addressValue))}" placeholder="Street, house, parish, or site details">
-        </details>` : ''}
+
+        ${showAddress ? `
+          <div
+            class="place-address-disclosure ${hasAddress ? 'has-address' : ''}"
+            data-place-address-disclosure>
+
+            <button
+              class="place-address-toggle ${hasAddress ? 'is-remove' : ''}"
+              type="button"
+              data-place-address-toggle
+              aria-expanded="${hasAddress ? 'true' : 'false'}"
+              aria-controls="${escapeHtml(addressFieldsId)}">
+
+              <span data-place-address-toggle-label>
+                ${escapeHtml(t(addressAction))}
+              </span>
+            </button>
+
+            <div
+              class="place-address-fields"
+              id="${escapeHtml(addressFieldsId)}"
+              data-place-address-fields
+              ${hasAddress ? '' : 'hidden'}>
+
+              <label for="${escapeHtml(id)}Address">
+                Address
+              </label>
+
+              <input
+                id="${escapeHtml(id)}Address"
+                data-place-address
+                data-source-value="${escapeHtml(addressValue)}"
+                value="${escapeHtml(localizedDataFieldValue(addressValue))}"
+                placeholder="Street, house, parish, or site details">
+            </div>
+          </div>
+        ` : ''}
       </div>`;
     }
 
@@ -50375,7 +50822,7 @@
           <div
             class="custom-fact-help"
             id="${escapeHtml(idPrefix)}TypeHelp">
-            Use a short category that describes the fact.
+            *Required. Use a short category that describes the fact.
           </div>
 
           <div
@@ -50658,6 +51105,22 @@
       }
       return fieldWrap(`<div class="field full"><label for="addPersonFactAlternativeNames">Alternative names</label><input id="addPersonFactAlternativeNames" value="${escapeHtml(details.alternativeNames || '')}" placeholder="Nickname, spelling variant, or former name"></div>`);
     }
+
+    function formatAddPersonFactSummary(count) {
+      const numericCount = Number(count);
+
+      const normalizedCount =
+        Number.isFinite(numericCount)
+          ? Math.max(0, Math.trunc(numericCount))
+          : 0;
+
+      return translateText(
+        normalizedCount
+          ? `${normalizedCount} added`
+          : 'Optional'
+      );
+    }
+
     function renderAddPersonAdditionalFacts(person = null) {
       const activeFacts = addPersonAddedFactsFromPerson(person);
       const expanded = activeFacts.length > 0;
@@ -50666,7 +51129,7 @@
         <div class="add-person-facts-section" data-add-person-facts>
           <button class="add-person-facts-header" type="button" data-add-person-facts-toggle aria-expanded="${expanded ? 'true' : 'false'}">
             <span class="add-person-facts-header-main"><span class="add-person-facts-chevron" aria-hidden="true">${icon.chevron}</span><span>Additional facts</span></span>
-            <span class="add-person-facts-meta" data-add-person-facts-count>${activeFacts.length ? `${activeFacts.length} added` : 'Optional'}</span>
+            <span class="add-person-facts-meta" data-add-person-facts-count>${escapeHtml(formatAddPersonFactSummary(activeFacts.length))}</span>
           </button>
           <div class="add-person-facts-body" data-add-person-facts-body ${expanded ? '' : 'hidden'}>
             <div class="fact-buttons" data-add-person-fact-buttons>
@@ -54927,11 +55390,27 @@
     }
 
     function updateAddPersonFactSummary() {
-      const section = modalBackdrop?.querySelector('[data-add-person-facts]');
+      const section =
+        modalBackdrop?.querySelector(
+          '[data-add-person-facts]'
+        );
+
       if (!section) return;
-      const count = section.querySelectorAll('[data-add-person-fact-card]').length;
-      const countLabel = section.querySelector('[data-add-person-facts-count]');
-      if (countLabel) countLabel.textContent = count ? `${count} added` : 'Optional';
+
+      const count =
+        section.querySelectorAll(
+          '[data-add-person-fact-card]'
+        ).length;
+
+      const countLabel =
+        section.querySelector(
+          '[data-add-person-facts-count]'
+        );
+
+      if (countLabel) {
+        countLabel.textContent =
+          formatAddPersonFactSummary(count);
+      }
     }
 
     function collectAddPersonActiveFactIds() {
@@ -57829,7 +58308,7 @@
               <h4>Education</h4>
 
               ${renderProfileInfoRow(
-                'Institution',
+                'Institution name',
                 details.educationInstitutionName || '-'
               )}
 
@@ -58398,7 +58877,7 @@
 
             <input
               id="profileWorkCompany"
-              placeholder="Company"
+              placeholder="e.g. Pawford School"
               value="${escapeHtml(details.workCompany || '')}">
           </div>
 
@@ -58407,7 +58886,7 @@
 
             <input
               id="profileWorkOccupation"
-              placeholder="Occupation"
+              placeholder="e.g. Teacher"
               value="${escapeHtml(details.workOccupation || '')}">
           </div>
 
@@ -58847,16 +59326,47 @@
               data-profile-photo-track
               aria-label="Photos for ${escapeHtml(person.name)}">
 
-              ${photos.map(photo => `
-                <button
-                  class="profile-photo-thumb"
-                  type="button"
-                  data-profile-photo="${escapeHtml(photo.id)}"
-                  title="${escapeHtml(photo.title)}"
-                  aria-label="Open ${escapeHtml(photo.title)}">
-                  ${renderPhotoThumbnail(photo, { label: photo.title })}
-                </button>
-              `).join('')}
+              ${photos
+                .map(photo => {
+                  const label =
+                    photo.title
+                    || photo.filename
+                    || 'Photo';
+
+                  return `
+                    <div
+                      class="
+                        person-connected-photo-item
+                        profile-photo-item
+                      ">
+
+                      <button
+                        class="profile-photo-thumb"
+                        type="button"
+                        data-profile-photo="${escapeHtml(
+                          photo.id
+                        )}"
+                        title="${escapeHtml(
+                          label
+                        )}"
+                        aria-label="Open ${escapeHtml(
+                          label
+                        )}">
+
+                        ${renderPhotoThumbnail(
+                          photo,
+                          { label }
+                        )}
+                      </button>
+
+                      ${renderPersonPhotoUnlinkButton(
+                        photo,
+                        person.id
+                      )}
+                    </div>
+                  `;
+                })
+                .join('')}
             </div>
 
             ${hasOverflow
@@ -60218,6 +60728,7 @@
 
       bindRelationshipList(main, 'profile');
       bindProfilePhotoCarousels(main);
+      bindPersonPhotoUnlinkButtons(main);
       bindConnectedNoteLinks(
         main
       );
@@ -61965,7 +62476,23 @@
             );
           }
         );
-      root.querySelectorAll('[data-family-photo]').forEach(button => button.addEventListener('click', () => openFamilyPhoto(button.dataset.familyPhoto)));
+      root
+        .querySelectorAll(
+          '[data-family-photo]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () =>
+              openFamilyPhoto(
+                button.dataset.familyPhoto
+              )
+          );
+        });
+
+      bindPersonPhotoUnlinkButtons(
+        root
+      );
       root
         .querySelectorAll(
           '[data-person-add-photos]'
@@ -70434,17 +70961,152 @@
       });
     }
 
-    function removePhotoPersonTag(photoId, personId) {
-      const photo = getPhoto(photoId);
-      const person = getPerson(personId);
-      if (!photo || !person) return;
+    function bindPersonPhotoUnlinkButtons(
+      root
+    ) {
+      root
+        ?.querySelectorAll(
+          '[data-person-photo-unlink]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              event.preventDefault();
+              event.stopPropagation();
+
+              const photoId =
+                button.dataset
+                  .personPhotoUnlink;
+
+              const personId =
+                button.dataset
+                  .personPhotoUnlinkPerson;
+
+              if (!photoId || !personId) {
+                return;
+              }
+
+              removePhotoPersonTag(
+                photoId,
+                personId
+              );
+            }
+          );
+        });
+    }
+
+    function removePhotoPersonTag(
+      photoId,
+      personId
+    ) {
+      const photo =
+        getPhoto(photoId);
+
+      const person =
+        getPerson(personId);
+
+      if (!photo || !person) {
+        return;
+      }
+
       const remove = () => {
-        setPhotoPersonIds(photo.id, (photo.personIds || []).filter(id => id !== personId));
-        showToast('Person tag removed.');
+        const removed =
+          setPhotoPersonIds(
+            photo.id,
+            (photo.personIds || [])
+              .filter(id =>
+                id !== personId
+              ),
+            {
+              rerender: false
+            }
+          );
+
+        if (!removed) {
+          return;
+        }
+
+        renderAfterPersonConnectedResourcesChanged();
+
+        showToast(
+          'Person tag removed.'
+        );
       };
-      if (person.primaryPhotoId !== photo.id) { remove(); return; }
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="removePrimaryTagTitle"><div class="modal-header"><div><h2 id="removePrimaryTagTitle">Remove primary photo tag?</h2><p>${escapeHtml(person.names?.display || 'Person')}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><p>This photo is the person's primary photo. Removing the tag will clear the primary photo.</p></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-remove-primary-tag>Remove tag</button></div></div>`);
-      modalBackdrop.querySelector('[data-remove-primary-tag]')?.addEventListener('click', () => { closeModal(); remove(); });
+
+      if (
+        person.primaryPhotoId
+          !== photo.id
+      ) {
+        remove();
+        return;
+      }
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="removePrimaryTagTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="removePrimaryTagTitle">
+                Remove primary photo tag?
+              </h2>
+
+              <p>
+                ${escapeHtml(
+                  person.names?.display
+                  || 'Person'
+                )}
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close>
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <p>
+              This photo is the person's primary photo.
+              Removing the tag will clear the primary photo.
+            </p>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+              Cancel
+            </button>
+
+            <button
+              class="button danger"
+              type="button"
+              data-remove-primary-tag>
+              Remove tag
+            </button>
+          </div>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelector(
+          '[data-remove-primary-tag]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            closeModal();
+            remove();
+          }
+        );
     }
 
     function toggleAlbumPhotoFavourite(
