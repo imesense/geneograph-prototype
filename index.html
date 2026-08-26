@@ -30817,6 +30817,7 @@
       'Notes': 'Заметки',
       'Places': 'Места',
       'Publish': 'Публикация',
+      'Sources': 'Источники',
       'Search anything...': 'Поиск по всему...',
       'Ctrl + K': 'Ctrl + K',
       'Help': 'Справка',
@@ -31407,7 +31408,8 @@
       'Old portraits and scans from the family album.': 'Старые портреты и сканы из семейного альбома.',
       'Personal album of Silver Whiskerfield.': 'Личный альбом Сильвера Вискерфильда.',
       'Recently added scans waiting for review.': 'Недавно добавленные сканы, ожидающие проверки.',
-      'Shared family portraits and gatherings.': 'Общие семейные портреты и фотографии встреч.'
+      'Shared family portraits and gatherings.': 'Общие семейные портреты и фотографии встреч.',
+      'Dimensions': 'Разрешение'
     });
 
     const RU_DATA_ARCHIVE = Object.freeze({
@@ -32608,8 +32610,8 @@
       'No sources linked to this photo.':
         'К этой фотографии не привязаны источники.',
 
-      'Source linking will be added when Albums is connected to central Sources and Citations.':
-        'Связывание с источниками будет добавлено, когда «Альбомы» будут подключены к общим «Источникам» и «Цитированиям».',
+      'Source linking will be added later.':
+        'Связывание с источниками будет добавлено позже.',
 
       'Check the historical date before saving.':
         'Проверьте историческую дату перед сохранением.',
@@ -35142,10 +35144,7 @@
         'Неразобранный конверт',
 
       'Pawford archive copy':
-        'Копия из архива Поуфорда',
-
-      'Workshop collection':
-        'Коллекция мастерской'
+        'Копия из архива Поуфорда'
     };
     const RU_DATA_NOTES = {
       // Daisy parentage research
@@ -35781,7 +35780,6 @@
       'Selected photo': 'Выбранная фотография',
       'No photos match this search.': 'По этому запросу фотографии не найдены.',
       'This project has no photos yet.': 'В этом проекте пока нет фотографий.',
-      'Prototype placeholder': 'Демонстрационный заполнитель',
       'No description': 'Без описания',
       'Linked to Family Tree with board changes': 'Связано с семейным древом, есть изменения на холсте',
       'Linked to Family Tree': 'Связано с семейным древом',
@@ -35944,13 +35942,11 @@
       'Add custom fact': 'Добавить пользовательский факт',
       'Custom filters': 'Пользовательские фильтры',
       'Optional description': 'Необязательное описание',
-      'Person photo upload': 'Загрузка фотографии человека',
       'This person': 'Этот человек',
       'Photo source': 'Источник фотографии',
       'Adjust photo': 'Настроить фотографию',
       'Choose photo': 'Выбрать фотографию',
       'Uploaded photo': 'Загруженная фотография',
-      'Photo upload': 'Загрузка фотографии',
       'Untitled photo': 'Фотография без названия',
       'Remove upload': 'Удалить загрузку',
       'Add more photos': 'Добавить ещё фотографии',
@@ -35993,7 +35989,6 @@
       'Selected files': 'Выбранные файлы',
       'Remove link': 'Удалить связь',
       'The file is no longer available.': 'Этот файл больше недоступен.',
-      'Note photo upload': 'Загрузка фотографии заметки',
       'Remove place': 'Удалить место',
       'Remove from selection': 'Убрать из выбранного',
       'Create note': 'Создать заметку',
@@ -38509,20 +38504,20 @@
         }
       ],
       media: [
-        { id: 'photo-silver-portrait', projectId: 'p1', kind: 'photo', title: 'Silver portrait', filename: 'silver-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1400, height: 1800, sizeBytes: 168960, placeholder: { pattern: 'orbit', palette: 'mono', seed: 1 }, personIds: ['silver'], albumIds: ['al-family', 'al-personal'], date: { date: '03.03.1998', dateLabel: '03 Mar 1998', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Portrait of Silver Whiskerfield.', origin: { type: 'upload', label: 'Family upload' }, favorite: true, createdAt: '2026-05-01T10:00:00Z', updatedAt: '2026-05-01T10:00:00Z' },
-        { id: 'photo-family-table', projectId: 'p1', kind: 'photo', title: 'Family table', filename: 'family-table-2025.jpg', src: '', mimeType: 'image/jpeg', width: 2400, height: 1350, sizeBytes: 3984588, placeholder: { pattern: 'bands', palette: 'moss', seed: 2 }, personIds: ['silver', 'luna', 'oliver'], albumIds: ['al-family', 'al-personal'], date: { date: '2025', dateLabel: '2025', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Family table after a celebration.', origin: { type: 'scan', label: 'Personal album scan' }, favorite: true, createdAt: '2026-04-18T09:30:00Z', updatedAt: '2026-05-02T11:10:00Z' },
-        { id: 'photo-barnaby-portrait', projectId: 'p1', kind: 'photo', title: 'Barnaby portrait', filename: 'barnaby-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1200, height: 1600, sizeBytes: 1228800, placeholder: { pattern: 'window', palette: 'mono', seed: 3 }, personIds: ['barnaby'], albumIds: ['al-grandma', 'al-portraits'], date: { date: '1975', dateLabel: '1975', dateType: 'About / Circa', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Barnaby Whiskerfield in Pawford.', origin: { type: 'scan', label: 'Family album scan' }, favorite: false, createdAt: '2026-05-03T08:00:00Z', updatedAt: '2026-05-03T08:00:00Z' },
-        { id: 'photo-luna-portrait', projectId: 'p1', kind: 'photo', title: 'Luna portrait', filename: 'luna-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1300, height: 1700, sizeBytes: 1480000, placeholder: { pattern: 'halo', palette: 'plum', seed: 4 }, personIds: ['luna'], albumIds: ['al-personal'], date: { date: '2018', dateLabel: '2018', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Portrait of Luna Purrington.', origin: { type: 'upload', label: 'Luna upload' }, favorite: false, createdAt: '2026-04-30T12:00:00Z', updatedAt: '2026-04-30T12:00:00Z' },
-        { id: 'photo-grandparents-garden', projectId: 'p1', kind: 'photo', title: 'Grandparents in the garden', filename: 'grandparents-garden.jpg', src: '', mimeType: 'image/jpeg', width: 2100, height: 1400, sizeBytes: 2200000, placeholder: { pattern: 'fold', palette: 'amber', seed: 5 }, personIds: ['barnaby', 'daisy'], albumIds: ['al-family', 'al-grandma'], date: { date: '', dateLabel: '', dateType: 'Between', fromDate: '1970', toDate: '1975' }, placeId: 'place-pawford-garden', placeText: 'Pawford garden', caption: 'Barnaby and Daisy in the family garden.', origin: { type: 'scan', label: 'Family album scan' }, favorite: true, createdAt: '2026-05-04T14:00:00Z', updatedAt: '2026-05-04T14:00:00Z' },
-        { id: 'photo-daisy-school', projectId: 'p1', kind: 'photo', title: 'Daisy school portrait', filename: 'daisy-school-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1100, height: 1500, sizeBytes: 980000, placeholder: { pattern: 'archive', palette: 'rose', seed: 6 }, personIds: ['daisy'], albumIds: ['al-grandma', 'al-portraits'], date: { date: '1960', dateLabel: '1960', dateType: 'Before', fromDate: '', toDate: '' }, placeId: 'place-meowbridge-school', placeText: 'Meowbridge school', caption: 'Early portrait of Daisy Milkpaw.', origin: { type: 'scan', label: 'Inherited print' }, favorite: false, createdAt: '2026-05-05T10:15:00Z', updatedAt: '2026-05-05T10:15:00Z' },
-        { id: 'photo-silver-luna-wedding', projectId: 'p1', kind: 'photo', title: 'Silver and Luna', filename: 'silver-luna-wedding.jpg', src: '', mimeType: 'image/jpeg', width: 2000, height: 1333, sizeBytes: 2450000, placeholder: { pattern: 'orbit', palette: 'plum', seed: 7 }, personIds: ['silver', 'luna'], albumIds: ['al-family', 'al-personal'], date: { date: '18.08.2023', dateLabel: '18 Aug 2023', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Silver and Luna at their wedding celebration.', origin: { type: 'upload', label: 'Family upload' }, favorite: true, createdAt: '2026-05-06T16:45:00Z', updatedAt: '2026-05-06T16:45:00Z' },
-        { id: 'photo-purrington-family', projectId: 'p1', kind: 'photo', title: 'Purrington family visit', filename: 'purrington-family-visit.jpg', src: '', mimeType: 'image/jpeg', width: 2300, height: 1500, sizeBytes: 3100000, placeholder: { pattern: 'bands', palette: 'amber', seed: 8 }, personIds: ['luna', 'rupert', 'mabel'], albumIds: ['al-family'], date: { date: '1980', dateLabel: '1980', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-fishmarket-row', placeText: 'Fishmarket Row', caption: 'A Purrington family visit.', origin: { type: 'scan', label: 'Rupert collection' }, favorite: false, createdAt: '2026-05-07T09:00:00Z', updatedAt: '2026-05-07T09:00:00Z' },
-        { id: 'photo-oliver-portrait', projectId: 'p1', kind: 'photo', title: 'Oliver portrait', filename: 'oliver-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1250, height: 1600, sizeBytes: 1170000, placeholder: { pattern: 'window', palette: 'sea', seed: 9 }, personIds: ['oliver'], albumIds: ['al-personal'], date: { date: '18.05.2024', dateLabel: '18 May 2024', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Oliver Whiskerfield portrait.', origin: { type: 'upload', label: 'Family upload' }, favorite: false, createdAt: '2026-05-08T13:00:00Z', updatedAt: '2026-05-08T13:00:00Z' },
-        { id: 'photo-pearl-portrait', projectId: 'p1', kind: 'photo', title: 'Pearl portrait', filename: 'pearl-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1000, height: 1450, sizeBytes: 910000, placeholder: { pattern: 'halo', palette: 'mono', seed: 10 }, personIds: ['pearl'], albumIds: ['al-portraits'], date: { date: '1950', dateLabel: '1950', dateType: 'About / Circa', fromDate: '', toDate: '' }, placeId: 'place-old-cattery', placeText: 'Old Cattery', caption: 'Portrait identified as Pearl Velvetpaw.', origin: { type: 'scan', label: 'Old Cattery collection' }, favorite: false, createdAt: '2026-05-09T10:00:00Z', updatedAt: '2026-05-09T10:00:00Z' },
-        { id: 'photo-young-family', projectId: 'p1', kind: 'photo', title: 'Young Whiskerfield family', filename: 'young-whiskerfield-family.jpg', src: '', mimeType: 'image/jpeg', width: 2600, height: 1700, sizeBytes: 4300000, placeholder: { pattern: 'fold', palette: 'moss', seed: 11 }, personIds: ['silver', 'luna', 'oliver', 'mochi', 'cleo'], albumIds: ['al-family', 'al-personal'], date: { date: '2026', dateLabel: '2026', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'The young Whiskerfield household.', origin: { type: 'upload', label: 'Household upload' }, favorite: false, createdAt: '2026-05-10T15:30:00Z', updatedAt: '2026-05-10T15:30:00Z' },
-        { id: 'photo-unidentified-studio', projectId: 'p1', kind: 'photo', title: 'Unidentified studio portrait', filename: 'unidentified-studio-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 900, height: 1300, sizeBytes: 740000, placeholder: { pattern: 'archive', palette: 'mono', seed: 12 }, personIds: [], albumIds: ['al-portraits'], date: { date: '', dateLabel: '', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-unknown', placeText: 'North quay studio', caption: 'Unidentified portrait awaiting research.', origin: { type: 'scan', label: 'Unsorted envelope' }, favorite: false, createdAt: '2026-05-11T11:00:00Z', updatedAt: '2026-05-11T11:00:00Z' },
-        { id: 'photo-archive-yard', projectId: 'p1', kind: 'photo', title: 'Archive yard', filename: 'archive-yard.jpg', src: '', mimeType: 'image/jpeg', width: 1900, height: 1200, sizeBytes: 2050000, placeholder: { pattern: 'orbit', palette: 'sea', seed: 13 }, personIds: [], albumIds: [], date: { date: '1948', dateLabel: '1948', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'View of the Pawford archive yard.', origin: { type: 'archive', label: 'Pawford archive copy' }, favorite: false, createdAt: '2026-05-12T09:20:00Z', updatedAt: '2026-05-12T09:20:00Z' },
-        { id: 'photo-archibald-workshop', projectId: 'p1', kind: 'photo', title: 'Archibald at the workshop', filename: 'archibald-workshop.jpg', src: '', mimeType: 'image/jpeg', width: 1800, height: 1200, sizeBytes: 1760000, placeholder: { pattern: 'bands', palette: 'rose', seed: 14 }, personIds: ['archibald'], albumIds: [], date: { date: '1940', dateLabel: '1940', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Archibald Whiskerfield outside the workshop.', origin: { type: 'scan', label: 'Workshop collection' }, favorite: false, createdAt: '2026-05-13T12:40:00Z', updatedAt: '2026-05-13T12:40:00Z' }
+        { id: 'photo-silver-portrait', projectId: 'p1', kind: 'photo', title: 'Silver portrait', filename: 'silver-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1400, height: 1800, sizeBytes: 168960, placeholder: { pattern: 'orbit', palette: 'mono', seed: 1 }, personIds: ['silver'], albumIds: ['al-family', 'al-personal'], date: { date: '03.03.1998', dateLabel: '03 Mar 1998', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Portrait of Silver Whiskerfield.', favorite: true, createdAt: '2026-05-01T10:00:00Z', updatedAt: '2026-05-01T10:00:00Z' },
+        { id: 'photo-family-table', projectId: 'p1', kind: 'photo', title: 'Family table', filename: 'family-table-2025.jpg', src: '', mimeType: 'image/jpeg', width: 2400, height: 1350, sizeBytes: 3984588, placeholder: { pattern: 'bands', palette: 'moss', seed: 2 }, personIds: ['silver', 'luna', 'oliver'], albumIds: ['al-family', 'al-personal'], date: { date: '2025', dateLabel: '2025', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Family table after a celebration.', favorite: true, createdAt: '2026-04-18T09:30:00Z', updatedAt: '2026-05-02T11:10:00Z' },
+        { id: 'photo-barnaby-portrait', projectId: 'p1', kind: 'photo', title: 'Barnaby portrait', filename: 'barnaby-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1200, height: 1600, sizeBytes: 1228800, placeholder: { pattern: 'window', palette: 'mono', seed: 3 }, personIds: ['barnaby'], albumIds: ['al-grandma', 'al-portraits'], date: { date: '1975', dateLabel: '1975', dateType: 'About / Circa', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Barnaby Whiskerfield in Pawford.', favorite: false, createdAt: '2026-05-03T08:00:00Z', updatedAt: '2026-05-03T08:00:00Z' },
+        { id: 'photo-luna-portrait', projectId: 'p1', kind: 'photo', title: 'Luna portrait', filename: 'luna-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1300, height: 1700, sizeBytes: 1480000, placeholder: { pattern: 'halo', palette: 'plum', seed: 4 }, personIds: ['luna'], albumIds: ['al-personal'], date: { date: '2018', dateLabel: '2018', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Portrait of Luna Purrington.', favorite: false, createdAt: '2026-04-30T12:00:00Z', updatedAt: '2026-04-30T12:00:00Z' },
+        { id: 'photo-grandparents-garden', projectId: 'p1', kind: 'photo', title: 'Grandparents in the garden', filename: 'grandparents-garden.jpg', src: '', mimeType: 'image/jpeg', width: 2100, height: 1400, sizeBytes: 2200000, placeholder: { pattern: 'fold', palette: 'amber', seed: 5 }, personIds: ['barnaby', 'daisy'], albumIds: ['al-family', 'al-grandma'], date: { date: '', dateLabel: '', dateType: 'Between', fromDate: '1970', toDate: '1975' }, placeId: 'place-pawford-garden', placeText: 'Pawford garden', caption: 'Barnaby and Daisy in the family garden.', favorite: true, createdAt: '2026-05-04T14:00:00Z', updatedAt: '2026-05-04T14:00:00Z' },
+        { id: 'photo-daisy-school', projectId: 'p1', kind: 'photo', title: 'Daisy school portrait', filename: 'daisy-school-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1100, height: 1500, sizeBytes: 980000, placeholder: { pattern: 'archive', palette: 'rose', seed: 6 }, personIds: ['daisy'], albumIds: ['al-grandma', 'al-portraits'], date: { date: '1960', dateLabel: '1960', dateType: 'Before', fromDate: '', toDate: '' }, placeId: 'place-meowbridge-school', placeText: 'Meowbridge school', caption: 'Early portrait of Daisy Milkpaw.', favorite: false, createdAt: '2026-05-05T10:15:00Z', updatedAt: '2026-05-05T10:15:00Z' },
+        { id: 'photo-silver-luna-wedding', projectId: 'p1', kind: 'photo', title: 'Silver and Luna', filename: 'silver-luna-wedding.jpg', src: '', mimeType: 'image/jpeg', width: 2000, height: 1333, sizeBytes: 2450000, placeholder: { pattern: 'orbit', palette: 'plum', seed: 7 }, personIds: ['silver', 'luna'], albumIds: ['al-family', 'al-personal'], date: { date: '18.08.2023', dateLabel: '18 Aug 2023', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Silver and Luna at their wedding celebration.', favorite: true, createdAt: '2026-05-06T16:45:00Z', updatedAt: '2026-05-06T16:45:00Z' },
+        { id: 'photo-purrington-family', projectId: 'p1', kind: 'photo', title: 'Purrington family visit', filename: 'purrington-family-visit.jpg', src: '', mimeType: 'image/jpeg', width: 2300, height: 1500, sizeBytes: 3100000, placeholder: { pattern: 'bands', palette: 'amber', seed: 8 }, personIds: ['luna', 'rupert', 'mabel'], albumIds: ['al-family'], date: { date: '1980', dateLabel: '1980', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-fishmarket-row', placeText: 'Fishmarket Row', caption: 'A Purrington family visit.', favorite: false, createdAt: '2026-05-07T09:00:00Z', updatedAt: '2026-05-07T09:00:00Z' },
+        { id: 'photo-oliver-portrait', projectId: 'p1', kind: 'photo', title: 'Oliver portrait', filename: 'oliver-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1250, height: 1600, sizeBytes: 1170000, placeholder: { pattern: 'window', palette: 'sea', seed: 9 }, personIds: ['oliver'], albumIds: ['al-personal'], date: { date: '18.05.2024', dateLabel: '18 May 2024', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Oliver Whiskerfield portrait.', favorite: false, createdAt: '2026-05-08T13:00:00Z', updatedAt: '2026-05-08T13:00:00Z' },
+        { id: 'photo-pearl-portrait', projectId: 'p1', kind: 'photo', title: 'Pearl portrait', filename: 'pearl-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1000, height: 1450, sizeBytes: 910000, placeholder: { pattern: 'halo', palette: 'mono', seed: 10 }, personIds: ['pearl'], albumIds: ['al-portraits'], date: { date: '1950', dateLabel: '1950', dateType: 'About / Circa', fromDate: '', toDate: '' }, placeId: 'place-old-cattery', placeText: 'Old Cattery', caption: 'Portrait identified as Pearl Velvetpaw.', favorite: false, createdAt: '2026-05-09T10:00:00Z', updatedAt: '2026-05-09T10:00:00Z' },
+        { id: 'photo-young-family', projectId: 'p1', kind: 'photo', title: 'Young Whiskerfield family', filename: 'young-whiskerfield-family.jpg', src: '', mimeType: 'image/jpeg', width: 2600, height: 1700, sizeBytes: 4300000, placeholder: { pattern: 'fold', palette: 'moss', seed: 11 }, personIds: ['silver', 'luna', 'oliver', 'mochi', 'cleo'], albumIds: ['al-family', 'al-personal'], date: { date: '2026', dateLabel: '2026', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'The young Whiskerfield household.', favorite: false, createdAt: '2026-05-10T15:30:00Z', updatedAt: '2026-05-10T15:30:00Z' },
+        { id: 'photo-unidentified-studio', projectId: 'p1', kind: 'photo', title: 'Unidentified studio portrait', filename: 'unidentified-studio-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 900, height: 1300, sizeBytes: 740000, placeholder: { pattern: 'archive', palette: 'mono', seed: 12 }, personIds: [], albumIds: ['al-portraits'], date: { date: '', dateLabel: '', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-unknown', placeText: 'North quay studio', caption: 'Unidentified portrait awaiting research.', favorite: false, createdAt: '2026-05-11T11:00:00Z', updatedAt: '2026-05-11T11:00:00Z' },
+        { id: 'photo-archive-yard', projectId: 'p1', kind: 'photo', title: 'Archive yard', filename: 'archive-yard.jpg', src: '', mimeType: 'image/jpeg', width: 1900, height: 1200, sizeBytes: 2050000, placeholder: { pattern: 'orbit', palette: 'sea', seed: 13 }, personIds: [], albumIds: [], date: { date: '1948', dateLabel: '1948', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'View of the Pawford archive yard.', favorite: false, createdAt: '2026-05-12T09:20:00Z', updatedAt: '2026-05-12T09:20:00Z' },
+        { id: 'photo-archibald-workshop', projectId: 'p1', kind: 'photo', title: 'Archibald at the workshop', filename: 'archibald-workshop.jpg', src: '', mimeType: 'image/jpeg', width: 1800, height: 1200, sizeBytes: 1760000, placeholder: { pattern: 'bands', palette: 'rose', seed: 14 }, personIds: ['archibald'], albumIds: [], date: { date: '1940', dateLabel: '1940', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Archibald Whiskerfield outside the workshop.', favorite: false, createdAt: '2026-05-13T12:40:00Z', updatedAt: '2026-05-13T12:40:00Z' }
       ],
       albums: [
         { id: 'al-family', projectId: 'p1', name: 'Family photos', description: 'Shared family portraits and gatherings.', createdAt: '2026-05-08T10:00:00Z' },
@@ -63433,7 +63428,6 @@
           placeText: '',
           address: '',
         caption: '',
-        origin: { type: 'upload', label: 'Person photo upload' },
         favorite: false,
         createdAt: '',
         updatedAt: ''
@@ -64145,8 +64139,6 @@
       projectId,
       draft,
       personIds = [],
-      originLabel =
-        'Photo upload',
       idPrefix =
         'photo-upload'
     }) {
@@ -64259,14 +64251,6 @@
 
         caption:
           '',
-
-        origin: {
-          type:
-            'upload',
-
-          label:
-            originLabel
-        },
 
         favorite:
           false,
@@ -64684,13 +64668,6 @@
         placeId: null,
         placeText: '',
         caption: '',
-
-        origin: {
-          type: 'upload',
-          label:
-            'Person photo upload'
-        },
-
         favorite: false,
         createdAt: '',
         updatedAt: ''
@@ -65405,9 +65382,6 @@
 
                 personIds: [],
 
-                originLabel:
-                  'Person photo upload',
-
                 idPrefix:
                   'photo-person-draft'
               })
@@ -65456,9 +65430,6 @@
           personIds: [
             person.id
           ],
-
-          originLabel:
-            'Person photo upload',
 
           idPrefix:
             `photo-${person.id}`
@@ -66009,9 +65980,6 @@
             personIds: [
               person.id
             ],
-
-            originLabel:
-              'Person photo upload',
 
             idPrefix:
               `photo-${person.id}`
@@ -69094,12 +69062,6 @@
           formatMediaTimestamp(
             photo.updatedAt
           )
-        ],
-        [
-          'Origin',
-          photo.origin?.label
-          || photo.origin?.type
-          || 'Unknown'
         ]
       ];
 
@@ -69233,7 +69195,7 @@
             <button
               class="link"
               type="button"
-              data-toast="Source linking will be added when Albums is connected to central Sources and Citations.">
+              data-toast="Source linking will be added later.">
 
               ${renderPanelButtonLabel(
                 icon.plus,
@@ -72212,7 +72174,7 @@
       modalBackdrop.querySelector('[data-create-placeholder-photo]')?.addEventListener('click', () => {
         const now = new Date().toISOString();
         const id = `photo-${Date.now()}`;
-        sampleData.media.unshift({ id, projectId: currentProjectId(), kind: 'photo', title: 'Untitled photo', filename: 'untitled-photo.jpg', src: '', mimeType: 'image/jpeg', width: 1600, height: 1200, sizeBytes: 0, placeholder: { pattern: 'orbit', palette: 'moss', seed: Date.now() % 997 || 1 }, personIds: [], albumIds: state.albumsView === 'album' && state.activeAlbumId ? [state.activeAlbumId] : [], date: { date: '', dateLabel: '', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: null, placeText: '', caption: '', origin: { type: 'prototype', label: 'Prototype placeholder' }, favorite: false, createdAt: now, updatedAt: now });
+        sampleData.media.unshift({ id, projectId: currentProjectId(), kind: 'photo', title: 'Untitled photo', filename: 'untitled-photo.jpg', src: '', mimeType: 'image/jpeg', width: 1600, height: 1200, sizeBytes: 0, placeholder: { pattern: 'orbit', palette: 'moss', seed: Date.now() % 997 || 1 }, personIds: [], albumIds: state.albumsView === 'album' && state.activeAlbumId ? [state.activeAlbumId] : [], date: { date: '', dateLabel: '', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: null, placeText: '', caption: '',  favorite: false, createdAt: now, updatedAt: now });
         state.selectedPhotoId = id; closeModal(); renderAlbums(); showToast('Placeholder photo added.');
       });
     }
@@ -81049,11 +81011,7 @@
         updatedAt:
           Number.isFinite(Date.parse(asset.updatedAt))
             ? asset.updatedAt
-            : now,
-        origin: {
-          type: 'upload',
-          label: 'Board upload'
-        }
+            : now
       };
     }
 
@@ -81215,11 +81173,7 @@
         height: draft.height,
         sizeBytes: draft.sizeBytes,
         createdAt: now,
-        updatedAt: now,
-        origin: {
-          type: 'upload',
-          label: 'Board upload'
-        }
+        updatedAt: now
       };
 
       diagram.assets.push(asset);
@@ -123958,14 +123912,6 @@
           caption:
             '',
 
-          origin: {
-            type:
-              'upload',
-
-            label:
-              'Note photo upload'
-          },
-
           favorite:
             false,
 
@@ -124708,9 +124654,6 @@
 
                 personIds:
                   [],
-
-                originLabel:
-                  'Note photo upload',
 
                 idPrefix:
                   `photo-note-${note.id}`
