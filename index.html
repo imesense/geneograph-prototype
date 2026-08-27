@@ -3715,22 +3715,84 @@
       stroke-linejoin: round;
     }
     .tree-line.partner { stroke: rgba(242,244,243,.56); stroke-dasharray: 4 5; }
+
     .tree-person-card,
     .add-parent-card {
       position: absolute;
-      width: 260px;
-      min-height: 110px;
       border: 1px solid rgba(98,217,154,.22);
       background: rgba(26,32,31,.95);
       border-radius: var(--radius-sm);
-      padding: var(--space-3);
       color: var(--text-primary);
-      display: grid;
-      grid-template-columns: 74px 1fr;
-      gap: var(--space-3);
       text-align: left;
       box-shadow: 0 12px 36px rgba(0,0,0,.18);
-      transition: border-color var(--ease), background var(--ease), transform var(--ease), box-shadow var(--ease);
+      transition:
+        border-color var(--ease),
+        background var(--ease),
+        transform var(--ease),
+        box-shadow var(--ease);
+    }
+
+    .tree-person-card {
+      box-sizing: border-box;
+
+      width:
+        var(
+          --tree-card-width,
+          300px
+        );
+
+      min-width:
+        var(
+          --tree-card-width,
+          300px
+        );
+
+      max-width:
+        var(
+          --tree-card-width,
+          300px
+        );
+
+      height:
+        var(
+          --tree-card-height,
+          124px
+        );
+
+      min-height:
+        var(
+          --tree-card-height,
+          124px
+        );
+
+      max-height:
+        var(
+          --tree-card-height,
+          124px
+        );
+
+      padding:
+        var(
+          --tree-card-padding,
+          10px
+        );
+
+      display: grid;
+
+      grid-template-columns:
+        var(
+          --tree-avatar-size,
+          68px
+        )
+        minmax(0, 1fr);
+
+      gap:
+        var(
+          --tree-card-content-gap,
+          10px
+        );
+
+      overflow: hidden;
     }
     .tree-person-card:hover {
       background: var(--surface-card-hover);
@@ -3800,8 +3862,50 @@
     .tree-person-card.unknown-gender.selected {
       border-color: var(--brand-green-500);
     }
-    .tree-card-content { min-width: 0; padding-bottom: 28px; }
-    .tree-name { margin: 0 0 6px; font-size: 15px; line-height: 1.18; letter-spacing: .01em; }
+    .tree-card-content {
+      min-width: 0;
+      height: 100%;
+      padding-bottom: 28px;
+      overflow: hidden;
+    }
+
+    .tree-name {
+      /*
+      * Reserve exactly two lines so the dates remain
+      * aligned across cards with short and long names.
+      */
+      height: 2.36em;
+      min-height: 2.36em;
+      max-height: 2.36em;
+
+      margin: 0 0 6px;
+      overflow: hidden;
+
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+
+      text-overflow: ellipsis;
+      overflow-wrap: anywhere;
+      word-break: normal;
+
+      font-size: 15px;
+      line-height: 1.18;
+      letter-spacing: .01em;
+    }
+
+    .tree-dates {
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .tree-dates > span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
     .tree-dates { color: var(--text-secondary); font-size: 13px; display: grid; gap: 2px; margin-bottom: 8px; }
     .status-dot { display: inline-flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 12px; }
     .status-dot::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--brand-green-500); }
@@ -3820,8 +3924,17 @@
     .tree-focus-control {
       position: absolute;
       z-index: 24;
-      width: 84px;
-      height: 32px;
+      width:
+        var(
+          --tree-focus-control-width,
+          84px
+        );
+
+      height:
+        var(
+          --tree-focus-control-height,
+          32px
+        );
       padding: 0 8px;
       border: 1px solid var(--border-default);
       border-radius: 8px;
@@ -3863,8 +3976,41 @@
       outline-offset: 2px;
     }
     .add-parent-card {
-      width: 150px;
-      min-height: 110px;
+      width:
+        var(
+          --tree-placeholder-width,
+          150px
+        );
+
+      min-width:
+        var(
+          --tree-placeholder-width,
+          150px
+        );
+
+      max-width:
+        var(
+          --tree-placeholder-width,
+          150px
+        );
+
+      height:
+        var(
+          --tree-placeholder-height,
+          110px
+        );
+
+      min-height:
+        var(
+          --tree-placeholder-height,
+          110px
+        );
+
+      max-height:
+        var(
+          --tree-placeholder-height,
+          110px
+        );
       display: flex;
       align-items: center;
       justify-content: center;
@@ -7477,11 +7623,6 @@
     .tree-line { stroke: rgba(245,247,246,.9); stroke-width: 3.2; }
     .tree-line.partner { stroke: rgba(245,247,246,.72); stroke-dasharray: 0; }
     .tree-person-card {
-      width: 260px;
-      min-height: 110px;
-      grid-template-columns: 68px 1fr;
-      padding: 10px;
-      gap: 10px;
       border-color: #5A9BD8;
     }
     .tree-person-card.female { border-color: rgba(141,108,232,.82); }
@@ -7497,8 +7638,6 @@
     .tree-name { font-size: 13px; margin-bottom: 5px; }
     .tree-dates { font-size: 12px; gap: 1px; margin-bottom: 6px; }
     .add-parent-card {
-      width: 150px;
-      min-height: 110px;
       padding: 8px;
       display: grid;
       grid-template-columns: 1fr;
@@ -16618,8 +16757,14 @@
     }
 
     .tree-avatar {
-      --person-avatar-width: 68px;
-      --person-avatar-font-size: 22px;
+      --person-avatar-width:
+        var(
+          --tree-avatar-size,
+          68px
+        );
+
+      --person-avatar-font-size:
+        22px;
     }
 
     .small-avatar {
@@ -38402,24 +38547,24 @@
       },
       people: [
         { id: 'silver', projectId: 'p1', primaryPhotoId: 'photo-silver-portrait', names: { first: 'Silver', middle: '', last: 'Whiskerfield', maiden: '', display: 'Silver Whiskerfield', initials: 'SW' }, gender: 'male', livingStatus: 'Living', role: 'Self', avatarClass: 'avatar-green', birth: { date: '03.03.1998', dateLabel: '03 Mar 1998', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 5, notes: 7 }, meta: { updated: '10 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'luna', projectId: 'p1', primaryPhotoId: 'photo-luna-portrait', names: { first: 'Luna', middle: '', last: 'Purrington', maiden: 'Purrington', display: 'Luna Purrington', initials: 'LP' }, gender: 'female', livingStatus: 'Living', role: 'Spouse', avatarClass: 'avatar-purple', birth: { date: '12.08.1999', dateLabel: '12 Aug 1999', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 3 }, meta: { updated: '10 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'oliver', projectId: 'p1', primaryPhotoId: 'photo-oliver-portrait', names: { first: 'Oliver', middle: '', last: 'Whiskerfield', maiden: '', display: 'Oliver Whiskerfield', initials: 'OW' }, gender: 'male', livingStatus: 'Living', role: 'Son', avatarClass: 'avatar-amber', birth: { date: '18.05.2024', dateLabel: '18 May 2024', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: '09 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing source' } },
+        { id: 'luna', projectId: 'p1', primaryPhotoId: 'photo-luna-portrait', names: { first: 'Luna', middle: 'Mabel', last: 'Whiskerfield', maiden: 'Purrington', display: 'Luna Purrington', initials: 'LP' }, gender: 'female', livingStatus: 'Living', role: 'Spouse', avatarClass: 'avatar-purple', birth: { date: '12.08.1999', dateLabel: '12 Aug 1999', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 3 }, meta: { updated: '10 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'oliver', projectId: 'p1', primaryPhotoId: 'photo-oliver-portrait', names: { first: 'Oliver', middle: 'Felix', last: 'Whiskerfield', maiden: '', display: 'Oliver Whiskerfield', initials: 'OW' }, gender: 'male', livingStatus: 'Living', role: 'Son', avatarClass: 'avatar-amber', birth: { date: '18.05.2024', dateLabel: '18 May 2024', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: '09 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing source' } },
         { id: 'mochi', projectId: 'p1', names: { first: 'Mochi', middle: '', last: 'Whiskerfield', maiden: '', display: 'Mochi Whiskerfield', initials: 'MO' }, gender: 'female', livingStatus: 'Living', role: 'Daughter', avatarClass: 'avatar-purple', birth: { date: '07.09.2026', dateLabel: '07 Sep 2026', dateType: 'Exact date', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: '09 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing source' } },
         { id: 'cleo', projectId: 'p1', names: { first: 'Cleo', middle: '', last: 'Whiskerfield', maiden: '', display: 'Cleo Whiskerfield', initials: 'CW' }, gender: 'female', livingStatus: 'Living', role: 'Daughter', avatarClass: 'avatar-purple', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 0, notes: 1 }, meta: { updated: '04 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing facts' } },
         { id: 'barnaby', projectId: 'p1', primaryPhotoId: 'photo-barnaby-portrait', names: { first: 'Barnaby', middle: '', last: 'Whiskerfield', maiden: '', display: 'Barnaby Whiskerfield', initials: 'BW' }, gender: 'male', livingStatus: 'Deceased', role: 'Paternal grandfather', avatarClass: '', birth: { date: '14.02.1946', dateLabel: '14 Feb 1946', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '22.11.2018', dateLabel: '22 Nov 2018', dateType: 'Exact date', placeId: 'place-pawford', reason: '', burialPlaceId: 'place-pawford' }, counts: { files: 3, notes: 2 }, meta: { updated: '4 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'daisy', projectId: 'p1', primaryPhotoId: 'photo-daisy-school', names: { first: 'Daisy', middle: '', last: 'Milkpaw', maiden: 'Milkpaw', display: 'Daisy Milkpaw', initials: 'DM' }, gender: 'female', livingStatus: 'Deceased', role: 'Paternal grandmother', avatarClass: 'avatar-purple', birth: { date: '03.06.1949', dateLabel: '03 Jun 1949', dateType: 'Exact date', placeId: null }, death: { date: '04.01.2020', dateLabel: '04 Jan 2020', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 3, notes: 1 }, meta: { updated: '4 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'daisy', projectId: 'p1', primaryPhotoId: 'photo-daisy-school', names: { first: 'Daisy', middle: '', last: 'Whiskerfield', maiden: 'Milkpaw', display: 'Daisy Milkpaw', initials: 'DM' }, gender: 'female', livingStatus: 'Deceased', role: 'Paternal grandmother', avatarClass: 'avatar-purple', birth: { date: '03.06.1949', dateLabel: '03 Jun 1949', dateType: 'Exact date', placeId: null }, death: { date: '04.01.2020', dateLabel: '04 Jan 2020', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 3, notes: 1 }, meta: { updated: '4 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
         { id: 'rupert', projectId: 'p1', names: { first: 'Rupert', middle: '', last: 'Purrington', maiden: '', display: 'Rupert Purrington', initials: 'RP' }, gender: 'male', livingStatus: 'Deceased', role: 'Maternal grandfather', avatarClass: '', birth: { date: '19.10.1951', dateLabel: '19 Oct 1951', dateType: 'Exact date', placeId: 'place-fishmarket-row' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 1 }, meta: { updated: '28 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Missing facts' } },
-        { id: 'mabel', projectId: 'p1', names: { first: 'Mabel', middle: '', last: 'Softtail', maiden: '', display: 'Mabel Softtail', initials: 'MS' }, gender: 'female', livingStatus: 'Living', role: 'Maternal grandmother', avatarClass: 'avatar-purple', birth: { date: '28.04.1955', dateLabel: '28 Apr 1955', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 2 }, meta: { updated: '28 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'mabel', projectId: 'p1', names: { first: 'Mabel', middle: '', last: 'Purrington', maiden: 'Softtail', display: 'Mabel Softtail', initials: 'MS' }, gender: 'female', livingStatus: 'Living', role: 'Maternal grandmother', avatarClass: 'avatar-purple', birth: { date: '28.04.1955', dateLabel: '28 Apr 1955', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 2 }, meta: { updated: '28 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
         { id: 'archibald', projectId: 'p1', names: { first: 'Archibald', middle: '', last: 'Whiskerfield', maiden: '', display: 'Archibald Whiskerfield', initials: 'AW' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '02.01.1915', dateLabel: '02 Jan 1915', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '17.07.1982', dateLabel: '17 Jul 1982', dateType: 'Exact date', placeId: 'place-pawford', reason: '', burialPlaceId: 'place-pawford' }, counts: { files: 2, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'edith', projectId: 'p1', names: { first: 'Edith', middle: '', last: 'Mackerelton', maiden: 'Mackerelton', display: 'Edith Mackerelton', initials: 'EM' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '21.09.1918', dateLabel: '21 Sep 1918', dateType: 'Exact date', placeId: 'place-old-cattery' }, death: { date: '03.03.1991', dateLabel: '03 Mar 1991', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
+        { id: 'edith', projectId: 'p1', names: { first: 'Edith', middle: '', last: 'Whiskerfield', maiden: 'Mackerelton', display: 'Edith Mackerelton', initials: 'EM' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '21.09.1918', dateLabel: '21 Sep 1918', dateType: 'Exact date', placeId: 'place-old-cattery' }, death: { date: '03.03.1991', dateLabel: '03 Mar 1991', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
         { id: 'percival', projectId: 'p1', names: { first: 'Percival', middle: '', last: 'Milkpaw', maiden: '', display: 'Percival Milkpaw', initials: 'PM' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '1968', dateLabel: '1968', dateType: 'Year only', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 1, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
-        { id: 'nora', projectId: 'p1', names: { first: 'Nora', middle: '', last: 'Creamfur', maiden: 'Creamfur', display: 'Nora Creamfur', initials: 'NC' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '11.11.1922', dateLabel: '11 Nov 1922', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
+        { id: 'nora', projectId: 'p1', names: { first: 'Nora', middle: '', last: 'Milkpaw', maiden: 'Creamfur', display: 'Nora Creamfur', initials: 'NC' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '11.11.1922', dateLabel: '11 Nov 1922', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
         { id: 'algernon', projectId: 'p1', names: { first: 'Algernon', middle: '', last: 'Purrington', maiden: '', display: 'Algernon Purrington', initials: 'AP' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '08.05.1920', dateLabel: '08 May 1920', dateType: 'Exact date', placeId: 'place-fishmarket-row' }, death: { date: '09.12.1999', dateLabel: '09 Dec 1999', dateType: 'Exact date', placeId: 'place-fishmarket-row', reason: '', burialPlaceId: 'place-fishmarket-row' }, counts: { files: 2, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
-        { id: 'beatrice', projectId: 'p1', names: { first: 'Beatrice', middle: '', last: 'Threadtail', maiden: 'Threadtail', display: 'Beatrice Threadtail', initials: 'BT' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '30.03.1924', dateLabel: '30 Mar 1924', dateType: 'Exact date', placeId: null }, death: { date: '15.06.2004', dateLabel: '15 Jun 2004', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 2, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
+        { id: 'beatrice', projectId: 'p1', names: { first: 'Beatrice', middle: '', last: 'Purrington', maiden: 'Threadtail', display: 'Beatrice Threadtail', initials: 'BT' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '30.03.1924', dateLabel: '30 Mar 1924', dateType: 'Exact date', placeId: null }, death: { date: '15.06.2004', dateLabel: '15 Jun 2004', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 2, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
         { id: 'felix', projectId: 'p1', names: { first: 'Felix', middle: '', last: 'Softtail', maiden: '', display: 'Felix Softtail', initials: 'FS' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '1919', dateLabel: '1919', dateType: 'Year only', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
-        { id: 'pearl', projectId: 'p1', names: { first: 'Pearl', middle: '', last: 'Velvetpaw', maiden: 'Velvetpaw', display: 'Pearl Velvetpaw', initials: 'PV' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '27.12.1927', dateLabel: '27 Dec 1927', dateType: 'Exact date', placeId: 'place-old-cattery' }, death: { date: '02.02.2011', dateLabel: '02 Feb 2011', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { files: 1, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
+        { id: 'pearl', projectId: 'p1', names: { first: 'Pearl', middle: '', last: 'Softtail', maiden: 'Velvetpaw', display: 'Pearl Velvetpaw', initials: 'PV' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '27.12.1927', dateLabel: '27 Dec 1927', dateType: 'Exact date', placeId: 'place-old-cattery' }, death: { date: '02.02.2011', dateLabel: '02 Feb 2011', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { files: 1, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
         { id: 'solomon', projectId: 'p1', names: { first: 'Solomon', middle: '', last: 'Velvetpaw', maiden: '', display: 'Solomon Velvetpaw', initials: 'SV' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Pearl Velvetpaw', avatarClass: 'avatar-amber', birth: { date: '1896', dateLabel: '1896', dateType: 'Year only', placeId: 'place-old-cattery' }, death: { date: '14.04.1961', dateLabel: '14 Apr 1961', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { files: 1, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'opal', projectId: 'p1', names: { first: 'Opal', middle: '', last: 'Silktail', maiden: '', display: 'Opal Silktail', initials: 'OS' }, gender: 'female', livingStatus: 'Deceased', role: 'Mother of Pearl Velvetpaw', avatarClass: 'avatar-purple', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '09.09.1970', dateLabel: '09 Sep 1970', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { files: 1, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Needs source', reviewStatus: 'Check birth details' } },
+        { id: 'opal', projectId: 'p1', names: { first: 'Opal', middle: '', last: 'Velvetpaw', maiden: 'Silktail', display: 'Opal Silktail', initials: 'OS' }, gender: 'female', livingStatus: 'Deceased', role: 'Mother of Pearl Velvetpaw', avatarClass: 'avatar-purple', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '09.09.1970', dateLabel: '09 Sep 1970', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { files: 1, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Needs source', reviewStatus: 'Check birth details' } },
         { id: 'horatio', projectId: 'p1', names: { first: 'Horatio', middle: '', last: 'Threadtail', maiden: '', display: 'Horatio Threadtail', initials: 'HT' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Beatrice Threadtail', avatarClass: 'avatar-blue', birth: { date: '1898', dateLabel: '1898', dateType: 'Year only', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 0, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing death details' } },
         { id: 'clementine', projectId: 'p1', names: { first: 'Clementine', middle: '', last: 'Purrington', maiden: '', display: 'Clementine Purrington', initials: 'CP' }, gender: 'female', livingStatus: 'Deceased', role: 'Mother of Algernon Purrington', avatarClass: 'avatar-purple', birth: { date: '1894', dateLabel: '1894', dateType: 'Year only', placeId: 'place-fishmarket-row' }, death: { date: '22.02.1966', dateLabel: '22 Feb 1966', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Check death place' } },
         { id: 'augustus', projectId: 'p1', names: { first: 'Augustus', middle: '', last: 'Whiskerfield', maiden: '', display: 'Augustus Whiskerfield', initials: 'AW2' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Archibald Whiskerfield', avatarClass: 'avatar-green', birth: { date: '1887', dateLabel: '1887', dateType: 'Year only', placeId: 'place-pawford' }, death: { date: '05.05.1954', dateLabel: '05 May 1954', dateType: 'Exact date', placeId: 'place-pawford', reason: '', burialPlaceId: 'place-pawford' }, counts: { files: 1, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
@@ -41447,11 +41592,214 @@
       });
     }
 
-    
+    function cleanTreeNamePart(value) {
+      return String(value || '')
+        .trim()
+        .replace(/\s+/g, ' ');
+    }
+
+    function comparableTreeSurname(value) {
+      return cleanTreeNamePart(value)
+        .normalize('NFKC')
+        .toLocaleLowerCase();
+    }
+
+    function treeMarriageSortKey(
+      family
+    ) {
+      const marriageEvent =
+        relationshipEventByTag(
+          family,
+          'MARR'
+        );
+
+      const marriageDate =
+        normalizeGenealogyDateInput(
+          marriageEvent?.date
+          || {},
+          'Exact date'
+        );
+
+      const sortValue =
+        marriageDate.sortDate
+        || marriageEvent?.sortDate
+        || family?.startSortDate
+        || '';
+
+      const numericValue =
+        Number(sortValue);
+
+      return Number.isFinite(
+        numericValue
+      )
+        ? numericValue
+        : 0;
+    }
+
+    function activeTreeMarriages(
+      personId
+    ) {
+      return getPartnerRelationships(
+        personId
+      )
+        .filter(family => {
+          const relationshipType =
+            cleanTreeNamePart(
+              relationshipTypeFromLegacy(
+                family
+              )
+            );
+
+          const relationshipStatus =
+            cleanTreeNamePart(
+              family.relationshipStatus
+              || 'active'
+            ).toLocaleLowerCase();
+
+          return (
+            relationshipType === 'Married'
+            && relationshipStatus === 'active'
+          );
+        })
+        .sort((left, right) => {
+          const dateDifference =
+            treeMarriageSortKey(right)
+            - treeMarriageSortKey(left);
+
+          if (dateDifference) {
+            return dateDifference;
+          }
+
+          return String(
+            left.id || ''
+          ).localeCompare(
+            String(
+              right.id || ''
+            )
+          );
+        });
+    }
+
+    function marriedSpouseSurnameForTree(
+      person
+    ) {
+      if (!person?.id) {
+        return '';
+      }
+
+      const marriage =
+        activeTreeMarriages(
+          person.id
+        )
+          .map(family => ({
+            family,
+
+            spouse:
+              getRelationshipPartner(
+                family,
+                person.id
+              )
+          }))
+          .find(entry =>
+            cleanTreeNamePart(
+              entry.spouse
+                ?.names
+                ?.last
+            )
+          );
+
+      return cleanTreeNamePart(
+        marriage
+          ?.spouse
+          ?.names
+          ?.last
+      );
+    }
+
+    function treePersonDisplayName(
+      person
+    ) {
+      const names =
+        person?.names
+        || {};
+
+      const firstName =
+        cleanTreeNamePart(
+          names.first
+        );
+
+      const middleName =
+        cleanTreeNamePart(
+          names.middle
+        );
+
+      const isFemale =
+        String(
+          person?.gender || ''
+        ).toLocaleLowerCase()
+          === 'female';
+
+      let effectiveSurname =
+        cleanTreeNamePart(
+          names.last
+        );
+
+      /*
+      * This is a display fallback only. Never persist
+      * the spouse's surname to the person's record.
+      */
+      if (
+        isFemale
+        && !effectiveSurname
+      ) {
+        effectiveSurname =
+          marriedSpouseSurnameForTree(
+            person
+          );
+      }
+
+      const maidenSurname =
+        isFemale
+          ? cleanTreeNamePart(
+              names.maiden
+            )
+          : '';
+
+      const baseName =
+        [
+          firstName,
+          middleName,
+          effectiveSurname
+        ]
+          .filter(Boolean)
+          .join(' ')
+        || cleanTreeNamePart(
+          names.display
+        )
+        || 'Unnamed person';
+
+      const shouldShowMaiden =
+        Boolean(
+          maidenSurname
+          && comparableTreeSurname(
+            maidenSurname
+          ) !== comparableTreeSurname(
+            effectiveSurname
+          )
+        );
+
+      return shouldShowMaiden
+        ? `${baseName} (${maidenSurname})`
+        : baseName;
+    }
+        
     function toTreePerson(person) {
       return {
         id: person.id,
-        name: person.names.display,
+        name:
+          treePersonDisplayName(
+            person
+          ),
         short: person.names.initials,
         gender: person.gender,
         birth: formatGenealogyDateLabel(person.birth),
@@ -46559,24 +46907,102 @@
       </button>`).join('')}</div>`;
     }
 
-    const TREE_CARD_W = 260;
-    const TREE_CARD_H = 110;
-    const TREE_GENERATION_GAP = 185;
-    const TREE_SPOUSE_GAP = 42;
-    const TREE_SIBLING_GAP = 52;
-    const TREE_SUBTREE_GAP = 96;
-    const TREE_PADDING_X = 900;
-    const TREE_PADDING_Y = 500;
-    const TREE_MIN_STAGE_W = 4040;
-    const TREE_MIN_STAGE_H = 1800;
-    const TREE_PARENT_PLACEHOLDER_GAP = 48;
-    const TREE_PARENT_PLACEHOLDER_VERTICAL_GAP = 112;
-    const TREE_CONNECTOR_RAIL_OFFSET = 56;
-    const PLACEHOLDER_W = 150;
-    const PLACEHOLDER_H = 110;
-    const TREE_FOCUS_CONTROL_W = 84;
-    const TREE_FOCUS_CONTROL_H = 32;
-    const TREE_FOCUS_CONTROL_GAP = 8;
+    /*
+    * Canonical Family Tree geometry.
+    *
+    * Layout calculations and CSS variables must derive
+    * from this object. Do not repeat these dimensions
+    * elsewhere as numeric literals.
+    */
+    const TREE_GEOMETRY = Object.freeze({
+      cardWidth: 300,
+      cardHeight: 124,
+      cardPadding: 10,
+      cardContentGap: 10,
+      avatarSize: 68,
+
+      generationPitch: 196,
+      spouseGap: 40,
+      siblingGap: 48,
+      subtreeGap: 96,
+
+      paddingX: 900,
+      paddingY: 500,
+      minimumStageWidth: 4040,
+      minimumStageHeight: 1800,
+
+      parentPlaceholderWidth: 150,
+      parentPlaceholderHeight: 110,
+      parentPlaceholderGap: 48,
+      parentPlaceholderVerticalGap: 112,
+
+      connectorRailOffset: 56,
+
+      focusControlWidth: 84,
+      focusControlHeight: 32,
+      focusControlGap: 8
+    });
+
+    /*
+    * Compatibility aliases keep the existing layout
+    * implementation readable while all values still
+    * come from one canonical source.
+    */
+    const {
+      cardWidth:
+        TREE_CARD_W,
+
+      cardHeight:
+        TREE_CARD_H,
+
+      generationPitch:
+        TREE_GENERATION_GAP,
+
+      spouseGap:
+        TREE_SPOUSE_GAP,
+
+      siblingGap:
+        TREE_SIBLING_GAP,
+
+      subtreeGap:
+        TREE_SUBTREE_GAP,
+
+      paddingX:
+        TREE_PADDING_X,
+
+      paddingY:
+        TREE_PADDING_Y,
+
+      minimumStageWidth:
+        TREE_MIN_STAGE_W,
+
+      minimumStageHeight:
+        TREE_MIN_STAGE_H,
+
+      parentPlaceholderWidth:
+        PLACEHOLDER_W,
+
+      parentPlaceholderHeight:
+        PLACEHOLDER_H,
+
+      parentPlaceholderGap:
+        TREE_PARENT_PLACEHOLDER_GAP,
+
+      parentPlaceholderVerticalGap:
+        TREE_PARENT_PLACEHOLDER_VERTICAL_GAP,
+
+      connectorRailOffset:
+        TREE_CONNECTOR_RAIL_OFFSET,
+
+      focusControlWidth:
+        TREE_FOCUS_CONTROL_W,
+
+      focusControlHeight:
+        TREE_FOCUS_CONTROL_H,
+
+      focusControlGap:
+        TREE_FOCUS_CONTROL_GAP
+    } = TREE_GEOMETRY;
 
     function personById(id) {
       const centralPerson = getPerson(id);
@@ -47440,7 +47866,36 @@
         { branchRoles: projection.branchRoles }
       );
       main.innerHTML = `
-        <div class="tree-shell">
+        <div
+          class="tree-shell"
+          style="
+            --tree-card-width:
+              ${TREE_GEOMETRY.cardWidth}px;
+
+            --tree-card-height:
+              ${TREE_GEOMETRY.cardHeight}px;
+
+            --tree-card-padding:
+              ${TREE_GEOMETRY.cardPadding}px;
+
+            --tree-card-content-gap:
+              ${TREE_GEOMETRY.cardContentGap}px;
+
+            --tree-avatar-size:
+              ${TREE_GEOMETRY.avatarSize}px;
+
+            --tree-placeholder-width:
+              ${TREE_GEOMETRY.parentPlaceholderWidth}px;
+
+            --tree-placeholder-height:
+              ${TREE_GEOMETRY.parentPlaceholderHeight}px;
+
+            --tree-focus-control-width:
+              ${TREE_GEOMETRY.focusControlWidth}px;
+
+            --tree-focus-control-height:
+              ${TREE_GEOMETRY.focusControlHeight}px;
+          ">
           <div class="tree-toolbar">
             <div class="tree-toolbar-left">
               <button
@@ -47844,23 +48299,97 @@
       return `<button class="tree-focus-control" type="button" style="left:${control.x}px;top:${control.y}px" data-tree-card-focus="${escapeHtml(person.id)}" data-i18n-skip aria-label="${escapeHtml(accessibleLabel)}">${icon.focus}<span>${visibleLabel}</span></button>`;
     }
 
-    function renderTreePersonCard(person) {
-      const selected = person.id === state.selectedPersonId;
-      const focused = person.id === treeProjectViewState().focusPersonId;
-      return `<article class="tree-person-card ${treePersonGenderClass(person)} ${selected ? 'selected' : ''} ${focused ? 'is-focus-person' : ''}" style="left:${person.layoutX}px;top:${person.layoutY}px" data-person-id="${person.id}" tabindex="0" ${focused ? 'aria-current="true"' : ''}>
-        <div class="tree-card-avatar-stack">
-          ${renderPersonAvatar(person, 'tree-avatar')}
-          ${focused ? `<span class="tree-focus-badge">${icon.focus}<span>Focus</span></span>` : ''}
-        </div>
-        <div class="tree-card-content">
-          <h3 class="tree-name">${escapeHtml(person.name)}</h3>
-          ${renderTreeCardDateLines(person)}
-        </div>
-        <div class="card-actions">
-          <button class="card-action" type="button" data-card-edit="${person.id}" aria-label="Edit ${escapeHtml(person.name)}">${icon.edit}</button>
-          <button class="card-action" type="button" data-card-add="relative" aria-label="Add relative">${icon.plus}</button>
-        </div>
-      </article>`;
+    function renderTreePersonCard(
+      person
+    ) {
+      const selected =
+        person.id
+          === state.selectedPersonId;
+
+      const focused =
+        person.id
+          === treeProjectViewState()
+            .focusPersonId;
+
+      const displayName =
+        String(
+          person.name
+          || 'Unnamed person'
+        );
+
+      return `
+        <article
+          class="
+            tree-person-card
+            ${treePersonGenderClass(person)}
+            ${selected ? 'selected' : ''}
+            ${focused ? 'is-focus-person' : ''}
+          "
+          style="
+            left:${person.layoutX}px;
+            top:${person.layoutY}px;
+          "
+          data-person-id="${escapeHtml(person.id)}"
+          tabindex="0"
+          aria-label="${escapeHtml(displayName)}"
+          ${
+            focused
+              ? 'aria-current="true"'
+              : ''
+          }>
+
+          <div class="tree-card-avatar-stack">
+            ${renderPersonAvatar(
+              person,
+              'tree-avatar'
+            )}
+
+            ${
+              focused
+                ? `
+                  <span class="tree-focus-badge">
+                    ${icon.focus}
+                    <span>Focus</span>
+                  </span>
+                `
+                : ''
+            }
+          </div>
+
+          <div class="tree-card-content">
+            <h3
+              class="tree-name"
+              title="${escapeHtml(displayName)}">
+
+              ${escapeHtml(displayName)}
+            </h3>
+
+            ${renderTreeCardDateLines(
+              person
+            )}
+          </div>
+
+          <div class="card-actions">
+            <button
+              class="card-action"
+              type="button"
+              data-card-edit="${escapeHtml(person.id)}"
+              aria-label="Edit ${escapeHtml(displayName)}">
+
+              ${icon.edit}
+            </button>
+
+            <button
+              class="card-action"
+              type="button"
+              data-card-add="relative"
+              aria-label="Add relative">
+
+              ${icon.plus}
+            </button>
+          </div>
+        </article>
+      `;
     }
 
     function treePersonGenderClass(person) {
