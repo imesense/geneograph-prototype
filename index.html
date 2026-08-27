@@ -31057,8 +31057,7 @@
       'Search or type a place': 'Найдите или введите место',
       'e.g. Dr., Sir, Lady': 'Например, д-р, сэр, леди',
       'e.g. Jr., III, PhD': 'Например, мл., III, PhD',
-      'e.g. 14 Feb 1946': 'Например, 14 февр. 1946',
-      'e.g. 18 Aug 1923': 'Например, 18 авг. 1923',
+      'e.g. 14 Feb 1915': 'Например, 14 февр. 1915',
       'e.g. Pawford, England': 'Например, Поуфорд, Англия',
       'e.g. Meowbridge, England': 'Например, Мяубридж, Англия',
       'Month': 'Месяц',
@@ -35864,8 +35863,6 @@
       'e.g. Whiskerfield': 'Например, Вискерфильд',
       'e.g. Purrington': 'Например, Пуррингтон',
       'e.g. Milkpaw': 'Например, Милкпоу',
-      'e.g. 20 Oct 1926': 'Например, 20 окт. 1926',
-      'e.g. 20 Oct 2020': 'Например, 20 окт. 2020',
       'Add person': 'Добавить человека',
       'Edit person': 'Изменить человека',
       'All Whiskerfield surname records.': 'Все записи, связанные с фамилией Вискерфильд.',
@@ -40524,7 +40521,7 @@
       const inputId = options.inputId || `${fieldId}Date`;
       const typeId = options.typeId || `${fieldId}DateType`;
       const inputToId = options.inputToId || `${inputId}To`;
-      const placeholder = options.placeholder || 'e.g. 14 Feb 1946';
+      const placeholder = options.placeholder || 'e.g. 14 Feb 1915';
       const fieldClass = options.className || '';
       const isBetween = model.dateType === 'Between';
       const hiddenValue = escapeHtml(JSON.stringify(model));
@@ -40546,7 +40543,7 @@
             </div>
             <div class="genealogy-date-range-cell" data-genealogy-date-to-cell>
               <span>To</span>
-              <input class="genealogy-date-input" id="${escapeHtml(inputToId)}" data-genealogy-date-input-to data-source-value="${escapeHtml(endValue)}" value="${escapeHtml(localizedDataFieldValue(endValue))}" placeholder="e.g. 1925">
+              <input class="genealogy-date-input" id="${escapeHtml(inputToId)}" data-genealogy-date-input-to data-source-value="${escapeHtml(endValue)}" value="${escapeHtml(localizedDataFieldValue(endValue))}" placeholder="e.g. 14 Feb 1925">
             </div>
           </div>
           <button class="genealogy-date-details-button" type="button" data-genealogy-date-details="${escapeHtml(fieldId)}" aria-label="Edit ${escapeHtml(label)} details" aria-expanded="false">${icon.calendar}</button>
@@ -40724,7 +40721,7 @@
       popover.setAttribute('aria-label', 'Genealogy date details');
       popover.innerHTML = `<div class="genealogy-date-popover-header"><div><strong>Date details</strong></div><button class="close-button" type="button" data-genealogy-date-close aria-label="Close date details">${icon.close}</button></div>
         <div class="genealogy-date-editor-grid">
-          <div class="genealogy-date-part-field full"><label>Smart date</label><input data-editor-smart value="${escapeHtml(formatGenealogyDateLabel(model) || model.originalText || '')}" placeholder="e.g. 18 Aug 1923"></div>
+          <div class="genealogy-date-part-field full"><label>Smart date</label><input data-editor-smart value="${escapeHtml(formatGenealogyDateLabel(model) || model.originalText || '')}" placeholder="e.g. 14 Feb 1915"></div>
           <div class="genealogy-date-part-field"><label>Date type</label><select class="compact-select" data-editor-type>${genealogyDateTypeOptions(model.dateType)}</select></div>
           <div class="genealogy-date-part-field">
             <label>Calendar</label>
@@ -50813,7 +50810,7 @@
             inputId: `${idPrefix}DateInput`,
             typeId: `${idPrefix}DateType`,
             defaultDateType: 'Exact date',
-            placeholder: 'e.g. 14 Feb 1946',
+            placeholder: 'e.g. 14 Feb 1915',
             className:
               'full genealogy-date-inline-range'
           }
@@ -50965,7 +50962,7 @@
                   inputId: 'addPersonFactEducationFromDate',
                   typeId: 'addPersonFactEducationFromDateType',
                   defaultDateType: 'Year only',
-                  placeholder: 'e.g. 2004',
+                  placeholder: 'e.g. 14 Feb 1915',
                   className: 'genealogy-date-inline-range'
                 }
               )}
@@ -50973,14 +50970,14 @@
 
             <div class="profile-edit-date-cell">
               ${renderGenealogyDateField(
-                'addPersonFactEducationFrom',
-                'Start date',
-                details.educationFromDate,
+                'addPersonFactEducationTo',
+                'End date',
+                details.educationToDate,
                 {
-                  inputId: 'addPersonFactEducationFromDate',
-                  typeId: 'addPersonFactEducationFromDateType',
+                  inputId: 'addPersonFactEducationToDate',
+                  typeId: 'addPersonFactEducationToDateType',
                   defaultDateType: 'Year only',
-                  placeholder: 'e.g. 2004',
+                  placeholder: 'e.g. 14 Feb 1920',
                   className: 'genealogy-date-inline-range'
                 }
               )}
@@ -51029,7 +51026,7 @@
                   inputId: 'addPersonFactWorkFromDate',
                   typeId: 'addPersonFactWorkFromDateType',
                   defaultDateType: 'Exact date',
-                  placeholder: 'e.g. 2016',
+                  placeholder: 'e.g. 14 Feb 1915',
                   className: 'genealogy-date-inline-range'
                 }
               )}
@@ -51044,7 +51041,7 @@
                   inputId: 'addPersonFactWorkToDate',
                   typeId: 'addPersonFactWorkToDateType',
                   defaultDateType: 'Exact date',
-                  placeholder: 'e.g. 2020',
+                  placeholder: 'e.g. 14 Feb 1920',
                   className: 'genealogy-date-inline-range'
                 }
               )}
@@ -51087,7 +51084,7 @@
             typeId: 'addPersonFactBaptismDateType',
             className: 'full genealogy-date-inline-range',
             defaultDateType: 'Exact date',
-            placeholder: 'e.g. 14 Feb 1946'
+            placeholder: 'e.g. 14 Feb 1915'
           })}`);
       }
       return fieldWrap(`<div class="field full"><label for="addPersonFactAlternativeNames">Alternative names</label><input id="addPersonFactAlternativeNames" value="${escapeHtml(details.alternativeNames || '')}" placeholder="Nickname, spelling variant, or former name"></div>`);
@@ -51220,7 +51217,7 @@
 
       return `<div class="partner-relationship-start" data-partner-relationship-start>
         ${renderGenealogyDateField(`${prefix}StartDate`, definition.startLabel, startEvent?.date || emptyGenealogyDate('Exact date'), {
-          inputId: `${prefix}StartDateInput`, typeId: `${prefix}StartDateType`, placeholder: 'e.g. 18 Aug 1923', defaultDateType: 'Exact date', className: 'full genealogy-date-inline-range'
+          inputId: `${prefix}StartDateInput`, typeId: `${prefix}StartDateType`, placeholder: 'e.g. 14 Feb 1915', defaultDateType: 'Exact date', className: 'full genealogy-date-inline-range'
         })}
         ${renderPlaceCombobox({ id: `${prefix}StartPlace`, label: definition.startPlaceLabel, value: startPlace, selectedPlaceId: startEvent?.placeId || family?.startPlaceId || '', addressValue: startEvent?.address || family?.startAddress || '', placeholder: 'e.g. Meowbridge, England', className: 'full', inputAttrs: 'data-partner-relationship-start-place' })}
       </div>
@@ -55213,7 +55210,7 @@
                 ${renderGenealogyDateField('addPersonBirth', 'Birth date', editPerson?.birth || emptyGenealogyDate('Exact date'), {
                   inputId: 'addPersonBirthDate',
                   typeId: 'addPersonBirthDateType',
-                  placeholder: 'e.g. 14 Feb 1946',
+                  placeholder: 'e.g. 14 Feb 1915',
                   defaultDateType: 'Exact date',
                   className: 'genealogy-date-inline-range'
                 })}
@@ -55231,7 +55228,7 @@
                 ${renderGenealogyDateField('addPersonDeath', 'Death date', editPerson?.death || emptyGenealogyDate('Exact date'), {
                   inputId: 'addPersonDeathDate',
                   typeId: 'addPersonDeathDateType',
-                  placeholder: 'e.g. 20 Oct 1926',
+                  placeholder: 'e.g. 14 Feb 1925',
                   defaultDateType: 'Exact date',
                   className: 'genealogy-date-inline-range'
                 })}
@@ -58694,7 +58691,7 @@
           inputId: 'profileInlineBirth',
           typeId: 'profileInlineBirthType',
           className: 'profile-field-birth-date genealogy-date-inline-range',
-          placeholder: 'e.g. 14 Feb 1946'
+          placeholder: 'e.g. 14 Feb 1915'
         })}
         ${renderPlaceCombobox({
           id: 'profileInlineBirthPlace',
@@ -58818,7 +58815,7 @@
                   inputId: 'profileEducationFromDate',
                   typeId: 'profileEducationFromDateType',
                   defaultDateType: 'Year only',
-                  placeholder: 'e.g. 2004',
+                  placeholder: 'e.g. 1915',
                   className: 'genealogy-date-inline-range'
                 }
               )}
@@ -58833,7 +58830,7 @@
                   inputId: 'profileEducationToDate',
                   typeId: 'profileEducationToDateType',
                   defaultDateType: 'Year only',
-                  placeholder: 'e.g. 2015',
+                  placeholder: 'e.g. 1920',
                   className: 'genealogy-date-inline-range'
                 }
               )}
@@ -58887,7 +58884,7 @@
                   inputId: 'profileWorkFromDate',
                   typeId: 'profileWorkFromDateType',
                   defaultDateType: 'Exact date',
-                  placeholder: 'e.g. 2016',
+                  placeholder: 'e.g. 14 Feb 1915',
                   className: 'genealogy-date-inline-range'
                 }
               )}
@@ -58902,7 +58899,7 @@
                   inputId: 'profileWorkToDate',
                   typeId: 'profileWorkToDateType',
                   defaultDateType: 'Exact date',
-                  placeholder: 'e.g. 2020',
+                  placeholder: 'e.g. 14 Feb 1925',
                   className: 'genealogy-date-inline-range'
                 }
               )}
@@ -58947,7 +58944,7 @@
               typeId: 'profileBaptismDateType',
               className: 'profile-other-baptism-date genealogy-date-inline-range',
               defaultDateType: 'Exact date',
-              placeholder: 'e.g. 14 Feb 1946'
+              placeholder: 'e.g. 14 Feb 1915'
             }
           )}
 
@@ -91930,7 +91927,7 @@
                     ${renderGenealogyDateField('geneoPersonBirth', 'Birth date', birth, {
                       inputId: 'geneoPersonBirthDate',
                       typeId: 'geneoPersonBirthDateType',
-                      placeholder: 'e.g. 14 Feb 1946',
+                      placeholder: 'e.g. 14 Feb 1915',
                       defaultDateType: 'Exact date',
                       className: 'genealogy-date-inline-range'
                     })}
@@ -91950,7 +91947,7 @@
                     ${renderGenealogyDateField('geneoPersonDeath', 'Death date', death, {
                       inputId: 'geneoPersonDeathDate',
                       typeId: 'geneoPersonDeathDateType',
-                      placeholder: 'e.g. 20 Oct 2020',
+                      placeholder: 'e.g. 14 Feb 1915',
                       defaultDateType: 'Exact date',
                       className: 'genealogy-date-inline-range'
                     })}
