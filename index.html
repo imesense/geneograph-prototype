@@ -30844,6 +30844,7 @@
       'unmapped':
         'без координат',
       'Clear search': 'Очистить поиск',
+      'Clear': 'Сброс',
       'Choose file': 'Выбрать файл',
       'Open': 'Открыть',
       'More actions': 'Другие действия',
@@ -32305,7 +32306,7 @@
       'Background color': 'Цвет фона',
       'Background hex color': 'HEX-код фона',
       'Canvas': 'Холст',
-      'Clear': 'Без узора',
+      'No pattern': 'Без узора',
       'Dots': 'Точки',
       'Grid': 'Сетка',
       'Life dates': 'Даты жизни',
@@ -32459,6 +32460,9 @@
       'Select all visible photos':
         'Выбрать все видимые фотографии',
 
+      'Select all':
+        'Выбрать все',
+
       'Photo actions':
         'Действия с фотографией',
 
@@ -32482,6 +32486,15 @@
 
       'Clear search and filters':
         'Очистить поиск и фильтры',
+      'Drag the photo to reposition it inside the crop.': 'Передвигайте фотографию для изменения выделенной области',
+      'Rotate left': 'Повернуть влево',
+      'Rotate right': 'Повернуть вправо',
+      'Use photo': 'Использовать фото',
+      'This photo will appear in Family Tree, People, and Profile.': 'Это фото отобразиться в Семейном древе, Людях и Профиле.',
+      'Family Tree preview': 'Превью - Семейное древо',
+      'Profile preview': 'Превью - Профиль',
+      'Your selected photo and crop adjustments will not be saved.': 'Выбранная фотография и настройки положения не будут сохранены.',
+      'Remove this photo from': 'Убрать фотографию из',
 
       // ========================================
       // Filters
@@ -32508,12 +32521,17 @@
       'Favourites only':
         'Только избранные',
 
+      'photo selected': 'фото выбрано',
+
       // ========================================
       // Selection / album membership
       // ========================================
 
       'Add to album':
         'Добавить в альбом',
+
+      'Add to albums':
+        'Добавить в альбомы',
 
       'Remove from album':
         'Удалить из альбома',
@@ -36047,6 +36065,20 @@
         other: 'фотографии'
       },
 
+      albums: {
+        one: 'альбом',
+        few: 'альбома',
+        many: 'альбомов',
+        other: 'альбома'
+      },
+
+      album: {
+        one: 'альбом',
+        few: 'альбома',
+        many: 'альбомов',
+        other: 'альбома'
+      },
+
       files: {
         one: 'файл',
         few: 'файла',
@@ -36483,7 +36515,7 @@
       }
 
       return String(text).replace(
-        /(\d[\d\s.,]*)\s+(people|person|places|place|stops|stop|photos|photo|files|file|notes|note|events|event|sources|source|questions|question|projects|project|objects|object|boards|board|connections|connection|relationships|relationship|items|item|names|name|years|year|records|record|collections|collection)\b/gi,
+        /(\d[\d\s.,]*)\s+(people|person|places|place|stops|stop|photos|photo|albums|album|files|file|notes|note|events|event|sources|source|questions|question|projects|project|objects|object|boards|board|connections|connection|relationships|relationship|items|item|names|name|years|year|records|record|collections|collection)\b/gi,
         (
           match,
           rawNumber,
@@ -36738,7 +36770,7 @@
         };
 
       const countNouns =
-        'people|person|places|place|stops|stop|photos|photo|files|file|notes|note|events|event|sources|source|questions|question|projects|project|objects|object|boards|board|connections|connection|relationships|relationship|items|item|names|name|years|year|records|record|collections|collection';
+        'people|person|places|place|stops|stop|photos|photo|albums|album|files|file|notes|note|events|event|sources|source|questions|question|projects|project|objects|object|boards|board|connections|connection|relationships|relationship|items|item|names|name|years|year|records|record|collections|collection';
 
       /*
         Sorting / searching / pagination
@@ -37158,6 +37190,70 @@
             suffix
               ? ` ${suffix}`
               : ''
+          }`
+      );
+
+      /*
+        Add-to-album modal counts.
+      */
+
+      repl(
+        new RegExp(
+          `^(\\d+)\\s+selected\\s+(${countNouns})$`,
+          'i'
+        ),
+        (_, number, noun) =>
+          `Выбрано: ${
+            countPhrase(
+              number,
+              noun
+            )
+          }`
+      );
+
+      repl(
+        new RegExp(
+          `^(\\d+)\\s+(${countNouns})\\s+selected\\s*·\\s*(\\d+)\\s+(${countNouns})\\s+chosen$`,
+          'i'
+        ),
+        (
+          _,
+          firstCount,
+          firstNoun,
+          secondCount,
+          secondNoun
+        ) =>
+          `Выбрано: ${
+            countPhrase(
+              firstCount,
+              firstNoun
+            )
+          } · Выбрано: ${
+            countPhrase(
+              secondCount,
+              secondNoun
+            )
+          }`
+      );
+
+      repl(
+        /^Add to\s+(\d+)\s+(albums?)$/i,
+        (_, number, noun) =>
+          `Добавить в ${
+            countPhrase(
+              number,
+              noun
+            )
+          }`
+      );
+
+      repl(
+        /^(\d+)\s+of\s+(\d+)\s+already added$/i,
+        (_, existing, total) =>
+          `Уже добавлено: ${
+            formatNumber(existing)
+          } из ${
+            formatNumber(total)
           }`
       );
 
@@ -67469,7 +67565,7 @@
                 class="button secondary"
                 type="button"
                 id="albumsSelectAll">
-                Select all
+                ${escapeHtml(t('Select all'))}
               </button>
             `;
 
@@ -67513,7 +67609,7 @@
               class="button secondary"
               type="button"
               id="albumsCancelSelection">
-              Clear
+              ${escapeHtml(t('Clear'))}
             </button>
           </div>
         </div>
@@ -72224,44 +72320,40 @@
       };
 
       const photoCountLabel = () =>
-        `${photoIds.length} selected ${
-          photoIds.length === 1
-            ? 'photo'
-            : 'photos'
-        }`;
+        translateText(
+          `${photoIds.length} selected ${
+            photoIds.length === 1
+              ? 'photo'
+              : 'photos'
+          }`
+        );
 
       const selectionLabel = () => {
         const albumCount =
           selectedAlbumIds.size;
 
-        return `${
-          photoIds.length
-        } ${
-          photoIds.length === 1
-            ? 'photo'
-            : 'photos'
-        } selected · ${
-          albumCount
-        } ${
-          albumCount === 1
-            ? 'album'
-            : 'albums'
-        } chosen`;
+        return translateText(
+          `${albumCount} ${
+            albumCount === 1
+              ? 'album'
+              : 'albums'
+          } selected`
+        );
       };
 
       const saveLabel = () => {
         const count =
           selectedAlbumIds.size;
 
-        if (!count) {
-          return 'Add to albums';
-        }
-
-        return `Add to ${count} ${
-          count === 1
-            ? 'album'
-            : 'albums'
-        }`;
+        return translateText(
+          count
+            ? `Add to ${count} ${
+                count === 1
+                  ? 'album'
+                  : 'albums'
+              }`
+            : 'Add to albums'
+        );
       };
 
       const renderAlbumRow =
@@ -72291,14 +72383,18 @@
 
           if (membership.complete) {
             membershipLabel =
-              'Already contains all selected photos';
+              translateText(
+                'Already contains all selected photos'
+              );
           } else if (
             membership.existingCount
           ) {
             membershipLabel =
-              `${membership.existingCount} of ${
-                membership.selectedPhotoCount
-              } already added`;
+              translateText(
+                `${membership.existingCount} of ${
+                  membership.selectedPhotoCount
+                } already added`
+              );
           }
 
           return `
@@ -72784,24 +72880,33 @@
         );
 
       const refreshFooter = () => {
-        if (!countElement) return;
+        if (
+          !countElement
+          || !footerActions
+        ) {
+          return;
+        }
 
         if (createMode) {
           countElement.textContent =
-            'Create a new album';
+            t('Create a new album');
 
           footerActions.innerHTML = `
             <button
-              class="
-                button
-                secondary
-              "
+              class="button secondary"
               type="button"
               data-album-picker-back>
-              Back
+              ${escapeHtml(
+                t('Back')
+              )}
             </button>
+
             <button
-              class="button primary album-picker-save"
+              class="
+                button
+                primary
+                album-picker-save
+              "
               type="submit"
               form="albumPickerCreateForm"
               data-album-picker-create-save
@@ -72810,7 +72915,9 @@
                   ? ''
                   : 'disabled'
               }>
-              Create and select
+              ${escapeHtml(
+                t('Create and select')
+              )}
             </button>
           `;
 
@@ -72822,13 +72929,12 @@
 
         footerActions.innerHTML = `
           <button
-            class="
-              button
-              secondary
-            "
+            class="button secondary"
             type="button"
             data-close>
-            Cancel
+            ${escapeHtml(
+              t('Cancel')
+            )}
           </button>
 
           <button
@@ -72865,13 +72971,15 @@
 
         if (resultsTitle) {
           resultsTitle.textContent =
-            hasQuery
-              ? 'Search results'
-              : 'All albums';
+            t(
+              hasQuery
+                ? 'Search results'
+                : 'All albums'
+            );
         }
 
         if (resultsMeta) {
-          resultsMeta.textContent =
+          const source =
             hasQuery
               ? `${albums.length} of ${total} albums`
               : `${total} ${
@@ -72879,13 +72987,18 @@
                     ? 'album'
                     : 'albums'
                 }`;
+
+          resultsMeta.textContent =
+            translateText(source);
         }
 
         if (resultsHost) {
           resultsHost.innerHTML =
             renderResults();
 
-          localizeUI(resultsHost);
+          localizeUI(
+            resultsHost
+          );
         }
 
         refreshFooter();
@@ -86536,17 +86649,26 @@
             role="group"
             aria-label="Background pattern">
             ${['dots', 'grid', 'clear']
-              .map(pattern => `
-                <button
-                  type="button"
-                  data-geneo-background-pattern="${pattern}"
-                  aria-pressed="${
-                    canvas.backgroundPattern
-                    === pattern
-                  }">
-                  ${capitalize(pattern)}
-                </button>
-              `)
+              .map(pattern => {
+                const label =
+                  pattern === 'clear'
+                    ? 'No pattern'
+                    : capitalize(pattern);
+
+                return `
+                  <button
+                    type="button"
+                    data-geneo-background-pattern="${pattern}"
+                    aria-pressed="${
+                      canvas.backgroundPattern
+                      === pattern
+                    }">
+                    ${escapeHtml(
+                      t(label)
+                    )}
+                  </button>
+                `;
+              })
               .join('')}
           </div>
         </div>
@@ -121862,7 +121984,7 @@
               class="button secondary"
               type="button"
               data-note-collection-picker-back>
-              Back
+              ${escapeHtml(t('Back'))}
             </button>
 
             <button
@@ -121878,7 +122000,9 @@
                   ? ''
                   : 'disabled'
               }>
-              Create and select
+              ${escapeHtml(
+                t('Create and select')
+              )}
             </button>
           `;
 
@@ -121886,14 +122010,16 @@
         }
 
         countElement.textContent =
-          selectionLabel();
+          translateText(
+            selectionLabel()
+          );
 
         footerActions.innerHTML = `
           <button
             class="button secondary"
             type="button"
             data-note-collection-picker-cancel>
-            Cancel
+            ${escapeHtml(t('Cancel'))}
           </button>
 
           <button
@@ -121930,13 +122056,15 @@
 
         if (resultsTitle) {
           resultsTitle.textContent =
-            hasQuery
-              ? 'Search results'
-              : 'All collections';
+            t(
+              hasQuery
+                ? 'Search results'
+                : 'All collections'
+            );
         }
 
         if (resultsMeta) {
-          resultsMeta.textContent =
+          const source =
             hasQuery
               ? `${collections.length} of ${total} collections`
               : `${total} ${
@@ -121944,6 +122072,9 @@
                     ? 'collection'
                     : 'collections'
                 }`;
+
+          resultsMeta.textContent =
+            translateText(source);
         }
 
         if (resultsHost) {
