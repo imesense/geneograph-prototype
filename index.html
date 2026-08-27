@@ -9303,85 +9303,16 @@
     }
 
     /*
-      Compact Profile hero:
-      - identity row contains photo and name;
-      - life data spans below both;
-      - actions become a vertical rail.
+      Compact Profile hero keeps the regular hero layout.
+      Only the action buttons change into a vertical rail.
     */
     @container people-profile (max-width: 1600px) {
-      .profile-command-hero {
-        grid-template-columns:
-          minmax(0, 1fr)
-          260px;
-        grid-template-areas:
-          "navigation navigation"
-          "content actions";
-        align-items: start;
-        column-gap: var(--space-5);
-        row-gap: var(--space-4);
-      }
-
-      .profile-command-hero
-      .profile-back-link {
-        grid-area: navigation;
-        position: relative;
-        top: auto;
-        right: auto;
-
-        justify-self: end;
-      }
-
-      .profile-command-hero
-      .profile-hero-content {
-        grid-template-areas:
-          "photo identity"
-          "life life"
-          "relation relation"
-          "tags tags";
-      }
-
-      .profile-command-hero
-      .profile-hero-life {
-        grid-template-columns:
-          repeat(
-            auto-fit,
-            minmax(
-              min(240px, 100%),
-              1fr
-            )
-          );
-        gap: var(--space-4);
-      }
-
-      .profile-command-hero
-      .profile-hero-life-item {
-        grid-template-columns:
-          minmax(0, 1fr);
-        align-content: start;
-        align-items: start;
-        gap: 4px;
-      }
-
-      .profile-command-hero
-      .profile-hero-life-place::before {
-        content: none;
-        margin-right: 0;
-      }
-
-      .profile-command-hero
-      .profile-hero-life-item:only-child {
-        grid-column: 1 / -1;
-      }
-
       .profile-command-hero
       .profile-hero-actions {
         width: 260px;
-        padding-top: 0;
 
         display: grid;
         grid-template-columns: 1fr;
-        align-content: start;
-        align-self: start;
         gap: var(--space-2);
       }
 
@@ -9396,10 +9327,6 @@
         white-space: normal;
         text-align: left;
         line-height: 1.3;
-      }
-
-      .profile-command-hero::after {
-        right: 120px;
       }
     }
 
@@ -9420,9 +9347,14 @@
 
       .profile-command-hero
       .profile-back-link {
+        grid-area: navigation;
+        position: relative;
+        top: auto;
+        right: auto;
+
         justify-self: start;
       }
-
+      
       .profile-command-hero
       .profile-hero-content {
         grid-template-columns:
@@ -30880,6 +30812,10 @@
       'without place':
         'без места',
       'e.g.':'Например,',
+      'is already a descendant of': 'уже является потомком',
+      'is already an ancestor of' : 'уже является предком',
+      'Connecting them as a parent would create a cycle.': 'Установление родительской связи создаст цикл.',
+      'Connecting them as a child would create a cycle.': 'Установление связи с ребенком создаст цикл.',
 
       'unmapped':
         'без координат',
@@ -31741,6 +31677,7 @@
       'e.g. Skill, membership, physical description': 'Например, навык, членство, внешняя особенность',
       'e. g. Woodworking, served in the army, etc.': 'Например, столярное дело, служба в армии и т. п.',
       'Parent–child connection': 'Связь родителя и ребёнка',
+      'will be removed from Saved filters.': 'будет удален из сохраненных фильтров.',
       'This value describes how this parent and child are connected. It does not change either person record.': 'Это значение описывает связь родителя и ребёнка и не изменяет записи людей.',
       'Save relationship': 'Сохранить связь'
     };
@@ -32457,6 +32394,8 @@
 
       'No photos match this view.':
         'В этом представлении нет подходящих фотографий.',
+
+      'Unlink note from photo?': 'Разорвать связь заметки с фото?',
 
       // ========================================
       // Albums tip
@@ -51054,8 +50993,32 @@
           </div>`);
       }
       if (factId === 'occupation') {
-        return fieldWrap(`<div class="field"><label for="addPersonFactWorkCompany">Company name</label><input id="addPersonFactWorkCompany" value="${escapeHtml(details.workCompany || '')}" placeholder="e.g. Pawford School"></div>
-          <div class="field"><label for="addPersonFactWorkOccupation">Occupation</label><input id="addPersonFactWorkOccupation" value="${escapeHtml(details.workOccupation || '')}" placeholder="e.g. Teacher"></div>
+        return fieldWrap(`<div class="field"><label for="addPersonFactWorkCompany">Company name</label>
+          <input
+            id="addPersonFactWorkCompany"
+            data-source-value="${escapeHtml(
+              details.workCompany || ''
+            )}"
+            value="${escapeHtml(
+              localizedDataFieldValue(
+                details.workCompany || ''
+              )
+            )}"
+            placeholder="e.g. Pawford School">
+          </div>
+          <div class="field"><label for="addPersonFactWorkOccupation">Occupation</label>
+            <input
+              id="addPersonFactWorkOccupation"
+              data-source-value="${escapeHtml(
+                details.workOccupation || ''
+              )}"
+              value="${escapeHtml(
+                localizedDataFieldValue(
+                  details.workOccupation || ''
+                )
+              )}"
+              placeholder="e.g. Teacher">
+            </div>
           <div class="add-person-fact-date-row">
             <div class="profile-edit-date-cell">
               ${renderGenealogyDateField(
@@ -51087,7 +51050,18 @@
               )}
             </div>
           </div>
-          <div class="field full"><label for="addPersonFactWorkNotes">Notes</label><textarea id="addPersonFactWorkNotes" placeholder="Work notes">${escapeHtml(details.workNotes || '')}</textarea></div>`);
+          <div class="field full"><label for="addPersonFactWorkNotes">Notes</label>
+            <textarea
+              id="addPersonFactWorkNotes"
+              data-source-value="${escapeHtml(
+                details.workNotes || ''
+              )}"
+              placeholder="Work notes">${escapeHtml(
+                localizedDataFieldValue(
+                  details.workNotes || ''
+                )
+              )}</textarea>
+            </div>`);
       }
       if (factId === 'religion') {
         return fieldWrap(
@@ -128998,20 +128972,6 @@
           }
 
           return `
-            <div
-              class="
-                notes-related-selected-head
-              ">
-
-              <strong>
-                Selected notes
-              </strong>
-
-              <span>
-                ${notes.length}
-              </span>
-            </div>
-
             <div
               class="
                 notes-related-selected-list
