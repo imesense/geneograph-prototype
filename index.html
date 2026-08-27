@@ -17232,6 +17232,30 @@
       justify-content: space-between;
     }
 
+    .person-photos-adder-modal
+    > .person-photos-adder-footer {
+      position: relative;
+      z-index: 2;
+
+      flex: 0 0 auto;
+
+      margin: 0;
+      padding:
+        var(--space-4)
+        var(--space-6);
+
+      border-top:
+        1px solid
+        var(--border-default);
+
+      background:
+        var(--surface-card);
+
+      box-shadow:
+        0 -10px 24px
+        rgba(0, 0, 0, .14);
+    }
+
     .person-photos-adder-count {
       color:
         var(--text-tertiary);
@@ -32395,6 +32419,7 @@
         'В этом представлении нет подходящих фотографий.',
 
       'Unlink note from photo?': 'Разорвать связь заметки с фото?',
+      'The photo will be removed from Albums and all other linked records.': 'Эта фотография будет удалена из альбомов и всех связанных записей.',
 
       // ========================================
       // Albums tip
@@ -32633,7 +32658,7 @@
         'Удалить безвозвратно',
 
       'Any affected primary-photo assignments will be cleared.':
-        'Все затронутые назначения основной фотографии будут сброшены.',
+        'Если фотография используется в качестве фото профиля, она будет удалена.',
 
       'Save copy':
         'Сохранить копию',
@@ -50962,7 +50987,7 @@
                   inputId: 'addPersonFactEducationFromDate',
                   typeId: 'addPersonFactEducationFromDateType',
                   defaultDateType: 'Year only',
-                  placeholder: 'e.g. 14 Feb 1915',
+                  placeholder: 'e.g. 1915',
                   className: 'genealogy-date-inline-range'
                 }
               )}
@@ -50977,7 +51002,7 @@
                   inputId: 'addPersonFactEducationToDate',
                   typeId: 'addPersonFactEducationToDateType',
                   defaultDateType: 'Year only',
-                  placeholder: 'e.g. 14 Feb 1920',
+                  placeholder: 'e.g. 1920',
                   className: 'genealogy-date-inline-range'
                 }
               )}
@@ -56672,61 +56697,68 @@
     ) {
       const birth =
         cleanGenealogyDateText(
-          person.birth
+          person?.birth
         );
 
       const death =
         cleanGenealogyDateText(
-          person.death
+          person?.death
         );
 
       const birthDate =
         parsePeoplePrototypeDate(
-          person.birth
+          person?.birth
         );
 
       const deathDate =
         parsePeoplePrototypeDate(
-          person.death
+          person?.death
         );
 
-      const isDeceased =
-        person.living === 'Deceased';
+      const livingStatus =
+        normalizeLivingStatus(
+          person?.living
+          ?? person?.livingStatus
+        );
+
+      const isLiving =
+        livingStatus === 'Living';
+
+      const showsDeath =
+        livingStatus !== 'Living';
 
       const birthPlace =
         options.includeBirthPlace
-          ? person.birthPlace || ''
+          ? person?.birthPlace || ''
           : '';
 
       const deathPlace =
         options.includeDeathPlace
-          ? person.deathPlace || ''
+          ? person?.deathPlace || ''
           : '';
 
-      const items = [];
+      const currentAge =
+        isLiving && birthDate
+          ? calculatePeopleAge(
+              birthDate
+            )
+          : null;
 
-      if (birth || birthPlace) {
-        const currentAge =
-          !isDeceased && birthDate
-            ? calculatePeopleAge(
-                birthDate
-              )
-            : null;
-
-        items.push({
+      const items = [
+        {
           label: 'Birth',
           value:
-            birth || 'Unknown date',
+            birth || 'Unknown',
           detail:
             currentAge !== null
               ? `Age: ${currentAge}`
               : '',
           place:
             birthPlace
-        });
-      }
+        }
+      ];
 
-      if (isDeceased) {
+      if (showsDeath) {
         const ageAtDeath =
           birthDate && deathDate
             ? calculatePeopleAge(
@@ -56738,7 +56770,7 @@
         items.push({
           label: 'Death',
           value:
-            death || 'Deceased',
+            death || 'Unknown',
           detail:
             ageAtDeath !== null
               ? `Age: ${ageAtDeath}`
@@ -56760,22 +56792,6 @@
           person,
           options
         );
-
-      if (!items.length) {
-        return `
-          <div class="profile-hero-life">
-            <div class="profile-hero-life-item">
-              <span class="profile-hero-life-label">
-                Dates
-              </span>
-
-              <strong class="profile-hero-life-primary">
-                Dates unknown
-              </strong>
-            </div>
-          </div>
-        `;
-      }
 
       return `
         <div
@@ -65009,9 +65025,9 @@
                   : renderPersonPhotosAdderUploadPanel()
               }
             </div>
-
-            ${renderPersonPhotosAdderFooter()}
           </div>
+
+          ${renderPersonPhotosAdderFooter()}
         </div>
       `);
 
@@ -71496,9 +71512,7 @@
                   count === 1
                     ? ''
                     : 's'
-                } will be removed from Albums,
-                people, events, attributes, and
-                all other linked records.
+                } will be removed from Albums and all other linked records.
               </p>
 
               <p>
