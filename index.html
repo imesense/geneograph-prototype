@@ -38915,14 +38915,45 @@
       }, date.dateType || 'Exact date');
     }
 
-    function mediaDateFromGenealogyModel(value) {
-      const date = normalizeGenealogyDateInput(value, value?.dateType || 'Exact date');
+    function mediaDateFromGenealogyModel(
+      value
+    ) {
+      const date =
+        normalizeGenealogyDateInput(
+          value,
+          value?.dateType
+          || 'Exact date'
+        );
+
       return {
-        date: date.dateType === 'Between' ? '' : (date.date || ''),
-        dateLabel: date.dateLabel || '',
-        dateType: date.dateType || 'Exact date',
-        fromDate: date.dateType === 'Between' ? (date.date || '') : '',
-        toDate: date.dateType === 'Between' ? (date.date2 || '') : ''
+        date:
+          date.dateType === 'Between'
+            ? ''
+            : date.date || '',
+
+        dateLabel:
+          date.dateLabel || '',
+
+        dateType:
+          date.dateType
+          || 'Exact date',
+
+        fromDate:
+          date.dateType === 'Between'
+            ? date.date || ''
+            : '',
+
+        toDate:
+          date.dateType === 'Between'
+            ? date.date2 || ''
+            : '',
+
+        calendar:
+          GENEALOGY_CALENDARS.includes(
+            date.calendar
+          )
+            ? date.calendar
+            : 'Gregorian'
       };
     }
 
@@ -40605,10 +40636,17 @@
     }
 
     function formatGenealogyDateStartLabel(input) {
-      const value = normalizeGenealogyDateInput(input);
-      if (value.dateType !== 'Between') return formatGenealogyDateLabel(value);
-      const base = parseBaseGenealogyDate(value.date || '');
-      return cleanGenealogyDateText(base?.dateLabel || value.date || '');
+      const value =
+        normalizeGenealogyDateInput(input);
+      const base =
+        parseBaseGenealogyDate(
+          value.date || ''
+        );
+      return cleanGenealogyDateText(
+        base?.dateLabel
+        || value.date
+        || ''
+      );
     }
 
     function formatGenealogyDateEndLabel(input) {
@@ -41272,7 +41310,93 @@
       });
     }
 
+    function normalizeGenealogyDateStartControl(
+      field
+    ) {
+      const model =
+        readGenealogyDateModel(field);
 
+      const input =
+        field.querySelector(
+          '[data-genealogy-date-input]'
+        );
+
+      const inputTo =
+        field.querySelector(
+          '[data-genealogy-date-input-to]'
+        );
+
+      if (!input) {
+        return;
+      }
+
+      /*
+      * Use the previous model type. When the change event
+      * runs, the select already contains the new type.
+      */
+      const previousType =
+        normalizeGenealogyDateType(
+          model.dateType
+        );
+
+      const text =
+        collectLocalizedDataFieldValue(
+          input,
+          input.dataset.sourceValue || ''
+        );
+
+      const text2 =
+        collectLocalizedDataFieldValue(
+          inputTo,
+          inputTo?.dataset.sourceValue || ''
+        );
+
+      const parsed =
+        parseGenealogyDateTextAsType(
+          text,
+          previousType,
+          {
+            calendar:
+              model.calendar
+              || 'Gregorian',
+
+            date2:
+              previousType === 'Between'
+                ? text2
+                : model.date2
+                  || model.date2Label
+                  || '',
+
+            date2Label:
+              previousType === 'Between'
+                ? text2
+                : model.date2
+                  || model.date2Label
+                  || ''
+          }
+        );
+
+      /*
+      * Preserve genuinely invalid user input so validation
+      * can report it instead of silently replacing it.
+      */
+      if (!parsed.valid) {
+        return;
+      }
+
+      const source =
+        formatGenealogyDateStartLabel(
+          parsed.value
+        );
+
+      input.dataset.sourceValue =
+        source;
+
+      input.value =
+        localizedDataFieldValue(
+          source
+        );
+    }
 
     function bindGenealogyDateFields(root = document) {
       root.querySelectorAll('[data-genealogy-date-details]').forEach(button => {
@@ -41292,10 +41416,21 @@
         if (type && !type.dataset.dateBound) {
           type.dataset.dateBound = 'true';
           type.addEventListener('change', () => {
-            const currentModel = readGenealogyDateModel(field);
+            normalizeGenealogyDateStartControl(
+              field
+            );
+
+            const currentModel =
+              readGenealogyDateModel(field);
             const selectedType = normalizeGenealogyDateType(type.value);
             field.classList.toggle('is-between', selectedType === 'Between');
-            if (selectedType !== 'Between' && inputTo) inputTo.value = '';
+            if (
+              selectedType !== 'Between'
+              && inputTo
+            ) {
+              inputTo.value = '';
+              inputTo.dataset.sourceValue = '';
+            }
             const model = field.querySelector('[data-genealogy-date-model]');
             if (model) model.value = JSON.stringify({ ...currentModel, dateType: selectedType, date2: selectedType === 'Between' ? currentModel.date2 || '' : '', date2Label: selectedType === 'Between' ? currentModel.date2Label || '' : '', sortDate2: selectedType === 'Between' ? currentModel.sortDate2 || '' : '' });
             clearError();
@@ -72226,11 +72361,167 @@
     }
 
     function openEditAlbumModal() {
-      const album = getProjectAlbums().find(item => item.id === state.activeAlbumId);
-      if (!album) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="editAlbumTitle"><div class="modal-header"><div><h2 id="editAlbumTitle">Edit album</h2><p>${escapeHtml(album.name)}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><form id="editAlbumForm"><div class="modal-body form-grid"><div class="field"><label for="editAlbumName">Album name</label><input id="editAlbumName" required value="${escapeHtml(album.name)}"></div><div class="field"><label for="editAlbumDescription">Description</label><textarea id="editAlbumDescription">${escapeHtml(album.description || '')}</textarea></div></div><div class="modal-footer"><button class="button danger" type="button" id="deleteAlbumButton">Delete album</button><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Save</button></div></form></div>`);
-      modalBackdrop.querySelector('#editAlbumForm')?.addEventListener('submit', event => { event.preventDefault(); album.name = modalBackdrop.querySelector('#editAlbumName').value.trim() || album.name; album.description = modalBackdrop.querySelector('#editAlbumDescription').value.trim(); closeModal(); renderAlbums(); showToast('Album updated.'); });
-      modalBackdrop.querySelector('#deleteAlbumButton')?.addEventListener('click', () => openDeleteAlbumConfirm(album.id));
+      const album =
+        getProjectAlbums()
+          .find(item =>
+            item.id === state.activeAlbumId
+          );
+
+      if (!album) {
+        return;
+      }
+
+      const sourceName =
+        album.name || '';
+
+      const sourceDescription =
+        album.description || '';
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="editAlbumTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="editAlbumTitle">
+                Edit album
+              </h2>
+
+              <p>
+                ${escapeHtml(
+                  album.name
+                )}
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close>
+              ${icon.close}
+            </button>
+          </div>
+
+          <form id="editAlbumForm">
+            <div class="modal-body form-grid">
+              <div class="field">
+                <label for="editAlbumName">
+                  Album name
+                </label>
+
+                <input
+                  id="editAlbumName"
+                  required
+                  data-source-value="${escapeHtml(
+                    sourceName
+                  )}"
+                  value="${escapeHtml(
+                    localizedDataFieldValue(
+                      sourceName
+                    )
+                  )}">
+              </div>
+
+              <div class="field">
+                <label for="editAlbumDescription">
+                  Description
+                </label>
+
+                <textarea
+                  id="editAlbumDescription"
+                  data-source-value="${escapeHtml(
+                    sourceDescription
+                  )}">${escapeHtml(
+                    localizedDataFieldValue(
+                      sourceDescription
+                    )
+                  )}</textarea>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                class="button danger"
+                type="button"
+                id="deleteAlbumButton">
+                Delete album
+              </button>
+
+              <button
+                class="button secondary"
+                type="button"
+                data-close>
+                Cancel
+              </button>
+
+              <button
+                class="button primary"
+                type="submit">
+                Save
+              </button>
+            </div>
+          </form>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelector('#editAlbumForm')
+        ?.addEventListener(
+          'submit',
+          event => {
+            event.preventDefault();
+
+            const nameInput =
+              modalBackdrop.querySelector(
+                '#editAlbumName'
+              );
+
+            const descriptionInput =
+              modalBackdrop.querySelector(
+                '#editAlbumDescription'
+              );
+
+            const nextName =
+              collectLocalizedDataFieldValue(
+                nameInput,
+                nameInput?.dataset.sourceValue
+                ?? sourceName
+              ).trim();
+
+            const nextDescription =
+              collectLocalizedDataFieldValue(
+                descriptionInput,
+                descriptionInput?.dataset.sourceValue
+                ?? sourceDescription
+              ).trim();
+
+            album.name =
+              nextName || sourceName;
+
+            album.description =
+              nextDescription;
+
+            closeModal();
+            renderAlbums();
+
+            showToast(
+              'Album updated.'
+            );
+          }
+        );
+
+      modalBackdrop
+        .querySelector('#deleteAlbumButton')
+        ?.addEventListener(
+          'click',
+          () =>
+            openDeleteAlbumConfirm(
+              album.id
+            )
+        );
     }
 
     function openDeleteAlbumConfirm(albumId) {
@@ -72776,7 +73067,8 @@
                     id="albumPickerName"
                     data-album-picker-name
                     required
-                    autocomplete="off">
+                    autocomplete="off"
+                    placeholder="e.g. Whiskerfield family photos">
                 </div>
 
                 <div class="field">
@@ -72788,10 +73080,9 @@
                   </label>
 
                   <textarea
-                    id="
-                      albumPickerDescription
-                    "
-                    data-album-picker-description>
+                    id="albumPickerDescription"
+                    data-album-picker-description
+                    placeholder="e.g. Portraits, documents, and family photos connected to the Whiskerfield family.">
                   </textarea>
                 </div>
               </div>
@@ -72931,7 +73222,7 @@
           <button
             class="button secondary"
             type="button"
-            data-close>
+            data-album-picker-cancel>
             ${escapeHtml(
               t('Cancel')
             )}
@@ -73171,6 +73462,14 @@
       modal.addEventListener(
         'click',
         event => {
+          if (
+            event.target.closest(
+              '[data-album-picker-cancel]'
+            )
+          ) {
+            closeModal();
+            return;
+          }
           if (
             event.target.closest(
               '[data-album-picker-create]'
