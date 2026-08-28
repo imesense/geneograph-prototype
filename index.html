@@ -3984,7 +3984,7 @@
         normal;
 
       font-size:
-        15px;
+        16px;
 
       line-height:
         1.18;
@@ -4010,7 +4010,7 @@
         2px;
 
       margin:
-        0;
+        4px 0 0;
 
       color:
         var(--text-secondary);
@@ -48528,6 +48528,226 @@
           ?? childCenter;
       }
 
+    /*
+    * A family with one child should use a straight vertical
+    * connector whenever its parent members belong to one
+    * rigid block.
+    *
+    * Process generations from youngest to oldest. If a child
+    * block is moved to align with its own descendants, its
+    * parent block will subsequently follow that new position.
+    */
+    function enforceDirectSingleChildAlignments() {
+      const eligibleModels =
+        familyModels
+          .map(model => {
+            if (model.children.length !== 1) {
+              return null;
+            }
+
+            const parentBlocks =
+              [
+                ...new Set(
+                  model.parents.map(entry =>
+                    entry.block
+                  )
+                )
+              ];
+
+            if (parentBlocks.length !== 1) {
+              return null;
+            }
+
+            const parentBlock =
+              parentBlocks[0];
+
+            const childEntry =
+              model.children[0];
+
+            if (
+              !childEntry
+              || parentBlock.id
+                === childEntry.block.id
+            ) {
+              return null;
+            }
+
+            const parentEntries =
+              model.parents
+                .filter(entry =>
+                  entry.block.id
+                    === parentBlock.id
+                )
+                .sort((left, right) => {
+                  const leftEdge =
+                    left.member.localCenter
+                    - left.member.width / 2;
+
+                  const rightEdge =
+                    right.member.localCenter
+                    - right.member.width / 2;
+
+                  return leftEdge - rightEdge;
+                });
+
+            if (!parentEntries.length) {
+              return null;
+            }
+
+            const first =
+              parentEntries[0].member;
+
+            const last =
+              parentEntries[
+                parentEntries.length - 1
+              ].member;
+
+            /*
+            * Match the connector router:
+            * - one parent: use its center;
+            * - two parents: use the center of the gap
+            *   between their inner edges.
+            */
+            const sourceOffset =
+              parentEntries.length > 1
+                ? (
+                    (
+                      first.localCenter
+                      + first.width / 2
+                    )
+                    + (
+                      last.localCenter
+                      - last.width / 2
+                    )
+                  ) / 2
+                : first.localCenter;
+
+            return {
+              model,
+              parentBlock,
+              childEntry,
+              sourceOffset
+            };
+          })
+          .filter(Boolean);
+
+      const parentGenerations =
+        [
+          ...new Set(
+            eligibleModels.map(item =>
+              item.parentBlock.generation
+            )
+          )
+        ]
+          .sort((left, right) =>
+            right - left
+          );
+
+      parentGenerations.forEach(generation => {
+        const row =
+          rows.get(generation);
+
+        if (!row?.length) return;
+
+        const requestsByBlockId =
+          new Map();
+
+        eligibleModels
+          .filter(item =>
+            item.parentBlock.generation
+              === generation
+          )
+          .forEach(item => {
+            const childBlockCenter =
+              positionByBlockId.get(
+                item.childEntry.block.id
+              );
+
+            if (
+              !Number.isFinite(
+                childBlockCenter
+              )
+            ) {
+              return;
+            }
+
+            const childConnectionX =
+              childBlockCenter
+              + item.childEntry.member
+                .localCenter;
+
+            const requestedParentCenter =
+              childConnectionX
+              - item.sourceOffset;
+
+            if (
+              !requestsByBlockId.has(
+                item.parentBlock.id
+              )
+            ) {
+              requestsByBlockId.set(
+                item.parentBlock.id,
+                []
+              );
+            }
+
+            requestsByBlockId
+              .get(item.parentBlock.id)
+              .push(requestedParentCenter);
+          });
+
+        if (!requestsByBlockId.size) {
+          return;
+        }
+
+        const targets = new Map(
+          row.map(block => [
+            block.id,
+            positionByBlockId.get(block.id)
+            ?? block.currentCenter
+          ])
+        );
+
+        const weights = new Map(
+          row.map(block => [
+            block.id,
+            1
+          ])
+        );
+
+        requestsByBlockId.forEach(
+          (requestedCenters, blockId) => {
+            targets.set(
+              blockId,
+              median(requestedCenters)
+            );
+
+            /*
+            * This makes direct alignment effectively hard.
+            * The row solver moves adjacent blocks when space
+            * is required instead of leaving a visible jog.
+            */
+            weights.set(
+              blockId,
+              1000000
+                * requestedCenters.length
+            );
+          }
+        );
+
+        solveOrderedRow(
+          row,
+          targets,
+          weights
+        ).forEach((position, blockId) => {
+          positionByBlockId.set(
+            blockId,
+            position
+          );
+        });
+      });
+    }
+
       /*
       * Alternate top-down and bottom-up passes. Virtual family
       * junctions pull parent and child groups toward a common
@@ -48612,12 +48832,47 @@
       }
 
       function solveCandidate(order) {
-        order.forEach((ids, generation) => rows.set(generation, ids.map(id => blockById.get(id))));
+        order.forEach(
+          (ids, generation) => {
+            rows.set(
+              generation,
+              ids
+                .map(id =>
+                  blockById.get(id)
+                )
+                .filter(Boolean)
+            );
+          }
+        );
+
         initializePositions();
-        for (let iteration = 0; iteration < 16; iteration += 1) {
-          generations.slice(1).forEach(generation => relaxGeneration(generation, 'down'));
-          generations.slice(0, -1).reverse().forEach(generation => relaxGeneration(generation, 'up'));
+
+        for (
+          let iteration = 0;
+          iteration < 16;
+          iteration += 1
+        ) {
+          generations
+            .slice(1)
+            .forEach(generation => {
+              relaxGeneration(
+                generation,
+                'down'
+              );
+            });
+
+          generations
+            .slice(0, -1)
+            .reverse()
+            .forEach(generation => {
+              relaxGeneration(
+                generation,
+                'up'
+              );
+            });
         }
+
+        enforceDirectSingleChildAlignments();
       }
 
       // Validate the actual routed geometry, including each partner's attachment,
@@ -50618,6 +50873,50 @@
       partnerGroups.forEach(renderPartnerConnector);
 
       drafts.forEach(draft => {
+        const directChild =
+          draft.children.length === 1
+            ? draft.children[0]
+            : null;
+
+        const hasDirectAlignment =
+          directChild
+          && Math.abs(
+            Math.round(draft.sourceX)
+            - Math.round(directChild.centerX)
+          ) <= 1;
+
+        if (hasDirectAlignment) {
+          /*
+          * Use one uninterrupted path. Do not split a direct
+          * connection into trunk, zero-width rail and child drop.
+          */
+          addDescriptor({
+            familyId:
+              draft.familyId,
+
+            role:
+              `${draft.role}-direct`,
+
+            childId:
+              directChild.id,
+
+            className:
+              'tree-line descendant',
+
+            points: [
+              {
+                x: draft.sourceX,
+                y: draft.sourceY
+              },
+              {
+                x: draft.sourceX,
+                y: directChild.topY
+              }
+            ]
+          });
+
+          return;
+        }
         addDescriptor({
           familyId: draft.familyId,
           role:
