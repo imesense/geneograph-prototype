@@ -3786,18 +3786,31 @@
         )
         minmax(0, 1fr);
 
-      gap:
+      /*
+      * The first row contains the avatar and copy.
+      * The remaining row contains the focus badge
+      * and action buttons.
+      */
+      grid-template-rows:
+        var(
+          --tree-avatar-size,
+          68px
+        )
+        minmax(0, 1fr);
+
+      column-gap:
+        var(
+          --tree-card-content-gap,
+          10px
+        );
+
+      row-gap:
         var(
           --tree-card-content-gap,
           10px
         );
 
       overflow: hidden;
-    }
-    .tree-person-card:hover {
-      background: var(--surface-card-hover);
-      transform: translateY(-1px);
-      border-color: #5A9BD8;
     }
 
     .tree-person-card.selected {
@@ -3815,10 +3828,48 @@
 
     .tree-card-avatar-stack {
       min-width: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
+      min-height: 0;
+
+      grid-column:
+        1;
+
+      grid-row:
+        1 / span 2;
+
+      display:
+        grid;
+
+      grid-template-rows:
+        var(
+          --tree-avatar-size,
+          68px
+        )
+        minmax(0, 1fr);
+
+      row-gap:
+        var(
+          --tree-card-content-gap,
+          10px
+        );
+
+      justify-items:
+        center;
+
+      align-items:
+        center;
+    }
+
+    .tree-card-avatar-stack > .tree-avatar {
+      grid-row:
+        1;
+    }
+
+    .tree-card-avatar-stack > .tree-focus-badge {
+      grid-row:
+        2;
+
+      align-self:
+        center;
     }
 
     .tree-focus-badge {
@@ -3863,41 +3914,83 @@
       border-color: var(--brand-green-500);
     }
     .tree-card-content {
-      min-width: 0;
-      height: 100%;
-      padding-bottom: 28px;
-      overflow: hidden;
+      min-width:
+        0;
+
+      min-height:
+        0;
+
+      grid-column:
+        2;
+
+      grid-row:
+        1;
+
+      display:
+        flex;
+
+      flex-direction:
+        column;
+
+      justify-content:
+        center;
+
+      padding:
+        0;
+
+      overflow:
+        hidden;
     }
 
     .tree-name {
       /*
-      * Reserve exactly two lines so the dates remain
-      * aligned across cards with short and long names.
+      * Use one line when the name fits and add a
+      * second line only when wrapping is required.
       */
-      height: 2.36em;
-      min-height: 2.36em;
-      max-height: 2.36em;
+      min-height:
+        0;
 
-      margin: 0 0 6px;
-      overflow: hidden;
+      height:
+        auto;
 
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      line-clamp: 2;
+      max-height:
+        2.36em;
 
-      text-overflow: ellipsis;
-      overflow-wrap: anywhere;
-      word-break: normal;
+      margin:
+        0;
 
-      font-size: 15px;
-      line-height: 1.18;
-      letter-spacing: .01em;
-    }
+      overflow:
+        hidden;
 
-    .tree-dates {
-      min-width: 0;
-      overflow: hidden;
+      display:
+        -webkit-box;
+
+      -webkit-box-orient:
+        vertical;
+
+      -webkit-line-clamp:
+        2;
+
+      line-clamp:
+        2;
+
+      text-overflow:
+        ellipsis;
+
+      overflow-wrap:
+        anywhere;
+
+      word-break:
+        normal;
+
+      font-size:
+        15px;
+
+      line-height:
+        1.18;
+
+      letter-spacing:
+        .01em;
     }
 
     .tree-dates > span {
@@ -3906,14 +3999,56 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .tree-dates { color: var(--text-secondary); font-size: 13px; display: grid; gap: 2px; margin-bottom: 8px; }
+    .tree-dates {
+      min-width:
+        0;
+
+      display:
+        grid;
+
+      gap:
+        2px;
+
+      margin:
+        0;
+
+      color:
+        var(--text-secondary);
+
+      font-size:
+        13px;
+
+      overflow:
+        hidden;
+    }
     .status-dot { display: inline-flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 12px; }
     .status-dot::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--brand-green-500); }
     .status-dot.deceased::before { background: var(--text-tertiary); }
     .status-dot.unknown::before {
       background: var(--amber);
     }
-    .card-actions { position: absolute; right: 8px; bottom: 8px; display: flex; gap: 4px; }
+    .card-actions {
+      position:
+        static;
+
+      grid-column:
+        2;
+
+      grid-row:
+        2;
+
+      align-self:
+        center;
+
+      justify-self:
+        end;
+
+      display:
+        flex;
+
+      gap:
+        4px;
+    }
     .card-action { width: 26px; height: 26px; border: 0; border-radius: 6px; background: transparent; color: var(--text-secondary); display: grid; place-items: center; }
     .card-action svg { width: 16px; height: 16px; }
     .card-action:hover { background: rgba(255,255,255,.06); color: var(--text-primary); }
@@ -7621,8 +7756,18 @@
       background: linear-gradient(180deg, rgba(22,58,42,.98), rgba(26,32,31,.96));
       z-index: 20;
     }
-    .tree-name { font-size: 13px; margin-bottom: 5px; }
-    .tree-dates { font-size: 12px; gap: 1px; margin-bottom: 6px; }
+    .tree-name {
+      font-size:
+        13px;
+    }
+
+    .tree-dates {
+      font-size:
+        12px;
+
+      gap:
+        1px;
+    }
     .add-parent-card {
       padding: 8px;
       display: grid;
