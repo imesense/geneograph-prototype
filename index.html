@@ -8054,74 +8054,36 @@
     /* Shared project-wide Sort control */
 
     .app-sort-field {
-      position: relative;
-
+      width: fit-content;
+      max-width: 100%;
       min-width: 0;
       height: 44px;
+
+      flex: 0 1 auto;
 
       display: inline-flex;
       align-items: center;
-
-      color: var(--text-secondary);
     }
 
-    .app-sort-icon {
-      position: absolute;
-      z-index: 1;
-      top: 50%;
-      left: 14px;
-
-      width: 18px;
-      height: 18px;
-
-      display: grid;
-      place-items: center;
-
-      color: var(--text-tertiary);
-      pointer-events: none;
-
-      transform: translateY(-50%);
-    }
-
-    .app-sort-icon svg {
-      width: 18px;
-      height: 18px;
-      display: block;
-    }
-
-    .app-sort-select {
-      width: 100%;
+    .app-sort-trigger {
+      width: fit-content;
+      max-width: 100%;
+      justify-content: flex-start;
+      text-align: left;
       min-width: 0;
       height: 44px;
-
-      padding:
-        0
-        42px
-        0
-        42px;
-
-      border:
-        1px solid
-        var(--border-default);
-      border-radius:
-        var(--radius-sm);
-
-      background:
-        var(--surface-card);
-      color:
-        var(--text-secondary);
-
-      font:
-        inherit;
-      font-size:
-        14px;
-      font-weight:
-        700;
-      line-height:
-        1;
-
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0 12px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-card);
+      color: var(--text-secondary);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
       cursor: pointer;
-
       transition:
         background var(--ease),
         border-color var(--ease),
@@ -8129,117 +8091,163 @@
         box-shadow var(--ease);
     }
 
-    .app-sort-select {
-      appearance: none;
-      background-image: none;
+    .app-sort-trigger:hover {
+      border-color: var(--border-strong);
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
     }
 
+    .app-sort-trigger:focus-visible {
+      outline: 0;
+      border-color: rgba(98, 217, 154, .55);
+      box-shadow: 0 0 0 3px rgba(98, 217, 154, .1);
+    }
 
+    .app-sort-trigger[aria-expanded="true"] {
+      border-color: rgba(98, 217, 154, .55);
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
+    }
+
+    .app-sort-icon,
     .app-sort-chevron {
-      position: absolute;
-      z-index: 1;
-      top: 50%;
-      right: 14px;
-
+      flex: 0 0 auto;
       width: 18px;
       height: 18px;
-
       display: grid;
       place-items: center;
-
       color: var(--text-tertiary);
-      pointer-events: none;
+    }
 
-      transform: translateY(-50%);
+    .app-sort-icon svg,
+    .app-sort-chevron svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+
+    .app-sort-icon svg {
+      transition: transform var(--ease);
+    }
+
+    .app-sort-icon.is-ascending svg {
+      transform: rotate(180deg);
+    }
+
+    .app-sort-current {
+      min-width: 0;
+      flex: 0 1 auto;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      text-align: left;
+    }
+
+    .app-sort-chevron {
+      margin-left: 0;
     }
 
     .app-sort-chevron svg {
       width: 16px;
       height: 16px;
-      display: block;
-
       transform: rotate(90deg);
+      transition: transform var(--ease);
     }
 
-    .app-sort-field:hover
-    .app-sort-select {
-      border-color:
-        var(--border-strong);
-
-      background:
-        var(--surface-card-hover);
-
-      color:
-        var(--text-primary);
+    .app-sort-trigger[aria-expanded="true"]
+    .app-sort-chevron svg {
+      transform: rotate(-90deg);
     }
 
-    .app-sort-field:hover
-    .app-sort-icon,
-    .app-sort-field:hover
-    .app-sort-chevron,
-    .app-sort-field:focus-within
-    .app-sort-icon,
-    .app-sort-field:focus-within
-    .app-sort-chevron {
-      color:
-        var(--text-primary);
+    .app-sort-popover {
+      width: min(280px, calc(100vw - 24px));
+      padding: var(--space-2);
     }
 
-    .app-sort-select:focus {
+    .app-sort-popover-section + .app-sort-popover-section {
+      margin-top: var(--space-2);
+      padding-top: var(--space-2);
+      border-top: 1px solid var(--border-default);
+    }
+
+    .app-sort-popover-title {
+      padding: 5px 10px 7px;
+      color: var(--text-tertiary);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      line-height: 1.3;
+      text-transform: uppercase;
+    }
+
+    .app-sort-popover-group {
+      display: grid;
+      gap: 2px;
+    }
+
+    .app-sort-option {
+      width: 100%;
+      min-height: 38px;
+      display: grid;
+      grid-template-columns: 18px minmax(0, 1fr);
+      align-items: center;
+      gap: var(--space-2);
+      padding: 8px 10px;
+      border: 0;
+      border-radius: var(--radius-xs);
+      background: transparent;
+      color: var(--text-secondary);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .app-sort-option:hover,
+    .app-sort-option:focus-visible {
       outline: 0;
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
     }
 
-    .app-sort-field:focus-within
-    .app-sort-select {
-      border-color:
-        rgba(98, 217, 154, .55);
-
-      color:
-        var(--text-primary);
-
-      box-shadow:
-        0 0 0 3px
-        rgba(98, 217, 154, .1);
+    .app-sort-option[aria-checked="true"] {
+      background: rgba(98, 217, 154, .1);
+      color: var(--brand-green-300);
     }
 
-    .projects-sort-field {
-      width: 215px;
-      min-width: 215px;
+    .app-sort-option-check {
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
     }
 
-    .people-toolbar
-    .app-sort-field {
-      width: 100%;
+    .app-sort-option-check svg {
+      width: 16px;
+      height: 16px;
     }
 
-    .albums-sort-field {
-      width: 190px;
-      min-width: 190px;
-    }
+    @media (max-width: 620px) {
+      .app-sort-field {
+        width: 44px;
+        max-width: 44px;
+        flex: 0 0 44px;
+      }
 
-    .geneo-sort-field {
-      width: 215px;
-      min-width: 215px;
-    }
+      .app-sort-trigger {
+        width: 100%;
+        max-width: 100%;
+        justify-content: center;
+        padding: 0;
+      }
 
-    .archive-sort-field {
-      width: 190px;
-      min-width: 190px;
-    }
-
-    .places-sort-field {
-      width: 180px;
-      flex: 0 0 180px;
-    }
-
-    .notes-sort-field {
-      width: 178px;
-      min-width: 178px;
-    }
-
-    .people-toolbar
-    .app-sort-field {
-      width: 100%;
+      .app-sort-current,
+      .app-sort-chevron {
+        display: none;
+      }
     }
 
     .search-input {
@@ -31639,6 +31647,12 @@
       'mother': 'мать',
       'fact': 'факт',
       'Items': 'Элементы',
+      'Sort by': 'Сортировать по',
+      'Direction': 'Направление',
+      'Ascending': 'По возрастанию',
+      'Descending': 'По убыванию',
+      'Last updated': 'Последнее изменение',
+      'Date created': 'Дата создания',
       'Advanced': 'Дополнительно',
       'Project photos': 'Фотографии проекта',
       'Upload new': 'Загрузить новые',
@@ -38945,30 +38959,30 @@
         openedAt: '2026-06-16T10:42:00Z'
       },
       people: [
-        { id: 'silver', projectId: 'p1', primaryPhotoId: 'photo-silver-portrait', names: { first: 'Silver', middle: '', last: 'Whiskerfield', maiden: '', display: 'Silver Whiskerfield', initials: 'SW' }, gender: 'male', livingStatus: 'Living', role: 'Self', avatarClass: 'avatar-green', birth: { date: '03.03.1998', dateLabel: '03 Mar 1998', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 5, notes: 7 }, meta: { updated: '10 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'luna', projectId: 'p1', primaryPhotoId: 'photo-luna-portrait', names: { first: 'Luna', middle: 'Mabel', last: 'Whiskerfield', maiden: 'Purrington', display: 'Luna Purrington', initials: 'LP' }, gender: 'female', livingStatus: 'Living', role: 'Spouse', avatarClass: 'avatar-purple', birth: { date: '12.08.1999', dateLabel: '12 Aug 1999', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 3 }, meta: { updated: '10 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'oliver', projectId: 'p1', primaryPhotoId: 'photo-oliver-portrait', names: { first: 'Oliver', middle: 'Felix', last: 'Whiskerfield', maiden: '', display: 'Oliver Whiskerfield', initials: 'OW' }, gender: 'male', livingStatus: 'Living', role: 'Son', avatarClass: 'avatar-amber', birth: { date: '18.05.2024', dateLabel: '18 May 2024', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: '09 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing source' } },
-        { id: 'mochi', projectId: 'p1', names: { first: 'Mochi', middle: '', last: 'Whiskerfield', maiden: '', display: 'Mochi Whiskerfield', initials: 'MO' }, gender: 'female', livingStatus: 'Living', role: 'Daughter', avatarClass: 'avatar-purple', birth: { date: '07.09.2026', dateLabel: '07 Sep 2026', dateType: 'Exact date', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: '09 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing source' } },
-        { id: 'cleo', projectId: 'p1', names: { first: 'Cleo', middle: '', last: 'Whiskerfield', maiden: '', display: 'Cleo Whiskerfield', initials: 'CW' }, gender: 'female', livingStatus: 'Living', role: 'Daughter', avatarClass: 'avatar-purple', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 0, notes: 1 }, meta: { updated: '04 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing facts' } },
-        { id: 'barnaby', projectId: 'p1', primaryPhotoId: 'photo-barnaby-portrait', names: { first: 'Barnaby', middle: '', last: 'Whiskerfield', maiden: '', display: 'Barnaby Whiskerfield', initials: 'BW' }, gender: 'male', livingStatus: 'Deceased', role: 'Paternal grandfather', avatarClass: '', birth: { date: '14.02.1946', dateLabel: '14 Feb 1946', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '22.11.2018', dateLabel: '22 Nov 2018', dateType: 'Exact date', placeId: 'place-pawford', reason: '', burialPlaceId: 'place-pawford' }, counts: { files: 3, notes: 2 }, meta: { updated: '4 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'daisy', projectId: 'p1', primaryPhotoId: 'photo-daisy-school', names: { first: 'Daisy', middle: '', last: 'Whiskerfield', maiden: 'Milkpaw', display: 'Daisy Milkpaw', initials: 'DM' }, gender: 'female', livingStatus: 'Deceased', role: 'Paternal grandmother', avatarClass: 'avatar-purple', birth: { date: '03.06.1949', dateLabel: '03 Jun 1949', dateType: 'Exact date', placeId: null }, death: { date: '04.01.2020', dateLabel: '04 Jan 2020', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 3, notes: 1 }, meta: { updated: '4 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'rupert', projectId: 'p1', names: { first: 'Rupert', middle: '', last: 'Purrington', maiden: '', display: 'Rupert Purrington', initials: 'RP' }, gender: 'male', livingStatus: 'Deceased', role: 'Maternal grandfather', avatarClass: '', birth: { date: '19.10.1951', dateLabel: '19 Oct 1951', dateType: 'Exact date', placeId: 'place-fishmarket-row' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 1 }, meta: { updated: '28 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Missing facts' } },
-        { id: 'mabel', projectId: 'p1', names: { first: 'Mabel', middle: '', last: 'Purrington', maiden: 'Softtail', display: 'Mabel Softtail', initials: 'MS' }, gender: 'female', livingStatus: 'Living', role: 'Maternal grandmother', avatarClass: 'avatar-purple', birth: { date: '28.04.1955', dateLabel: '28 Apr 1955', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 2 }, meta: { updated: '28 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'archibald', projectId: 'p1', names: { first: 'Archibald', middle: '', last: 'Whiskerfield', maiden: '', display: 'Archibald Whiskerfield', initials: 'AW' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '02.01.1915', dateLabel: '02 Jan 1915', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '17.07.1982', dateLabel: '17 Jul 1982', dateType: 'Exact date', placeId: 'place-pawford', reason: '', burialPlaceId: 'place-pawford' }, counts: { files: 2, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'edith', projectId: 'p1', names: { first: 'Edith', middle: '', last: 'Whiskerfield', maiden: 'Mackerelton', display: 'Edith Mackerelton', initials: 'EM' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '21.09.1918', dateLabel: '21 Sep 1918', dateType: 'Exact date', placeId: 'place-old-cattery' }, death: { date: '03.03.1991', dateLabel: '03 Mar 1991', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
-        { id: 'percival', projectId: 'p1', names: { first: 'Percival', middle: '', last: 'Milkpaw', maiden: '', display: 'Percival Milkpaw', initials: 'PM' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '1968', dateLabel: '1968', dateType: 'Year only', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 1, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
-        { id: 'nora', projectId: 'p1', names: { first: 'Nora', middle: '', last: 'Milkpaw', maiden: 'Creamfur', display: 'Nora Creamfur', initials: 'NC' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '11.11.1922', dateLabel: '11 Nov 1922', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
-        { id: 'algernon', projectId: 'p1', names: { first: 'Algernon', middle: '', last: 'Purrington', maiden: '', display: 'Algernon Purrington', initials: 'AP' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '08.05.1920', dateLabel: '08 May 1920', dateType: 'Exact date', placeId: 'place-fishmarket-row' }, death: { date: '09.12.1999', dateLabel: '09 Dec 1999', dateType: 'Exact date', placeId: 'place-fishmarket-row', reason: '', burialPlaceId: 'place-fishmarket-row' }, counts: { files: 2, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
-        { id: 'beatrice', projectId: 'p1', names: { first: 'Beatrice', middle: '', last: 'Purrington', maiden: 'Threadtail', display: 'Beatrice Threadtail', initials: 'BT' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '30.03.1924', dateLabel: '30 Mar 1924', dateType: 'Exact date', placeId: null }, death: { date: '15.06.2004', dateLabel: '15 Jun 2004', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 2, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
-        { id: 'felix', projectId: 'p1', names: { first: 'Felix', middle: '', last: 'Softtail', maiden: '', display: 'Felix Softtail', initials: 'FS' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '1919', dateLabel: '1919', dateType: 'Year only', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
-        { id: 'pearl', projectId: 'p1', names: { first: 'Pearl', middle: '', last: 'Softtail', maiden: 'Velvetpaw', display: 'Pearl Velvetpaw', initials: 'PV' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '27.12.1927', dateLabel: '27 Dec 1927', dateType: 'Exact date', placeId: 'place-old-cattery' }, death: { date: '02.02.2011', dateLabel: '02 Feb 2011', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { files: 1, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
-        { id: 'solomon', projectId: 'p1', names: { first: 'Solomon', middle: '', last: 'Velvetpaw', maiden: '', display: 'Solomon Velvetpaw', initials: 'SV' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Pearl Velvetpaw', avatarClass: 'avatar-amber', birth: { date: '1896', dateLabel: '1896', dateType: 'Year only', placeId: 'place-old-cattery' }, death: { date: '14.04.1961', dateLabel: '14 Apr 1961', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { files: 1, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'opal', projectId: 'p1', names: { first: 'Opal', middle: '', last: 'Velvetpaw', maiden: 'Silktail', display: 'Opal Silktail', initials: 'OS' }, gender: 'female', livingStatus: 'Deceased', role: 'Mother of Pearl Velvetpaw', avatarClass: 'avatar-purple', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '09.09.1970', dateLabel: '09 Sep 1970', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { files: 1, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Needs source', reviewStatus: 'Check birth details' } },
-        { id: 'horatio', projectId: 'p1', names: { first: 'Horatio', middle: '', last: 'Threadtail', maiden: '', display: 'Horatio Threadtail', initials: 'HT' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Beatrice Threadtail', avatarClass: 'avatar-blue', birth: { date: '1898', dateLabel: '1898', dateType: 'Year only', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 0, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing death details' } },
-        { id: 'clementine', projectId: 'p1', names: { first: 'Clementine', middle: '', last: 'Purrington', maiden: '', display: 'Clementine Purrington', initials: 'CP' }, gender: 'female', livingStatus: 'Deceased', role: 'Mother of Algernon Purrington', avatarClass: 'avatar-purple', birth: { date: '1894', dateLabel: '1894', dateType: 'Year only', placeId: 'place-fishmarket-row' }, death: { date: '22.02.1966', dateLabel: '22 Feb 1966', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Check death place' } },
-        { id: 'augustus', projectId: 'p1', names: { first: 'Augustus', middle: '', last: 'Whiskerfield', maiden: '', display: 'Augustus Whiskerfield', initials: 'AW2' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Archibald Whiskerfield', avatarClass: 'avatar-green', birth: { date: '1887', dateLabel: '1887', dateType: 'Year only', placeId: 'place-pawford' }, death: { date: '05.05.1954', dateLabel: '05 May 1954', dateType: 'Exact date', placeId: 'place-pawford', reason: '', burialPlaceId: 'place-pawford' }, counts: { files: 1, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
-        { id: 'tobias', projectId: 'p1', names: { first: 'Tobias', middle: '', last: 'Creamfur', maiden: '', display: 'Tobias Creamfur', initials: 'TC' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Nora Creamfur', avatarClass: 'avatar-amber', birth: { date: '1891', dateLabel: '1891', dateType: 'Year only', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 0, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing death details' } },
-        { id: 'marigold', projectId: 'p1', names: { first: 'Marigold', middle: '', last: 'Butterpaws', maiden: '', display: 'Marigold Butterpaws', initials: 'MB' }, gender: 'female', livingStatus: 'Deceased', role: 'Mother of Nora Creamfur', avatarClass: 'avatar-purple', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '03.08.1968', dateLabel: '03 Aug 1968', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 1, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Check birth details' } }
+        { id: 'silver', projectId: 'p1', createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z', primaryPhotoId: 'photo-silver-portrait', names: { first: 'Silver', middle: '', last: 'Whiskerfield', maiden: '', display: 'Silver Whiskerfield', initials: 'SW' }, gender: 'male', livingStatus: 'Living', role: 'Self', avatarClass: 'avatar-green', birth: { date: '03.03.1998', dateLabel: '03 Mar 1998', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 5, notes: 7 }, meta: { updated: '10 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'luna', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',primaryPhotoId: 'photo-luna-portrait', names: { first: 'Luna', middle: 'Mabel', last: 'Whiskerfield', maiden: 'Purrington', display: 'Luna Purrington', initials: 'LP' }, gender: 'female', livingStatus: 'Living', role: 'Spouse', avatarClass: 'avatar-purple', birth: { date: '12.08.1999', dateLabel: '12 Aug 1999', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 3 }, meta: { updated: '10 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'oliver', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',primaryPhotoId: 'photo-oliver-portrait', names: { first: 'Oliver', middle: 'Felix', last: 'Whiskerfield', maiden: '', display: 'Oliver Whiskerfield', initials: 'OW' }, gender: 'male', livingStatus: 'Living', role: 'Son', avatarClass: 'avatar-amber', birth: { date: '18.05.2024', dateLabel: '18 May 2024', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: '09 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing source' } },
+        { id: 'mochi', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Mochi', middle: '', last: 'Whiskerfield', maiden: '', display: 'Mochi Whiskerfield', initials: 'MO' }, gender: 'female', livingStatus: 'Living', role: 'Daughter', avatarClass: 'avatar-purple', birth: { date: '07.09.2026', dateLabel: '07 Sep 2026', dateType: 'Exact date', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: '09 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing source' } },
+        { id: 'cleo', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Cleo', middle: '', last: 'Whiskerfield', maiden: '', display: 'Cleo Whiskerfield', initials: 'CW' }, gender: 'female', livingStatus: 'Living', role: 'Daughter', avatarClass: 'avatar-purple', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 0, notes: 1 }, meta: { updated: '04 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing facts' } },
+        { id: 'barnaby', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',primaryPhotoId: 'photo-barnaby-portrait', names: { first: 'Barnaby', middle: '', last: 'Whiskerfield', maiden: '', display: 'Barnaby Whiskerfield', initials: 'BW' }, gender: 'male', livingStatus: 'Deceased', role: 'Paternal grandfather', avatarClass: '', birth: { date: '14.02.1946', dateLabel: '14 Feb 1946', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '22.11.2018', dateLabel: '22 Nov 2018', dateType: 'Exact date', placeId: 'place-pawford', reason: '', burialPlaceId: 'place-pawford' }, counts: { files: 3, notes: 2 }, meta: { updated: '4 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'daisy', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',primaryPhotoId: 'photo-daisy-school', names: { first: 'Daisy', middle: '', last: 'Whiskerfield', maiden: 'Milkpaw', display: 'Daisy Milkpaw', initials: 'DM' }, gender: 'female', livingStatus: 'Deceased', role: 'Paternal grandmother', avatarClass: 'avatar-purple', birth: { date: '03.06.1949', dateLabel: '03 Jun 1949', dateType: 'Exact date', placeId: null }, death: { date: '04.01.2020', dateLabel: '04 Jan 2020', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 3, notes: 1 }, meta: { updated: '4 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'rupert', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Rupert', middle: '', last: 'Purrington', maiden: '', display: 'Rupert Purrington', initials: 'RP' }, gender: 'male', livingStatus: 'Deceased', role: 'Maternal grandfather', avatarClass: '', birth: { date: '19.10.1951', dateLabel: '19 Oct 1951', dateType: 'Exact date', placeId: 'place-fishmarket-row' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 1 }, meta: { updated: '28 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Missing facts' } },
+        { id: 'mabel', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Mabel', middle: '', last: 'Purrington', maiden: 'Softtail', display: 'Mabel Softtail', initials: 'MS' }, gender: 'female', livingStatus: 'Living', role: 'Maternal grandmother', avatarClass: 'avatar-purple', birth: { date: '28.04.1955', dateLabel: '28 Apr 1955', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 2 }, meta: { updated: '28 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'archibald', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Archibald', middle: '', last: 'Whiskerfield', maiden: '', display: 'Archibald Whiskerfield', initials: 'AW' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '02.01.1915', dateLabel: '02 Jan 1915', dateType: 'Exact date', placeId: 'place-pawford' }, death: { date: '17.07.1982', dateLabel: '17 Jul 1982', dateType: 'Exact date', placeId: 'place-pawford', reason: '', burialPlaceId: 'place-pawford' }, counts: { files: 2, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'edith', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Edith', middle: '', last: 'Whiskerfield', maiden: 'Mackerelton', display: 'Edith Mackerelton', initials: 'EM' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '21.09.1918', dateLabel: '21 Sep 1918', dateType: 'Exact date', placeId: 'place-old-cattery' }, death: { date: '03.03.1991', dateLabel: '03 Mar 1991', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 2, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
+        { id: 'percival', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Percival', middle: '', last: 'Milkpaw', maiden: '', display: 'Percival Milkpaw', initials: 'PM' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '1968', dateLabel: '1968', dateType: 'Year only', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 1, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
+        { id: 'nora', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Nora', middle: '', last: 'Milkpaw', maiden: 'Creamfur', display: 'Nora Creamfur', initials: 'NC' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '11.11.1922', dateLabel: '11 Nov 1922', dateType: 'Exact date', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
+        { id: 'algernon', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Algernon', middle: '', last: 'Purrington', maiden: '', display: 'Algernon Purrington', initials: 'AP' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '08.05.1920', dateLabel: '08 May 1920', dateType: 'Exact date', placeId: 'place-fishmarket-row' }, death: { date: '09.12.1999', dateLabel: '09 Dec 1999', dateType: 'Exact date', placeId: 'place-fishmarket-row', reason: '', burialPlaceId: 'place-fishmarket-row' }, counts: { files: 2, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
+        { id: 'beatrice', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Beatrice', middle: '', last: 'Purrington', maiden: 'Threadtail', display: 'Beatrice Threadtail', initials: 'BT' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '30.03.1924', dateLabel: '30 Mar 1924', dateType: 'Exact date', placeId: null }, death: { date: '15.06.2004', dateLabel: '15 Jun 2004', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 2, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Historic records' } },
+        { id: 'felix', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Felix', middle: '', last: 'Softtail', maiden: '', display: 'Felix Softtail', initials: 'FS' }, gender: 'male', livingStatus: 'Deceased', role: 'Great-grandfather', avatarClass: '', birth: { date: '1919', dateLabel: '1919', dateType: 'Year only', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 0 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
+        { id: 'pearl', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Pearl', middle: '', last: 'Softtail', maiden: 'Velvetpaw', display: 'Pearl Velvetpaw', initials: 'PV' }, gender: 'female', livingStatus: 'Deceased', role: 'Great-grandmother', avatarClass: 'avatar-purple', birth: { date: '27.12.1927', dateLabel: '27 Dec 1927', dateType: 'Exact date', placeId: 'place-old-cattery' }, death: { date: '02.02.2011', dateLabel: '02 Feb 2011', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { files: 1, notes: 1 }, meta: { updated: '24 Apr 2026', sourceStatus: 'Unsourced', reviewStatus: 'Historic records' } },
+        { id: 'solomon', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Solomon', middle: '', last: 'Velvetpaw', maiden: '', display: 'Solomon Velvetpaw', initials: 'SV' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Pearl Velvetpaw', avatarClass: 'avatar-amber', birth: { date: '1896', dateLabel: '1896', dateType: 'Year only', placeId: 'place-old-cattery' }, death: { date: '14.04.1961', dateLabel: '14 Apr 1961', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { files: 1, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'opal', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Opal', middle: '', last: 'Velvetpaw', maiden: 'Silktail', display: 'Opal Silktail', initials: 'OS' }, gender: 'female', livingStatus: 'Deceased', role: 'Mother of Pearl Velvetpaw', avatarClass: 'avatar-purple', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '09.09.1970', dateLabel: '09 Sep 1970', dateType: 'Exact date', placeId: 'place-old-cattery', reason: '', burialPlaceId: 'place-old-cattery' }, counts: { files: 1, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Needs source', reviewStatus: 'Check birth details' } },
+        { id: 'horatio', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Horatio', middle: '', last: 'Threadtail', maiden: '', display: 'Horatio Threadtail', initials: 'HT' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Beatrice Threadtail', avatarClass: 'avatar-blue', birth: { date: '1898', dateLabel: '1898', dateType: 'Year only', placeId: null }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 0, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing death details' } },
+        { id: 'clementine', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Clementine', middle: '', last: 'Purrington', maiden: '', display: 'Clementine Purrington', initials: 'CP' }, gender: 'female', livingStatus: 'Deceased', role: 'Mother of Algernon Purrington', avatarClass: 'avatar-purple', birth: { date: '1894', dateLabel: '1894', dateType: 'Year only', placeId: 'place-fishmarket-row' }, death: { date: '22.02.1966', dateLabel: '22 Feb 1966', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 1, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Check death place' } },
+        { id: 'augustus', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Augustus', middle: '', last: 'Whiskerfield', maiden: '', display: 'Augustus Whiskerfield', initials: 'AW2' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Archibald Whiskerfield', avatarClass: 'avatar-green', birth: { date: '1887', dateLabel: '1887', dateType: 'Year only', placeId: 'place-pawford' }, death: { date: '05.05.1954', dateLabel: '05 May 1954', dateType: 'Exact date', placeId: 'place-pawford', reason: '', burialPlaceId: 'place-pawford' }, counts: { files: 1, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'No issues' } },
+        { id: 'tobias', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Tobias', middle: '', last: 'Creamfur', maiden: '', display: 'Tobias Creamfur', initials: 'TC' }, gender: 'male', livingStatus: 'Deceased', role: 'Father of Nora Creamfur', avatarClass: 'avatar-amber', birth: { date: '1891', dateLabel: '1891', dateType: 'Year only', placeId: 'place-meowbridge' }, death: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null, reason: '', burialPlaceId: null }, counts: { files: 0, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Unsourced', reviewStatus: 'Missing death details' } },
+        { id: 'marigold', projectId: 'p1',  createdAt: '2025-01-12T10:00:00Z', updatedAt: '2026-05-10T00:00:00Z',names: { first: 'Marigold', middle: '', last: 'Butterpaws', maiden: '', display: 'Marigold Butterpaws', initials: 'MB' }, gender: 'female', livingStatus: 'Deceased', role: 'Mother of Nora Creamfur', avatarClass: 'avatar-purple', birth: { date: '', dateLabel: '', dateType: 'Exact date', placeId: null }, death: { date: '03.08.1968', dateLabel: '03 Aug 1968', dateType: 'Exact date', placeId: 'place-meowbridge', reason: '', burialPlaceId: 'place-meowbridge' }, counts: { files: 1, notes: 1 }, meta: { updated: '24 May 2026', sourceStatus: 'Partly sourced', reviewStatus: 'Check birth details' } }
       ],
       relationshipSeed: [
         { id: 'rel-archibald-edith-partner', projectId: 'p1', type: 'family', gedcomXref: '@FRELARCHIBALDEDITHPARTNER@', partnerAId: 'archibald', partnerBId: 'edith', personAId: 'archibald', personBId: 'edith', partnerARoleHint: '', partnerBRoleHint: '', childrenIds: [], relationshipType: 'Married', relationshipStatus: 'active', events: [{ id: 'rel-archibald-edith-partner-marriage', eventType: 'Marriage', gedcomTag: 'MARR', typeLabel: 'Civil', date: { date: '', dateLabel: '', dateType: 'Exact date', calendar: 'Gregorian', originalText: '' }, placeId: null, placeText: '', sortDate: '', confidence: '' }], nonEvents: [], createdAt: '', updatedAt: '' },
@@ -39007,17 +39021,17 @@
         { id: 'rel-marigold-nora-parent', projectId: 'p1', type: 'parentChild', parentId: 'marigold', childId: 'nora', parentRole: 'mother' }
       ],
       places: [
-        { id: 'place-pawford', projectId: 'p1', name: 'Pawford, North Yorkshire, England', alternativeNames: ['Pawford town'], coordinates: { lat: 53.9594, lng: -1.082 }, updatedAt: '2026-05-10T00:00:00Z', deleted: false },
-        { id: 'place-meowbridge', projectId: 'p1', name: 'Meowbridge, North Yorkshire, England', alternativeNames: ['Meow Bridge'], coordinates: { lat: 53.9948, lng: -1.1347 }, updatedAt: '2026-05-08T00:00:00Z', deleted: false },
-        { id: 'place-fishmarket-row', projectId: 'p1', name: 'Fishmarket Row, North Yorkshire, England', alternativeNames: ['Fish Market Row'], coordinates: { lat: 53.9369, lng: -1.1118 }, updatedAt: '2026-05-06T00:00:00Z', deleted: false },
-        { id: 'place-old-cattery', projectId: 'p1', name: 'Old Cattery, North Yorkshire, England', alternativeNames: ['The Old Cattery'], coordinates: { lat: 54.0182, lng: -1.0376 }, updatedAt: '2026-05-04T00:00:00Z', deleted: false },
-        { id: 'place-unknown', projectId: 'p1', name: 'Unidentified village near Pawford, North Yorkshire, England', alternativeNames: ['Village near Pawford'], coordinates: null, updatedAt: '2026-04-25T00:00:00Z', deleted: false },
-        { id: 'place-pawford-garden', projectId: 'p1', name: 'Whiskerfield family garden, Pawford, North Yorkshire, England', alternativeNames: ['Pawford family garden'], coordinates: null, updatedAt: '2026-05-04T00:00:00Z', deleted: false },
-        { id: 'place-meowbridge-school', projectId: 'p1', name: 'Meowbridge School, North Yorkshire, England', alternativeNames: ['Meowbridge school'], coordinates: null, updatedAt: '2026-05-05T00:00:00Z', deleted: false },
-        { id: 'place-archive', projectId: 'p1', name: 'Pawford County Archive, North Yorkshire, England', alternativeNames: ['Pawford archive'], coordinates: { lat: 54.3393, lng: -1.4322 }, updatedAt: '2026-05-01T00:00:00Z', deleted: false },
-        { id: 'place-residence', projectId: 'p1', name: 'Whiskerfield residence near Pawford, North Yorkshire, England', alternativeNames: ['Whiskerfield family house'], coordinates: { lat: 53.985, lng: -1.105 }, updatedAt: '2026-04-28T00:00:00Z', deleted: false },
-        { id: 'place-cemetery', projectId: 'p1', name: 'Pawford Cemetery, North Yorkshire, England', alternativeNames: ['Pawford burial ground'], coordinates: { lat: 53.94978, lng: -1.07004 }, updatedAt: '2026-04-20T00:00:00Z', deleted: false },
-        { id: 'place-deleted', projectId: 'p1', name: 'Pawford, North Yorkshire, England', alternativeNames: ['Duplicate Pawford record'], coordinates: { lat: 53.9594, lng: -1.082 }, updatedAt: '2026-04-12T00:00:00Z', deleted: true }
+        { id: 'place-pawford', projectId: 'p1', createdAt: '2025-01-12T10:00:00Z', name: 'Pawford, North Yorkshire, England', alternativeNames: ['Pawford town'], coordinates: { lat: 53.9594, lng: -1.082 }, updatedAt: '2026-05-10T00:00:00Z', deleted: false },
+        { id: 'place-meowbridge', projectId: 'p1', createdAt: '2025-01-12T10:00:00Z', name: 'Meowbridge, North Yorkshire, England', alternativeNames: ['Meow Bridge'], coordinates: { lat: 53.9948, lng: -1.1347 }, updatedAt: '2026-05-08T00:00:00Z', deleted: false },
+        { id: 'place-fishmarket-row', projectId: 'p1', createdAt: '2025-01-12T10:00:00Z', name: 'Fishmarket Row, North Yorkshire, England', alternativeNames: ['Fish Market Row'], coordinates: { lat: 53.9369, lng: -1.1118 }, updatedAt: '2026-05-06T00:00:00Z', deleted: false },
+        { id: 'place-old-cattery', projectId: 'p1', createdAt: '2025-01-12T10:00:00Z', name: 'Old Cattery, North Yorkshire, England', alternativeNames: ['The Old Cattery'], coordinates: { lat: 54.0182, lng: -1.0376 }, updatedAt: '2026-05-04T00:00:00Z', deleted: false },
+        { id: 'place-unknown', projectId: 'p1', createdAt: '2025-01-12T10:00:00Z', name: 'Unidentified village near Pawford, North Yorkshire, England', alternativeNames: ['Village near Pawford'], coordinates: null, updatedAt: '2026-04-25T00:00:00Z', deleted: false },
+        { id: 'place-pawford-garden', projectId: 'p1', createdAt: '2025-01-12T10:00:00Z', name: 'Whiskerfield family garden, Pawford, North Yorkshire, England', alternativeNames: ['Pawford family garden'], coordinates: null, updatedAt: '2026-05-04T00:00:00Z', deleted: false },
+        { id: 'place-meowbridge-school', projectId: 'p1', createdAt: '2025-01-12T10:00:00Z', name: 'Meowbridge School, North Yorkshire, England', alternativeNames: ['Meowbridge school'], coordinates: null, updatedAt: '2026-05-05T00:00:00Z', deleted: false },
+        { id: 'place-archive', projectId: 'p1', createdAt: '2025-01-12T10:00:00Z', name: 'Pawford County Archive, North Yorkshire, England', alternativeNames: ['Pawford archive'], coordinates: { lat: 54.3393, lng: -1.4322 }, updatedAt: '2026-05-01T00:00:00Z', deleted: false },
+        { id: 'place-residence', projectId: 'p1', createdAt: '2025-01-12T10:00:00Z', name: 'Whiskerfield residence near Pawford, North Yorkshire, England', alternativeNames: ['Whiskerfield family house'], coordinates: { lat: 53.985, lng: -1.105 }, updatedAt: '2026-04-28T00:00:00Z', deleted: false },
+        { id: 'place-cemetery', projectId: 'p1', createdAt: '2025-01-12T10:00:00Z', name: 'Pawford Cemetery, North Yorkshire, England', alternativeNames: ['Pawford burial ground'], coordinates: { lat: 53.94978, lng: -1.07004 }, updatedAt: '2026-04-20T00:00:00Z', deleted: false },
+        { id: 'place-deleted', projectId: 'p1', createdAt: '2025-01-12T10:00:00Z', name: 'Pawford, North Yorkshire, England', alternativeNames: ['Duplicate Pawford record'], coordinates: { lat: 53.9594, lng: -1.082 }, updatedAt: '2026-04-12T00:00:00Z', deleted: true }
       ],
       placeSavedFilters: [
         {
@@ -39798,8 +39812,7 @@
       person.primaryPhotoCrop = normalizePersonPhotoCrop(
         crop || (previousPhotoId === photo.id ? person.primaryPhotoCrop : null)
       );
-      person.meta = person.meta || {};
-      person.meta.updated = 'Just now';
+      markPersonUpdated(person);
       if (rerender) render();
       if (notify) showToast('Primary photo updated.');
       return true;
@@ -42220,6 +42233,24 @@
       };
     }
 
+    function markPersonUpdated(
+      person,
+      now = new Date().toISOString()
+    ) {
+      if (!person) {
+        return;
+      }
+
+      person.meta =
+        person.meta || {};
+
+      person.meta.updated =
+        'Just now';
+
+      person.updatedAt =
+        now;
+    }
+
     function toPeopleRecord(person) {
       return {
         id: person.id,
@@ -42233,6 +42264,11 @@
         death: formatGenealogyDateLabel(person.death),
         deathPlace: getPlaceEventDisplay(person.death),
         updated: person.meta.updated,
+        updatedAt:
+          person.updatedAt || '',
+
+        createdAt:
+          person.createdAt || '',
         gender: person.gender,
         relation: person.role,
         photos: getPersonPhotoCount(person.id),
@@ -44066,7 +44102,6 @@
       activeModule: 'Projects',
       viewMode: 'grid',
       search: '',
-      sort: 'modified',
       openSide: 'overview',
       projectContinuation: null,
       treeView: 'Classic',
@@ -44082,12 +44117,9 @@
       peopleSelectedIds: [],
       peopleSelectionAnchorId: '',
       peopleSearch: '',
-      peopleSort: 'modified',
-
       peoplePage: 1,
       peopleRowsPerPage: 25,
       peoplePaginationQueryKey: '',
-
       peopleSavedView: 'All people',
       peopleSavedViewId: '',
       peopleFilters: { surname: '', birthPlace: '', living: 'Any', sourceStatus: '', reviewStatus: '' },
@@ -44099,7 +44131,6 @@
       geneoLibraryView: 'all',
       geneoActiveCollectionId: null,
       geneoBoardSearch: '',
-      geneoBoardSort: 'modified',
       geneoBoardViewMode: 'grid',
       selectedGeneoBoardId: 'gb1',
       selectedGeneoNodeId: null,
@@ -44209,7 +44240,6 @@
       albumsView: 'all',
       activeAlbumId: null,
       albumsSearch: '',
-      albumsSort: 'modified',
       albumsFilters: { personId: '', placeId: '', dateRange: '', favouriteOnly: false },
       albumsViewMode: 'grid',
       albumsPage: 1,
@@ -44260,7 +44290,6 @@
       archiveSelectedFileIds: [],
       archiveSearch: '',
       archiveSearchScope: 'folder',
-      archiveSort: 'updated',
       archiveFileTypeFilter: 'all',
       archiveLinkFilter: 'all',
       archiveSourceTypeFilter: 'all',
@@ -44292,7 +44321,6 @@
       notesActiveCollectionId: null,
       selectedNoteId: null,
       notesSearch: '',
-      notesSort: 'updated',
       notesContext: null,
       notesMobilePane: 'browser',
       notesSaveStatus: 'Saved',
@@ -44323,7 +44351,6 @@
       selectedPlaceId: 'place-pawford',
       placesSearch: '',
       placesReviewFocusId: '',
-      placesSort: 'name',
       placesViewMode: 'map',
       placesInspectorCollapsed: false,
       placesInspectorSections: {
@@ -44370,6 +44397,29 @@
         includePrivateNotes: false,
         includeUnsourcedFacts: false
       },
+      sort: 'updated',
+      sortDirection: 'descending',
+
+      peopleSort: 'updated',
+      peopleSortDirection: 'descending',
+
+      geneoBoardSort: 'updated',
+      geneoBoardSortDirection: 'descending',
+
+      albumsSort: 'updated',
+      albumsSortDirection: 'descending',
+
+      archiveFileSort: 'updated',
+      archiveFileSortDirection: 'descending',
+
+      archiveSourceSort: 'updated',
+      archiveSourceSortDirection: 'descending',
+
+      notesSort: 'updated',
+      notesSortDirection: 'descending',
+
+      placesSort: 'name',
+      placesSortDirection: 'ascending',
       topbarPopover: null,
       userSignedIn: true,
       unreadNotifications: 5,
@@ -45193,13 +45243,16 @@
       const exact = findExactPlaceMatch(display);
       if (exact) return exact;
 
+      const now =
+        new Date().toISOString();
       const place = {
         id: uniquePlaceIdFromText(display),
         projectId: currentProjectId(),
         name: display,
         alternativeNames: [],
         coordinates: null,
-        updatedAt: new Date().toISOString(),
+        createdAt: now,
+        updatedAt: now,
         deleted: false
       };
 
@@ -46104,42 +46157,12 @@
                 <label class="app-search-field" aria-label="Search projects">${icon.search}<input id="projectSearch" type="search" placeholder="Search projects..." value="${escapeHtml(state.search)}"></label>
               </div>
               <div class="toolbar-right">
-                ${renderAppSortSelect({
-                  id:
-                    'sortProjects',
-
-                  value:
-                    state.sort,
-
-                  ariaLabel:
-                    'Sort projects',
-
-                  className:
-                    'projects-sort-field',
-
-                  options: [
-                    {
-                      value:
-                        'modified',
-
-                      label:
-                        'Updated'
-                    },
-                    {
-                      value:
-                        'name',
-
-                      label:
-                        'Name'
-                    },
-                    {
-                      value:
-                        'people',
-
-                      label:
-                        'People count'
-                    }
-                  ]
+                ${renderAppSortControl({
+                  id: 'sortProjects',
+                  field: state.sort,
+                  direction: state.sortDirection,
+                  ariaLabel: 'Sort projects',
+                  options: APP_SORT_OPTIONS.projects
                 })}
                 <button class="toolbar-button ${state.viewMode === 'grid' ? 'active' : ''}" type="button" data-view="grid" aria-label="Grid view" aria-pressed="${state.viewMode === 'grid'}">${icon.grid}</button>
                 <button class="toolbar-button ${state.viewMode === 'list' ? 'active' : ''}" type="button" data-view="list" aria-label="List view" aria-pressed="${state.viewMode === 'list'}">${icon.list}</button>
@@ -51609,62 +51632,717 @@
       </span>`;
     }
 
-    function renderAppSortSelect({
+    const APP_SORT_OPTIONS = Object.freeze({
+      projects: [
+        { value: 'name', label: 'Name' },
+        { value: 'updated', label: 'Last updated' },
+        { value: 'created', label: 'Date created' },
+        { value: 'people', label: 'People count' }
+      ],
+
+      people: [
+        { value: 'first', label: 'First name' },
+        { value: 'last', label: 'Last name' },
+        { value: 'birth', label: 'Birth date' },
+        { value: 'updated', label: 'Last updated' },
+        { value: 'created', label: 'Date created' }
+      ],
+
+      geneograph: [
+        { value: 'name', label: 'Name' },
+        { value: 'updated', label: 'Last updated' },
+        { value: 'created', label: 'Date created' }
+      ],
+
+      albums: [
+        { value: 'photoName', label: 'Photo name' },
+        { value: 'updated', label: 'Last updated' },
+        { value: 'added', label: 'Date added' }
+      ],
+
+      archiveFiles: [
+        { value: 'name', label: 'File name' },
+        { value: 'updated', label: 'Last updated' },
+        { value: 'added', label: 'Date added' },
+        { value: 'type', label: 'Type' }
+      ],
+
+      archiveSources: [
+        { value: 'name', label: 'Name' },
+        { value: 'updated', label: 'Last updated' },
+        { value: 'created', label: 'Date created' }
+      ],
+
+      notes: [
+        { value: 'name', label: 'Name' },
+        { value: 'updated', label: 'Last updated' },
+        { value: 'created', label: 'Date created' }
+      ],
+
+      places: [
+        { value: 'name', label: 'Name' },
+        { value: 'updated', label: 'Last updated' },
+        { value: 'created', label: 'Date created' }
+      ]
+    });
+
+    const appSortControlRegistry =
+      new Map();
+
+    function normalizeAppSortDirection(
+      direction
+    ) {
+      return direction === 'ascending'
+        ? 'ascending'
+        : 'descending';
+    }
+
+    function appSortTimestamp(value) {
+      const timestamp =
+        Date.parse(value);
+
+      return Number.isFinite(timestamp)
+        ? timestamp
+        : Number.NaN;
+    }
+
+    function appSortCollator() {
+      return new Intl.Collator(
+        state.language === 'ru'
+          ? 'ru'
+          : 'en',
+        {
+          sensitivity: 'base',
+          numeric: true
+        }
+      );
+    }
+
+    function compareAppSortValues(
+      first,
+      second,
+      {
+        type = 'text',
+        direction = 'ascending'
+      } = {}
+    ) {
+      const normalizedDirection =
+        normalizeAppSortDirection(
+          direction
+        );
+
+      const firstMissing =
+        type === 'number'
+          ? !Number.isFinite(first)
+          : !String(first ?? '').trim();
+
+      const secondMissing =
+        type === 'number'
+          ? !Number.isFinite(second)
+          : !String(second ?? '').trim();
+
+      /*
+      * Missing values are always last. Do this
+      * before applying the direction multiplier.
+      */
+      if (firstMissing && secondMissing) {
+        return 0;
+      }
+
+      if (firstMissing) {
+        return 1;
+      }
+
+      if (secondMissing) {
+        return -1;
+      }
+
+      let comparison;
+
+      if (type === 'number') {
+        comparison =
+          first - second;
+      } else {
+        comparison =
+          appSortCollator().compare(
+            String(first),
+            String(second)
+          );
+      }
+
+      return normalizedDirection
+        === 'descending'
+          ? -comparison
+          : comparison;
+    }
+
+    function appSortRecords(
+      records,
+      {
+        field,
+        direction,
+        extractors,
+        getFallback = null
+      }
+    ) {
+      const extractor =
+        extractors[field]
+        || Object.values(extractors)[0];
+
+      return records
+        .map((record, index) => ({
+          record,
+          index
+        }))
+        .sort((firstItem, secondItem) => {
+          const first =
+            firstItem.record;
+
+          const second =
+            secondItem.record;
+
+          const comparison =
+            compareAppSortValues(
+              extractor.get(first),
+              extractor.get(second),
+              {
+                type:
+                  extractor.type,
+                direction
+              }
+            );
+
+          if (comparison) {
+            return comparison;
+          }
+
+          if (getFallback) {
+            const fallbackComparison =
+              compareAppSortValues(
+                getFallback(first),
+                getFallback(second),
+                {
+                  type: 'text',
+                  direction
+                }
+              );
+
+            if (fallbackComparison) {
+              return fallbackComparison;
+            }
+          }
+
+          /*
+          * Preserve source order for completely
+          * equivalent records.
+          */
+          return (
+            firstItem.index
+            - secondItem.index
+          );
+        })
+        .map(item => item.record);
+    }
+
+    function renderAppSortControl({
       id,
-      value,
+      field,
+      direction,
       ariaLabel,
       options,
       className = ''
     }) {
+      const normalizedDirection =
+        normalizeAppSortDirection(
+          direction
+        );
+
+      const selectedOption =
+        options.find(option =>
+          option.value === field
+        )
+        || options[0];
+
+      const directionLabel =
+        normalizedDirection
+          === 'ascending'
+            ? 'Ascending'
+            : 'Descending';
+
       return `
         <span
           class="
             app-sort-field
             ${escapeHtml(className)}
-          ">
+          "
+          data-app-sort-control>
 
-          <span
-            class="app-sort-icon"
-            aria-hidden="true">
-            ${icon.sortLines}
-          </span>
-
-          <select
-            class="app-sort-select"
+          <button
+            class="app-sort-trigger"
+            type="button"
             id="${escapeHtml(id)}"
+            data-app-sort-trigger
             aria-label="${escapeHtml(
-              ariaLabel
-            )}">
+              `${ariaLabel}: ${
+                t(selectedOption.label)
+              }, ${t(directionLabel)}`
+            )}"
+            aria-haspopup="dialog"
+            aria-expanded="false">
 
-            ${options
-              .map(option => `
-                <option
-                  value="${escapeHtml(
-                    option.value
-                  )}"
-                  ${
-                    String(value)
-                      === String(
-                        option.value
-                      )
-                      ? 'selected'
-                      : ''
-                  }>
-                  ${escapeHtml(
-                    option.label
-                  )}
-                </option>
-              `)
-              .join('')}
-          </select>
+            <span
+              class="
+                app-sort-icon
+                ${
+                  normalizedDirection
+                    === 'ascending'
+                      ? 'is-ascending'
+                      : 'is-descending'
+                }
+              "
+              aria-hidden="true">
+              ${icon.sortLines}
+            </span>
 
-          <span
-            class="app-sort-chevron"
-            aria-hidden="true">
-            ${icon.chevron}
-          </span>
+            <span class="app-sort-current">
+              ${escapeHtml(
+                t(selectedOption.label)
+              )}
+            </span>
+
+            <span
+              class="app-sort-chevron"
+              aria-hidden="true">
+              ${icon.chevron}
+            </span>
+          </button>
         </span>
       `;
+    }
+
+    function renderAppSortOption({
+      value,
+      label,
+      selected,
+      attribute
+    }) {
+      return `
+        <button
+          class="app-sort-option"
+          type="button"
+          role="radio"
+          aria-checked="${
+            selected
+              ? 'true'
+              : 'false'
+          }"
+          ${attribute}="${escapeHtml(
+            value
+          )}">
+
+          <span
+            class="app-sort-option-check"
+            aria-hidden="true">
+            ${
+              selected
+                ? icon.check
+                : ''
+            }
+          </span>
+
+          <span>
+            ${escapeHtml(t(label))}
+          </span>
+        </button>
+      `;
+    }
+
+    function openAppSortPopover(
+      id,
+      focusSection = ''
+    ) {
+      const config =
+        appSortControlRegistry.get(id);
+
+      const anchor =
+        document.getElementById(id);
+
+      if (
+        !config
+        || !anchor
+      ) {
+        return;
+      }
+
+      closeMenu();
+
+      const field =
+        config.getField();
+
+      const direction =
+        normalizeAppSortDirection(
+          config.getDirection()
+        );
+
+      const menu =
+        document.createElement('div');
+
+      menu.id =
+        'projectMenu';
+
+      menu.className =
+        'menu-popover app-sort-popover';
+
+      menu.dataset.appSortId =
+        id;
+
+      menu.setAttribute(
+        'role',
+        'dialog'
+      );
+
+      menu.setAttribute(
+        'aria-label',
+        t('Sort')
+      );
+
+      menu.innerHTML = `
+        <section class="app-sort-popover-section">
+          <div class="app-sort-popover-title">
+            ${escapeHtml(t('Sort by'))}
+          </div>
+
+          <div
+            class="app-sort-popover-group"
+            role="radiogroup"
+            aria-label="${escapeHtml(
+              t('Sort by')
+            )}">
+
+            ${config.options
+              .map(option =>
+                renderAppSortOption({
+                  value:
+                    option.value,
+
+                  label:
+                    option.label,
+
+                  selected:
+                    option.value
+                      === field,
+
+                  attribute:
+                    'data-app-sort-field'
+                })
+              )
+              .join('')}
+          </div>
+        </section>
+
+        <section class="app-sort-popover-section">
+          <div class="app-sort-popover-title">
+            ${escapeHtml(t('Direction'))}
+          </div>
+
+          <div
+            class="app-sort-popover-group"
+            role="radiogroup"
+            aria-label="${escapeHtml(
+              t('Direction')
+            )}">
+
+            ${renderAppSortOption({
+              value:
+                'ascending',
+
+              label:
+                'Ascending',
+
+              selected:
+                direction
+                  === 'ascending',
+
+              attribute:
+                'data-app-sort-direction'
+            })}
+
+            ${renderAppSortOption({
+              value:
+                'descending',
+
+              label:
+                'Descending',
+
+              selected:
+                direction
+                  === 'descending',
+
+              attribute:
+                'data-app-sort-direction'
+            })}
+          </div>
+        </section>
+      `;
+
+      document.body.appendChild(menu);
+
+      const rect =
+        anchor.getBoundingClientRect();
+
+      const margin =
+        12;
+
+      const left =
+        Math.min(
+          Math.max(
+            margin,
+            rect.right
+              - menu.offsetWidth
+          ),
+          Math.max(
+            margin,
+            window.innerWidth
+              - menu.offsetWidth
+              - margin
+          )
+        );
+
+      let top =
+        rect.bottom + 6;
+
+      if (
+        top + menu.offsetHeight
+          > window.innerHeight - margin
+      ) {
+        top =
+          Math.max(
+            margin,
+            rect.top
+              - menu.offsetHeight
+              - 6
+          );
+      }
+
+      menu.style.left =
+        `${left}px`;
+
+      menu.style.top =
+        `${top}px`;
+
+      anchor.setAttribute(
+        'aria-expanded',
+        'true'
+      );
+
+      function applySelection(
+        nextField,
+        nextDirection,
+        section
+      ) {
+        closeMenu();
+
+        config.onChange({
+          field:
+            nextField,
+
+          direction:
+            normalizeAppSortDirection(
+              nextDirection
+            )
+        });
+
+        /*
+        * The module rerenders after a change.
+        * Reopen the same control so the user can
+        * select both the field and direction in
+        * one interaction.
+        */
+        requestAnimationFrame(() => {
+          openAppSortPopover(
+            id,
+            section
+          );
+        });
+      }
+
+      menu.addEventListener(
+        'click',
+        event => {
+          const fieldButton =
+            event.target.closest(
+              '[data-app-sort-field]'
+            );
+
+          if (fieldButton) {
+            applySelection(
+              fieldButton.dataset
+                .appSortField,
+              direction,
+              'field'
+            );
+
+            return;
+          }
+
+          const directionButton =
+            event.target.closest(
+              '[data-app-sort-direction]'
+            );
+
+          if (directionButton) {
+            applySelection(
+              field,
+              directionButton.dataset
+                .appSortDirection,
+              'direction'
+            );
+          }
+        }
+      );
+
+      menu.addEventListener(
+        'keydown',
+        event => {
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            event.stopPropagation();
+
+            closeMenu();
+            anchor.focus({
+              preventScroll: true
+            });
+
+            return;
+          }
+
+          const current =
+            event.target.closest(
+              '.app-sort-option'
+            );
+
+          if (!current) {
+            return;
+          }
+
+          const group =
+            current.closest(
+              '[role="radiogroup"]'
+            );
+
+          const buttons = [
+            ...group.querySelectorAll(
+              '.app-sort-option'
+            )
+          ];
+
+          const index =
+            buttons.indexOf(current);
+
+          let nextIndex =
+            index;
+
+          if (
+            event.key === 'ArrowDown'
+            || event.key === 'ArrowRight'
+          ) {
+            nextIndex =
+              (index + 1)
+              % buttons.length;
+          } else if (
+            event.key === 'ArrowUp'
+            || event.key === 'ArrowLeft'
+          ) {
+            nextIndex =
+              (
+                index - 1
+                + buttons.length
+              )
+              % buttons.length;
+          } else if (
+            event.key === 'Home'
+          ) {
+            nextIndex = 0;
+          } else if (
+            event.key === 'End'
+          ) {
+            nextIndex =
+              buttons.length - 1;
+          } else {
+            return;
+          }
+
+          event.preventDefault();
+
+          buttons[nextIndex].focus();
+        }
+      );
+
+      bindMenuLifecycle(anchor);
+
+      const focusSelector =
+        focusSection === 'direction'
+          ? '[data-app-sort-direction][aria-checked="true"]'
+          : focusSection === 'field'
+            ? '[data-app-sort-field][aria-checked="true"]'
+            : '.app-sort-option[aria-checked="true"]';
+
+      menu.querySelector(
+        focusSelector
+      )?.focus({
+        preventScroll: true
+      });
+    }
+
+    function bindAppSortControl(
+      root,
+      {
+        id,
+        options,
+        getField,
+        getDirection,
+        onChange
+      }
+    ) {
+      const trigger =
+        document.getElementById(id);
+
+      if (
+        !trigger
+        || !root?.contains(trigger)
+      ) {
+        return;
+      }
+
+      appSortControlRegistry.set(
+        id,
+        {
+          options,
+          getField,
+          getDirection,
+          onChange
+        }
+      );
+
+      trigger.addEventListener(
+        'click',
+        () => {
+          const existingMenu =
+            document.getElementById(
+              'projectMenu'
+            );
+
+          if (
+            existingMenu?.dataset
+              .appSortId === id
+          ) {
+            closeMenu();
+            return;
+          }
+
+          openAppSortPopover(id);
+        }
+      );
     }
 
     function treePersonToPeopleRecordId(person) {
@@ -55546,10 +56224,13 @@
       const deathPlace = livingStatus === 'Deceased'
         ? resolvePlaceInputSelector('#addPersonDeathPlace')
         : { placeId: null, placeText: '', address: '', created: false };
-
+      const now =
+        new Date().toISOString();
       const person = {
         id,
         projectId: state.currentProjectId || state.selectedProjectId || 'p1',
+        createdAt: now,
+        updatedAt: now,
         names: { first: firstName, middle: middleName, last: lastName, maiden: maidenName, display, initials },
         gender: genderValue === 'Male' ? 'male' : genderValue === 'Female' ? 'female' : 'unknown',
         livingStatus,
@@ -59787,7 +60468,7 @@
       );
       syncFamilyReciprocalLinks();
 
-      person.meta.updated = 'Just now';
+      markPersonUpdated(person);
       sampleData.events = buildSampleEvents();
 
       closeModal();
@@ -60381,41 +61062,57 @@
       return date ? date.getTime() : Number.NaN;
     }
 
-    function comparePeopleNames(a, b) {
-      return cleanEditFieldValue(a?.name)
-        .localeCompare(cleanEditFieldValue(b?.name), undefined, { sensitivity: 'base' });
-    }
+    function sortPeopleRecords(
+      records,
+      sort = state.peopleSort
+    ) {
+      return appSortRecords(records, {
+        field:
+          sort,
 
-    function comparePeopleOptionalNumber(a, b, direction = 'asc') {
-      const aMissing = !Number.isFinite(a);
-      const bMissing = !Number.isFinite(b);
+        direction:
+          state.peopleSortDirection,
 
-      if (aMissing && bMissing) return 0;
-      if (aMissing) return 1;
-      if (bMissing) return -1;
+        extractors: {
+          first: {
+            type: 'text',
+            get: record =>
+              record.first
+          },
 
-      return direction === 'desc' ? b - a : a - b;
-    }
+          last: {
+            type: 'text',
+            get: record =>
+              record.surname
+          },
 
-    function sortPeopleRecords(records, sort = state.peopleSort) {
-      return records.slice().sort((a, b) => {
-        if (sort === 'name') {
-          return comparePeopleNames(a, b);
-        }
+          birth: {
+            type: 'number',
+            get: record =>
+              peopleSortDateValue(
+                record.birth
+              )
+          },
 
-        if (sort === 'birth') {
-          return comparePeopleOptionalNumber(
-            peopleSortDateValue(a.birth),
-            peopleSortDateValue(b.birth),
-            'asc'
-          ) || comparePeopleNames(a, b);
-        }
+          updated: {
+            type: 'number',
+            get: record =>
+              appSortTimestamp(
+                record.updatedAt
+              )
+          },
 
-        return comparePeopleOptionalNumber(
-          peopleSortDateValue(a.updated),
-          peopleSortDateValue(b.updated),
-          'desc'
-        ) || comparePeopleNames(a, b);
+          created: {
+            type: 'number',
+            get: record =>
+              appSortTimestamp(
+                record.createdAt
+              )
+          }
+        },
+
+        getFallback:
+          record => record.name
       });
     }
 
@@ -60677,9 +61374,16 @@
             .trim()
             .toLowerCase(),
 
-        sort:
-          state.peopleSort
-          || 'modified',
+        sort: {
+          field:
+            state.peopleSort
+            || 'updated',
+
+          direction:
+            normalizeAppSortDirection(
+              state.peopleSortDirection
+            )
+        },
 
         filters:
           peopleFiltersWithDefaults()
@@ -61234,42 +61938,13 @@
                 : ''
             }
           </button>
-
-          ${renderAppSortSelect({
-            id:
-              'peopleSort',
-
-            value:
-              state.peopleSort,
-
-            ariaLabel:
-              'Sort people',
-
-            options: [
-              {
-                value:
-                  'modified',
-
-                label:
-                  'Date modified'
-              },
-              {
-                value:
-                  'name',
-
-                label:
-                  'Person name'
-              },
-              {
-                value:
-                  'birth',
-
-                label:
-                  'Birth date'
-              }
-            ]
+          ${renderAppSortControl({
+            id: 'peopleSort',
+            field: state.peopleSort,
+            direction: state.peopleSortDirection,
+            ariaLabel: 'Sort people',
+            options: APP_SORT_OPTIONS.people
           })}
-
           <button
             class="button primary"
             type="button"
@@ -64418,15 +65093,15 @@
         payloads.other
       );
 
-      person.updated = 'Just now';
+      person.updated =
+        'Just now';
 
       const centralPerson =
         getPerson(person.id);
 
-      if (centralPerson?.meta) {
-        centralPerson.meta.updated =
-          'Just now';
-      }
+      markPersonUpdated(
+        centralPerson
+      );
 
       sampleData.events =
         buildSampleEvents();
@@ -64931,11 +65606,9 @@
               result.value
             );
 
-            centralPerson.meta =
-              centralPerson.meta || {};
-
-            centralPerson.meta.updated =
-              'Just now';
+            markPersonUpdated(
+              centralPerson
+            );
 
             sampleData.events =
               buildSampleEvents();
@@ -66600,9 +67273,23 @@
         clearPeopleSelection();
         renderPeople();
       });
-      main.querySelector('#peopleSort')?.addEventListener('change', event => {
-        state.peopleSort = event.currentTarget.value || 'modified';
-        renderPeople();
+      bindAppSortControl(main, {
+        id: 'peopleSort',
+        options: APP_SORT_OPTIONS.people,
+        getField: () => state.peopleSort,
+        getDirection: () =>
+          state.peopleSortDirection,
+
+        onChange: ({
+          field,
+          direction
+        }) => {
+          state.peopleSort = field;
+          state.peopleSortDirection =
+            direction;
+
+          renderPeople();
+        }
       });
       main.querySelector('#peopleColumnsButton')?.addEventListener('click', event => openPeopleColumnsPopover(event.currentTarget));
       main.querySelector('#peopleFilterButton')?.addEventListener('click', event => openPeopleFilterPopover(event.currentTarget));
@@ -69159,11 +69846,7 @@
         });
       });
 
-      person.meta =
-        person.meta || {};
-
-      person.meta.updated =
-        'Just now';
+      markPersonUpdated(person);
 
       const name =
         person.names?.display
@@ -69734,8 +70417,7 @@
       const name = person.names?.display || 'Person';
       person.primaryPhotoId = '';
       person.primaryPhotoCrop = null;
-      person.meta = person.meta || {};
-      person.meta.updated = 'Just now';
+      markPersonUpdated(person);
       resetPersonPhotoPickerState();
       closeModal({ force: true });
       renderAfterPersonPrimaryPhotoChange();
@@ -70132,52 +70814,42 @@
               ) === 'Unknown date'
           );
       }
+      return appSortRecords(photos, {
+        field:
+          state.albumsSort,
 
-      const sorters = {
-        title:
-          (
-            first,
-            second
-          ) =>
-            (
-              first.title || ''
-            ).localeCompare(
-              second.title || ''
-            ),
+        direction:
+          state.albumsSortDirection,
 
-        oldest:
-          (
-            first,
-            second
-          ) =>
-            String(
-              first.createdAt || ''
-            ).localeCompare(
-              String(
-                second.createdAt || ''
+        extractors: {
+          photoName: {
+            type: 'text',
+            get: photo =>
+              photo.title
+          },
+
+          updated: {
+            type: 'number',
+            get: photo =>
+              appSortTimestamp(
+                photo.updatedAt
               )
-            ),
+          },
 
-        modified:
-          (
-            first,
-            second
-          ) =>
-            String(
-              second.updatedAt || ''
-            ).localeCompare(
-              String(
-                first.updatedAt || ''
+          added: {
+            type: 'number',
+            get: photo =>
+              appSortTimestamp(
+                photo.createdAt
               )
-            )
-      };
+          }
+        },
 
-      return [
-        ...photos
-      ].sort(
-        sorters[state.albumsSort]
-        || sorters.modified
-      );
+        getFallback:
+          photo =>
+            photo.title
+            || photo.filename
+      });
     }
 
     const ALBUMS_ROWS_PER_PAGE_OPTIONS =
@@ -71084,45 +71756,13 @@
                 : ''
             }
           </button>
-
-          ${renderAppSortSelect({
-            id:
-              'albumsSort',
-
-            value:
-              state.albumsSort,
-
-            ariaLabel:
-              'Sort photos',
-
-            className:
-              'albums-sort-field',
-
-            options: [
-              {
-                value:
-                  'modified',
-
-                label:
-                  'Updated'
-              },
-              {
-                value:
-                  'oldest',
-
-                label:
-                  'Oldest added'
-              },
-              {
-                value:
-                  'title',
-
-                label:
-                  'Title'
-              }
-            ]
+          ${renderAppSortControl({
+            id: 'albumsSort',
+            field: state.albumsSort,
+            direction: state.albumsSortDirection,
+            ariaLabel: 'Sort photos',
+            options: APP_SORT_OPTIONS.albums
           })}
-
           <div
             class="albums-view-switch"
             role="group"
@@ -77551,17 +78191,25 @@
           }
         );
 
-        main
-          .querySelector('#albumsSort')
-          ?.addEventListener(
-            'change',
-            event => {
-              state.albumsSort =
-                event.target.value;
-              resetAlbumsPage();
-              renderAlbums();
-            }
-          );
+        bindAppSortControl(main, {
+          id: 'albumsSort',
+          options: APP_SORT_OPTIONS.albums,
+          getField: () => state.albumsSort,
+          getDirection: () =>
+            state.albumsSortDirection,
+
+          onChange: ({
+            field,
+            direction
+          }) => {
+            state.albumsSort = field;
+            state.albumsSortDirection =
+              direction;
+
+            resetAlbumsPage();
+            renderAlbums();
+          }
+        });
 
         main
           .querySelector(
@@ -78102,6 +78750,7 @@
         collectionIds: ['board-col-tree-design', 'board-col-research-theory'],
         modified: 'Aug 12, 2026',
         modifiedAt: '2026-08-12T12:00:00Z',
+        createdAt: '2026-08-12T12:00:00Z',
         favorite: true,
         archived: false,
         thumb: 'tree',
@@ -80668,39 +81317,13 @@
               class="
                 geneo-board-toolbar-right
               ">
-
-              ${renderAppSortSelect({
-                id:
-                  'geneoBoardSort',
-
-                value:
-                  state.geneoBoardSort,
-
-                ariaLabel:
-                  'Sort boards',
-
-                className:
-                  'geneo-sort-field',
-
-                options: [
-                  {
-                    value:
-                      'modified',
-
-                    label:
-                      'Date modified'
-                  },
-
-                  {
-                    value:
-                      'name',
-
-                    label:
-                      'Name'
-                  }
-                ]
+              ${renderAppSortControl({
+                id: 'geneoBoardSort',
+                field: state.geneoBoardSort,
+                direction: state.geneoBoardSortDirection,
+                ariaLabel: 'Sort boards',
+                options: APP_SORT_OPTIONS.geneograph
               })}
-
               <button
                 class="
                   toolbar-button
@@ -80986,43 +81609,38 @@
             )
           );
       }
+      return appSortRecords(list, {
+        field:
+          state.geneoBoardSort,
 
-      list =
-        list.slice();
+        direction:
+          state.geneoBoardSortDirection,
 
-      if (
-        state.geneoBoardSort
-          === 'name'
-      ) {
-        list.sort(
-          (
-            first,
-            second
-          ) =>
-            String(
-              first.title || ''
-            ).localeCompare(
-              String(
-                second.title || ''
+        extractors: {
+          name: {
+            type: 'text',
+            get: board =>
+              board.title
+          },
+
+          updated: {
+            type: 'number',
+            get:
+              geneographBoardModifiedTime
+          },
+
+          created: {
+            type: 'number',
+            get: board =>
+              appSortTimestamp(
+                board.createdAt
               )
-            )
-        );
-      } else {
-        list.sort(
-          (
-            first,
-            second
-          ) =>
-            geneographBoardModifiedTime(
-              second
-            )
-            - geneographBoardModifiedTime(
-                first
-              )
-        );
-      }
+          }
+        },
 
-      return list;
+        getFallback:
+          board => board.title
+      });
     }
 
     function openGeneographImportBoardModal() {
@@ -83051,21 +83669,26 @@
         'geneoBoardSearch',
         renderGeneographHome
       );
+      bindAppSortControl(main, {
+        id: 'geneoBoardSort',
+        options:
+          APP_SORT_OPTIONS.geneograph,
+        getField: () =>
+          state.geneoBoardSort,
+        getDirection: () =>
+          state.geneoBoardSortDirection,
 
-      main
-        .querySelector(
-          '#geneoBoardSort'
-        )
-        ?.addEventListener(
-          'change',
-          event => {
-            state.geneoBoardSort =
-              event.target.value;
+        onChange: ({
+          field,
+          direction
+        }) => {
+          state.geneoBoardSort = field;
+          state.geneoBoardSortDirection =
+            direction;
 
-            renderGeneographHome();
-          }
-        );
-
+          renderGeneographHome();
+        }
+      });
       main
         .querySelectorAll(
           '[data-geneo-board-view]'
@@ -85214,6 +85837,8 @@
 
               return;
             }
+            const now =
+              new Date().toISOString();
 
             const newBoard = {
               id:
@@ -85233,9 +85858,8 @@
 
               modified:
                 'Just now',
-              modifiedAt:
-                new Date()
-                  .toISOString(),
+              modifiedAt: now,
+              createdAt: now,
               favorite:
                 false,
               archived:
@@ -107320,68 +107944,46 @@
           );
       }
 
-      const sort =
-        state.archiveSort
-        || 'updated';
+      return appSortRecords(files, {
+        field:
+          state.archiveFileSort,
 
-      return files
-        .slice()
-        .sort((a, b) => {
-          if (
-            sort === 'name'
-          ) {
-            return String(
-              a.name || ''
-            ).localeCompare(
-              String(
-                b.name || ''
+        direction:
+          state.archiveFileSortDirection,
+
+        extractors: {
+          name: {
+            type: 'text',
+            get: file =>
+              file.name
+          },
+
+          updated: {
+            type: 'number',
+            get: file =>
+              appSortTimestamp(
+                file.updatedAt
               )
-            );
+          },
+
+          added: {
+            type: 'number',
+            get: file =>
+              appSortTimestamp(
+                file.addedAt
+              )
+          },
+
+          type: {
+            type: 'text',
+            get:
+              archiveFileTypeLabel
           }
+        },
 
-          if (
-            sort === 'type'
-          ) {
-            return (
-              archiveFileTypeLabel(
-                a
-              ).localeCompare(
-                archiveFileTypeLabel(
-                  b
-                )
-              )
-              || String(
-                a.name || ''
-              ).localeCompare(
-                String(
-                  b.name || ''
-                )
-              )
-            );
-          }
-
-          if (
-            sort === 'added'
-          ) {
-            return (
-              archiveDateValue(
-                b.addedAt
-              )
-              - archiveDateValue(
-                  a.addedAt
-                )
-            );
-          }
-
-          return (
-            archiveDateValue(
-              b.updatedAt
-            )
-            - archiveDateValue(
-                a.updatedAt
-              )
-          );
-        });
+        getFallback:
+          file => file.name
+      });
     }
 
     function archiveVisibleChildFolders() {
@@ -107402,18 +108004,87 @@
     }
 
     function archiveFilteredSources() {
-      const query = String(state.archiveSearch || '').trim().toLowerCase();
-      let sources = archiveProjectSources();
-      if (state.archiveSourceTypeFilter === 'favorites') sources = sources.filter(source => source.favorite);
-      else if (state.archiveSourceTypeFilter && state.archiveSourceTypeFilter !== 'all') sources = sources.filter(source => source.type === state.archiveSourceTypeFilter);
-      if (query) {
-        sources = sources.filter(source => [source.title, source.type, source.repositoryOwner, source.holder, source.location, source.reference, source.description]
-          .join(' ').toLowerCase().includes(query));
+      const query =
+        String(
+          state.archiveSearch || ''
+        )
+          .trim()
+          .toLowerCase();
+
+      let sources =
+        archiveProjectSources();
+
+      if (
+        state.archiveSourceTypeFilter
+          === 'favorites'
+      ) {
+        sources =
+          sources.filter(source =>
+            source.favorite
+          );
+      } else if (
+        state.archiveSourceTypeFilter
+        && state.archiveSourceTypeFilter
+          !== 'all'
+      ) {
+        sources =
+          sources.filter(source =>
+            source.type
+              === state.archiveSourceTypeFilter
+          );
       }
-      return sources.slice().sort((a, b) => {
-        if (state.archiveSort === 'name') return String(a.title || '').localeCompare(String(b.title || ''));
-        if (state.archiveSort === 'type') return String(a.type || '').localeCompare(String(b.type || ''));
-        return archiveDateValue(b.updatedAt) - archiveDateValue(a.updatedAt);
+
+      if (query) {
+        sources =
+          sources.filter(source =>
+            [
+              source.title,
+              source.type,
+              source.repositoryOwner,
+              source.holder,
+              source.location,
+              source.reference,
+              source.description
+            ]
+              .join(' ')
+              .toLowerCase()
+              .includes(query)
+          );
+      }
+
+      return appSortRecords(sources, {
+        field:
+          state.archiveSourceSort,
+
+        direction:
+          state.archiveSourceSortDirection,
+
+        extractors: {
+          name: {
+            type: 'text',
+            get: source =>
+              source.title
+          },
+
+          updated: {
+            type: 'number',
+            get: source =>
+              appSortTimestamp(
+                source.updatedAt
+              )
+          },
+
+          created: {
+            type: 'number',
+            get: source =>
+              appSortTimestamp(
+                source.createdAt
+              )
+          }
+        },
+
+        getFallback:
+          source => source.title
       });
     }
 
@@ -108505,60 +109176,51 @@
     function archiveSortFoldersForTable(
       folders
     ) {
-      const sort =
-        state.archiveSort
-        || 'updated';
+      return appSortRecords(folders, {
+        field:
+          state.archiveFileSort,
 
-      return folders
-        .slice()
-        .sort((a, b) => {
-          const nameCompare =
-            String(
-              a.name || ''
-            ).localeCompare(
-              String(
-                b.name || ''
-              )
-            );
+        direction:
+          state.archiveFileSortDirection,
 
-          if (
-            sort === 'updated'
-          ) {
-            return (
-              archiveDateValue(
-                b.updatedAt
-                || b.createdAt
-              )
-              - archiveDateValue(
-                  a.updatedAt
-                  || a.createdAt
-                )
-              || nameCompare
-            );
-          }
+        extractors: {
+          name: {
+            type: 'text',
+            get: folder =>
+              folder.name
+          },
 
-          if (
-            sort === 'added'
-          ) {
-            return (
-              archiveDateValue(
-                b.createdAt
+          updated: {
+            type: 'number',
+            get: folder =>
+              appSortTimestamp(
+                folder.updatedAt
+                || folder.createdAt
               )
-              - archiveDateValue(
-                  a.createdAt
-                )
-              || nameCompare
-            );
-          }
+          },
+
+          added: {
+            type: 'number',
+            get: folder =>
+              appSortTimestamp(
+                folder.createdAt
+              )
+          },
 
           /*
-            Every record in this group is a Folder.
-            Name is therefore the useful secondary
-            ordering for both Name and Type sorts.
+          * All these records have the same type.
+          * The fallback name determines their
+          * order within the Folder group.
           */
+          type: {
+            type: 'text',
+            get: () => 'Folder'
+          }
+        },
 
-          return nameCompare;
-        });
+        getFallback:
+          folder => folder.name
+      });
     }
 
     function renderArchiveTableGroupRow(
@@ -109404,86 +110066,6 @@
           : 'Search this folder';
     }
 
-    function archiveToolbarSortOptions() {
-      if (
-        archiveToolbarIsSources()
-      ) {
-        return [
-          {
-            value:
-              'updated',
-
-            label:
-              'Updated'
-          },
-          {
-            value:
-              'name',
-
-            label:
-              'Name'
-          },
-          {
-            value:
-              'type',
-
-            label:
-              'Type'
-          }
-        ];
-      }
-
-      return [
-        {
-          value:
-            'updated',
-
-          label:
-            'Modified'
-        },
-        {
-          value:
-            'added',
-
-          label:
-            'Date added'
-        },
-        {
-          value:
-            'name',
-
-          label:
-            'Name'
-        },
-        {
-          value:
-            'type',
-
-          label:
-            'Type'
-        }
-      ];
-    }
-
-    function archiveToolbarSortValue() {
-      const options =
-        archiveToolbarSortOptions();
-
-      const allowedValues =
-        new Set(
-          options.map(
-            option =>
-              option.value
-          )
-        );
-
-      return allowedValues.has(
-        state.archiveSort
-      )
-        ? state.archiveSort
-        : 'updated';
-    }
-
     function renderArchiveToolbar() {
       const sourcesView =
         archiveToolbarIsSources();
@@ -109592,24 +110174,24 @@
                   : ''
               }
             </button>
-
-            ${renderAppSortSelect({
-              id:
-                'archiveSort',
-
-              value:
-                archiveToolbarSortValue(),
-
+            ${renderAppSortControl({
+              id: 'archiveSort',
+              field:
+                sourcesView
+                  ? state.archiveSourceSort
+                  : state.archiveFileSort,
+              direction:
+                sourcesView
+                  ? state.archiveSourceSortDirection
+                  : state.archiveFileSortDirection,
               ariaLabel:
                 sourcesView
                   ? 'Sort sources'
                   : 'Sort files',
-
-              className:
-                'archive-sort-field',
-
               options:
-                archiveToolbarSortOptions()
+                sourcesView
+                  ? APP_SORT_OPTIONS.archiveSources
+                  : APP_SORT_OPTIONS.archiveFiles
             })}
           </div>
         </div>
@@ -118598,7 +119180,54 @@
           input.setSelectionRange(position, position);
         });
       });
-      root.querySelector('#archiveSort') ?.addEventListener('change', event => {state.archiveSort = event.currentTarget.value; renderArchiveMain();});
+      const sortingSources =
+        archiveToolbarIsSources();
+
+      bindAppSortControl(root, {
+        id: 'archiveSort',
+
+        options:
+          sortingSources
+            ? APP_SORT_OPTIONS
+                .archiveSources
+            : APP_SORT_OPTIONS
+                .archiveFiles,
+
+        getField: () =>
+          sortingSources
+            ? state.archiveSourceSort
+            : state.archiveFileSort,
+
+        getDirection: () =>
+          sortingSources
+            ? state
+                .archiveSourceSortDirection
+            : state
+                .archiveFileSortDirection,
+
+        onChange: ({
+          field,
+          direction
+        }) => {
+          if (sortingSources) {
+            state.archiveSourceSort =
+              field;
+
+            state
+              .archiveSourceSortDirection =
+              direction;
+          } else {
+            state.archiveFileSort =
+              field;
+
+            state
+              .archiveFileSortDirection =
+              direction;
+          }
+
+          renderArchiveMain();
+        }
+      });
       root.querySelector('#archiveFilterButton') ?.addEventListener('click', event => {openArchiveFilterPopover(event.currentTarget);});
       root.querySelectorAll('[data-archive-remove-filter]').forEach(button => {button.addEventListener('click', () => {removeArchiveToolbarFilter(button.dataset.archiveRemoveFilter);});});
       root
@@ -120127,56 +120756,6 @@
         : 0;
     }
 
-    function compareNotesByUpdatedAt(
-      first,
-      second
-    ) {
-      return (
-        noteTimestamp(
-          second,
-          'updatedAt'
-        )
-        - noteTimestamp(
-            first,
-            'updatedAt'
-          )
-        || String(
-          first?.title || ''
-        ).localeCompare(
-          String(
-            second?.title || ''
-          )
-        )
-        || String(
-          first?.id || ''
-        ).localeCompare(
-          String(
-            second?.id || ''
-          )
-        )
-      );
-    }
-
-    function compareNotesByCreatedAt(
-      first,
-      second
-    ) {
-      return (
-        noteTimestamp(
-          second,
-          'createdAt'
-        )
-        - noteTimestamp(
-            first,
-            'createdAt'
-          )
-        || compareNotesByUpdatedAt(
-          first,
-          second
-        )
-      );
-    }
-
     function getProjectNotes(
       projectId =
         currentProjectId(),
@@ -120197,7 +120776,15 @@
         )
         .slice()
         .sort(
-          compareNotesByUpdatedAt
+          (first, second) =>
+            noteTimestamp(
+              second,
+              'updatedAt'
+            )
+            - noteTimestamp(
+                first,
+                'updatedAt'
+              )
         );
     }
 
@@ -123068,45 +123655,13 @@
                     : ''
                 }
               </button>
-
-              ${renderAppSortSelect({
-                id:
-                  'notesSort',
-
-                value:
-                  state.notesSort,
-
-                ariaLabel:
-                  'Sort notes',
-
-                className:
-                  'notes-sort-field',
-
-                options: [
-                  {
-                    value:
-                      'updated',
-
-                    label:
-                      'Updated'
-                  },
-                  {
-                    value:
-                      'title',
-
-                    label:
-                      'Title'
-                  },
-                  {
-                    value:
-                      'created',
-
-                    label:
-                      'Created'
-                  }
-                ]
+              ${renderAppSortControl({
+                id: 'notesSort',
+                field: state.notesSort,
+                direction: state.notesSortDirection,
+                ariaLabel: 'Sort notes',
+                options: APP_SORT_OPTIONS.notes
               })}
-
               </div>
             </div>
 
@@ -135743,22 +136298,24 @@
             );
           }
         );
+      bindAppSortControl(main, {
+        id: 'notesSort',
+        options: APP_SORT_OPTIONS.notes,
+        getField: () => state.notesSort,
+        getDirection: () =>
+          state.notesSortDirection,
 
-      main
-        .querySelector(
-          '#notesSort'
-        )
-        ?.addEventListener(
-          'change',
-          event => {
-            state.notesSort =
-              event.currentTarget.value
-              || 'updated';
+        onChange: ({
+          field,
+          direction
+        }) => {
+          state.notesSort = field;
+          state.notesSortDirection =
+            direction;
 
-            renderNotes();
-          }
-        );
-
+          renderNotes();
+        }
+      });
       main
         .querySelectorAll(
           '[data-clear-notes-filter]'
@@ -136853,38 +137410,41 @@
               .includes(query)
           );
       }
+      list =
+        appSortRecords(list, {
+          field:
+            state.notesSort,
 
-      if (
-        state.notesSort === 'title'
-      ) {
-        list.sort(
-          (
-            first,
-            second
-          ) =>
-            String(
-              first.title || ''
-            ).localeCompare(
-              String(
-                second.title || ''
-              )
-            )
-            || compareNotesByUpdatedAt(
-              first,
-              second
-            )
-        );
-      } else if (
-        state.notesSort === 'created'
-      ) {
-        list.sort(
-          compareNotesByCreatedAt
-        );
-      } else {
-        list.sort(
-          compareNotesByUpdatedAt
-        );
-      }
+          direction:
+            state.notesSortDirection,
+
+          extractors: {
+            name: {
+              type: 'text',
+              get: note =>
+                note.title
+            },
+
+            updated: {
+              type: 'number',
+              get: note =>
+                appSortTimestamp(
+                  note.updatedAt
+                )
+            },
+
+            created: {
+              type: 'number',
+              get: note =>
+                appSortTimestamp(
+                  note.createdAt
+                )
+            }
+          },
+
+          getFallback:
+            note => note.title
+        });
 
       return list;
     }
@@ -141410,7 +141970,9 @@
               placePrimaryName(place),
               placeSecondaryName(place),
               placeCountry(place),
-              ...placeAlternativeNames(place)
+              ...placeAlternativeNames(
+                place
+              )
             ]
               .join(' ')
               .toLowerCase()
@@ -141418,38 +141980,44 @@
           );
       }
 
-      if (
-        state.placesSort === 'country'
-      ) {
-        list.sort((a, b) =>
-          placeCountry(a)
-            .localeCompare(
-              placeCountry(b)
-            )
-          || a.name.localeCompare(
-            b.name
-          )
-        );
-      } else if (
-        state.placesSort === 'updated'
-      ) {
-        list.sort((a, b) =>
-          Date.parse(
-            b.updatedAt || 0
-          )
-          - Date.parse(
-            a.updatedAt || 0
-          )
-        );
-      } else {
-        list.sort((a, b) =>
-          a.name.localeCompare(
-            b.name
-          )
-        );
-      }
+      return appSortRecords(list, {
+        field:
+          state.placesSort,
 
-      return list;
+        direction:
+          state.placesSortDirection,
+
+        extractors: {
+          name: {
+            type: 'text',
+
+            get: place =>
+              placePrimaryName(place)
+              || place.name
+          },
+
+          updated: {
+            type: 'number',
+
+            get: place =>
+              appSortTimestamp(
+                place.updatedAt
+              )
+          },
+
+          created: {
+            type: 'number',
+
+            get: place =>
+              appSortTimestamp(
+                place.createdAt
+              )
+          }
+        },
+
+        getFallback:
+          place => place.name
+      });
     }
 
     function placesPageTitle() {
@@ -141738,61 +142306,24 @@
                         : ''
                     }
                   </button>
-
                   ${
                     isPlacesListView
-                      ? `
-                        <span
-                          class="
-                            app-sort-field
-                            places-sort-field
-                          ">
+                      ? renderAppSortControl({
+                          id:
+                            'placesSort',
 
-                          ${renderAppSortSelect({
-                            id:
-                              'placesSort',
+                          field:
+                            state.placesSort,
 
-                            value:
-                              state.placesSort,
+                          direction:
+                            state.placesSortDirection,
 
-                            ariaLabel:
-                              'Sort places',
+                          ariaLabel:
+                            'Sort places',
 
-                            className:
-                              'places-sort-field',
-
-                            options: [
-                              {
-                                value:
-                                  'name',
-
-                                label:
-                                  'Name'
-                              },
-                              {
-                                value:
-                                  'country',
-
-                                label:
-                                  'Country'
-                              },
-                              {
-                                value:
-                                  'updated',
-
-                                label:
-                                  'Recently updated'
-                              }
-                            ]
-                          })}
-
-                          <span
-                            class="app-sort-chevron"
-                            aria-hidden="true">
-                            ${icon.chevron}
-                          </span>
-                        </span>
-                      `
+                          options:
+                            APP_SORT_OPTIONS.places
+                        })
                       : ''
                   }
                   ${!isPlacesListView ? `
@@ -144390,7 +144921,24 @@
       );
       main.querySelector('#placesAddPlace')?.addEventListener('click', () => openPlaceModal());
       main.querySelector('#placesFilterButton')?.addEventListener('click', event => {openPlacesFilterPopover(event.currentTarget);});
-      main.querySelector('#placesSort')?.addEventListener('change', event => { state.placesSort = event.target.value; renderPlacesMain(); });
+      bindAppSortControl(main, {
+        id: 'placesSort',
+        options: APP_SORT_OPTIONS.places,
+        getField: () => state.placesSort,
+        getDirection: () =>
+          state.placesSortDirection,
+
+        onChange: ({
+          field,
+          direction
+        }) => {
+          state.placesSort = field;
+          state.placesSortDirection =
+            direction;
+
+          renderPlacesMain();
+        }
+      });
       main
         .querySelector(
           '#placesClearFilters'
@@ -148616,7 +149164,6 @@
     }
 
     function filteredProjects() {
-      const originalOrder = new Map(sampleData.projects.map((project, index) => [project.id, index]));
       const peopleCounts =
         new Map(
           sampleData.projects.map(
@@ -148628,17 +149175,69 @@
             ]
           )
         );
-      let list = [...sampleData.projects];
-      const q = state.search.trim().toLowerCase();
-      if (q) list = list.filter(project => `${project.name} ${project.status} ${project.desc}`.toLowerCase().includes(q));
-      list.sort((a, b) => {
-        let comparison = 0;
-        if (state.sort === 'modified') comparison = projectModifiedTimestamp(b) - projectModifiedTimestamp(a);
-        if (state.sort === 'name') comparison = a.name.localeCompare(b.name);
-        if (state.sort === 'people') {comparison = (peopleCounts.get(b.id) || 0) - (peopleCounts.get(a.id) || 0);}
-        return comparison || a.name.localeCompare(b.name) || originalOrder.get(a.id) - originalOrder.get(b.id);
+
+      let list = [
+        ...sampleData.projects
+      ];
+
+      const query =
+        state.search
+          .trim()
+          .toLowerCase();
+
+      if (query) {
+        list =
+          list.filter(project =>
+            `${
+              project.name
+            } ${
+              project.status
+            } ${
+              project.desc
+            }`
+              .toLowerCase()
+              .includes(query)
+          );
+      }
+
+      return appSortRecords(list, {
+        field:
+          state.sort,
+
+        direction:
+          state.sortDirection,
+
+        extractors: {
+          name: {
+            type: 'text',
+            get: project =>
+              project.name
+          },
+
+          updated: {
+            type: 'number',
+            get:
+              projectModifiedTimestamp
+          },
+
+          created: {
+            type: 'number',
+            get:
+              projectCreatedTimestamp
+          },
+
+          people: {
+            type: 'number',
+            get: project =>
+              peopleCounts.get(
+                project.id
+              ) ?? 0
+          }
+        },
+
+        getFallback:
+          project => project.name
       });
-      return list;
     }
 
     function bindStartupImportTile() {
@@ -148747,7 +149346,22 @@
 
     function bindProjectControls() {
       bindSearchInput(main, '#projectSearch', 'search', renderStartup);
-      main.querySelector('#sortProjects')?.addEventListener('change', e => { state.sort = e.target.value; renderStartup(); });
+      bindAppSortControl(main, {
+        id: 'sortProjects',
+        options: APP_SORT_OPTIONS.projects,
+        getField: () => state.sort,
+        getDirection: () =>
+          state.sortDirection,
+
+        onChange: ({
+          field,
+          direction
+        }) => {
+          state.sort = field;
+          state.sortDirection = direction;
+          renderStartup();
+        }
+      });
       main.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => { state.viewMode = button.dataset.view; renderStartup(); }));
       main.querySelectorAll('[data-project-id]').forEach(card => {
         card.addEventListener('click', event => {
