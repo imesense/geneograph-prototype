@@ -8706,6 +8706,583 @@
       letter-spacing: .01em;
     }
 
+    /* ---------- Shared module filters ---------- */
+
+    .shared-filter-panel {
+      position: fixed;
+      z-index: 95;
+      width: min(460px, calc(100vw - 24px));
+      max-height: min(680px, calc(100vh - 24px));
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      background: var(--surface-card);
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      overflow: visible;
+    }
+
+    .shared-filter-panel.people-filter-popover {
+      width: min(560px, calc(100vw - 24px));
+      overflow: visible;
+    }
+
+    .shared-filter-panel-header {
+      min-width: 0;
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    .shared-filter-panel-header h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .shared-filter-panel-header p {
+      margin: 4px 0 0;
+      color: var(--text-tertiary);
+      font-size: 13px;
+    }
+
+    .shared-filter-panel-close {
+      width: 32px;
+      height: 32px;
+      flex: 0 0 32px;
+      border: 0;
+      border-radius: var(--radius-xs);
+      background: transparent;
+      color: var(--text-tertiary);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .shared-filter-panel-close:hover {
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
+    }
+
+    .shared-filter-panel-close:focus-visible {
+      outline: 2px solid var(--brand-green-400);
+      outline-offset: 1px;
+    }
+
+    .shared-filter-panel-close svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .shared-filter-panel-body {
+      min-height: 0;
+      padding: var(--space-4);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .shared-filter-fields {
+      display: grid;
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+      gap: var(--space-4) var(--space-3);
+    }
+
+    .shared-filter-field {
+      min-width: 0;
+      display: grid;
+      align-content: start;
+      gap: 7px;
+    }
+
+    .shared-filter-field--full {
+      grid-column: 1 / -1;
+    }
+
+    .shared-filter-field > label {
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .02em;
+    }
+
+    .shared-filter-field select,
+    .shared-filter-field input {
+      font: inherit;
+    }
+
+    .shared-filter-field select {
+      width: 100%;
+      height: 40px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background-color: var(--surface-input);
+      background-image: var(--select-chevron);
+      background-position:
+        calc(100% - 17px)
+        center;
+      background-size: 12px 7px;
+      background-repeat: no-repeat;
+      color: var(--text-primary);
+      padding: 0 36px 0 11px;
+      outline: 0;
+      appearance: none;
+      font-weight: 700;
+    }
+
+    .shared-filter-field select:hover {
+      border-color: var(--border-strong);
+      background-color: var(--surface-card-hover);
+    }
+
+    .shared-filter-field select:focus-visible {
+      border-color: rgba(98, 217, 154, .55);
+      box-shadow:
+        0 0 0 3px rgba(98, 217, 154, .1);
+    }
+
+    .shared-filter-combobox {
+      position: relative;
+      min-width: 0;
+    }
+
+    .shared-filter-selected {
+      margin-bottom: 7px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .shared-filter-selected[hidden] {
+      display: none;
+    }
+
+    .shared-filter-token {
+      max-width: 100%;
+      min-height: 28px;
+      padding: 3px 4px 3px 9px;
+      border: 1px solid rgba(98, 217, 154, .24);
+      border-radius: var(--radius-xs);
+      background: rgba(47, 174, 116, .08);
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .shared-filter-token-label {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .shared-filter-token-remove {
+      width: 21px;
+      height: 21px;
+      flex: 0 0 21px;
+      padding: 0;
+      border: 0;
+      border-radius: 5px;
+      background: transparent;
+      color: var(--text-tertiary);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .shared-filter-token-remove:hover {
+      background: rgba(255, 255, 255, .07);
+      color: var(--text-primary);
+    }
+
+    .shared-filter-token-remove:focus-visible {
+      outline: 2px solid var(--brand-green-400);
+    }
+
+    .shared-filter-token-remove svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    .shared-filter-combobox-input {
+      height: 42px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-input);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-left: 11px;
+    }
+
+    .shared-filter-combobox-input:hover {
+      border-color: var(--border-strong);
+      background: var(--surface-card-hover);
+    }
+
+    .shared-filter-combobox-input:focus-within {
+      border-color: rgba(98, 217, 154, .55);
+      box-shadow:
+        0 0 0 3px rgba(98, 217, 154, .1);
+    }
+
+    .shared-filter-combobox-input > svg {
+      width: 17px;
+      height: 17px;
+      flex: 0 0 17px;
+      color: var(--text-tertiary);
+    }
+
+    .shared-filter-combobox-input input {
+      width: 100%;
+      min-width: 0;
+      height: 100%;
+      padding: 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    .shared-filter-combobox-input input::placeholder {
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+
+    .shared-filter-combobox-toggle {
+      width: 36px;
+      height: 100%;
+      flex: 0 0 36px;
+      padding: 0;
+      border: 0;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      background: transparent;
+      color: var(--text-tertiary);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .shared-filter-combobox-toggle:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, .035);
+    }
+
+    .shared-filter-combobox-toggle svg {
+      width: 15px;
+      height: 15px;
+      transform: rotate(90deg);
+      transition: transform var(--ease);
+    }
+
+    .shared-filter-combobox.is-open
+    .shared-filter-combobox-toggle svg {
+      transform: rotate(-90deg);
+    }
+
+    .shared-filter-listbox {
+      position: fixed;
+      z-index: 110;
+      top: auto;
+      right: auto;
+      bottom: auto;
+      left: auto;
+      width: auto;
+      max-height: 320px;
+      padding: 5px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: var(--surface-card);
+      box-shadow: var(--shadow-soft);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+    }
+
+    .shared-filter-listbox.is-above {
+      transform-origin: bottom;
+    }
+
+    .shared-filter-listbox[hidden] {
+      display: none;
+    }
+
+    .shared-filter-option {
+      width: 100%;
+      min-height: 38px;
+      padding: 7px 9px;
+      border: 0;
+      border-radius: var(--radius-xs);
+      background: transparent;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      text-align: left;
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .shared-filter-option:hover,
+    .shared-filter-option.is-active {
+      background: var(--surface-card-hover);
+      color: var(--text-primary);
+    }
+
+    .shared-filter-option[aria-selected="true"] {
+      background: rgba(47, 174, 116, .09);
+      color: var(--text-primary);
+    }
+
+    .shared-filter-option-check {
+      width: 17px;
+      height: 17px;
+      flex: 0 0 17px;
+      color: transparent;
+      display: grid;
+      place-items: center;
+    }
+
+    .shared-filter-option[aria-selected="true"]
+    .shared-filter-option-check {
+      color: var(--brand-green-300);
+    }
+
+    .shared-filter-option-check svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .shared-filter-option-label {
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .shared-filter-option-count {
+      flex: 0 0 auto;
+      color: var(--text-tertiary);
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .shared-filter-empty {
+      padding: 14px 10px;
+      color: var(--text-tertiary);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .shared-filter-year-range {
+      min-width:
+        0;
+
+      display:
+        grid;
+
+      gap:
+        7px;
+    }
+
+    .shared-filter-year-controls {
+      min-width:
+        0;
+
+      display:
+        grid;
+
+      grid-template-columns:
+        minmax(0, 1fr)
+        minmax(86px, .72fr);
+
+      align-items:
+        center;
+
+      gap:
+        var(--space-2);
+    }
+
+    .shared-filter-year-controls.is-empty {
+      grid-template-columns:
+        minmax(0, 1fr);
+    }
+
+    .shared-filter-year-controls.is-between {
+      grid-template-columns:
+        minmax(0, 1fr)
+        minmax(72px, .68fr)
+        minmax(72px, .68fr);
+    }
+
+    .shared-filter-year-input-shell {
+      min-width:
+        0;
+
+      display:
+        block;
+    }
+
+    .shared-filter-year-input-shell[hidden] {
+      display:
+        none;
+    }
+
+    .shared-filter-year-input {
+      box-sizing:
+        border-box;
+
+      width:
+        100%;
+
+      min-width:
+        0;
+
+      height:
+        40px;
+
+      padding:
+        0 11px;
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      outline:
+        0;
+
+      background:
+        var(--surface-input);
+
+      color:
+        var(--text-primary);
+
+      font-weight:
+        700;
+    }
+
+    .shared-filter-year-input::placeholder {
+      color:
+        var(--text-tertiary);
+
+      font-weight:
+        600;
+    }
+
+    .shared-filter-year-input:hover {
+      border-color:
+        var(--border-strong);
+
+      background:
+        var(--surface-card-hover);
+    }
+
+    .shared-filter-year-input:focus-visible {
+      border-color:
+        rgba(98, 217, 154, .55);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(98, 217, 154, .1);
+    }
+
+    .shared-filter-year-input[aria-invalid="true"] {
+      border-color:
+        var(--red);
+    }
+
+    .shared-filter-field-error {
+      margin: 0;
+      color: var(--red);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .shared-filter-field-error[hidden] {
+      display: none;
+    }
+
+    .shared-filter-panel-footer {
+      padding: var(--space-3) var(--space-4);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    .shared-filter-panel-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-2);
+    }
+
+    .shared-filter-panel-footer .button {
+      min-height: 40px;
+    }
+
+    .shared-filter-visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      border: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 640px) {
+      .shared-filter-panel.is-mobile {
+        top: 12px !important;
+        right: 12px !important;
+        bottom: 12px !important;
+        left: 12px !important;
+        width: auto;
+        max-height: none;
+      }
+
+      .shared-filter-year-controls {
+        gap:
+          6px;
+      }
+      .shared-filter-panel.is-mobile
+      .shared-filter-panel-body {
+        flex: 1 1 auto;
+      }
+
+      .shared-filter-fields {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .shared-filter-field--full {
+        grid-column: auto;
+      }
+
+      .shared-filter-panel-footer {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .shared-filter-panel-actions,
+      .shared-filter-panel-actions .button {
+        width: 100%;
+      }
+    }
+
     .people-saved-view-modal {
       width: min(620px, calc(100vw - 32px));
     }
@@ -32184,6 +32761,31 @@
       'Choose which fields are visible in the people table.': 'Выберите поля, которые будут отображаться в таблице людей.',
 
       'Filter people': 'Фильтровать людей',
+      'Choose one or more values.':
+        'Выберите одно или несколько значений.',
+
+      'Search surnames':
+        'Поиск фамилий',
+
+      'Search birth places':
+        'Поиск мест рождения',
+      'Birth year':
+        'Год рождения',
+
+      'Enter a valid year.':
+        'Введите корректный год.',
+
+      'Unknown birth place':
+        'Неизвестное место рождения',
+
+      'No matching options.':
+        'Подходящих вариантов нет.',
+
+      'Open options':
+        'Открыть варианты',
+
+      'Close options':
+        'Закрыть варианты',
       'Refine the directory by surname, birth place, living status, and review needs.': 'Уточните список по фамилии, месту рождения, жизненному статусу и необходимости проверки.',
       'People filters cleared.': 'Фильтры людей очищены.',
       'Create a reusable filter for the People directory.': 'Создайте многоразовый фильтр для списка людей.',
@@ -44204,7 +44806,14 @@
         surname: person.names.last,
         living: person.livingStatus,
         birth: formatGenealogyDateLabel(person.birth),
+        birthYear:
+          timelineYearFromValue(
+            person.birth
+          ),
         birthPlace: getPlaceEventDisplay(person.birth),
+        birthPlaceId:
+          person.birth?.placeId
+          || '',
         death: formatGenealogyDateLabel(person.death),
         deathPlace: getPlaceEventDisplay(person.death),
         updated: person.meta.updated,
@@ -46096,7 +46705,17 @@
       peoplePaginationQueryKey: '',
       peopleSavedView: 'All people',
       peopleSavedViewId: '',
-      peopleFilters: { surname: '', birthPlace: '', living: 'Any', sourceStatus: '', reviewStatus: '' },
+      peopleFilters: {
+        surnames: [],
+        birthPlaceIds: [],
+        birthYear: {
+          mode: '',
+          from: '',
+          to: ''
+        },
+        living: 'Any',
+        reviewStatus: ''
+      },
       peopleVisibleColumns: { living: true, birth: true, birthPlace: true, death: true, deathPlace: true, updated: true },
       peoplePreviewCollapsed: false,
       peopleProfileEditing: false,
@@ -62796,121 +63415,2765 @@
     function profileDetailDateLabel(input, fallback = '-') {
       return formatGenealogyDateLabel(input) || fallback;
     }
-    const defaultPeopleFilters = Object.freeze({
-      surname: '',
-      birthPlace: '',
-      living: 'Any',
-      reviewStatus: ''
-    });
-    const peopleFilterDefinitions = Object.freeze([
-      Object.freeze({
-        key: 'surname',
-        label: 'Surname',
-        options: Object.freeze([
-          '',
-          'Whiskerfield',
-          'Purrington',
-          'Milkpaw',
-          'Softtail'
-        ])
-      }),
-      Object.freeze({
-        key: 'birthPlace',
-        label: 'Birth place',
-        options: Object.freeze([
-          '',
-          'Pawford',
-          'Meowbridge',
-          'Fishmarket Row',
-          'Old Cattery',
-          'Unknown'
-        ])
-      }),
-      Object.freeze({
-        key: 'living',
-        label: 'Living status',
-        options: Object.freeze([
-          'Any',
-          'Living',
-          'Deceased',
-          'Unknown'
-        ])
-      }),
-      Object.freeze({
-        key: 'reviewStatus',
-        label: 'Review status',
-        options: Object.freeze([
-          '',
-          'No issues',
-          'Possible duplicate',
-          'Missing facts',
-          'Missing source',
-          'Historic records'
-        ])
-      })
-    ]);
 
-    function peopleFilterFieldId(prefix, key) {
-      return `${prefix}-${key}`;
+    const SHARED_FILTER_UNKNOWN_VALUE =
+      '__unknown__';
+
+    function normalizeSharedFilterSearch(
+      value
+    ) {
+      return String(value || '')
+        .normalize('NFKD')
+        .replace(
+          /\p{Diacritic}/gu,
+          ''
+        )
+        .trim()
+        .toLocaleLowerCase(
+          state.language === 'ru'
+            ? 'ru'
+            : 'en'
+        );
+    }
+
+    function normalizeSharedFilterYearRange(
+      value
+    ) {
+      const source =
+        value
+        && typeof value === 'object'
+          ? value
+          : {};
+
+      const requestedMode =
+        String(
+          source.mode || ''
+        ).toLowerCase();
+
+      const mode =
+        [
+          'before',
+          'after',
+          'between'
+        ].includes(requestedMode)
+          ? requestedMode
+          : '';
+
+      return {
+        mode,
+
+        from:
+          String(
+            source.from ?? ''
+          ).trim(),
+
+        to:
+          String(
+            source.to ?? ''
+          ).trim()
+      };
+    }
+
+    function sharedFilterYearNumber(
+      value
+    ) {
+      const text =
+        String(value ?? '')
+          .trim();
+
+      if (
+        !/^\d{1,4}$/.test(text)
+      ) {
+        return null;
+      }
+
+      const year =
+        Number(text);
+
+      return (
+        Number.isInteger(year)
+        && year >= 1
+        && year <= 9999
+      )
+        ? year
+        : null;
+    }
+
+    function sharedFilterYearRangeError(
+      value
+    ) {
+      const range =
+        normalizeSharedFilterYearRange(
+          value
+        );
+
+      if (!range.mode) {
+        return '';
+      }
+
+      const fromYear =
+        sharedFilterYearNumber(
+          range.from
+        );
+
+      if (fromYear == null) {
+        return translateText(
+          range.mode === 'between'
+            ? 'Enter a valid starting year.'
+            : 'Enter a valid year.'
+        );
+      }
+
+      if (
+        range.mode !== 'between'
+      ) {
+        return '';
+      }
+
+      const toYear =
+        sharedFilterYearNumber(
+          range.to
+        );
+
+      if (toYear == null) {
+        return translateText(
+          'Enter a valid ending year.'
+        );
+      }
+
+      if (fromYear > toYear) {
+        return translateText(
+          'The starting year must not be later than the ending year.'
+        );
+      }
+
+      return '';
+    }
+
+    function sharedFilterYearRangeLabel(
+      value
+    ) {
+      const range =
+        normalizeSharedFilterYearRange(
+          value
+        );
+
+      if (
+        range.mode === 'before'
+      ) {
+        return `${
+          translateText('Before')
+        } ${range.from}`;
+      }
+
+      if (
+        range.mode === 'after'
+      ) {
+        return `${
+          translateText('After')
+        } ${range.from}`;
+      }
+
+      if (
+        range.mode === 'between'
+      ) {
+        return `${
+          range.from
+        }–${
+          range.to
+        }`;
+      }
+
+      return '';
+    }
+
+    function sharedFilterYearMatches(
+      yearValue,
+      rangeValue
+    ) {
+      const range =
+        normalizeSharedFilterYearRange(
+          rangeValue
+        );
+
+      if (
+        !range.mode
+        || sharedFilterYearRangeError(
+          range
+        )
+      ) {
+        return true;
+      }
+
+      const year =
+        sharedFilterYearNumber(
+          yearValue
+        );
+
+      if (year == null) {
+        return false;
+      }
+
+      const fromYear =
+        sharedFilterYearNumber(
+          range.from
+        );
+
+      if (
+        range.mode === 'before'
+      ) {
+        return year < fromYear;
+      }
+
+      if (
+        range.mode === 'after'
+      ) {
+        return year > fromYear;
+      }
+
+      const toYear =
+        sharedFilterYearNumber(
+          range.to
+        );
+
+      return (
+        year >= fromYear
+        && year <= toYear
+      );
+    }
+
+    function cloneSharedFilterValues(
+      schema,
+      source = {}
+    ) {
+      const result = {};
+
+      schema.forEach(definition => {
+        const fallback =
+          definition.control
+            === 'year-range'
+            ? definition.defaultValue
+              || {}
+            : definition.multiple
+              ? []
+              : definition.defaultValue
+                ?? '';
+
+        const sourceValue =
+          Object.prototype
+            .hasOwnProperty.call(
+              source || {},
+              definition.key
+            )
+            ? source[
+                definition.key
+              ]
+            : fallback;
+
+        if (
+          definition.control
+            === 'year-range'
+        ) {
+          result[
+            definition.key
+          ] =
+            normalizeSharedFilterYearRange(
+              sourceValue
+            );
+
+          return;
+        }
+
+        result[
+          definition.key
+        ] =
+          definition.multiple
+            ? [
+                ...new Set(
+                  (
+                    Array.isArray(sourceValue)
+                      ? sourceValue
+                      : sourceValue
+                        ? [sourceValue]
+                        : []
+                  )
+                    .map(value =>
+                      String(value)
+                    )
+                    .filter(Boolean)
+                )
+              ]
+            : sourceValue
+              ?? fallback;
+      });
+
+      return result;
+    }
+
+    function sharedFilterOptions(
+      definition
+    ) {
+      const source =
+        typeof definition.getOptions
+          === 'function'
+          ? definition.getOptions()
+          : definition.options
+            || [];
+
+      return source.map(option => {
+        if (
+          typeof option === 'string'
+        ) {
+          return {
+            value:
+              option,
+
+            label:
+              option
+          };
+        }
+
+        return {
+          value:
+            String(
+              option?.value
+              ?? ''
+            ),
+
+          label:
+            String(
+              option?.label
+              ?? option?.value
+              ?? ''
+            ),
+
+          keywords:
+            Array.isArray(
+              option?.keywords
+            )
+              ? option.keywords
+              : [],
+
+          count:
+            Number.isFinite(
+              Number(option?.count)
+            )
+              ? Number(option.count)
+              : null
+        };
+      });
+    }
+
+    function sharedFilterDefinitionByKey(
+      schema,
+      key
+    ) {
+      return schema.find(
+        definition =>
+          definition.key === key
+      ) || null;
+    }
+
+    function sharedFilterValueIsActive(
+      definition,
+      value
+    ) {
+      if (!definition) {
+        return false;
+      }
+
+      if (
+        definition.control
+          === 'year-range'
+      ) {
+        const range =
+          normalizeSharedFilterYearRange(
+            value
+          );
+
+        return Boolean(
+          range.mode
+          && !sharedFilterYearRangeError(
+            range
+          )
+        );
+      }
+
+      if (definition.multiple) {
+        return (
+          Array.isArray(value)
+          && value.length > 0
+        );
+      }
+
+      if (
+        definition.control === 'boolean'
+      ) {
+        return Boolean(value);
+      }
+
+      return (
+        String(value ?? '')
+        !== String(
+          definition.defaultValue
+          ?? ''
+        )
+      );
+    }
+
+    function sharedFilterOptionLabel(
+      definition,
+      value
+    ) {
+      const option =
+        sharedFilterOptions(
+          definition
+        ).find(item =>
+          item.value === String(value)
+        );
+
+      return translateText(
+        option?.label
+        || String(value || '')
+      );
+    }
+
+    function sharedFilterDisplayValue(
+      definition,
+      value
+    ) {
+      if (
+        definition?.control
+          === 'year-range'
+      ) {
+        return sharedFilterYearRangeLabel(
+          value
+        );
+      }
+      if (
+        definition?.multiple
+      ) {
+        const values =
+          Array.isArray(value)
+            ? value
+            : [];
+
+        if (!values.length) {
+          return '';
+        }
+
+        const labels =
+          values.map(item =>
+            sharedFilterOptionLabel(
+              definition,
+              item
+            )
+          );
+
+        if (labels.length === 1) {
+          return labels[0];
+        }
+
+        return `${
+          labels[0]
+        } +${
+          labels.length - 1
+        }`;
+      }
+
+      return sharedFilterOptionLabel(
+        definition,
+        value
+      );
+    }
+
+    function sharedFilterOptionStatus(
+      count
+    ) {
+      if (
+        state.language === 'ru'
+      ) {
+        const rule =
+          new Intl.PluralRules('ru')
+            .select(count);
+
+        const word =
+          rule === 'one'
+            ? 'вариант'
+            : rule === 'few'
+              ? 'варианта'
+              : 'вариантов';
+
+        return `${count} ${word}`;
+      }
+
+      return `${count} ${
+        count === 1
+          ? 'option'
+          : 'options'
+      } available`;
+    }
+
+    function sharedFilterRemoveValueLabel(
+      label
+    ) {
+      return state.language === 'ru'
+        ? `Удалить: ${label}`
+        : `Remove ${label}`;
+    }
+
+    function sharedFilterSafeId(
+      value
+    ) {
+      return String(value || '')
+        .replace(
+          /[^a-z0-9_-]+/gi,
+          '-'
+        );
+    }
+
+    function renderSharedFilterFields({
+      schema,
+      values,
+      prefix
+    }) {
+      const normalized =
+        cloneSharedFilterValues(
+          schema,
+          values
+        );
+
+      const fields =
+        schema.map(definition => {
+          const fieldId =
+            `${prefix}-${
+              sharedFilterSafeId(
+                definition.key
+              )
+            }`;
+
+          const fieldClass =
+            definition.layout === 'full'
+              ? 'shared-filter-field shared-filter-field--full'
+              : 'shared-filter-field';
+
+          if (
+            definition.control === 'combobox'
+          ) {
+            const listboxId =
+              `${fieldId}-listbox`;
+
+            return `
+              <div
+                class="${fieldClass}">
+
+                <label
+                  for="${escapeHtml(fieldId)}">
+                  ${escapeHtml(
+                    translateText(
+                      definition.label
+                    )
+                  )}
+                </label>
+
+                <div
+                  class="shared-filter-combobox"
+                  data-shared-filter-combobox="${
+                    escapeHtml(
+                      definition.key
+                    )
+                  }">
+
+                  <div
+                    class="shared-filter-selected"
+                    data-shared-filter-selected
+                    hidden>
+                  </div>
+
+                  <div
+                    class="
+                      shared-filter-combobox-input
+                    ">
+
+                    ${icon.search}
+
+                    <input
+                      id="${escapeHtml(fieldId)}"
+                      type="text"
+                      role="combobox"
+                      aria-autocomplete="list"
+                      aria-expanded="false"
+                      aria-controls="${
+                        escapeHtml(
+                          listboxId
+                        )
+                      }"
+                      autocomplete="off"
+                      placeholder="${
+                        escapeHtml(
+                          translateText(
+                            definition.placeholder
+                            || 'Search'
+                          )
+                        )
+                      }"
+                      data-shared-filter-input>
+
+                    <button
+                      class="
+                        shared-filter-combobox-toggle
+                      "
+                      type="button"
+                      aria-label="${
+                        escapeHtml(
+                          translateText(
+                            'Open options'
+                          )
+                        )
+                      }"
+                      data-shared-filter-toggle>
+
+                      ${icon.chevron}
+                    </button>
+                  </div>
+
+                  <div
+                    class="shared-filter-listbox"
+                    id="${escapeHtml(listboxId)}"
+                    role="listbox"
+                    ${
+                      definition.multiple
+                        ? 'aria-multiselectable="true"'
+                        : ''
+                    }
+                    data-shared-filter-listbox
+                    hidden>
+                  </div>
+
+                  <span
+                    class="
+                      shared-filter-visually-hidden
+                    "
+                    aria-live="polite"
+                    data-shared-filter-status>
+                  </span>
+                </div>
+              </div>
+            `;
+          }
+          if (
+            definition.control
+              === 'year-range'
+          ) {
+            const range =
+              normalizeSharedFilterYearRange(
+                normalized[
+                  definition.key
+                ]
+              );
+
+            const isBetween =
+              range.mode === 'between';
+
+            const error =
+              sharedFilterYearRangeError(
+                range
+              );
+
+            const errorId =
+              `${fieldId}-error`;
+
+            return `
+              <div
+                class="
+                  ${fieldClass}
+                  shared-filter-year-field
+                ">
+                <label id="${escapeHtml(fieldId)}-label">
+                  ${escapeHtml(
+                    translateText(
+                      definition.label
+                    )
+                  )}
+                </label>
+
+                <div
+                  class="shared-filter-year-range"
+                  data-shared-filter-year-range="${
+                    escapeHtml(
+                      definition.key
+                    )
+                  }">
+
+                  <div
+                    class="
+                      shared-filter-year-controls
+                      ${range.mode ? '' : 'is-empty'}
+                      ${isBetween ? 'is-between' : ''}
+                    "
+                    data-shared-filter-year-controls>
+
+                    <select
+                      aria-labelledby="${escapeHtml(fieldId)}-label"
+                      data-shared-filter-year-mode>
+
+                      <option
+                        value=""
+                        ${range.mode ? '' : 'selected'}>
+                        ${escapeHtml(
+                          translateText(
+                            'Any year'
+                          )
+                        )}
+                      </option>
+
+                      <option
+                        value="before"
+                        ${
+                          range.mode === 'before'
+                            ? 'selected'
+                            : ''
+                        }>
+                        ${escapeHtml(
+                          translateText('Before')
+                        )}
+                      </option>
+
+                      <option
+                        value="after"
+                        ${
+                          range.mode === 'after'
+                            ? 'selected'
+                            : ''
+                        }>
+                        ${escapeHtml(
+                          translateText('After')
+                        )}
+                      </option>
+
+                      <option
+                        value="between"
+                        ${
+                          isBetween
+                            ? 'selected'
+                            : ''
+                        }>
+                        ${escapeHtml(
+                          translateText('Between')
+                        )}
+                      </option>
+                    </select>
+
+                    <label
+                      class="shared-filter-year-input-shell"
+                      data-shared-filter-year-from-shell
+                      ${range.mode ? '' : 'hidden'}>
+
+                      <span
+                        class="shared-filter-visually-hidden"
+                        data-shared-filter-year-from-label>
+
+                        ${escapeHtml(
+                          translateText(
+                            isBetween
+                              ? 'Year from'
+                              : 'Year'
+                          )
+                        )}
+                      </span>
+
+                      <input
+                        class="shared-filter-year-input"
+                        type="text"
+                        inputmode="numeric"
+                        maxlength="4"
+                        autocomplete="off"
+                        placeholder="${
+                          escapeHtml(
+                            translateText(
+                              isBetween
+                                ? 'From'
+                                : 'Year'
+                            )
+                          )
+                        }"
+                        value="${escapeHtml(range.from)}"
+                        aria-describedby="${escapeHtml(errorId)}"
+                        data-shared-filter-year-from>
+                    </label>
+
+                    <label
+                      class="shared-filter-year-input-shell"
+                      data-shared-filter-year-to-shell
+                      ${isBetween ? '' : 'hidden'}>
+
+                      <span
+                        class="shared-filter-visually-hidden">
+
+                        ${escapeHtml(
+                          translateText(
+                            'Year to'
+                          )
+                        )}
+                      </span>
+
+                      <input
+                        class="shared-filter-year-input"
+                        type="text"
+                        inputmode="numeric"
+                        maxlength="4"
+                        autocomplete="off"
+                        placeholder="${
+                          escapeHtml(
+                            translateText('To')
+                          )
+                        }"
+                        value="${escapeHtml(range.to)}"
+                        aria-describedby="${escapeHtml(errorId)}"
+                        data-shared-filter-year-to>
+                    </label>
+                  </div>
+
+                  <p
+                    class="shared-filter-field-error"
+                    id="${escapeHtml(errorId)}"
+                    role="alert"
+                    data-shared-filter-year-error
+                    ${error ? '' : 'hidden'}>
+                    ${escapeHtml(error)}
+                  </p>
+                </div>
+              </div>
+            `;
+          }
+          if (
+            definition.control === 'boolean'
+          ) {
+            return `
+              <label class="${fieldClass}">
+                <span>
+                  ${escapeHtml(
+                    translateText(
+                      definition.label
+                    )
+                  )}
+                </span>
+
+                <span>
+                  <input
+                    type="checkbox"
+                    data-shared-filter-boolean="${
+                      escapeHtml(
+                        definition.key
+                      )
+                    }"
+                    ${
+                      normalized[
+                        definition.key
+                      ]
+                        ? 'checked'
+                        : ''
+                    }>
+
+                  ${escapeHtml(
+                    translateText(
+                      definition.checkboxLabel
+                      || definition.label
+                    )
+                  )}
+                </span>
+              </label>
+            `;
+          }
+
+          const options =
+            sharedFilterOptions(
+              definition
+            );
+
+          return `
+            <div class="${fieldClass}">
+              <label
+                for="${escapeHtml(fieldId)}">
+                ${escapeHtml(
+                  translateText(
+                    definition.label
+                  )
+                )}
+              </label>
+
+              <select
+                id="${escapeHtml(fieldId)}"
+                data-shared-filter-select="${
+                  escapeHtml(
+                    definition.key
+                  )
+                }">
+
+                ${options.map(option => `
+                  <option
+                    value="${
+                      escapeHtml(
+                        option.value
+                      )
+                    }"
+                    ${
+                      String(
+                        normalized[
+                          definition.key
+                        ]
+                      ) === option.value
+                        ? 'selected'
+                        : ''
+                    }>
+
+                    ${escapeHtml(
+                      translateText(
+                        option.label
+                      )
+                    )}
+                  </option>
+                `).join('')}
+              </select>
+            </div>
+          `;
+        }).join('');
+
+      return `
+        <div
+          class="shared-filter-fields"
+          data-shared-filter-root="${
+            escapeHtml(prefix)
+          }">
+
+          ${fields}
+        </div>
+      `;
+    }
+
+    function bindSharedFilterFields(
+      root,
+      {
+        schema,
+        values,
+        prefix,
+        onChange =
+          () => {}
+      }
+    ) {
+      const container =
+        [
+          ...root.querySelectorAll(
+            '[data-shared-filter-root]'
+          )
+        ].find(element =>
+          element.dataset
+            .sharedFilterRoot
+            === prefix
+        );
+
+      if (!container) {
+        return null;
+      }
+
+      const currentValues =
+        cloneSharedFilterValues(
+          schema,
+          values
+        );
+
+      const comboboxBindings = [];
+      const yearRangeBindings = [];
+      
+      const getValues =
+        () =>
+          cloneSharedFilterValues(
+            schema,
+            currentValues
+          );
+
+      const notifyChange = () => {
+        const nextValues =
+          getValues();
+
+        onChange(nextValues);
+
+        container.dispatchEvent(
+          new CustomEvent(
+            'shared-filter-change',
+            {
+              bubbles:
+                true,
+
+              detail:
+                nextValues
+            }
+          )
+        );
+      };
+
+      const closeOtherComboboxes =
+        activeBinding => {
+          comboboxBindings
+            .filter(binding =>
+              binding !== activeBinding
+            )
+            .forEach(binding =>
+              binding.close()
+            );
+        };
+
+      schema.forEach(definition => {
+      const yearRangeRoot =
+        container.querySelector(
+          `[data-shared-filter-year-range="${
+            definition.key
+          }"]`
+        );
+
+      if (yearRangeRoot) {
+        const controls =
+          yearRangeRoot.querySelector(
+            '[data-shared-filter-year-controls]'
+          );
+
+        const modeSelect =
+          yearRangeRoot.querySelector(
+            '[data-shared-filter-year-mode]'
+          );
+
+        const fromShell =
+          yearRangeRoot.querySelector(
+            '[data-shared-filter-year-from-shell]'
+          );
+
+        const fromLabel =
+          yearRangeRoot.querySelector(
+            '[data-shared-filter-year-from-label]'
+          );
+
+        const fromInput =
+          yearRangeRoot.querySelector(
+            '[data-shared-filter-year-from]'
+          );
+
+        const toShell =
+          yearRangeRoot.querySelector(
+            '[data-shared-filter-year-to-shell]'
+          );
+
+        const toInput =
+          yearRangeRoot.querySelector(
+            '[data-shared-filter-year-to]'
+          );
+
+        const errorRoot =
+          yearRangeRoot.querySelector(
+            '[data-shared-filter-year-error]'
+          );
+
+        if (
+          !controls
+          || !modeSelect
+          || !fromShell
+          || !fromInput
+          || !toShell
+          || !toInput
+          || !errorRoot
+        ) {
+          return;
+        }
+
+        const updatePresentation =
+          () => {
+            const range =
+              normalizeSharedFilterYearRange(
+                currentValues[
+                  definition.key
+                ]
+              );
+
+            const isBetween =
+              range.mode === 'between';
+
+            controls.classList.toggle(
+              'is-empty',
+              !range.mode
+            );
+
+            controls.classList.toggle(
+              'is-between',
+              isBetween
+            );
+
+            fromShell.hidden =
+              !range.mode;
+
+            toShell.hidden =
+              !isBetween;
+
+          if (fromLabel) {
+            fromLabel.textContent =
+              translateText(
+                isBetween
+                  ? 'Year from'
+                  : 'Year'
+              );
+          }
+
+          fromInput.placeholder =
+            translateText(
+              isBetween
+                ? 'From'
+                : 'Year'
+            );
+
+          toInput.placeholder =
+            translateText(
+              'To'
+            );
+
+            const fromYear =
+              sharedFilterYearNumber(
+                range.from
+              );
+
+            const toYear =
+              sharedFilterYearNumber(
+                range.to
+              );
+
+            const orderInvalid =
+              isBetween
+              && fromYear != null
+              && toYear != null
+              && fromYear > toYear;
+
+            const error =
+              sharedFilterYearRangeError(
+                range
+              );
+
+            errorRoot.hidden =
+              !error;
+
+            errorRoot.textContent =
+              error;
+
+            if (
+              range.mode
+              && fromYear == null
+            ) {
+              fromInput.setAttribute(
+                'aria-invalid',
+                'true'
+              );
+            } else {
+              fromInput.removeAttribute(
+                'aria-invalid'
+              );
+            }
+
+            if (
+              isBetween
+              && (
+                toYear == null
+                || orderInvalid
+              )
+            ) {
+              toInput.setAttribute(
+                'aria-invalid',
+                'true'
+              );
+            } else {
+              toInput.removeAttribute(
+                'aria-invalid'
+              );
+            }
+          };
+
+        const sync =
+          () => {
+            const range =
+              normalizeSharedFilterYearRange(
+                currentValues[
+                  definition.key
+                ]
+              );
+
+            currentValues[
+              definition.key
+            ] = range;
+
+            modeSelect.value =
+              range.mode;
+
+            fromInput.value =
+              range.from;
+
+            toInput.value =
+              range.to;
+
+            updatePresentation();
+          };
+
+        modeSelect.addEventListener(
+          'change',
+          () => {
+            const range =
+              normalizeSharedFilterYearRange(
+                currentValues[
+                  definition.key
+                ]
+              );
+
+            range.mode =
+              modeSelect.value;
+
+            if (!range.mode) {
+              range.from = '';
+              range.to = '';
+            } else if (
+              range.mode !== 'between'
+            ) {
+              range.to = '';
+            }
+
+            currentValues[
+              definition.key
+            ] = range;
+
+            sync();
+            notifyChange();
+
+            if (range.mode) {
+              requestAnimationFrame(
+                () => {
+                  fromInput.focus({
+                    preventScroll:
+                      true
+                  });
+                }
+              );
+            }
+          }
+        );
+
+        const bindYearInput =
+          (
+            input,
+            property
+          ) => {
+            input.addEventListener(
+              'input',
+              () => {
+                const sanitized =
+                  input.value
+                    .replace(/\D/g, '')
+                    .slice(0, 4);
+
+                if (
+                  input.value !== sanitized
+                ) {
+                  input.value =
+                    sanitized;
+                }
+
+                const range =
+                  normalizeSharedFilterYearRange(
+                    currentValues[
+                      definition.key
+                    ]
+                  );
+
+                range[property] =
+                  sanitized;
+
+                currentValues[
+                  definition.key
+                ] = range;
+
+                updatePresentation();
+                notifyChange();
+              }
+            );
+          };
+
+        bindYearInput(
+          fromInput,
+          'from'
+        );
+
+        bindYearInput(
+          toInput,
+          'to'
+        );
+
+        yearRangeBindings.push({
+          definition,
+          sync
+        });
+
+        sync();
+        return;
+      }
+        const select =
+          container.querySelector(
+            `[data-shared-filter-select="${
+              definition.key
+            }"]`
+          );
+
+        if (select) {
+          select.addEventListener(
+            'change',
+            () => {
+              currentValues[
+                definition.key
+              ] =
+                select.value;
+
+              notifyChange();
+            }
+          );
+
+          return;
+        }
+
+        const booleanInput =
+          container.querySelector(
+            `[data-shared-filter-boolean="${
+              definition.key
+            }"]`
+          );
+
+        if (booleanInput) {
+          booleanInput.addEventListener(
+            'change',
+            () => {
+              currentValues[
+                definition.key
+              ] =
+                Boolean(
+                  booleanInput.checked
+                );
+
+              notifyChange();
+            }
+          );
+
+          return;
+        }
+
+        const combobox =
+          container.querySelector(
+            `[data-shared-filter-combobox="${
+              definition.key
+            }"]`
+          );
+
+        if (!combobox) {
+          return;
+        }
+
+        const input =
+          combobox.querySelector(
+            '[data-shared-filter-input]'
+          );
+
+        const toggle =
+          combobox.querySelector(
+            '[data-shared-filter-toggle]'
+          );
+
+        const listbox =
+          combobox.querySelector(
+            '[data-shared-filter-listbox]'
+          );
+
+        const selectedRoot =
+          combobox.querySelector(
+            '[data-shared-filter-selected]'
+          );
+
+        const status =
+          combobox.querySelector(
+            '[data-shared-filter-status]'
+          );
+
+        if (
+          !input
+          || !toggle
+          || !listbox
+          || !selectedRoot
+        ) {
+          return;
+        }
+
+        let query = '';
+        let activeIndex = -1;
+        let visibleOptions = [];
+
+        const optionId =
+          index =>
+            `${
+              listbox.id
+            }-option-${
+              index
+            }`;
+
+        const selectedValues =
+          () =>
+            Array.isArray(
+              currentValues[
+                definition.key
+              ]
+            )
+              ? currentValues[
+                  definition.key
+                ]
+              : [];
+
+        const renderSelected = () => {
+          const valuesToRender =
+            selectedValues();
+
+          selectedRoot.hidden =
+            valuesToRender.length === 0;
+
+          selectedRoot.innerHTML =
+            valuesToRender.map(value => {
+              const label =
+                sharedFilterOptionLabel(
+                  definition,
+                  value
+                );
+
+              return `
+                <span
+                  class="shared-filter-token">
+
+                  <span
+                    class="
+                      shared-filter-token-label
+                    ">
+                    ${escapeHtml(label)}
+                  </span>
+
+                  <button
+                    class="
+                      shared-filter-token-remove
+                    "
+                    type="button"
+                    data-shared-filter-remove="${
+                      escapeHtml(value)
+                    }"
+                    aria-label="${
+                      escapeHtml(
+                        sharedFilterRemoveValueLabel(
+                          label
+                        )
+                      )
+                    }">
+
+                    ${icon.close}
+                  </button>
+                </span>
+              `;
+            }).join('');
+        };
+
+        const positionListbox = () => {
+          const inputShell =
+            combobox.querySelector(
+              '.shared-filter-combobox-input'
+            )
+            || input;
+
+          const rect =
+            inputShell
+              .getBoundingClientRect();
+
+          const margin = 12;
+          const gap = 5;
+          const preferredHeight = 320;
+
+          const spaceBelow =
+            window.innerHeight
+            - rect.bottom
+            - margin
+            - gap;
+
+          const spaceAbove =
+            rect.top
+            - margin
+            - gap;
+
+          const openAbove =
+            spaceBelow < preferredHeight
+            && spaceAbove > spaceBelow;
+
+          const availableHeight =
+            Math.max(
+              80,
+              Math.min(
+                preferredHeight,
+                openAbove
+                  ? spaceAbove
+                  : spaceBelow
+              )
+            );
+
+          const width =
+            Math.min(
+              rect.width,
+              window.innerWidth
+                - margin * 2
+            );
+
+          const left =
+            Math.min(
+              Math.max(
+                margin,
+                rect.left
+              ),
+              window.innerWidth
+                - width
+                - margin
+            );
+
+          listbox.classList.toggle(
+            'is-above',
+            openAbove
+          );
+
+          listbox.style.left =
+            `${left}px`;
+
+          listbox.style.width =
+            `${width}px`;
+
+          listbox.style.maxHeight =
+            `${availableHeight}px`;
+
+          if (openAbove) {
+            listbox.style.top =
+              'auto';
+
+            listbox.style.bottom =
+              `${
+                window.innerHeight
+                - rect.top
+                + gap
+              }px`;
+          } else {
+            listbox.style.top =
+              `${rect.bottom + gap}px`;
+
+            listbox.style.bottom =
+              'auto';
+          }
+        };
+
+        const renderOptions = () => {
+          const normalizedQuery =
+            normalizeSharedFilterSearch(
+              query
+            );
+
+          visibleOptions =
+            sharedFilterOptions(
+              definition
+            ).filter(option => {
+              if (!normalizedQuery) {
+                return true;
+              }
+
+              const searchText =
+                [
+                  option.label,
+                  translateText(
+                    option.label
+                  ),
+                  ...(option.keywords || [])
+                ]
+                  .map(
+                    normalizeSharedFilterSearch
+                  )
+                  .join(' ');
+
+              return searchText.includes(
+                normalizedQuery
+              );
+            });
+
+          if (
+            activeIndex
+            >= visibleOptions.length
+          ) {
+            activeIndex =
+              visibleOptions.length - 1;
+          }
+
+          if (
+            activeIndex < 0
+            && visibleOptions.length
+          ) {
+            activeIndex = 0;
+          }
+
+          const chosen =
+            new Set(
+              selectedValues()
+            );
+
+          listbox.innerHTML =
+            visibleOptions.length
+              ? visibleOptions
+                  .map(
+                    (option, index) => `
+                      <button
+                        class="
+                          shared-filter-option
+                          ${
+                            index === activeIndex
+                              ? 'is-active'
+                              : ''
+                          }
+                        "
+                        id="${
+                          escapeHtml(
+                            optionId(index)
+                          )
+                        }"
+                        type="button"
+                        role="option"
+                        aria-selected="${
+                          chosen.has(
+                            option.value
+                          )
+                            ? 'true'
+                            : 'false'
+                        }"
+                        data-shared-filter-option="${
+                          escapeHtml(
+                            option.value
+                          )
+                        }">
+
+                        <span
+                          class="
+                            shared-filter-option-check
+                          "
+                          aria-hidden="true">
+                          ${icon.check}
+                        </span>
+
+                        <span
+                          class="
+                            shared-filter-option-label
+                          ">
+                          ${escapeHtml(
+                            translateText(
+                              option.label
+                            )
+                          )}
+                        </span>
+
+                        ${
+                          option.count == null
+                            ? ''
+                            : `
+                              <span
+                                class="
+                                  shared-filter-option-count
+                                ">
+                                ${option.count}
+                              </span>
+                            `
+                        }
+                      </button>
+                    `
+                  )
+                  .join('')
+              : `
+                  <div
+                    class="shared-filter-empty">
+                    ${escapeHtml(
+                      translateText(
+                        'No matching options.'
+                      )
+                    )}
+                  </div>
+                `;
+
+          if (
+            activeIndex >= 0
+            && visibleOptions.length
+          ) {
+            input.setAttribute(
+              'aria-activedescendant',
+              optionId(activeIndex)
+            );
+          } else {
+            input.removeAttribute(
+              'aria-activedescendant'
+            );
+          }
+
+          if (status) {
+            status.textContent =
+              sharedFilterOptionStatus(
+                visibleOptions.length
+              );
+          }
+        };
+
+        const open = () => {
+          closeOtherComboboxes(
+            binding
+          );
+
+          renderOptions();
+
+          listbox.hidden = false;
+
+          combobox.classList.add(
+            'is-open'
+          );
+
+          input.setAttribute(
+            'aria-expanded',
+            'true'
+          );
+
+          toggle.setAttribute(
+            'aria-label',
+            translateText(
+              'Close options'
+            )
+          );
+
+          positionListbox();
+        };
+
+        const close = () => {
+          listbox.hidden = true;
+
+          combobox.classList.remove(
+            'is-open'
+          );
+
+          input.setAttribute(
+            'aria-expanded',
+            'false'
+          );
+
+          input.removeAttribute(
+            'aria-activedescendant'
+          );
+
+          toggle.setAttribute(
+            'aria-label',
+            translateText(
+              'Open options'
+            )
+          );
+        };
+
+        const setSelectedValue =
+          value => {
+            const oldValues =
+              selectedValues();
+
+            if (definition.multiple) {
+              currentValues[
+                definition.key
+              ] =
+                oldValues.includes(value)
+                  ? oldValues.filter(
+                      item =>
+                        item !== value
+                    )
+                  : [
+                      ...oldValues,
+                      value
+                    ];
+            } else {
+              currentValues[
+                definition.key
+              ] =
+                value;
+
+              close();
+            }
+
+            query = '';
+            input.value = '';
+
+            renderSelected();
+            renderOptions();
+            notifyChange();
+
+            input.focus();
+          };
+
+        const binding = {
+          definition,
+          input,
+          open,
+          close,
+
+          sync() {
+            renderSelected();
+            renderOptions();
+          }
+        };
+
+        comboboxBindings.push(
+          binding
+        );
+
+        renderSelected();
+
+        input.addEventListener(
+          'focus',
+          open
+        );
+
+        input.addEventListener(
+          'input',
+          () => {
+            query =
+              input.value;
+
+            activeIndex = 0;
+            open();
+          }
+        );
+
+        input.addEventListener(
+          'keydown',
+          event => {
+            if (
+              event.key === 'ArrowDown'
+            ) {
+              event.preventDefault();
+
+              if (listbox.hidden) {
+                open();
+              } else if (
+                visibleOptions.length
+              ) {
+                activeIndex =
+                  Math.min(
+                    activeIndex + 1,
+                    visibleOptions.length - 1
+                  );
+
+                renderOptions();
+              }
+
+              listbox
+                .querySelector(
+                  '.shared-filter-option.is-active'
+                )
+                ?.scrollIntoView({
+                  block:
+                    'nearest'
+                });
+
+              return;
+            }
+
+            if (
+              event.key === 'ArrowUp'
+            ) {
+              event.preventDefault();
+
+              if (listbox.hidden) {
+                open();
+              } else if (
+                visibleOptions.length
+              ) {
+                activeIndex =
+                  Math.max(
+                    activeIndex - 1,
+                    0
+                  );
+
+                renderOptions();
+              }
+
+              listbox
+                .querySelector(
+                  '.shared-filter-option.is-active'
+                )
+                ?.scrollIntoView({
+                  block:
+                    'nearest'
+                });
+
+              return;
+            }
+
+            if (
+              event.key === 'Enter'
+              && !listbox.hidden
+              && activeIndex >= 0
+              && visibleOptions[
+                activeIndex
+              ]
+            ) {
+              event.preventDefault();
+
+              setSelectedValue(
+                visibleOptions[
+                  activeIndex
+                ].value
+              );
+
+              return;
+            }
+
+            if (
+              event.key === 'Escape'
+              && !listbox.hidden
+            ) {
+              event.preventDefault();
+              event.stopPropagation();
+
+              close();
+            }
+          }
+        );
+
+        toggle.addEventListener(
+          'click',
+          () => {
+            if (listbox.hidden) {
+              input.focus();
+              open();
+            } else {
+              close();
+              input.focus();
+            }
+          }
+        );
+
+        listbox.addEventListener(
+          'pointerdown',
+          event => {
+            if (
+              event.target.closest(
+                '[data-shared-filter-option]'
+              )
+            ) {
+              event.preventDefault();
+            }
+          }
+        );
+
+        listbox.addEventListener(
+          'click',
+          event => {
+            const option =
+              event.target.closest(
+                '[data-shared-filter-option]'
+              );
+
+            if (!option) {
+              return;
+            }
+
+            /*
+            * setSelectedValue() rebuilds the listbox.
+            * Stop this click before its original target
+            * is removed and document treats it as an
+            * outside click.
+            */
+            event.preventDefault();
+            event.stopPropagation();
+
+            setSelectedValue(
+              option.dataset
+                .sharedFilterOption
+            );
+          }
+        );
+
+        selectedRoot.addEventListener(
+          'click',
+          event => {
+            const removeButton =
+              event.target.closest(
+                '[data-shared-filter-remove]'
+              );
+
+            if (!removeButton) {
+              return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            const value =
+              removeButton.dataset
+                .sharedFilterRemove;
+
+            currentValues[
+              definition.key
+            ] =
+              selectedValues()
+                .filter(item =>
+                  item !== value
+                );
+
+            renderSelected();
+            renderOptions();
+            notifyChange();
+
+            input.focus();
+          }
+        );
+
+        combobox.addEventListener(
+          'focusout',
+          () => {
+            setTimeout(
+              () => {
+                if (
+                  !combobox.contains(
+                    document.activeElement
+                  )
+                ) {
+                  close();
+                }
+              },
+              0
+            );
+          }
+        );
+      });
+
+      const panelBody =
+        container.closest(
+          '.shared-filter-panel-body'
+        );
+
+      panelBody?.addEventListener(
+        'scroll',
+        () => {
+          comboboxBindings.forEach(
+            binding =>
+              binding.close()
+          );
+        },
+        {
+          passive:
+            true
+        }
+      );
+
+      const reset = () => {
+        const defaults =
+          cloneSharedFilterValues(
+            schema,
+            {}
+          );
+
+        Object.assign(
+          currentValues,
+          defaults
+        );
+
+        schema.forEach(definition => {
+          const select =
+            container.querySelector(
+              `[data-shared-filter-select="${
+                definition.key
+              }"]`
+            );
+
+          if (select) {
+            select.value =
+              currentValues[
+                definition.key
+              ];
+          }
+
+          const booleanInput =
+            container.querySelector(
+              `[data-shared-filter-boolean="${
+                definition.key
+              }"]`
+            );
+
+          if (booleanInput) {
+            booleanInput.checked =
+              Boolean(
+                currentValues[
+                  definition.key
+                ]
+              );
+          }
+        });
+        yearRangeBindings.forEach(
+          binding =>
+            binding.sync()
+        );
+        comboboxBindings.forEach(
+          binding =>
+            binding.sync()
+        );
+
+        notifyChange();
+      };
+
+      return {
+        getValues,
+        reset,
+
+        getErrors() {
+          return schema
+            .filter(definition =>
+              definition.control
+                === 'year-range'
+            )
+            .map(definition =>
+              sharedFilterYearRangeError(
+                currentValues[
+                  definition.key
+                ]
+              )
+            )
+            .filter(Boolean);
+        },
+
+        focusFirstInvalid() {
+          container
+            .querySelector(
+              '[aria-invalid="true"]'
+            )
+            ?.focus({
+              preventScroll:
+                true
+            });
+        },
+
+        openCombobox(key) {
+          const binding =
+            comboboxBindings.find(
+              item =>
+                item.definition.key
+                  === key
+            );
+
+          if (!binding) {
+            return;
+          }
+
+          binding.input.focus({
+            preventScroll:
+              true
+          });
+
+          binding.open();
+        },
+
+        focusFirst() {
+          container
+            .querySelector(
+              [
+                '[data-shared-filter-input]',
+                '[data-shared-filter-year-mode]',
+                '[data-shared-filter-select]'
+              ].join(', ')
+            )
+            ?.focus();
+        }
+      };
+    }
+
+    function positionSharedFilterPanel(
+      panel,
+      anchor
+    ) {
+      if (
+        window.innerWidth <= 640
+      ) {
+        panel.classList.add(
+          'is-mobile'
+        );
+
+        return;
+      }
+
+      const margin = 12;
+      const gap = 8;
+
+      const anchorRect =
+        anchor.getBoundingClientRect();
+
+      const left =
+        Math.min(
+          Math.max(
+            margin,
+            anchorRect.right
+              - panel.offsetWidth
+          ),
+          window.innerWidth
+            - panel.offsetWidth
+            - margin
+        );
+
+      const below =
+        anchorRect.bottom
+        + gap;
+
+      const top =
+        below + panel.offsetHeight
+          <= window.innerHeight
+            - margin
+          ? below
+          : Math.max(
+              margin,
+              anchorRect.top
+                - panel.offsetHeight
+                - gap
+            );
+
+      panel.style.left =
+        `${left}px`;
+
+      panel.style.top =
+        `${top}px`;
+    }
+
+    /* ---------- People filter configuration ---------- */
+
+    const defaultPeopleFilters =
+      Object.freeze({
+        surnames:
+          Object.freeze([]),
+
+        birthPlaceIds:
+          Object.freeze([]),
+        birthYear:
+          Object.freeze({
+            mode:
+              '',
+
+            from:
+              '',
+
+            to:
+              ''
+          }),
+
+        living:
+          'Any',
+
+        reviewStatus:
+          ''
+      });
+
+    function peopleSurnameFilterOptions() {
+      const values =
+        new Map();
+
+      getPeople(
+        currentProjectId()
+      )
+        .filter(person =>
+          person
+          && !person.deleted
+        )
+        .forEach(person => {
+          const surname =
+            String(
+              person.names?.last
+              || ''
+            ).trim();
+
+          if (!surname) {
+            return;
+          }
+
+          const key =
+            normalizeSharedFilterSearch(
+              surname
+            );
+
+          const existing =
+            values.get(key);
+
+          if (existing) {
+            existing.count += 1;
+          } else {
+            values.set(
+              key,
+              {
+                value:
+                  surname,
+
+                label:
+                  surname,
+
+                count:
+                  1
+              }
+            );
+          }
+        });
+
+      const collator =
+        new Intl.Collator(
+          state.language === 'ru'
+            ? 'ru'
+            : 'en',
+          {
+            sensitivity:
+              'base'
+          }
+        );
+
+      return [
+        ...values.values()
+      ].sort(
+        (left, right) =>
+          collator.compare(
+            left.label,
+            right.label
+          )
+      );
+    }
+
+    function peopleBirthPlaceFilterOptions() {
+      const counts =
+        new Map();
+
+      let unknownCount = 0;
+
+      getPeople(
+        currentProjectId()
+      )
+        .filter(person =>
+          person
+          && !person.deleted
+        )
+        .forEach(person => {
+          const placeId =
+            String(
+              person.birth?.placeId
+              || ''
+            ).trim();
+
+          if (!placeId) {
+            unknownCount += 1;
+            return;
+          }
+
+          counts.set(
+            placeId,
+            (
+              counts.get(placeId)
+              || 0
+            ) + 1
+          );
+        });
+
+      const options =
+        [
+          ...counts.entries()
+        ].map(
+          ([
+            placeId,
+            count
+          ]) => {
+            const place =
+              sampleData.places
+                .find(item =>
+                  item.id === placeId
+                );
+
+            return {
+              value:
+                placeId,
+
+              label:
+                getPlaceDisplay(
+                  placeId
+                ),
+
+              keywords:
+                [
+                  ...(place
+                    ?.alternativeNames
+                    || [])
+                ],
+
+              count
+            };
+          }
+        );
+
+      if (unknownCount) {
+        options.push({
+          value:
+            SHARED_FILTER_UNKNOWN_VALUE,
+
+          label:
+            'Unknown birth place',
+
+          count:
+            unknownCount
+        });
+      }
+
+      const collator =
+        new Intl.Collator(
+          state.language === 'ru'
+            ? 'ru'
+            : 'en',
+          {
+            sensitivity:
+              'base'
+          }
+        );
+
+      return options.sort(
+        (left, right) =>
+          collator.compare(
+            translateText(
+              left.label
+            ),
+            translateText(
+              right.label
+            )
+          )
+      );
+    }
+
+    const peopleFilterSchema =
+      Object.freeze([
+        Object.freeze({
+          key:
+            'surnames',
+
+          label:
+            'Surname',
+
+          control:
+            'combobox',
+
+          multiple:
+            true,
+
+          layout:
+            'full',
+
+          placeholder:
+            'Search surnames',
+
+          getOptions:
+            peopleSurnameFilterOptions
+        }),
+
+        Object.freeze({
+          key:
+            'birthPlaceIds',
+
+          label:
+            'Birth place',
+
+          control:
+            'combobox',
+
+          multiple:
+            true,
+
+          layout:
+            'full',
+
+          placeholder:
+            'Search birth places',
+
+          getOptions:
+            peopleBirthPlaceFilterOptions
+        }),
+
+        Object.freeze({
+          key:
+            'birthYear',
+
+          label:
+            'Birth year',
+
+          control:
+            'year-range',
+
+          layout:
+            'full',
+
+          defaultValue:
+            Object.freeze({
+              mode:
+                '',
+
+              from:
+                '',
+
+              to:
+                ''
+            })
+        }),
+        Object.freeze({
+          key:
+            'living',
+
+          label:
+            'Living status',
+
+          control:
+            'select',
+
+          defaultValue:
+            'Any',
+
+          options:
+            Object.freeze([
+              Object.freeze({
+                value:
+                  'Any',
+
+                label:
+                  'Any'
+              }),
+
+              Object.freeze({
+                value:
+                  'Living',
+
+                label:
+                  'Living'
+              }),
+
+              Object.freeze({
+                value:
+                  'Deceased',
+
+                label:
+                  'Deceased'
+              }),
+
+              Object.freeze({
+                value:
+                  'Unknown',
+
+                label:
+                  'Unknown'
+              })
+            ])
+        }),
+
+        Object.freeze({
+          key:
+            'reviewStatus',
+
+          label:
+            'Review status',
+
+          control:
+            'select',
+
+          defaultValue:
+            '',
+
+          options:
+            Object.freeze([
+              Object.freeze({
+                value:
+                  '',
+
+                label:
+                  'Any'
+              }),
+
+              Object.freeze({
+                value:
+                  'No issues',
+
+                label:
+                  'No issues'
+              }),
+
+              Object.freeze({
+                value:
+                  'Possible duplicate',
+
+                label:
+                  'Possible duplicate'
+              }),
+
+              Object.freeze({
+                value:
+                  'Missing facts',
+
+                label:
+                  'Missing facts'
+              }),
+
+              Object.freeze({
+                value:
+                  'Missing source',
+
+                label:
+                  'Missing source'
+              }),
+
+              Object.freeze({
+                value:
+                  'Historic records',
+
+                label:
+                  'Historic records'
+              })
+            ])
+        })
+      ]);
+
+    function peopleFiltersWithDefaults(
+      filters = state.peopleFilters
+    ) {
+      return cloneSharedFilterValues(
+        peopleFilterSchema,
+        {
+          ...defaultPeopleFilters,
+          ...(filters || {})
+        }
+      );
     }
 
     function renderPeopleFilterFields(
       filters = defaultPeopleFilters,
       prefix = 'people-filter'
     ) {
-      const normalized = peopleFiltersWithDefaults(filters);
+      return renderSharedFilterFields({
+        schema:
+          peopleFilterSchema,
 
-      return peopleFilterDefinitions.map(definition => {
-        const fieldId = peopleFilterFieldId(prefix, definition.key);
+        values:
+          peopleFiltersWithDefaults(
+            filters
+          ),
 
-        return `<div class="people-filter-field">
-          <label for="${escapeHtml(fieldId)}">${escapeHtml(definition.label)}</label>
-          <select
-            id="${escapeHtml(fieldId)}"
-            data-people-filter-input="${escapeHtml(definition.key)}">
-            ${peopleFilterOptions(
-              definition.options,
-              normalized[definition.key]
-            )}
-          </select>
-        </div>`;
-      }).join('');
-    }
-
-    function readPeopleFilterFields(root) {
-      const filters = { ...defaultPeopleFilters };
-
-      peopleFilterDefinitions.forEach(definition => {
-        const input = root.querySelector(
-          `[data-people-filter-input="${definition.key}"]`
-        );
-
-        filters[definition.key] = input
-          ? input.value
-          : defaultPeopleFilters[definition.key];
-      });
-
-      return peopleFiltersWithDefaults(filters);
-    }
-
-    function resetPeopleFilterFields(root) {
-      peopleFilterDefinitions.forEach(definition => {
-        const input = root.querySelector(
-          `[data-people-filter-input="${definition.key}"]`
-        );
-
-        if (input) {
-          input.value = defaultPeopleFilters[definition.key];
-        }
+        prefix
       });
     }
+
+    function bindPeopleFilterFields(
+      root,
+      filters,
+      prefix,
+      onChange =
+        () => {}
+    ) {
+      const controller =
+        bindSharedFilterFields(
+          root,
+          {
+            schema:
+              peopleFilterSchema,
+
+            values:
+              peopleFiltersWithDefaults(
+                filters
+              ),
+
+            prefix,
+            onChange
+          }
+        );
+
+      root.peopleFilterController =
+        controller;
+
+      return controller;
+    }
+
+    function readPeopleFilterFields(
+      root
+    ) {
+      return (
+        root
+          ?.peopleFilterController
+          ?.getValues()
+        || peopleFiltersWithDefaults(
+          defaultPeopleFilters
+        )
+      );
+    }
+
+    function resetPeopleFilterFields(
+      root
+    ) {
+      root
+        ?.peopleFilterController
+        ?.reset();
+    }
+    
     const defaultPeopleColumns = Object.freeze({ living: true, birth: true, birthPlace: true, death: true, deathPlace: true, updated: true });
     const peopleColumnLabels = { living: 'Living', birth: 'Birth date', birthPlace: 'Birth place', death: 'Death date', deathPlace: 'Death place', updated: 'Updated' };
 
     let peopleSavedViews = [
-      { id: 'whiskerfield-line', name: 'Whiskerfield surname', description: 'All Whiskerfield surname records.', filters: { surname: 'Whiskerfield' } },
-      { id: 'meowbridge-places', name: 'Meowbridge places', description: 'People and records connected to Meowbridge.', filters: { birthPlace: 'Meowbridge' } },
-      { id: 'historic-records', name: 'Historic records', description: 'Great-grandparents and early evidence.', filters: { reviewStatus: 'Historic records' } }
+      {
+        id:
+          'whiskerfield-line',
+
+        name:
+          'Whiskerfield surname',
+
+        description:
+          'All Whiskerfield surname records.',
+
+        filters: {
+          surnames:
+            ['Whiskerfield']
+        }
+      },
+
+      {
+        id:
+          'meowbridge-places',
+
+        name:
+          'Meowbridge places',
+
+        description:
+          'People and records connected to Meowbridge.',
+
+        filters: {
+          birthPlaceIds:
+            ['place-meowbridge']
+        }
+      },
+
+      {
+        id:
+          'historic-records',
+
+        name:
+          'Historic records',
+
+        description:
+          'Great-grandparents and early evidence.',
+
+        filters: {
+          reviewStatus:
+            'Historic records'
+        }
+      }
     ];
 
     function selectedPeopleRecord() {
@@ -63229,10 +66492,6 @@
       `;
     }
 
-    function peopleFiltersWithDefaults(filters = state.peopleFilters) {
-      return { ...defaultPeopleFilters, ...(filters || {}) };
-    }
-
     function peopleColumnsWithDefaults(columns = state.peopleVisibleColumns) {
       return { ...defaultPeopleColumns, ...(columns || {}) };
     }
@@ -63257,37 +66516,228 @@
       return 'No issues';
     }
 
-    function hasActivePeopleFilters(filters = state.peopleFilters) {
-      const f = peopleFiltersWithDefaults(filters);
-      return Boolean(f.surname || f.birthPlace || f.reviewStatus || f.living !== 'Any');
+    function hasActivePeopleFilters(
+      filters = state.peopleFilters
+    ) {
+      const normalized =
+        peopleFiltersWithDefaults(
+          filters
+        );
+
+      return peopleFilterSchema
+        .some(definition =>
+          sharedFilterValueIsActive(
+            definition,
+            normalized[
+              definition.key
+            ]
+          )
+        );
     }
 
-    function activePeopleFilterEntries(filters = state.peopleFilters) {
-      const f = peopleFiltersWithDefaults(filters);
-      const entries = [];
+    function activePeopleFilterEntries(
+      filters = state.peopleFilters
+    ) {
+      const normalized =
+        peopleFiltersWithDefaults(
+          filters
+        );
 
-      if (f.surname) entries.push(['surname', 'Surname', f.surname]);
-      if (f.birthPlace) entries.push(['birthPlace', 'Birth place', f.birthPlace]);
-      if (f.living !== 'Any') entries.push(['living', 'Living status', f.living]);
-      if (f.reviewStatus) entries.push(['reviewStatus', 'Review status', f.reviewStatus]);
-
-      return entries;
+      return peopleFilterSchema
+        .filter(definition =>
+          sharedFilterValueIsActive(
+            definition,
+            normalized[
+              definition.key
+            ]
+          )
+        )
+        .map(definition => [
+          definition.key,
+          definition.label,
+          sharedFilterDisplayValue(
+            definition,
+            normalized[
+              definition.key
+            ]
+          )
+        ]);
     }
 
-    function activePeopleFilterCount(filters = state.peopleFilters) {
-      return activePeopleFilterEntries(filters).length;
+    function activePeopleFilterCount(
+      filters = state.peopleFilters
+    ) {
+      return activePeopleFilterEntries(
+        filters
+      ).length;
+    }
+
+    function peopleRecordsMatchingFilters(
+      records,
+      filters,
+      searchQuery =
+        state.peopleSearch
+    ) {
+      const normalized =
+        peopleFiltersWithDefaults(
+          filters
+        );
+
+      const selectedSurnames =
+        new Set(
+          normalized.surnames.map(
+            normalizeSharedFilterSearch
+          )
+        );
+
+      const selectedBirthPlaceIds =
+        new Set(
+          normalized.birthPlaceIds
+        );
+
+      const normalizedQuery =
+        normalizeSharedFilterSearch(
+          searchQuery
+        );
+
+      return records.filter(person => {
+        if (
+          selectedSurnames.size
+          && !selectedSurnames.has(
+            normalizeSharedFilterSearch(
+              person.surname
+            )
+          )
+        ) {
+          return false;
+        }
+
+        if (
+          selectedBirthPlaceIds.size
+        ) {
+          const hasKnownPlace =
+            Boolean(
+              person.birthPlaceId
+            );
+
+          const matchesKnownPlace =
+            hasKnownPlace
+            && selectedBirthPlaceIds.has(
+              person.birthPlaceId
+            );
+
+          const matchesUnknownPlace =
+            !hasKnownPlace
+            && selectedBirthPlaceIds.has(
+              SHARED_FILTER_UNKNOWN_VALUE
+            );
+
+          if (
+            !matchesKnownPlace
+            && !matchesUnknownPlace
+          ) {
+            return false;
+          }
+        }
+
+        if (
+          !sharedFilterYearMatches(
+            person.birthYear,
+            normalized.birthYear
+          )
+        ) {
+          return false;
+        }
+
+        if (
+          normalized.living !== 'Any'
+          && person.living
+            !== normalized.living
+        ) {
+          return false;
+        }
+
+        if (
+          normalized.reviewStatus
+          && getPeopleReviewStatus(person)
+            !== normalized.reviewStatus
+        ) {
+          return false;
+        }
+
+        if (normalizedQuery) {
+          const searchText =
+            normalizeSharedFilterSearch(
+              [
+                person.name,
+                person.birthPlace,
+                person.relation,
+                person.living,
+                getPeopleSourceStatus(
+                  person
+                ),
+                getPeopleReviewStatus(
+                  person
+                )
+              ]
+                .filter(Boolean)
+                .join(' ')
+            );
+
+          if (
+            !searchText.includes(
+              normalizedQuery
+            )
+          ) {
+            return false;
+          }
+        }
+
+        return true;
+      });
+    }
+
+    function peopleFilterResultCount(
+      filters
+    ) {
+      return peopleRecordsMatchingFilters(
+        currentPeopleRecords(),
+        filters
+      ).length;
+    }
+
+    function peopleFilterApplyLabel(
+      filters
+    ) {
+      const count =
+        peopleFilterResultCount(
+          filters
+        );
+
+      if (
+        state.language === 'ru'
+      ) {
+        return `Показать ${
+          translateCountPhrase(
+            `${count} people`
+          )
+        }`;
+      }
+
+      return `Show ${count} ${
+        count === 1
+          ? 'person'
+          : 'people'
+      }`;
     }
 
     function filteredPeople() {
-      const q = state.peopleSearch.trim().toLowerCase();
-      const f = peopleFiltersWithDefaults();
-      let list = [...currentPeopleRecords()];
-      if (f.surname) list = list.filter(p => p.surname === f.surname || p.name.toLowerCase().includes(f.surname.toLowerCase()));
-      if (f.birthPlace) list = list.filter(p => p.birthPlace.toLowerCase().includes(f.birthPlace.toLowerCase()));
-      if (f.living !== 'Any') list = list.filter(p => p.living === f.living);
-      if (f.reviewStatus) list = list.filter(p => getPeopleReviewStatus(p) === f.reviewStatus);
-      if (q) list = list.filter(p => `${p.name} ${p.birthPlace} ${p.relation} ${p.living} ${getPeopleSourceStatus(p)} ${getPeopleReviewStatus(p)}`.toLowerCase().includes(q));
-      return sortPeopleRecords(list);
+      return sortPeopleRecords(
+        peopleRecordsMatchingFilters(
+          currentPeopleRecords(),
+          peopleFiltersWithDefaults()
+        )
+      );
     }
 
     const PEOPLE_ROWS_PER_PAGE_OPTIONS =
@@ -67650,113 +71100,463 @@
       }, 0);
     }
 
-    function closePeopleFilterPopover() {
-      document.getElementById('peopleFilterPopover')?.remove();
-      document.getElementById('albumsFilterPopover')?.remove();
-      document.removeEventListener('click', closePeopleFilterOnOutside);
-      document.removeEventListener('keydown', closePeopleFilterOnEscape);
+    let peopleFilterReturnFocus =
+      null;
+
+    function closePeopleFilterPopover({
+      restoreFocus = false
+    } = {}) {
+      document
+        .getElementById(
+          'peopleFilterPopover'
+        )
+        ?.remove();
+
+      document
+        .getElementById(
+          'albumsFilterPopover'
+        )
+        ?.remove();
+
+      document.removeEventListener(
+        'click',
+        closePeopleFilterOnOutside
+      );
+
+      document.removeEventListener(
+        'keydown',
+        closePeopleFilterOnEscape
+      );
+
+      if (
+        restoreFocus
+        && peopleFilterReturnFocus
+          ?.isConnected
+      ) {
+        peopleFilterReturnFocus.focus({
+          preventScroll:
+            true
+        });
+      }
+
+      peopleFilterReturnFocus =
+        null;
     }
 
-    function closePeopleFilterOnOutside(event) {
-      if (!event.target.closest('#peopleFilterPopover') && !event.target.closest('#peopleFilterButton')) closePeopleFilterPopover();
+    function closePeopleFilterOnOutside(
+      event
+    ) {
+      const popover =
+        document.getElementById(
+          'peopleFilterPopover'
+        );
+
+      const trigger =
+        document.getElementById(
+          'peopleFilterButton'
+        );
+
+      const eventPath =
+        typeof event.composedPath
+          === 'function'
+            ? event.composedPath()
+            : [];
+
+      const insidePopover =
+        eventPath.length
+          ? eventPath.includes(
+              popover
+            )
+          : popover?.contains(
+              event.target
+            );
+
+      const insideTrigger =
+        eventPath.length
+          ? eventPath.includes(
+              trigger
+            )
+          : trigger?.contains(
+              event.target
+            );
+
+      if (
+        insidePopover
+        || insideTrigger
+      ) {
+        return;
+      }
+
+      closePeopleFilterPopover();
     }
 
-    function closePeopleFilterOnEscape(event) {
-      if (event.key === 'Escape') closePeopleFilterPopover();
+    function closePeopleFilterOnEscape(
+      event
+    ) {
+      if (
+        event.key !== 'Escape'
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+
+      closePeopleFilterPopover({
+        restoreFocus:
+          true
+      });
     }
 
-    function peopleFilterOptions(values, selected) {
-      return values.map(value => `<option value="${escapeHtml(value)}" ${value === selected ? 'selected' : ''}>${escapeHtml(value || 'Any')}</option>`).join('');
+    function peopleFilterOptions(
+      values,
+      selected
+    ) {
+      /*
+      * Retained temporarily because other modules
+      * may still use the old native-select helper.
+      */
+      return values.map(value => `
+        <option
+          value="${escapeHtml(value)}"
+          ${
+            value === selected
+              ? 'selected'
+              : ''
+          }>
+          ${escapeHtml(value || 'Any')}
+        </option>
+      `).join('');
     }
 
-    function openPeopleFilterPopover(anchor) {
+    function openPeopleFilterPopover(
+      anchor
+    ) {
       closePeopleFilterPopover();
       closePeopleColumnsPopover();
       closeMenu();
 
-      const rect = anchor.getBoundingClientRect();
-      const filters = peopleFiltersWithDefaults();
-      const popover = document.createElement('div');
+      peopleFilterReturnFocus =
+        anchor;
 
-      popover.className = 'people-filter-popover';
-      popover.id = 'peopleFilterPopover';
-      popover.style.top = `${rect.bottom + 8}px`;
-      popover.style.left = `${
-        Math.min(window.innerWidth - 376, Math.max(12, rect.left - 56))
-      }px`;
+      const filters =
+        peopleFiltersWithDefaults();
 
-      popover.setAttribute('role', 'dialog');
-      popover.setAttribute('aria-label', 'Filter people');
+      const popover =
+        document.createElement(
+          'div'
+        );
+
+      popover.className =
+        'shared-filter-panel people-filter-popover';
+
+      popover.id =
+        'peopleFilterPopover';
+
+      popover.setAttribute(
+        'role',
+        'dialog'
+      );
+
+      popover.setAttribute(
+        'aria-label',
+        translateText(
+          'Filter people'
+        )
+      );
 
       popover.innerHTML = `
-        <div class="people-filter-popover-header">
-          <h3>Filter people</h3>
-          <p>Refine the directory by surname, birth place, living status, and review needs.</p>
-        </div>
+        <div
+          class="
+            shared-filter-panel-header
+          ">
 
-        <div class="people-filter-grid">
-          ${renderPeopleFilterFields(filters, 'people-popover-filter')}
-        </div>
+          <div>
+            <h3>Filter people</h3>
+            <p>
+              Choose one or more values.
+            </p>
+          </div>
 
-        <div class="people-filter-footer">
           <button
-            class="button secondary"
+            class="
+              shared-filter-panel-close
+            "
+            type="button"
+            aria-label="Close"
+            data-people-filter-close>
+
+            ${icon.close}
+          </button>
+        </div>
+
+        <div
+          class="
+            shared-filter-panel-body
+          ">
+
+          ${renderPeopleFilterFields(
+            filters,
+            'people-popover-filter'
+          )}
+        </div>
+
+        <div
+          class="
+            shared-filter-panel-footer
+          ">
+
+          <button
+            class="link"
             type="button"
             data-people-filter-reset>
-            Reset
+            Clear filters
           </button>
 
-          <button
-            class="button primary"
-            type="button"
-            data-people-filter-apply>
-            Apply filters
-          </button>
+          <div
+            class="
+              shared-filter-panel-actions
+            ">
+
+            <button
+              class="button secondary"
+              type="button"
+              data-people-filter-cancel>
+              Cancel
+            </button>
+
+            <button
+              class="button primary"
+              type="button"
+              data-people-filter-apply>
+
+              <span
+                aria-live="polite"
+                data-people-filter-result>
+                ${escapeHtml(
+                  peopleFilterApplyLabel(
+                    filters
+                  )
+                )}
+              </span>
+            </button>
+          </div>
         </div>
       `;
 
-      document.body.appendChild(popover);
+      document.body.appendChild(
+        popover
+      );
+
+      localizeUI(popover);
+      const resultLabel =
+        popover.querySelector(
+          '[data-people-filter-result]'
+        );
+
+      const applyButton =
+        popover.querySelector(
+          '[data-people-filter-apply]'
+        );
+
+      let controller = null;
+
+      const updatePeopleFilterPreview =
+        nextFilters => {
+          if (resultLabel) {
+            resultLabel.textContent =
+              peopleFilterApplyLabel(
+                nextFilters
+              );
+          }
+
+          if (applyButton) {
+            applyButton.disabled =
+              Boolean(
+                (
+                  controller
+                    ?.getErrors()
+                  || []
+                ).length
+              );
+          }
+        };
+
+      controller =
+        bindPeopleFilterFields(
+          popover,
+          filters,
+          'people-popover-filter',
+          updatePeopleFilterPreview
+        );
+
+      updatePeopleFilterPreview(
+        controller?.getValues()
+        || filters
+      );
 
       popover
-        .querySelector('[data-people-filter-reset]')
-        ?.addEventListener('click', () => {
-          resetPeopleFilterFields(popover);
-        });
+        .querySelector(
+          '[data-people-filter-reset]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            controller?.reset();
+          }
+        );
 
       popover
-        .querySelector('[data-people-filter-apply]')
-        ?.addEventListener('click', () => {
-          clearPeopleSelection();
-          state.peopleFilters = readPeopleFilterFields(popover);
-          state.peopleSavedViewId = '';
-          state.peopleSavedView = 'Custom filters';
+        .querySelector(
+          '[data-people-filter-close]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            closePeopleFilterPopover({
+              restoreFocus:
+                true
+            });
+          }
+        );
 
-          closePeopleFilterPopover();
-          renderPeople();
-        });
+      popover
+        .querySelector(
+          '[data-people-filter-cancel]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            closePeopleFilterPopover({
+              restoreFocus:
+                true
+            });
+          }
+        );
+      popover
+        .querySelector(
+          '[data-people-filter-apply]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const errors =
+              controller?.getErrors()
+              || [];
 
-      setTimeout(() => {
-        document.addEventListener('click', closePeopleFilterOnOutside);
-        document.addEventListener('keydown', closePeopleFilterOnEscape);
-      }, 0);
+            if (errors.length) {
+              controller
+                ?.focusFirstInvalid();
+
+              return;
+            }
+
+            clearPeopleSelection();
+
+            state.peopleFilters =
+              controller?.getValues()
+              || peopleFiltersWithDefaults();
+
+            state.peopleSavedViewId =
+              '';
+
+            state.peopleSavedView =
+              hasActivePeopleFilters()
+                ? 'Custom filters'
+                : 'All people';
+
+            closePeopleFilterPopover();
+
+            renderPeople();
+          }
+        );
+
+      positionSharedFilterPanel(
+        popover,
+        anchor
+      );
+
+      requestAnimationFrame(
+        () => {
+          popover
+            .querySelector(
+              '[data-people-filter-close]'
+            )
+            ?.focus({
+              preventScroll:
+                true
+            });
+        }
+      );
+
+      setTimeout(
+        () => {
+          document.addEventListener(
+            'click',
+            closePeopleFilterOnOutside
+          );
+
+          document.addEventListener(
+            'keydown',
+            closePeopleFilterOnEscape
+          );
+        },
+        0
+      );
     }
 
     function clearPeopleFilters() {
       clearPeopleSelection();
-      state.peopleFilters = { ...defaultPeopleFilters };
-      state.peopleSavedViewId = '';
-      state.peopleSavedView = 'All people';
+
+      state.peopleFilters =
+        peopleFiltersWithDefaults(
+          defaultPeopleFilters
+        );
+
+      state.peopleSavedViewId =
+        '';
+
+      state.peopleSavedView =
+        'All people';
+
       renderPeople();
-      showToast('People filters cleared.');
+
+      showToast(
+        'People filters cleared.'
+      );
     }
 
-    function removePeopleFilter(key) {
+    function removePeopleFilter(
+      key
+    ) {
+      const definition =
+        sharedFilterDefinitionByKey(
+          peopleFilterSchema,
+          key
+        );
+
+      if (!definition) {
+        return;
+      }
+
       clearPeopleSelection();
-      state.peopleFilters = peopleFiltersWithDefaults();
-      if (key === 'living') state.peopleFilters[key] = 'Any';
-      else state.peopleFilters[key] = '';
-      state.peopleSavedViewId = '';
-      state.peopleSavedView = hasActivePeopleFilters() ? 'Custom filters' : 'All people';
+
+      state.peopleFilters =
+        peopleFiltersWithDefaults();
+
+      state.peopleFilters[key] =
+        cloneSharedFilterValues(
+          [definition],
+          {}
+        )[key];
+
+      state.peopleSavedViewId =
+        '';
+
+      state.peopleSavedView =
+        hasActivePeopleFilters()
+          ? 'Custom filters'
+          : 'All people';
+
       renderPeople();
     }
 
@@ -67882,12 +71682,10 @@
                   </button>
                 </div>
 
-                <div class="people-filter-grid">
-                  ${renderPeopleFilterFields(
-                    filters,
-                    'people-saved-view-filter'
-                  )}
-                </div>
+                ${renderPeopleFilterFields(
+                  filters,
+                  'people-saved-view-filter'
+                )}
 
                 <p
                   class="people-saved-view-error"
@@ -67919,6 +71717,16 @@
       const form = modalBackdrop.querySelector('#peopleSavedViewForm');
       const nameInput = modalBackdrop.querySelector('#peopleSavedViewName');
 
+      const savedViewFilterController =
+        bindPeopleFilterFields(
+          form,
+          filters,
+          'people-saved-view-filter',
+          () => {
+            setPeopleSavedViewModalError();
+          }
+        );
+
       nameInput?.focus();
 
       modalBackdrop
@@ -67935,94 +71743,193 @@
       form?.addEventListener('change', () => {
         setPeopleSavedViewModalError();
       });
+      form?.addEventListener(
+        'submit',
+        event => {
+          event.preventDefault();
 
-      form?.addEventListener('submit', event => {
-        event.preventDefault();
+          const submittedName =
+            nameInput?.value.trim()
+            || '';
 
-        const submittedName = nameInput?.value.trim() || '';
-        const submittedDescription = modalBackdrop
-          .querySelector('#peopleSavedViewDescription')
-          ?.value
-          .trim() || '';
+          const submittedDescription =
+            modalBackdrop
+              .querySelector(
+                '#peopleSavedViewDescription'
+              )
+              ?.value
+              .trim()
+            || '';
 
-        const submittedFilters = readPeopleFilterFields(form);
+          const submittedFilters =
+            readPeopleFilterFields(
+              form
+            );
 
-        if (!submittedName) {
-          setPeopleSavedViewModalError(
-            'Enter a filter name.',
-            '#peopleSavedViewName'
-          );
-          return;
-        }
+          if (!submittedName) {
+            setPeopleSavedViewModalError(
+              'Enter a filter name.',
+              '#peopleSavedViewName'
+            );
 
-        if (!hasActivePeopleFilters(submittedFilters)) {
-          setPeopleSavedViewModalError(
-            'Choose at least one filter option.',
-            '[data-people-filter-input]'
-          );
-          return;
-        }
-
-        const duplicate = peopleSavedViews.find(view => {
-          return view.id !== viewId
-            && view.name.trim().toLowerCase()
-              === submittedName.toLowerCase();
-        });
-
-        if (duplicate) {
-          setPeopleSavedViewModalError(
-            'A saved filter with this name already exists.',
-            '#peopleSavedViewName'
-          );
-          return;
-        }
-
-        if (isEdit) {
-          const wasActive = state.peopleSavedViewId === existingView.id;
-
-          existingView.name = submittedName;
-          existingView.description = submittedDescription;
-          existingView.filters = { ...submittedFilters };
-
-          if (wasActive) {
-            clearPeopleSelection();
-            state.peopleSavedView = submittedName;
-            state.peopleFilters = { ...submittedFilters };
+            return;
           }
+
+          const filterErrors =
+            savedViewFilterController
+              ?.getErrors()
+            || [];
+
+          if (filterErrors.length) {
+            setPeopleSavedViewModalError(
+              filterErrors[0],
+              '[aria-invalid="true"]'
+            );
+
+            savedViewFilterController
+              ?.focusFirstInvalid();
+
+            return;
+          }
+
+          const normalizedFilters =
+            peopleFiltersWithDefaults(
+              submittedFilters
+            );
+
+          if (
+            !hasActivePeopleFilters(
+              normalizedFilters
+            )
+          ) {
+            setPeopleSavedViewModalError(
+              'Choose at least one filter option.',
+              [
+                '[data-shared-filter-input]',
+                '[data-shared-filter-year-mode]',
+                '[data-shared-filter-select]'
+              ].join(', ')
+            );
+
+            return;
+          }
+
+          const duplicate =
+            peopleSavedViews.find(view =>
+              view.id !== viewId
+              && view.name
+                .trim()
+                .toLowerCase()
+                === submittedName
+                  .toLowerCase()
+            );
+
+          if (duplicate) {
+            setPeopleSavedViewModalError(
+              'A saved filter with this name already exists.',
+              '#peopleSavedViewName'
+            );
+
+            return;
+          }
+
+          if (isEdit) {
+            const wasActive =
+              state.peopleSavedViewId
+              === existingView.id;
+
+            existingView.name =
+              submittedName;
+
+            existingView.description =
+              submittedDescription;
+
+            existingView.filters =
+              peopleFiltersWithDefaults(
+                normalizedFilters
+              );
+
+            if (wasActive) {
+              clearPeopleSelection();
+
+              state.peopleSavedView =
+                submittedName;
+
+              state.peopleFilters =
+                peopleFiltersWithDefaults(
+                  normalizedFilters
+                );
+            }
+
+            closeModal();
+            renderPeople();
+            showToast(
+              'Filter updated.'
+            );
+
+            return;
+          }
+
+          const id =
+            `people-view-${Date.now()}`;
+
+          const savedFilters =
+            peopleFiltersWithDefaults(
+              normalizedFilters
+            );
+
+          peopleSavedViews.push({
+            id,
+            name:
+              submittedName,
+
+            description:
+              submittedDescription,
+
+            filters:
+              savedFilters
+          });
+
+          clearPeopleSelection();
+
+          state.peopleSavedViewId =
+            id;
+
+          state.peopleSavedView =
+            submittedName;
+
+          state.peopleFilters =
+            peopleFiltersWithDefaults(
+              savedFilters
+            );
+
+          state.peopleView =
+            'directory';
 
           closeModal();
           renderPeople();
-          showToast('Filter updated.');
-          return;
+          showToast(
+            'Filter created.'
+          );
         }
-
-        const id = `people-view-${Date.now()}`;
-
-        peopleSavedViews.push({
-          id,
-          name: submittedName,
-          description: submittedDescription,
-          filters: { ...submittedFilters }
-        });
-
-        clearPeopleSelection();
-        state.peopleSavedViewId = id;
-        state.peopleSavedView = submittedName;
-        state.peopleFilters = { ...submittedFilters };
-        state.peopleView = 'directory';
-
-        closeModal();
-        renderPeople();
-        showToast('Filter created.');
-      });
+      );
     }
 
     function openCreatePeopleFilterModal() {
       openPeopleSavedViewModal({
-        mode: 'create',
-        initialName: '',
-        initialDescription: '',
-        initialFilters: { ...defaultPeopleFilters }
+        mode:
+          'create',
+
+        initialName:
+          '',
+
+        initialDescription:
+          '',
+
+        initialFilters:
+          peopleFiltersWithDefaults(
+            defaultPeopleFilters
+          )
       });
     }
 
@@ -68194,7 +72101,10 @@
         clearPeopleSelection();
         state.peopleSavedViewId = '';
         state.peopleSavedView = 'All people';
-        state.peopleFilters = { ...defaultPeopleFilters };
+        state.peopleFilters =
+          peopleFiltersWithDefaults(
+            defaultPeopleFilters
+          );
         state.peopleView = 'directory';
       }
 
@@ -68203,14 +72113,35 @@
       showToast('Filter deleted.');
     }
 
-    function applyPeopleSavedView(viewId) {
-      const view = peopleSavedViews.find(item => item.id === viewId);
-      if (!view) return;
+    function applyPeopleSavedView(
+      viewId
+    ) {
+      const view =
+        peopleSavedViews.find(
+          item =>
+            item.id === viewId
+        );
+
+      if (!view) {
+        return;
+      }
+
       clearPeopleSelection();
-      state.peopleSavedViewId = view.id;
-      state.peopleSavedView = view.name;
-      state.peopleFilters = { ...defaultPeopleFilters, ...view.filters };
-      state.peopleView = 'directory';
+
+      state.peopleSavedViewId =
+        view.id;
+
+      state.peopleSavedView =
+        view.name;
+
+      state.peopleFilters =
+        peopleFiltersWithDefaults(
+          view.filters
+        );
+
+      state.peopleView =
+        'directory';
+
       renderPeople();
     }
 
@@ -69565,7 +73496,10 @@
           state.peopleSide = 'people';
           state.peopleSavedViewId = '';
           state.peopleSavedView = 'All people';
-          state.peopleFilters = { ...defaultPeopleFilters };
+          state.peopleFilters =
+            peopleFiltersWithDefaults(
+              defaultPeopleFilters
+            );
 
           renderPeople();
         });
