@@ -32508,6 +32508,12 @@
       'Marriage record': 'Запись о браке',
       'Meowbridge marriage record': 'Запись о браке из Мяубриджа',
       'Old Cattery burial index': 'Указатель захоронений Олд-Кэттери',
+      'Marriage certificate linked to the family relationship and Meowbridge.': 'Свидетельство о браке связанное с семейными отношениями и Мяубриджем.',
+      'Recorded oral-history interview with Luna Purrington.': 'Запись устного интервью с Луной Пуррингтон.',
+      'Continuation register containing entries connected to Luna Purrington’s family.': 'Реестр, содержащий записи, относящиеся к семье Луны Пуррингтон.',
+      'Reference image stored in Archive; it is not duplicated into Albums.': 'Пример изображения, которое хранится в архиве; оно не дублируется в альбомы.',
+      'Unidentified scan retained for later organization.': 'Неопознанный скан сохраненный для последующей обработки.', 
+      'Downloaded extract from the regional Pawford records database.': 'Выдержка из региональной базы данных архивов города Поуфорд.',
       'Register': 'Реестр',
       'Household register extract supporting Daisy Milkpaw’s birth and household context.': 'Выписка из домовой ведомости, подтверждающая сведения о рождении Дейзи Милкпоу и составе домохозяйства.',
       'Household scan that may connect members of the Whiskerfield family in Pawford.': 'Скан домовой книги, который может связывать членов семьи Вискерфильдов в Поуфорде.',
@@ -34366,7 +34372,7 @@
         'Верхний уровень',
 
       'Parent folder':
-        'Родительская папка',
+        'Корневая папка',
 
       // ========================================
       // Create folder
@@ -37936,6 +37942,23 @@
 
           return source;
         };
+
+      /*
+       * Places map-position summaries.
+       *
+       * Supports both the standalone status and
+       * the summary containing coordinates.
+       */
+      repl(
+        /^Mapped(?:\s+at\s+(.+))?$/i,
+        (
+          _match,
+          coordinates
+        ) =>
+          coordinates
+            ? `На карте: ${coordinates}`
+            : 'На карте'
+      );
 
       /*
         formatProjectDate() currently produces English
@@ -120419,6 +120442,23 @@
             })}
           `;
 
+          /*
+           * This picker is rendered after openModal()
+           * has localized the initial modal content.
+           *
+           * Localize the newly inserted subtree
+           * explicitly. The same function also runs
+           * after search, selection, and expand/collapse
+           * rerenders.
+           */
+          localizeUI(
+            parentPickerRoot,
+            {
+              suppressObserverReplay:
+                true
+            }
+          );
+
           requestAnimationFrame(
             () => {
               if (!focusSearch) {
@@ -153316,6 +153356,22 @@
           </button>
         </div>
       `;
+
+      /*
+       * The duplicate warning is rendered after
+       * openModal() has localized the initial modal.
+       *
+       * Restrict localization to the warning itself.
+       * This deliberately excludes the editable place
+       * name and alternative-name textarea.
+       */
+      localizeUI(
+        host,
+        {
+          suppressObserverReplay:
+            true
+        }
+      );
       return duplicate;
     }
 
@@ -153350,12 +153406,44 @@
       if (copy) copy.disabled = !result.hasCoordinates;
       const remove = modalBackdrop.querySelector('[data-place-remove-position]');
       if (remove) remove.hidden = !result.hasAnyValue;
-      const choose = modalBackdrop.querySelector('[data-place-choose-map]');
-      if (choose) choose.textContent = result.hasCoordinates ? 'Edit position' : 'Choose on map';
-      const summary = modalBackdrop.querySelector('[data-place-map-summary]');
-      if (summary) summary.textContent = result.hasCoordinates
-        ? `Mapped at ${result.coordinates.lat.toFixed(6)}, ${result.coordinates.lng.toFixed(6)}`
-        : result.hasAnyValue ? 'Coordinates need attention' : 'Not on map';
+      const choose =
+        modalBackdrop.querySelector(
+          '[data-place-choose-map]'
+        );
+
+      if (choose) {
+        choose.textContent =
+          translateText(
+            result.hasCoordinates
+              ? 'Edit position'
+              : 'Choose on map'
+          );
+      }
+
+      const summary =
+        modalBackdrop.querySelector(
+          '[data-place-map-summary]'
+        );
+
+      if (summary) {
+        const summaryText =
+          result.hasCoordinates
+            ? `Mapped at ${
+                result.coordinates.lat
+                  .toFixed(6)
+              }, ${
+                result.coordinates.lng
+                  .toFixed(6)
+              }`
+            : result.hasAnyValue
+              ? 'Coordinates need attention'
+              : 'Not on map';
+
+        summary.textContent =
+          translateText(
+            summaryText
+          );
+      }
       const details = modalBackdrop.querySelector('[data-place-coordinate-details]');
       if (!result.valid && details) {
         details.open = true;
