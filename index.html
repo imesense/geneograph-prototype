@@ -8767,9 +8767,16 @@
       overflow: visible;
     }
 
-    .shared-filter-panel.people-filter-popover {
-      width: min(560px, calc(100vw - 24px));
-      overflow: visible;
+    .shared-filter-panel.people-filter-popover,
+    .shared-filter-panel.albums-shared-filter-popover {
+      width:
+        min(
+          560px,
+          calc(100vw - 24px)
+        );
+
+      overflow:
+        visible;
     }
 
     .shared-filter-panel-header {
@@ -8853,39 +8860,97 @@
       letter-spacing: .02em;
     }
 
+    .shared-filter-boolean-title {
+      color:
+        var(--text-secondary);
+
+      font-size:
+        12px;
+
+      font-weight:
+        900;
+
+      letter-spacing:
+        .02em;
+    }
+
+    .shared-filter-boolean-control {
+      min-height:
+        42px;
+
+      padding:
+        0 var(--space-3);
+
+      border:
+        1px solid
+        var(--border-default);
+
+      border-radius:
+        var(--radius-sm);
+
+      background:
+        var(--surface-input);
+
+      color:
+        var(--text-primary);
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      gap:
+        var(--space-2);
+
+      font-size:
+        13px;
+
+      font-weight:
+        750;
+
+      cursor:
+        pointer;
+
+      transition:
+        border-color var(--ease),
+        background var(--ease);
+    }
+
+    .shared-filter-boolean-control:hover {
+      border-color:
+        var(--border-strong);
+
+      background:
+        var(--surface-card-hover);
+    }
+
+    .shared-filter-boolean-control:focus-within {
+      border-color:
+        rgba(98, 217, 154, .55);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(98, 217, 154, .1);
+    }
+
+    .shared-filter-boolean-control input {
+      width:
+        17px;
+
+      height:
+        17px;
+
+      margin:
+        0;
+
+      accent-color:
+        var(--brand-green-500);
+    }
+
     .shared-filter-field select,
     .shared-filter-field input {
       font: inherit;
-    }
-
-    .shared-filter-field select {
-      width: 100%;
-      height: 40px;
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-sm);
-      background-color: var(--surface-input);
-      background-image: var(--select-chevron);
-      background-position:
-        calc(100% - 17px)
-        center;
-      background-size: 12px 7px;
-      background-repeat: no-repeat;
-      color: var(--text-primary);
-      padding: 0 36px 0 11px;
-      outline: 0;
-      appearance: none;
-      font-weight: 700;
-    }
-
-    .shared-filter-field select:hover {
-      border-color: var(--border-strong);
-      background-color: var(--surface-card-hover);
-    }
-
-    .shared-filter-field select:focus-visible {
-      border-color: rgba(98, 217, 154, .55);
-      box-shadow:
-        0 0 0 3px rgba(98, 217, 154, .1);
     }
 
     .shared-filter-combobox {
@@ -22276,6 +22341,86 @@
       margin-bottom: var(--space-3);
     }
 
+    .archive-filter-results-bar {
+      min-width: 0;
+      min-height: 46px;
+      flex: 0 0 auto;
+      margin-bottom: var(--space-3);
+      padding: var(--space-2) var(--space-3);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: var(--surface-card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    .archive-filter-results-bar > strong {
+      min-width: 0;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .archive-filter-presentation {
+      flex: 0 0 auto;
+      padding: 3px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: rgba(10, 14, 13, .42);
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .archive-filter-presentation button {
+      min-height: 32px;
+      padding: 0 11px;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--text-tertiary);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .archive-filter-presentation button:hover {
+      color: var(--text-primary);
+    }
+
+    .archive-filter-presentation button.active {
+      background: var(--surface-selected);
+      color: var(--brand-green-300);
+    }
+
+    .archive-filter-presentation button:focus-visible {
+      outline: 2px solid var(--brand-green-400);
+      outline-offset: 1px;
+    }
+
+    .shared-filter-panel.archive-shared-filter-popover {
+      width: min(620px, calc(100vw - 24px));
+    }
+
+    @media (max-width: 640px) {
+      .archive-filter-results-bar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .archive-filter-presentation {
+        width: 100%;
+      }
+
+      .archive-filter-presentation button {
+        flex: 1 1 50%;
+      }
+    }
+
     .archive-selection-bar {
       min-height: 48px;
       margin-bottom: var(--space-3);
@@ -33790,6 +33935,39 @@
       'Favourites only':
         'Только избранные',
 
+      'All Archive':
+        'Весь архив',
+
+      'Current folder and subfolders':
+        'Текущая папка и подпапки',
+
+      'Document date':
+        'Дата документа',
+
+      'Files only':
+        'Только файлы',
+
+      'Folder structure':
+        'Структура папок',
+
+      'Filtered result layout':
+        'Вид отфильтрованных результатов',
+
+      'Browse files matching the active filters.':
+        'Просматривайте файлы, соответствующие активным фильтрам.',
+
+      'No files match these filters.':
+        'Нет файлов, соответствующих этим фильтрам.',
+
+      'No folders contain matching files.':
+        'Нет папок с подходящими файлами.',
+
+      'Change or clear the active filters and try again.':
+        'Измените или сбросьте активные фильтры и повторите попытку.',
+
+      'Filter files across Archive and choose how results are displayed.':
+        'Фильтруйте файлы во всём архиве и выбирайте способ отображения результатов.',
+
       'photo selected': 'фото выбрано',
 
       // ========================================
@@ -35125,6 +35303,9 @@
 
       'Search places...':
         'Поиск мест...',
+
+      'Search people':
+        'Поиск людей',
 
       'Open place filters':
         'Открыть фильтры мест',
@@ -41937,9 +42118,6 @@
         return;
       }
 
-      state.archivePersonFilterId =
-        '';
-
       state.archiveSearch =
         '';
 
@@ -41952,9 +42130,7 @@
       placeId
     ) {
       const place =
-        getPlace(
-          placeId
-        );
+        getPlace(placeId);
 
       if (!place) {
         return;
@@ -41969,24 +42145,24 @@
         view:
           'files',
 
-        /*
-          Place results can span several folders,
-          so the physical location is the Files root.
-        */
-
         folderId:
           null,
 
         search:
-          placePrimaryName(
-            place
-          ),
-
-        searchScope:
-          'all',
-
-        personFilterId:
           '',
+
+        fileFilters: {
+          ...defaultArchiveFileFilters,
+          placeIds: [
+            place.id
+          ]
+        },
+
+        filterPresentation:
+          'flat',
+
+        filterScopeFolderId:
+          null,
 
         selectedFileId:
           files[0]?.id
@@ -42010,9 +42186,7 @@
       personId
     ) {
       const person =
-        getPerson(
-          personId
-        );
+        getPerson(personId);
 
       if (!person) {
         return;
@@ -42033,11 +42207,18 @@
         search:
           '',
 
-        searchScope:
-          'folder',
+        fileFilters: {
+          ...defaultArchiveFileFilters,
+          personIds: [
+            person.id
+          ]
+        },
 
-        personFilterId:
-          person.id,
+        filterPresentation:
+          'flat',
+
+        filterScopeFolderId:
+          null,
 
         selectedFileId:
           files[0]?.id
@@ -47201,11 +47382,22 @@
       archiveSelectedSourceId: 'as1',
       archiveSelectedFileIds: [],
       archiveSearch: '',
-      archiveSearchScope: 'folder',
-      archiveFileTypeFilter: 'all',
-      archiveLinkFilter: 'all',
+      archiveFileFilters: {
+        scope: 'all',
+        fileType: 'all',
+        connections: 'all',
+        personIds: [],
+        placeIds: [],
+        documentYears: {
+          mode: '',
+          from: '',
+          to: ''
+        },
+        favouriteOnly: false
+      },
+      archiveFilterPresentation: 'flat',
+      archiveFilterScopeFolderId: null,
       archiveSourceTypeFilter: 'all',
-      archivePersonFilterId: '',
       archiveInspectorCollapsed: false,
       archiveFileEditing: false,
       archiveFileEditOriginal: null,
@@ -55966,11 +56158,16 @@
           search:
             '',
 
-          searchScope:
-            'folder',
+          fileFilters:
+            archiveFileFiltersWithDefaults(
+              {}
+            ),
 
-          personFilterId:
-            '',
+          filterPresentation:
+            'flat',
+
+          filterScopeFolderId:
+            null,
 
           selectedFileId:
             file?.id
@@ -64552,56 +64749,76 @@
                     "
                     data-shared-filter-year-controls>
 
-                    <select
-                      aria-labelledby="${escapeHtml(fieldId)}-label"
-                      data-shared-filter-year-mode>
+                    <div class="common-select-shell">
+                      <select
+                        class="compact-select common-select"
+                        aria-labelledby="${escapeHtml(fieldId)}-label"
+                        data-shared-filter-year-mode>
 
-                      <option
-                        value=""
-                        ${range.mode ? '' : 'selected'}>
-                        ${escapeHtml(
-                          translateText(
-                            'Any year'
-                          )
-                        )}
-                      </option>
+                        <option
+                          value=""
+                          ${range.mode ? '' : 'selected'}>
 
-                      <option
-                        value="before"
-                        ${
-                          range.mode === 'before'
-                            ? 'selected'
-                            : ''
-                        }>
-                        ${escapeHtml(
-                          translateText('Before')
-                        )}
-                      </option>
+                          ${escapeHtml(
+                            translateText(
+                              'Any year'
+                            )
+                          )}
+                        </option>
 
-                      <option
-                        value="after"
-                        ${
-                          range.mode === 'after'
-                            ? 'selected'
-                            : ''
-                        }>
-                        ${escapeHtml(
-                          translateText('After')
-                        )}
-                      </option>
+                        <option
+                          value="before"
+                          ${
+                            range.mode === 'before'
+                              ? 'selected'
+                              : ''
+                          }>
 
-                      <option
-                        value="between"
-                        ${
-                          isBetween
-                            ? 'selected'
-                            : ''
-                        }>
-                        ${escapeHtml(
-                          translateText('Between')
-                        )}
-                      </option>
-                    </select>
+                          ${escapeHtml(
+                            translateText(
+                              'Before'
+                            )
+                          )}
+                        </option>
+
+                        <option
+                          value="after"
+                          ${
+                            range.mode === 'after'
+                              ? 'selected'
+                              : ''
+                          }>
+
+                          ${escapeHtml(
+                            translateText(
+                              'After'
+                            )
+                          )}
+                        </option>
+
+                        <option
+                          value="between"
+                          ${
+                            isBetween
+                              ? 'selected'
+                              : ''
+                          }>
+
+                          ${escapeHtml(
+                            translateText(
+                              'Between'
+                            )
+                          )}
+                        </option>
+                      </select>
+
+                      <span
+                        class="common-select-chevron"
+                        aria-hidden="true">
+
+                        ${icon.chevron}
+                      </span>
+                    </div>
 
                     <label
                       class="shared-filter-year-input-shell"
@@ -64689,8 +64906,16 @@
             definition.control === 'boolean'
           ) {
             return `
-              <label class="${fieldClass}">
-                <span>
+              <div
+                class="
+                  ${fieldClass}
+                  shared-filter-boolean-field
+                ">
+
+                <span
+                  class="
+                    shared-filter-boolean-title
+                  ">
                   ${escapeHtml(
                     translateText(
                       definition.label
@@ -64698,7 +64923,11 @@
                   )}
                 </span>
 
-                <span>
+                <label
+                  class="
+                    shared-filter-boolean-control
+                  ">
+
                   <input
                     type="checkbox"
                     data-shared-filter-boolean="${
@@ -64714,14 +64943,16 @@
                         : ''
                     }>
 
-                  ${escapeHtml(
-                    translateText(
-                      definition.checkboxLabel
-                      || definition.label
-                    )
-                  )}
-                </span>
-              </label>
+                  <span>
+                    ${escapeHtml(
+                      translateText(
+                        definition.checkboxLabel
+                        || definition.label
+                      )
+                    )}
+                  </span>
+                </label>
+              </div>
             `;
           }
 
@@ -64741,39 +64972,49 @@
                 )}
               </label>
 
-              <select
-                id="${escapeHtml(fieldId)}"
-                data-shared-filter-select="${
-                  escapeHtml(
-                    definition.key
-                  )
-                }">
+              <div class="common-select-shell">
+                <select
+                  class="compact-select common-select"
+                  id="${escapeHtml(fieldId)}"
+                  data-shared-filter-select="${
+                    escapeHtml(
+                      definition.key
+                    )
+                  }">
 
-                ${options.map(option => `
-                  <option
-                    value="${
-                      escapeHtml(
-                        option.value
-                      )
-                    }"
-                    ${
-                      String(
-                        normalized[
-                          definition.key
-                        ]
-                      ) === option.value
-                        ? 'selected'
-                        : ''
-                    }>
+                  ${options.map(option => `
+                    <option
+                      value="${
+                        escapeHtml(
+                          option.value
+                        )
+                      }"
+                      ${
+                        String(
+                          normalized[
+                            definition.key
+                          ]
+                        ) === option.value
+                          ? 'selected'
+                          : ''
+                      }>
 
-                    ${escapeHtml(
-                      translateText(
-                        option.label
-                      )
-                    )}
-                  </option>
-                `).join('')}
-              </select>
+                      ${escapeHtml(
+                        translateText(
+                          option.label
+                        )
+                      )}
+                    </option>
+                  `).join('')}
+                </select>
+
+                <span
+                  class="common-select-chevron"
+                  aria-hidden="true">
+
+                  ${icon.chevron}
+                </span>
+              </div>
             </div>
           `;
         }).join('');
@@ -65261,17 +65502,25 @@
               index
             }`;
 
-        const selectedValues =
-          () =>
-            Array.isArray(
-              currentValues[
-                definition.key
-              ]
-            )
-              ? currentValues[
-                  definition.key
-                ]
+        const selectedValues = () => {
+          const value =
+            currentValues[
+              definition.key
+            ];
+
+          if (definition.multiple) {
+            return Array.isArray(value)
+              ? value
               : [];
+          }
+
+          return value == null
+            || value === ''
+              ? []
+              : [
+                  String(value)
+                ];
+        };
 
         const renderSelected = () => {
           const valuesToRender =
@@ -65863,10 +66112,13 @@
             currentValues[
               definition.key
             ] =
-              selectedValues()
-                .filter(item =>
-                  item !== value
-                );
+              definition.multiple
+                ? selectedValues()
+                    .filter(item =>
+                      item !== value
+                    )
+                : definition.defaultValue
+                  ?? '';
 
             renderSelected();
             renderOptions();
@@ -71551,12 +71803,6 @@
         )
         ?.remove();
 
-      document
-        .getElementById(
-          'albumsFilterPopover'
-        )
-        ?.remove();
-
       document.removeEventListener(
         'click',
         closePeopleFilterOnOutside
@@ -71671,6 +71917,7 @@
       anchor
     ) {
       closePeopleFilterPopover();
+      closeAlbumsFilterPopover();
       closePeopleColumnsPopover();
       closeMenu();
 
@@ -73963,12 +74210,395 @@
     }
 
     // ---------- Canonical Albums module ----------
-    const defaultAlbumFilters = {
-      personId: '',
-      placeId: '',
-      dateRange: '',
-      favouriteOnly: false
-    };
+
+    const defaultAlbumFilters =
+      Object.freeze({
+        personId:
+          '',
+
+        placeId:
+          '',
+
+        dateRange:
+          '',
+
+        favouriteOnly:
+          false
+      });
+
+    function albumsPersonFilterOptions() {
+      const projectId =
+        currentProjectId();
+
+      const photos =
+        getProjectPhotos(projectId);
+
+      const counts =
+        new Map();
+
+      let untaggedCount = 0;
+
+      photos.forEach(photo => {
+        const personIds =
+          Array.isArray(
+            photo.personIds
+          )
+            ? [
+                ...new Set(
+                  photo.personIds
+                )
+              ]
+            : [];
+
+        if (!personIds.length) {
+          untaggedCount += 1;
+        }
+
+        personIds.forEach(personId => {
+          const person =
+            getPerson(personId);
+
+          if (
+            !person
+            || person.projectId
+              !== projectId
+          ) {
+            return;
+          }
+
+          counts.set(
+            personId,
+            (
+              counts.get(personId)
+              || 0
+            ) + 1
+          );
+        });
+      });
+
+      const collator =
+        new Intl.Collator(
+          state.language === 'ru'
+            ? 'ru'
+            : 'en',
+          {
+            sensitivity:
+              'base'
+          }
+        );
+
+      const people =
+        getPeople(projectId)
+          .filter(person =>
+            counts.has(person.id)
+          )
+          .map(person => ({
+            value:
+              person.id,
+
+            label:
+              person.names?.display
+              || 'Unnamed person',
+
+            count:
+              counts.get(person.id)
+              || 0
+          }))
+          .sort(
+            (left, right) =>
+              collator.compare(
+                left.label,
+                right.label
+              )
+          );
+
+      return [
+        {
+          value:
+            'none',
+
+          label:
+            'No people tagged',
+
+          count:
+            untaggedCount
+        },
+
+        ...people
+      ];
+    }
+
+    function albumsPlaceFilterOptions() {
+      const photos =
+        getProjectPhotos(
+          currentProjectId()
+        );
+
+      const counts =
+        new Map();
+
+      let unknownCount = 0;
+
+      photos.forEach(photo => {
+        const placeId =
+          String(
+            photo.placeId || ''
+          ).trim();
+
+        if (!placeId) {
+          if (
+            !String(
+              photo.placeText || ''
+            ).trim()
+          ) {
+            unknownCount += 1;
+          }
+
+          return;
+        }
+
+        counts.set(
+          placeId,
+          (
+            counts.get(placeId)
+            || 0
+          ) + 1
+        );
+      });
+
+      const collator =
+        new Intl.Collator(
+          state.language === 'ru'
+            ? 'ru'
+            : 'en',
+          {
+            sensitivity:
+              'base'
+          }
+        );
+
+      const places = [
+        ...counts.entries()
+      ]
+        .map(([
+          placeId,
+          count
+        ]) => {
+          const place =
+            sampleData.places.find(
+              item =>
+                item.id === placeId
+            );
+
+          return {
+            value:
+              placeId,
+
+            label:
+              getPlaceDisplay(
+                placeId
+              ),
+
+            /*
+            * Alternative names improve searching,
+            * but are not displayed or localized.
+            */
+            keywords:
+              place?.alternativeNames
+              || [],
+
+            count
+          };
+        })
+        .sort(
+          (left, right) =>
+            collator.compare(
+              left.label,
+              right.label
+            )
+        );
+
+      return [
+        {
+          value:
+            'none',
+
+          label:
+            'No known place',
+
+          count:
+            unknownCount
+        },
+
+        ...places
+      ];
+    }
+
+    const albumsFilterSchema =
+      Object.freeze([
+        Object.freeze({
+          key:
+            'personId',
+
+          label:
+            'Person',
+
+          control:
+            'combobox',
+
+          multiple:
+            false,
+
+          layout:
+            'full',
+
+          placeholder:
+            'Search people',
+
+          defaultValue:
+            '',
+
+          getOptions:
+            albumsPersonFilterOptions
+        }),
+
+        Object.freeze({
+          key:
+            'placeId',
+
+          label:
+            'Place',
+
+          control:
+            'combobox',
+
+          multiple:
+            false,
+
+          layout:
+            'full',
+
+          placeholder:
+            'Search places',
+
+          defaultValue:
+            '',
+
+          getOptions:
+            albumsPlaceFilterOptions
+        }),
+
+        Object.freeze({
+          key:
+            'dateRange',
+
+          label:
+            'Date',
+
+          control:
+            'select',
+
+          defaultValue:
+            '',
+
+          options:
+            Object.freeze([
+              Object.freeze({
+                value:
+                  '',
+
+                label:
+                  'Any date'
+              }),
+
+              Object.freeze({
+                value:
+                  'dated',
+
+                label:
+                  'Known date'
+              }),
+
+              Object.freeze({
+                value:
+                  'unknown',
+
+                label:
+                  'Unknown date'
+              })
+            ])
+        }),
+
+        Object.freeze({
+          key:
+            'favouriteOnly',
+
+          label:
+            'Favourites',
+
+          control:
+            'boolean',
+
+          defaultValue:
+            false,
+
+          checkboxLabel:
+            'Favourites only'
+        })
+      ]);
+
+    function albumsFiltersWithDefaults(
+      filters = state.albumsFilters
+    ) {
+      return cloneSharedFilterValues(
+        albumsFilterSchema,
+        {
+          ...defaultAlbumFilters,
+          ...(filters || {})
+        }
+      );
+    }
+
+    function renderAlbumsFilterFields(
+      filters = defaultAlbumFilters,
+      prefix = 'albums-filter'
+    ) {
+      return renderSharedFilterFields({
+        schema:
+          albumsFilterSchema,
+
+        values:
+          albumsFiltersWithDefaults(
+            filters
+          ),
+
+        prefix
+      });
+    }
+
+    function bindAlbumsFilterFields(
+      root,
+      filters,
+      prefix,
+      onChange =
+        () => {}
+    ) {
+      return bindSharedFilterFields(
+        root,
+        {
+          schema:
+            albumsFilterSchema,
+
+          values:
+            albumsFiltersWithDefaults(
+              filters
+            ),
+
+          prefix,
+          onChange
+        }
+      );
+    }
 
     function personPrimaryPhotoId(person) {
       const centralPerson = getPerson(person?.id) || person;
@@ -77624,9 +78254,24 @@
           );
     }
 
-    function albumFilterCount() {
-      const filters = state.albumsFilters || defaultAlbumFilters;
-      return [filters.personId, filters.placeId, filters.dateRange, filters.favouriteOnly].filter(Boolean).length;
+    function albumFilterCount(
+      filters = state.albumsFilters
+    ) {
+      const normalized =
+        albumsFiltersWithDefaults(
+          filters
+        );
+
+      return albumsFilterSchema
+        .filter(definition =>
+          sharedFilterValueIsActive(
+            definition,
+            normalized[
+              definition.key
+            ]
+          )
+        )
+        .length;
     }
 
     function albumsHaveActiveQuery() {
@@ -80105,72 +80750,361 @@
       `;
     }
 
-    function openAlbumsFilterPopover(anchor) {
-      closeMenu();
-      const projectPhotos = getProjectPhotos();
-      const taggedIds = new Set(projectPhotos.flatMap(photo => photo.personIds || []));
-      const people = getPeople(currentProjectId()).filter(person => taggedIds.has(person.id));
-      const placeIds = new Set(projectPhotos.map(photo => photo.placeId).filter(Boolean));
-      const rect = anchor.getBoundingClientRect();
-      const menu = document.createElement('div');
-      menu.className = 'albums-filter-popover';
-      menu.id = 'projectMenu';
-      const filters = state.albumsFilters || defaultAlbumFilters;
-      menu.innerHTML = `<div class="albums-filter-popover-head"><strong>Filter photos</strong><span>Use filters to narrow down the view.</span></div><div class="albums-filter-popover-body"><label class="albums-filter-field">Person<select data-albums-filter="personId"><option value="">All people</option><option value="none" ${filters.personId === 'none' ? 'selected' : ''}>No people tagged</option>${people.map(person => `<option value="${escapeHtml(person.id)}" ${filters.personId === person.id ? 'selected' : ''}>${escapeHtml(person.names?.display || 'Unnamed person')}</option>`).join('')}</select></label><label class="albums-filter-field">Place<select data-albums-filter="placeId"><option value="">All places</option><option value="none" ${filters.placeId === 'none' ? 'selected' : ''}>No known place</option>${[...placeIds].map(id => `<option value="${escapeHtml(id)}" ${filters.placeId === id ? 'selected' : ''}>${escapeHtml(getPlaceDisplay(id))}</option>`).join('')}</select></label><label class="albums-filter-field">Date<select data-albums-filter="dateRange"><option value="">Any date</option><option value="dated" ${filters.dateRange === 'dated' ? 'selected' : ''}>Known date</option><option value="unknown" ${filters.dateRange === 'unknown' ? 'selected' : ''}>Unknown date</option></select></label><label class="albums-filter-check"><input type="checkbox" data-albums-filter-favorite ${filters.favouriteOnly ? 'checked' : ''}> Favourites only</label></div><div class="albums-filter-popover-footer"><button class="button secondary" type="button" data-albums-filter-clear>Reset</button><button class="button primary" type="button" data-albums-filter-apply>Apply filters</button></div>`;
-      document.body.appendChild(menu);
-      const margin = 12;
-      const left = Math.min(
-        Math.max(margin, rect.right - menu.offsetWidth),
-        Math.max(margin, window.innerWidth - menu.offsetWidth - margin)
+    let albumsFilterReturnFocus =
+      null;
+
+    function closeAlbumsFilterPopover({
+      restoreFocus = false
+    } = {}) {
+      document
+        .getElementById(
+          'albumsFilterPopover'
+        )
+        ?.remove();
+
+      document.removeEventListener(
+        'click',
+        closeAlbumsFilterOnOutside
       );
-      const below = rect.bottom + 6;
-      const top = below + menu.offsetHeight <= window.innerHeight - margin
-        ? below
-        : Math.max(margin, rect.top - menu.offsetHeight - 6);
-      menu.style.left = `${left}px`;
-      menu.style.top = `${top}px`;
-      menu.querySelector('[data-albums-filter-apply]')?.addEventListener('click', () => {
-        state.albumsFilters = {
-          personId: menu.querySelector('[data-albums-filter="personId"]')?.value || '',
-          placeId: menu.querySelector('[data-albums-filter="placeId"]')?.value || '',
-          dateRange: menu.querySelector('[data-albums-filter="dateRange"]')?.value || '',
-          favouriteOnly: Boolean(menu.querySelector('[data-albums-filter-favorite]')?.checked)
-        };
-        resetAlbumsPage();
-        closeMenu();
-        renderAlbums();
-      });
-      menu.querySelector('[data-albums-filter-clear]')?.addEventListener('click', () => {
-        state.albumsFilters = { ...defaultAlbumFilters };
-        resetAlbumsPage();
-        closeMenu();
-        renderAlbums();
-      });
-      bindMenuLifecycle(anchor);
-      menu.addEventListener('click', event => event.stopPropagation());
+
+      document.removeEventListener(
+        'keydown',
+        closeAlbumsFilterOnEscape
+      );
+
+      if (
+        restoreFocus
+        && albumsFilterReturnFocus
+          ?.isConnected
+      ) {
+        albumsFilterReturnFocus.focus({
+          preventScroll:
+            true
+        });
+      }
+
+      albumsFilterReturnFocus =
+        null;
     }
 
-    function removeAlbumFilter(key) {
-      if (
-        key === 'favouriteOnly'
-      ) {
-        state
-          .albumsFilters
-          .favouriteOnly =
-            false;
-      } else {
-        state.albumsFilters[key] =
-          '';
+    function closeAlbumsFilterOnOutside(
+      event
+    ) {
+      const popover =
+        document.getElementById(
+          'albumsFilterPopover'
+        );
+
+      const trigger =
+        document.getElementById(
+          'albumsFilterButton'
+        );
+
+      if (!popover) {
+        return;
       }
+
+      const eventPath =
+        typeof event.composedPath
+          === 'function'
+            ? event.composedPath()
+            : [];
+
+      const insidePopover =
+        eventPath.length
+          ? eventPath.includes(
+              popover
+            )
+          : popover.contains(
+              event.target
+            );
+
+      const insideTrigger =
+        eventPath.length
+          ? eventPath.includes(
+              trigger
+            )
+          : trigger?.contains(
+              event.target
+            );
+
+      if (
+        insidePopover
+        || insideTrigger
+      ) {
+        return;
+      }
+
+      closeAlbumsFilterPopover();
+    }
+
+    function closeAlbumsFilterOnEscape(
+      event
+    ) {
+      if (
+        event.key !== 'Escape'
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+
+      closeAlbumsFilterPopover({
+        restoreFocus:
+          true
+      });
+    }
+
+    function openAlbumsFilterPopover(
+      anchor
+    ) {
+      closeAlbumsFilterPopover();
+      closePeopleFilterPopover();
+      closeMenu();
+
+      albumsFilterReturnFocus =
+        anchor;
+
+      const filters =
+        albumsFiltersWithDefaults();
+
+      const popover =
+        document.createElement(
+          'div'
+        );
+
+      popover.className =
+        'shared-filter-panel albums-shared-filter-popover';
+
+      popover.id =
+        'albumsFilterPopover';
+
+      popover.setAttribute(
+        'role',
+        'dialog'
+      );
+
+      popover.setAttribute(
+        'aria-label',
+        translateText(
+          'Filter photos'
+        )
+      );
+
+      popover.innerHTML = `
+        <div
+          class="
+            shared-filter-panel-header
+          ">
+
+          <div>
+            <h3>
+              Filter photos
+            </h3>
+
+            <p>
+              Use filters to narrow down
+              the view.
+            </p>
+          </div>
+
+          <button
+            class="
+              shared-filter-panel-close
+            "
+            type="button"
+            aria-label="Close"
+            data-albums-filter-close>
+
+            ${icon.close}
+          </button>
+        </div>
+
+        <div
+          class="
+            shared-filter-panel-body
+          ">
+
+          ${renderAlbumsFilterFields(
+            filters,
+            'albums-popover-filter'
+          )}
+        </div>
+
+        <div
+          class="
+            shared-filter-panel-footer
+          ">
+
+          <button
+            class="link"
+            type="button"
+            data-albums-filter-reset>
+            Clear filters
+          </button>
+
+          <div
+            class="
+              shared-filter-panel-actions
+            ">
+
+            <button
+              class="button secondary"
+              type="button"
+              data-albums-filter-cancel>
+              Cancel
+            </button>
+
+            <button
+              class="button primary"
+              type="button"
+              data-albums-filter-apply>
+              Apply filters
+            </button>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(
+        popover
+      );
+
+      localizeUI(popover);
+
+      const controller =
+        bindAlbumsFilterFields(
+          popover,
+          filters,
+          'albums-popover-filter'
+        );
+
+      popover
+        .querySelector(
+          '[data-albums-filter-reset]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            controller?.reset();
+          }
+        );
+
+      popover
+        .querySelector(
+          '[data-albums-filter-close]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            closeAlbumsFilterPopover({
+              restoreFocus:
+                true
+            });
+          }
+        );
+
+      popover
+        .querySelector(
+          '[data-albums-filter-cancel]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            closeAlbumsFilterPopover({
+              restoreFocus:
+                true
+            });
+          }
+        );
+
+      popover
+        .querySelector(
+          '[data-albums-filter-apply]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            state.albumsFilters =
+              controller?.getValues()
+              || albumsFiltersWithDefaults();
+
+            resetAlbumsPage();
+
+            closeAlbumsFilterPopover();
+
+            renderAlbums();
+          }
+        );
+
+      positionSharedFilterPanel(
+        popover,
+        anchor
+      );
+
+      requestAnimationFrame(
+        () => {
+          popover
+            .querySelector(
+              '[data-albums-filter-close]'
+            )
+            ?.focus({
+              preventScroll:
+                true
+            });
+        }
+      );
+
+      setTimeout(
+        () => {
+          document.addEventListener(
+            'click',
+            closeAlbumsFilterOnOutside
+          );
+
+          document.addEventListener(
+            'keydown',
+            closeAlbumsFilterOnEscape
+          );
+        },
+        0
+      );
+    }
+
+    function removeAlbumFilter(
+      key
+    ) {
+      const definition =
+        sharedFilterDefinitionByKey(
+          albumsFilterSchema,
+          key
+        );
+
+      if (!definition) {
+        return;
+      }
+
+      const filters =
+        albumsFiltersWithDefaults();
+
+      filters[key] =
+        definition.control
+          === 'boolean'
+            ? false
+            : definition.defaultValue
+              ?? '';
+
+      state.albumsFilters =
+        filters;
 
       resetAlbumsPage();
       renderAlbums();
     }
 
     function clearAlbumFilters() {
-      state.albumsFilters = {
-        ...defaultAlbumFilters
-      };
+      state.albumsFilters =
+        albumsFiltersWithDefaults(
+          defaultAlbumFilters
+        );
 
       resetAlbumsPage();
       renderAlbums();
@@ -112078,6 +113012,562 @@
             );
     }
 
+    const defaultArchiveFileFilters =
+      Object.freeze({
+        scope:
+          'all',
+
+        fileType:
+          'all',
+
+        connections:
+          'all',
+
+        personIds:
+          Object.freeze([]),
+
+        placeIds:
+          Object.freeze([]),
+
+        documentYears:
+          Object.freeze({
+            mode:
+              '',
+
+            from:
+              '',
+
+            to:
+              ''
+          }),
+
+        favouriteOnly:
+          false
+      });
+
+    function archiveFilePersonIds(
+      file
+    ) {
+      return archiveUniqueIds(
+        file?.linkedPersonIds
+        || []
+      );
+    }
+
+    function archiveFilePlaceIds(
+      file
+    ) {
+      const documentPlace =
+        archiveDocumentPlace(
+          file
+        );
+
+      return archiveUniqueIds([
+        documentPlace.placeId,
+
+        ...(
+          file?.linkedPlaceIds
+          || []
+        ),
+
+        ...(
+          file?.placeIds
+          || []
+        )
+      ]);
+    }
+
+    function archiveFilterCollator() {
+      return new Intl.Collator(
+        state.language === 'ru'
+          ? 'ru'
+          : 'en',
+        {
+          sensitivity:
+            'base'
+        }
+      );
+    }
+
+    function archivePersonFilterOptions() {
+      const files =
+        archiveProjectFiles();
+
+      const counts =
+        new Map();
+
+      files.forEach(file => {
+        archiveFilePersonIds(
+          file
+        ).forEach(personId => {
+          counts.set(
+            personId,
+            (
+              counts.get(personId)
+              || 0
+            ) + 1
+          );
+        });
+      });
+
+      return getPeople(
+        currentProjectId()
+      )
+        .filter(person =>
+          counts.has(person.id)
+        )
+        .map(person => ({
+          value:
+            person.id,
+
+          label:
+            personResourceDisplayName(
+              person
+            ),
+
+          count:
+            counts.get(person.id)
+            || 0
+        }))
+        .sort(
+          (left, right) =>
+            archiveFilterCollator()
+              .compare(
+                left.label,
+                right.label
+              )
+        );
+    }
+
+    function archivePlaceFilterOptions() {
+      const files =
+        archiveProjectFiles();
+
+      const counts =
+        new Map();
+
+      files.forEach(file => {
+        archiveFilePlaceIds(
+          file
+        ).forEach(placeId => {
+          counts.set(
+            placeId,
+            (
+              counts.get(placeId)
+              || 0
+            ) + 1
+          );
+        });
+      });
+
+      return [
+        ...counts.entries()
+      ]
+        .map(([
+          placeId,
+          count
+        ]) => {
+          const place =
+            getPlace(placeId);
+
+          return {
+            value:
+              placeId,
+
+            label:
+              getPlaceDisplay(
+                placeId
+              )
+              || place?.name
+              || placeId,
+
+            /*
+            * Alternative names improve searching,
+            * but are not displayed or localized.
+            */
+            keywords:
+              place?.alternativeNames
+              || [],
+
+            count
+          };
+        })
+        .sort(
+          (left, right) =>
+            archiveFilterCollator()
+              .compare(
+                left.label,
+                right.label
+              )
+        );
+    }
+
+    const archiveFileFilterSchema =
+      Object.freeze([
+        Object.freeze({
+          key:
+            'scope',
+
+          label:
+            'Location',
+
+          control:
+            'select',
+
+          defaultValue:
+            'all',
+
+          options:
+            Object.freeze([
+              Object.freeze({
+                value:
+                  'all',
+
+                label:
+                  'All Archive'
+              }),
+
+              Object.freeze({
+                value:
+                  'folder',
+
+                label:
+                  'Current folder and subfolders'
+              })
+            ])
+        }),
+
+        Object.freeze({
+          key:
+            'fileType',
+
+          label:
+            'File type',
+
+          control:
+            'select',
+
+          defaultValue:
+            'all',
+
+          options:
+            Object.freeze([
+              Object.freeze({
+                value:
+                  'all',
+
+                label:
+                  'All types'
+              }),
+
+              Object.freeze({
+                value:
+                  'pdf',
+
+                label:
+                  'PDF'
+              }),
+
+              Object.freeze({
+                value:
+                  'img',
+
+                label:
+                  'Images'
+              }),
+
+              Object.freeze({
+                value:
+                  'doc',
+
+                label:
+                  'Documents'
+              }),
+
+              Object.freeze({
+                value:
+                  'sheet',
+
+                label:
+                  'Spreadsheets'
+              }),
+
+              Object.freeze({
+                value:
+                  'audio',
+
+                label:
+                  'Audio'
+              }),
+
+              Object.freeze({
+                value:
+                  'archive',
+
+                label:
+                  'Archive files'
+              })
+            ])
+        }),
+
+        Object.freeze({
+          key:
+            'connections',
+
+          label:
+            'Connections',
+
+          control:
+            'select',
+
+          defaultValue:
+            'all',
+
+          options:
+            Object.freeze([
+              Object.freeze({
+                value:
+                  'all',
+
+                label:
+                  'All files'
+              }),
+
+              Object.freeze({
+                value:
+                  'linked',
+
+                label:
+                  'Linked files'
+              }),
+
+              Object.freeze({
+                value:
+                  'unlinked',
+
+                label:
+                  'Unlinked files'
+              })
+            ])
+        }),
+
+        Object.freeze({
+          key:
+            'favouriteOnly',
+
+          label:
+            'Favourites',
+
+          control:
+            'boolean',
+
+          defaultValue:
+            false,
+
+          checkboxLabel:
+            'Favourites only'
+        }),
+
+        Object.freeze({
+          key:
+            'personIds',
+
+          label:
+            'People',
+
+          control:
+            'combobox',
+
+          multiple:
+            true,
+
+          layout:
+            'full',
+
+          placeholder:
+            'Search people',
+
+          defaultValue:
+            Object.freeze([]),
+
+          getOptions:
+            archivePersonFilterOptions
+        }),
+
+        Object.freeze({
+          key:
+            'placeIds',
+
+          label:
+            'Places',
+
+          control:
+            'combobox',
+
+          multiple:
+            true,
+
+          layout:
+            'full',
+
+          placeholder:
+            'Search places',
+
+          defaultValue:
+            Object.freeze([]),
+
+          getOptions:
+            archivePlaceFilterOptions
+        }),
+
+        Object.freeze({
+          key:
+            'documentYears',
+
+          label:
+            'Document date',
+
+          control:
+            'year-range',
+
+          layout:
+            'full',
+
+          defaultValue:
+            Object.freeze({
+              mode:
+                '',
+
+              from:
+                '',
+
+              to:
+                ''
+            })
+        }),
+      ]);
+
+    const archiveSourceFilterSchema =
+      Object.freeze([
+        Object.freeze({
+          key:
+            'sourceType',
+
+          label:
+            'Source type',
+
+          control:
+            'select',
+
+          defaultValue:
+            'all',
+
+          getOptions:
+            () => [
+              {
+                value:
+                  'all',
+
+                label:
+                  'All source types'
+              },
+
+              {
+                value:
+                  'favorites',
+
+                label:
+                  'Favourite sources'
+              },
+
+              ...ARCHIVE_SOURCE_TYPES.map(
+                type => ({
+                  value:
+                    type,
+
+                  label:
+                    type
+                })
+              )
+            ]
+        })
+      ]);
+
+    function archiveFileFiltersWithDefaults(
+      filters =
+        state.archiveFileFilters
+    ) {
+      return cloneSharedFilterValues(
+        archiveFileFilterSchema,
+        {
+          ...defaultArchiveFileFilters,
+          ...(filters || {})
+        }
+      );
+    }
+
+    function archiveEffectiveFileFilters() {
+      const filters =
+        archiveFileFiltersWithDefaults();
+
+      /*
+      * The Favourites sidebar item is a shortcut
+      * into the same predicate, not a second
+      * filtering implementation.
+      */
+      if (
+        state.archiveView
+          === 'favorites'
+      ) {
+        filters.favouriteOnly =
+          true;
+      }
+
+      return filters;
+    }
+
+    function archiveFileFilteringActive(
+      filters =
+        archiveEffectiveFileFilters()
+    ) {
+      const structuredFilterActive =
+        archiveFileFilterSchema
+          .filter(definition =>
+            definition.key !== 'scope'
+          )
+          .some(definition =>
+            sharedFilterValueIsActive(
+              definition,
+              filters[
+                definition.key
+              ]
+            )
+          );
+
+      return Boolean(
+        String(
+          state.archiveSearch || ''
+        ).trim()
+        || structuredFilterActive
+      );
+    }
+
+    function archiveFileFilterCount() {
+      const filters =
+        archiveEffectiveFileFilters();
+
+      return archiveFileFilterSchema
+        .filter(definition =>
+          sharedFilterValueIsActive(
+            definition,
+            filters[
+              definition.key
+            ]
+          )
+        )
+        .length;
+    }
+
     const ARCHIVE_NAVIGATION_HISTORY_LIMIT =
       50;
 
@@ -112103,12 +113593,15 @@
           snapshot.selectedFileId
         );
 
-      const person =
-        snapshot.personFilterId
-          ? getPerson(
-              snapshot.personFilterId
-            )
-          : null;
+      const fileFilters =
+        archiveFileFiltersWithDefaults(
+          snapshot.fileFilters
+        );
+
+      if (view === 'favorites') {
+        fileFilters.favouriteOnly =
+          true;
+      }
 
       return {
         view,
@@ -112123,22 +113616,18 @@
             snapshot.search || ''
           ),
 
-        searchScope:
-          snapshot.searchScope === 'all'
-            ? 'all'
-            : 'folder',
+        fileFilters,
 
-        fileTypeFilter:
-          snapshot.fileTypeFilter
-          || 'all',
+        filterPresentation:
+          snapshot.filterPresentation
+            === 'folders'
+              ? 'folders'
+              : 'flat',
 
-        linkFilter:
-          snapshot.linkFilter
-          || 'all',
-
-        personFilterId:
-          person?.id
-          || '',
+        filterScopeFolderId:
+          archiveNormalizeFolderId(
+            snapshot.filterScopeFolderId
+          ),
 
         selectedFileId:
           selectedFile?.id
@@ -112162,17 +113651,14 @@
         search:
           state.archiveSearch,
 
-        searchScope:
-          state.archiveSearchScope,
+        fileFilters:
+          state.archiveFileFilters,
 
-        fileTypeFilter:
-          state.archiveFileTypeFilter,
+        filterPresentation:
+          state.archiveFilterPresentation,
 
-        linkFilter:
-          state.archiveLinkFilter,
-
-        personFilterId:
-          state.archivePersonFilterId,
+        filterScopeFolderId:
+          state.archiveFilterScopeFolderId,
 
         selectedFileId:
           state.archiveSelectedFileId,
@@ -112194,10 +113680,9 @@
         normalized.view,
         normalized.folderId,
         normalized.search,
-        normalized.searchScope,
-        normalized.fileTypeFilter,
-        normalized.linkFilter,
-        normalized.personFilterId,
+        normalized.fileFilters,
+        normalized.filterPresentation,
+        normalized.filterScopeFolderId,
         normalized.selectedFileId,
         normalized.inspectorCollapsed
       ]);
@@ -112277,17 +113762,16 @@
       state.archiveSearch =
         normalized.search;
 
-      state.archiveSearchScope =
-        normalized.searchScope;
+      state.archiveFileFilters =
+        archiveFileFiltersWithDefaults(
+          normalized.fileFilters
+        );
 
-      state.archiveFileTypeFilter =
-        normalized.fileTypeFilter;
+      state.archiveFilterPresentation =
+        normalized.filterPresentation;
 
-      state.archiveLinkFilter =
-        normalized.linkFilter;
-
-      state.archivePersonFilterId =
-        normalized.personFilterId;
+      state.archiveFilterScopeFolderId =
+        normalized.filterScopeFolderId;
 
       state.archiveSelectedFileId =
         normalized.selectedFileId;
@@ -112385,17 +113869,16 @@
               search:
                 '',
 
-              searchScope:
-                'folder',
+              fileFilters:
+                archiveFileFiltersWithDefaults(
+                  state.archiveFileFilters
+                ),
 
-              fileTypeFilter:
-                state.archiveFileTypeFilter,
+              filterPresentation:
+                state.archiveFilterPresentation,
 
-              linkFilter:
-                state.archiveLinkFilter,
-
-              personFilterId:
-                '',
+              filterScopeFolderId:
+                state.archiveFilterScopeFolderId,
 
               selectedFileId:
                 null,
@@ -112560,20 +114043,27 @@
         return;
       }
 
+      const scopeRoot =
+        archiveFileFilteringActive()
+        && archiveEffectiveFileFilters()
+          .scope === 'folder'
+          ? archiveNormalizeFolderId(
+              state.archiveFilterScopeFolderId
+            )
+          : null;
+
+      if (
+        scopeRoot
+        && currentFolder.id === scopeRoot
+      ) {
+        return;
+      }
+
       archiveNavigateToLocationCommit({
         folderId:
           archiveFolderParentId(
             currentFolder
           ),
-
-        search:
-          '',
-
-        searchScope:
-          'folder',
-
-        personFilterId:
-          '',
 
         selectedFileId:
           null,
@@ -112582,7 +114072,6 @@
           false
       });
     }
-
     /*
       Public navigation functions always protect
       an active file-edit draft.
@@ -112674,15 +114163,6 @@
 
           folderId:
             folder.id,
-
-          search:
-            '',
-
-          searchScope:
-            'folder',
-
-          personFilterId:
-            '',
 
           selectedFileId:
             null,
@@ -114720,13 +116200,79 @@
     }
 
     function archiveSearchText(file) {
-      const people = (file.linkedPersonIds || []).map(id => getPerson(id)?.names?.display || '').join(' ');
-      const events = (file.linkedEventIds || []).map(id => archiveEventLabel(archiveConnectionRecord('event', id))).join(' ');
-      const notes = archiveNoteIdsForFile(file).map(id => archiveConnectionRecord('note', id)?.title || '').join(' ');
-      const places = (file.linkedPlaceIds || []).map(id => getPlace(id)?.name || '').join(' ');
-      const sources = (file.linkedSourceIds || []).map(id => archiveSourceById(id)?.title || '').join(' ');
-      return [file.name, file.description, archiveFolderPath(file.folderId), people, events, notes, places, sources]
-        .join(' ').toLowerCase();
+      const people =
+        archiveFilePersonIds(file)
+          .map(id =>
+            getPerson(id)
+              ?.names?.display
+            || ''
+          )
+          .join(' ');
+
+      const events =
+        (
+          file.linkedEventIds
+          || []
+        )
+          .map(id =>
+            archiveEventLabel(
+              archiveConnectionRecord(
+                'event',
+                id
+              )
+            )
+          )
+          .join(' ');
+
+      const notes =
+        archiveNoteIdsForFile(file)
+          .map(id =>
+            archiveConnectionRecord(
+              'note',
+              id
+            )?.title
+            || ''
+          )
+          .join(' ');
+
+      const places =
+        archiveFilePlaceIds(file)
+          .map(id =>
+            getPlace(id)?.name
+            || ''
+          )
+          .join(' ');
+
+      const sources =
+        (
+          file.linkedSourceIds
+          || []
+        )
+          .map(id =>
+            archiveSourceById(id)
+              ?.title
+            || ''
+          )
+          .join(' ');
+
+      return [
+        file.name,
+        file.description,
+        archiveFolderPath(
+          file.folderId
+        ),
+        people,
+        events,
+        notes,
+        places,
+        sources
+      ]
+        .join(' ')
+        .toLocaleLowerCase(
+          state.language === 'ru'
+            ? 'ru'
+            : 'en'
+        );
     }
 
     function archiveFileHasLinks(
@@ -114737,9 +116283,8 @@
       }
 
       return Boolean(
-        (
-          file.linkedPersonIds
-          || []
+        archiveFilePersonIds(
+          file
         ).length
 
         || (
@@ -114751,17 +116296,9 @@
           file
         ).length
 
-        || archiveUniqueIds([
-          ...(
-            file.linkedPlaceIds
-            || []
-          ),
-
-          ...(
-            file.placeIds
-            || []
-          )
-        ]).length
+        || archiveFilePlaceIds(
+          file
+        ).length
 
         || (
           file.linkedSourceIds
@@ -114770,144 +116307,265 @@
       );
     }
 
-    function archiveFilteredFiles() {
-      const folderId =
-        archiveNormalizeFolderId(
-          state.archiveSelectedFolderId
+    function archiveDocumentYearInterval(
+      file
+    ) {
+      const model =
+        archiveDocumentDateModel(
+          file
         );
 
-      const query =
+      const text = [
+        model.date,
+        model.dateLabel,
+        model.originalText,
+        model.date2,
+        model.date2Label
+      ]
+        .filter(Boolean)
+        .join(' ');
+
+      const years =
+        (
+          text.match(
+            /\b\d{4}\b/g
+          )
+          || []
+        )
+          .map(Number)
+          .filter(year =>
+            Number.isInteger(year)
+            && year >= 1
+            && year <= 9999
+          );
+
+      if (!years.length) {
+        return null;
+      }
+
+      const type =
         String(
-          state.archiveSearch || ''
+          model.dateType || ''
         )
           .trim()
           .toLowerCase();
 
-      const personId =
-        state.archivePersonFilterId
-        || '';
+      const firstYear =
+        years[0];
 
-      let files =
-        archiveProjectFiles();
+      if (type === 'before') {
+        return {
+          from:
+            1,
 
-      if (
-        state.archiveView
-          === 'favorites'
-      ) {
-        files =
-          files.filter(
-            file =>
-              file.favorite
-          );
+          to:
+            Math.max(
+              1,
+              firstYear - 1
+            )
+        };
+      }
+
+      if (type === 'after') {
+        return {
+          from:
+            Math.min(
+              9999,
+              firstYear + 1
+            ),
+
+          to:
+            9999
+        };
       }
 
       if (
-        personId
+        type === 'between'
+        && years.length >= 2
       ) {
-        files =
-          files.filter(file =>
-            (
-              file.linkedPersonIds
-              || []
-            ).includes(
+        return {
+          from:
+            Math.min(
+              years[0],
+              years[1]
+            ),
+
+          to:
+            Math.max(
+              years[0],
+              years[1]
+            )
+        };
+      }
+
+      return {
+        from:
+          firstYear,
+
+        to:
+          firstYear
+      };
+    }
+
+    function archiveDocumentYearMatches(
+      file,
+      value
+    ) {
+      const range =
+        normalizeSharedFilterYearRange(
+          value
+        );
+
+      if (!range.mode) {
+        return true;
+      }
+
+      if (
+        sharedFilterYearRangeError(
+          range
+        )
+      ) {
+        return false;
+      }
+
+      const fileInterval =
+        archiveDocumentYearInterval(
+          file
+        );
+
+      if (!fileInterval) {
+        return false;
+      }
+
+      const fromYear =
+        sharedFilterYearNumber(
+          range.from
+        );
+
+      let filterFrom = 1;
+      let filterTo = 9999;
+
+      if (range.mode === 'before') {
+        filterTo =
+          Math.max(
+            1,
+            fromYear - 1
+          );
+      }
+
+      if (range.mode === 'after') {
+        filterFrom =
+          Math.min(
+            9999,
+            fromYear + 1
+          );
+      }
+
+      if (range.mode === 'between') {
+        filterFrom =
+          fromYear;
+
+        filterTo =
+          sharedFilterYearNumber(
+            range.to
+          );
+      }
+
+      /*
+      * Historical date ranges match when they
+      * overlap the requested period.
+      */
+      return (
+        fileInterval.from
+          <= filterTo
+
+        && fileInterval.to
+          >= filterFrom
+      );
+    }
+
+    function archiveFileMatchesFilters(
+      file,
+      filters,
+      query
+    ) {
+      if (
+        query
+        && !archiveSearchText(
+          file
+        ).includes(query)
+      ) {
+        return false;
+      }
+
+      if (
+        filters.fileType !== 'all'
+        && archiveFileKind(file)
+          !== filters.fileType
+      ) {
+        return false;
+      }
+
+      if (
+        filters.connections === 'linked'
+        && !archiveFileHasLinks(file)
+      ) {
+        return false;
+      }
+
+      if (
+        filters.connections === 'unlinked'
+        && archiveFileHasLinks(file)
+      ) {
+        return false;
+      }
+
+      if (
+        filters.favouriteOnly
+        && !file.favorite
+      ) {
+        return false;
+      }
+
+      if (
+        filters.personIds.length
+        && !archiveFilePersonIds(file)
+          .some(personId =>
+            filters.personIds.includes(
               personId
             )
-          );
+          )
+      ) {
+        return false;
       }
-      /*
-        "All files" bypasses the selected folder
-        only while an actual search query exists.
-      */
-
-      const searchingAllFiles =
-        Boolean(query)
-        && state.archiveSearchScope
-          === 'all';
 
       if (
-        !personId
-        && !searchingAllFiles
-      ) {
-        if (
-          state.archiveView
-            === 'favorites'
-          || query
-        ) {
-          const scopeIds =
-            archiveFolderScopeIds(
-              folderId
-            );
-
-          files =
-            files.filter(file =>
-              scopeIds.has(
-                archiveFileFolderId(
-                  file
-                )
-              )
-            );
-        } else {
-          /*
-            Normal folder browsing shows only files
-            directly inside the current location.
-          */
-
-          files =
-            files.filter(file =>
-              archiveFileFolderId(
-                file
-              ) === folderId
-            );
-        }
-      }
-
-      if (query) {
-        files =
-          files.filter(file =>
-            archiveSearchText(
-              file
-            ).includes(
-              query
+        filters.placeIds.length
+        && !archiveFilePlaceIds(file)
+          .some(placeId =>
+            filters.placeIds.includes(
+              placeId
             )
-          );
+          )
+      ) {
+        return false;
       }
 
       if (
-        state.archiveFileTypeFilter
-        && state.archiveFileTypeFilter
-          !== 'all'
+        !archiveDocumentYearMatches(
+          file,
+          filters.documentYears
+        )
       ) {
-        files =
-          files.filter(file =>
-            archiveFileKind(
-              file
-            )
-            === state.archiveFileTypeFilter
-          );
+        return false;
       }
 
-      if (
-        state.archiveLinkFilter
-          === 'linked'
-      ) {
-        files =
-          files.filter(
-            archiveFileHasLinks
-          );
-      }
+      return true;
+    }
 
-      if (
-        state.archiveLinkFilter
-          === 'unlinked'
-      ) {
-        files =
-          files.filter(file =>
-            !archiveFileHasLinks(
-              file
-            )
-          );
-      }
-
+    function archiveSortFilteredFiles(
+      files
+    ) {
       return appSortRecords(files, {
         field:
           state.archiveFileSort,
@@ -114917,29 +116575,39 @@
 
         extractors: {
           name: {
-            type: 'text',
-            get: file =>
-              file.name
+            type:
+              'text',
+
+            get:
+              file => file.name
           },
 
           updated: {
-            type: 'number',
-            get: file =>
-              appSortTimestamp(
-                file.updatedAt
-              )
+            type:
+              'number',
+
+            get:
+              file =>
+                appSortTimestamp(
+                  file.updatedAt
+                )
           },
 
           added: {
-            type: 'number',
-            get: file =>
-              appSortTimestamp(
-                file.addedAt
-              )
+            type:
+              'number',
+
+            get:
+              file =>
+                appSortTimestamp(
+                  file.addedAt
+                )
           },
 
           type: {
-            type: 'text',
+            type:
+              'text',
+
             get:
               archiveFileTypeLabel
           }
@@ -114950,19 +116618,201 @@
       });
     }
 
-    function archiveVisibleChildFolders() {
+    function archiveMatchingFiles() {
+      const filters =
+        archiveEffectiveFileFilters();
+
+      const query =
+        String(
+          state.archiveSearch || ''
+        )
+          .trim()
+          .toLocaleLowerCase(
+            state.language === 'ru'
+              ? 'ru'
+              : 'en'
+          );
+
+      /*
+      * Without a filter, Archive remains ordinary
+      * direct-folder browsing.
+      */
       if (
-        state.archiveView
-          === 'favorites'
-        || state.archivePersonFilterId
-        || state.archiveSearch
+        !archiveFileFilteringActive(
+          filters
+        )
+      ) {
+        return archiveSortFilteredFiles(
+          archiveProjectFiles()
+            .filter(file =>
+              archiveFileFolderId(
+                file
+              ) ===
+              archiveNormalizeFolderId(
+                state.archiveSelectedFolderId
+              )
+            )
+        );
+      }
+
+      let files =
+        archiveProjectFiles();
+
+      if (filters.scope === 'folder') {
+        const scopeRoot =
+          archiveNormalizeFolderId(
+            state.archiveFilterScopeFolderId
+          );
+
+        const scopeIds =
+          archiveFolderScopeIds(
+            scopeRoot
+          );
+
+        files =
+          files.filter(file =>
+            scopeIds.has(
+              archiveFileFolderId(
+                file
+              )
+            )
+          );
+      }
+
+      return archiveSortFilteredFiles(
+        files.filter(file =>
+          archiveFileMatchesFilters(
+            file,
+            filters,
+            query
+          )
+        )
+      );
+    }
+
+    function archiveFolderMatchProjection(
+      matchingFiles =
+        archiveMatchingFiles()
+    ) {
+      const visibleFolderIds =
+        new Set();
+
+      const matchingCountByFolder =
+        new Map();
+
+      const filters =
+        archiveEffectiveFileFilters();
+
+      const scopeRoot =
+        filters.scope === 'folder'
+          ? archiveNormalizeFolderId(
+              state.archiveFilterScopeFolderId
+            )
+          : null;
+
+      matchingFiles.forEach(file => {
+        let folderId =
+          archiveFileFolderId(
+            file
+          );
+
+        while (folderId) {
+          visibleFolderIds.add(
+            folderId
+          );
+
+          matchingCountByFolder.set(
+            folderId,
+            (
+              matchingCountByFolder.get(
+                folderId
+              )
+              || 0
+            ) + 1
+          );
+
+          if (
+            scopeRoot
+            && folderId === scopeRoot
+          ) {
+            break;
+          }
+
+          const folder =
+            archiveFolderById(
+              folderId
+            );
+
+          folderId =
+            archiveFolderParentId(
+              folder
+            );
+        }
+      });
+
+      return {
+        visibleFolderIds,
+        matchingCountByFolder
+      };
+    }
+
+    function archiveVisibleFiles(
+      matchingFiles =
+        archiveMatchingFiles()
+    ) {
+      if (
+        !archiveFileFilteringActive()
+        || state.archiveFilterPresentation
+          === 'flat'
+      ) {
+        return matchingFiles;
+      }
+
+      const folderId =
+        archiveNormalizeFolderId(
+          state.archiveSelectedFolderId
+        );
+
+      return matchingFiles.filter(file =>
+        archiveFileFolderId(
+          file
+        ) === folderId
+      );
+    }
+
+    function archiveVisibleChildFolders(
+      matchingFiles =
+        archiveMatchingFiles()
+    ) {
+      if (
+        !archiveFileFilteringActive()
+      ) {
+        return archiveFolderChildren(
+          archiveNormalizeFolderId(
+            state.archiveSelectedFolderId
+          )
+        );
+      }
+
+      if (
+        state.archiveFilterPresentation
+          === 'flat'
       ) {
         return [];
       }
 
+      const projection =
+        archiveFolderMatchProjection(
+          matchingFiles
+        );
+
       return archiveFolderChildren(
         archiveNormalizeFolderId(
           state.archiveSelectedFolderId
+        )
+      ).filter(folder =>
+        projection.visibleFolderIds.has(
+          folder.id
         )
       );
     }
@@ -115101,8 +116951,7 @@
 
       const folderItemVisible =
         state.archiveView === 'files'
-        && !state.archiveSearch
-        && !state.archivePersonFilterId
+        && !archiveFileFilteringActive()
         && selectedFolderItem
         && archiveFolderParentId(
           selectedFolderItem
@@ -115494,9 +117343,6 @@
                   state.archiveSelectedFileIds =
                     [];
 
-                  state.archivePersonFilterId =
-                    '';
-
                   state.archiveInspectorCollapsed =
                     false;
 
@@ -115518,11 +117364,22 @@
                 search:
                   '',
 
-                searchScope:
-                  'folder',
+                fileFilters: {
+                  ...archiveFileFiltersWithDefaults(
+                    state.archiveFileFilters
+                  ),
 
-                personFilterId:
-                  '',
+                  favouriteOnly:
+                    nextView === 'favorites'
+                },
+
+                filterPresentation:
+                  nextView === 'favorites'
+                    ? 'flat'
+                    : state.archiveFilterPresentation,
+
+                filterScopeFolderId:
+                  null,
 
                 selectedFileId:
                   null,
@@ -115673,7 +117530,7 @@
       }
 
       const visibleFiles =
-        archiveFilteredFiles();
+        archiveVisibleFiles();
 
       const visibleFileIds =
         new Set(
@@ -115886,13 +117743,6 @@
           Add source
         </button>
       `;
-    }
-
-    function renderArchivePersonFilterBar() {
-      const person = getPerson(state.archivePersonFilterId);
-      if (!person) return '';
-      const label = personResourceDisplayName(person);
-      return `<div class="archive-person-filterbar"><span class="filter-chip active-filter-chip"><span class="active-filter-chip-copy"><strong>Person:</strong> ${escapeHtml(label)}</span><button class="active-filter-chip-remove" type="button" data-clear-archive-person-filter aria-label="Remove ${escapeHtml(label)} filter">${icon.close}</button></span></div>`;
     }
 
     function renderArchiveLocationButton(
@@ -116124,6 +117974,73 @@
       `;
     }
 
+    function renderArchiveFilterResultsBar(
+      matchingCount
+    ) {
+      if (
+        !archiveFileFilteringActive()
+      ) {
+        return '';
+      }
+
+      const fileLabel =
+        `${matchingCount} ${
+          matchingCount === 1
+            ? 'file'
+            : 'files'
+        }`;
+
+      return `
+        <div
+          class="archive-filter-results-bar">
+
+          <strong>
+            ${escapeHtml(fileLabel)}
+          </strong>
+
+          <div
+            class="archive-filter-presentation"
+            role="group"
+            aria-label="Filtered result layout">
+
+            <button
+              type="button"
+              class="${
+                state.archiveFilterPresentation
+                  === 'flat'
+                    ? 'active'
+                    : ''
+              }"
+              data-archive-filter-presentation="flat"
+              aria-pressed="${
+                state.archiveFilterPresentation
+                  === 'flat'
+              }">
+
+              Files only
+            </button>
+
+            <button
+              type="button"
+              class="${
+                state.archiveFilterPresentation
+                  === 'folders'
+                    ? 'active'
+                    : ''
+              }"
+              data-archive-filter-presentation="folders"
+              aria-pressed="${
+                state.archiveFilterPresentation
+                  === 'folders'
+              }">
+
+              Folder structure
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
     function renderArchiveSelectionBar(files) {
       const selected = state.archiveSelectedFileIds.filter(id => archiveFileById(id));
       if (!selected.length) return '';
@@ -116209,7 +118126,8 @@
     }
 
     function renderArchiveFolderTableRow(
-      folder
+      folder,
+      matchingFileCount = null
     ) {
       const directFiles =
         archiveProjectFiles()
@@ -116225,9 +118143,29 @@
           folder.id
         ).length;
 
+      const filtering =
+        Number.isFinite(
+          matchingFileCount
+        );
+
       const itemCount =
-        directFiles
-        + childFolders;
+        filtering
+          ? matchingFileCount
+          : directFiles
+            + childFolders;
+
+      const itemLabel =
+        filtering
+          ? `${itemCount} ${
+              itemCount === 1
+                ? 'matching file'
+                : 'matching files'
+            }`
+          : `${itemCount} ${
+              itemCount === 1
+                ? 'item'
+                : 'items'
+            }`;
 
       const detailSelected =
         state.archiveSelectedFolderItemId
@@ -116290,12 +118228,9 @@
           </td>
 
           <td>
-            ${itemCount}
-            ${
-              itemCount === 1
-                ? 'item'
-                : 'items'
-            }
+            ${escapeHtml(
+              itemLabel
+            )}
           </td>
 
           <td>
@@ -116330,7 +118265,7 @@
 
     function archiveVisibleSelectionState(
       files =
-        archiveFilteredFiles()
+        archiveVisibleFiles()
     ) {
       const visibleIds =
         (
@@ -116375,7 +118310,7 @@
 
     function toggleAllVisibleArchiveFiles(
       files =
-        archiveFilteredFiles()
+        archiveVisibleFiles()
     ) {
       const selection =
         archiveVisibleSelectionState(
@@ -116646,7 +118581,14 @@
 
     function renderArchiveFileTable(
       files,
-      folders
+      folders,
+      {
+        showPaths =
+          false,
+
+        matchingCountByFolder =
+          new Map()
+      } = {}
     ) {
       const sortedFolders =
         archiveSortFoldersForTable(
@@ -116669,8 +118611,17 @@
         }
 
         ${sortedFolders
-          .map(
-            renderArchiveFolderTableRow
+          .map(folder =>
+            renderArchiveFolderTableRow(
+              folder,
+              matchingCountByFolder.has(
+                folder.id
+              )
+                ? matchingCountByFolder.get(
+                    folder.id
+                  )
+                : null
+            )
           )
           .join('')}
       `;
@@ -116688,14 +118639,7 @@
           .map(file =>
             renderArchiveFileTableRow(
               file,
-
-              state.archiveView
-                === 'favorites'
-              || state.archiveSearchScope
-                === 'all'
-              || Boolean(
-                state.archiveSearch
-              )
+              showPaths
             )
           )
           .join('')}
@@ -116875,20 +118819,35 @@
     }
 
     function renderArchiveFilesView() {
+      const matchingFiles =
+        archiveMatchingFiles();
+
       const files =
-        archiveFilteredFiles();
+        archiveVisibleFiles(
+          matchingFiles
+        );
 
       const folders =
-        archiveVisibleChildFolders();
+        archiveVisibleChildFolders(
+          matchingFiles
+        );
+
+      const projection =
+        archiveFolderMatchProjection(
+          matchingFiles
+        );
+
+      const filtering =
+        archiveFileFilteringActive();
+
+      const flatResults =
+        filtering
+        && state.archiveFilterPresentation
+          === 'flat';
 
       const currentFolder =
         archiveFolderById(
           state.archiveSelectedFolderId
-        );
-
-      const person =
-        getPerson(
-          state.archivePersonFilterId
         );
 
       const title =
@@ -116900,57 +118859,46 @@
               : ARCHIVE_ROOT_LABEL;
 
       const subtitle =
-        archiveFilesViewSubtitle(
-          currentFolder,
-          person
-        );
-
-      const headerActions =
-        renderArchiveFilesHeaderActions();
+        filtering
+          ? 'Browse files matching the active filters.'
+          : archiveFilesViewSubtitle(
+              currentFolder
+            );
 
       const hasRows =
         files.length
         || folders.length;
 
-      const showingInformationalEmpty =
-        state.archiveView
-          === 'favorites'
-        || Boolean(
-          state.archiveSearch
-        );
-
       const emptyTitle =
-        state.archiveView
-          === 'favorites'
-          ? 'No favourite files'
-          : 'No files match this search';
+        flatResults
+          ? 'No files match these filters.'
+          : 'No folders contain matching files.';
 
       const emptyCopy =
-        state.archiveView
-          === 'favorites'
-          ? 'Mark frequently used files as favourites to find them here.'
-          : 'Try a different search term or clear the active filters.';
+        'Change or clear the active filters and try again.';
 
       return `
-        <div
-          class="
-            archive-page
-          ">
-
+        <div class="archive-page">
           ${renderArchivePageHead({
             title,
             subtitle,
             actions:
-              headerActions
+              renderArchiveFilesHeaderActions()
           })}
 
           ${renderArchiveToolbar()}
 
-          ${renderArchivePersonFilterBar()}
-
           ${renderArchiveActiveFilterbar()}
 
-          ${renderArchiveLocationRow()}
+          ${renderArchiveFilterResultsBar(
+            matchingFiles.length
+          )}
+
+          ${
+            flatResults
+              ? ''
+              : renderArchiveLocationRow()
+          }
 
           ${renderArchiveSelectionBar(
             files
@@ -116960,9 +118908,17 @@
             hasRows
               ? renderArchiveFileTable(
                   files,
-                  folders
+                  folders,
+                  {
+                    showPaths:
+                      flatResults,
+
+                    matchingCountByFolder:
+                      projection
+                        .matchingCountByFolder
+                  }
                 )
-              : showingInformationalEmpty
+              : filtering
                 ? renderArchiveEmpty(
                     emptyTitle,
                     emptyCopy
@@ -117162,458 +119118,359 @@
       `;
     }
 
-    function renderArchiveFileFilterFields() {
-      return `
-        <label
-          class="
-            module-filter-field
-          ">
+    let archiveFilterReturnFocus =
+      null;
 
-          Search scope
+    function closeArchiveFilterPopover({
+      restoreFocus =
+        false
+    } = {}) {
+      document
+        .getElementById(
+          'archiveFilterPopover'
+        )
+        ?.remove();
 
-          <select
-            data-archive-filter-search-scope>
+      document.removeEventListener(
+        'click',
+        closeArchiveFilterOnOutside
+      );
 
-            <option
-              value="folder"
-              ${
-                state.archiveSearchScope
-                  === 'folder'
-                    ? 'selected'
-                    : ''
-              }>
-              This folder
-            </option>
+      document.removeEventListener(
+        'keydown',
+        closeArchiveFilterOnEscape
+      );
 
-            <option
-              value="all"
-              ${
-                state.archiveSearchScope
-                  === 'all'
-                    ? 'selected'
-                    : ''
-              }>
-              All files
-            </option>
-          </select>
-        </label>
+      if (
+        restoreFocus
+        && archiveFilterReturnFocus
+          ?.isConnected
+      ) {
+        archiveFilterReturnFocus.focus({
+          preventScroll:
+            true
+        });
+      }
 
-        <label
-          class="
-            module-filter-field
-          ">
-
-          File type
-
-          <select
-            data-archive-filter-file-type>
-
-            <option
-              value="all"
-              ${
-                state.archiveFileTypeFilter
-                  === 'all'
-                    ? 'selected'
-                    : ''
-              }>
-              All types
-            </option>
-
-            <option
-              value="pdf"
-              ${
-                state.archiveFileTypeFilter
-                  === 'pdf'
-                    ? 'selected'
-                    : ''
-              }>
-              PDF
-            </option>
-
-            <option
-              value="img"
-              ${
-                state.archiveFileTypeFilter
-                  === 'img'
-                    ? 'selected'
-                    : ''
-              }>
-              Images
-            </option>
-
-            <option
-              value="doc"
-              ${
-                state.archiveFileTypeFilter
-                  === 'doc'
-                    ? 'selected'
-                    : ''
-              }>
-              Documents
-            </option>
-
-            <option
-              value="sheet"
-              ${
-                state.archiveFileTypeFilter
-                  === 'sheet'
-                    ? 'selected'
-                    : ''
-              }>
-              Spreadsheets
-            </option>
-
-            <option
-              value="audio"
-              ${
-                state.archiveFileTypeFilter
-                  === 'audio'
-                    ? 'selected'
-                    : ''
-              }>
-              Audio
-            </option>
-
-            <option
-              value="archive"
-              ${
-                state.archiveFileTypeFilter
-                  === 'archive'
-                    ? 'selected'
-                    : ''
-              }>
-              Archive files
-            </option>
-          </select>
-        </label>
-
-        <label
-          class="
-            module-filter-field
-          ">
-
-          Connections
-
-          <select
-            data-archive-filter-links>
-
-            <option
-              value="all"
-              ${
-                state.archiveLinkFilter
-                  === 'all'
-                    ? 'selected'
-                    : ''
-              }>
-              All files
-            </option>
-
-            <option
-              value="linked"
-              ${
-                state.archiveLinkFilter
-                  === 'linked'
-                    ? 'selected'
-                    : ''
-              }>
-              Linked files
-            </option>
-
-            <option
-              value="unlinked"
-              ${
-                state.archiveLinkFilter
-                  === 'unlinked'
-                    ? 'selected'
-                    : ''
-              }>
-              Unlinked files
-            </option>
-          </select>
-        </label>
-      `;
+      archiveFilterReturnFocus =
+        null;
     }
 
-    function renderArchiveSourceFilterFields() {
-      return `
-        <label
-          class="
-            module-filter-field
-          ">
+    function closeArchiveFilterOnOutside(
+      event
+    ) {
+      const panel =
+        document.getElementById(
+          'archiveFilterPopover'
+        );
 
-          Source type
+      const trigger =
+        document.getElementById(
+          'archiveFilterButton'
+        );
 
-          <select
-            data-archive-filter-source-type>
+      if (!panel) {
+        return;
+      }
 
-            <option
-              value="all"
-              ${
-                state.archiveSourceTypeFilter
-                  === 'all'
-                    ? 'selected'
-                    : ''
-              }>
-              All source types
-            </option>
+      const path =
+        typeof event.composedPath
+          === 'function'
+            ? event.composedPath()
+            : [];
 
-            <option
-              value="favorites"
-              ${
-                state.archiveSourceTypeFilter
-                  === 'favorites'
-                    ? 'selected'
-                    : ''
-              }>
-              Favourite sources
-            </option>
+      const insidePanel =
+        path.length
+          ? path.includes(panel)
+          : panel.contains(
+              event.target
+            );
 
-            ${ARCHIVE_SOURCE_TYPES
-              .map(type => `
-                <option
-                  value="${escapeHtml(
-                    type
-                  )}"
-                  ${
-                    state.archiveSourceTypeFilter
-                      === type
-                        ? 'selected'
-                        : ''
-                  }>
+      const insideTrigger =
+        path.length
+          ? path.includes(trigger)
+          : trigger?.contains(
+              event.target
+            );
 
-                  ${escapeHtml(
-                    type
-                  )}
-                </option>
-              `)
-              .join('')}
-          </select>
-        </label>
-      `;
+      if (
+        insidePanel
+        || insideTrigger
+      ) {
+        return;
+      }
+
+      closeArchiveFilterPopover();
+    }
+
+    function closeArchiveFilterOnEscape(
+      event
+    ) {
+      if (event.key !== 'Escape') {
+        return;
+      }
+
+      event.preventDefault();
+
+      closeArchiveFilterPopover({
+        restoreFocus:
+          true
+      });
     }
 
     function openArchiveFilterPopover(
       anchor
     ) {
+      closeArchiveFilterPopover();
+      closeAlbumsFilterPopover();
+      closePeopleFilterPopover();
       closeMenu();
+
+      archiveFilterReturnFocus =
+        anchor;
 
       const sourcesView =
         archiveToolbarIsSources();
 
-      const rect =
-        anchor.getBoundingClientRect();
+      const schema =
+        sourcesView
+          ? archiveSourceFilterSchema
+          : archiveFileFilterSchema;
 
-      const menu =
+      const values =
+        sourcesView
+          ? {
+              sourceType:
+                state.archiveSourceTypeFilter
+                || 'all'
+            }
+          : archiveFileFiltersWithDefaults();
+
+      const prefix =
+        sourcesView
+          ? 'archive-source-filter'
+          : 'archive-file-filter';
+
+      const panel =
         document.createElement(
           'div'
         );
 
-      menu.className =
-        'module-filter-popover';
+      panel.className =
+        'shared-filter-panel archive-shared-filter-popover';
 
-      menu.id =
-        'projectMenu';
+      panel.id =
+        'archiveFilterPopover';
 
-      menu.setAttribute(
+      panel.setAttribute(
         'role',
         'dialog'
       );
 
-      menu.setAttribute(
+      panel.setAttribute(
         'aria-label',
-        sourcesView
-          ? 'Filter sources'
-          : 'Filter files'
+        translateText(
+          sourcesView
+            ? 'Filter sources'
+            : 'Filter files'
+        )
       );
 
-      menu.innerHTML = `
-        <div
-          class="
-            module-filter-popover-head
-          ">
+      panel.innerHTML = `
+        <div class="shared-filter-panel-header">
+          <div>
+            <h3>
+              ${
+                sourcesView
+                  ? 'Filter sources'
+                  : 'Filter files'
+              }
+            </h3>
 
-          <strong>
-            ${
-              sourcesView
-                ? 'Filter sources'
-                : 'Filter files'
-            }
-          </strong>
-
-          <span>
-            ${
-              sourcesView
-                ? 'Narrow sources by type or favourite status.'
-                : 'Choose where to search and narrow files by type or connections.'
-            }
-          </span>
-        </div>
-
-        <div
-          class="
-            module-filter-popover-body
-          ">
-
-          ${
-            sourcesView
-              ? renderArchiveSourceFilterFields()
-              : renderArchiveFileFilterFields()
-          }
-        </div>
-
-        <div
-          class="
-            module-filter-popover-footer
-          ">
+            <p>
+              ${
+                sourcesView
+                  ? 'Narrow sources by type or favourite status.'
+                  : 'Filter files across Archive and choose how results are displayed.'
+              }
+            </p>
+          </div>
 
           <button
-            class="
-              button secondary
-            "
+            class="shared-filter-panel-close"
+            type="button"
+            aria-label="Close"
+            data-archive-filter-close>
+
+            ${icon.close}
+          </button>
+        </div>
+
+        <div class="shared-filter-panel-body">
+          ${renderSharedFilterFields({
+            schema,
+            values,
+            prefix
+          })}
+        </div>
+
+        <div class="shared-filter-panel-footer">
+          <button
+            class="link"
             type="button"
             data-archive-filter-reset>
 
-            Reset
+            Clear filters
           </button>
 
-          <button
-            class="
-              button primary
-            "
-            type="button"
-            data-archive-filter-apply>
+          <div class="shared-filter-panel-actions">
+            <button
+              class="button secondary"
+              type="button"
+              data-archive-filter-cancel>
 
-            Apply filters
-          </button>
+              Cancel
+            </button>
+
+            <button
+              class="button primary"
+              type="button"
+              data-archive-filter-apply>
+
+              Apply filters
+            </button>
+          </div>
         </div>
       `;
 
       document.body.appendChild(
-        menu
+        panel
       );
 
-      const margin =
-        12;
+      localizeUI(panel);
 
-      const left =
-        Math.min(
-          Math.max(
-            margin,
-            rect.right
-              - menu.offsetWidth
-          ),
-
-          Math.max(
-            margin,
-            window.innerWidth
-              - menu.offsetWidth
-              - margin
-          )
-        );
-
-      const below =
-        rect.bottom + 6;
-
-      const top =
-        below
-        + menu.offsetHeight
-        <= window.innerHeight
-          - margin
-          ? below
-          : Math.max(
-              margin,
-              rect.top
-              - menu.offsetHeight
-              - 6
-            );
-
-      menu.style.left =
-        `${left}px`;
-
-      menu.style.top =
-        `${top}px`;
-
-      menu
-        .querySelector(
-          '[data-archive-filter-apply]'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            if (
-              sourcesView
-            ) {
-              state.archiveSourceTypeFilter =
-                menu
-                  .querySelector(
-                    '[data-archive-filter-source-type]'
-                  )
-                  ?.value
-                || 'all';
-
-              state.archiveSelectedSourceId =
-                null;
-            } else {
-              state.archiveSearchScope =
-                menu
-                  .querySelector(
-                    '[data-archive-filter-search-scope]'
-                  )
-                  ?.value
-                || 'folder';
-
-              state.archiveFileTypeFilter =
-                menu
-                  .querySelector(
-                    '[data-archive-filter-file-type]'
-                  )
-                  ?.value
-                || 'all';
-
-              state.archiveLinkFilter =
-                menu
-                  .querySelector(
-                    '[data-archive-filter-links]'
-                  )
-                  ?.value
-                || 'all';
-
-              state.archiveSelectedFileId =
-                null;
-
-              state.archiveSelectedFileIds =
-                [];
-            }
-
-            closeMenu();
-            renderArchive();
+      const controller =
+        bindSharedFilterFields(
+          panel,
+          {
+            schema,
+            values,
+            prefix
           }
         );
 
-      menu
+      panel
         .querySelector(
           '[data-archive-filter-reset]'
         )
         ?.addEventListener(
           'click',
           () => {
-            if (
-              sourcesView
-            ) {
+            controller?.reset();
+          }
+        );
+
+      panel
+        .querySelector(
+          '[data-archive-filter-close]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            closeArchiveFilterPopover({
+              restoreFocus:
+                true
+            });
+          }
+        );
+
+      panel
+        .querySelector(
+          '[data-archive-filter-cancel]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            closeArchiveFilterPopover({
+              restoreFocus:
+                true
+            });
+          }
+        );
+
+      panel
+        .querySelector(
+          '[data-archive-filter-apply]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const errors =
+              controller?.getErrors()
+              || [];
+
+            if (errors.length) {
+              controller
+                ?.focusFirstInvalid();
+
+              return;
+            }
+
+            const nextValues =
+              controller?.getValues()
+              || values;
+
+            if (sourcesView) {
               state.archiveSourceTypeFilter =
-                'all';
+                nextValues.sourceType
+                || 'all';
 
               state.archiveSelectedSourceId =
                 null;
             } else {
-              state.archiveSearchScope =
-                'folder';
+              const wasFiltering =
+                archiveFileFilteringActive();
 
-              state.archiveFileTypeFilter =
-                'all';
+              state.archiveFileFilters =
+                archiveFileFiltersWithDefaults(
+                  nextValues
+                );
 
-              state.archiveLinkFilter =
-                'all';
+              state.archiveFilterScopeFolderId =
+                nextValues.scope === 'folder'
+                  ? archiveNormalizeFolderId(
+                      state.archiveSelectedFolderId
+                    )
+                  : null;
+
+              if (
+                state.archiveView
+                  === 'favorites'
+                && !nextValues
+                  .favouriteOnly
+              ) {
+                state.archiveView =
+                  'files';
+              }
+
+              /*
+              * Start a newly filtered hierarchy at
+              * its logical root.
+              */
+              if (
+                !wasFiltering
+                || state.archiveFilterPresentation
+                  === 'folders'
+              ) {
+                state.archiveSelectedFolderId =
+                  nextValues.scope === 'folder'
+                    ? state
+                        .archiveFilterScopeFolderId
+                    : null;
+              }
+
+              state.archiveSelectedFolderItemId =
+                null;
 
               state.archiveSelectedFileId =
                 null;
@@ -117622,20 +119479,31 @@
                 [];
             }
 
-            closeMenu();
+            closeArchiveFilterPopover();
             renderArchive();
           }
         );
 
-      bindMenuLifecycle(
+      positionSharedFilterPanel(
+        panel,
         anchor
       );
 
-      menu.addEventListener(
-        'click',
-        event =>
-          event.stopPropagation()
-      );
+      requestAnimationFrame(() => {
+        controller?.focusFirst();
+      });
+
+      setTimeout(() => {
+        document.addEventListener(
+          'click',
+          closeArchiveFilterOnOutside
+        );
+
+        document.addEventListener(
+          'keydown',
+          closeArchiveFilterOnEscape
+        );
+      }, 0);
     }
 
     function archiveActiveToolbarFilters() {
@@ -117659,76 +119527,51 @@
               state.archiveSourceTypeFilter
                 === 'favorites'
                   ? 'Favourite sources'
-                  : state.archiveSourceTypeFilter
+                  : state
+                      .archiveSourceTypeFilter
           }
         ];
       }
 
-      const filters = [];
+      const filters =
+        archiveEffectiveFileFilters();
 
-      if (
-        state.archiveSearchScope
-          === 'all'
-      ) {
-        filters.push({
-          key:
-            'searchScope',
-
-          label:
-            'Search all files'
-        });
-      }
-
-      if (
-        state.archiveFileTypeFilter
-        && state.archiveFileTypeFilter
-          !== 'all'
-      ) {
-        const labels = {
-          pdf:
-            'PDF',
-          img:
-            'Images',
-          doc:
-            'Documents',
-          sheet:
-            'Spreadsheets',
-          audio:
-            'Audio',
-          archive:
-            'Archive files'
-        };
-
-        filters.push({
-          key:
-            'fileType',
-
-          label:
-            labels[
-              state.archiveFileTypeFilter
+      return archiveFileFilterSchema
+        .filter(definition =>
+          sharedFilterValueIsActive(
+            definition,
+            filters[
+              definition.key
             ]
-            || state.archiveFileTypeFilter
+          )
+        )
+        .map(definition => {
+          let label;
+
+          if (
+            definition.control
+              === 'boolean'
+          ) {
+            label =
+              definition.checkboxLabel
+              || definition.label;
+          } else {
+            label =
+              sharedFilterDisplayValue(
+                definition,
+                filters[
+                  definition.key
+                ]
+              );
+          }
+
+          return {
+            key:
+              definition.key,
+
+            label
+          };
         });
-      }
-
-      if (
-        state.archiveLinkFilter
-        && state.archiveLinkFilter
-          !== 'all'
-      ) {
-        filters.push({
-          key:
-            'links',
-
-          label:
-            state.archiveLinkFilter
-              === 'linked'
-                ? 'Linked files'
-                : 'Unlinked files'
-        });
-      }
-
-      return filters;
     }
 
     function renderArchiveActiveFilterbar() {
@@ -117803,35 +119646,50 @@
     function removeArchiveToolbarFilter(
       key
     ) {
-      if (
-        key === 'sourceType'
-      ) {
+      if (key === 'sourceType') {
         state.archiveSourceTypeFilter =
           'all';
 
         state.archiveSelectedSourceId =
           null;
+
+        renderArchive();
+        return;
+      }
+
+      const definition =
+        sharedFilterDefinitionByKey(
+          archiveFileFilterSchema,
+          key
+        );
+
+      if (!definition) {
+        return;
+      }
+
+      const defaults =
+        archiveFileFiltersWithDefaults(
+          {}
+        );
+
+      state.archiveFileFilters = {
+        ...archiveFileFiltersWithDefaults(),
+        [key]:
+          defaults[key]
+      };
+
+      if (key === 'scope') {
+        state.archiveFilterScopeFolderId =
+          null;
       }
 
       if (
-        key === 'searchScope'
+        key === 'favouriteOnly'
+        && state.archiveView
+          === 'favorites'
       ) {
-        state.archiveSearchScope =
-          'folder';
-      }
-
-      if (
-        key === 'fileType'
-      ) {
-        state.archiveFileTypeFilter =
-          'all';
-      }
-
-      if (
-        key === 'links'
-      ) {
-        state.archiveLinkFilter =
-          'all';
+        state.archiveView =
+          'files';
       }
 
       state.archiveSelectedFileId =
@@ -117853,14 +119711,24 @@
         state.archiveSelectedSourceId =
           null;
       } else {
-        state.archiveSearchScope =
-          'folder';
+        state.archiveFileFilters =
+          archiveFileFiltersWithDefaults(
+            {}
+          );
 
-        state.archiveFileTypeFilter =
-          'all';
+        state.archiveFilterScopeFolderId =
+          null;
 
-        state.archiveLinkFilter =
-          'all';
+        state.archiveFilterPresentation =
+          'flat';
+
+        if (
+          state.archiveView
+            === 'favorites'
+        ) {
+          state.archiveView =
+            'files';
+        }
 
         state.archiveSelectedFileId =
           null;
@@ -126207,6 +128075,56 @@
         }
       });
       root.querySelector('#archiveFilterButton') ?.addEventListener('click', event => {openArchiveFilterPopover(event.currentTarget);});
+      root
+        .querySelectorAll(
+          '[data-archive-filter-presentation]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              const presentation =
+                button.dataset
+                  .archiveFilterPresentation;
+
+              if (
+                presentation !== 'flat'
+                && presentation !== 'folders'
+              ) {
+                return;
+              }
+
+              state.archiveFilterPresentation =
+                presentation;
+
+              if (
+                presentation === 'folders'
+              ) {
+                const filters =
+                  archiveEffectiveFileFilters();
+
+                state.archiveSelectedFolderId =
+                  filters.scope === 'folder'
+                    ? archiveNormalizeFolderId(
+                        state
+                          .archiveFilterScopeFolderId
+                      )
+                    : null;
+              }
+
+              state.archiveSelectedFolderItemId =
+                null;
+
+              state.archiveSelectedFileId =
+                null;
+
+              state.archiveSelectedFileIds =
+                [];
+
+              renderArchive();
+            }
+          );
+        });
       root.querySelectorAll('[data-archive-remove-filter]').forEach(button => {button.addEventListener('click', () => {removeArchiveToolbarFilter(button.dataset.archiveRemoveFilter);});});
       root
         .querySelector(
@@ -126345,7 +128263,6 @@
           );
         });
       root.querySelectorAll('[data-archive-add-source]').forEach(button => button.addEventListener('click', () => openArchiveSourceModal()));
-      root.querySelector('[data-clear-archive-person-filter]')?.addEventListener('click', () => { state.archivePersonFilterId = ''; state.archiveSearch = ''; state.archiveSelectedFileId = null; renderArchive(); });
       root
         .querySelector(
           '[data-archive-breadcrumb-root]'
@@ -156229,11 +158146,28 @@
       state.archiveSelectedSourceId = null;
       state.archiveSelectedFileIds = [];
       state.archiveSearch = '';
-      state.archiveSearchScope = 'folder';
-      state.archiveFileTypeFilter = 'all';
-      state.archiveLinkFilter = 'all';
-      state.archiveSourceTypeFilter = 'all';
-      state.archivePersonFilterId = '';
+      state.archiveFileFilters = {
+        scope: 'all',
+        fileType: 'all',
+        connections: 'all',
+        personIds: [],
+        placeIds: [],
+        documentYears: {
+          mode: '',
+          from: '',
+          to: ''
+        },
+        favouriteOnly: false
+      };
+
+      state.archiveFilterPresentation =
+        'flat';
+
+      state.archiveFilterScopeFolderId =
+        null;
+
+      state.archiveSourceTypeFilter =
+        'all';
       state.archiveFileEditing = false;
       state.archiveFileEditOriginal = null;
       state.archiveFileEditDraft = null;
