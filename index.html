@@ -17532,6 +17532,42 @@
       object-fit: cover;
     }
 
+    .photo-thumbnail
+    .thumb-img-backdrop {
+      position: absolute;
+      z-index: 1;
+      inset: -24px;
+
+      width: calc(100% + 48px);
+      height: calc(100% + 48px);
+
+      display: block;
+      object-fit: cover;
+
+      filter:
+        blur(20px)
+        saturate(.72)
+        brightness(.48);
+
+      transform:
+        scale(1.04);
+
+      opacity: .94;
+
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /*
+    * Once a real background exists, the
+    * unrelated abstract artwork must not
+    * remain visible behind it.
+    */
+    .photo-thumbnail.has-image-backdrop
+    .photo-abstract {
+      visibility: hidden;
+    }
+
     /* Shared connected-photo preview */
     .connected-photo-grid {
       display: grid;
@@ -21684,7 +21720,18 @@
     }
 
     .albums-delete-copy { padding: var(--space-4); border: 1px solid rgba(212,107,107,.24); border-radius: var(--radius-sm); background: rgba(212,107,107,.08); color: #f0b8b8; }
-    .albums-lightbox-photo { width: 100%; height: min(64vh, 720px); border-radius: var(--radius-sm); }
+    .albums-lightbox-photo {
+      width: 100%;
+      height: min(64vh, 720px);
+
+      border-radius:
+        var(--radius-sm);
+    }
+
+    .albums-lightbox-photo
+    .thumb-img {
+      object-fit: contain;
+    }
 
     @media (max-width: 1500px) {
       .geneo-board-grid {
@@ -33962,12 +34009,6 @@
       'New photos will be added to the current project and album.':
         'Новые фотографии будут добавлены в текущий проект и альбом.',
 
-      'Add placeholder photo':
-        'Добавить тестовую фотографию',
-
-      'Placeholder photo added.':
-        'Тестовая фотография добавлена.',
-
       // ========================================
       // Add to album picker
       // ========================================
@@ -37099,6 +37140,7 @@
       'Photo has invalid or missing image dimensions.': 'Размеры фотографии отсутствуют или недопустимы.',
       'One file could not be added:': 'Не удалось добавить один файл:',
       'One or more uploaded photos are no longer valid. Remove them and choose the files again.': 'Одна или несколько загруженных фотографий больше недоступны. Удалите их и выберите файлы заново.',
+      'No valid photos were added.': 'Не добавлено ни одной подходящей фотографии.',
       'The uploaded photo is no longer valid. Choose it again.': 'Загруженная фотография больше недоступна. Выберите её заново.',
       'The photo is no longer available for this person.': 'Эта фотография больше недоступна для данного человека.',
       'The photo could not be prepared for adjustment.': 'Не удалось подготовить фотографию к настройке.',
@@ -37278,6 +37320,8 @@
       'Remove upload': 'Удалить загрузку',
       'Add more photos': 'Добавить ещё фотографии',
       'Drop photos here': 'Перетащите фотографии сюда',
+      'Choose photos': 'Выбрать фотографии',
+      'Remove upload': 'Удалить загруженную фотографию',
       'Close add photos dialog': 'Закрыть окно добавления фотографий',
       'Upload new photos': 'Загрузить новые фотографии',
       'Untitled collection': 'Коллекция без названия',
@@ -40914,20 +40958,20 @@
         }
       ],
       media: [
-        { id: 'photo-silver-portrait', projectId: 'p1', kind: 'photo', title: 'Silver portrait', filename: 'silver-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1400, height: 1800, sizeBytes: 168960, placeholder: { pattern: 'orbit', palette: 'mono', seed: 1 }, personIds: ['silver'], albumIds: ['al-family', 'al-personal'], date: { date: '03.03.1998', dateLabel: '03 Mar 1998', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Portrait of Silver Whiskerfield.', favorite: true, createdAt: '2026-05-01T10:00:00Z', updatedAt: '2026-05-01T10:00:00Z' },
-        { id: 'photo-family-table', projectId: 'p1', kind: 'photo', title: 'Family table', filename: 'family-table-2025.jpg', src: '', mimeType: 'image/jpeg', width: 2400, height: 1350, sizeBytes: 3984588, placeholder: { pattern: 'bands', palette: 'moss', seed: 2 }, personIds: ['silver', 'luna', 'oliver'], albumIds: ['al-family', 'al-personal'], date: { date: '2025', dateLabel: '2025', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Family table after a celebration.', favorite: true, createdAt: '2026-04-18T09:30:00Z', updatedAt: '2026-05-02T11:10:00Z' },
-        { id: 'photo-barnaby-portrait', projectId: 'p1', kind: 'photo', title: 'Barnaby portrait', filename: 'barnaby-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1200, height: 1600, sizeBytes: 1228800, placeholder: { pattern: 'window', palette: 'mono', seed: 3 }, personIds: ['barnaby'], albumIds: ['al-grandma', 'al-portraits'], date: { date: '1975', dateLabel: '1975', dateType: 'About / Circa', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Barnaby Whiskerfield in Pawford.', favorite: false, createdAt: '2026-05-03T08:00:00Z', updatedAt: '2026-05-03T08:00:00Z' },
-        { id: 'photo-luna-portrait', projectId: 'p1', kind: 'photo', title: 'Luna portrait', filename: 'luna-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1300, height: 1700, sizeBytes: 1480000, placeholder: { pattern: 'halo', palette: 'plum', seed: 4 }, personIds: ['luna'], albumIds: ['al-personal'], date: { date: '2018', dateLabel: '2018', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Portrait of Luna Purrington.', favorite: false, createdAt: '2026-04-30T12:00:00Z', updatedAt: '2026-04-30T12:00:00Z' },
-        { id: 'photo-grandparents-garden', projectId: 'p1', kind: 'photo', title: 'Grandparents in the garden', filename: 'grandparents-garden.jpg', src: '', mimeType: 'image/jpeg', width: 2100, height: 1400, sizeBytes: 2200000, placeholder: { pattern: 'fold', palette: 'amber', seed: 5 }, personIds: ['barnaby', 'daisy'], albumIds: ['al-family', 'al-grandma'], date: { date: '', dateLabel: '', dateType: 'Between', fromDate: '1970', toDate: '1975' }, placeId: 'place-pawford-garden', placeText: 'Pawford garden', caption: 'Barnaby and Daisy in the family garden.', favorite: true, createdAt: '2026-05-04T14:00:00Z', updatedAt: '2026-05-04T14:00:00Z' },
-        { id: 'photo-daisy-school', projectId: 'p1', kind: 'photo', title: 'Daisy school portrait', filename: 'daisy-school-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1100, height: 1500, sizeBytes: 980000, placeholder: { pattern: 'archive', palette: 'rose', seed: 6 }, personIds: ['daisy'], albumIds: ['al-grandma', 'al-portraits'], date: { date: '1960', dateLabel: '1960', dateType: 'Before', fromDate: '', toDate: '' }, placeId: 'place-meowbridge-school', placeText: 'Meowbridge school', caption: 'Early portrait of Daisy Milkpaw.', favorite: false, createdAt: '2026-05-05T10:15:00Z', updatedAt: '2026-05-05T10:15:00Z' },
-        { id: 'photo-silver-luna-wedding', projectId: 'p1', kind: 'photo', title: 'Silver and Luna', filename: 'silver-luna-wedding.jpg', src: '', mimeType: 'image/jpeg', width: 2000, height: 1333, sizeBytes: 2450000, placeholder: { pattern: 'orbit', palette: 'plum', seed: 7 }, personIds: ['silver', 'luna'], albumIds: ['al-family', 'al-personal'], date: { date: '18.08.2023', dateLabel: '18 Aug 2023', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Silver and Luna at their wedding celebration.', favorite: true, createdAt: '2026-05-06T16:45:00Z', updatedAt: '2026-05-06T16:45:00Z' },
-        { id: 'photo-purrington-family', projectId: 'p1', kind: 'photo', title: 'Purrington family visit', filename: 'purrington-family-visit.jpg', src: '', mimeType: 'image/jpeg', width: 2300, height: 1500, sizeBytes: 3100000, placeholder: { pattern: 'bands', palette: 'amber', seed: 8 }, personIds: ['luna', 'rupert', 'mabel'], albumIds: ['al-family'], date: { date: '1980', dateLabel: '1980', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-fishmarket-row', placeText: 'Fishmarket Row', caption: 'A Purrington family visit.', favorite: false, createdAt: '2026-05-07T09:00:00Z', updatedAt: '2026-05-07T09:00:00Z' },
-        { id: 'photo-oliver-portrait', projectId: 'p1', kind: 'photo', title: 'Oliver portrait', filename: 'oliver-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1250, height: 1600, sizeBytes: 1170000, placeholder: { pattern: 'window', palette: 'sea', seed: 9 }, personIds: ['oliver'], albumIds: ['al-personal'], date: { date: '18.05.2024', dateLabel: '18 May 2024', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Oliver Whiskerfield portrait.', favorite: false, createdAt: '2026-05-08T13:00:00Z', updatedAt: '2026-05-08T13:00:00Z' },
-        { id: 'photo-pearl-portrait', projectId: 'p1', kind: 'photo', title: 'Pearl portrait', filename: 'pearl-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 1000, height: 1450, sizeBytes: 910000, placeholder: { pattern: 'halo', palette: 'mono', seed: 10 }, personIds: ['pearl'], albumIds: ['al-portraits'], date: { date: '1950', dateLabel: '1950', dateType: 'About / Circa', fromDate: '', toDate: '' }, placeId: 'place-old-cattery', placeText: 'Old Cattery', caption: 'Portrait identified as Pearl Velvetpaw.', favorite: false, createdAt: '2026-05-09T10:00:00Z', updatedAt: '2026-05-09T10:00:00Z' },
-        { id: 'photo-young-family', projectId: 'p1', kind: 'photo', title: 'Young Whiskerfield family', filename: 'young-whiskerfield-family.jpg', src: '', mimeType: 'image/jpeg', width: 2600, height: 1700, sizeBytes: 4300000, placeholder: { pattern: 'fold', palette: 'moss', seed: 11 }, personIds: ['silver', 'luna', 'oliver', 'mochi', 'cleo'], albumIds: ['al-family', 'al-personal'], date: { date: '2026', dateLabel: '2026', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'The young Whiskerfield household.', favorite: false, createdAt: '2026-05-10T15:30:00Z', updatedAt: '2026-05-10T15:30:00Z' },
-        { id: 'photo-unidentified-studio', projectId: 'p1', kind: 'photo', title: 'Unidentified studio portrait', filename: 'unidentified-studio-portrait.jpg', src: '', mimeType: 'image/jpeg', width: 900, height: 1300, sizeBytes: 740000, placeholder: { pattern: 'archive', palette: 'mono', seed: 12 }, personIds: [], albumIds: ['al-portraits'], date: { date: '', dateLabel: '', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-unknown', placeText: 'North quay studio', caption: 'Unidentified portrait awaiting research.', favorite: false, createdAt: '2026-05-11T11:00:00Z', updatedAt: '2026-05-11T11:00:00Z' },
-        { id: 'photo-archive-yard', projectId: 'p1', kind: 'photo', title: 'Archive yard', filename: 'archive-yard.jpg', src: '', mimeType: 'image/jpeg', width: 1900, height: 1200, sizeBytes: 2050000, placeholder: { pattern: 'orbit', palette: 'sea', seed: 13 }, personIds: [], albumIds: [], date: { date: '1948', dateLabel: '1948', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'View of the Pawford archive yard.', favorite: false, createdAt: '2026-05-12T09:20:00Z', updatedAt: '2026-05-12T09:20:00Z' },
-        { id: 'photo-archibald-workshop', projectId: 'p1', kind: 'photo', title: 'Archibald at the workshop', filename: 'archibald-workshop.jpg', src: '', mimeType: 'image/jpeg', width: 1800, height: 1200, sizeBytes: 1760000, placeholder: { pattern: 'bands', palette: 'rose', seed: 14 }, personIds: ['archibald'], albumIds: [], date: { date: '1940', dateLabel: '1940', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Archibald Whiskerfield outside the workshop.', favorite: false, createdAt: '2026-05-13T12:40:00Z', updatedAt: '2026-05-13T12:40:00Z' }
+        { id: 'photo-silver-portrait', projectId: 'p1', kind: 'photo', title: 'Silver portrait', filename: 'silver-portrait.jpg', src: './assets/sample-photos/silver-portrait.jpg', mimeType: 'image/jpeg', width: 1400, height: 1800, sizeBytes: 168960, placeholder: { pattern: 'orbit', palette: 'mono', seed: 1 }, personIds: ['silver'], albumIds: ['al-family', 'al-personal'], date: { date: '03.03.1998', dateLabel: '03 Mar 1998', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Portrait of Silver Whiskerfield.', favorite: true, createdAt: '2026-05-01T10:00:00Z', updatedAt: '2026-05-01T10:00:00Z' },
+        { id: 'photo-family-table', projectId: 'p1', kind: 'photo', title: 'Family table', filename: 'family-table-2025.jpg', src: './assets/sample-photos/family-table-2025.jpg', mimeType: 'image/jpeg', width: 2400, height: 1350, sizeBytes: 3984588, placeholder: { pattern: 'bands', palette: 'moss', seed: 2 }, personIds: ['silver', 'luna', 'oliver'], albumIds: ['al-family', 'al-personal'], date: { date: '2025', dateLabel: '2025', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Family table after a celebration.', favorite: true, createdAt: '2026-04-18T09:30:00Z', updatedAt: '2026-05-02T11:10:00Z' },
+        { id: 'photo-barnaby-portrait', projectId: 'p1', kind: 'photo', title: 'Barnaby portrait', filename: 'barnaby-portrait.jpg', src: './assets/sample-photos/barnaby-portrait.jpg', mimeType: 'image/jpeg', width: 1200, height: 1600, sizeBytes: 1228800, placeholder: { pattern: 'window', palette: 'mono', seed: 3 }, personIds: ['barnaby'], albumIds: ['al-grandma', 'al-portraits'], date: { date: '1975', dateLabel: '1975', dateType: 'About / Circa', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Barnaby Whiskerfield in Pawford.', favorite: false, createdAt: '2026-05-03T08:00:00Z', updatedAt: '2026-05-03T08:00:00Z' },
+        { id: 'photo-luna-portrait', projectId: 'p1', kind: 'photo', title: 'Luna portrait', filename: 'luna-portrait.jpg', src: './assets/sample-photos/luna-portrait.jpg', mimeType: 'image/jpeg', width: 1300, height: 1700, sizeBytes: 1480000, placeholder: { pattern: 'halo', palette: 'plum', seed: 4 }, personIds: ['luna'], albumIds: ['al-personal'], date: { date: '2018', dateLabel: '2018', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Portrait of Luna Purrington.', favorite: false, createdAt: '2026-04-30T12:00:00Z', updatedAt: '2026-04-30T12:00:00Z' },
+        { id: 'photo-grandparents-garden', projectId: 'p1', kind: 'photo', title: 'Grandparents in the garden', filename: 'grandparents-garden.jpg', src: './assets/sample-photos/grandparents-garden.jpg', mimeType: 'image/jpeg', width: 2100, height: 1400, sizeBytes: 2200000, placeholder: { pattern: 'fold', palette: 'amber', seed: 5 }, personIds: ['barnaby', 'daisy'], albumIds: ['al-family', 'al-grandma'], date: { date: '', dateLabel: '', dateType: 'Between', fromDate: '1970', toDate: '1975' }, placeId: 'place-pawford-garden', placeText: 'Pawford garden', caption: 'Barnaby and Daisy in the family garden.', favorite: true, createdAt: '2026-05-04T14:00:00Z', updatedAt: '2026-05-04T14:00:00Z' },
+        { id: 'photo-daisy-school', projectId: 'p1', kind: 'photo', title: 'Daisy school portrait', filename: 'daisy-school-portrait.jpg', src: './assets/sample-photos/daisy-school-portrait.jpg', mimeType: 'image/jpeg', width: 1100, height: 1500, sizeBytes: 980000, placeholder: { pattern: 'archive', palette: 'rose', seed: 6 }, personIds: ['daisy'], albumIds: ['al-grandma', 'al-portraits'], date: { date: '1960', dateLabel: '1960', dateType: 'Before', fromDate: '', toDate: '' }, placeId: 'place-meowbridge-school', placeText: 'Meowbridge school', caption: 'Early portrait of Daisy Milkpaw.', favorite: false, createdAt: '2026-05-05T10:15:00Z', updatedAt: '2026-05-05T10:15:00Z' },
+        { id: 'photo-silver-luna-wedding', projectId: 'p1', kind: 'photo', title: 'Silver and Luna', filename: 'silver-luna-wedding.jpg', src: './assets/sample-photos/silver-luna-wedding.jpg', mimeType: 'image/jpeg', width: 2000, height: 1333, sizeBytes: 2450000, placeholder: { pattern: 'orbit', palette: 'plum', seed: 7 }, personIds: ['silver', 'luna'], albumIds: ['al-family', 'al-personal'], date: { date: '18.08.2023', dateLabel: '18 Aug 2023', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-meowbridge', placeText: 'Meowbridge', caption: 'Silver and Luna at their wedding celebration.', favorite: true, createdAt: '2026-05-06T16:45:00Z', updatedAt: '2026-05-06T16:45:00Z' },
+        { id: 'photo-purrington-family', projectId: 'p1', kind: 'photo', title: 'Purrington family visit', filename: 'purrington-family-visit.jpg', src: './assets/sample-photos/purrington-family-visit.jpg', mimeType: 'image/jpeg', width: 2300, height: 1500, sizeBytes: 3100000, placeholder: { pattern: 'bands', palette: 'amber', seed: 8 }, personIds: ['luna', 'rupert', 'mabel'], albumIds: ['al-family'], date: { date: '1980', dateLabel: '1980', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-fishmarket-row', placeText: 'Fishmarket Row', caption: 'A Purrington family visit.', favorite: false, createdAt: '2026-05-07T09:00:00Z', updatedAt: '2026-05-07T09:00:00Z' },
+        { id: 'photo-oliver-portrait', projectId: 'p1', kind: 'photo', title: 'Oliver portrait', filename: 'oliver-portrait.jpg', src: './assets/sample-photos/oliver-portrait.jpg', mimeType: 'image/jpeg', width: 1250, height: 1600, sizeBytes: 1170000, placeholder: { pattern: 'window', palette: 'sea', seed: 9 }, personIds: ['oliver'], albumIds: ['al-personal'], date: { date: '18.05.2024', dateLabel: '18 May 2024', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Oliver Whiskerfield portrait.', favorite: false, createdAt: '2026-05-08T13:00:00Z', updatedAt: '2026-05-08T13:00:00Z' },
+        { id: 'photo-pearl-portrait', projectId: 'p1', kind: 'photo', title: 'Pearl portrait', filename: 'pearl-portrait.jpg', src: './assets/sample-photos/pearl-portrait.jpg', mimeType: 'image/jpeg', width: 1000, height: 1450, sizeBytes: 910000, placeholder: { pattern: 'halo', palette: 'mono', seed: 10 }, personIds: ['pearl'], albumIds: ['al-portraits'], date: { date: '1950', dateLabel: '1950', dateType: 'About / Circa', fromDate: '', toDate: '' }, placeId: 'place-old-cattery', placeText: 'Old Cattery', caption: 'Portrait identified as Pearl Velvetpaw.', favorite: false, createdAt: '2026-05-09T10:00:00Z', updatedAt: '2026-05-09T10:00:00Z' },
+        { id: 'photo-young-family', projectId: 'p1', kind: 'photo', title: 'Young Whiskerfield family', filename: 'young-whiskerfield-family.jpg', src: './assets/sample-photos/young-whiskerfield-family.jpg', mimeType: 'image/jpeg', width: 2600, height: 1700, sizeBytes: 4300000, placeholder: { pattern: 'fold', palette: 'moss', seed: 11 }, personIds: ['silver', 'luna', 'oliver', 'mochi', 'cleo'], albumIds: ['al-family', 'al-personal'], date: { date: '2026', dateLabel: '2026', dateType: 'Year only', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'The young Whiskerfield household.', favorite: false, createdAt: '2026-05-10T15:30:00Z', updatedAt: '2026-05-10T15:30:00Z' },
+        { id: 'photo-unidentified-studio', projectId: 'p1', kind: 'photo', title: 'Unidentified studio portrait', filename: 'unidentified-studio-portrait.jpg', src: './assets/sample-photos/unidentified-studio-portrait.jpg', mimeType: 'image/jpeg', width: 900, height: 1300, sizeBytes: 740000, placeholder: { pattern: 'archive', palette: 'mono', seed: 12 }, personIds: [], albumIds: ['al-portraits'], date: { date: '', dateLabel: '', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: 'place-unknown', placeText: 'North quay studio', caption: 'Unidentified portrait awaiting research.', favorite: false, createdAt: '2026-05-11T11:00:00Z', updatedAt: '2026-05-11T11:00:00Z' },
+        { id: 'photo-archive-yard', projectId: 'p1', kind: 'photo', title: 'Archive yard', filename: 'archive-yard.jpg', src: './assets/sample-photos/archive-yard.jpg', mimeType: 'image/jpeg', width: 1900, height: 1200, sizeBytes: 2050000, placeholder: { pattern: 'orbit', palette: 'sea', seed: 13 }, personIds: [], albumIds: [], date: { date: '1948', dateLabel: '1948', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'View of the Pawford archive yard.', favorite: false, createdAt: '2026-05-12T09:20:00Z', updatedAt: '2026-05-12T09:20:00Z' },
+        { id: 'photo-archibald-workshop', projectId: 'p1', kind: 'photo', title: 'Archibald at the workshop', filename: 'archibald-workshop.jpg', src: './assets/sample-photos/archibald-workshop.jpg', mimeType: 'image/jpeg', width: 1800, height: 1200, sizeBytes: 1760000, placeholder: { pattern: 'bands', palette: 'rose', seed: 14 }, personIds: ['archibald'], albumIds: [], date: { date: '1940', dateLabel: '1940', dateType: 'After', fromDate: '', toDate: '' }, placeId: 'place-pawford', placeText: 'Pawford', caption: 'Archibald Whiskerfield outside the workshop.', favorite: false, createdAt: '2026-05-13T12:40:00Z', updatedAt: '2026-05-13T12:40:00Z' }
       ],
       albums: [
         { id: 'al-family', projectId: 'p1', name: 'Family photos', description: 'Shared family portraits and gatherings.', createdAt: '2026-05-08T10:00:00Z' },
@@ -41519,12 +41563,102 @@
       return `<span class="photo-abstract pattern-${escapeHtml(model.pattern)} palette-${escapeHtml(model.palette)}" style="--photo-abstract-angle:${model.rotation}deg;--photo-abstract-x:${model.offsetX}%;--photo-abstract-y:${model.offsetY}%" aria-hidden="true"><span class="photo-abstract-layer one"></span><span class="photo-abstract-layer two"></span><span class="photo-abstract-layer three"></span></span>`;
     }
 
-    function renderPhotoThumbnail(photo, options = {}) {
-      if (!photo) return '';
-      const className = ['photo-thumbnail', options.className || ''].filter(Boolean).join(' ');
-      const label = options.label || photo.title || photo.filename || 'Photo';
-      const src = typeof photo.src === 'string' ? photo.src.trim() : '';
-      return `<span class="${escapeHtml(className)}${src ? ' has-image' : ''}" data-photo-thumbnail role="img" aria-label="${escapeHtml(label)}">${renderPhotoAbstract(photo)}${src ? `<img class="thumb-img" src="${escapeHtml(src)}" alt="" loading="lazy" onerror="this.closest('[data-photo-thumbnail]').classList.remove('has-image');this.remove()">` : ''}</span>`;
+    function renderPhotoThumbnail(
+      photo,
+      options = {}
+    ) {
+      if (!photo) {
+        return '';
+      }
+
+      const className = [
+        'photo-thumbnail',
+        options.className || ''
+      ]
+        .filter(Boolean)
+        .join(' ');
+
+      const label =
+        options.label
+        || photo.title
+        || photo.filename
+        || 'Photo';
+
+      const src =
+        typeof photo.src === 'string'
+          ? photo.src.trim()
+          : '';
+
+      const useBackdrop =
+        Boolean(
+          src
+          && options.backdrop
+        );
+
+      return `
+        <span
+          class="${escapeHtml(
+            className
+          )}${src ? ' has-image' : ''}${
+            useBackdrop
+              ? ' has-image-backdrop'
+              : ''
+          }"
+          data-photo-thumbnail
+          role="img"
+          aria-label="${escapeHtml(label)}">
+
+          ${renderPhotoAbstract(photo)}
+
+          ${
+            useBackdrop
+              ? `
+                <img
+                  class="
+                    thumb-img-backdrop
+                  "
+                  src="${escapeHtml(src)}"
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  draggable="false">
+              `
+              : ''
+          }
+
+          ${
+            src
+              ? `
+                <img
+                  class="thumb-img"
+                  src="${escapeHtml(src)}"
+                  alt=""
+                  loading="lazy"
+                  draggable="false"
+                  onerror="
+                    const root =
+                      this.closest(
+                        '[data-photo-thumbnail]'
+                      );
+
+                    root?.classList.remove(
+                      'has-image',
+                      'has-image-backdrop'
+                    );
+
+                    root
+                      ?.querySelector(
+                        '.thumb-img-backdrop'
+                      )
+                      ?.remove();
+
+                    this.remove();
+                  ">
+              `
+              : ''
+          }
+        </span>
+      `;
     }
 
     const PERSON_PHOTO_CROP_DEFAULT = Object.freeze({
@@ -79032,7 +79166,10 @@
 
                 label:
                   photo.title
-                  || photo.filename
+                  || photo.filename,
+
+                backdrop:
+                  true
               }
             )}
           </button>
@@ -79965,7 +80102,23 @@
     function openPhotoLightbox(photoId) {
       const photo = getPhoto(photoId, { projectId: currentProjectId() });
       if (!photo) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="photoLightboxTitle"><div class="modal-header"><div><h2 id="photoLightboxTitle">${escapeHtml(photo.title || photo.filename)}</h2><p>${escapeHtml(formatPhotoDate(photo))}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body">${renderPhotoThumbnail(photo, { className: 'albums-lightbox-photo', label: photo.title })}<p>${escapeHtml(photo.caption || 'No caption.')}</p></div></div>`);
+      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="photoLightboxTitle"><div class="modal-header"><div><h2 id="photoLightboxTitle">${escapeHtml(photo.title || photo.filename)}</h2><p>${escapeHtml(formatPhotoDate(photo))}</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body">
+        ${
+        renderPhotoThumbnail(
+          photo,
+          {
+            className:
+              'albums-lightbox-photo',
+
+            label:
+              photo.title
+              || photo.filename,
+
+            backdrop:
+              true
+          }
+        )
+        }<p>${escapeHtml(photo.caption || 'No caption.')}</p></div></div>`);
     }
 
     function openPhotoPeopleModal(photoId) {
@@ -82836,15 +82989,571 @@
     }
 
     function openAddPhotosModal() {
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="addPhotosTitle"><div class="modal-header"><div><h2 id="addPhotosTitle">Add photos</h2><p>Add new photos to your project.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="dropzone">${icon.import}<div><strong>Add photo</strong><span>New photos will be added to the current project and album.</span></div></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-create-placeholder-photo>Add placeholder photo</button></div></div>`);
-      modalBackdrop.querySelector('[data-create-placeholder-photo]')?.addEventListener('click', () => {
-        const projectId = requireActiveProjectId();
-        if (!projectId) return;
-        const now = new Date().toISOString();
-        const id = `photo-${Date.now()}`;
-        sampleData.media.unshift({ id, projectId, kind: 'photo', title: 'Untitled photo', filename: 'untitled-photo.jpg', src: '', mimeType: 'image/jpeg', width: 1600, height: 1200, sizeBytes: 0, placeholder: { pattern: 'orbit', palette: 'moss', seed: Date.now() % 997 || 1 }, personIds: [], albumIds: state.albumsView === 'album' && state.activeAlbumId ? [state.activeAlbumId] : [], date: { date: '', dateLabel: '', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: null, placeText: '', caption: '',  favorite: false, createdAt: now, updatedAt: now });
-        state.selectedPhotoId = id; closeModal(); renderAlbums(); showToast('Placeholder photo added.');
-      });
+      const projectId =
+        requireActiveProjectId();
+
+      if (!projectId) {
+        return;
+      }
+
+      /*
+      * Capture the destination when the modal
+      * opens. Switching state while files are
+      * being read cannot redirect the upload.
+      */
+      const targetAlbumId =
+        state.albumsView === 'album'
+        && state.activeAlbumId
+        && getProjectAlbums(
+          projectId
+        ).some(
+          album =>
+            album.id
+            === state.activeAlbumId
+        )
+          ? state.activeAlbumId
+          : '';
+
+      let uploadDrafts = [];
+      let uploadErrors = [];
+      let processing = false;
+
+      const renderUploadErrors = () => {
+        if (!uploadErrors.length) {
+          return '';
+        }
+
+        return `
+          <div
+            class="
+              person-photos-adder-upload-errors
+            "
+            role="alert">
+
+            <strong>
+              ${
+                uploadErrors.length === 1
+                  ? 'One file could not be added:'
+                  : `${
+                      uploadErrors.length
+                    } files could not be added:`
+              }
+            </strong>
+
+            <ul>
+              ${uploadErrors
+                .map(error => `
+                  <li>
+                    ${escapeHtml(error)}
+                  </li>
+                `)
+                .join('')}
+            </ul>
+          </div>
+        `;
+      };
+
+      const processFiles =
+        async fileList => {
+          if (processing) {
+            return;
+          }
+
+          const knownSignatures =
+            new Set(
+              uploadDrafts.map(
+                draft =>
+                  draft.signature
+              )
+            );
+
+          const files =
+            Array.from(
+              fileList || []
+            ).filter(file => {
+              const signature =
+                photoUploadFileSignature(
+                  file
+                );
+
+              if (
+                knownSignatures.has(
+                  signature
+                )
+              ) {
+                return false;
+              }
+
+              knownSignatures.add(
+                signature
+              );
+
+              return true;
+            });
+
+          if (!files.length) {
+            return;
+          }
+
+          processing = true;
+
+          const modal =
+            modalBackdrop.querySelector(
+              '[data-albums-photo-upload]'
+            );
+
+          modal
+            ?.querySelectorAll(
+              'button'
+            )
+            .forEach(button => {
+              button.disabled = true;
+            });
+
+          const results =
+            await Promise.all(
+              files.map(async file => {
+                try {
+                  return {
+                    draft:
+                      await createPhotoUploadDraft(
+                        file,
+                        {
+                          idPrefix:
+                            'albums-photo-upload-draft'
+                        }
+                      ),
+
+                    error:
+                      ''
+                  };
+                } catch (error) {
+                  return {
+                    draft:
+                      null,
+
+                    error:
+                      error?.message
+                      || `${
+                        file.name
+                        || 'File'
+                      } — could not be read`
+                  };
+                }
+              })
+            );
+
+          processing = false;
+
+          uploadDrafts = [
+            ...uploadDrafts,
+
+            ...results
+              .map(result =>
+                result.draft
+              )
+              .filter(Boolean)
+          ];
+
+          uploadErrors =
+            results
+              .map(result =>
+                result.error
+              )
+              .filter(Boolean);
+
+          renderDialog();
+        };
+
+      const commitUploads = () => {
+        if (
+          processing
+          || !uploadDrafts.length
+        ) {
+          return;
+        }
+
+        if (
+          uploadDrafts.some(
+            draft =>
+              !photoUploadDraftIsValid(
+                draft
+              )
+          )
+        ) {
+          uploadErrors = [
+            'One or more uploaded photos are no longer valid. Remove them and choose the files again.'
+          ];
+
+          renderDialog();
+          return;
+        }
+
+        const createdPhotos =
+          uploadDrafts
+            .map(draft =>
+              createMediaFromPhotoUpload({
+                projectId,
+
+                draft,
+
+                personIds:
+                  [],
+
+                idPrefix:
+                  'photo-albums'
+              })
+            )
+            .filter(Boolean);
+
+        if (!createdPhotos.length) {
+          uploadErrors = [
+            'No valid photos were added.'
+          ];
+
+          renderDialog();
+          return;
+        }
+
+        if (targetAlbumId) {
+          createdPhotos.forEach(photo => {
+            photo.albumIds = [
+              ...new Set([
+                ...(photo.albumIds || []),
+                targetAlbumId
+              ])
+            ];
+          });
+        }
+
+        const project =
+          sampleData.projects.find(
+            item =>
+              item.id === projectId
+          );
+
+        touchProjectModified(
+          project
+        );
+
+        state.selectedPhotoIds = [];
+
+        state.selectedPhotoId =
+          createdPhotos[0].id;
+
+        closeModal({
+          force: true
+        });
+
+        renderAlbums();
+
+        showToast(
+          'Photos added'
+        );
+      };
+
+      const bindDialog = () => {
+        const modal =
+          modalBackdrop.querySelector(
+            '[data-albums-photo-upload]'
+          );
+
+        if (!modal) {
+          return;
+        }
+
+        const fileInput =
+          modal.querySelector(
+            '[data-albums-photo-upload-file]'
+          );
+
+        modal
+          .querySelector(
+            '[data-albums-photo-upload-choose]'
+          )
+          ?.addEventListener(
+            'click',
+            () => {
+              fileInput?.click();
+            }
+          );
+
+        fileInput?.addEventListener(
+          'change',
+          () => {
+            processFiles(
+              fileInput.files
+            );
+          }
+        );
+
+        const dropzone =
+          modal.querySelector(
+            '[data-albums-photo-upload-dropzone]'
+          );
+
+        if (dropzone) {
+          [
+            'dragenter',
+            'dragover'
+          ].forEach(type => {
+            dropzone.addEventListener(
+              type,
+              event => {
+                event.preventDefault();
+
+                dropzone.classList.add(
+                  'is-dragging'
+                );
+              }
+            );
+          });
+
+          [
+            'dragleave',
+            'drop'
+          ].forEach(type => {
+            dropzone.addEventListener(
+              type,
+              event => {
+                event.preventDefault();
+
+                dropzone.classList.remove(
+                  'is-dragging'
+                );
+              }
+            );
+          });
+
+          dropzone.addEventListener(
+            'drop',
+            event => {
+              processFiles(
+                event.dataTransfer?.files
+              );
+            }
+          );
+        }
+
+        modal.addEventListener(
+          'click',
+          event => {
+            const removeButton =
+              event.target.closest(
+                '[data-person-photos-adder-remove-upload]'
+              );
+
+            if (removeButton) {
+              const draftId =
+                removeButton.dataset
+                  .personPhotosAdderRemoveUpload;
+
+              uploadDrafts =
+                uploadDrafts.filter(
+                  draft =>
+                    draft.id !== draftId
+                );
+
+              uploadErrors = [];
+
+              renderDialog();
+              return;
+            }
+
+            if (
+              event.target.closest(
+                '[data-albums-photo-upload-save]'
+              )
+            ) {
+              commitUploads();
+            }
+          }
+        );
+      };
+
+      const renderDialog = () => {
+        const maxMegabytes =
+          Math.round(
+            PHOTO_UPLOAD_MAX_BYTES
+            / (
+              1024 * 1024
+            )
+          );
+
+        const photoCount =
+          uploadDrafts.length;
+
+        openModal(`
+          <div
+            class="
+              modal
+              person-photo-picker-modal
+              person-photos-adder-modal
+            "
+            data-albums-photo-upload
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="
+              albumsPhotoUploadTitle
+            ">
+
+            <div class="modal-header">
+              <div>
+                <h2
+                  id="
+                    albumsPhotoUploadTitle
+                  ">
+                  Add photos
+                </h2>
+
+                <p>
+                  New photos will be added
+                  ${
+                    targetAlbumId
+                      ? 'to the current album.'
+                      : 'to the current project.'
+                  }
+                </p>
+              </div>
+
+              <button
+                class="close-button"
+                type="button"
+                data-close
+                aria-label="
+                  Close add photos dialog
+                ">
+                ${icon.close}
+              </button>
+            </div>
+
+            <div
+              class="
+                modal-body
+                person-photo-picker-body
+                person-photos-adder-body
+              ">
+
+              <div
+                class="
+                  person-photos-adder-upload-panel
+                ">
+
+                <div
+                  class="
+                    person-photo-upload-dropzone
+                    person-photos-adder-upload-dropzone
+                    ${
+                      photoCount
+                        ? 'has-drafts'
+                        : ''
+                    }
+                  "
+                  data-albums-photo-upload-dropzone>
+
+                  <input
+                    type="file"
+                    accept="${
+                      PHOTO_UPLOAD_ALLOWED_TYPES
+                        .join(',')
+                    }"
+                    multiple
+                    data-albums-photo-upload-file
+                    hidden>
+
+                  <div
+                    class="
+                      person-photo-upload-prompt
+                    ">
+
+                    ${icon.import}
+
+                    <strong>
+                      ${
+                        photoCount
+                          ? 'Add more photos'
+                          : 'Drop photos here'
+                      }
+                    </strong>
+
+                    <p>
+                      JPEG, PNG, or WebP up to
+                      ${maxMegabytes} MB each.
+                    </p>
+
+                    <button
+                      class="button primary"
+                      type="button"
+                      data-albums-photo-upload-choose>
+                      Choose photos
+                    </button>
+                  </div>
+                </div>
+
+                ${renderUploadErrors()}
+
+                ${
+                  photoCount
+                    ? `
+                      <div
+                        class="
+                          person-photo-candidate-grid
+                          person-photos-adder-upload-grid
+                        ">
+                        ${uploadDrafts
+                          .map(
+                            renderPersonPhotosAdderUploadDraft
+                          )
+                          .join('')}
+                      </div>
+                    `
+                    : ''
+                }
+              </div>
+            </div>
+
+            <div
+              class="
+                modal-footer
+                person-photos-adder-footer
+              ">
+
+              <div
+                class="
+                  modal-footer-actions
+                ">
+
+                <button
+                  class="button secondary"
+                  type="button"
+                  data-close>
+                  Cancel
+                </button>
+
+                <button
+                  class="button primary"
+                  type="button"
+                  data-albums-photo-upload-save
+                  ${
+                    photoCount
+                      ? ''
+                      : 'disabled'
+                  }>
+                  ${
+                    photoCount === 1
+                      ? 'Add photo'
+                      : 'Add photos'
+                  }
+                </button>
+              </div>
+            </div>
+          </div>
+        `);
+
+        bindDialog();
+      };
+
+      renderDialog();
     }
 
     function openAddToAlbumModal() {
