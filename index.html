@@ -2456,6 +2456,22 @@
     .choice:has(input:checked) { background: var(--surface-selected); border-color: rgba(98,217,154,.38); }
     .choice strong { display: block; margin-bottom: 4px; }
     .choice span { color: var(--text-tertiary); font-size: 12px; }
+    .choice.is-unavailable {
+      cursor: not-allowed;
+      opacity: .62;
+    }
+    .choice.is-unavailable:hover { background: rgba(255,255,255,.018); }
+    .choice-status {
+      display: inline-flex !important;
+      width: fit-content;
+      margin-top: 8px;
+      padding: 2px 7px;
+      border: 1px solid var(--border-default);
+      border-radius: 999px;
+      color: var(--text-secondary) !important;
+      font-size: 11px !important;
+      line-height: 1.4;
+    }
 
     .toast {
       position: fixed;
@@ -3439,6 +3455,35 @@
       grid-template-rows: 58px 1fr;
       background: #090f0d;
       overflow: hidden;
+    }
+    .tree-empty-state {
+      min-height: 0;
+      display: grid;
+      place-items: center;
+      padding: 32px;
+      background: var(--surface-main);
+    }
+    .tree-empty-state-card {
+      width: min(440px, 100%);
+      text-align: center;
+    }
+    .tree-empty-state-icon {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 16px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      color: var(--brand-green-400);
+      background: var(--surface-card);
+    }
+    .tree-empty-state-icon svg { width: 22px; height: 22px; }
+    .tree-empty-state-card h1 { margin: 0; font-size: 22px; }
+    .tree-empty-state-card p {
+      margin: 8px auto 20px;
+      color: var(--text-secondary);
+      line-height: 1.55;
     }
     .tree-toolbar {
       border-bottom: 1px solid var(--border-default);
@@ -31866,9 +31911,8 @@
     const PLACE_EDITOR_GEOCODER_DEBOUNCE_MS = 300;
     const PLACE_EDITOR_CLOSE_COORDINATE_KM = 0.5;
 
-    const DEMO_TREE_PROJECT_ID = 'p1';
-        function currentFamilyTreeProjectId() {
-      return DEMO_TREE_PROJECT_ID;
+    function currentFamilyTreeProjectId() {
+      return currentProjectId();
     }
 
     const SUPPORTED_LANGUAGES = ['en', 'ru'];
@@ -32370,6 +32414,18 @@
       'Starting point': 'Начальный вариант',
       'Blank project': 'Пустой проект',
       'Add people manually.': 'Добавить людей вручную.',
+      'Coming later': 'Будет доступно позже',
+      'This starting point is not available yet.': 'Этот начальный вариант пока недоступен.',
+      'Project name is required.': 'Укажите название проекта.',
+      'Project created.': 'Проект создан.',
+      'Open a project before creating records.': 'Откройте проект перед созданием записей.',
+      'Add first person': 'Добавить первого человека',
+      'Start your family tree': 'Начните семейное древо',
+      'Add the first person to begin building this project\'s family tree.': 'Добавьте первого человека, чтобы начать семейное древо этого проекта.',
+      'No project activity yet': 'В проекте пока нет действий',
+      'Activity will appear as you add and edit project records.': 'Действия появятся после добавления и изменения записей проекта.',
+      'Start by adding a person or opening a project module.': 'Начните с добавления человека или откройте модуль проекта.',
+      'Add people before creating person-based publications.': 'Добавьте людей, прежде чем создавать публикации о людях.',
       'Bring an existing tree.': 'Импортировать существующее древо.',
       'Start from person': 'Начать с человека',
       'Create the first profile now.': 'Создать первый профиль сейчас.',
@@ -40919,7 +40975,9 @@
 
 
     function getPeople(projectId) {
-      return sampleData.people.filter(person => !projectId || person.projectId === projectId);
+      return projectId
+        ? sampleData.people.filter(person => person.projectId === projectId)
+        : [];
     }
 
     function getProjectPeopleCount(
@@ -40989,16 +41047,15 @@
       projectId =
         currentProjectId()
     ) {
-      return sampleData.media.filter(
-        photo =>
-          !projectId
-          || photo.projectId
-            === projectId
-      );
+      return projectId
+        ? sampleData.media.filter(photo => photo.projectId === projectId)
+        : [];
     }
 
     function getProjectAlbums(projectId = currentProjectId()) {
-      return sampleData.albums.filter(album => !projectId || album.projectId === projectId);
+      return projectId
+        ? sampleData.albums.filter(album => album.projectId === projectId)
+        : [];
     }
 
     function getPhotosForPerson(personId, options = {}) {
@@ -41989,7 +42046,7 @@
         return [];
       }));
       return (sampleData.archiveFiles || []).filter(file =>
-        (!file.projectId || file.projectId === projectId)
+        file.projectId === projectId
         && (includeDeleted || !file.deleted)
         && (recordHasPlaceReference(file, placeId) || linkedFileIds.has(file.id))
       );
@@ -44305,7 +44362,9 @@
 
         function buildOptions(query) {
           const projectId = String(input.dataset.placeProjectId || '').trim();
-          const pool = (sampleData.places || []).filter(p => !p.deleted && (!projectId || p.projectId === projectId));
+          const pool = projectId
+            ? (sampleData.places || []).filter(p => !p.deleted && p.projectId === projectId)
+            : [];
           const trimmed = (query || '').trim();
           const scored = pool
             .map(p => ({ place: p, score: placeMatchScore(p, trimmed) }))
@@ -44902,7 +44961,7 @@
         function getTreeFamiliesFromSampleData(projectId) {
       const childOwner = new Map();
       return centralFamilyRecords()
-        .filter(family => !projectId || family.projectId === projectId)
+        .filter(family => Boolean(projectId) && family.projectId === projectId)
         .map(family => {
           const pair = normalizedFamilyPair(family);
           const partnerIds = [...new Set([familyPartnerAId(family), familyPartnerBId(family)].filter(Boolean))];
@@ -45576,6 +45635,65 @@
       const warn = message => console.warn('[sampleData]', message);
       const personIds = new Set(sampleData.people.map(person => person.id));
       const projectIds = new Set(sampleData.projects.map(project => project.id));
+      if (projectIds.size !== sampleData.projects.length) {
+        warn('Projects contain duplicate IDs');
+      }
+
+      const projectOwnedCollections = [
+        'people',
+        'families',
+        'relationships',
+        'relationshipSeed',
+        'educationSeed',
+        'places',
+        'placeSavedFilters',
+        'placeIssues',
+        'events',
+        'media',
+        'albums',
+        'archiveFolders',
+        'archiveFiles',
+        'sources',
+        'archiveImports',
+        'archiveIssues',
+        'noteCollections',
+        'notes',
+        'boardCollections',
+        'boards',
+        'links',
+        'publishDrafts',
+        'activity',
+        'notifications'
+      ];
+
+      projectOwnedCollections.forEach(collectionName => {
+        const records = Array.isArray(sampleData[collectionName])
+          ? sampleData[collectionName]
+          : [];
+        const ids = records.map(record => record?.id).filter(Boolean);
+        if (new Set(ids).size !== ids.length) {
+          warn(`${collectionName} contains duplicate IDs`);
+        }
+        records.forEach(record => {
+          if (!record?.projectId || !projectIds.has(record.projectId)) {
+            warn(`${collectionName} record ${record?.id || '(missing ID)'} points to missing project ${record?.projectId || '(none)'}`);
+          }
+        });
+      });
+
+      const archiveFolderMap = new Map(
+        (sampleData.archiveFolders || []).map(folder => [folder.id, folder])
+      );
+      (sampleData.archiveFolders || []).forEach(folder => {
+        const parentId = folder.parentId === 'null' ? null : folder.parentId;
+        if (!parentId) return;
+        const parent = archiveFolderMap.get(parentId);
+        if (!parent) {
+          warn(`Archive folder ${folder.id} points to missing parent ${parentId}`);
+        } else if (parent.projectId !== folder.projectId) {
+          warn(`Archive folder ${folder.id} has a cross-project parent ${parentId}`);
+        }
+      });
       const placeIds = new Set(sampleData.places.map(place => place.id));
       const familyIds = new Set(centralFamilyRecords().map(family => family.id));
       const sourceIds = new Set((sampleData.sources || []).map(source => source.id));
@@ -46999,7 +47117,7 @@
       publishWizardStep: 'type',
       publishOutputType: 'report',
       publishScopeMode: 'person',
-      publishFocusPerson: 'Silver Whiskerfield',
+      publishFocusPersonId: 'silver',
       publishGenerations: 4,
       publishFormat: 'PDF',
       publishSettings: {
@@ -47043,20 +47161,47 @@
       language: normalizeLang(localStorage.getItem(LANGUAGE_STORAGE_KEY) || 'en')
     };
 
+    function validProjectById(projectId) {
+      return (
+        sampleData.projects || []
+      ).find(project =>
+        project.id === projectId
+        && !project.deleted
+        && project.available !== false
+      ) || null;
+    }
+
     function currentProjectId() {
-      return state.currentProjectId || state.selectedProjectId || 'p1';
+      const activeId =
+        state.currentProjectId
+        || '';
+
+      return validProjectById(activeId)?.id || '';
+    }
+
+    function requireActiveProjectId() {
+      const projectId = currentProjectId();
+
+      if (!projectId) {
+        showToast('Open a project before creating records.');
+        return '';
+      }
+
+      return projectId;
     }
 
     function currentTreePeople() {
-      const projectPeople = getTreePeopleFromSampleData(currentFamilyTreeProjectId());
-      if (projectPeople?.length) return projectPeople;
-      return sampleData.people.map(toTreePerson);
+      const projectId = currentFamilyTreeProjectId();
+      return projectId
+        ? getTreePeopleFromSampleData(projectId)
+        : [];
     }
 
     function currentTreeFamilies() {
-      const projectFamilies = getTreeFamiliesFromSampleData(currentFamilyTreeProjectId());
-      if (projectFamilies?.length) return projectFamilies;
-      return getTreeFamiliesFromSampleData(DEMO_TREE_PROJECT_ID);
+      const projectId = currentFamilyTreeProjectId();
+      return projectId
+        ? getTreeFamiliesFromSampleData(projectId)
+        : [];
     }
 
     const TREE_ANCESTOR_GENERATION_MIN = 0;
@@ -47812,12 +47957,12 @@
       return cleanEditFieldValue(place?.name);
     }
 
-    function findExactPlaceMatch(text) {
+    function findExactPlaceMatch(text, projectId = currentProjectId()) {
       const normalized = normalizePlaceLookupText(text);
-      if (!normalized) return null;
+      if (!normalized || !projectId) return null;
 
       return sampleData.places.find(place => {
-        if (!place || place.deleted) return false;
+        if (!place || place.deleted || place.projectId !== projectId) return false;
 
         const values = [
           place.name,
@@ -47856,6 +48001,9 @@
       const display = cleanEditFieldValue(text);
       if (!display) return null;
 
+      const projectId = requireActiveProjectId();
+      if (!projectId) return null;
+
       const exact = findExactPlaceMatch(display);
       if (exact) return exact;
 
@@ -47863,7 +48011,7 @@
         new Date().toISOString();
       const place = {
         id: uniquePlaceIdFromText(display),
-        projectId: currentProjectId(),
+        projectId,
         name: display,
         alternativeNames: [],
         coordinates: null,
@@ -48370,7 +48518,28 @@
         meta: 'Publish - Privacy reminder',
         module: 'Publish'
       }
+    ].map(notification => ({
+      ...notification,
+      projectId: 'p1'
+    }));
+
+    sampleData.activity = [
+      { id: 'activity-photos-added', projectId: 'p1', module: 'Albums', tone: 'red', title: 'Photos added', detail: '4 photos added to Family photos', occurredAt: '2026-05-24T10:42:00Z' },
+      { id: 'activity-person-updated', projectId: 'p1', module: 'People', tone: 'purple', title: 'Person updated', detail: 'Luna Purrington profile updated', occurredAt: '2026-05-23T10:42:00Z' },
+      { id: 'activity-gedcom-imported', projectId: 'p1', module: 'Family Tree', tone: 'amber', title: 'GEDCOM imported', detail: '24 people imported from GEDCOM', occurredAt: '2026-05-25T09:00:00Z' },
+      { id: 'activity-note-added', projectId: 'p1', module: 'Notes', tone: '', title: 'Research note added', detail: 'Surname origin note updated', occurredAt: '2026-05-21T11:00:00Z' },
+      { id: 'activity-relationship-connected', projectId: 'p1', module: 'Family Tree', tone: '', title: 'Relationship connected', detail: 'Luna Purrington was connected to the tree', occurredAt: '2026-05-18T12:00:00Z' },
+      { id: 'activity-file-linked', projectId: 'p1', module: 'Archive', tone: 'amber', title: 'Archive file linked', detail: 'Pawford household register linked to Silver Whiskerfield', occurredAt: '2026-05-14T09:00:00Z' },
+      { id: 'activity-duplicate-reviewed', projectId: 'p1', module: 'People', tone: '', title: 'Duplicate reviewed', detail: 'Possible duplicate was marked reviewed', occurredAt: '2026-05-10T14:00:00Z' },
+      { id: 'activity-photo-tags', projectId: 'p1', module: 'Albums', tone: 'red', title: 'Photo tags added', detail: 'Three portraits were linked to people', occurredAt: '2026-05-07T15:00:00Z' }
     ];
+
+    function projectNotifications(projectId = currentProjectId()) {
+      if (!projectId) return [];
+      return (sampleData.notifications || []).filter(notification =>
+        notification.projectId === projectId
+      );
+    }
 
     function render() {
       closeMenu();
@@ -48556,7 +48725,7 @@
     }
 
     function renderNotificationsPopover() {
-      const rows = sampleData.notifications.map(item => `<button class="topbar-popover-row" type="button" data-notification-id="${item.id}"><span class="topbar-popover-icon topbar-topic-icon ${item.tone === 'warn' ? 'warn' : item.tone === 'blue' ? 'blue' : item.tone === 'purple' ? 'purple' : ''}" aria-hidden="true">${item.icon}</span><span class="topbar-popover-copy"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.meta)}</span></span><span class="topbar-popover-arrow">${icon.chevron}</span></button>`).join('');
+      const rows = projectNotifications().map(item => `<button class="topbar-popover-row" type="button" data-notification-id="${item.id}"><span class="topbar-popover-icon topbar-topic-icon ${item.tone === 'warn' ? 'warn' : item.tone === 'blue' ? 'blue' : item.tone === 'purple' ? 'purple' : ''}" aria-hidden="true">${item.icon}</span><span class="topbar-popover-copy"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.meta)}</span></span><span class="topbar-popover-arrow">${icon.chevron}</span></button>`).join('');
       return `<div class="topbar-popover-header"><div><h2>Notifications</h2><p>${state.unreadNotifications ? `${state.unreadNotifications} items need attention` : 'No unread notifications'}</p></div><button class="topbar-text-button" type="button" data-notifications-read>Mark all read</button></div><div class="topbar-popover-list">${rows}</div><div class="topbar-popover-footer"><button class="topbar-text-button" type="button" data-notifications-all>View all notifications</button></div>`;
     }
 
@@ -48638,7 +48807,7 @@
     }
 
     function activateTopbarNotification(id) {
-      const item = sampleData.notifications.find(notification => notification.id === id);
+      const item = projectNotifications().find(notification => notification.id === id);
       if (!item) return;
       closeTopbarPopover();
       if (item.openSide) {
@@ -49111,7 +49280,13 @@
 
     function renderOpenProject() {
       const project = currentProject();
-      const projectTitle = project.name.replace('Tree', 'History');
+      if (!project) {
+        state.projectOpen = false;
+        state.currentProjectId = null;
+        renderStartup();
+        return;
+      }
+      const projectTitle = project.name;
 
       const projectPhotoCount =
         getProjectPhotos(
@@ -49272,7 +49447,7 @@
     }
 
     function renderProjectSettings(project) {
-      const title = project.name.replace('Tree', 'History');
+      const title = project.name;
 
       const localizedTitle =
         localizedDataFieldValue(
@@ -49524,7 +49699,8 @@
 
     function openMoveProjectModal() {
       const project = currentProject();
-      const title = project.name.replace('Tree', 'History');
+      if (!project) return;
+      const title = project.name;
       const currentPath = project.projectPath || `C:\\Users\\Silver\\Documents\\GeneoGraph\\${title}.ggproj`;
       openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="moveProjectTitle">
         <div class="modal-header"><div><h2 id="moveProjectTitle">Move project</h2><p>Choose a new local folder for this project. This is simulated in the prototype.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div>
@@ -49846,13 +50022,13 @@
       main.querySelectorAll('[data-startup-open-module]').forEach(row => {
         row.addEventListener('click', event => {
           event.stopPropagation();
-          openStartupProjectModule(row.dataset.startupProject || 'p1', row.dataset.startupOpenModule || 'Projects');
+          openStartupProjectModule(row.dataset.startupProject || '', row.dataset.startupOpenModule || 'Projects');
         });
         row.addEventListener('keydown', event => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
             event.stopPropagation();
-            openStartupProjectModule(row.dataset.startupProject || 'p1', row.dataset.startupOpenModule || 'Projects');
+            openStartupProjectModule(row.dataset.startupProject || '', row.dataset.startupOpenModule || 'Projects');
           }
         });
       });
@@ -49864,18 +50040,33 @@
     }
 
     function renderOpenProjectInsightsCard(project) {
+      const projectPeople = getPeople(project.id);
+      const projectFiles = (sampleData.archiveFiles || []).filter(file => file.projectId === project.id);
+      const projectPhotos = getProjectPhotos(project.id);
+      const projectPlaceRecords = projectPlaces(project.id);
+      const missingFacts = projectPeople.filter(person =>
+        !formatGenealogyDateLabel(person.birth)
+        || (!person.birth?.placeId && !person.birth?.placeText)
+      ).length;
+      const missingSourceData = projectFiles.filter(file =>
+        !(file.linkedSourceIds || file.sourceIds || []).length
+      ).length;
+      const unsortedPhotos = projectPhotos.filter(photo => !(photo.albumIds || []).length).length;
+      const placeCleanup = projectPlaceRecords.filter(place =>
+        getActivePlaceReviewIssues(place).length
+      ).length;
       const items = [
-        { module: 'People', icon: icon.people, tone: 'purple', title: 'Missing facts', detail: 'Cleo Whiskerfield is missing a confirmed birth date and place.' },
-        { module: 'Archive', icon: icon.file, tone: 'amber', title: 'Missing source data', detail: '6 archive files in this project are missing source or provenance information.' },
-        { module: 'Albums', icon: icon.image, tone: 'red', title: 'Unsorted photos', detail: '8 photos are not assigned to an album.' },
-        { module: 'Places', icon: icon.mapPin, tone: 'blue', title: 'Place cleanup', detail: '3 imported place names need coordinates or hierarchy review.' }
-      ];
+        missingFacts ? { module: 'People', icon: icon.people, tone: 'purple', title: 'Missing facts', detail: `${missingFacts} ${missingFacts === 1 ? 'person is' : 'people are'} missing birth details.` } : null,
+        missingSourceData ? { module: 'Archive', icon: icon.file, tone: 'amber', title: 'Missing source data', detail: `${missingSourceData} archive ${missingSourceData === 1 ? 'file is' : 'files are'} missing source information.` } : null,
+        unsortedPhotos ? { module: 'Albums', icon: icon.image, tone: 'red', title: 'Unsorted photos', detail: `${unsortedPhotos} ${unsortedPhotos === 1 ? 'photo is' : 'photos are'} not assigned to an album.` } : null,
+        placeCleanup ? { module: 'Places', icon: icon.mapPin, tone: 'blue', title: 'Place cleanup', detail: `${placeCleanup} ${placeCleanup === 1 ? 'place needs' : 'places need'} review.` } : null
+      ].filter(Boolean);
       return `<div class="right-card"><h2>Project insights</h2><div class="startup-action-list">
-        ${items.map(item => `<button class="startup-action-row project-insight-row" type="button" data-open-project-module="${item.module}" aria-label="Open ${escapeHtml(item.module)} for ${escapeHtml(item.title)}">
+        ${items.length ? items.map(item => `<button class="startup-action-row project-insight-row" type="button" data-open-project-module="${item.module}" aria-label="Open ${escapeHtml(item.module)} for ${escapeHtml(item.title)}">
           <div class="startup-action-icon ${item.tone}">${item.icon}</div>
           <div class="startup-action-copy"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(project.name)} · ${escapeHtml(item.detail)}</span></div>
           <span class="project-insight-chevron" aria-hidden="true">${icon.chevron}</span>
-        </button>`).join('')}
+        </button>`).join('') : `<div class="panel-muted" style="padding:16px">${escapeHtml(t('Start by adding a person or opening a project module.'))}</div>`}
       </div></div>`;
     }
 
@@ -49929,18 +50120,24 @@
 
 
     function renderActivityRows(count) {
-      const rows = [
-        { module: 'Albums', svg: icon.image, tone: 'red', title: 'Photos added', detail: '4 photos added to Family photos', occurredAt: '2026-05-24T10:42:00Z' },
-        { module: 'People', svg: icon.people, tone: 'purple', title: 'Person updated', detail: 'Luna Purrington profile updated', occurredAt: '2026-05-23T10:42:00Z' },
-        { module: 'Family Tree', svg: icon.file, tone: 'amber', title: 'GEDCOM imported', detail: '24 people imported from GEDCOM', occurredAt: '2026-05-25T09:00:00Z' },
-        { module: 'Notes', svg: icon.note, tone: '', title: 'Research note added', detail: 'Surname origin note updated', occurredAt: '2026-05-21T11:00:00Z' },
-        { module: 'Family Tree', svg: icon.tree, tone: '', title: 'Relationship connected', detail: 'Luna Purrington was connected to the tree', occurredAt: '2026-05-18T12:00:00Z' },
-        { module: 'Archive', svg: icon.file, tone: 'amber', title: 'Archive file linked', detail: 'Pawford household register linked to Silver Whiskerfield', occurredAt: '2026-05-14T09:00:00Z' },
-        { module: 'People', svg: icon.people, tone: '', title: 'Duplicate reviewed', detail: 'Possible duplicate was marked reviewed', occurredAt: '2026-05-10T14:00:00Z' },
-        { module: 'Albums', svg: icon.image, tone: 'red', title: 'Photo tags added', detail: 'Three portraits were linked to people', occurredAt: '2026-05-07T15:00:00Z' }
-      ];
+      const activityIcons = {
+        Albums: icon.image,
+        People: icon.people,
+        'Family Tree': icon.tree,
+        Notes: icon.note,
+        Archive: icon.file,
+        Places: icon.mapPin,
+        Geneograph: icon.geneograph
+      };
+      const rows = (sampleData.activity || [])
+        .filter(row => row.projectId === currentProjectId())
+        .slice()
+        .sort((first, second) => Date.parse(second.occurredAt || '') - Date.parse(first.occurredAt || ''));
+      if (!rows.length) {
+        return `<div class="panel-muted" style="padding:20px"><strong>${escapeHtml(t('No project activity yet'))}</strong><span style="display:block;margin-top:4px">${escapeHtml(t('Activity will appear as you add and edit project records.'))}</span></div>`;
+      }
       return `<div class="project-activity-list">${rows.slice(0,count).map(row => `<button class="project-activity-row" type="button" data-open-project-module="${row.module}">
-        <span class="project-activity-icon ${row.tone}">${row.svg}</span>
+        <span class="project-activity-icon ${row.tone || ''}">${activityIcons[row.module] || icon.clock}</span>
         <span class="project-activity-copy"><strong>${escapeHtml(row.title)}</strong><span>${escapeHtml(row.detail)}</span></span>
         <span class="project-activity-time">${escapeHtml(formatProjectDate(row.occurredAt))}</span>
       </button>`).join('')}</div>`;
@@ -53020,6 +53217,29 @@
         currentFamilyTreeProjectId();
       const treePeopleSource = currentTreePeople();
       const treeFamiliesSource = currentTreeFamilies();
+
+      if (!treeProjectId || !treePeopleSource.length) {
+        main.innerHTML = `
+          <div class="tree-shell">
+            <section class="tree-empty-state" aria-labelledby="treeEmptyTitle">
+              <div class="tree-empty-state-card">
+                <div class="tree-empty-state-icon" aria-hidden="true">${icon.tree}</div>
+                <h1 id="treeEmptyTitle">${escapeHtml(t('Start your family tree'))}</h1>
+                <p>${escapeHtml(t("Add the first person to begin building this project's family tree."))}</p>
+                <button class="button primary" type="button" data-tree-add-first-person>
+                  ${icon.plus}
+                  ${escapeHtml(t('Add first person'))}
+                </button>
+              </div>
+            </section>
+          </div>
+        `;
+        main.querySelector('[data-tree-add-first-person]')?.addEventListener('click', () => {
+          openAddPersonModal('Add person', 'Create a new person in this project');
+        });
+        return;
+      }
+
       const treeViewState = treeProjectViewState(treeProjectId);
       const focusPersonId = resolveTreeFocusPersonId(treePeopleSource, treeProjectId);
       const projection = buildFamilyTreeProjection(treePeopleSource, treeFamiliesSource, {
@@ -58807,6 +59027,8 @@
     }
 
     function createPersonFromAddPersonModal(options = {}, additionalFacts = {}) {
+      const projectId = requireActiveProjectId();
+      if (!projectId) return null;
       const enteredFirstName = readAddPersonModalValue('#addPersonFirstName');
       const firstName = enteredFirstName || 'Unknown';
       const lastName = readAddPersonModalValue('#addPersonLastName');
@@ -58827,7 +59049,7 @@
         new Date().toISOString();
       const person = {
         id,
-        projectId: state.currentProjectId || state.selectedProjectId || 'p1',
+        projectId,
         createdAt: now,
         updatedAt: now,
         names: { first: firstName, middle: middleName, last: lastName, maiden: maidenName, display, initials },
@@ -60314,7 +60536,9 @@
         return null;
       }
 
+      const projectPeopleBeforeCreate = getPeople(currentProjectId()).length;
       const newPerson = createPersonFromAddPersonModal(options, additionalFacts);
+      if (!newPerson) return null;
       applyAddPersonAttachmentDrafts(
         newPerson.id
       );
@@ -60336,6 +60560,20 @@
       }
 
       sampleData.events = buildSampleEvents();
+
+      if (projectPeopleBeforeCreate === 0) {
+        const project = validProjectById(newPerson.projectId);
+        if (project) {
+          project.defaultPersonId = newPerson.id;
+          touchProjectModified(project);
+        }
+        const treeView = treeProjectViewState(newPerson.projectId);
+        treeView.focusPersonId = newPerson.id;
+        treeView.recentPersonIds = [newPerson.id];
+        treeView.navigationBackStack = [];
+        treeView.navigationForwardStack = [];
+        state.treeCenterTargetId = newPerson.id;
+      }
 
       clearPeopleSelection();
 
@@ -82362,13 +82600,14 @@
           'submit',
           event => {
             event.preventDefault();
+            const projectId = requireActiveProjectId();
+            if (!projectId) return;
 
             const album = {
               id:
                 `album-${Date.now()}`,
 
-              projectId:
-                currentProjectId(),
+              projectId,
 
               name:
                 modalBackdrop
@@ -82599,9 +82838,11 @@
     function openAddPhotosModal() {
       openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="addPhotosTitle"><div class="modal-header"><div><h2 id="addPhotosTitle">Add photos</h2><p>Add new photos to your project.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="dropzone">${icon.import}<div><strong>Add photo</strong><span>New photos will be added to the current project and album.</span></div></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="button" data-create-placeholder-photo>Add placeholder photo</button></div></div>`);
       modalBackdrop.querySelector('[data-create-placeholder-photo]')?.addEventListener('click', () => {
+        const projectId = requireActiveProjectId();
+        if (!projectId) return;
         const now = new Date().toISOString();
         const id = `photo-${Date.now()}`;
-        sampleData.media.unshift({ id, projectId: currentProjectId(), kind: 'photo', title: 'Untitled photo', filename: 'untitled-photo.jpg', src: '', mimeType: 'image/jpeg', width: 1600, height: 1200, sizeBytes: 0, placeholder: { pattern: 'orbit', palette: 'moss', seed: Date.now() % 997 || 1 }, personIds: [], albumIds: state.albumsView === 'album' && state.activeAlbumId ? [state.activeAlbumId] : [], date: { date: '', dateLabel: '', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: null, placeText: '', caption: '',  favorite: false, createdAt: now, updatedAt: now });
+        sampleData.media.unshift({ id, projectId, kind: 'photo', title: 'Untitled photo', filename: 'untitled-photo.jpg', src: '', mimeType: 'image/jpeg', width: 1600, height: 1200, sizeBytes: 0, placeholder: { pattern: 'orbit', palette: 'moss', seed: Date.now() % 997 || 1 }, personIds: [], albumIds: state.albumsView === 'album' && state.activeAlbumId ? [state.activeAlbumId] : [], date: { date: '', dateLabel: '', dateType: 'Exact date', fromDate: '', toDate: '' }, placeId: null, placeText: '', caption: '',  favorite: false, createdAt: now, updatedAt: now });
         state.selectedPhotoId = id; closeModal(); renderAlbums(); showToast('Placeholder photo added.');
       });
     }
@@ -84847,6 +85088,12 @@
       workspace.classList.remove('no-sidebar');
       if (state.geneoView === 'board') {
         const board = selectedGeneographBoard();
+        if (!board) {
+          state.geneoView = 'home';
+          state.selectedGeneoBoardId = null;
+          renderGeneographHome();
+          return;
+        }
         const center = geneoCurrentViewportCenter()
           || geneoSavedViewport(board?.id)?.center
           || geneoContentCenter();
@@ -84858,7 +85105,9 @@
     }
 
     function selectedGeneographBoard() {
-      return sampleData.boards.find(board => board.id === state.selectedGeneoBoardId) || sampleData.boards[0];
+      return getGeneographBoard(state.selectedGeneoBoardId, {
+        projectId: currentProjectId()
+      });
     }
 
     const GENEO_PERSON_CARD_STYLES =
@@ -86820,12 +87069,13 @@
       projectId =
         currentProjectId()
     } = {}) {
+      projectId = validProjectById(projectId)?.id || '';
       const normalizedName =
         String(
           name || ''
         ).trim();
 
-      if (!normalizedName) {
+      if (!normalizedName || !projectId) {
         return null;
       }
 
@@ -91479,7 +91729,8 @@
 
       const projectId =
         board?.projectId
-        || currentProjectId();
+        || requireActiveProjectId();
+      if (!projectId) return;
 
       const inheritedCollection =
         !editing
@@ -92658,13 +92909,13 @@
       });
       sampleData.boardCollections = (sampleData.boardCollections || []).filter(Boolean).map(collection => ({
         id: String(collection.id || '').trim(),
-        projectId: String(collection.projectId || currentProjectId() || 'p1'),
+        projectId: String(collection.projectId || ''),
         name: String(collection.name || 'Untitled collection').trim(),
         description: String(collection.description || '').trim()
       })).filter(collection => collection.id && projects.has(collection.projectId));
       sampleData.boards = (sampleData.boards || []).filter(Boolean).map(board => {
         board.id = String(board.id || createRuntimeId('board'));
-        board.projectId = String(board.projectId || currentProjectId() || 'p1');
+        board.projectId = String(board.projectId || '');
         board.title = String(board.title || 'Untitled board').trim() || 'Untitled board';
         board.description = String(board.description || '').trim();
         board.collectionIds = normalizeGeneographIdArray(board.collectionIds);
@@ -110641,16 +110892,28 @@
     sampleData.archiveImports = [];
     sampleData.archiveIssues = [];
 
-    function archiveFolderById(id) {
-      return (sampleData.archiveFolders || []).find(folder => folder.id === id) || null;
+    function archiveFolderById(id, projectId = currentProjectId()) {
+      if (!id || !projectId) return null;
+      return (sampleData.archiveFolders || []).find(folder =>
+        folder.id === id
+        && folder.projectId === projectId
+      ) || null;
     }
 
-    function archiveFileById(id) {
-      return (sampleData.archiveFiles || []).find(file => file.id === id) || null;
+    function archiveFileById(id, projectId = currentProjectId()) {
+      if (!id || !projectId) return null;
+      return (sampleData.archiveFiles || []).find(file =>
+        file.id === id
+        && file.projectId === projectId
+      ) || null;
     }
 
-    function archiveSourceById(id) {
-      return (sampleData.sources || []).find(source => source.id === id) || null;
+    function archiveSourceById(id, projectId = currentProjectId()) {
+      if (!id || !projectId) return null;
+      return (sampleData.sources || []).find(source =>
+        source.id === id
+        && source.projectId === projectId
+      ) || null;
     }
 
     const ARCHIVE_ROOT_PICKER_VALUE =
@@ -110745,6 +111008,8 @@
         || []
       )
         .filter(folder =>
+          folder.projectId === currentProjectId()
+          &&
           archiveFolderParentId(
             folder
           ) === parentId
@@ -111739,12 +112004,16 @@
 
     function archiveProjectFiles() {
       const projectId = currentProjectId();
-      return (sampleData.archiveFiles || []).filter(file => !file.projectId || file.projectId === projectId);
+      return projectId
+        ? (sampleData.archiveFiles || []).filter(file => file.projectId === projectId)
+        : [];
     }
 
     function archiveProjectSources() {
       const projectId = currentProjectId();
-      return (sampleData.sources || []).filter(source => !source.projectId || source.projectId === projectId);
+      return projectId
+        ? (sampleData.sources || []).filter(source => source.projectId === projectId)
+        : [];
     }
 
     function archiveFileKind(file) {
@@ -112677,7 +112946,7 @@
       const configs = {
         person: {
           singular: 'person', title: 'People', addLabel: 'Add people',
-          records: () => (sampleData.people || []).filter(person => !person.deleted && (!person.projectId || person.projectId === projectId)),
+          records: () => (sampleData.people || []).filter(person => !person.deleted && person.projectId === projectId),
           label: record => record?.names?.display || record?.name || 'Person',
           meta: record =>
             archiveFilePersonMeta(
@@ -112686,7 +112955,7 @@
         },
         event: {
           singular: 'event', title: 'Events', addLabel: 'Add events',
-          records: () => (sampleData.events || []).filter(event => !event.projectId || event.projectId === projectId),
+          records: () => (sampleData.events || []).filter(event => event.projectId === projectId),
           label: archiveEventLabel,
           meta: archiveEventMeta
         },
@@ -112698,7 +112967,7 @@
         },
         place: {
           singular: 'place', title: 'Places', addLabel: 'Add places',
-          records: () => (sampleData.places || []).filter(place => !place.deleted && (!place.projectId || place.projectId === projectId)),
+          records: () => (sampleData.places || []).filter(place => !place.deleted && place.projectId === projectId),
           label: record => record?.name || 'Place',
           meta: record => (record?.alternativeNames || []).slice(0, 2).join(' · ') || 'Place record'
         },
@@ -119015,11 +119284,8 @@
       )
         .filter(file =>
           !file.deleted
-          && (
-            !file.projectId
-            || file.projectId
-              === projectId
-          )
+          && Boolean(projectId)
+          && file.projectId === projectId
         );
     }
 
@@ -120122,6 +120388,8 @@
       name,
       parentId = null
     ) {
+      const projectId = requireActiveProjectId();
+      if (!projectId) return null;
       const normalizedName =
         String(
           name || ''
@@ -120161,8 +120429,7 @@
       const folder = {
         id,
 
-        projectId:
-          currentProjectId(),
+        projectId,
 
         parentId:
           normalizedParentId,
@@ -120692,11 +120959,13 @@
       const form = modalBackdrop.querySelector('[data-archive-source-form]');
       form?.addEventListener('submit', event => {
         event.preventDefault();
+        const projectId = source?.projectId || requireActiveProjectId();
+        if (!projectId) return;
         const title = form.querySelector('[data-archive-source-title]').value.trim();
         if (!title) return;
         const now = new Date().toISOString();
         const target = source || {
-          id: `source-${Date.now()}`, projectId: currentProjectId(), favorite: false,
+          id: `source-${Date.now()}`, projectId, favorite: false,
           linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], createdAt: now
         };
         target.title = title;
@@ -127210,8 +127479,7 @@
                 sampleData.sources || []
               ).filter(
                 source =>
-                  !source.projectId
-                  || source.projectId
+                  source.projectId
                     === projectId
               ),
 
@@ -144324,6 +144592,11 @@
         showCreatedToast = true
       } = {}
     ) {
+      const ownerProjectId = validProjectById(projectId)?.id || '';
+      if (!ownerProjectId) {
+        showToast('Open a project before creating records.');
+        return null;
+      }
       const previousActiveModule =
         state.activeModule;
       const creationContext =
@@ -144332,7 +144605,7 @@
           contextId,
           allowActiveContext:
             inheritActiveContext,
-          projectId
+          projectId: ownerProjectId
         });
 
       const inheritedCollectionId =
@@ -144365,7 +144638,7 @@
         id:
           createRuntimeId('note'),
 
-        projectId,
+        projectId: ownerProjectId,
 
         title:
           String(title || '').trim()
@@ -153612,9 +153885,11 @@
         setPlaceEditorNameError('This place is no longer available.');
         return;
       }
+      const projectId = existing?.projectId || requireActiveProjectId();
+      if (!projectId) return;
       const place = existing || {
         id: uniquePlaceIdFromText(draft.name),
-        projectId: currentProjectId(),
+        projectId,
         deleted: false
       };
       const coordinatesChanged = Boolean(
@@ -154050,7 +154325,35 @@
       { id: 'pub4', title: 'Migration of the Whiskerfield Family', type: 'chart', preview: 'map', scope: 'Migration map', updated: '6 days ago', privacy: 'Ready to export', sources: 'Places and events included', format: 'PDF', status: 'draft', details: ['Places: 14', 'Events: 32', 'Time range: 1860-1970'] },
       { id: 'pub5', title: 'Metric Book 1887 - Index', type: 'export', preview: 'index', scope: 'Archive index', updated: '1 week ago', privacy: 'Published', sources: 'Archive files included', format: 'CSV', status: 'exported', details: ['Pages: 248', 'Extracted entries: 381', 'People: 192', 'Places: 37'] },
       { id: 'pub6', title: 'Barnaby Whiskerfield - Biography', type: 'report', preview: 'biography', scope: 'Person biography', updated: '1 week ago', privacy: 'Draft', sources: '46 sources', format: 'PDF', status: 'draft', details: ['24 pages', '27 photos', '46 sources', '2 maps'] }
-    ];
+    ].map(draft => ({
+      ...draft,
+      projectId: 'p1'
+    }));
+
+    function getProjectPublishDrafts(projectId = currentProjectId()) {
+      if (!projectId) return [];
+      return (sampleData.publishDrafts || []).filter(draft =>
+        draft.projectId === projectId
+      );
+    }
+
+    function getPublishDraft(draftId, projectId = currentProjectId()) {
+      return getProjectPublishDrafts(projectId).find(draft => draft.id === draftId) || null;
+    }
+
+    function publishProjectPeople() {
+      return getPeople(currentProjectId());
+    }
+
+    function publishFocusPerson() {
+      const people = publishProjectPeople();
+      const selected = people.find(person => person.id === state.publishFocusPersonId);
+      return selected || people[0] || null;
+    }
+
+    function publishTypeNeedsPeople(typeId) {
+      return typeId === 'report' || typeId === 'chart';
+    }
 
     function renderPublish() {
       renderPublishSidebar();
@@ -154059,6 +154362,7 @@
     }
 
     function renderPublishSidebar() {
+      const hasPeople = publishProjectPeople().length > 0;
       const nav = [
         ['drafts', 'Drafts', publishIcon('draft')],
         ['reports', 'Reports', publishIcon('report')],
@@ -154079,7 +154383,9 @@
           <p>Review living people, private notes, unsourced facts, and source inclusion before exporting.</p>
         </div>
       `;
-      sidebar.querySelector('#publishCreateOutput')?.addEventListener('click', () => { openPublishWizard('report'); });
+      sidebar.querySelector('#publishCreateOutput')?.addEventListener('click', () => {
+        openPublishWizard(hasPeople ? 'report' : 'export');
+      });
       sidebar.querySelectorAll('[data-publish-side]').forEach(button => button.addEventListener('click', () => {
         state.publishSide = button.dataset.publishSide;
         state.publishView = 'home';
@@ -154124,7 +154430,7 @@
       bindSearchInput(main, '#publishSearch', 'publishSearch', renderPublishHome);
       main.querySelectorAll('[data-publish-type]').forEach(button => button.addEventListener('click', () => openPublishWizard(button.dataset.publishType)));
       main.querySelectorAll('[data-continue-draft]').forEach(button => button.addEventListener('click', () => {
-        const draft = sampleData.publishDrafts.find(d => d.id === button.dataset.continueDraft);
+        const draft = getPublishDraft(button.dataset.continueDraft);
         if (draft) openPublishWizard(draft.type, draft.id);
       }));
       main.querySelectorAll('[data-publish-draft-menu]').forEach(button => button.addEventListener('click', e => {
@@ -154135,10 +154441,12 @@
     }
 
     function renderPublishTypeCard(type, selectable = true) {
-      return `<button class="publish-type-card ${state.publishOutputType === type.id && selectable ? 'selected' : ''}" type="button" data-publish-type="${type.id}">
+      const unavailable = publishTypeNeedsPeople(type.id) && !publishProjectPeople().length;
+      return `<button class="publish-type-card ${state.publishOutputType === type.id && selectable ? 'selected' : ''}" type="button" data-publish-type="${type.id}" ${unavailable ? 'disabled aria-disabled="true"' : ''}>
         <span class="publish-type-icon">${publishIcon(type.id)}</span>
         <h3>${escapeHtml(type.title)}</h3>
         <p>${escapeHtml(type.desc)}</p>
+        ${unavailable ? `<span class="panel-muted">${escapeHtml(t('Add people before creating person-based publications.'))}</span>` : ''}
         <div class="publish-mini-list">${type.formats.map(format => `<span>${escapeHtml(format)}</span>`).join('')}</div>
       </button>`;
     }
@@ -154191,17 +154499,34 @@
     }
 
     function renderPublishReadiness() {
+      const projectId = currentProjectId();
+      const people = getPeople(projectId);
+      const photos = getProjectPhotos(projectId);
+      const sources = (sampleData.sources || []).filter(source => source.projectId === projectId);
+      if (!people.length && !photos.length && !sources.length) {
+        return `<div class="panel-muted">${escapeHtml(t('Start by adding a person or opening a project module.'))}</div>`;
+      }
+      const livingIds = new Set(people.filter(person => normalizeLivingStatus(person.livingStatus) === 'Living').map(person => person.id));
+      const privacyPhotos = photos.filter(photo => (photo.personIds || []).some(personId => livingIds.has(personId))).length;
       const rows = [
         ['ok', 'Living people hidden', 'Export defaults hide living people and private details.'],
-        ['warn', '3 photos need privacy review', 'Photos linked to living people should be reviewed before sharing.'],
-        ['warn', '5 unsourced facts', 'You can include them, but the report will show source warnings.'],
-        ['ok', 'Sources can be included', 'Citations and archive references are available for this project.']
+        privacyPhotos
+          ? ['warn', `${privacyPhotos} ${privacyPhotos === 1 ? 'photo needs' : 'photos need'} privacy review`, 'Photos linked to living people should be reviewed before sharing.']
+          : ['ok', 'Photo privacy ready', 'No photos linked to living people need review.'],
+        sources.length
+          ? ['ok', 'Sources can be included', `${sources.length} ${sources.length === 1 ? 'source is' : 'sources are'} available for this project.`]
+          : ['warn', 'No sources yet', 'Add sources before creating a sourced publication.']
       ];
       return rows.map(([kind, title, copy]) => `<div class="publish-readiness-row"><span class="publish-readiness-icon ${kind === 'warn' ? 'warn' : ''}">${kind === 'warn' ? '!' : '?'}</span><div><strong>${escapeHtml(title)}</strong><span>${escapeHtml(copy)}</span></div></div>`).join('');
     }
 
     function renderPublishWizard() {
       const type = publishTypes.find(t => t.id === state.publishOutputType) || publishTypes[0];
+      if (publishTypeNeedsPeople(type.id) && !publishProjectPeople().length) {
+        state.publishView = 'home';
+        renderPublishHome();
+        return;
+      }
       main.innerHTML = `
         <div class="publish-main">
           <div class="publish-page-head">
@@ -154241,6 +154566,9 @@
     }
 
     function renderPublishScopeStep() {
+      const people = publishProjectPeople();
+      const focusPerson = publishFocusPerson();
+      if (focusPerson) state.publishFocusPersonId = focusPerson.id;
       const options =
         state.publishOutputType === 'chart'
           ? [
@@ -154341,11 +154669,11 @@
             <div class="publish-field">
               <label>Focus person</label>
 
-              <input
-                id="publishFocusPerson"
-                value="${escapeHtml(
-                  state.publishFocusPerson
-                )}">
+              <select id="publishFocusPerson" ${people.length ? '' : 'disabled'}>
+                ${people.length
+                  ? people.map(person => `<option value="${escapeHtml(person.id)}" ${person.id === state.publishFocusPersonId ? 'selected' : ''}>${escapeHtml(person.names?.display || 'Unknown')}</option>`).join('')
+                  : '<option value="">No people</option>'}
+              </select>
             </div>
 
             <div class="publish-field">
@@ -154414,13 +154742,19 @@
     }
 
     function renderPublishPrivacyStep() {
+      const projectId = currentProjectId();
+      const people = getPeople(projectId);
+      const livingIds = new Set(people.filter(person => normalizeLivingStatus(person.livingStatus) === 'Living').map(person => person.id));
+      const privacyPhotoCount = getProjectPhotos(projectId).filter(photo =>
+        (photo.personIds || []).some(personId => livingIds.has(personId))
+      ).length;
+      const sourceCount = (sampleData.sources || []).filter(source => source.projectId === projectId).length;
       return `<div class="publish-form-grid">
         <div class="publish-warning-list">
           <div class="publish-warning good"><strong>${icon.check}</strong><span>Living people will be hidden unless you explicitly include them.</span></div>
           <div class="publish-warning good"><strong>${icon.check}</strong><span>Private notes are excluded by default.</span></div>
-          <div class="publish-warning"><strong>${icon.warning}</strong><span>3 photos are linked to living people and should be reviewed.</span></div>
-          <div class="publish-warning"><strong>${icon.warning}</strong><span>5 facts have no source. You can export them with warnings or exclude them.</span></div>
-          <div class="publish-warning"><strong>${icon.warning}</strong><span>2 sources are marked incomplete in Archive.</span></div>
+          ${privacyPhotoCount ? `<div class="publish-warning"><strong>${icon.warning}</strong><span>${privacyPhotoCount} ${privacyPhotoCount === 1 ? 'photo is' : 'photos are'} linked to living people and should be reviewed.</span></div>` : ''}
+          ${sourceCount ? '' : '<div class="publish-warning"><strong>!</strong><span>No sources are available in this project.</span></div>'}
         </div>
         <div class="publish-field"><label>Output format</label><select id="publishFormat"><option ${state.publishFormat === 'PDF' ? 'selected' : ''}>PDF</option><option ${state.publishFormat === 'PNG' ? 'selected' : ''}>PNG</option><option ${state.publishFormat === 'GEDCOM' ? 'selected' : ''}>GEDCOM</option><option ${state.publishFormat === 'GEDZip' ? 'selected' : ''}>GEDZip</option></select></div>
       </div>`;
@@ -154432,35 +154766,57 @@
     }
 
     function renderPublishReportPreview() {
+      const project = currentProject();
+      const person = publishFocusPerson();
+      if (!project || !person) return `<div class="panel-muted">${escapeHtml(t('Add people before creating person-based publications.'))}</div>`;
+      const personName = person.names?.display || 'Unknown';
+      const birth = formatGenealogyDateLabel(person.birth) || 'Birth date unknown';
+      const birthPlace = person.birth?.placeId
+        ? getPlaceDisplay(person.birth.placeId)
+        : person.birth?.placeText || 'Place unknown';
+      const sourceCount = (sampleData.sources || []).filter(source =>
+        source.projectId === person.projectId
+        && (source.linkedPersonIds || []).includes(person.id)
+      ).length;
+      const noteCount = getNotesForPerson(person.id, { includeArchived: true }).length;
       return `<div class="publish-report-page">
-        <h2>Whiskerfield Family History</h2>
-        <div class="muted-line">Prepared from GeneoGraph research - ${escapeHtml(state.publishFocusPerson)}</div>
-        <p><strong>Silver Sergeevich Whiskerfield</strong> was born on 03 Mar 1998 in Pawford, England. This report summarizes selected family facts, relationships, linked archive material, and research notes.</p>
-        <div class="publish-report-section"><strong>Family</strong><p>Child of Barnaby Whiskerfield and Luna Purrington. Spouse of Luna Purrington.</p></div>
-        <div class="publish-report-section"><strong>Timeline</strong><p>1998 Birth - 2025 Wedding - Education and residence details are included according to the current scope.</p></div>
-        <div class="publish-report-section publish-footnote">Sources: Marriage certificate.pdf; Birth record extract; Personal album of Silver Whiskerfield.</div>
+        <h2>${escapeHtml(project.name)}</h2>
+        <div class="muted-line">Prepared from GeneoGraph research - ${escapeHtml(personName)}</div>
+        <p><strong>${escapeHtml(personName)}</strong> · ${escapeHtml(birth)} · ${escapeHtml(birthPlace)}</p>
+        <div class="publish-report-section"><strong>Research summary</strong><p>${sourceCount} ${sourceCount === 1 ? 'source' : 'sources'} and ${noteCount} ${noteCount === 1 ? 'note' : 'notes'} are linked to this person.</p></div>
+        <div class="publish-report-section publish-footnote">Generated from the active project only.</div>
       </div>`;
     }
 
     function renderPublishChartPreview() {
+      const person = publishFocusPerson();
+      if (!person) return `<div class="panel-muted">${escapeHtml(t('Add people before creating person-based publications.'))}</div>`;
+      const family = currentTreeFamilies().find(item => (item.children || []).includes(person.id));
+      const parentIds = [family?.left, family?.right].filter(Boolean);
+      const parentCards = parentIds.map((personId, index) => {
+        const parent = getPerson(personId);
+        return `<div class="publish-chart-card" style="left:${index ? 470 : 170}px;top:118px"><strong>${escapeHtml(parent?.names?.display || 'Unknown')}</strong><span>Parent</span></div>`;
+      }).join('');
       return `<div class="publish-chart-preview">
-        <div class="publish-chart-line" style="left:250px;top:160px;width:260px"></div>
-        <div class="publish-chart-line" style="left:380px;top:160px;width:2px;height:110px"></div>
-        <div class="publish-chart-line" style="left:300px;top:270px;width:160px"></div>
-        <div class="publish-chart-card" style="left:170px;top:118px"><strong>Barnaby Whiskerfield</strong><span>Father - 1976</span></div>
-        <div class="publish-chart-card" style="left:470px;top:118px"><strong>Luna Purrington</strong><span>Mother - 1975</span></div>
-        <div class="publish-chart-card" style="left:300px;top:300px;border-color:rgba(98,217,154,.8)"><strong>Silver Whiskerfield</strong><span>Focus person - 1998</span></div>
+        ${parentCards}
+        <div class="publish-chart-card" style="left:300px;top:300px;border-color:rgba(98,217,154,.8)"><strong>${escapeHtml(person.names?.display || 'Unknown')}</strong><span>Focus person</span></div>
         <div class="publish-chip" style="position:absolute;left:24px;bottom:24px">Page 1 - Fit to printable area</div>
       </div>`;
     }
 
     function renderPublishPackagePreview() {
+      const projectId = currentProjectId();
+      const peopleCount = getPeople(projectId).length;
+      const sourceCount = (sampleData.sources || []).filter(source => source.projectId === projectId).length;
+      const noteCount = getProjectNotes(projectId, { includeArchived: true }).length;
+      const photoCount = getProjectPhotos(projectId).length;
+      const fileCount = (sampleData.archiveFiles || []).filter(file => file.projectId === projectId).length;
       const rows = [
-        ['People', '5000 records'],
-        ['Sources', '147 source records'],
-        ['Notes', state.publishSettings.includeNotes ? 'Included' : 'Excluded'],
-        ['Photos', state.publishSettings.includePhotos ? '3 selected photos' : 'Excluded'],
-        ['Archive files', state.publishSettings.includeArchiveRefs ? 'References only' : 'Excluded'],
+        ['People', `${peopleCount} records`],
+        ['Sources', `${sourceCount} source records`],
+        ['Notes', state.publishSettings.includeNotes ? `${noteCount} included` : 'Excluded'],
+        ['Photos', state.publishSettings.includePhotos ? `${photoCount} included` : 'Excluded'],
+        ['Archive files', state.publishSettings.includeArchiveRefs ? `${fileCount} references` : 'Excluded'],
         ['Living people', state.publishSettings.includeLivingPeople ? 'Included' : 'Hidden'],
         ['Private notes', state.publishSettings.includePrivateNotes ? 'Included' : 'Excluded'],
         ['Format', state.publishFormat]
@@ -154473,7 +154829,10 @@
       main.querySelectorAll('[data-publish-step]').forEach(button => button.addEventListener('click', () => { state.publishWizardStep = button.dataset.publishStep; renderPublishWizard(); }));
       main.querySelectorAll('[data-publish-type]').forEach(button => button.addEventListener('click', () => { state.publishOutputType = button.dataset.publishType; state.publishScopeMode = defaultPublishScope(); state.publishFormat = defaultPublishFormat(); renderPublishWizard(); }));
       main.querySelectorAll('[data-publish-scope]').forEach(button => button.addEventListener('click', () => { state.publishScopeMode = button.dataset.publishScope; renderPublishWizard(); }));
-      main.querySelector('#publishFocusPerson')?.addEventListener('change', e => { state.publishFocusPerson = e.target.value; renderPublishWizard(); });
+      main.querySelector('#publishFocusPerson')?.addEventListener('change', event => {
+        state.publishFocusPersonId = event.target.value;
+        renderPublishWizard();
+      });
       main.querySelector('#publishGenerations')?.addEventListener('change', e => { state.publishGenerations = Number(e.target.value); renderPublishWizard(); });
       main.querySelector('#publishFormat')?.addEventListener('change', e => { state.publishFormat = e.target.value; renderPublishWizard(); });
       main.querySelectorAll('[data-publish-setting]').forEach(input => input.addEventListener('change', () => { state.publishSettings[input.dataset.publishSetting] = input.checked; renderPublishWizard(); }));
@@ -154496,9 +154855,15 @@
 
     function savePublishDraft(exported) {
       const type = publishTypes.find(t => t.id === state.publishOutputType) || publishTypes[0];
+      const projectId = requireActiveProjectId();
+      const focusPerson = publishFocusPerson();
+      if (!projectId || (publishTypeNeedsPeople(type.id) && !focusPerson)) return;
+      const focusName = focusPerson?.names?.display || currentProject()?.name || 'Project';
       const draft = {
         id: `pub-${Date.now()}`,
-        title: `${state.publishFocusPerson.split(' ')[0]} ${type.label.toLowerCase()} ${exported ? 'export' : 'draft'}`,
+        projectId,
+        focusPersonId: focusPerson?.id || null,
+        title: `${focusName.split(' ')[0]} ${type.label.toLowerCase()} ${exported ? 'export' : 'draft'}`,
         type: state.publishOutputType,
         scope: publishScopeLabel(),
         updated: 'Just now',
@@ -154518,9 +154883,14 @@
     }
 
     function openPublishWizard(type = 'report', draftId = null) {
-      const draft = draftId ? sampleData.publishDrafts.find(d => d.id === draftId) : null;
+      const draft = draftId ? getPublishDraft(draftId) : null;
+      if (publishTypeNeedsPeople(draft?.type || type) && !publishProjectPeople().length) {
+        showToast('Add people before creating person-based publications.');
+        return;
+      }
       state.publishView = 'wizard';
       state.publishOutputType = draft?.type || type;
+      state.publishFocusPersonId = draft?.focusPersonId || publishFocusPerson()?.id || '';
       state.publishScopeMode = defaultPublishScope();
       state.publishFormat = draft?.format || defaultPublishFormat();
       state.publishWizardStep = 'type';
@@ -154530,7 +154900,7 @@
 
     function openPublishDraftMenu(draftId, anchor) {
       closeMenu();
-      const draft = sampleData.publishDrafts.find(d => d.id === draftId);
+      const draft = getPublishDraft(draftId);
       if (!draft) return;
       const rect = anchor.getBoundingClientRect();
       const menu = document.createElement('div');
@@ -154544,7 +154914,7 @@
         const action = e.target.closest('[data-action]')?.dataset.action;
         if (action === 'continue') openPublishWizard(draft.type, draft.id);
         if (action === 'duplicate') {
-          sampleData.publishDrafts.unshift({ ...draft, id: `pub-${Date.now()}`, title: `${draft.title} copy`, updated: 'Just now', status: 'draft' });
+          sampleData.publishDrafts.unshift({ ...draft, id: `pub-${Date.now()}`, projectId: currentProjectId(), title: `${draft.title} copy`, updated: 'Just now', status: 'draft' });
           renderPublishHome();
           showToast('Draft duplicated.');
         }
@@ -154555,11 +154925,11 @@
     }
 
     function openDeletePublishDraftModal(draftId) {
-      const draft = sampleData.publishDrafts.find(d => d.id === draftId);
+      const draft = getPublishDraft(draftId);
       if (!draft) return;
       openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deletePublishDraftTitle"><div class="modal-header"><div><h2 id="deletePublishDraftTitle">Delete output?</h2><p>This removes the draft or exported summary from the Publish list. No real files are affected in this prototype.</p></div><button class="close-button" type="button" data-close>${icon.close}</button></div><div class="modal-body"><div class="notes-evidence-card"><strong>${escapeHtml(draft.title)}</strong><span>${escapeHtml(draft.scope)}</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" id="publishConfirmDeleteDraft">Delete output</button></div></div>`);
       modalBackdrop.querySelector('#publishConfirmDeleteDraft')?.addEventListener('click', () => {
-        const idx = sampleData.publishDrafts.findIndex(d => d.id === draftId);
+        const idx = sampleData.publishDrafts.findIndex(d => d.id === draftId && d.projectId === currentProjectId());
         if (idx >= 0) sampleData.publishDrafts.splice(idx, 1);
         closeModal();
         renderPublish();
@@ -154568,7 +154938,7 @@
     }
 
     function filteredPublishDrafts() {
-      let list = [...sampleData.publishDrafts];
+      let list = getProjectPublishDrafts();
       if (state.publishSide === 'drafts') list = list.filter(d => d.status === 'draft');
       if (state.publishSide === 'reports') list = list.filter(d => d.type === 'report');
       if (state.publishSide === 'charts') list = list.filter(d => d.type === 'chart');
@@ -154605,7 +154975,8 @@
 
     function publishScopeLabel() {
       const mode = state.publishScopeMode.replaceAll('-', ' ');
-      return `${capitalize(mode)} - ${state.publishFocusPerson} - ${state.publishGenerations} generations`;
+      const focusName = publishFocusPerson()?.names?.display || currentProject()?.name || 'Project';
+      return `${capitalize(mode)} - ${focusName} - ${state.publishGenerations} generations`;
     }
 
     function defaultPublishFormat() {
@@ -154995,100 +155366,181 @@
       }`;
     }
 
-    function navigateToProjectModuleCommit(projectId, moduleName = 'Projects') {
-      const project = sampleData.projects.find(item => item.id === projectId && !item.deleted && item.available !== false);
-      const nextModule = moduleName === 'Projects' || modules.includes(moduleName) ? moduleName : 'Projects';
-      if (!project) {
-        return false;
-      }
-      const previousProjectId = currentProjectId();
-      const projectChanged = previousProjectId !== project.id;
-      if (state.activeModule === 'Geneograph' && state.geneoView === 'board' && (nextModule !== 'Geneograph' || projectChanged)) {
-        captureGeneographViewport();
-        cancelGeneographPencilStroke();
-        clearGeneographConnectionClick();
-      }
-      closeMenu();
+    function resetProjectModuleState(projectId) {
+      const people = getPeople(projectId);
+      const firstPersonId = people[0]?.id || '';
+      const firstPhotoId = getProjectPhotos(projectId)[0]?.id || '';
+      const firstPlaceId = projectPlaces(projectId)[0]?.id || null;
+
       clearPeopleSelection();
-      state.projectOpen = true;
-      state.currentProjectId =
-        project.id;
+      state.selectedPersonId = firstPersonId;
+      state.treeCenterTargetId = firstPersonId;
+      state.selectedPeopleId = firstPersonId;
+      state.peopleView = 'directory';
+      state.peopleSide = 'people';
+      state.peopleSelectedIds = [];
+      state.peopleSelectionAnchorId = '';
+      state.peopleSearch = '';
+      state.peoplePage = 1;
+      state.peoplePaginationQueryKey = '';
+      state.peopleSavedView = 'All people';
+      state.peopleSavedViewId = '';
+      state.peopleFilters = {
+        surnames: [],
+        birthPlaceIds: [],
+        birthYear: { mode: '', from: '', to: '' },
+        living: 'Any',
+        reviewStatus: ''
+      };
+      state.peopleProfileEditing = false;
 
-      state.selectedProjectId =
-        project.id;
+      const treeView = treeProjectViewState(projectId);
+      const validTreeFocus = people.some(person => person.id === treeView.focusPersonId)
+        ? treeView.focusPersonId
+        : treeDefaultPersonId(projectId);
+      treeView.focusPersonId = validTreeFocus;
+      treeView.recentPersonIds = validTreeFocus ? [validTreeFocus] : [];
+      treeView.navigationBackStack = [];
+      treeView.navigationForwardStack = [];
 
-      if (projectChanged) {
-        clearNotesContext();
+      cancelGeneographPencilStroke?.();
+      clearGeneographConnectionClick?.();
+      state.geneoView = 'home';
+      state.geneoLibraryView = 'all';
+      state.geneoActiveCollectionId = null;
+      state.geneoBoardSearch = '';
+      state.selectedGeneoBoardId = null;
+      state.selectedGeneoNodeId = null;
+      state.selectedGeneoNodeIds = [];
+      state.selectedGeneoConnectionId = null;
+      state.selectedGeneoConnectionIds = [];
+      state.selectedGeneoWaypointIndex = null;
+      state.geneoConnectionDraft = null;
+      state.geneoInlineEditNodeId = null;
+      state.geneoLayerSearch = '';
+      state.geneoTool = 'pan';
 
-        state.notesView =
-          'all';
+      state.albumsView = 'all';
+      state.activeAlbumId = null;
+      state.albumsSearch = '';
+      state.albumsFilters = {
+        personId: '',
+        placeId: '',
+        dateRange: '',
+        favouriteOnly: false
+      };
+      state.albumsPage = 1;
+      state.selectedPhotoId = firstPhotoId;
+      state.selectedPhotoIds = [];
+      state.albumsDetailEditing = false;
+      state.albumsDetailEditOriginal = null;
+      state.albumsDetailDraft = null;
 
-        state.notesActiveCollectionId =
-          null;
+      state.archiveView = 'files';
+      state.archiveSelectedFolderId = null;
+      state.archiveSelectedFolderItemId = null;
+      state.archiveSelectedFileId = null;
+      state.archiveSelectedSourceId = null;
+      state.archiveSelectedFileIds = [];
+      state.archiveSearch = '';
+      state.archiveSearchScope = 'folder';
+      state.archiveFileTypeFilter = 'all';
+      state.archiveLinkFilter = 'all';
+      state.archiveSourceTypeFilter = 'all';
+      state.archivePersonFilterId = '';
+      state.archiveFileEditing = false;
+      state.archiveFileEditOriginal = null;
+      state.archiveFileEditDraft = null;
+      state.archiveExpandedFolders = {};
+      state.archiveNavigationBackStack = [];
+      state.archiveNavigationForwardStack = [];
+      state.archivePendingTreeRevealId = null;
 
-        state.selectedNoteId =
-          null;
+      clearNotesContext();
+      state.notesView = 'all';
+      state.notesActiveCollectionId = null;
+      state.selectedNoteId = null;
+      state.notesSearch = '';
+      state.notesRightCollapsed = true;
+      state.notesMobilePane = 'browser';
+      state.notesSaveStatus = 'Saved';
+      state.notesFilters = {
+        linkedRecords: 'any',
+        relatedNotes: 'any',
+        collections: 'any'
+      };
 
-        state.notesSearch =
-          '';
+      state.placesView = 'all';
+      state.placesSavedFilterId = '';
+      state.placesFilters = { ...defaultPlaceFilters };
+      state.placesSearch = '';
+      state.placesReviewFocusId = '';
+      state.selectedPlaceId = firstPlaceId;
+      clearPlacesRoute();
+      state.placesMapView = {
+        center: null,
+        zoom: PLACES_MAP_CONFIG.defaultZoom,
+        userMoved: false,
+        lastFitKey: ''
+      };
 
-        state.notesRightCollapsed =
-          true;
+      state.publishView = 'home';
+      state.publishSide = 'drafts';
+      state.publishSearch = '';
+      state.publishSelectedDraftId = null;
+      state.publishWizardStep = 'type';
+      state.publishOutputType = 'report';
+      state.publishScopeMode = 'person';
+      state.publishFocusPersonId = firstPersonId;
+      state.publishGenerations = 4;
+      state.publishFormat = 'PDF';
+      state.unreadNotifications = projectNotifications(projectId).length;
+    }
 
-        state.notesMobilePane =
-          'browser';
+    function activateProject(projectId, {
+      moduleName = 'Projects',
+      renderNow = true,
+      reset = true
+    } = {}) {
+      const project = validProjectById(projectId);
+      const nextModule = moduleName === 'Projects' || modules.includes(moduleName)
+        ? moduleName
+        : 'Projects';
 
-        state.notesSaveStatus =
-          'Saved';
+      if (!project) return false;
 
-        state.notesFilters = {
-          linkedRecords:
-            'any',
-
-          relatedNotes:
-            'any',
-
-          collections:
-            'any'
-        };
-
-        resetAlbumsPage();
-        state.placesView =
-          'all';
-
-        state.placesSavedFilterId =
-          '';
-
-        state.placesFilters = {
-          ...defaultPlaceFilters
-        };
-
-        state.placesSearch =
-          '';
-
-        state.selectedPlaceId =
-          projectPlaces(
-            project.id
-          )[0]?.id
-          || null;
-
-        clearPlacesRoute();
-        state.placesMapView = {
-          center: null,
-          zoom:
-            PLACES_MAP_CONFIG
-              .defaultZoom,
-          userMoved: false,
-          lastFitKey: ''
-        };
+      const projectChanged = state.currentProjectId !== project.id;
+      if (
+        state.activeModule === 'Geneograph'
+        && state.geneoView === 'board'
+        && (nextModule !== 'Geneograph' || projectChanged)
+      ) {
+        captureGeneographViewport();
       }
 
-      state.activeModule =
-        nextModule;
+      closeMenu();
+      state.projectOpen = true;
+      state.currentProjectId = project.id;
+      state.selectedProjectId = project.id;
+
+      if (reset && projectChanged) {
+        resetProjectModuleState(project.id);
+      }
+
+      state.activeModule = nextModule;
       if (nextModule === 'Projects') state.openSide = 'overview';
-      persistProjectContinuation({ projectId: project.id, module: nextModule, openedAt: new Date().toISOString() });
-      render();
+      persistProjectContinuation({
+        projectId: project.id,
+        module: nextModule,
+        openedAt: new Date().toISOString()
+      });
+
+      if (renderNow) render();
       return true;
+    }
+
+    function navigateToProjectModuleCommit(projectId, moduleName = 'Projects') {
+      return activateProject(projectId, { moduleName });
     }
 
     function navigateToProjectModule(
@@ -155364,7 +155816,7 @@
     }
 
     function currentProject() {
-      return sampleData.projects.find(p => p.id === state.currentProjectId) || sampleData.projects[0];
+      return validProjectById(state.currentProjectId);
     }
 
     function uniqueProjectId() {
@@ -155717,9 +156169,15 @@
       const project = sampleData.projects.find(item => item.id === projectId);
       if (!project) return false;
 
+      const deletedBoardIds = new Set(
+        (sampleData.boards || [])
+          .filter(board => board.projectId === project.id)
+          .map(board => board.id)
+      );
       const projectCollections = [
         'people',
         'families',
+        'relationships',
         'relationshipSeed',
         'educationSeed',
         'places',
@@ -155728,11 +156186,19 @@
         'events',
         'media',
         'albums',
+        'archiveFolders',
         'archiveFiles',
         'sources',
+        'archiveImports',
+        'archiveIssues',
+        'noteCollections',
         'notes',
+        'boardCollections',
         'boards',
-        'links'
+        'links',
+        'publishDrafts',
+        'activity',
+        'notifications'
       ];
       projectCollections.forEach(collectionName => {
         if (!Array.isArray(sampleData[collectionName])) return;
@@ -155744,62 +156210,28 @@
       if (state.projectContinuation?.projectId === project.id) clearProjectContinuation();
 
       const nextProject = sampleData.projects[0] || null;
-      const nextProjectId = nextProject?.id || '';
-      const nextPerson = sampleData.people.find(person => person.projectId === nextProjectId) || null;
-      const nextPhoto =
-        sampleData.media.find(
-          photo =>
-            photo.projectId
-              === nextProjectId
-        )
-        || null;
-      const nextPlace = sampleData.places.find(place => place.projectId === nextProjectId) || null;
+      delete state.treeProjectViews[project.id];
+      deletedBoardIds.forEach(boardId => {
+        delete state.geneoBoardViewports[boardId];
+      });
+      sampleData.events = buildSampleEvents();
+      closeModal({ force: true });
 
-      state.projectOpen = false;
       state.currentProjectId = null;
-      state.selectedProjectId = nextProjectId;
+      state.projectOpen = false;
       state.activeModule = 'Projects';
       state.openSide = 'overview';
-      clearPeopleSelection();
-      state.selectedPersonId = nextPerson?.id || '';
-      state.treeCenterTargetId = nextPerson?.id || '';
-      state.selectedPeopleId = nextPerson?.id || '';
-      state.selectedPhotoId = nextPhoto?.id || '';
-      state.selectedPhotoIds = [];
-      state.activeAlbumId = null;
-      state.albumsFilters.personId = '';
-      state.selectedPlaceId =
-        nextPlace?.id || null;
 
-      state.placesView =
-        'all';
-
-      state.placesSavedFilterId =
-        '';
-
-      state.placesFilters = {
-        ...defaultPlaceFilters
-      };
-
-      state.placesSearch =
-        '';
-
-      clearPlacesRoute();
-
-      state.placesMapView = {
-        center: null,
-        zoom:
-          PLACES_MAP_CONFIG
-            .defaultZoom,
-        userMoved: false,
-        lastFitKey: ''
-      };
-
-      sampleData.events =
-        buildSampleEvents();
-
-      closeModal({ force: true });
-      render();
+      if (nextProject) {
+        state.selectedProjectId = nextProject.id;
+        activateProject(nextProject.id, {
+          moduleName: 'Projects',
+          reset: true
+        });
+      } else {
+        state.selectedProjectId = '';
+        render();
+      }
       showToast('Project deleted.');
       return true;
     }
@@ -155988,6 +156420,28 @@
       document.removeEventListener('click', closeTopbarPopoverOnOutside);
     }
 
+    function createBlankProject({ name, description = '' }) {
+      const normalizedName = String(name || '').trim();
+      if (!normalizedName) return null;
+
+      const now = new Date().toISOString();
+      const project = {
+        id: uniqueProjectId(),
+        name: normalizedName,
+        desc: String(description || '').trim(),
+        createdAt: now,
+        modifiedAt: now,
+        status: 'Local project',
+        cover: 'paper',
+        defaultPersonId: null,
+        files: 0,
+        notes: 0
+      };
+
+      sampleData.projects.push(project);
+      return project;
+    }
+
     function openCreateModal() {
       openModal(`
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="createTitle">
@@ -156012,54 +156466,55 @@
                     <span>Add people manually.</span>
                   </label>
 
-                  <label class="choice">
-                    <input type="radio" name="start" value="gedcom">
+                  <label class="choice is-unavailable" aria-disabled="true">
+                    <input type="radio" name="start" value="gedcom" disabled>
                     <strong>Import GEDCOM</strong>
-                    <span>Bring an existing tree.</span>
+                    <span>This starting point is not available yet.</span>
+                    <span class="choice-status">Coming later</span>
                   </label>
 
-                  <label class="choice">
-                    <input type="radio" name="start" value="person">
+                  <label class="choice is-unavailable" aria-disabled="true">
+                    <input type="radio" name="start" value="person" disabled>
                     <strong>Start from person</strong>
-                    <span>Create the first profile now.</span>
+                    <span>This starting point is not available yet.</span>
+                    <span class="choice-status">Coming later</span>
                   </label>
                 </div>
               </fieldset>
-
-              <div class="field create-gedcom-field" id="createGedcomField" hidden>
-                <label for="createGedcomFile">GEDCOM file</label>
-
-                <div class="dropzone create-gedcom-dropzone" id="createGedcomDropzone" role="button" tabindex="0" aria-describedby="createGedcomHelp">
-                  ${icon.import}
-                  <div>
-                    <strong>Drop a GEDCOM file here or choose a file</strong>
-                    <span id="createGedcomHelp">Supports .ged and .gedcom files</span>
-                  </div>
-                </div>
-
-                <input id="createGedcomFile" type="file" accept=".ged,.gedcom" hidden>
-              </div>
             </div><div class="modal-footer">
                 <button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Create project</button></div></form>
         </div>`);
-      document.getElementById('projectName').focus();
+      document.getElementById('projectName')?.focus({ preventScroll: true });
       const createForm = document.getElementById('createForm');
-      const gedcomField = document.getElementById('createGedcomField');
-      document.getElementById('createGedcomDropzone')?.addEventListener('click', () => {
-        showToast('File picker would open here.');
+      const nameInput = document.getElementById('projectName');
+      const descriptionInput = document.getElementById('projectDesc');
+
+      createForm.addEventListener('submit', event => {
+        event.preventDefault();
+        const name = String(nameInput?.value || '').trim();
+
+        nameInput?.setCustomValidity('');
+        if (!name) {
+          nameInput?.setCustomValidity(t('Project name is required.'));
+          nameInput?.reportValidity();
+          nameInput?.focus({ preventScroll: true });
+          return;
+        }
+
+        const project = createBlankProject({
+          name,
+          description: descriptionInput?.value || ''
+        });
+        if (!project) return;
+
+        closeModal({ force: true });
+        activateProject(project.id, { moduleName: 'Projects' });
+        showToast('Project created.');
       });
 
-      function updateCreateGedcomField() {
-        const selectedStart = createForm.querySelector('input[name="start"]:checked')?.value;
-        gedcomField.hidden = selectedStart !== 'gedcom';
-      }
-
-      createForm.querySelectorAll('input[name="start"]').forEach(input => {
-        input.addEventListener('change', updateCreateGedcomField);
+      nameInput?.addEventListener('input', () => {
+        nameInput.setCustomValidity('');
       });
-
-      updateCreateGedcomField();
-      document.getElementById('createForm').addEventListener('submit', e => { e.preventDefault(); closeModal(); showToast('Project creation simulated.'); });
     }
 
     function openImportModal() {
@@ -156858,7 +157313,7 @@
               projectId:
                 String(
                   savedFilter.projectId
-                  || currentProjectId()
+                  || ''
                 ),
 
               name:
@@ -156904,7 +157359,7 @@
 
     function normalizeCentralPlaceRecords() {
       sampleData.places.forEach(place => {
-        place.projectId = place.projectId || currentProjectId();
+        place.projectId = String(place.projectId || '');
         const legacyName = String(place.name || '').trim();
         const legacyDisplay = String(place.display || '').trim();
         const legacyHierarchy = place.hierarchy && typeof place.hierarchy === 'object' && !Array.isArray(place.hierarchy)
@@ -157930,9 +158385,7 @@
 
       note.projectId =
         String(
-          note.projectId
-          || sampleData.projects[0]?.id
-          || 'p1'
+          note.projectId || ''
         ).trim();
 
       note.title =
@@ -158180,9 +158633,7 @@
 
             collection.projectId =
               String(
-                collection.projectId
-                || sampleData.projects[0]?.id
-                || 'p1'
+                collection.projectId || ''
               ).trim();
 
             collection.name =
