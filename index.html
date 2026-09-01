@@ -71421,7 +71421,12 @@
         );
       main.querySelectorAll('[data-profile-place]').forEach(button => button.addEventListener('click', () => openProfilePlace(button.dataset.profilePlace)));
       const profileViewAllActions = {
-        archive: openProfileAllArchive,
+        archive:
+          () =>
+            openProfileAllArchive(
+              person.id
+            ),
+
         notes:
           () =>
             openProfileAllNotes(
@@ -71473,29 +71478,13 @@
       render();
     }
 
-    function openProfileAllArchive() {
-      openArchiveLocation({
-        view:
-          'files',
-
-        folderId:
-          null,
-
-        search:
-          '',
-
-        searchScope:
-          'folder',
-
-        personFilterId:
-          '',
-
-        selectedFileId:
-          null,
-
-        inspectorCollapsed:
-          true
-      });
+    function openProfileAllArchive(
+      personId =
+        state.selectedPeopleId
+    ) {
+      openArchiveForPerson(
+        personId
+      );
     }
 
     function openProfileAllNotes(
