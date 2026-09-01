@@ -41104,11 +41104,45 @@
         : [];
     }
 
-    function getPhotosForPerson(personId, options = {}) {
-      const person = getPerson(personId);
-      if (!person) return [];
-      return getProjectPhotos(person.projectId, options).filter(photo =>
-        Array.isArray(photo.personIds) && photo.personIds.includes(personId)
+    function photoIsTaggedWithPerson(
+      photo,
+      personOrId
+    ) {
+      const personId =
+        typeof personOrId === 'string'
+          ? personOrId
+          : personOrId?.id;
+
+      return Boolean(
+        personId
+        && Array.isArray(
+          photo?.personIds
+        )
+        && photo.personIds.includes(
+          personId
+        )
+      );
+    }
+
+    function getPhotosForPerson(
+      personId,
+      options = {}
+    ) {
+      const person =
+        getPerson(personId);
+
+      if (!person) {
+        return [];
+      }
+
+      return getProjectPhotos(
+        person.projectId,
+        options
+      ).filter(photo =>
+        photoIsTaggedWithPerson(
+          photo,
+          person
+        )
       );
     }
 
@@ -41695,7 +41729,13 @@
       sampleData.people.forEach(person => {
         if (!person.primaryPhotoId || (ids.size && !ids.has(person.primaryPhotoId))) return;
         const photo = getPhoto(person.primaryPhotoId, { projectId: person.projectId });
-        if (!photo || !personPhotosAdderPhotoAlreadyAdded(photo)) {
+        if (
+          !photo
+          || !photoIsTaggedWithPerson(
+            photo,
+            person
+          )
+        ) {
           person.primaryPhotoId = '';
           person.primaryPhotoCrop = null;
         }
@@ -74141,17 +74181,39 @@
     }
 
     function personPhotoPickerProjectPhotos() {
-      const person = personPhotoPickerPerson();
-      if (!person) return [];
-      const query = state.personPhotoPicker.search.trim().toLowerCase();
-      return getProjectPhotos(person.projectId).filter(photo => {
+      const person =
+        personPhotoPickerPerson();
+
+      if (!person) {
+        return [];
+      }
+
+      const query =
+        state.personPhotoPicker
+          .search
+          .trim()
+          .toLowerCase();
+
+      return getProjectPhotos(
+        person.projectId
+      ).filter(photo => {
         if (
-          state.personPhotoPicker.projectScope === 'tagged'
-          && !personPhotosAdderPhotoAlreadyAdded(photo)
+          state.personPhotoPicker
+            .projectScope === 'tagged'
+          && !photoIsTaggedWithPerson(
+            photo,
+            person
+          )
         ) {
           return false;
         }
-        return !query || photoSearchText(photo).includes(query);
+
+        return (
+          !query
+          || photoSearchText(
+            photo
+          ).includes(query)
+        );
       });
     }
 
@@ -74162,7 +74224,11 @@
     function renderPersonPhotoCandidate(photo, person) {
       const selected = photo.id === state.personPhotoPicker.selectedPhotoId;
       const current = photo.id === person.primaryPhotoId;
-      const tagged = personPhotosAdderPhotoAlreadyAdded(photo);
+      const tagged =
+        photoIsTaggedWithPerson(
+          photo,
+          person
+        );
       return `<button class="person-photo-candidate" type="button" data-person-photo-candidate="${escapeHtml(photo.id)}" aria-pressed="${selected}">
         <span class="person-photo-candidate-preview">
           ${renderPhotoThumbnail(photo, { label: photo.title || photo.filename })}
@@ -74995,22 +75061,29 @@
       ) || null;
     }
 
-    function personPhotosAdderPhotoAlreadyAdded(photo) {
+    function personPhotosAdderPhotoAlreadyAdded(
+      photo
+    ) {
       const draftTarget =
-        state.personPhotosAdder?.draftTarget;
+        state.personPhotosAdder
+          ?.draftTarget;
 
       if (draftTarget) {
         return (
-          draftTarget.existingPhotoIds || []
-        ).includes(photo?.id);
+          draftTarget
+            .existingPhotoIds
+          || []
+        ).includes(
+          photo?.id
+        );
       }
 
       const person =
         personPhotosAdderPerson();
 
-      return Boolean(
-        person?.id
-        && (photo?.personIds || []).includes(person.id)
+      return photoIsTaggedWithPerson(
+        photo,
+        person
       );
     }
 
