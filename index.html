@@ -4652,6 +4652,23 @@
       color: var(--text-secondary);
     }
 
+    .timeline-source-action {
+      width: fit-content;
+      min-height: 26px;
+      margin-top: 4px;
+      padding: 2px 0;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--text-tertiary);
+      font-size: 11px;
+    }
+
+    .timeline-source-action svg {
+      width: 14px;
+      height: 14px;
+    }
+
     .timeline-date {
       color: var(--text-primary);
       font-weight: 800;
@@ -10946,8 +10963,8 @@
       align-self: start;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-template-rows:
-        repeat(2, var(--profile-connected-card-h));
+      grid-auto-rows:
+        var(--profile-connected-card-h);
       gap: var(--space-4);
       margin: 0;
     }
@@ -30358,6 +30375,26 @@
         15px;
     }
 
+    .places-inspector-section.has-action {
+      position: relative;
+    }
+
+    .places-inspector-section.has-action > summary {
+      padding-right: 126px;
+    }
+
+    .places-inspector-section-action {
+      position: absolute;
+      z-index: 2;
+      top: 8px;
+      right: 36px;
+    }
+
+    .places-inspector-section-action .link {
+      min-height: 30px;
+      padding: 4px 7px;
+    }
+
     .places-inspector-section {
       scroll-margin-top:
         56px;
@@ -32677,6 +32714,32 @@
       'Locked': 'Заблокировано',
       'Review status': 'Статус проверки',
       'Source status': 'Статус источников',
+      'Sources linked':
+        'Источники привязаны',
+
+      'No sources linked':
+        'Источники не привязаны',
+
+      'Any source status':
+        'Любой статус источников',
+
+      'With sources':
+        'С источниками',
+
+      'Without sources':
+        'Без источников',
+
+      'Connection status':
+        'Статус связей',
+
+      'Any connection status':
+        'Любой статус связей',
+
+      'With connections':
+        'Со связями',
+
+      'Without connections':
+        'Без связей',
       'Relationship actions': 'Действия со связью',
       'First name': 'Имя',
       'Last name': 'Фамилия',
@@ -34730,7 +34793,7 @@
       'Filter sources':
         'Фильтровать источники',
 
-      'Narrow sources by type or favourite status.':
+      'Narrow sources by category, connection status, or favourite status.':
         'Уточните список источников по типу или статусу избранного.',
 
       'Choose where to search and narrow files by type or connections.':
@@ -35159,8 +35222,8 @@
       'The Source record cannot be restored.':
         'Запись об источнике нельзя будет восстановить.',
 
-      'Its connections will be removed. Linked files, People, Events, Notes, and Places will not be deleted.':
-        'Её связи будут удалены. Связанные файлы, люди, события, заметки и места удалены не будут.',
+      'Its connections will be removed. Linked files, Photos, People, Events, Notes, and Places will not be deleted.':
+        'Её связи будут удалены. Связанные файлы, фото, люди, события, заметки и места удалены не будут.',
 
       'Source permanently deleted.':
         'Источник удалён безвозвратно.',
@@ -38925,7 +38988,16 @@
             )
           }.`
       );
-
+      repl(
+        /^(\d+)\s+sources?\s+linked$/i,
+        (_, number) =>
+          `Связано: ${
+            countPhrase(
+              number,
+              'source'
+            )
+          }`
+      );
       /*
         Notification count.
       */
@@ -45912,6 +45984,12 @@
       person,
       relationshipLabels = null
     ) {
+      const sourceCount =
+        sourceIdsForTarget(
+          'person',
+          person.id,
+          person.projectId
+        ).length;
       return {
         id: person.id,
         initials: person.names.initials,
@@ -45952,7 +46030,7 @@
           getNotesForPerson(
             person.id
           ).length,
-        sourceStatus: person.meta.sourceStatus,
+        sourceCount,
         reviewStatus: person.meta.reviewStatus,
         avatarClass: person.avatarClass,
         primaryPhotoId: person.primaryPhotoId || '',
@@ -46625,8 +46703,28 @@
       return events;
     }
 
+    function rebuildSampleEventsAndPruneSourceLinks() {
+      sampleData.events =
+        buildSampleEvents();
+
+      /*
+        Source links are populated later than the
+        first generated-event build during startup.
+      */
+      if (
+        Array.isArray(
+          sampleData.sourceLinks
+        )
+        && sampleData.sourceLinks.length
+      ) {
+        pruneInvalidSourceLinks();
+      }
+
+      return sampleData.events;
+    }
+
     normalizeSampleGenealogyDates();
-    sampleData.events = buildSampleEvents();
+    rebuildSampleEventsAndPruneSourceLinks();
 
 
     function validateSampleNotesFixture(
@@ -46729,7 +46827,6 @@
       });
       const placeIds = new Set(sampleData.places.map(place => place.id));
       const familyIds = new Set(centralFamilyRecords().map(family => family.id));
-      const sourceIds = new Set((sampleData.sources || []).map(source => source.id));
       const mediaIds = new Set((sampleData.media || []).map(media => media.id));
       const albumIds = new Set((sampleData.albums || []).map(album => album.id));
       const archiveFileIds =
@@ -47328,25 +47425,6 @@
             );
           }
         });
-
-        (
-          note.linkedSourceIds || []
-        ).forEach(sourceId => {
-          if (
-            !sourceIds.has(
-              sourceId
-            )
-          ) {
-            warn(
-              `Note ${
-                note.id
-              } points to missing source ${
-                sourceId
-              }`
-            );
-          }
-        });
-
         (
           note.linkedArchiveFileIds || []
         ).forEach(fileId => {
@@ -48017,7 +48095,16 @@
       treeProjectViews: {},
       treeCenterTargetId: 'silver',
       treeInspectorCollapsed: false,
-      inspectorSections: { insights: false, timeline: false, relationships: false, photos: false, archive: false, notes: false, record: false },
+      inspectorSections: {
+        insights: false,
+        timeline: false,
+        relationships: false,
+        photos: false,
+        archive: false,
+        notes: false,
+        sources: false,
+        record: false
+      },
       peopleView: 'directory',
       peopleSide: 'people',
       selectedPeopleId: 'silver',
@@ -48222,6 +48309,7 @@
       archiveFilterPresentation: 'flat',
       archiveFilterScopeFolderId: null,
       archiveSourceCategoryFilter: 'all',
+      archiveSourceConnectionFilter: 'all',
       archiveSourceFavouriteOnly: false,
       archiveInspectorCollapsed: false,
       archiveFileEditing: false,
@@ -48292,7 +48380,8 @@
         events: true,
         photos: false,
         files: false,
-        notes: false
+        notes: false,
+        sources: false
       },
       placesInspectorShowAllEvents: false,
       placesMapView: {
@@ -49365,7 +49454,7 @@
         };
       }
       person.meta.updated = record.updated || person.meta.updated;
-      sampleData.events = buildSampleEvents();
+      rebuildSampleEventsAndPruneSourceLinks();
     }
 
 
@@ -57079,6 +57168,20 @@
         getNotesForPerson(
           person.id
         ).length;
+
+      const centralPerson =
+        getPerson(
+          person.id
+        );
+
+      const sourceCount =
+        centralPerson
+          ? sourcesForTarget(
+              'person',
+              centralPerson.id,
+              centralPerson.projectId
+            ).length
+          : 0;
       const viewState = treeProjectViewState();
       const isFocusPerson = viewState.focusPersonId === person.id;
 
@@ -57211,6 +57314,27 @@
                   : 'notes'
               }
             </button>
+            <button
+              class="
+                app-chip
+                app-chip--sources
+              "
+              type="button"
+              data-person-chip-section="sources"
+              aria-controls="section-sources"
+              aria-label="Show ${sourceCount} ${
+                sourceCount === 1
+                  ? 'source'
+                  : 'sources'
+              }">
+
+              ${sourceCount}
+              ${
+                sourceCount === 1
+                  ? 'source'
+                  : 'sources'
+              }
+            </button>
           </div>
         </div>
       `;
@@ -57234,7 +57358,17 @@
         <div class="record-kv"><span>Added</span><span>1 May 2026</span></div>
         <div class="record-kv"><span>Updated</span><span>${escapeHtml(record.updated || '-')}</span></div>
         <div class="record-kv"><span>Parents</span><span>${escapeHtml(record.parents || 'Unknown parents')}</span></div>
-        <div class="record-kv"><span>Source status</span><span>${escapeHtml(getPeopleSourceStatus(record))}</span></div>
+        <div class="record-kv">
+          <span>Sources</span>
+
+          <span>
+            ${escapeHtml(
+              getPeopleSourceStatus(
+                record
+              )
+            )}
+          </span>
+        </div>
         <div class="record-kv"><span>Review status</span><span>${escapeHtml(getPeopleReviewStatus(record))}</span></div>
       </div>`;
     }
@@ -57339,6 +57473,44 @@
       const photoCount = getPersonPhotoCount(person.id);
       const archiveCount = getArchiveFilesForPerson(person.id).length;
       const noteCount = getNotesForPerson(person.id).length;
+      const centralPerson =
+        getPerson(
+          person.id
+        );
+
+      const personSources =
+        centralPerson
+          ? sourcesForTarget(
+              'person',
+              centralPerson.id,
+              centralPerson.projectId
+            )
+          : [];
+
+      const sourceCount =
+        personSources.length;
+
+      const sourcesContent =
+        centralPerson
+          ? renderConnectedSourceList({
+              targetType:
+                'person',
+
+              targetId:
+                centralPerson.id,
+
+              projectId:
+                centralPerson.projectId,
+
+              sources:
+                personSources,
+
+              emptyText:
+                'No sources linked to this person.'
+            })
+          : renderInspectorSectionEmpty(
+              'No sources linked to this person.'
+            );
       const contextClass = isPeopleContext ? ' people-person-sidebar' : '';
 
       return `
@@ -57473,6 +57645,36 @@
                 count: noteCount,
                 personId: person.id
               })
+          }
+        )}
+        ${renderInspectorSection(
+          'sources',
+          'Sources',
+          `${sourceCount} ${
+            sourceCount === 1
+              ? 'source'
+              : 'sources'
+          }`,
+          sourcesContent,
+          centralPerson
+            ? `
+              <button
+                class="link"
+                type="button"
+                data-person-manage-sources="${escapeHtml(
+                  centralPerson.id
+                )}">
+
+                ${renderPanelButtonLabel(
+                  icon.plus,
+                  'Add source'
+                )}
+              </button>
+            `
+            : '',
+          {
+            inlineAction:
+              true
           }
         )}
         ${renderInspectorSection('record', 'Record Info', '', renderPersonRecordInfo(person.id))}
@@ -57785,17 +57987,157 @@
       return timelineDetailLines(datePlaceLines);
     }
 
-    function renderTimelineItem(event, personId) {
-      return `<div class="timeline-item">
-        <div class="timeline-date">${timelineDateBlockHtml(event, personId)}</div>
-        <div class="timeline-dot ${escapeHtml(timelineEventColor(event))}">
-          <span class="timeline-dot-icon" aria-hidden="true">${timelineEventIcon(event)}</span>
+    function renderTimelineItem(
+      event,
+      personId
+    ) {
+      const sourceCount =
+        sourcesForTarget(
+          'event',
+          event.id,
+          event.projectId
+        ).length;
+
+      return `
+        <div class="timeline-item">
+          <div class="timeline-date">
+            ${timelineDateBlockHtml(
+              event,
+              personId
+            )}
+          </div>
+
+          <div
+            class="
+              timeline-dot
+              ${escapeHtml(
+                timelineEventColor(
+                  event
+                )
+              )}
+            ">
+
+            <span
+              class="timeline-dot-icon"
+              aria-hidden="true">
+              ${timelineEventIcon(
+                event
+              )}
+            </span>
+          </div>
+
+          <div class="timeline-copy">
+            <strong>
+              ${escapeHtml(
+                event.title
+              )}
+            </strong>
+
+            <span>
+              ${String(
+                timelineEventDetail(
+                  event,
+                  personId
+                )
+                || ''
+              )}
+            </span>
+
+            <button
+              class="
+                link
+                timeline-source-action
+              "
+              type="button"
+              data-event-manage-sources="${escapeHtml(
+                event.id
+              )}"
+              data-event-source-project="${escapeHtml(
+                event.projectId
+                || currentProjectId()
+              )}">
+
+              ${icon.archive}
+
+              <span>
+                ${
+                  sourceCount
+                    ? `${sourceCount} ${
+                        sourceCount === 1
+                          ? 'source'
+                          : 'sources'
+                      }`
+                    : 'Add source'
+                }
+              </span>
+            </button>
+          </div>
         </div>
-        <div class="timeline-copy">
-          <strong>${escapeHtml(event.title)}</strong>
-          <span>${String(timelineEventDetail(event, personId) || '')}</span>
-        </div>
-      </div>`;
+      `;
+    }
+
+    function bindTimelineSourceControls(
+      root,
+      {
+        afterSave =
+          null
+      } = {}
+    ) {
+      root
+        ?.querySelectorAll(
+          '[data-event-manage-sources]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              const eventId =
+                button.dataset
+                  .eventManageSources;
+
+              const projectId =
+                button.dataset
+                  .eventSourceProject
+                  || currentProjectId();
+
+              const event =
+                sourceTargetRecord(
+                  'event',
+                  eventId,
+                  projectId
+                );
+
+              if (!event) {
+                showToast(
+                  'The event is no longer available.'
+                );
+
+                return;
+              }
+
+              openSourcesForTargetModal({
+                targetType:
+                  'event',
+
+                targetId:
+                  event.id,
+
+                projectId,
+
+                title:
+                  'Manage event sources',
+
+                subtitle:
+                  `Sources connected to ${
+                    event.title
+                    || 'this event'
+                  }.`,
+
+                afterSave
+              });
+            }
+          );
+        });
     }
 
     function parentChildRelationshipKey(
@@ -61451,7 +61793,7 @@
       if (!result.ok) return result;
 
       syncFamilyReciprocalLinks();
-      sampleData.events = buildSampleEvents();
+      rebuildSampleEventsAndPruneSourceLinks();
 
       return {
         ...result,
@@ -61547,7 +61889,7 @@
       }
 
       syncFamilyReciprocalLinks();
-      sampleData.events = buildSampleEvents();
+      rebuildSampleEventsAndPruneSourceLinks();
     }
     
     function addPersonDateFieldHasTypedValue(fieldId) {
@@ -61768,7 +62110,7 @@
         }
       }
 
-      sampleData.events = buildSampleEvents();
+      rebuildSampleEventsAndPruneSourceLinks();
 
       if (projectPeopleBeforeCreate === 0) {
         const project = validProjectById(newPerson.projectId);
@@ -62906,7 +63248,7 @@
       context = 'tree'
     ) {
       syncFamilyReciprocalLinks();
-      sampleData.events = buildSampleEvents();
+      rebuildSampleEventsAndPruneSourceLinks();
 
       if (focusPersonId) {
         state.selectedPersonId = focusPersonId;
@@ -63839,7 +64181,7 @@
 
       applyPartnerDetailsToCreatedConnection(result, relationshipValues);
 
-      sampleData.events = buildSampleEvents();
+      rebuildSampleEventsAndPruneSourceLinks();
       refreshAfterPossibleMatchConnection(connectionIntent.anchorPersonId);
 
       showToast(`${connectPersonName(selectedPerson)} connected as ${addPersonConnectionToastLabel(connectionIntent.relationshipType)}.`);
@@ -64514,7 +64856,7 @@
       syncFamilyReciprocalLinks();
 
       markPersonUpdated(person);
-      sampleData.events = buildSampleEvents();
+      rebuildSampleEventsAndPruneSourceLinks();
 
       closeModal();
       if (state.activeModule === 'Family Tree') {
@@ -67199,6 +67541,9 @@
         living:
           'Any',
 
+        sourceLinks:
+          'all',
+
         reviewStatus:
           ''
       });
@@ -67501,7 +67846,46 @@
               })
             ])
         }),
+        Object.freeze({
+          key:
+            'sourceLinks',
 
+          label:
+            'Sources',
+
+          control:
+            'select',
+
+          defaultValue:
+            'all',
+
+          options:
+            Object.freeze([
+              Object.freeze({
+                value:
+                  'all',
+
+                label:
+                  'Any source status'
+              }),
+
+              Object.freeze({
+                value:
+                  'linked',
+
+                label:
+                  'With sources'
+              }),
+
+              Object.freeze({
+                value:
+                  'unlinked',
+
+                label:
+                  'Without sources'
+              })
+            ])
+        }),
         Object.freeze({
           key:
             'reviewStatus',
@@ -68026,19 +68410,100 @@
       return Object.keys(defaultPeopleColumns).some(key => columns[key] !== defaultPeopleColumns[key]);
     }
 
-    function getPeopleSourceStatus(person) {
-      if (person.sourceStatus) return person.sourceStatus;
-      if (person.files >= 7) return 'Fully sourced';
-      if (person.files <= 1) return 'Unsourced';
-      return 'Partly sourced';
+    function getPeopleSourceCount(
+      person
+    ) {
+      if (!person?.id) {
+        return 0;
+      }
+
+      if (
+        Number.isInteger(
+          person.sourceCount
+        )
+      ) {
+        return person.sourceCount;
+      }
+
+      const centralPerson =
+        getPerson(
+          person.id
+        );
+
+      if (!centralPerson) {
+        return 0;
+      }
+
+      return sourceIdsForTarget(
+        'person',
+        centralPerson.id,
+        centralPerson.projectId
+      ).length;
     }
 
-    function getPeopleReviewStatus(person) {
-      if (person.reviewStatus) return person.reviewStatus;
-      if (person.id === 'cleo') return 'Missing facts';
-      if (person.id === 'rupert') return 'Missing facts';
-      if (person.files <= 1) return 'Missing source';
-      return 'No issues';
+    function getPeopleSourceStatus(
+      person
+    ) {
+      const count =
+        getPeopleSourceCount(
+          person
+        );
+
+      return `${count} ${
+        count === 1
+          ? 'source'
+          : 'sources'
+      } linked`;
+    }
+
+    function getPeopleReviewStatus(
+      person
+    ) {
+      const centralPerson =
+        getPerson(
+          person?.id
+        );
+
+      const explicitStatus =
+        person?.reviewStatus
+        || centralPerson?.meta
+          ?.reviewStatus
+        || '';
+
+      /*
+        Preserve specific review findings.
+        Source availability must not hide a
+        duplicate or missing-facts warning.
+      */
+      if (
+        explicitStatus
+        && explicitStatus !== 'No issues'
+        && explicitStatus !== 'Missing source'
+      ) {
+        return explicitStatus;
+      }
+
+      const sourceCount =
+        getPeopleSourceCount(
+          person
+        );
+
+      if (!sourceCount) {
+        return 'Missing source';
+      }
+
+      /*
+        A stale stored “Missing source” status
+        must disappear after a Source is linked.
+      */
+      if (
+        explicitStatus === 'Missing source'
+      ) {
+        return 'No issues';
+      }
+
+      return explicitStatus
+        || 'No issues';
     }
 
     function hasActivePeopleFilters(
@@ -68178,6 +68643,27 @@
           normalized.living !== 'Any'
           && person.living
             !== normalized.living
+        ) {
+          return false;
+        }
+
+        const sourceCount =
+          getPeopleSourceCount(
+            person
+          );
+
+        if (
+          normalized.sourceLinks
+            === 'linked'
+          && sourceCount === 0
+        ) {
+          return false;
+        }
+
+        if (
+          normalized.sourceLinks
+            === 'unlinked'
+          && sourceCount > 0
         ) {
           return false;
         }
@@ -70343,6 +70829,7 @@
       addLabel,
       addToast,
       addAction = '',
+      showFooter = true,
       body
     }) {
       const noun = profileResourceNoun(
@@ -70402,7 +70889,7 @@
             ${body}
           </div>
 
-          ${count > 0
+          ${showFooter && count > 0
             ? `
               <button
                 class="profile-resource-card__footer"
@@ -70581,15 +71068,106 @@
         );
     }
 
-    function renderProfileConnectedCube(person) {
+    function renderProfileConnectedSources(
+      person
+    ) {
+      const centralPerson =
+        getPerson(
+          person.id
+        );
+
+      const sources =
+        centralPerson
+          ? sourcesForTarget(
+              'person',
+              centralPerson.id,
+              centralPerson.projectId
+            )
+          : [];
+
+      const body =
+        centralPerson
+          ? renderConnectedSourceList({
+              targetType:
+                'person',
+
+              targetId:
+                centralPerson.id,
+
+              projectId:
+                centralPerson.projectId,
+
+              sources,
+
+              limit:
+                3,
+
+              emptyText:
+                'No sources linked to this person.'
+            })
+          : renderProfileResourceEmpty(
+              'No sources linked to this person.'
+            );
+
+      return renderProfileResourceCard({
+        type:
+          'sources',
+
+        iconSvg:
+          icon.archive,
+
+        title:
+          'Sources',
+
+        count:
+          sources.length,
+
+        singular:
+          'source',
+
+        plural:
+          'sources',
+
+        addLabel:
+          'Add source',
+
+        addAction:
+          'add-sources',
+
+        showFooter:
+          false,
+
+        body
+      });
+    }
+
+    function renderProfileConnectedCube(
+      person
+    ) {
       return `
         <section
           class="profile-connected-cube"
           aria-label="Connected profile items">
-          ${renderProfileConnectedPhotos(person)}
-          ${renderProfileConnectedFiles(person)}
-          ${renderProfileConnectedNotes(person)}
-          ${renderProfileConnectedPlaces(person)}
+
+          ${renderProfileConnectedPhotos(
+            person
+          )}
+
+          ${renderProfileConnectedFiles(
+            person
+          )}
+
+          ${renderProfileConnectedNotes(
+            person
+          )}
+
+          ${renderProfileConnectedPlaces(
+            person
+          )}
+
+          ${renderProfileConnectedSources(
+            person
+          )}
         </section>
       `;
     }
@@ -72034,7 +72612,7 @@
       );
 
       sampleData.events =
-        buildSampleEvents();
+        rebuildSampleEventsAndPruneSourceLinks();
     }
 
     function showProfileEditValidationError(
@@ -72088,6 +72666,29 @@
               }
 
               renderAfterPersonConnectedResourcesChanged();
+            }
+        }
+      );
+      bindTimelineSourceControls(
+        main,
+        {
+          afterSave:
+            renderAfterPersonConnectedResourcesChanged
+        }
+      );
+      bindConnectedSourceLinks(
+        main,
+        {
+          onUnlinked:
+            ({
+              targetType
+            }) => {
+              if (
+                targetType
+                  === 'person'
+              ) {
+                renderAfterPersonConnectedResourcesChanged();
+              }
             }
         }
       );
@@ -72252,6 +72853,46 @@
               person.id,
               'profile'
             )
+        );
+      main
+        .querySelector(
+          '[data-profile-resource-action="add-sources"]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const centralPerson =
+              getPerson(
+                person.id
+              );
+
+            if (!centralPerson) {
+              return;
+            }
+
+            openSourcesForTargetModal({
+              targetType:
+                'person',
+
+              targetId:
+                centralPerson.id,
+
+              projectId:
+                centralPerson.projectId,
+
+              title:
+                'Manage sources',
+
+              subtitle:
+                `Sources connected to ${
+                  centralPerson.names?.display
+                  || 'this person'
+                }.`,
+
+              afterSave:
+                renderAfterPersonConnectedResourcesChanged
+            });
+          }
         );
       main.querySelectorAll('[data-profile-place]').forEach(button => button.addEventListener('click', () => openProfilePlace(button.dataset.profilePlace)));
       const profileViewAllActions = {
@@ -72530,7 +73171,7 @@
             );
 
             sampleData.events =
-              buildSampleEvents();
+              rebuildSampleEventsAndPruneSourceLinks();
 
             closeModal();
 
@@ -74293,7 +74934,23 @@
               )
           );
         });
+      bindTimelineSourceControls(
+        root,
+        {
+          afterSave:
+            () =>
+              rerenderPersonSidebarContext(
+                context,
+                {
+                  preserveScroll:
+                    true,
 
+                  focusSectionId:
+                    'timeline'
+                }
+              )
+        }
+      );
       bindPersonPhotoUnlinkButtons(
         root
       );
@@ -74423,6 +75080,96 @@
             }
         }
       );
+      bindConnectedSourceLinks(
+        root,
+        {
+          onUnlinked:
+            ({
+              targetType
+            }) => {
+              if (
+                targetType
+                  !== 'person'
+              ) {
+                return;
+              }
+
+              state.inspectorSections
+                .sources = true;
+
+              rerenderPersonSidebarContext(
+                context,
+                {
+                  preserveScroll:
+                    true,
+
+                  focusSectionId:
+                    'sources'
+                }
+              );
+            }
+        }
+      );
+
+      root
+        .querySelector(
+          '[data-person-manage-sources]'
+        )
+        ?.addEventListener(
+          'click',
+          event => {
+            const personId =
+              event.currentTarget
+                .dataset
+                .personManageSources;
+
+            const centralPerson =
+              getPerson(
+                personId
+              );
+
+            if (!centralPerson) {
+              return;
+            }
+
+            openSourcesForTargetModal({
+              targetType:
+                'person',
+
+              targetId:
+                centralPerson.id,
+
+              projectId:
+                centralPerson.projectId,
+
+              title:
+                'Manage sources',
+
+              subtitle:
+                `Sources connected to ${
+                  centralPerson.names?.display
+                  || 'this person'
+                }.`,
+
+              afterSave:
+                () => {
+                  state.inspectorSections
+                    .sources = true;
+
+                  rerenderPersonSidebarContext(
+                    context,
+                    {
+                      preserveScroll:
+                        true,
+
+                      focusSectionId:
+                        'sources'
+                    }
+                  );
+                }
+            });
+          }
+        );
       root
         .querySelectorAll(
           '[data-person-resource-view]'
@@ -74662,7 +75409,7 @@
       if (deletedIds.has(state.treeCenterTargetId)) state.treeCenterTargetId = fallbackId;
 
       syncFamilyReciprocalLinks();
-      sampleData.events = buildSampleEvents();
+      rebuildSampleEventsAndPruneSourceLinks();
       closeModal();
       render();
       showToast(validIds.length === 1 ? 'Person deleted.' : `${validIds.length} people deleted.`);
@@ -81221,10 +81968,22 @@
       });
     }
 
-    function renderAlbumsPhotoSources() {
-      return renderInspectorSectionEmpty(
-        'No sources linked to this photo.'
-      );
+    function renderAlbumsPhotoSources(
+      photo
+    ) {
+      return renderConnectedSourceList({
+        targetType:
+          'photo',
+
+        targetId:
+          photo.id,
+
+        projectId:
+          photo.projectId,
+
+        emptyText:
+          'No sources linked to this photo.'
+      });
     }
 
     function renderAlbumsPhotoMetadata(photo) {
@@ -81339,6 +82098,13 @@
           }
         );
 
+      const photoSources =
+        sourcesForTarget(
+          'photo',
+          photo.id,
+          photo.projectId
+        );
+
       const peopleAction =
         actionsLocked
           ? ''
@@ -81394,7 +82160,7 @@
             <button
               class="link"
               type="button"
-              data-toast="Source linking will be added later.">
+              id="albumsManagePhotoSources">
 
               ${renderPanelButtonLabel(
                 icon.plus,
@@ -81473,8 +82239,15 @@
           ${renderAlbumsDetailSection(
             'sources',
             'Sources',
-            renderAlbumsPhotoSources(),
-            sourceAction
+            renderAlbumsPhotoSources(
+              photo
+            ),
+            sourceAction,
+            `${photoSources.length} ${
+              photoSources.length === 1
+                ? 'source'
+                : 'sources'
+            }`
           )}
 
           ${renderAlbumsDetailSection(
@@ -83939,7 +84712,7 @@
       }
 
       sampleData.events =
-        buildSampleEvents();
+        rebuildSampleEventsAndPruneSourceLinks();
 
       ensureSelectedAlbumPhoto();
       renderAlbums();
@@ -86851,6 +87624,23 @@
             }
         }
       );
+      bindConnectedSourceLinks(
+        main,
+        {
+          onUnlinked:
+            ({
+              targetType
+            }) => {
+              if (
+                targetType !== 'photo'
+              ) {
+                return;
+              }
+
+              renderAlbumsPreserveViewport();
+            }
+        }
+      );
 
       const browsingLocked =
         state.albumsDetailEditing;
@@ -87264,6 +88054,52 @@
             openAlbumsPhotoNotesModal(
               state.selectedPhotoId
             )
+        );
+
+      main
+        .querySelector(
+          '#albumsManagePhotoSources'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const photo =
+              getPhoto(
+                state.selectedPhotoId,
+                {
+                  projectId:
+                    currentProjectId()
+                }
+              );
+
+            if (!photo) {
+              return;
+            }
+
+            openSourcesForTargetModal({
+              targetType:
+                'photo',
+
+              targetId:
+                photo.id,
+
+              projectId:
+                photo.projectId,
+
+              title:
+                'Manage sources',
+
+              subtitle:
+                `Sources connected to ${
+                  photo.title
+                  || photo.filename
+                  || 'this photo'
+                }.`,
+
+              afterSave:
+                renderAlbumsPreserveViewport
+            });
+          }
         );
 
       const editRoot =
@@ -110522,7 +111358,7 @@
       resolved.relationship.updatedAt = 'Just now';
       if (resolved.central) {
         syncFamilyReciprocalLinks();
-        sampleData.events = buildSampleEvents();
+        rebuildSampleEventsAndPruneSourceLinks();
       }
       touchGeneographBoard();
       renderGeneographEditorPreserveScroll();
@@ -114168,6 +115004,740 @@
           );
     }
 
+    function sourcesForTarget(
+      targetType,
+      targetId,
+      projectId =
+        currentProjectId()
+    ) {
+      if (
+        !sourceTargetRecord(
+          targetType,
+          targetId,
+          projectId
+        )
+      ) {
+        return [];
+      }
+
+      return sourceIdsForTarget(
+        targetType,
+        targetId,
+        projectId
+      )
+        .map(sourceId =>
+          archiveSourceById(
+            sourceId,
+            projectId
+          )
+        )
+        .filter(Boolean);
+    }
+
+    function connectedSourceMeta(
+      source
+    ) {
+      return [
+        localizedSourceCategoryLabel(
+          source?.category,
+          ''
+        ),
+
+        source?.providedBy,
+
+        source?.reference
+      ]
+        .filter(Boolean)
+        .slice(0, 2)
+        .join(' · ')
+        || 'Source record';
+    }
+
+    function openConnectedSource(
+      sourceId,
+      projectId =
+        currentProjectId()
+    ) {
+      const source =
+        archiveSourceById(
+          sourceId,
+          projectId
+        );
+
+      if (!source) {
+        showToast(
+          'The source is no longer available.'
+        );
+
+        return;
+      }
+
+      if (
+        state.activeModule === 'Archive'
+        && typeof archiveRememberCurrentLocation
+          === 'function'
+      ) {
+        archiveRememberCurrentLocation();
+      }
+
+      state.activeModule =
+        'Archive';
+
+      state.archiveView =
+        'sources';
+
+      state.archiveSearch =
+        '';
+
+      state.archiveSourceCategoryFilter =
+        'all';
+
+      state.archiveSourceConnectionFilter =
+        'all';
+
+      state.archiveSourceFavouriteOnly =
+        false;
+
+      state.archiveSelectedSourceId =
+        source.id;
+
+      state.archiveInspectorCollapsed =
+        false;
+
+      state.archiveSelectedFileIds =
+        [];
+
+      render();
+    }
+
+    function renderConnectedSourceList({
+      targetType,
+      targetId,
+      projectId =
+        currentProjectId(),
+      sources =
+        sourcesForTarget(
+          targetType,
+          targetId,
+          projectId
+        ),
+      limit = 4,
+      emptyText =
+        'No sources linked.'
+    }) {
+      const visibleSources =
+        sources.slice(
+          0,
+          limit
+        );
+
+      if (!visibleSources.length) {
+        return renderInspectorSectionEmpty(
+          emptyText
+        );
+      }
+
+      return `
+        <div
+          class="archive-connection-list"
+          data-connected-source-list>
+
+          ${visibleSources
+            .map(source => `
+              <div
+                class="archive-connection-row">
+
+                <button
+                  class="archive-connection-open"
+                  type="button"
+                  data-connected-source-open="${escapeHtml(
+                    source.id
+                  )}"
+                  data-connected-source-project="${escapeHtml(
+                    source.projectId
+                    || projectId
+                  )}"
+                  aria-label="Open ${escapeHtml(
+                    source.title
+                    || 'source'
+                  )}">
+                </button>
+
+                <strong>
+                  ${escapeHtml(
+                    source.title
+                    || 'Untitled source'
+                  )}
+                </strong>
+
+                <span>
+                  ${escapeHtml(
+                    connectedSourceMeta(
+                      source
+                    )
+                  )}
+                </span>
+
+                <button
+                  class="archive-connection-unlink"
+                  type="button"
+                  data-connected-source-unlink="${escapeHtml(
+                    source.id
+                  )}"
+                  data-connected-source-target-type="${escapeHtml(
+                    targetType
+                  )}"
+                  data-connected-source-target-id="${escapeHtml(
+                    targetId
+                  )}"
+                  data-connected-source-project="${escapeHtml(
+                    source.projectId
+                    || projectId
+                  )}"
+                  aria-label="Unlink ${escapeHtml(
+                    source.title
+                    || 'source'
+                  )}"
+                  title="Unlink source">
+
+                  ${icon.unlink}
+                </button>
+              </div>
+            `)
+            .join('')}
+        </div>
+      `;
+    }
+
+    function bindConnectedSourceLinks(
+      root,
+      {
+        onUnlinked =
+          null
+      } = {}
+    ) {
+      if (!root) {
+        return;
+      }
+
+      root
+        .querySelectorAll(
+          '[data-connected-source-open]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              openConnectedSource(
+                button.dataset
+                  .connectedSourceOpen,
+
+                button.dataset
+                  .connectedSourceProject
+                  || currentProjectId()
+              );
+            }
+          );
+        });
+
+      root
+        .querySelectorAll(
+          '[data-connected-source-unlink]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            event => {
+              event.preventDefault();
+              event.stopPropagation();
+
+              const sourceId =
+                button.dataset
+                  .connectedSourceUnlink;
+
+              const targetType =
+                button.dataset
+                  .connectedSourceTargetType;
+
+              const targetId =
+                button.dataset
+                  .connectedSourceTargetId;
+
+              const projectId =
+                button.dataset
+                  .connectedSourceProject
+                  || currentProjectId();
+
+              const removed =
+                setSourceLink(
+                  sourceId,
+                  targetType,
+                  targetId,
+                  false,
+                  {
+                    projectId
+                  }
+                );
+
+              if (!removed) {
+                showToast(
+                  'The source link could not be removed.'
+                );
+
+                return;
+              }
+
+              if (
+                typeof onUnlinked
+                  === 'function'
+              ) {
+                onUnlinked({
+                  sourceId,
+                  targetType,
+                  targetId,
+                  projectId
+                });
+              }
+
+              showToast(
+                'Source unlinked.'
+              );
+            }
+          );
+        });
+    }
+
+    function openSourcesForTargetModal({
+      targetType,
+      targetId,
+      projectId =
+        currentProjectId(),
+      title =
+        'Manage sources',
+      subtitle =
+        '',
+      afterSave =
+        null
+    }) {
+      const target =
+        sourceTargetRecord(
+          targetType,
+          targetId,
+          projectId
+        );
+
+      if (!target) {
+        showToast(
+          'The connected record is no longer available.'
+        );
+
+        return;
+      }
+
+      const records =
+        (sampleData.sources || [])
+          .filter(source =>
+            source.projectId
+              === projectId
+          )
+          .slice()
+          .sort((first, second) =>
+            (
+              first.title || ''
+            ).localeCompare(
+              second.title || ''
+            )
+          );
+
+      const selected =
+        new Set(
+          sourceIdsForTarget(
+            targetType,
+            targetId,
+            projectId
+          )
+        );
+
+      let query =
+        '';
+
+      openModal(`
+        <div
+          class="
+            modal
+            notes-related-modal
+            archive-link-picker-modal
+          "
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="targetSourcesModalTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="targetSourcesModalTitle">
+                ${escapeHtml(title)}
+              </h2>
+
+              <p>
+                ${escapeHtml(
+                  subtitle
+                  || 'Choose the sources connected to this record.'
+                )}
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close">
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body form-grid">
+            <div class="archive-link-picker-toolbar">
+              <label
+                class="
+                  app-search-field
+                  archive-link-picker-search
+                "
+                aria-label="Search sources">
+
+                ${icon.search}
+
+                <input
+                  type="search"
+                  data-target-source-search
+                  placeholder="Search sources..."
+                  autocomplete="off">
+              </label>
+
+              <button
+                class="button secondary"
+                type="button"
+                data-target-source-create>
+
+                ${icon.plus}
+                Create source
+              </button>
+            </div>
+
+            <div
+              class="archive-modal-list"
+              data-target-source-results>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <span
+              class="archive-link-picker-status"
+              data-target-source-count
+              aria-live="polite">
+            </span>
+
+            <div class="archive-modal-actions">
+              <button
+                class="button secondary"
+                type="button"
+                data-close>
+                Cancel
+              </button>
+
+              <button
+                class="button primary"
+                type="button"
+                data-target-source-save>
+                Save links
+              </button>
+            </div>
+          </div>
+        </div>
+      `);
+
+      const modal =
+        modalBackdrop.querySelector(
+          '.archive-link-picker-modal'
+        );
+
+      const results =
+        modal?.querySelector(
+          '[data-target-source-results]'
+        );
+
+      const count =
+        modal?.querySelector(
+          '[data-target-source-count]'
+        );
+
+      const updateCount = () => {
+        if (!count) {
+          return;
+        }
+
+        count.textContent =
+          `${selected.size} ${
+            selected.size === 1
+              ? 'source'
+              : 'sources'
+          } selected`;
+      };
+
+      const renderChoices = () => {
+        if (!results) {
+          return;
+        }
+
+        const normalizedQuery =
+          query.trim().toLocaleLowerCase(
+            state.language === 'ru'
+              ? 'ru'
+              : 'en'
+          );
+
+        const visible =
+          records.filter(source => {
+            if (!normalizedQuery) {
+              return true;
+            }
+
+            return [
+              source.title,
+              connectedSourceMeta(
+                source
+              ),
+              source.location,
+              source.notes
+            ]
+              .filter(Boolean)
+              .join(' ')
+              .toLocaleLowerCase(
+                state.language === 'ru'
+                  ? 'ru'
+                  : 'en'
+              )
+              .includes(
+                normalizedQuery
+              );
+          });
+
+        results.innerHTML =
+          visible.length
+            ? visible
+                .map(source => `
+                  <label
+                    class="archive-modal-choice">
+
+                    <input
+                      type="checkbox"
+                      data-target-source-choice
+                      value="${escapeHtml(
+                        source.id
+                      )}"
+                      ${
+                        selected.has(
+                          source.id
+                        )
+                          ? 'checked'
+                          : ''
+                      }>
+
+                    <span
+                      class="archive-modal-choice-copy">
+
+                      <strong>
+                        ${escapeHtml(
+                          source.title
+                          || 'Untitled source'
+                        )}
+                      </strong>
+
+                      <span>
+                        ${escapeHtml(
+                          connectedSourceMeta(
+                            source
+                          )
+                        )}
+                      </span>
+                    </span>
+                  </label>
+                `)
+                .join('')
+            : `
+              <div class="archive-section-empty">
+                No matching sources.
+              </div>
+            `;
+
+        updateCount();
+      };
+
+      modal
+        ?.querySelector(
+          '[data-target-source-search]'
+        )
+        ?.addEventListener(
+          'input',
+          event => {
+            query =
+              event.currentTarget.value;
+
+            renderChoices();
+          }
+        );
+
+      modal?.addEventListener(
+        'change',
+        event => {
+          const input =
+            event.target.closest(
+              '[data-target-source-choice]'
+            );
+
+          if (!input) {
+            return;
+          }
+
+          if (input.checked) {
+            selected.add(
+              input.value
+            );
+          } else {
+            selected.delete(
+              input.value
+            );
+          }
+
+          updateCount();
+        }
+      );
+
+      modal
+        ?.querySelector(
+          '[data-target-source-save]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            const savedIds =
+              setSourceIdsForTarget(
+                targetType,
+                targetId,
+                [...selected],
+                {
+                  projectId
+                }
+              );
+
+            const savedSet =
+              new Set(
+                savedIds || []
+              );
+
+            const savedCorrectly =
+              Array.isArray(savedIds)
+              && savedSet.size
+                === selected.size
+              && [...selected].every(
+                sourceId =>
+                  savedSet.has(
+                    sourceId
+                  )
+              );
+
+            if (!savedCorrectly) {
+              showToast(
+                'Source links could not be updated.'
+              );
+
+              return;
+            }
+
+            closeModal();
+
+            if (
+              typeof afterSave
+                === 'function'
+            ) {
+              afterSave();
+            }
+
+            showToast(
+              'Source links updated.'
+            );
+          }
+        );
+
+      modal
+        ?.querySelector(
+          '[data-target-source-create]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            closeModal();
+
+            openArchiveSourceModal(
+              '',
+              {
+                onCreated:
+                  createdSource => {
+                    const savedIds =
+                      setSourceIdsForTarget(
+                        targetType,
+                        targetId,
+                        [
+                          ...selected,
+                          createdSource.id
+                        ],
+                        {
+                          projectId
+                        }
+                      );
+
+                    if (
+                      !savedIds
+                      || !savedIds.includes(
+                        createdSource.id
+                      )
+                    ) {
+                      showToast(
+                        'Source created, but it could not be linked.'
+                      );
+
+                      return;
+                    }
+
+                    if (
+                      typeof afterSave
+                        === 'function'
+                    ) {
+                      afterSave();
+                    }
+
+                    showToast(
+                      'Source created and linked.'
+                    );
+                  }
+              }
+            );
+          }
+        );
+
+      renderChoices();
+
+      requestAnimationFrame(() => {
+        modal
+          ?.querySelector(
+            '[data-target-source-search]'
+          )
+          ?.focus({
+            preventScroll:
+              true
+          });
+      });
+    }
+
     function removeSourceLinksForSource(
       sourceId
     ) {
@@ -115125,7 +116695,46 @@
               )
             ]
         }),
+        Object.freeze({
+          key:
+            'sourceConnections',
 
+          label:
+            'Connection status',
+
+          control:
+            'select',
+
+          defaultValue:
+            'all',
+
+          options:
+            Object.freeze([
+              Object.freeze({
+                value:
+                  'all',
+
+                label:
+                  'Any connection status'
+              }),
+
+              Object.freeze({
+                value:
+                  'linked',
+
+                label:
+                  'With connections'
+              }),
+
+              Object.freeze({
+                value:
+                  'unlinked',
+
+                label:
+                  'Without connections'
+              })
+            ])
+        }),
         Object.freeze({
           key:
             'sourceFavouriteOnly',
@@ -116958,6 +118567,41 @@
           label: record => record?.name || 'Place',
           meta: record => (record?.alternativeNames || []).slice(0, 2).join(' · ') || 'Place record'
         },
+        photo: {
+          singular:
+            'photo',
+
+          title:
+            'Photos',
+
+          addLabel:
+            'Add photos',
+
+          records:
+            () =>
+              getProjectPhotos(
+                projectId
+              ),
+
+          label:
+            record =>
+              record?.title
+              || record?.filename
+              || 'Untitled photo',
+
+          meta:
+            record =>
+              [
+                formatPhotoDate(
+                  record
+                ),
+
+                record?.filename
+              ]
+                .filter(Boolean)
+                .join(' · ')
+              || 'Photo'
+        },
         source: {
           singular: 'source', title: 'Sources', addLabel: 'Add sources',
           records: archiveProjectSources,
@@ -116986,13 +118630,69 @@
       return configs[type] || null;
     }
 
-    function archiveConnectionRecord(type, id) {
-      if (type === 'person') return getPerson(id);
-      if (type === 'event') return (sampleData.events || []).find(event => event.id === id) || null;
-      if (type === 'note') return typeof getNote === 'function' ? getNote(id, { includeArchived: true }) : (sampleData.notes || []).find(note => note.id === id) || null;
-      if (type === 'place') return getPlace(id);
-      if (type === 'source') return archiveSourceById(id);
-      if (type === 'file') return archiveFileById(id);
+    function archiveConnectionRecord(
+      type,
+      id
+    ) {
+      if (type === 'person') {
+        return getPerson(
+          id
+        );
+      }
+
+      if (type === 'event') {
+        return (
+          sampleData.events || []
+        ).find(event =>
+          event.id === id
+        ) || null;
+      }
+
+      if (type === 'note') {
+        return typeof getNote
+          === 'function'
+            ? getNote(
+                id,
+                {
+                  includeArchived:
+                    true
+                }
+              )
+            : (
+                sampleData.notes || []
+              ).find(note =>
+                note.id === id
+              ) || null;
+      }
+
+      if (type === 'place') {
+        return getPlace(
+          id
+        );
+      }
+
+      if (type === 'photo') {
+        return getPhoto(
+          id,
+          {
+            projectId:
+              currentProjectId()
+          }
+        );
+      }
+
+      if (type === 'source') {
+        return archiveSourceById(
+          id
+        );
+      }
+
+      if (type === 'file') {
+        return archiveFileById(
+          id
+        );
+      }
+
       return null;
     }
 
@@ -118693,13 +120393,96 @@
       );
     }
 
+    function archiveSourceConnectedSearchText(
+      source
+    ) {
+      if (!source) {
+        return '';
+      }
+
+      return sourceLinksForSource(
+        source.id,
+        '',
+        source.projectId
+      )
+        .flatMap(link => {
+          const record =
+            sourceTargetRecord(
+              link.targetType,
+              link.targetId,
+              link.projectId
+            );
+
+          const config =
+            archiveEntityConfig(
+              link.targetType
+            );
+
+          if (!record || !config) {
+            return [];
+          }
+
+          return [
+            config.title,
+            config.singular,
+            config.label(
+              record
+            ),
+            config.meta(
+              record
+            )
+          ];
+        })
+        .filter(Boolean)
+        .join(' ');
+    }
+
+    function archiveSourceSearchText(
+      source
+    ) {
+      return [
+        source?.title,
+
+        sourceCategoryLabel(
+          source?.category,
+          ''
+        ),
+
+        localizedSourceCategoryLabel(
+          source?.category,
+          ''
+        ),
+
+        source?.providedBy,
+        source?.location,
+        source?.reference,
+        source?.url,
+        source?.notes,
+
+        archiveSourceConnectedSearchText(
+          source
+        )
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLocaleLowerCase(
+          state.language === 'ru'
+            ? 'ru'
+            : 'en'
+        );
+    }
+
     function archiveFilteredSources() {
       const query =
         String(
           state.archiveSearch || ''
         )
           .trim()
-          .toLowerCase();
+          .toLocaleLowerCase(
+            state.language === 'ru'
+              ? 'ru'
+              : 'en'
+          );
 
       let sources =
         archiveProjectSources();
@@ -118716,7 +120499,29 @@
                 .archiveSourceCategoryFilter
           );
       }
+      if (
+        state.archiveSourceConnectionFilter
+          === 'linked'
+      ) {
+        sources =
+          sources.filter(source =>
+            archiveSourceConnectionCount(
+              source
+            ) > 0
+          );
+      }
 
+      if (
+        state.archiveSourceConnectionFilter
+          === 'unlinked'
+      ) {
+        sources =
+          sources.filter(source =>
+            archiveSourceConnectionCount(
+              source
+            ) === 0
+          );
+      }
       if (
         state.archiveSourceFavouriteOnly
       ) {
@@ -118729,28 +120534,11 @@
       if (query) {
         sources =
           sources.filter(source =>
-            [
-              source.title,
-
-              sourceCategoryLabel(
-                source.category,
-                ''
-              ),
-
-              localizedSourceCategoryLabel(
-                source.category,
-                ''
-              ),
-
-              source.providedBy,
-              source.location,
-              source.reference,
-              source.notes
-            ]
-              .filter(Boolean)
-              .join(' ')
-              .toLowerCase()
-              .includes(query)
+            archiveSourceSearchText(
+              source
+            ).includes(
+              query
+            )
           );
       }
 
@@ -120974,6 +122762,10 @@
             && state.archiveSourceCategoryFilter
               !== 'all',
 
+          state.archiveSourceConnectionFilter
+            && state.archiveSourceConnectionFilter
+              !== 'all',
+
           state.archiveSourceFavouriteOnly
         ]
           .filter(Boolean)
@@ -121277,10 +123069,13 @@
                 state.archiveSourceCategoryFilter
                 || 'all',
 
+              sourceConnections:
+                state.archiveSourceConnectionFilter
+                || 'all',
+
               sourceFavouriteOnly:
                 Boolean(
-                  state
-                    .archiveSourceFavouriteOnly
+                  state.archiveSourceFavouriteOnly
                 )
             }
           : archiveFileFiltersWithDefaults();
@@ -121329,7 +123124,7 @@
             <p>
               ${
                 sourcesView
-                  ? 'Narrow sources by type or favourite status.'
+                  ? 'Narrow sources by category, connection status, or favourite status.'
                   : 'Filter files across Archive and choose how results are displayed.'
               }
             </p>
@@ -121464,6 +123259,10 @@
                 nextValues.sourceCategory
                 || 'all';
 
+              state.archiveSourceConnectionFilter =
+                nextValues.sourceConnections
+                || 'all';
+
               state.archiveSourceFavouriteOnly =
                 Boolean(
                   nextValues
@@ -121574,7 +123373,26 @@
               )
           });
         }
+        if (
+          state.archiveSourceConnectionFilter
+          && state.archiveSourceConnectionFilter
+            !== 'all'
+        ) {
+          filters.push({
+            key:
+              'sourceConnections',
 
+            label:
+              state.archiveSourceConnectionFilter
+                === 'linked'
+                  ? translateText(
+                      'With connections'
+                    )
+                  : translateText(
+                      'Without connections'
+                    )
+          });
+        }
         if (
           state.archiveSourceFavouriteOnly
         ) {
@@ -121718,7 +123536,19 @@
 
         return;
       }
+      if (
+        key === 'sourceConnections'
+      ) {
+        state.archiveSourceConnectionFilter =
+          'all';
 
+        state.archiveSelectedSourceId =
+          null;
+
+        renderArchive();
+
+        return;
+      }
       if (
         key === 'sourceFavouriteOnly'
       ) {
@@ -121783,10 +123613,10 @@
       ) {
         state.archiveSourceCategoryFilter =
           'all';
-
+        state.archiveSourceConnectionFilter =
+          'all';
         state.archiveSourceFavouriteOnly =
           false;
-
         state.archiveSelectedSourceId =
           null;
       } else {
@@ -124576,6 +126406,11 @@
         ${renderArchiveSourceConnectionSection(
           source,
           'file'
+        )}
+
+        ${renderArchiveSourceConnectionSection(
+          source,
+          'photo'
         )}
 
         ${renderArchiveSourceConnectionSection(
@@ -131166,7 +133001,7 @@
     function openArchiveDeleteSourceConfirm(sourceId) {
       const source = archiveSourceById(sourceId);
       if (!source) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveDeleteSourceTitle"><div class="modal-header"><div><h2 id="archiveDeleteSourceTitle">Delete source permanently?</h2><p>${escapeHtml(source.title)}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-delete-summary"><strong>The Source record cannot be restored.</strong><span>Its connections will be removed. Linked files, People, Events, Notes, and Places will not be deleted.</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-archive-delete-source-confirm>Delete permanently</button></div></div>`);
+      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveDeleteSourceTitle"><div class="modal-header"><div><h2 id="archiveDeleteSourceTitle">Delete source permanently?</h2><p>${escapeHtml(source.title)}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-delete-summary"><strong>The Source record cannot be restored.</strong><span>Its connections will be removed. Linked files, Photos, People, Events, Notes, and Places will not be deleted.</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-archive-delete-source-confirm>Delete permanently</button></div></div>`);
       modalBackdrop.querySelector('[data-archive-delete-source-confirm]')?.addEventListener('click', () => {
         removeSourceLinksForSource(
           source.id
@@ -131609,6 +133444,15 @@
       type,
       id
     ) {
+      if (
+        type === 'photo'
+      ) {
+        openAlbumsForPhoto(
+          id
+        );
+
+        return;
+      }
       if (
         type === 'person'
       ) {
@@ -134389,6 +136233,31 @@
       );
     }
 
+    function noteEntityRecordsForNote(
+      note,
+      type
+    ) {
+      if (
+        !note
+        || !getNoteEntityConfig(type)
+      ) {
+        return [];
+      }
+
+      return noteEntityLinkedIds(
+        note,
+        type
+      )
+        .map(id =>
+          noteEntityById(
+            type,
+            id,
+            note.projectId
+          )
+        )
+        .filter(Boolean);
+    }
+
     function noteEntityRecords(
       type,
       projectId =
@@ -134946,8 +136815,9 @@
       if (
         config
         && id
-        && (
-          note[config.field] || []
+        && noteEntityLinkedIds(
+          note,
+          type
         ).includes(id)
       ) {
         setNotesContext(
@@ -135090,24 +136960,23 @@
     function noteExternalEntityCount(
       note
     ) {
-      return Object
-        .values(
-          NOTE_ENTITY_TYPES
-        )
-        .reduce(
-          (
-            total,
-            config
-          ) =>
-            total
-            + new Set(
-                note?.[
-                  config.field
-                ] || []
-              ).size,
+      return Object.keys(
+        NOTE_ENTITY_TYPES
+      ).reduce(
+        (
+          total,
+          type
+        ) =>
+          total
+          + new Set(
+              noteEntityLinkedIds(
+                note,
+                type
+              )
+            ).size,
 
-          0
-        );
+        0
+      );
     }
 
     function noteLinkedEntityCount(
@@ -136793,25 +138662,25 @@
       }`;
     }
 
-
     function noteEntityCountItems(
       note
     ) {
-      return Object
-        .entries(
-          NOTE_ENTITY_TYPES
-        )
+      return Object.entries(
+        NOTE_ENTITY_TYPES
+      )
         .map(([
           type,
           config
         ]) => ({
           type,
           config,
+
           count:
             new Set(
-              note?.[
-                config.field
-              ] || []
+              noteEntityLinkedIds(
+                note,
+                type
+              )
             ).size
         }))
         .filter(
@@ -139514,25 +141383,10 @@
       }
 
       const records =
-        type === 'photo'
-          ? getPhotosForNote(
-              note.id,
-              {
-                projectId:
-                  note.projectId
-              }
-            )
-          : (
-              note[config.field] || []
-            )
-              .map(id =>
-                noteEntityById(
-                  type,
-                  id,
-                  note.projectId
-                )
-              )
-              .filter(Boolean);
+        noteEntityRecordsForNote(
+          note,
+          type
+        );
 
       const countLabel =
         `${records.length} ${
@@ -147050,7 +148904,10 @@
 
       const selected =
         new Set(
-          note[config.field] || []
+          noteEntityLinkedIds(
+            note,
+            type
+          )
         );
 
       const records =
@@ -149311,10 +151168,6 @@
             ...note.linkedPhotoIds
           ],
 
-          linkedSourceIds: [
-            ...note.linkedSourceIds
-          ],
-
           linkedArchiveFileIds: [
             ...note.linkedArchiveFileIds
           ],
@@ -150205,9 +152058,9 @@
               setNoteEntityLinks(
                 note.id,
                 type,
-                (
-                  note[config.field]
-                  || []
+                noteEntityLinkedIds(
+                  note,
+                  type
                 ).filter(
                   linkedId =>
                     linkedId !== id
@@ -150314,27 +152167,26 @@
           .join(' ');
 
       const linkedText =
-        Object.entries(
+        Object.keys(
           NOTE_ENTITY_TYPES
         )
-          .flatMap(([
-            type,
-            config
-          ]) =>
-            (note[config.field] || [])
-              .map(id =>
-                noteEntityById(
-                  type,
-                  id,
-                  note.projectId
-                )
+          .flatMap(type =>
+            noteEntityRecordsForNote(
+              note,
+              type
+            ).flatMap(record => [
+              noteEntityLabel(
+                type,
+                record
+              ),
+
+              noteEntityMeta(
+                type,
+                record
               )
-              .filter(Boolean)
-              .flatMap(record => [
-                config.label(record),
-                config.meta(record)
-              ])
+            ])
           )
+          .filter(Boolean)
           .join(' ');
 
       const relatedText =
@@ -156142,7 +157994,8 @@
         events: true,
         photos: false,
         files: false,
-        notes: false
+        notes: false,
+        sources: false
       };
 
       state.placesInspectorSections = {
@@ -157120,7 +158973,8 @@
       key,
       title,
       countLabel = '',
-      content
+      content,
+      actionHtml = ''
     }) {
       const open =
         placesInspectorSectionIsOpen(
@@ -157131,13 +158985,18 @@
         <details
           class="
             places-inspector-section
+            ${
+              actionHtml
+                ? 'has-action'
+                : ''
+            }
           "
-          id="placeInspectorSection-${
-            escapeHtml(key)
-          }"
-          data-place-inspector-section="${
-            escapeHtml(key)
-          }"
+          id="placeInspectorSection-${escapeHtml(
+            key
+          )}"
+          data-place-inspector-section="${escapeHtml(
+            key
+          )}"
           ${open ? 'open' : ''}>
 
           <summary>
@@ -157174,6 +159033,19 @@
               </span>
             </span>
           </summary>
+
+          ${
+            actionHtml
+              ? `
+                <div
+                  class="
+                    places-inspector-section-action
+                  ">
+                  ${actionHtml}
+                </div>
+              `
+              : ''
+          }
 
           <div
             class="
@@ -157360,6 +159232,13 @@
           place.id
         );
 
+      const sources =
+        sourcesForTarget(
+          'place',
+          place.id,
+          place.projectId
+        );
+
       const alternatives =
         placeAlternativeNames(
           place
@@ -157429,6 +159308,19 @@
             placeInspectorCountLabel(
               notes.length,
               'note'
+            )
+        },
+        {
+          key:
+            'sources',
+
+          target:
+            'sources',
+
+          label:
+            placeInspectorCountLabel(
+              sources.length,
+              'source'
             )
         }
       ];
@@ -157698,6 +159590,52 @@
                 notes
               )
           })}
+          ${renderPlaceInspectorSection({
+            key:
+              'sources',
+
+            title:
+              'Sources',
+
+            countLabel:
+              placeInspectorCountLabel(
+                sources.length,
+                'source'
+              ),
+
+            actionHtml:
+              `
+                <button
+                  class="link"
+                  type="button"
+                  data-place-manage-sources="${escapeHtml(
+                    place.id
+                  )}">
+
+                  ${renderPanelButtonLabel(
+                    icon.plus,
+                    'Add source'
+                  )}
+                </button>
+              `,
+
+            content:
+              renderConnectedSourceList({
+                targetType:
+                  'place',
+
+                targetId:
+                  place.id,
+
+                projectId:
+                  place.projectId,
+
+                sources,
+
+                emptyText:
+                  'No sources linked to this place.'
+              })
+          })}
         </div>
       `;
     }
@@ -157729,6 +159667,85 @@
             }
         }
       );
+      bindConnectedSourceLinks(
+        root,
+        {
+          onUnlinked:
+            ({
+              targetType
+            }) => {
+              if (
+                targetType !== 'place'
+              ) {
+                return;
+              }
+
+              placesInspectorSectionState()
+                .sources = true;
+
+              rerenderPlacesInspector({
+                preserveScroll:
+                  true
+              });
+            }
+        }
+      );
+
+      root
+        .querySelector(
+          '[data-place-manage-sources]'
+        )
+        ?.addEventListener(
+          'click',
+          event => {
+            const placeId =
+              event.currentTarget
+                .dataset
+                .placeManageSources;
+
+            const place =
+              getPlace(
+                placeId
+              );
+
+            if (!place) {
+              return;
+            }
+
+            openSourcesForTargetModal({
+              targetType:
+                'place',
+
+              targetId:
+                place.id,
+
+              projectId:
+                place.projectId,
+
+              title:
+                'Manage sources',
+
+              subtitle:
+                `Sources connected to ${
+                  placePrimaryName(
+                    place
+                  )
+                  || place.name
+                }.`,
+
+              afterSave:
+                () => {
+                  placesInspectorSectionState()
+                    .sources = true;
+
+                  rerenderPlacesInspector({
+                    preserveScroll:
+                      true
+                  });
+                }
+            });
+          }
+        );
       root
         .querySelector(
           '[data-places-inspector-toggle]'
@@ -161222,7 +163239,7 @@
         [sampleData.media, sampleData.archiveFiles, sampleData.sources, sampleData.notes].forEach(records => (records || []).forEach(record => clearStructuredPlaceReferences(record, place.id)));
         sampleData.links = sampleData.links.filter(link => !placeLinkMatches(link, place.id));
         sampleData.events =
-          buildSampleEvents();
+          rebuildSampleEventsAndPruneSourceLinks();
 
         state.selectedPlaceId =
           projectPlaces()
@@ -162391,6 +164408,7 @@
       state.archiveFilterPresentation = 'flat';
       state.archiveFilterScopeFolderId = null;
       state.archiveSourceCategoryFilter = 'all';
+      state.archiveSourceConnectionFilter = 'all';
       state.archiveSourceFavouriteOnly = false;
       state.archiveFileEditing = false;
       state.archiveFileEditOriginal = null;
@@ -163133,6 +165151,7 @@
         'archiveFolders',
         'archiveFiles',
         'sources',
+        'sourceLinks',
         'archiveImports',
         'archiveIssues',
         'noteCollections',
@@ -163158,7 +165177,7 @@
       deletedBoardIds.forEach(boardId => {
         delete state.geneoBoardViewports[boardId];
       });
-      sampleData.events = buildSampleEvents();
+      rebuildSampleEventsAndPruneSourceLinks();
       closeModal({ force: true });
 
       state.currentProjectId = null;
@@ -165488,6 +167507,7 @@
         'linkedPeople',
         'linkedPlaces',
         'linkedSources',
+        'linkedSourceIds',
         'created',
         'updated',
         'sortRank',
@@ -165659,8 +167679,7 @@
       normalizePlaceIssueDismissals();
       normalizeEventPlaceAddresses();
       normalizeSampleGenealogyDates();
-      sampleData.events = buildSampleEvents();
-      pruneInvalidSourceLinks();
+      rebuildSampleEventsAndPruneSourceLinks();
       validateSampleData();
     }
 
