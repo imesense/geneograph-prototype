@@ -23722,7 +23722,7 @@
       font-size: 11px;
     }
 
-    .archive-source-type-chip,
+    .archive-source-category-chip,
     .archive-count-chip {
       display: inline-flex;
       align-items: center;
@@ -34436,11 +34436,14 @@
       'Unlinked files':
         'Несвязанные файлы',
 
-      'Source type':
-        'Тип источника',
+      'Source category':
+        'Категория источника',
 
-      'All source types':
-        'Все типы источников',
+      'All source categories':
+        'Все категории источников',
+
+      'Favourite sources only':
+        'Только избранные источники',
 
       'Favourite sources':
         'Избранные источники',
@@ -34467,8 +34470,8 @@
       'All sources':
         'Все источники',
 
-      'Source types':
-        'Типы источников',
+      'Source categories':
+        'Категории источников',
 
       'No sources found':
         'Источники не найдены',
@@ -34492,23 +34495,35 @@
       // Source taxonomy
       // ========================================
 
-      'Archive or repository':
-        'Архив или хранилище',
+      'Archive, library, or institution':
+        'Архив, библиотека или учреждение',
 
-      'Website or database':
-        'Веб-сайт или база данных',
+      'Website or online database':
+        'Веб-сайт или онлайн-база данных',
 
-      'Book or publication':
-        'Книга или публикация',
+      'Book, newspaper, or publication':
+        'Книга, газета или публикация',
 
-      'Register or record collection':
-        'Реестр или коллекция записей',
+      'Person, interview, or correspondence':
+        'Человек, интервью или переписка',
 
-      'Interview or correspondence':
-        'Интервью или переписка',
+      'Family or personal collection':
+        'Семейная или личная коллекция',
 
-      'Family collection':
-        'Семейная коллекция',
+      'Other source':
+        'Другой источник',
+
+      'Category':
+        'Категория',
+
+      'Choose category':
+        'Выберите категорию',
+
+      'Not categorized':
+        'Без категории',
+
+      'Obtained from':
+        'Получено от',
 
       // ========================================
       // Archive inspector
@@ -46825,7 +46840,8 @@
         'activity'
       ].forEach(seen);
 
-      const legacySourceFields = [
+      const forbiddenSourceFields = [
+        'type',
         'repositoryOwner',
         'holder',
         'description',
@@ -46850,7 +46866,22 @@
           );
         }
 
-        legacySourceFields.forEach(
+        if (
+          source.category
+          && !SOURCE_CATEGORY_BY_VALUE.has(
+            source.category
+          )
+        ) {
+          warn(
+            `Source ${
+              source.id
+            } has invalid category ${
+              source.category
+            }`
+          );
+        }
+
+        forbiddenSourceFields.forEach(
           field => {
             if (
               Object.prototype
@@ -46861,7 +46892,11 @@
                 )
             ) {
               warn(
-                `Source ${source.id} still contains legacy field ${field}`
+                `Source ${
+                  source.id
+                } contains obsolete field ${
+                  field
+                }`
               );
             }
           }
@@ -47533,7 +47568,8 @@
       },
       archiveFilterPresentation: 'flat',
       archiveFilterScopeFolderId: null,
-      archiveSourceTypeFilter: 'all',
+      archiveSourceCategoryFilter: 'all',
+      archiveSourceFavouriteOnly: false,
       archiveInspectorCollapsed: false,
       archiveFileEditing: false,
       archiveFileEditOriginal: null,
@@ -112609,15 +112645,93 @@
       { id: 'inbox', projectId: 'p1', parentId: 'null', name: 'Unfiled', createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-01T10:00:00Z' }
     ];
 
-    const ARCHIVE_SOURCE_TYPES = [
-      'Archive or repository',
-      'Website or database',
-      'Book or publication',
-      'Register or record collection',
-      'Interview or correspondence',
-      'Family collection',
-      'Other'
-    ];
+    const SOURCE_CATEGORIES =
+      Object.freeze([
+        Object.freeze({
+          value:
+            'institution',
+
+          label:
+            'Archive, library, or institution'
+        }),
+
+        Object.freeze({
+          value:
+            'online',
+
+          label:
+            'Website or online database'
+        }),
+
+        Object.freeze({
+          value:
+            'publication',
+
+          label:
+            'Book, newspaper, or publication'
+        }),
+
+        Object.freeze({
+          value:
+            'person',
+
+          label:
+            'Person, interview, or correspondence'
+        }),
+
+        Object.freeze({
+          value:
+            'private-collection',
+
+          label:
+            'Family or personal collection'
+        }),
+
+        Object.freeze({
+          value:
+            'other',
+
+          label:
+            'Other source'
+        })
+      ]);
+
+    const SOURCE_CATEGORY_BY_VALUE =
+      new Map(
+        SOURCE_CATEGORIES.map(
+          category => [
+            category.value,
+            category
+          ]
+        )
+      );
+
+    function sourceCategoryLabel(
+      value,
+      fallback =
+        'Not categorized'
+    ) {
+      return SOURCE_CATEGORY_BY_VALUE
+        .get(value)
+        ?.label
+        || fallback;
+    }
+
+    function localizedSourceCategoryLabel(
+      value,
+      fallback =
+        'Not categorized'
+    ) {
+      const label =
+        sourceCategoryLabel(
+          value,
+          fallback
+        );
+
+      return label
+        ? translateText(label)
+        : '';
+    }
 
     sampleData.sources = [
       {
@@ -112630,8 +112744,8 @@
         title:
           'Pawford County Archive — parish and household registers',
 
-        type:
-          'Archive or repository',
+        category:
+          'institution',
 
         providedBy:
           'Pawford County Archive',
@@ -112671,8 +112785,8 @@
         title:
           'Pawford household register continuation, 1947–1952',
 
-        type:
-          'Register or record collection',
+        category:
+          'institution',
 
         providedBy:
           'Pawford County Archive',
@@ -112712,8 +112826,8 @@
         title:
           'Meowbridge marriage certificate held in family documents',
 
-        type:
-          'Family collection',
+        category:
+          'private-collection',
 
         providedBy:
           'Whiskerfield family documents',
@@ -112753,8 +112867,8 @@
         title:
           'Interview with Luna Purrington, 2 April 2026',
 
-        type:
-          'Interview or correspondence',
+        category:
+          'person',
 
         providedBy:
           'Luna Purrington',
@@ -112794,8 +112908,8 @@
         title:
           'Whiskerfield family reference collection',
 
-        type:
-          'Family collection',
+        category:
+          'private-collection',
 
         providedBy:
           'Silver Whiskerfield',
@@ -112835,8 +112949,8 @@
         title:
           'Regional genealogy database — Pawford records',
 
-        type:
-          'Website or database',
+        category:
+          'online',
 
         providedBy:
           'Regional genealogy database',
@@ -114276,10 +114390,10 @@
       Object.freeze([
         Object.freeze({
           key:
-            'sourceType',
+            'sourceCategory',
 
           label:
-            'Source type',
+            'Source category',
 
           control:
             'select',
@@ -114294,27 +114408,36 @@
                   'all',
 
                 label:
-                  'All source types'
+                  'All source categories'
               },
 
-              {
-                value:
-                  'favorites',
-
-                label:
-                  'Favourite sources'
-              },
-
-              ...ARCHIVE_SOURCE_TYPES.map(
-                type => ({
+              ...SOURCE_CATEGORIES.map(
+                category => ({
                   value:
-                    type,
+                    category.value,
 
                   label:
-                    type
+                    category.label
                 })
               )
             ]
+        }),
+
+        Object.freeze({
+          key:
+            'sourceFavouriteOnly',
+
+          label:
+            'Favourites',
+
+          control:
+            'boolean',
+
+          defaultValue:
+            false,
+
+          checkboxLabel:
+            'Favourite sources only'
         })
       ]);
 
@@ -116139,7 +116262,11 @@
           meta:
             record =>
               [
-                record?.type,
+                localizedSourceCategoryLabel(
+                  record?.category,
+                  ''
+                ),
+
                 record?.providedBy
               ]
                 .filter(Boolean)
@@ -117875,22 +118002,24 @@
         archiveProjectSources();
 
       if (
-        state.archiveSourceTypeFilter
-          === 'favorites'
-      ) {
-        sources =
-          sources.filter(source =>
-            source.favorite
-          );
-      } else if (
-        state.archiveSourceTypeFilter
-        && state.archiveSourceTypeFilter
+        state.archiveSourceCategoryFilter
+        && state.archiveSourceCategoryFilter
           !== 'all'
       ) {
         sources =
           sources.filter(source =>
-            source.type
-              === state.archiveSourceTypeFilter
+            source.category
+              === state
+                .archiveSourceCategoryFilter
+          );
+      }
+
+      if (
+        state.archiveSourceFavouriteOnly
+      ) {
+        sources =
+          sources.filter(source =>
+            source.favorite
           );
       }
 
@@ -117899,52 +118028,76 @@
           sources.filter(source =>
             [
               source.title,
-              source.type,
+
+              sourceCategoryLabel(
+                source.category,
+                ''
+              ),
+
+              localizedSourceCategoryLabel(
+                source.category,
+                ''
+              ),
+
               source.providedBy,
               source.location,
               source.reference,
               source.notes
             ]
+              .filter(Boolean)
               .join(' ')
               .toLowerCase()
               .includes(query)
           );
       }
 
-      return appSortRecords(sources, {
-        field:
-          state.archiveSourceSort,
+      return appSortRecords(
+        sources,
+        {
+          field:
+            state.archiveSourceSort,
 
-        direction:
-          state.archiveSourceSortDirection,
+          direction:
+            state.archiveSourceSortDirection,
 
-        extractors: {
-          name: {
-            type: 'text',
-            get: source =>
+          extractors: {
+            name: {
+              type:
+                'text',
+
+              get:
+                source =>
+                  source.title
+            },
+
+            updated: {
+              type:
+                'number',
+
+              get:
+                source =>
+                  appSortTimestamp(
+                    source.updatedAt
+                  )
+            },
+
+            created: {
+              type:
+                'number',
+
+              get:
+                source =>
+                  appSortTimestamp(
+                    source.createdAt
+                  )
+            }
+          },
+
+          getFallback:
+            source =>
               source.title
-          },
-
-          updated: {
-            type: 'number',
-            get: source =>
-              appSortTimestamp(
-                source.updatedAt
-              )
-          },
-
-          created: {
-            type: 'number',
-            get: source =>
-              appSortTimestamp(
-                source.createdAt
-              )
-          }
-        },
-
-        getFallback:
-          source => source.title
-      });
+        }
+      );
     }
 
     function ensureArchiveSelection() {
@@ -118238,16 +118391,105 @@
     }
 
     function renderArchiveSourceFilters() {
-      const sources = archiveProjectSources();
-      const countFor = value => value === 'all' ? sources.length : value === 'favorites' ? sources.filter(source => source.favorite).length : sources.filter(source => source.type === value).length;
-      const button = (value, label) => `<button class="archive-source-filter ${state.archiveSourceTypeFilter === value ? 'active' : ''}" type="button" data-archive-source-filter="${escapeHtml(value)}"><span>${escapeHtml(label)}</span><span>${countFor(value)}</span></button>`;
+      const sources =
+        archiveProjectSources();
+
+      const categoryCount =
+        value =>
+          sources.filter(source =>
+            source.category === value
+          ).length;
+
+      const button = ({
+        value,
+        label,
+        count,
+        active
+      }) => `
+        <button
+          class="
+            archive-source-filter
+            ${active ? 'active' : ''}
+          "
+          type="button"
+          data-archive-source-filter="${escapeHtml(value)}">
+
+          <span>
+            ${escapeHtml(label)}
+          </span>
+
+          <span>
+            ${count}
+          </span>
+        </button>
+      `;
+
       return `
         <div class="archive-source-filter-list">
-          ${button('all', 'All sources')}
-          ${button('favorites', 'Favourites')}
+          ${button({
+            value:
+              'all',
+
+            label:
+              'All sources',
+
+            count:
+              sources.length,
+
+            active:
+              state.archiveSourceCategoryFilter
+                === 'all'
+              && !state
+                .archiveSourceFavouriteOnly
+          })}
+
+          ${button({
+            value:
+              'favorites',
+
+            label:
+              'Favourites',
+
+            count:
+              sources.filter(source =>
+                source.favorite
+              ).length,
+
+            active:
+              state
+                .archiveSourceFavouriteOnly
+          })}
         </div>
-        <div class="side-section-title" style="margin-top:var(--space-5)">Source types</div>
-        <div class="archive-source-filter-list">${ARCHIVE_SOURCE_TYPES.map(type => button(type, type)).join('')}</div>`;
+
+        <div
+          class="side-section-title"
+          style="margin-top:var(--space-5)">
+          Source categories
+        </div>
+
+        <div class="archive-source-filter-list">
+          ${SOURCE_CATEGORIES.map(
+            category =>
+              button({
+                value:
+                  category.value,
+
+                label:
+                  category.label,
+
+                count:
+                  categoryCount(
+                    category.value
+                  ),
+
+                active:
+                  state
+                    .archiveSourceCategoryFilter
+                    === category.value
+              })
+          ).join('')}
+        </div>
+      `;
     }
 
     function openArchiveCreateFolderFromTrigger(
@@ -118444,9 +118686,34 @@
           button.addEventListener(
             'click',
             () => {
-              state.archiveSourceTypeFilter =
+              const value =
                 button.dataset
                   .archiveSourceFilter;
+
+              if (value === 'all') {
+                state
+                  .archiveSourceCategoryFilter =
+                    'all';
+
+                state
+                  .archiveSourceFavouriteOnly =
+                    false;
+              } else if (
+                value === 'favorites'
+              ) {
+                state
+                  .archiveSourceFavouriteOnly =
+                    !state
+                      .archiveSourceFavouriteOnly;
+              } else if (
+                SOURCE_CATEGORY_BY_VALUE.has(
+                  value
+                )
+              ) {
+                state
+                  .archiveSourceCategoryFilter =
+                    value;
+              }
 
               state.archiveSelectedSourceId =
                 null;
@@ -119985,11 +120252,15 @@
       if (
         archiveToolbarIsSources()
       ) {
-        return state.archiveSourceTypeFilter
-          && state.archiveSourceTypeFilter
-            !== 'all'
-            ? 1
-            : 0;
+        return [
+          state.archiveSourceCategoryFilter
+            && state.archiveSourceCategoryFilter
+              !== 'all',
+
+          state.archiveSourceFavouriteOnly
+        ]
+          .filter(Boolean)
+          .length;
       }
 
       return [
@@ -120285,9 +120556,15 @@
       const values =
         sourcesView
           ? {
-              sourceType:
-                state.archiveSourceTypeFilter
-                || 'all'
+              sourceCategory:
+                state.archiveSourceCategoryFilter
+                || 'all',
+
+              sourceFavouriteOnly:
+                Boolean(
+                  state
+                    .archiveSourceFavouriteOnly
+                )
             }
           : archiveFileFiltersWithDefaults();
 
@@ -120466,9 +120743,15 @@
               || values;
 
             if (sourcesView) {
-              state.archiveSourceTypeFilter =
-                nextValues.sourceType
+              state.archiveSourceCategoryFilter =
+                nextValues.sourceCategory
                 || 'all';
+
+              state.archiveSourceFavouriteOnly =
+                Boolean(
+                  nextValues
+                    .sourceFavouriteOnly
+                );
 
               state.archiveSelectedSourceId =
                 null;
@@ -120555,27 +120838,41 @@
       if (
         archiveToolbarIsSources()
       ) {
-        if (
-          !state.archiveSourceTypeFilter
-          || state.archiveSourceTypeFilter
-            === 'all'
-        ) {
-          return [];
-        }
+        const filters =
+          [];
 
-        return [
-          {
+        if (
+          state.archiveSourceCategoryFilter
+          && state.archiveSourceCategoryFilter
+            !== 'all'
+        ) {
+          filters.push({
             key:
-              'sourceType',
+              'sourceCategory',
 
             label:
-              state.archiveSourceTypeFilter
-                === 'favorites'
-                  ? 'Favourite sources'
-                  : state
-                      .archiveSourceTypeFilter
-          }
-        ];
+              localizedSourceCategoryLabel(
+                state
+                  .archiveSourceCategoryFilter
+              )
+          });
+        }
+
+        if (
+          state.archiveSourceFavouriteOnly
+        ) {
+          filters.push({
+            key:
+              'sourceFavouriteOnly',
+
+            label:
+              translateText(
+                'Favourite sources'
+              )
+          });
+        }
+
+        return filters;
       }
 
       const filters =
@@ -120691,14 +120988,31 @@
     function removeArchiveToolbarFilter(
       key
     ) {
-      if (key === 'sourceType') {
-        state.archiveSourceTypeFilter =
+      if (
+        key === 'sourceCategory'
+      ) {
+        state.archiveSourceCategoryFilter =
           'all';
 
         state.archiveSelectedSourceId =
           null;
 
         renderArchive();
+
+        return;
+      }
+
+      if (
+        key === 'sourceFavouriteOnly'
+      ) {
+        state.archiveSourceFavouriteOnly =
+          false;
+
+        state.archiveSelectedSourceId =
+          null;
+
+        renderArchive();
+
         return;
       }
 
@@ -120750,8 +121064,11 @@
       if (
         archiveToolbarIsSources()
       ) {
-        state.archiveSourceTypeFilter =
+        state.archiveSourceCategoryFilter =
           'all';
+
+        state.archiveSourceFavouriteOnly =
+          false;
 
         state.archiveSelectedSourceId =
           null;
@@ -120812,19 +121129,141 @@
       );
     }
 
-    function renderArchiveSourceTable(sources) {
-      return `<div class="archive-table-wrap"><table class="archive-table"><thead><tr>
-        <th class="archive-col-name">Source</th><th class="archive-col-type">Type</th><th style="width:90px">Files</th><th style="width:128px">Linked records</th><th class="archive-col-modified">Updated</th><th class="archive-col-favorite" aria-label="Favourite">${icon.star}</th><th class="archive-col-actions"></th>
-      </tr></thead><tbody>${sources.map(source => `<tr class="${state.archiveSelectedSourceId === source.id ? 'selected' : ''}" data-archive-source-row="${escapeHtml(source.id)}" tabindex="0">
-        <td><div class="archive-source-title-cell"><strong title="${escapeHtml(source.title)}">${escapeHtml(source.title)}</strong><span>${escapeHtml(
-          source.providedBy || source.reference || 'Source record'
-        )}</span></div></td>
-        <td><span class="archive-source-type-chip">${escapeHtml(source.type || 'Other')}</span></td><td>${archiveFilesForSource(source.id).length}</td><td>${archiveSourceLinkedRecordCount(source)}</td><td>${escapeHtml(
-          archiveFormatDate(source.updatedAt)
-          )}</td>
-        <td style="text-align:center"><button class="archive-row-icon-button ${source.favorite ? 'active' : ''}" type="button" data-archive-source-favorite="${escapeHtml(source.id)}" aria-label="${source.favorite ? 'Remove source from favourites' : 'Add source to favourites'}">${icon.star}</button></td>
-        <td><button class="archive-row-icon-button" type="button" data-archive-row-actions="source" data-archive-row-id="${escapeHtml(source.id)}" aria-label="Source actions">${icon.more}</button></td>
-      </tr>`).join('')}</tbody></table></div>`;
+    function renderArchiveSourceTable(
+      sources
+    ) {
+      return `
+        <div class="archive-table-wrap">
+          <table class="archive-table">
+            <thead>
+              <tr>
+                <th class="archive-col-name">
+                  Source
+                </th>
+
+                <th class="archive-col-type">
+                  Category
+                </th>
+
+                <th style="width:90px">
+                  Files
+                </th>
+
+                <th style="width:128px">
+                  Linked records
+                </th>
+
+                <th class="archive-col-modified">
+                  Updated
+                </th>
+
+                <th
+                  class="archive-col-favorite"
+                  aria-label="Favourite">
+                  ${icon.star}
+                </th>
+
+                <th class="archive-col-actions">
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              ${sources.map(source => `
+                <tr
+                  class="${
+                    state.archiveSelectedSourceId
+                      === source.id
+                        ? 'selected'
+                        : ''
+                  }"
+                  data-archive-source-row="${escapeHtml(source.id)}"
+                  tabindex="0">
+
+                  <td>
+                    <div class="archive-source-title-cell">
+                      <strong
+                        title="${escapeHtml(source.title)}">
+                        ${escapeHtml(source.title)}
+                      </strong>
+
+                      <span>
+                        ${escapeHtml(
+                          source.providedBy
+                          || source.reference
+                          || 'Source record'
+                        )}
+                      </span>
+                    </div>
+                  </td>
+
+                  <td>
+                    <span class="archive-source-category-chip">
+                      ${escapeHtml(
+                        localizedSourceCategoryLabel(
+                          source.category
+                        )
+                      )}
+                    </span>
+                  </td>
+
+                  <td>
+                    ${
+                      archiveFilesForSource(
+                        source.id
+                      ).length
+                    }
+                  </td>
+
+                  <td>
+                    ${
+                      archiveSourceLinkedRecordCount(
+                        source
+                      )
+                    }
+                  </td>
+
+                  <td>
+                    ${escapeHtml(
+                      archiveFormatDate(
+                        source.updatedAt
+                      )
+                    )}
+                  </td>
+
+                  <td style="text-align:center">
+                    <button
+                      class="
+                        archive-row-icon-button
+                        ${source.favorite ? 'active' : ''}
+                      "
+                      type="button"
+                      data-archive-source-favorite="${escapeHtml(source.id)}"
+                      aria-label="${
+                        source.favorite
+                          ? 'Remove source from favourites'
+                          : 'Add source to favourites'
+                      }">
+                      ${icon.star}
+                    </button>
+                  </td>
+
+                  <td>
+                    <button
+                      class="archive-row-icon-button"
+                      type="button"
+                      data-archive-row-actions="source"
+                      data-archive-row-id="${escapeHtml(source.id)}"
+                      aria-label="Source actions">
+                      ${icon.more}
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
     }
 
     function renderArchiveSourcesView() {
@@ -122961,74 +123400,201 @@
     }
 
     function renderArchiveSourceInspector() {
-      const source = archiveSourceById(state.archiveSelectedSourceId) || archiveFilteredSources()[0] || null;
-      if (!source) 
-      return renderArchiveInspectorShell({
-        title:
-          'Sources',
+      const source =
+        archiveSourceById(
+          state.archiveSelectedSourceId
+        )
+        || archiveFilteredSources()[0]
+        || null;
 
-        subtitle:
-          'No source selected',
-        content:
-          renderInspectorSectionEmpty(
-            'Select or create a source record.'
-          )
-      });
-      const body = `<div class="archive-preview"><div class="archive-preview-content">${icon.archive}<strong>${escapeHtml(source.type || 'Source')}</strong><span>${escapeHtml(
-        source.providedBy || source.reference || 'Genealogy source record')}</span></div></div>
-        <div class="archive-inspector-primary-actions"><button class="button secondary" type="button" data-archive-edit-source="${escapeHtml(source.id)}">Edit source</button><button class="archive-row-icon-button ${source.favorite ? 'active' : ''}" type="button" data-archive-source-favorite="${escapeHtml(source.id)}" aria-label="Toggle source favourite">${icon.star}</button></div>
-        <section class="archive-inspector-section"><div class="archive-inspector-section-head"><strong>Source details</strong></div><div class="archive-inspector-section-body"><div class="archive-kv-list">
-          <div class="archive-kv">
-            <span>Type</span>
-            <span>${escapeHtml(source.type || 'Other')}</span>
+      if (!source) {
+        return renderArchiveInspectorShell({
+          title:
+            'Sources',
+
+          subtitle:
+            'No source selected',
+
+          content:
+            renderInspectorSectionEmpty(
+              'Select or create a source record.'
+            )
+        });
+      }
+
+      const categoryLabel =
+        localizedSourceCategoryLabel(
+          source.category
+        );
+
+      const body = `
+        <div class="archive-preview">
+          <div class="archive-preview-content">
+            ${icon.archive}
+
+            <strong>
+              ${escapeHtml(categoryLabel)}
+            </strong>
+
+            <span>
+              ${escapeHtml(
+                source.providedBy
+                || source.reference
+                || 'Genealogy source record'
+              )}
+            </span>
+          </div>
+        </div>
+
+        <div class="archive-inspector-primary-actions">
+          <button
+            class="button secondary"
+            type="button"
+            data-archive-edit-source="${escapeHtml(source.id)}">
+            Edit source
+          </button>
+
+          <button
+            class="
+              archive-row-icon-button
+              ${source.favorite ? 'active' : ''}
+            "
+            type="button"
+            data-archive-source-favorite="${escapeHtml(source.id)}"
+            aria-label="Toggle source favourite">
+            ${icon.star}
+          </button>
+        </div>
+
+        <section class="archive-inspector-section">
+          <div class="archive-inspector-section-head">
+            <strong>Source details</strong>
           </div>
 
-          <div class="archive-kv">
-            <span>Obtained from</span>
-            <span>${escapeHtml(source.providedBy || 'Not specified')}</span>
-          </div>
+          <div class="archive-inspector-section-body">
+            <div class="archive-kv-list">
+              <div class="archive-kv">
+                <span>Category</span>
+                <span>${escapeHtml(categoryLabel)}</span>
+              </div>
 
-          <div class="archive-kv">
-            <span>Location</span>
-            <span>${escapeHtml(source.location || 'Not specified')}</span>
-          </div>
+              <div class="archive-kv">
+                <span>Obtained from</span>
+                <span>
+                  ${escapeHtml(
+                    source.providedBy
+                    || 'Not specified'
+                  )}
+                </span>
+              </div>
 
-          <div class="archive-kv">
-            <span>Where can it be found?</span>
-            <span>${escapeHtml(source.reference || 'Not specified')}</span>
-          </div>
+              <div class="archive-kv">
+                <span>Location</span>
+                <span>
+                  ${escapeHtml(
+                    source.location
+                    || 'Not specified'
+                  )}
+                </span>
+              </div>
 
-          <div class="archive-kv">
-            <span>Website or link</span>
-            <span>${escapeHtml(source.url || 'Not specified')}</span>
-          </div>
+              <div class="archive-kv">
+                <span>Where can it be found?</span>
+                <span>
+                  ${escapeHtml(
+                    source.reference
+                    || 'Not specified'
+                  )}
+                </span>
+              </div>
 
-          <div class="archive-kv">
-            <span>Date accessed or received</span>
-            <span>${
-              escapeHtml(
-                source.accessedDate
-                  ? archiveFormatDate(
+              <div class="archive-kv">
+                <span>Website or link</span>
+                <span>
+                  ${escapeHtml(
+                    source.url
+                    || 'Not specified'
+                  )}
+                </span>
+              </div>
+
+              <div class="archive-kv">
+                <span>Date accessed or received</span>
+                <span>
+                  ${
+                    escapeHtml(
                       source.accessedDate
+                        ? archiveFormatDate(
+                            source.accessedDate
+                          )
+                        : 'Not specified'
                     )
-                  : 'Not specified'
-              )
-            }</span>
+                  }
+                </span>
+              </div>
+            </div>
+
+            ${
+              source.notes
+                ? `
+                  <p
+                    style="
+                      margin:var(--space-3) 0 0;
+                      color:var(--text-secondary);
+                      line-height:1.5;
+                    ">
+                    ${escapeHtml(source.notes)}
+                  </p>
+                `
+                : ''
+            }
           </div>
-        </div>${source.notes ? `<p style="margin:var(--space-3) 0 0;color:var(--text-secondary);line-height:1.5">${escapeHtml(source.notes)}</p>` : ''}</div></section>
-        ${renderArchiveConnectionSection('source', source.id, 'file')}
-        ${renderArchiveConnectionSection('source', source.id, 'person')}
-        ${renderArchiveConnectionSection('source', source.id, 'event')}
-        ${renderArchiveConnectionSection('source', source.id, 'note')}
-        ${renderArchiveConnectionSection('source', source.id, 'place')}
-        <button class="button danger full" type="button" data-archive-delete-source="${escapeHtml(source.id)}">Delete source permanently</button>`;
+        </section>
+
+        ${renderArchiveConnectionSection(
+          'source',
+          source.id,
+          'file'
+        )}
+
+        ${renderArchiveConnectionSection(
+          'source',
+          source.id,
+          'person'
+        )}
+
+        ${renderArchiveConnectionSection(
+          'source',
+          source.id,
+          'event'
+        )}
+
+        ${renderArchiveConnectionSection(
+          'source',
+          source.id,
+          'note'
+        )}
+
+        ${renderArchiveConnectionSection(
+          'source',
+          source.id,
+          'place'
+        )}
+
+        <button
+          class="button danger full"
+          type="button"
+          data-archive-delete-source="${escapeHtml(source.id)}">
+          Delete source permanently
+        </button>
+      `;
+
       return renderArchiveInspectorShell({
         title:
           source.title,
 
         subtitle:
-          source.type
-          || 'Source',
+          categoryLabel,
 
         content:
           body
@@ -124721,17 +125287,18 @@
           source
         );
 
-      const typeOptions =
-        ARCHIVE_SOURCE_TYPES
-          .map(type => `
+      const categoryOptions =
+        SOURCE_CATEGORIES
+          .map(category => `
             <option
-              value="${escapeHtml(type)}"
+              value="${escapeHtml(category.value)}"
               ${
-                source?.type === type
-                  ? 'selected'
-                  : ''
+                source?.category
+                  === category.value
+                    ? 'selected'
+                    : ''
               }>
-              ${escapeHtml(type)}
+              ${escapeHtml(category.label)}
             </option>
           `)
           .join('');
@@ -124783,17 +125350,17 @@
 
               <div class="form-row">
                 <div class="field">
-                  <label>Source type</label>
+                  <label>Source category</label>
 
                   <select
                     class="compact-select"
-                    data-archive-source-form-type>
+                    data-archive-source-form-category>
 
                     <option value="">
-                      Choose type
+                      Choose category
                     </option>
 
-                    ${typeOptions}
+                    ${categoryOptions}
                   </select>
                 </div>
 
@@ -124934,13 +125501,12 @@
           target.title =
             title;
 
-          target.type =
+          target.category =
             form
               .querySelector(
-                '[data-archive-source-form-type]'
+                '[data-archive-source-form-category]'
               )
-              .value
-            || 'Other';
+              .value;
 
           target.providedBy =
             form
@@ -159645,14 +160211,10 @@
         favouriteOnly: false
       };
 
-      state.archiveFilterPresentation =
-        'flat';
-
-      state.archiveFilterScopeFolderId =
-        null;
-
-      state.archiveSourceTypeFilter =
-        'all';
+      state.archiveFilterPresentation = 'flat';
+      state.archiveFilterScopeFolderId = null;
+      state.archiveSourceCategoryFilter = 'all';
+      state.archiveSourceFavouriteOnly = false;
       state.archiveFileEditing = false;
       state.archiveFileEditOriginal = null;
       state.archiveFileEditDraft = null;
