@@ -22944,36 +22944,76 @@
       white-space: nowrap;
     }
 
+    .archive-sidebar {
+      height: 100%;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+      box-sizing: border-box;
+    }
+
+    .archive-sidebar-section {
+      min-width: 0;
+      flex: 0 0 auto;
+    }
+
+    .archive-source-browser {
+      min-width: 0;
+      display: grid;
+      gap: var(--space-5);
+    }
+
     .archive-source-filter-list {
+      min-width: 0;
       display: grid;
       gap: 3px;
     }
 
     .archive-source-filter {
       width: 100%;
-      min-height: 34px;
-      padding: 0 10px;
+      min-width: 0;
+      min-height: 38px;
+      padding: 6px 10px;
       border: 1px solid transparent;
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       background: transparent;
       color: var(--text-secondary);
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       gap: var(--space-2);
       text-align: left;
-      font-weight: 800;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.35;
+      letter-spacing: 0;
+      transition:
+        background var(--ease),
+        border-color var(--ease),
+        color var(--ease);
     }
 
-    .archive-source-filter:hover,
-    .archive-source-filter.active {
-      background: var(--surface-selected);
+    .archive-source-filter:hover {
+      background: rgba(255, 255, 255, .035);
       color: var(--text-primary);
     }
 
-    .archive-source-filter span:last-child {
-      color: var(--text-tertiary);
-      font-size: 11px;
+    .archive-source-filter.active {
+      border-color: rgba(98, 217, 154, .1);
+      background: rgba(98, 217, 154, .075);
+      color: var(--text-primary);
+      box-shadow:
+        inset 2px 0 0
+        var(--brand-green-400);
+    }
+
+    .archive-source-filter-label {
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .archive-inspector,
@@ -23698,6 +23738,132 @@
       margin-top: var(--space-2);
     }
 
+    .archive-source-modal {
+      width: min(860px, 100%);
+      max-height: min(88vh, 820px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .archive-source-modal .modal-header,
+    .archive-source-modal .modal-footer {
+      flex: 0 0 auto;
+    }
+
+    .archive-source-form {
+      min-height: 0;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .archive-source-form-body {
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      display: grid;
+      gap: var(--space-6);
+    }
+
+    .archive-source-form-section {
+      min-width: 0;
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .archive-source-form-section
+    + .archive-source-form-section {
+      padding-top: var(--space-5);
+      border-top: 1px solid var(--border-default);
+    }
+
+    .archive-source-form-section-heading {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-2);
+    }
+
+    .archive-source-form-section-heading h3 {
+      margin: 0;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .archive-source-form-row {
+      min-width: 0;
+      display: grid;
+      align-items: start;
+      gap: var(--space-4);
+    }
+
+    .archive-source-form-row-identity {
+      grid-template-columns:
+        minmax(190px, 0.7fr)
+        minmax(0, 1.3fr);
+    }
+
+    .archive-source-form-row-location {
+      grid-template-columns:
+        minmax(0, 0.85fr)
+        minmax(0, 1.15fr);
+    }
+
+    .archive-source-form-row-access {
+      grid-template-columns:
+        minmax(0, 1.3fr)
+        minmax(190px, 0.7fr);
+    }
+
+    .archive-source-form-section .field {
+      min-width: 0;
+    }
+
+    .archive-source-form-section input,
+    .archive-source-form-section textarea,
+    .archive-source-form-section select {
+      font: inherit;
+    }
+
+    .archive-source-form-section
+    .compact-select {
+      width: 100%;
+      max-width: none;
+      background-color: var(--surface-input);
+    }
+
+    .archive-source-form-section textarea {
+      min-height: 104px;
+      max-height: 180px;
+    }
+
+    .archive-source-required {
+      margin-left: 3px;
+      color: var(--red);
+    }
+
+    @media (max-width: 680px) {
+      .archive-source-modal {
+        max-height: calc(
+          100vh
+          - (var(--space-4) * 2)
+        );
+      }
+
+      .archive-source-form-row-identity,
+      .archive-source-form-row-location,
+      .archive-source-form-row-access {
+        grid-template-columns:
+          minmax(0, 1fr);
+      }
+
+      .archive-source-form-body {
+        gap: var(--space-5);
+      }
+    }
+
     .archive-source-title-cell {
       min-width: 0;
       display: grid;
@@ -23722,7 +23888,6 @@
       font-size: 11px;
     }
 
-    .archive-source-category-chip,
     .archive-count-chip {
       display: inline-flex;
       align-items: center;
@@ -23735,6 +23900,93 @@
       font-size: 11px;
       font-weight: 850;
       white-space: nowrap;
+    }
+
+    .archive-source-table {
+      min-width: 1020px;
+    }
+
+    .archive-source-table td {
+      height: 62px;
+    }
+
+    .archive-col-source-category {
+      width: 152px;
+    }
+
+    .archive-col-source-reference {
+      width: 240px;
+    }
+
+    .archive-col-source-connections {
+      width: 116px;
+      text-align: center !important;
+    }
+
+    .archive-col-source-accessed {
+      width: 126px;
+    }
+
+    .archive-source-origin {
+      font-size: 12px !important;
+      line-height: 1.35;
+    }
+
+    .archive-source-category-text,
+    .archive-source-reference-text,
+    .archive-source-accessed-text {
+      min-width: 0;
+      display: block;
+      overflow: hidden;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 650;
+      line-height: 1.4;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .archive-source-category-text {
+      color: var(--text-tertiary);
+    }
+
+    .archive-source-connections-cell {
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 750;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .archive-source-favourite-cell {
+      text-align: center !important;
+    }
+
+    .archive-source-table
+    .archive-source-row.selected-detail,
+    .archive-source-table
+    .archive-source-row.selected-detail:hover {
+      background:
+        var(--surface-selected);
+
+      box-shadow:
+        inset 3px 0 0
+        var(--brand-green-400);
+    }
+
+    .archive-source-row-actions {
+      opacity: 0;
+      transition:
+        opacity var(--ease);
+    }
+
+    .archive-source-row:hover
+    .archive-source-row-actions,
+    .archive-source-row:focus-within
+    .archive-source-row-actions,
+    .archive-source-row.selected-detail
+    .archive-source-row-actions {
+      opacity: 1;
     }
 
     .archive-modal-list {
@@ -34269,6 +34521,9 @@
       'All files':
         'Все файлы',
 
+      'Where found':
+        'Где найти',
+
       'New folder':
         'Новая папка',
 
@@ -34351,8 +34606,8 @@
       'Search files':
         'Поиск файлов',
 
-      'Search sources':
-        'Поиск источников',
+      'Search sources...':
+        'Поиск источников...',
 
       'Search favourite files':
         'Поиск среди избранных файлов',
@@ -34472,6 +34727,24 @@
 
       'Source categories':
         'Категории источников',
+
+      'Browse sources':
+        'Просмотр источников',
+
+      'Institutions':
+        'Учреждения',
+
+      'Online sources':
+        'Онлайн-источники',
+
+      'Publications':
+        'Публикации',
+
+      'People & correspondence':
+        'Люди и переписка',
+
+      'Family & personal':
+        'Семейные и личные',
 
       'No sources found':
         'Источники не найдены',
@@ -34776,8 +35049,17 @@
       'e.g. Pawford household register':
         'Например, домовая книга Поуфорда',
 
-      'Origin - Where or who did it come from?':
-        'Происхождение - Откуда или от кого это получено?',
+      'Where or who did it come from?':
+        'Откуда или от кого это получено?',
+
+      'Basic information':
+        'Основная информация',
+
+      'Finding details':
+        'Данные для поиска',
+
+      'Additional notes':
+        'Дополнительные заметки',
 
       'Person, archive, website, library, or family collection':
         'Человек, архив, веб-сайт, библиотека или семейная коллекция',
@@ -34789,7 +35071,7 @@
         'Где это можно найти?',
 
       'Collection, folder, volume, page, call number, or item':
-        'Коллекция, папка, том, страница, шифр или единица хранения',
+        'Коллекция, папка или архивный шифр',
 
       'Website or link':
         'Веб-сайт или ссылка',
@@ -112652,7 +112934,10 @@
             'institution',
 
           label:
-            'Archive, library, or institution'
+            'Archive, library, or institution',
+
+          shortLabel:
+            'Institutions'
         }),
 
         Object.freeze({
@@ -112660,7 +112945,10 @@
             'online',
 
           label:
-            'Website or online database'
+            'Website or online database',
+
+          shortLabel:
+            'Online sources'
         }),
 
         Object.freeze({
@@ -112668,7 +112956,10 @@
             'publication',
 
           label:
-            'Book, newspaper, or publication'
+            'Book, newspaper, or publication',
+
+          shortLabel:
+            'Publications'
         }),
 
         Object.freeze({
@@ -112676,7 +112967,10 @@
             'person',
 
           label:
-            'Person, interview, or correspondence'
+            'Person, interview, or correspondence',
+
+          shortLabel:
+            'People & correspondence'
         }),
 
         Object.freeze({
@@ -112684,7 +112978,10 @@
             'private-collection',
 
           label:
-            'Family or personal collection'
+            'Family or personal collection',
+
+          shortLabel:
+            'Family & personal'
         }),
 
         Object.freeze({
@@ -112692,7 +112989,10 @@
             'other',
 
           label:
-            'Other source'
+            'Other source',
+
+          shortLabel:
+            'Other'
         })
       ]);
 
@@ -112980,6 +113280,33 @@
           '2026-06-01T10:00:00Z'
       }
     ];
+
+    function sourceCategoryShortLabel(
+      value,
+      fallback =
+        'Not categorized'
+    ) {
+      return SOURCE_CATEGORY_BY_VALUE
+        .get(value)
+        ?.shortLabel
+        || fallback;
+    }
+
+    function localizedSourceCategoryShortLabel(
+      value,
+      fallback =
+        'Not categorized'
+    ) {
+      const label =
+        sourceCategoryShortLabel(
+          value,
+          fallback
+        );
+
+      return label
+        ? translateText(label)
+        : '';
+    }
 
     const archiveMarriageEventId =
       (sampleData.events || []).find(event =>
@@ -118206,7 +118533,11 @@
       renderArchiveMain();
     }
 
-    function renderArchiveSidebarNavItem(id, label, svg) {
+    function renderArchiveSidebarNavItem(
+      id,
+      label,
+      svg
+    ) {
       const active =
         id === 'files'
           ? state.archiveView === 'files'
@@ -118215,7 +118546,27 @@
             )
           : state.archiveView === id;
 
-      return `<button class="side-link ${active ? 'active' : ''}" type="button" data-archive-view="${id}">${svg}<span>${escapeHtml(label)}</span></button>`;
+      return `
+        <button
+          class="
+            side-link
+            ${active ? 'active' : ''}
+          "
+          type="button"
+          data-archive-view="${escapeHtml(id)}"
+          aria-current="${
+            active
+              ? 'page'
+              : 'false'
+          }">
+
+          ${svg}
+
+          <span>
+            ${escapeHtml(label)}
+          </span>
+        </button>
+      `;
     }
 
     function renderArchiveFolderTree(
@@ -118394,17 +118745,20 @@
       const sources =
         archiveProjectSources();
 
-      const categoryCount =
-        value =>
-          sources.filter(source =>
-            source.category === value
-          ).length;
+      const populatedCategories =
+        SOURCE_CATEGORIES.filter(
+          category =>
+            sources.some(source =>
+              source.category
+                === category.value
+            )
+        );
 
       const button = ({
         value,
         label,
-        count,
-        active
+        active,
+        title = ''
       }) => `
         <button
           class="
@@ -118412,82 +118766,77 @@
             ${active ? 'active' : ''}
           "
           type="button"
-          data-archive-source-filter="${escapeHtml(value)}">
+          data-archive-source-filter="${escapeHtml(value)}"
+          aria-pressed="${active ? 'true' : 'false'}"
+          ${
+            title
+              ? `title="${escapeHtml(title)}"`
+              : ''
+          }>
 
-          <span>
+          <span class="archive-source-filter-label">
             ${escapeHtml(label)}
-          </span>
-
-          <span>
-            ${count}
           </span>
         </button>
       `;
 
       return `
-        <div class="archive-source-filter-list">
-          ${button({
-            value:
-              'all',
+        <div class="archive-source-browser">
+          <div
+            class="archive-source-filter-list"
+            role="group"
+            aria-label="Browse sources">
 
-            label:
-              'All sources',
+            ${button({
+              value:
+                'all',
 
-            count:
-              sources.length,
+              label:
+                'All sources',
 
-            active:
-              state.archiveSourceCategoryFilter
-                === 'all'
-              && !state
-                .archiveSourceFavouriteOnly
-          })}
+              active:
+                state.archiveSourceCategoryFilter
+                  === 'all'
+            })}
+          </div>
 
-          ${button({
-            value:
-              'favorites',
+          ${
+            populatedCategories.length
+              ? `
+                <div>
+                  <div class="side-section-title">
+                    Source categories
+                  </div>
 
-            label:
-              'Favourites',
+                  <div
+                    class="archive-source-filter-list"
+                    role="group"
+                    aria-label="Source categories">
 
-            count:
-              sources.filter(source =>
-                source.favorite
-              ).length,
+                    ${populatedCategories
+                      .map(category =>
+                        button({
+                          value:
+                            category.value,
 
-            active:
-              state
-                .archiveSourceFavouriteOnly
-          })}
-        </div>
+                          label:
+                            category.shortLabel,
 
-        <div
-          class="side-section-title"
-          style="margin-top:var(--space-5)">
-          Source categories
-        </div>
+                          title:
+                            category.label,
 
-        <div class="archive-source-filter-list">
-          ${SOURCE_CATEGORIES.map(
-            category =>
-              button({
-                value:
-                  category.value,
-
-                label:
-                  category.label,
-
-                count:
-                  categoryCount(
-                    category.value
-                  ),
-
-                active:
-                  state
-                    .archiveSourceCategoryFilter
-                    === category.value
-              })
-          ).join('')}
+                          active:
+                            state
+                              .archiveSourceCategoryFilter
+                              === category.value
+                        })
+                      )
+                      .join('')}
+                  </div>
+                </div>
+              `
+              : ''
+          }
         </div>
       `;
     }
@@ -118513,91 +118862,97 @@
       const sourceView =
         state.archiveView
           === 'sources';
+        sidebar.innerHTML = `
+          <nav
+            class="archive-sidebar"
+            aria-label="Archive navigation">
 
-      sidebar.innerHTML = `
-        <div>
-          <div class="side-section-title">
-            Navigation
-          </div>
+            <section class="archive-sidebar-section">
+              <div class="side-section-title">
+                Navigation
+              </div>
 
-          <div class="side-nav">
-            ${renderArchiveSidebarNavItem(
-              'files',
-              ARCHIVE_ROOT_LABEL,
-              icon.folder
-            )}
+              <div class="side-nav">
+                ${renderArchiveSidebarNavItem(
+                  'files',
+                  ARCHIVE_ROOT_LABEL,
+                  icon.folder
+                )}
 
-            ${renderArchiveSidebarNavItem(
-              'favorites',
-              'Favourites',
-              icon.star
-            )}
+                ${renderArchiveSidebarNavItem(
+                  'favorites',
+                  'Favourites',
+                  icon.star
+                )}
 
-            ${renderArchiveSidebarNavItem(
-              'sources',
-              'Sources',
-              icon.archive
-            )}
-          </div>
-        </div>
+                ${renderArchiveSidebarNavItem(
+                  'sources',
+                  'Sources',
+                  icon.archive
+                )}
+              </div>
+            </section>
 
-        <div class="archive-sidebar-tree-section">
-          <div
-            class="
-              side-section-title
+            <section
+              class="
+                archive-sidebar-section
+                archive-sidebar-tree-section
+              ">
+
+              <div
+                class="
+                  side-section-title
+                  ${
+                    sourceView
+                      ? ''
+                      : 'with-add'
+                  }
+                ">
+
+                <span>
+                  ${
+                    sourceView
+                      ? 'Browse sources'
+                      : 'Folders'
+                  }
+                </span>
+
+                ${
+                  sourceView
+                    ? ''
+                    : `
+                      <button
+                        class="side-add-button"
+                        type="button"
+                        data-archive-create-folder
+                        aria-label="Create folder"
+                        title="Create folder">
+
+                        ${icon.plus}
+                      </button>
+                    `
+                }
+              </div>
 
               ${
                 sourceView
-                  ? ''
-                  : 'with-add'
+                  ? renderArchiveSourceFilters()
+                  : `
+                    <div
+                      class="
+                        archive-folder-tree
+                        archive-sidebar-folder-tree
+                      "
+                      role="tree"
+                      aria-label="Archive folder tree">
+
+                      ${renderArchiveFolderTree()}
+                    </div>
+                  `
               }
-            ">
-
-            <span>
-              ${
-                sourceView
-                  ? 'Sources'
-                  : 'Folders'
-              }
-            </span>
-
-            ${
-              sourceView
-                ? ''
-                : `
-                  <button
-                    class="
-                      side-add-button
-                    "
-                    type="button"
-                    data-archive-create-folder
-                    aria-label="Create folder"
-                    title="Create folder">
-
-                    ${icon.plus}
-                  </button>
-                `
-            }
-          </div>
-
-          ${
-            sourceView
-              ? renderArchiveSourceFilters()
-              : `
-                <div
-                  class="
-                    archive-folder-tree
-                    archive-sidebar-folder-tree
-                  "
-                  role="tree"
-                  aria-label="Archive folder tree">
-
-                  ${renderArchiveFolderTree()}
-                </div>
-              `
-          }
-        </div>
-      `;
+            </section>
+          </nav>
+        `;
 
       sidebar
         .querySelectorAll(
@@ -118678,50 +119033,36 @@
           );
         });
 
-      sidebar
-        .querySelectorAll(
-          '[data-archive-source-filter]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              const value =
-                button.dataset
-                  .archiveSourceFilter;
+    sidebar
+      .querySelectorAll(
+        '[data-archive-source-filter]'
+      )
+      .forEach(button => {
+        button.addEventListener(
+          'click',
+          () => {
+            const value =
+              button.dataset
+                .archiveSourceFilter;
 
-              if (value === 'all') {
-                state
-                  .archiveSourceCategoryFilter =
-                    'all';
-
-                state
-                  .archiveSourceFavouriteOnly =
-                    false;
-              } else if (
-                value === 'favorites'
-              ) {
-                state
-                  .archiveSourceFavouriteOnly =
-                    !state
-                      .archiveSourceFavouriteOnly;
-              } else if (
-                SOURCE_CATEGORY_BY_VALUE.has(
-                  value
-                )
-              ) {
-                state
-                  .archiveSourceCategoryFilter =
-                    value;
-              }
-
-              state.archiveSelectedSourceId =
-                null;
-
-              renderArchive();
+            if (
+              value !== 'all'
+              && !SOURCE_CATEGORY_BY_VALUE
+                .has(value)
+            ) {
+              return;
             }
-          );
-        });
+
+            state.archiveSourceCategoryFilter =
+              value;
+
+            state.archiveSelectedSourceId =
+              null;
+
+            renderArchive();
+          }
+        );
+      });
 
     sidebar
       .querySelector(
@@ -120283,7 +120624,7 @@
       if (
         archiveToolbarIsSources()
       ) {
-        return 'Search sources';
+        return 'Search sources...';
       }
 
       if (
@@ -121102,31 +121443,104 @@
       renderArchive();
     }
 
-    function archiveSourceLinkedRecordCount(
+    function archiveSourceConnectionCount(
       source
     ) {
       if (!source) {
         return 0;
       }
 
-      return [
-        'person',
-        'event',
-        'note',
-        'place'
-      ].reduce(
-        (
-          count,
-          targetType
-        ) =>
-          count
-          + sourceTargetIds(
-              source.id,
-              targetType,
-              source.projectId
-            ).length,
-        0
-      );
+      return sourceLinksForSource(
+        source.id,
+        '',
+        source.projectId
+      ).length;
+    }
+
+    function archiveSourceOriginLabel(
+      source
+    ) {
+      if (!source) {
+        return 'Source record';
+      }
+
+      const values =
+        [
+          source.providedBy,
+          source.location
+        ]
+          .map(value =>
+            String(value || '').trim()
+          )
+          .filter(
+            (
+              value,
+              index,
+              records
+            ) =>
+              value
+              && records.indexOf(value)
+                === index
+          );
+
+      return values.join(' · ')
+        || 'Source record';
+    }
+
+    function archiveSourceWebsiteHost(
+      value
+    ) {
+      const normalized =
+        String(value || '').trim();
+
+      if (!normalized) {
+        return '';
+      }
+
+      try {
+        return new URL(
+          normalized
+        )
+          .hostname
+          .replace(
+            /^www\./i,
+            ''
+          );
+      } catch {
+        return normalized;
+      }
+    }
+
+    function archiveSourceReferenceLabel(
+      source
+    ) {
+      if (!source) {
+        return 'Not specified';
+      }
+
+      const values =
+        [
+          source.reference,
+          archiveSourceWebsiteHost(
+            source.url
+          )
+        ]
+          .map(value =>
+            String(value || '').trim()
+          )
+          .filter(
+            (
+              value,
+              index,
+              records
+            ) =>
+              value
+              && records.indexOf(value)
+                === index
+          );
+
+      return values.join(' · ')
+        || 'Not specified';
     }
 
     function renderArchiveSourceTable(
@@ -121134,27 +121548,33 @@
     ) {
       return `
         <div class="archive-table-wrap">
-          <table class="archive-table">
+          <table
+            class="
+              archive-table
+              archive-source-table
+            "
+            aria-label="Sources">
+
             <thead>
               <tr>
                 <th class="archive-col-name">
                   Source
                 </th>
 
-                <th class="archive-col-type">
+                <th class="archive-col-source-category">
                   Category
                 </th>
 
-                <th style="width:90px">
-                  Files
+                <th class="archive-col-source-reference">
+                  Where found
                 </th>
 
-                <th style="width:128px">
-                  Linked records
+                <th class="archive-col-source-connections">
+                  Connections
                 </th>
 
-                <th class="archive-col-modified">
-                  Updated
+                <th class="archive-col-source-accessed">
+                  Accessed
                 </th>
 
                 <th
@@ -121169,97 +121589,141 @@
             </thead>
 
             <tbody>
-              ${sources.map(source => `
-                <tr
-                  class="${
-                    state.archiveSelectedSourceId
-                      === source.id
-                        ? 'selected'
-                        : ''
-                  }"
-                  data-archive-source-row="${escapeHtml(source.id)}"
-                  tabindex="0">
+              ${sources.map(source => {
+                const selected =
+                  state.archiveSelectedSourceId
+                    === source.id;
 
-                  <td>
-                    <div class="archive-source-title-cell">
-                      <strong
-                        title="${escapeHtml(source.title)}">
-                        ${escapeHtml(source.title)}
-                      </strong>
+                const categoryLabel =
+                  localizedSourceCategoryShortLabel(
+                    source.category
+                  );
 
-                      <span>
-                        ${escapeHtml(
-                          source.providedBy
-                          || source.reference
-                          || 'Source record'
-                        )}
+                const fullCategoryLabel =
+                  localizedSourceCategoryLabel(
+                    source.category
+                  );
+
+                const originLabel =
+                  archiveSourceOriginLabel(
+                    source
+                  );
+
+                const referenceLabel =
+                  archiveSourceReferenceLabel(
+                    source
+                  );
+
+                const connectionCount =
+                  archiveSourceConnectionCount(
+                    source
+                  );
+
+                const accessedLabel =
+                  source.accessedDate
+                    ? archiveFormatDate(
+                        source.accessedDate
+                      )
+                    : 'Not specified';
+
+                return `
+                  <tr
+                    class="
+                      archive-source-row
+                      ${
+                        selected
+                          ? 'selected-detail'
+                          : ''
+                      }
+                    "
+                    data-archive-source-row="${escapeHtml(source.id)}"
+                    tabindex="0"
+                    aria-selected="${
+                      selected
+                        ? 'true'
+                        : 'false'
+                    }">
+
+                    <td>
+                      <div class="archive-source-title-cell">
+                        <strong
+                          title="${escapeHtml(source.title)}">
+                          ${escapeHtml(source.title)}
+                        </strong>
+
+                        <span
+                          class="archive-source-origin"
+                          title="${escapeHtml(originLabel)}">
+                          ${escapeHtml(originLabel)}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td>
+                      <span
+                        class="archive-source-category-text"
+                        title="${escapeHtml(fullCategoryLabel)}">
+                        ${escapeHtml(categoryLabel)}
                       </span>
-                    </div>
-                  </td>
+                    </td>
 
-                  <td>
-                    <span class="archive-source-category-chip">
-                      ${escapeHtml(
-                        localizedSourceCategoryLabel(
-                          source.category
-                        )
-                      )}
-                    </span>
-                  </td>
+                    <td>
+                      <span
+                        class="archive-source-reference-text"
+                        title="${escapeHtml(referenceLabel)}">
+                        ${escapeHtml(referenceLabel)}
+                      </span>
+                    </td>
 
-                  <td>
-                    ${
-                      archiveFilesForSource(
-                        source.id
-                      ).length
-                    }
-                  </td>
+                    <td class="archive-source-connections-cell">
+                      ${connectionCount}
+                    </td>
 
-                  <td>
-                    ${
-                      archiveSourceLinkedRecordCount(
-                        source
-                      )
-                    }
-                  </td>
+                    <td>
+                      <span
+                        class="archive-source-accessed-text"
+                        title="${escapeHtml(accessedLabel)}">
+                        ${escapeHtml(accessedLabel)}
+                      </span>
+                    </td>
 
-                  <td>
-                    ${escapeHtml(
-                      archiveFormatDate(
-                        source.updatedAt
-                      )
-                    )}
-                  </td>
+                    <td class="archive-source-favourite-cell">
+                      <button
+                        class="
+                          archive-row-icon-button
+                          ${
+                            source.favorite
+                              ? 'active'
+                              : ''
+                          }
+                        "
+                        type="button"
+                        data-archive-source-favorite="${escapeHtml(source.id)}"
+                        aria-label="${
+                          source.favorite
+                            ? 'Remove source from favourites'
+                            : 'Add source to favourites'
+                        }">
+                        ${icon.star}
+                      </button>
+                    </td>
 
-                  <td style="text-align:center">
-                    <button
-                      class="
-                        archive-row-icon-button
-                        ${source.favorite ? 'active' : ''}
-                      "
-                      type="button"
-                      data-archive-source-favorite="${escapeHtml(source.id)}"
-                      aria-label="${
-                        source.favorite
-                          ? 'Remove source from favourites'
-                          : 'Add source to favourites'
-                      }">
-                      ${icon.star}
-                    </button>
-                  </td>
-
-                  <td>
-                    <button
-                      class="archive-row-icon-button"
-                      type="button"
-                      data-archive-row-actions="source"
-                      data-archive-row-id="${escapeHtml(source.id)}"
-                      aria-label="Source actions">
-                      ${icon.more}
-                    </button>
-                  </td>
-                </tr>
-              `).join('')}
+                    <td>
+                      <button
+                        class="
+                          archive-row-icon-button
+                          archive-source-row-actions
+                        "
+                        type="button"
+                        data-archive-row-actions="source"
+                        data-archive-row-id="${escapeHtml(source.id)}"
+                        aria-label="Source actions">
+                        ${icon.more}
+                      </button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
             </tbody>
           </table>
         </div>
@@ -125305,7 +125769,7 @@
 
       openModal(`
         <div
-          class="modal"
+          class="modal archive-source-modal"
           role="dialog"
           aria-modal="true"
           aria-labelledby="archiveSourceModalTitle">
@@ -125335,95 +125799,197 @@
             </button>
           </div>
 
-          <form data-archive-source-form>
-            <div class="modal-body form-grid">
+          <form
+            class="archive-source-form"
+            data-archive-source-form>
 
-              <div class="field">
-                <label>Source name</label>
+            <div
+              class="
+                modal-body
+                archive-source-form-body
+              ">
 
-                <input
-                  data-archive-source-title
-                  required
-                  value="${escapeHtml(source?.title || '')}"
-                  placeholder="e.g. Pawford household register">
-              </div>
+              <section
+                class="archive-source-form-section"
+                aria-labelledby="archiveSourceBasicHeading">
 
-              <div class="form-row">
-                <div class="field">
-                  <label>Source category</label>
+                <div
+                  class="
+                    archive-source-form-section-heading
+                  ">
 
-                  <select
-                    class="compact-select"
-                    data-archive-source-form-category>
-
-                    <option value="">
-                      Choose category
-                    </option>
-
-                    ${categoryOptions}
-                  </select>
+                  <h3 id="archiveSourceBasicHeading">
+                    Basic information
+                  </h3>
                 </div>
 
                 <div class="field">
-                  <label>
-                    Origin - Where or who did it come from?
+                  <label for="archiveSourceName">
+                    Source name
+
+                    <span
+                      class="archive-source-required"
+                      aria-hidden="true">
+                      *
+                    </span>
                   </label>
 
                   <input
-                    data-archive-source-provided-by
-                    value="${escapeHtml(source?.providedBy || '')}"
-                    placeholder="Person, archive, website, library, or family collection">
+                    id="archiveSourceName"
+                    data-archive-source-title
+                    required
+                    aria-required="true"
+                    autocomplete="off"
+                    value="${escapeHtml(source?.title || '')}"
+                    placeholder="e.g. Pawford household register">
                 </div>
-              </div>
 
-              <div class="form-row">
+                <div
+                  class="
+                    archive-source-form-row
+                    archive-source-form-row-identity
+                  ">
+
+                  <div class="field">
+                    <label for="archiveSourceCategory">
+                      Source category
+                    </label>
+
+                    <select
+                      id="archiveSourceCategory"
+                      class="compact-select"
+                      data-archive-source-form-category>
+
+                      <option value="">
+                        Choose category
+                      </option>
+
+                      ${categoryOptions}
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label for="archiveSourceProvidedBy">
+                      Where or who did it come from?
+                    </label>
+
+                    <input
+                      id="archiveSourceProvidedBy"
+                      data-archive-source-provided-by
+                      autocomplete="off"
+                      value="${escapeHtml(source?.providedBy || '')}"
+                      placeholder="Person, archive, website, library, or family collection">
+                  </div>
+                </div>
+              </section>
+
+              <section
+                class="archive-source-form-section"
+                aria-labelledby="archiveSourceFindingHeading">
+
+                <div
+                  class="
+                    archive-source-form-section-heading
+                  ">
+
+                  <h3 id="archiveSourceFindingHeading">
+                    Finding details
+                  </h3>
+                </div>
+
+                <div
+                  class="
+                    archive-source-form-row
+                    archive-source-form-row-location
+                  ">
+
+                  <div class="field">
+                    <label for="archiveSourceLocation">
+                      Location
+                    </label>
+
+                    <input
+                      id="archiveSourceLocation"
+                      data-archive-source-location
+                      autocomplete="off"
+                      value="${escapeHtml(source?.location || '')}"
+                      placeholder="Town, archive location, or where the item is kept">
+                  </div>
+
+                  <div class="field">
+                    <label for="archiveSourceReference">
+                      Where can it be found?
+                    </label>
+
+                    <input
+                      id="archiveSourceReference"
+                      data-archive-source-reference
+                      autocomplete="off"
+                      value="${escapeHtml(source?.reference || '')}"
+                      placeholder="Collection, folder, volume, page, call number, or item">
+                  </div>
+                </div>
+
+                <div
+                  class="
+                    archive-source-form-row
+                    archive-source-form-row-access
+                  ">
+
+                  <div class="field">
+                    <label for="archiveSourceUrl">
+                      Website or link
+                    </label>
+
+                    <input
+                      id="archiveSourceUrl"
+                      type="url"
+                      inputmode="url"
+                      autocomplete="url"
+                      data-archive-source-url
+                      value="${escapeHtml(source?.url || '')}"
+                      placeholder="https://">
+                  </div>
+
+                  <div class="field">
+                    <label for="archiveSourceAccessed">
+                      Date accessed or received
+                    </label>
+
+                    <input
+                      id="archiveSourceAccessed"
+                      type="date"
+                      data-archive-source-accessed
+                      value="${escapeHtml(source?.accessedDate || '')}">
+                  </div>
+                </div>
+              </section>
+
+              <section
+                class="archive-source-form-section"
+                aria-labelledby="archiveSourceNotesHeading">
+
+                <div
+                  class="
+                    archive-source-form-section-heading
+                  ">
+
+                  <h3 id="archiveSourceNotesHeading">
+                    Additional notes
+                  </h3>
+                </div>
+
                 <div class="field">
-                  <label>Location</label>
+                  <label for="archiveSourceNotes">
+                    Notes
+                  </label>
 
-                  <input
-                    data-archive-source-location
-                    value="${escapeHtml(source?.location || '')}"
-                    placeholder="Town, archive location, or where the item is kept">
+                  <textarea
+                    id="archiveSourceNotes"
+                    data-archive-source-notes
+                    placeholder="Add anything that will help you recognize or find this source again">${escapeHtml(source?.notes || '')}</textarea>
                 </div>
-
-                <div class="field">
-                  <label>Where can it be found?</label>
-
-                  <input
-                    data-archive-source-reference
-                    value="${escapeHtml(source?.reference || '')}"
-                    placeholder="Collection, folder, volume, page, call number, or item">
-                </div>
-              </div>
-
-              <div class="form-row">
-                <div class="field">
-                  <label>Website or link</label>
-
-                  <input
-                    type="url"
-                    data-archive-source-url
-                    value="${escapeHtml(source?.url || '')}"
-                    placeholder="https://">
-                </div>
-
-                <div class="field">
-                  <label>Date accessed or received</label>
-
-                  <input
-                    type="date"
-                    data-archive-source-accessed
-                    value="${escapeHtml(source?.accessedDate || '')}">
-                </div>
-              </div>
-
-              <div class="field">
-                <label>Notes</label>
-
-                <textarea
-                  data-archive-source-notes
-                  placeholder="Add anything that will help you recognize or find this source again">${escapeHtml(source?.notes || '')}</textarea>
-              </div>
+              </section>
             </div>
 
             <div class="modal-footer">
@@ -125452,6 +126018,18 @@
         modalBackdrop.querySelector(
           '[data-archive-source-form]'
         );
+
+      requestAnimationFrame(
+        () => {
+          modalBackdrop
+            .querySelector(
+              '#archiveSourceName'
+            )
+            ?.focus({
+              preventScroll: true
+            });
+        }
+      );
 
       form?.addEventListener(
         'submit',
