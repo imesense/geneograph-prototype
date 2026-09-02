@@ -35529,6 +35529,24 @@
       'The note is no longer available.':
         'Эта заметка больше недоступна.',
 
+      'The source is no longer available.':
+        'Этот источник больше недоступен.',
+
+      'Notes linked to source.':
+        'Заметки связаны с источником.',
+
+      'Place links could not be updated.':
+        'Не удалось обновить связи с местами.',
+
+      'Linked notes remain available in the Notes module.':
+        'Связанные заметки остаются доступными в разделе «Заметки».',
+
+      'People links could not be updated.':
+        'Не удалось обновить связи с людьми.',
+
+      'Linked people updated.':
+        'Связанные люди обновлены.',
+
       'People links updated.':
         'Связи заметки с людьми обновлены.',
 
@@ -37049,8 +37067,8 @@
       'Unidentified studio portrait':
         'Неопознанный студийный портрет',
 
-      'Archive yard':
-        'Двор архива',
+      'Archive storage':
+        'Хранилище архива',
 
       'Archibald at the workshop':
         'Арчибальд у мастерской',
@@ -38895,6 +38913,17 @@
           `Выбрано: ${
             formatNumber(number)
           }`
+      );
+
+      repl(
+        /^(\d+)\s+events?\s+added to source\.$/i,
+        (_, number) =>
+          `К источнику добавлено ${
+            countPhrase(
+              number,
+              'event'
+            )
+          }.`
       );
 
       /*
@@ -129752,6 +129781,796 @@
       );
     }
 
+    function openArchiveSourcePeopleModal(
+      sourceId
+    ) {
+      const source =
+        archiveSourceById(
+          sourceId
+        );
+
+      if (!source) {
+        showToast(
+          'The source is no longer available.'
+        );
+
+        return;
+      }
+
+      const projectId =
+        source.projectId
+        || currentProjectId();
+
+      const initialPersonIds =
+        sourceTargetIds(
+          source.id,
+          'person',
+          projectId
+        );
+
+      /*
+        People connected to files from this source
+        receive priority in Suggested people.
+        All project people remain searchable.
+      */
+      const suggestedPersonIds =
+        archiveUniqueIds(
+          archiveFilesForSource(
+            source.id
+          ).flatMap(file =>
+            file.linkedPersonIds
+            || []
+          )
+        );
+
+      openPeopleLinkModal({
+        projectId,
+
+        title:
+          'Add people',
+
+        subtitle:
+          source.title
+          || 'Untitled source',
+
+        initialPersonIds,
+
+        suggestedPersonIds,
+
+        selectedHeading:
+          'Linked people',
+
+        saveLabel:
+          'Save people',
+
+        onSave:
+          nextPersonIds => {
+            const currentSource =
+              archiveSourceById(
+                source.id,
+                projectId
+              );
+
+            if (!currentSource) {
+              showToast(
+                'The source is no longer available.'
+              );
+
+              return false;
+            }
+
+            const currentIds =
+              new Set(
+                sourceTargetIds(
+                  currentSource.id,
+                  'person',
+                  projectId
+                )
+              );
+
+            const desiredIds =
+              new Set(
+                archiveUniqueIds(
+                  nextPersonIds
+                )
+              );
+
+            /*
+              Save the entire edited selection:
+              remove deselected people and add newly
+              selected people in one atomic operation.
+            */
+            const writes = [
+              ...[...currentIds]
+                .filter(personId =>
+                  !desiredIds.has(
+                    personId
+                  )
+                )
+                .map(personId => ({
+                  ownerType:
+                    'source',
+
+                  ownerId:
+                    currentSource.id,
+
+                  entityType:
+                    'person',
+
+                  entityId:
+                    personId,
+
+                  shouldLink:
+                    false
+                })),
+
+              ...[...desiredIds]
+                .filter(personId =>
+                  !currentIds.has(
+                    personId
+                  )
+                )
+                .map(personId => ({
+                  ownerType:
+                    'source',
+
+                  ownerId:
+                    currentSource.id,
+
+                  entityType:
+                    'person',
+
+                  entityId:
+                    personId,
+
+                  shouldLink:
+                    true
+                }))
+            ];
+
+            const committed =
+              archiveSetConnectionsAtomically(
+                writes
+              );
+
+            if (!committed.ok) {
+              showToast(
+                'People links could not be updated.'
+              );
+
+              return false;
+            }
+
+            /*
+              Verify that the canonical sourceLinks
+              collection now matches the modal state.
+            */
+            const savedIds =
+              new Set(
+                sourceTargetIds(
+                  currentSource.id,
+                  'person',
+                  projectId
+                )
+              );
+
+            const savedCorrectly =
+              savedIds.size
+                === desiredIds.size
+              && [...desiredIds].every(
+                personId =>
+                  savedIds.has(
+                    personId
+                  )
+              );
+
+            if (!savedCorrectly) {
+              showToast(
+                'People links could not be updated.'
+              );
+
+              return false;
+            }
+
+            return committed;
+          },
+
+        afterSave:
+          renderArchive,
+
+        successMessage:
+          'Linked people updated.'
+      });
+    }
+
+    function openArchiveSourceEventsModal(
+      sourceId
+    ) {
+      const source =
+        archiveSourceById(
+          sourceId
+        );
+
+      if (!source) {
+        showToast(
+          'The source is no longer available.'
+        );
+
+        return;
+      }
+
+      const projectId =
+        source.projectId
+        || currentProjectId();
+
+      const initiallyLinkedEventIds =
+        sourceTargetIds(
+          source.id,
+          'event',
+          projectId
+        );
+
+      /*
+        People connected directly to the Source
+        appear first in the Notes-style person list.
+      */
+      const primaryPersonIds =
+        sourceTargetIds(
+          source.id,
+          'person',
+          projectId
+        );
+
+      /*
+        People connected through files from this
+        Source are useful secondary suggestions.
+      */
+      const secondaryPersonIds =
+        archiveUniqueIds(
+          archiveFilesForSource(
+            source.id
+          ).flatMap(file =>
+            file.linkedPersonIds
+            || []
+          )
+        );
+
+      openEventLinkModal({
+        projectId,
+
+        title:
+          'Add events',
+
+        subtitle:
+          source.title
+          || 'Untitled source',
+
+        initiallyLinkedEventIds,
+
+        primaryPersonIds,
+
+        secondaryPersonIds,
+
+        alreadyLinkedTarget:
+          'this source',
+
+        onSave:
+          selectedEventIds => {
+            const currentSource =
+              archiveSourceById(
+                source.id,
+                projectId
+              );
+
+            if (!currentSource) {
+              showToast(
+                'The source is no longer available.'
+              );
+
+              return false;
+            }
+
+            const currentEventIds =
+              new Set(
+                sourceTargetIds(
+                  currentSource.id,
+                  'event',
+                  projectId
+                )
+              );
+
+            /*
+              openEventLinkModal is additive:
+              previously linked Events are disabled,
+              and selectedEventIds contains new choices.
+            */
+            const eventIdsToAdd =
+              archiveUniqueIds(
+                selectedEventIds
+              ).filter(eventId =>
+                !currentEventIds.has(
+                  eventId
+                )
+              );
+
+            const writes =
+              eventIdsToAdd.map(
+                eventId => ({
+                  ownerType:
+                    'source',
+
+                  ownerId:
+                    currentSource.id,
+
+                  entityType:
+                    'event',
+
+                  entityId:
+                    eventId,
+
+                  shouldLink:
+                    true
+                })
+              );
+
+            const committed =
+              archiveSetConnectionsAtomically(
+                writes
+              );
+
+            if (!committed.ok) {
+              showToast(
+                'No events were linked.'
+              );
+
+              return false;
+            }
+
+            /*
+              Verify the canonical sourceLinks data,
+              including the unlikely case where the
+              Source changed while the modal was open.
+            */
+            const savedEventIds =
+              new Set(
+                sourceTargetIds(
+                  currentSource.id,
+                  'event',
+                  projectId
+                )
+              );
+
+            const savedCorrectly =
+              selectedEventIds.every(
+                eventId =>
+                  savedEventIds.has(
+                    eventId
+                  )
+              );
+
+            if (!savedCorrectly) {
+              showToast(
+                'No events were linked.'
+              );
+
+              return false;
+            }
+
+            return {
+              ...committed,
+
+              addedLinkCount:
+                eventIdsToAdd.length
+            };
+          },
+
+        afterSave:
+          renderArchive,
+
+        successMessage:
+          count =>
+            `${count} ${
+              count === 1
+                ? 'event'
+                : 'events'
+            } added to source.`
+      });
+    }
+
+    function openArchiveSourceNotesModal(
+      sourceId
+    ) {
+      const source =
+        archiveSourceById(
+          sourceId
+        );
+
+      if (!source) {
+        showToast(
+          'The source is no longer available.'
+        );
+
+        return;
+      }
+
+      const projectId =
+        source.projectId
+        || currentProjectId();
+
+      const existingNoteIds =
+        sourceTargetIds(
+          source.id,
+          'note',
+          projectId
+        );
+
+      openNoteLinkPickerModal({
+        projectId,
+
+        title:
+          'Add notes',
+
+        description:
+          `Link existing notes to “${
+            source.title
+            || 'Untitled source'
+          }”.`,
+
+        helperText:
+          'Linked notes remain available in the Notes module.',
+
+        existingNoteIds,
+
+        includeArchived:
+          false,
+
+        existingStatus:
+          'Already linked',
+
+        existingMetaLabel:
+          'already linked',
+
+        createLabel:
+          'Create linked note',
+
+        onCreate:
+          () => {
+            const currentSource =
+              archiveSourceById(
+                source.id,
+                projectId
+              );
+
+            if (!currentSource) {
+              showToast(
+                'The source is no longer available.'
+              );
+
+              return;
+            }
+
+            /*
+              Source is already supported by the
+              canonical Notes context model.
+            */
+            openNewNoteForContext(
+              'source',
+              currentSource.id
+            );
+          },
+
+        onSave:
+          selectedNoteIds => {
+            const currentSource =
+              archiveSourceById(
+                source.id,
+                projectId
+              );
+
+            if (!currentSource) {
+              showToast(
+                'The source is no longer available.'
+              );
+
+              return false;
+            }
+
+            const currentNoteIds =
+              new Set(
+                sourceTargetIds(
+                  currentSource.id,
+                  'note',
+                  projectId
+                )
+              );
+
+            const noteIdsToAdd =
+              archiveUniqueIds(
+                selectedNoteIds
+              ).filter(noteId =>
+                !currentNoteIds.has(
+                  noteId
+                )
+              );
+
+            const writes =
+              noteIdsToAdd.map(
+                noteId => ({
+                  ownerType:
+                    'source',
+
+                  ownerId:
+                    currentSource.id,
+
+                  entityType:
+                    'note',
+
+                  entityId:
+                    noteId,
+
+                  shouldLink:
+                    true
+                })
+              );
+
+            const committed =
+              archiveSetConnectionsAtomically(
+                writes
+              );
+
+            if (!committed.ok) {
+              showToast(
+                'No notes were linked.'
+              );
+
+              return false;
+            }
+
+            return {
+              ...committed,
+
+              addedLinkCount:
+                committed.changedCount
+            };
+          },
+
+        afterSave:
+          renderArchive,
+
+        successMessage:
+          'Notes linked to source.'
+      });
+    }
+
+    function openArchiveSourcePlacesModal(
+      sourceId
+    ) {
+      const source =
+        archiveSourceById(
+          sourceId
+        );
+
+      if (!source) {
+        showToast(
+          'The source is no longer available.'
+        );
+
+        return;
+      }
+
+      const projectId =
+        source.projectId
+        || currentProjectId();
+
+      const initialPlaceIds =
+        sourceTargetIds(
+          source.id,
+          'place',
+          projectId
+        );
+
+      const filePlaceIds =
+        archiveFilesForSource(
+          source.id
+        )
+          .map(file =>
+            archiveDocumentPlace(
+              file
+            ).placeId
+          )
+          .filter(Boolean);
+
+      const notePlaceIds =
+        sourceTargetIds(
+          source.id,
+          'note',
+          projectId
+        ).flatMap(noteId => {
+          const note =
+            getNote(
+              noteId,
+              {
+                projectId,
+                includeArchived:
+                  true
+              }
+            );
+
+          return note?.linkedPlaceIds
+            || [];
+        });
+
+      const eventPlaceIds =
+        sourceTargetIds(
+          source.id,
+          'event',
+          projectId
+        )
+          .map(eventId =>
+            archiveConnectionRecord(
+              'event',
+              eventId
+            )?.placeId
+          )
+          .filter(Boolean);
+
+      const suggestedPlaceIds =
+        archiveUniqueIds([
+          ...filePlaceIds,
+          ...notePlaceIds,
+          ...eventPlaceIds
+        ]);
+
+      openNotesPlacesModal({
+        linkContext: {
+          projectId,
+
+          title:
+            'Add places',
+
+          subtitle:
+            source.title
+            || 'Untitled source',
+
+          initialPlaceIds,
+
+          suggestedPlaceIds,
+
+          renderContext:
+            renderArchive,
+
+          onSave:
+            nextPlaceIds => {
+              const currentSource =
+                archiveSourceById(
+                  source.id,
+                  projectId
+                );
+
+              if (!currentSource) {
+                showToast(
+                  'The source is no longer available.'
+                );
+
+                return false;
+              }
+
+              const currentIds =
+                new Set(
+                  sourceTargetIds(
+                    currentSource.id,
+                    'place',
+                    projectId
+                  )
+                );
+
+              const desiredIds =
+                new Set(
+                  archiveUniqueIds(
+                    nextPlaceIds
+                  )
+                );
+
+              const writes = [
+                ...[...currentIds]
+                  .filter(placeId =>
+                    !desiredIds.has(
+                      placeId
+                    )
+                  )
+                  .map(placeId => ({
+                    ownerType:
+                      'source',
+
+                    ownerId:
+                      currentSource.id,
+
+                    entityType:
+                      'place',
+
+                    entityId:
+                      placeId,
+
+                    shouldLink:
+                      false
+                  })),
+
+                ...[...desiredIds]
+                  .filter(placeId =>
+                    !currentIds.has(
+                      placeId
+                    )
+                  )
+                  .map(placeId => ({
+                    ownerType:
+                      'source',
+
+                    ownerId:
+                      currentSource.id,
+
+                    entityType:
+                      'place',
+
+                    entityId:
+                      placeId,
+
+                    shouldLink:
+                      true
+                  }))
+              ];
+
+              const committed =
+                archiveSetConnectionsAtomically(
+                  writes
+                );
+
+              if (!committed.ok) {
+                showToast(
+                  'Place links could not be updated.'
+                );
+
+                return false;
+              }
+
+              const savedIds =
+                new Set(
+                  sourceTargetIds(
+                    currentSource.id,
+                    'place',
+                    projectId
+                  )
+                );
+
+              const savedCorrectly =
+                savedIds.size
+                  === desiredIds.size
+                && [...desiredIds].every(
+                  placeId =>
+                    savedIds.has(
+                      placeId
+                    )
+                );
+
+              if (!savedCorrectly) {
+                showToast(
+                  'Place links could not be updated.'
+                );
+
+                return false;
+              }
+
+              return committed;
+            },
+
+          afterSave:
+            renderArchive,
+
+          successMessage:
+            'Place links updated.'
+        }
+      });
+    }
+
     function openArchiveConnectionPicker({ ownerType, ownerIds, entityType }) {
       const config = archiveEntityConfig(entityType);
       const ids = archiveUniqueIds(ownerIds);
@@ -131799,18 +132618,61 @@
                   .archiveAddConnection;
 
               /*
-                Source → Files now uses the shared
-                Add Files relationship modal.
+                Sources use the specialized shared
+                relationship modals for People and Files.
               */
               if (
                 ownerType === 'source'
-                && entityType === 'file'
               ) {
-                openArchiveSourceFilesModal(
-                  ownerId
-                );
+                if (
+                  entityType === 'person'
+                ) {
+                  openArchiveSourcePeopleModal(
+                    ownerId
+                  );
 
-                return;
+                  return;
+                }
+
+                if (
+                  entityType === 'event'
+                ) {
+                  openArchiveSourceEventsModal(
+                    ownerId
+                  );
+
+                  return;
+                }
+
+                if (
+                  entityType === 'note'
+                ) {
+                  openArchiveSourceNotesModal(
+                    ownerId
+                  );
+
+                  return;
+                }
+
+                if (
+                  entityType === 'place'
+                ) {
+                  openArchiveSourcePlacesModal(
+                    ownerId
+                  );
+
+                  return;
+                }
+
+                if (
+                  entityType === 'file'
+                ) {
+                  openArchiveSourceFilesModal(
+                    ownerId
+                  );
+
+                  return;
+                }
               }
 
               openArchiveConnectionPicker({
@@ -142978,6 +143840,17 @@
         noteId =
           state.selectedNoteId,
 
+        /*
+          When absent, this remains the normal
+          Notes → Places workflow.
+
+          Source → Places supplies a linkContext
+          so the same modal can read and save
+          Source connections.
+        */
+        linkContext =
+          null,
+
         selectedIds:
           resumedSelectedIds =
             null,
@@ -142988,17 +143861,46 @@
       } = {}
     ) {
       const note =
-        getNote(
-          noteId,
-          {
-            includeArchived:
-              true
-          }
-        );
+        linkContext
+          ? null
+          : getNote(
+              noteId,
+              {
+                includeArchived:
+                  true
+              }
+            );
 
-      if (!note) {
+      const projectId =
+        linkContext?.projectId
+        || note?.projectId
+        || currentProjectId();
+
+      if (
+        !projectId
+        || (
+          !linkContext
+          && !note
+        )
+      ) {
         return;
       }
+
+      const initialLinkedPlaceIds =
+        linkContext
+          ? linkContext.initialPlaceIds
+            || []
+          : note.linkedPlaceIds
+            || [];
+
+      const modalTitle =
+        linkContext?.title
+        || 'Add places';
+
+      const modalSubtitle =
+        linkContext?.subtitle
+        || note?.title
+        || 'Untitled note';
 
       const validPlace =
         placeId => {
@@ -143011,15 +143913,13 @@
             place
             && !place.deleted
             && place.projectId
-              === note.projectId
+              === projectId
           );
         };
 
       const initialSelectedIds =
         new Set(
-          (
-            note.linkedPlaceIds || []
-          ).filter(
+          initialLinkedPlaceIds.filter(
             validPlace
           )
         );
@@ -143037,9 +143937,15 @@
         );
 
       const suggestedIds =
-        notesSuggestedPlaceIds(
-          note
-        );
+        linkContext
+          ? new Set(
+              linkContext
+                .suggestedPlaceIds
+              || []
+            )
+          : notesSuggestedPlaceIds(
+              note
+            );
 
       let query =
         String(
@@ -143048,7 +143954,7 @@
 
       const allPlaces = () =>
         projectPlaces(
-          note.projectId
+          projectId
         );
 
       const placeNames =
@@ -143209,8 +144115,7 @@
             getPlaceConnectionCounts(
               place.id,
               {
-                projectId:
-                  note.projectId
+                projectId
               }
             )
           ).reduce(
@@ -143465,7 +144370,7 @@
 
                   <p>
                     Create a place before
-                    linking it to this note.
+                    linking it.
                   </p>
 
                   <button
@@ -143576,13 +144481,14 @@
           <div class="modal-header">
             <div>
               <h2 id="notesPlacesTitle">
-                Add places
+                ${escapeHtml(
+                  modalTitle
+                )}
               </h2>
 
               <p>
                 ${escapeHtml(
-                  note.title
-                  || 'Untitled note'
+                  modalSubtitle
                 )}
               </p>
             </div>
@@ -143870,13 +144776,21 @@
           const nextQuery =
             query;
 
-          renderNotesPreservingInteraction();
+          if (linkContext) {
+            linkContext
+              .renderContext?.();
+          } else {
+            renderNotesPreservingInteraction();
+          }
 
           requestAnimationFrame(
             () => {
               openNotesPlacesModal({
                 noteId:
-                  note.id,
+                  note?.id
+                  || noteId,
+
+                linkContext,
 
                 selectedIds: [
                   ...nextSelectedIds
@@ -144003,25 +144917,47 @@
               return;
             }
 
+          const nextPlaceIds =
+            [
+              ...selectedIds
+            ];
+
+          let saved;
+
+          if (linkContext) {
+            saved =
+              linkContext.onSave?.(
+                nextPlaceIds
+              );
+          } else {
             setNoteEntityLinks(
               note.id,
               'place',
-              [
-                ...selectedIds
-              ],
+              nextPlaceIds,
               {
-                projectId:
-                  note.projectId
+                projectId
               }
             );
 
-            closeModal();
+            saved = true;
+          }
 
+          if (saved === false) {
+            return;
+          }
+
+          closeModal();
+
+          if (linkContext) {
+            linkContext.afterSave?.();
+          } else {
             renderNotesPreservingInteraction();
+          }
 
-            showToast(
-              'Place links updated.'
-            );
+          showToast(
+            linkContext?.successMessage
+            || 'Place links updated.'
+          );
           }
         }
       );
