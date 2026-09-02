@@ -2285,6 +2285,17 @@
       margin-bottom: 0;
     }
 
+    .genealogy-date-field.is-exact-only {
+      --genealogy-date-columns:
+        minmax(0, 1fr)
+        var(--control-icon-button-size);
+    }
+
+    .genealogy-date-field.is-exact-only
+    .genealogy-date-type-shell {
+      display: none;
+    }
+
     .genealogy-date-controls {
       min-width: 0;
       display: grid;
@@ -2430,12 +2441,16 @@
       .genealogy-date-controls {
         grid-template-columns: 1fr;
       }
-
+      .genealogy-date-field.is-exact-only
+      .genealogy-date-controls {
+        grid-template-columns:
+          minmax(0, 1fr)
+          var(--control-icon-button-size);
+      }
       .genealogy-date-field:not(.is-between)
         .genealogy-date-type-shell {
         grid-column: 1 / -1;
       }
-
       .genealogy-date-editor-grid {
         grid-template-columns: 1fr;
       }
@@ -23959,7 +23974,6 @@
       color: var(--text-secondary);
       font-size: 13px;
       font-weight: 750;
-      text-align: center;
       font-variant-numeric: tabular-nums;
     }
 
@@ -32472,6 +32486,8 @@
       'DD MMM YYYY': 'ДД МММ ГГГГ',
       'DD.MM.YYYY': 'ДД.ММ.ГГГГ',
       'YYYY-MM-DD': 'ГГГГ-ММ-ДД',
+      'Enter a complete date with day, month, and year.': 'Введите полную дату, указав день, месяц и год.',
+      'e.g. 24 May 2026': 'Например, 24 мая 2026',
       'Reset changes': 'Сбросить изменения',
       'Description': 'Описание',
       'Help center': 'Справочный центр',
@@ -34727,6 +34743,7 @@
       // Sources view
       // ========================================
 
+      'Source': 'Источник',
       'All sources':
         'Все источники',
 
@@ -35088,7 +35105,7 @@
         'Город, расположение архива или место хранения',
 
       'Where can it be found?':
-        'Где это можно найти?',
+        'Где найти?',
 
       'Collection, folder, volume, page, call number, or item':
         'Коллекция, папка или архивный шифр',
@@ -35097,7 +35114,7 @@
         'Веб-сайт или ссылка',
 
       'Date accessed or received':
-        'Дата обращения или получения',
+        'Дата обращения',
 
       'Add anything that will help you recognize or find this source again':
         'Добавьте сведения, которые помогут снова распознать или найти этот источник',
@@ -36904,7 +36921,96 @@
       'Places that do not yet have coordinates.':
         'Места, для которых ещё не указаны координаты.'
     };
-    const RU_DATA_SOURCES = Object.freeze({});
+
+    const RU_DATA_SOURCES =
+      Object.freeze({
+        // ========================================
+        // Source as1
+        // ========================================
+
+        'Pawford County Archive — parish and household registers':
+          'Архив округа Поуфорд — приходские и домовые книги',
+
+        'Register collection 12 / household series 3':
+          'Коллекция реестров 12 / серия домовых книг 3',
+
+        'County archive material used for Pawford household and parish research.':
+          'Материалы окружного архива, использованные для изучения домохозяйств и прихода Поуфорда.',
+
+        // ========================================
+        // Source as2
+        // ========================================
+
+        'Pawford household register continuation, 1947–1952':
+          'Продолжение домовой книги Поуфорда, 1947–1952',
+
+        'Household series 3, continuation volume':
+          'Серия домовых книг 3, том-продолжение',
+
+        'Continuation volume for Pawford household entries after 1946.':
+          'Том-продолжение с записями о домохозяйствах Поуфорда после 1946 года.',
+
+        // ========================================
+        // Source as3
+        // ========================================
+
+        'Meowbridge marriage certificate held in family documents':
+          'Свидетельство о браке в Мяубридже из семейных документов',
+
+        'Whiskerfield family documents':
+          'Семейные документы Вискерфильдов',
+
+        'Certificate folder, item 2':
+          'Папка со свидетельствами, документ 2',
+
+        'Original certificate scan retained by the family.':
+          'Скан оригинала свидетельства хранится в семье.',
+
+        // ========================================
+        // Source as4
+        // ========================================
+
+        'Interview with Luna Purrington, 2 April 2026':
+          'Интервью с Луной Пуррингтон, 2 апреля 2026 года',
+
+        'Online interview':
+          'Онлайн-интервью',
+
+        'Audio interview 2026-04-02':
+          'Аудиоинтервью от 02.04.2026',
+
+        'Recorded family-history interview covering stories from 1940 to 1990.':
+          'Записанное интервью по семейной истории с рассказами о периоде с 1940 по 1990 год.',
+
+        // ========================================
+        // Source as5
+        // ========================================
+
+        'Whiskerfield family reference collection':
+          'Справочная коллекция семьи Вискерфильдов',
+
+        'Reference box A':
+          'Коробка со справочными материалами A',
+
+        'Mixed family reference material, clippings, and album documentation.':
+          'Смешанная коллекция семейных справочных материалов, вырезок и описаний альбомов.',
+
+        // ========================================
+        // Source as6
+        // ========================================
+
+        'Regional genealogy database — Pawford records':
+          'Региональная генеалогическая база данных — записи Поуфорда',
+
+        'Regional genealogy database':
+          'Региональная генеалогическая база данных',
+
+        'Pawford record collection, 1900–1950':
+          'Коллекция записей Поуфорда, 1900–1950',
+
+        'Online index and document extracts for the Pawford area.':
+          'Онлайн-указатель и выписки из документов по району Поуфорда.'
+      });
     const RU_DATA_PHOTOS = {
       // Titles
       'Silver portrait':
@@ -44535,43 +44641,230 @@
         year2: second.year || ''
       };
     }
-    function renderGenealogyDateField(fieldId, label, dateInput, options = {}) {
-      const defaultDateType = options.defaultDateType || options.defaultType || 'Exact date';
-      const model = normalizeGenealogyDateInput(dateInput || emptyGenealogyDate(defaultDateType), defaultDateType);
-      const inputId = options.inputId || `${fieldId}Date`;
-      const typeId = options.typeId || `${fieldId}DateType`;
-      const inputToId = options.inputToId || `${inputId}To`;
-      const placeholder = options.placeholder || 'e.g. 14 Feb 1915';
-      const fieldClass = options.className || '';
-      const isBetween = model.dateType === 'Between';
-      const hiddenValue = escapeHtml(JSON.stringify(model));
-      const startValue = formatGenealogyDateStartLabel(model);
-      const endValue = formatGenealogyDateEndLabel(model);
-      return `<div class="field genealogy-date-field ${isBetween ? 'is-between' : ''} ${escapeHtml(fieldClass)}" data-genealogy-date-field="${escapeHtml(fieldId)}">
-        <label for="${escapeHtml(inputId)}">${escapeHtml(label)}</label>
-        <div class="genealogy-date-controls">
-          <div class="common-select-shell genealogy-date-type-shell">
-            <select class="compact-select common-select genealogy-date-type" id="${escapeHtml(typeId)}" data-genealogy-date-type>
-              ${genealogyDateTypeOptions(model.dateType)}
-            </select>
-            <span class="common-select-chevron" aria-hidden="true">${icon.chevron}</span>
-          </div>
-          <div class="genealogy-date-range-shell" data-genealogy-date-range-shell>
-            <div class="genealogy-date-range-cell">
-              <span>From</span>
-              <input class="genealogy-date-input" id="${escapeHtml(inputId)}" data-genealogy-date-input data-source-value="${escapeHtml(startValue)}" value="${escapeHtml(localizedDataFieldValue(startValue))}" placeholder="${escapeHtml(placeholder)}">
+
+    function renderGenealogyDateField(
+      fieldId,
+      label,
+      dateInput,
+      options = {}
+    ) {
+      const defaultDateType =
+        options.defaultDateType
+        || options.defaultType
+        || 'Exact date';
+
+      const exactOnly =
+        Boolean(
+          options.exactOnly
+        );
+
+      const initialModel =
+        normalizeGenealogyDateInput(
+          dateInput
+          || emptyGenealogyDate(
+            defaultDateType
+          ),
+          defaultDateType
+        );
+
+      const model =
+        exactOnly
+          ? {
+              ...initialModel,
+
+              dateType:
+                'Exact date',
+
+              calendar:
+                'Gregorian',
+
+              date2:
+                '',
+
+              date2Label:
+                '',
+
+              sortDate2:
+                ''
+            }
+          : initialModel;
+
+      const inputId =
+        options.inputId
+        || `${fieldId}Date`;
+
+      const typeId =
+        options.typeId
+        || `${fieldId}DateType`;
+
+      const inputToId =
+        options.inputToId
+        || `${inputId}To`;
+
+      const placeholder =
+        options.placeholder
+        || 'e.g. 14 Feb 1915';
+
+      const fieldClass =
+        options.className
+        || '';
+
+      const isBetween =
+        !exactOnly
+        && model.dateType
+          === 'Between';
+
+      const hiddenValue =
+        escapeHtml(
+          JSON.stringify(
+            model
+          )
+        );
+
+      const startValue =
+        formatGenealogyDateStartLabel(
+          model
+        );
+
+      const endValue =
+        formatGenealogyDateEndLabel(
+          model
+        );
+
+      return `
+        <div
+          class="
+            field
+            genealogy-date-field
+            ${isBetween ? 'is-between' : ''}
+            ${exactOnly ? 'is-exact-only' : ''}
+            ${escapeHtml(fieldClass)}
+          "
+          data-genealogy-date-field="${escapeHtml(
+            fieldId
+          )}"
+          data-genealogy-date-exact-only="${
+            exactOnly
+              ? 'true'
+              : 'false'
+          }">
+
+          <label for="${escapeHtml(inputId)}">
+            ${escapeHtml(label)}
+          </label>
+
+          <div class="genealogy-date-controls">
+            <div
+              class="
+                common-select-shell
+                genealogy-date-type-shell
+              ">
+
+              <select
+                class="
+                  compact-select
+                  common-select
+                  genealogy-date-type
+                "
+                id="${escapeHtml(typeId)}"
+                data-genealogy-date-type>
+
+                ${genealogyDateTypeOptions(
+                  model.dateType
+                )}
+              </select>
+
+              <span
+                class="common-select-chevron"
+                aria-hidden="true">
+
+                ${icon.chevron}
+              </span>
             </div>
-            <div class="genealogy-date-range-cell" data-genealogy-date-to-cell>
-              <span>To</span>
-              <input class="genealogy-date-input" id="${escapeHtml(inputToId)}" data-genealogy-date-input-to data-source-value="${escapeHtml(endValue)}" value="${escapeHtml(localizedDataFieldValue(endValue))}" placeholder="e.g. 14 Feb 1925">
+
+            <div
+              class="genealogy-date-range-shell"
+              data-genealogy-date-range-shell>
+
+              <div class="genealogy-date-range-cell">
+                <span>From</span>
+
+                <input
+                  class="genealogy-date-input"
+                  id="${escapeHtml(inputId)}"
+                  data-genealogy-date-input
+                  data-source-value="${escapeHtml(
+                    startValue
+                  )}"
+                  value="${escapeHtml(
+                    localizedDataFieldValue(
+                      startValue
+                    )
+                  )}"
+                  placeholder="${escapeHtml(
+                    placeholder
+                  )}">
+              </div>
+
+              <div
+                class="genealogy-date-range-cell"
+                data-genealogy-date-to-cell>
+
+                <span>To</span>
+
+                <input
+                  class="genealogy-date-input"
+                  id="${escapeHtml(inputToId)}"
+                  data-genealogy-date-input-to
+                  data-source-value="${escapeHtml(
+                    endValue
+                  )}"
+                  value="${escapeHtml(
+                    localizedDataFieldValue(
+                      endValue
+                    )
+                  )}"
+                  placeholder="e.g. 14 Feb 1925">
+              </div>
             </div>
+
+            <button
+              class="genealogy-date-details-button"
+              type="button"
+              data-genealogy-date-details="${escapeHtml(
+                fieldId
+              )}"
+              aria-label="Edit ${escapeHtml(
+                label
+              )} details"
+              aria-expanded="false">
+
+              ${icon.calendar}
+            </button>
           </div>
-          <button class="genealogy-date-details-button" type="button" data-genealogy-date-details="${escapeHtml(fieldId)}" aria-label="Edit ${escapeHtml(label)} details" aria-expanded="false">${icon.calendar}</button>
+
+          <input
+            type="hidden"
+            data-genealogy-date-model
+            value="${hiddenValue}">
+
+          <div
+            class="genealogy-date-standard-status"
+            data-genealogy-date-status>
+
+            ${
+              model.calendar === 'Julian'
+                ? 'Julian calendar stored; conversion is not implemented.'
+                : ''
+            }
+          </div>
+
+          <div
+            class="genealogy-date-validation"
+            data-genealogy-date-validation>
+          </div>
         </div>
-        <input type="hidden" data-genealogy-date-model value="${hiddenValue}">
-        <div class="genealogy-date-standard-status" data-genealogy-date-status>${model.calendar === 'Julian' ? 'Julian calendar stored; conversion is not implemented.' : ''}</div>
-        <div class="genealogy-date-validation" data-genealogy-date-validation></div>
-      </div>`;
+      `;
     }
 
     function readGenealogyDateModel(fieldRoot) {
@@ -44708,6 +45001,10 @@
     function openGenealogyDateEditor(anchor, fieldId) {
       const root = document.querySelector(`[data-genealogy-date-field="${CSS.escape(fieldId)}"]`);
       if (!root) return;
+      const exactOnly =
+        root.dataset
+          .genealogyDateExactOnly
+          === 'true';
       closeGenealogyDateEditor();
       anchor?.setAttribute('aria-expanded', 'true');
       const existingModel = readGenealogyDateModel(root);
@@ -44742,8 +45039,27 @@
       popover.innerHTML = `<div class="genealogy-date-popover-header"><div><strong>Date details</strong></div><button class="close-button" type="button" data-genealogy-date-close aria-label="Close date details">${icon.close}</button></div>
         <div class="genealogy-date-editor-grid">
           <div class="genealogy-date-part-field full"><label>Smart date</label><input data-editor-smart value="${escapeHtml(formatGenealogyDateLabel(model) || model.originalText || '')}" placeholder="e.g. 14 Feb 1915"></div>
-          <div class="genealogy-date-part-field"><label>Date type</label><select class="compact-select" data-editor-type>${genealogyDateTypeOptions(model.dateType)}</select></div>
-          <div class="genealogy-date-part-field">
+          <div
+            class="genealogy-date-part-field"
+            ${exactOnly ? 'hidden' : ''}>
+
+            <label>Date type</label>
+
+            <select
+              class="compact-select"
+              data-editor-type>
+
+              ${genealogyDateTypeOptions(
+                exactOnly
+                  ? 'Exact date'
+                  : model.dateType
+              )}
+            </select>
+          </div>
+          <div
+            class="genealogy-date-part-field"
+            ${exactOnly ? 'hidden' : ''}>
+
             <label>Calendar</label>
 
             <select
@@ -44781,7 +45097,13 @@
               <div class="genealogy-date-part-field"><label>Second year</label><input data-editor-year2 inputmode="numeric" value="${escapeHtml(parts.year2)}" placeholder="YYYY"></div>
             </div>
           </div>
-          <div class="genealogy-date-editor-note full" data-editor-note>Julian calendar can be stored; conversion is not implemented in this prototype.</div>
+          <div
+            class="genealogy-date-editor-note full"
+            data-editor-note
+            ${exactOnly ? 'hidden' : ''}>
+
+            Julian calendar can be stored; conversion is not implemented in this prototype.
+          </div>
           <div class="genealogy-date-validation full" data-editor-validation></div>
         </div>
         <div class="genealogy-date-actions"><button class="button secondary" type="button" data-genealogy-date-close>Cancel</button><button class="button primary" type="button" data-genealogy-date-apply>Apply</button></div>`;
@@ -121700,7 +122022,12 @@
                       </span>
                     </td>
 
-                    <td class="archive-source-connections-cell">
+                    <td
+                      class="
+                        archive-col-source-connections
+                        archive-source-connections-cell
+                      ">
+
                       ${connectionCount}
                     </td>
 
@@ -123567,8 +123894,12 @@
           source,
           entityType
         ),
-        String(
-          records.length
+        translateText(
+          `${records.length} ${
+            records.length === 1
+              ? config.singular
+              : config.title.toLowerCase()
+          }`
         )
       );
     }
@@ -125922,6 +126253,103 @@
       );
     }
 
+    function archiveSourceAccessedDateToIso(
+      dateModel
+    ) {
+      if (
+        !dateModel
+        || (
+          !dateModel.date
+          && !dateModel.dateLabel
+          && !dateModel.originalText
+        )
+      ) {
+        return '';
+      }
+
+      const sortDate =
+        String(
+          dateModel.sortDate
+          || ''
+        );
+
+      if (
+        !/^\d{8}$/.test(
+          sortDate
+        )
+      ) {
+        return null;
+      }
+
+      const year =
+        sortDate.slice(
+          0,
+          4
+        );
+
+      const month =
+        sortDate.slice(
+          4,
+          6
+        );
+
+      const day =
+        sortDate.slice(
+          6,
+          8
+        );
+
+      if (
+        month === '00'
+        || day === '00'
+        || !isValidGregorianDate(
+          year,
+          month,
+          day
+        )
+      ) {
+        return null;
+      }
+
+      return `${year}-${month}-${day}`;
+    }
+
+    function collectArchiveSourceAccessedDate() {
+      const fieldId =
+        'archiveSourceAccessed';
+
+      const fieldRoot =
+        modalBackdrop
+          ?.querySelector(
+            `[data-genealogy-date-field="${fieldId}"]`
+          );
+
+      const dateModel =
+        collectGenealogyDateField(
+          fieldId
+        );
+
+      if (!dateModel) {
+        return null;
+      }
+
+      const isoDate =
+        archiveSourceAccessedDateToIso(
+          dateModel
+        );
+
+      if (isoDate === null) {
+        setGenealogyDateFieldError(
+          fieldRoot,
+          'Enter a complete date with day, month, and year.'
+        );
+
+        return null;
+      }
+
+      return isoDate;
+    }
+
     function openArchiveSourceModal(
       sourceId = '',
       {
@@ -126139,17 +126567,31 @@
                       placeholder="https://">
                   </div>
 
-                  <div class="field">
-                    <label for="archiveSourceAccessed">
-                      Date accessed or received
-                    </label>
+                  ${renderGenealogyDateField(
+                    'archiveSourceAccessed',
+                    'Date accessed or received',
+                    source?.accessedDate
+                      || '',
+                    {
+                      inputId:
+                        'archiveSourceAccessedInput',
 
-                    <input
-                      id="archiveSourceAccessed"
-                      type="date"
-                      data-archive-source-accessed
-                      value="${escapeHtml(source?.accessedDate || '')}">
-                  </div>
+                      typeId:
+                        'archiveSourceAccessedType',
+
+                      defaultDateType:
+                        'Exact date',
+
+                      placeholder:
+                        'e.g. 24 May 2026',
+
+                      className:
+                        'archive-source-accessed-date',
+
+                      exactOnly:
+                        true
+                    }
+                  )}
                 </div>
               </section>
 
@@ -126207,6 +126649,10 @@
           '[data-archive-source-form]'
         );
 
+      bindGenealogyDateFields(
+        modalBackdrop
+      );
+
       requestAnimationFrame(
         () => {
           modalBackdrop
@@ -126241,6 +126687,21 @@
               .trim();
 
           if (!title) {
+            return;
+          }
+
+          const accessedDate =
+            collectArchiveSourceAccessedDate();
+
+          if (accessedDate === null) {
+            form
+              .querySelector(
+                '[data-genealogy-date-input]'
+              )
+              ?.focus({
+                preventScroll: true
+              });
+
             return;
           }
 
@@ -126307,11 +126768,7 @@
               .trim();
 
           target.accessedDate =
-            form
-              .querySelector(
-                '[data-archive-source-accessed]'
-              )
-              .value;
+            accessedDate;
 
           target.notes =
             form
