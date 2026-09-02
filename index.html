@@ -23526,54 +23526,59 @@
         not-allowed;
     }
 
-    .archive-preview {
-      min-height: 198px;
-      margin-bottom: var(--space-3);
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-md);
-      background:
-        radial-gradient(circle at 30% 18%, rgba(98, 217, 154, .08), transparent 34%),
-        linear-gradient(145deg, #1b2220, #0d1211);
+    .archive-source-inspector-content {
+      min-width: 0;
+    }
+
+    .archive-source-inspector-content
+    .panel-section-body {
+      padding:
+        var(--space-4)
+        var(--space-4)
+        var(--space-5);
+    }
+
+    .archive-source-read-list {
+      margin: 0;
+      padding: 0;
+    }
+
+    .archive-source-url {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .archive-source-notes {
+      min-width: 0;
+      margin-top: var(--space-4);
+      padding-top: var(--space-4);
+      border-top:
+        1px solid
+        rgba(45, 54, 52, .72);
+      text-align: left;
+    }
+
+    .archive-source-notes strong {
+      display: block;
+      margin-bottom: var(--space-2);
       color: var(--text-tertiary);
-      overflow: hidden;
-      display: grid;
-      place-items: center;
-      text-align: center;
-    }
-
-    .archive-preview-content {
-      padding: var(--space-5);
-      display: grid;
-      place-items: center;
-      gap: var(--space-2);
-    }
-
-    .archive-preview-content svg {
-      width: 44px;
-      height: 44px;
-      color: var(--text-secondary);
-    }
-
-    .archive-preview-content strong {
-      color: var(--text-primary);
-    }
-
-    .archive-preview-content span {
-      max-width: 250px;
       font-size: 12px;
-      line-height: 1.45;
+      font-weight: 850;
+      line-height: 1.5;
     }
-    
-    .archive-inspector-primary-actions {
-      margin-bottom:
-        var(--space-3);
 
-      display: grid;
-      grid-template-columns:
-        minmax(0, 1fr);
-
-      gap:
-        var(--space-2);
+    .archive-source-notes p {
+      width: 100%;
+      min-width: 0;
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.55;
+      text-align: left;
+      text-indent: 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
 
     .archive-inspector-section {
@@ -35030,6 +35035,21 @@
 
       'Source details':
         'Сведения об источнике',
+
+      'Source notes':
+        'Заметки об источнике',
+
+      'No people linked.':
+        'Связанных людей нет.',
+
+      'No events linked.':
+        'Связанных событий нет.',
+
+      'No notes linked.':
+        'Связанных заметок нет.',
+
+      'No places linked.':
+        'Связанных мест нет.',
 
       'Repository / owner':
         'Хранилище / владелец',
@@ -47862,8 +47882,13 @@
         people: false,
         events: false,
         notes: false,
-        metadata:
-          false
+        metadata: false,
+        'source-details': true,
+        'source-file': true,
+        'source-person': false,
+        'source-event': false,
+        'source-note': false,
+        'source-place': false
       },
       archiveExpandedFolders: {
         pawford: true,
@@ -122152,7 +122177,23 @@
                   ${icon.edit}
                 </button>
               `
-              : ''
+              : context?.type === 'source'
+                ? `
+                  <button
+                    class="
+                      archive-inspector-action
+                    "
+                    type="button"
+                    data-archive-edit-source="${escapeHtml(
+                      context.id
+                    )}"
+                    aria-label="Edit source"
+                    title="Edit source">
+
+                    ${icon.edit}
+                  </button>
+                `
+                : ''
           }
 
           ${renderArchiveInspectorFolderOpenButton(
@@ -123287,87 +123328,381 @@
       `;
     }
 
-    function renderArchiveSourceFileSection(
-      sourceId
+    function renderArchiveSourceSection(
+      sectionId,
+      title,
+      content,
+      actionHtml = '',
+      meta = ''
     ) {
-      const source =
-        archiveSourceById(
-          sourceId
+      const stateKey =
+        `source-${sectionId}`;
+
+      return renderInspectorSection(
+        stateKey,
+        title,
+        meta,
+        content,
+        actionHtml,
+        {
+          inlineAction:
+            Boolean(
+              actionHtml
+            ),
+
+          alwaysShowAction:
+            true,
+
+          open:
+            archiveInspectorSectionIsOpen(
+              stateKey
+            ),
+
+          toggleAttribute:
+            'data-archive-section-toggle',
+
+          sectionId:
+            `archive-source-section-${sectionId}`
+        }
+      );
+    }
+
+    function archiveSourceConnectionRecords(
+      source,
+      entityType
+    ) {
+      if (!source) {
+        return [];
+      }
+
+      if (entityType === 'file') {
+        return archiveFilesForSource(
+          source.id
+        );
+      }
+
+      return archiveConnectionIds(
+        'source',
+        source.id,
+        entityType
+      )
+        .map(id =>
+          archiveConnectionRecord(
+            entityType,
+            id
+          )
+        )
+        .filter(Boolean);
+    }
+
+    function renderArchiveSourceSectionAction(
+      source,
+      entityType
+    ) {
+      const config =
+        archiveEntityConfig(
+          entityType
         );
 
-      if (!source) {
+      if (!source || !config) {
         return '';
       }
 
-      const files =
-        archiveFilesForSource(
-          source.id
+      return `
+        <button
+          class="link"
+          type="button"
+          data-archive-add-connection="${escapeHtml(
+            entityType
+          )}"
+          data-archive-owner-type="source"
+          data-archive-owner-id="${escapeHtml(
+            source.id
+          )}">
+
+          ${renderPanelButtonLabel(
+            icon.plus,
+            config.addLabel
+          )}
+        </button>
+      `;
+    }
+
+    function renderArchiveSourceConnectionContent(
+      source,
+      entityType,
+      records
+    ) {
+      const config =
+        archiveEntityConfig(
+          entityType
         );
 
+      if (!config) {
+        return '';
+      }
+
+      if (!records.length) {
+        return renderInspectorSectionEmpty(
+          `No ${config.title.toLowerCase()} linked.`
+        );
+      }
+
+      if (entityType === 'file') {
+        return renderConnectedFileList({
+          files:
+            records,
+
+          limit:
+            4,
+
+          contextType:
+            'source',
+
+          contextId:
+            source.id,
+
+          emptyText:
+            'No files linked.'
+        });
+      }
+
       return `
-        <section
+        <div class="archive-connection-list">
+          ${records
+            .slice(
+              0,
+              4
+            )
+            .map(record => `
+              <div class="archive-connection-row">
+                <button
+                  class="archive-connection-open"
+                  type="button"
+                  data-archive-open-connection="${escapeHtml(
+                    entityType
+                  )}"
+                  data-archive-connection-id="${escapeHtml(
+                    record.id
+                  )}"
+                  aria-label="Open ${escapeHtml(
+                    config.label(
+                      record
+                    )
+                  )}">
+                </button>
+
+                <strong>
+                  ${escapeHtml(
+                    config.label(
+                      record
+                    )
+                  )}
+                </strong>
+
+                <span>
+                  ${escapeHtml(
+                    config.meta(
+                      record
+                    )
+                  )}
+                </span>
+
+                <button
+                  class="archive-connection-unlink"
+                  type="button"
+                  data-archive-unlink-owner-type="source"
+                  data-archive-unlink-owner-id="${escapeHtml(
+                    source.id
+                  )}"
+                  data-archive-unlink-type="${escapeHtml(
+                    entityType
+                  )}"
+                  data-archive-unlink-id="${escapeHtml(
+                    record.id
+                  )}"
+                  aria-label="Unlink ${escapeHtml(
+                    config.label(
+                      record
+                    )
+                  )}">
+
+                  ${icon.unlink}
+                </button>
+              </div>
+            `)
+            .join('')}
+        </div>
+      `;
+    }
+
+    function renderArchiveSourceConnectionSection(
+      source,
+      entityType
+    ) {
+      const config =
+        archiveEntityConfig(
+          entityType
+        );
+
+      if (!source || !config) {
+        return '';
+      }
+
+      const records =
+        archiveSourceConnectionRecords(
+          source,
+          entityType
+        );
+
+      return renderArchiveSourceSection(
+        entityType,
+        config.title,
+        renderArchiveSourceConnectionContent(
+          source,
+          entityType,
+          records
+        ),
+        renderArchiveSourceSectionAction(
+          source,
+          entityType
+        ),
+        String(
+          records.length
+        )
+      );
+    }
+
+    function renderArchiveSourceDetails(
+      source,
+      categoryLabel
+    ) {
+      const url =
+        String(
+          source.url
+          || ''
+        ).trim();
+
+      const rows = [
+        {
+          label:
+            'Category',
+
+          value:
+            categoryLabel
+            || 'Not specified'
+        },
+        {
+          label:
+            'Obtained from',
+
+          value:
+            source.providedBy
+            || 'Not specified'
+        },
+        {
+          label:
+            'Location',
+
+          value:
+            source.location
+            || 'Not specified'
+        },
+        {
+          label:
+            'Where can it be found?',
+
+          value:
+            source.reference
+            || 'Not specified'
+        },
+        {
+          label:
+            'Website or link',
+
+          value:
+            url
+            || 'Not specified',
+
+          isLink:
+            Boolean(
+              url
+            )
+        },
+        {
+          label:
+            'Date accessed or received',
+
+          value:
+            source.accessedDate
+              ? archiveFormatDate(
+                  source.accessedDate
+                )
+              : 'Not specified'
+        }
+      ];
+
+      return `
+        <dl
           class="
-            archive-inspector-section
+            archive-file-read-list
+            archive-source-read-list
           ">
 
-          <div
-            class="
-              archive-inspector-section-head
-            ">
+          ${rows
+            .map(row => `
+              <div class="archive-file-read-row">
+                <dt>
+                  ${escapeHtml(
+                    row.label
+                  )}
+                </dt>
 
-            <strong>
-              Files
-            </strong>
+                <dd>
+                  ${
+                    row.isLink
+                      ? `
+                        <a
+                          class="
+                            link
+                            archive-source-url
+                          "
+                          href="${escapeHtml(
+                            row.value
+                          )}"
+                          target="_blank"
+                          rel="noopener noreferrer">
 
-            <span>
-              ${files.length}
-            </span>
-          </div>
+                          ${escapeHtml(
+                            row.value
+                          )}
+                        </a>
+                      `
+                      : escapeHtml(
+                          row.value
+                        )
+                  }
+                </dd>
+              </div>
+            `)
+            .join('')}
+        </dl>
 
-          <div
-            class="
-              archive-inspector-section-body
-            ">
-          ${
-            files.length
-              ? renderConnectedFileList({
-                  files,
+        ${
+          source.notes
+            ? `
+              <div class="archive-source-notes">
+                <strong>
+                  Source notes
+                </strong>
 
-                  limit:
-                    4,
-
-                  contextType:
-                    'source',
-
-                  contextId:
-                    source.id,
-
-                  emptyText:
-                    'No files linked.'
-                })
-              : renderInspectorSectionEmpty(
-                  'No files linked.'
-                )
-          }
-
-            <button
-              class="
-                button
-                ghost
-                archive-link-section-action
-              "
-              type="button"
-              data-archive-add-connection="file"
-              data-archive-owner-type="source"
-              data-archive-owner-id="${escapeHtml(
-                source.id
-              )}">
-
-              ${icon.plus}
-              Add files
-            </button>
-          </div>
-        </section>
+                <p>${escapeHtml(
+                    source.notes
+                  )}</p>
+              </div>
+            `
+            : ''
+        }
       `;
     }
 
@@ -123466,29 +123801,6 @@
                 : 'files'
             } added to source.`
       });
-    }
-
-    function renderArchiveConnectionSection(ownerType, ownerId, entityType) {
-      if (
-        ownerType === 'source'
-        && entityType === 'file'
-      ) {
-        return renderArchiveSourceFileSection(
-          ownerId
-        );
-      }
-      const config = archiveEntityConfig(entityType);
-      if (!config) return '';
-      const ids = archiveConnectionIds(ownerType, ownerId, entityType);
-      const records = ids.map(id => archiveConnectionRecord(entityType, id)).filter(Boolean);
-      return `<section class="archive-inspector-section"><div class="archive-inspector-section-head"><strong>${escapeHtml(config.title)}</strong><span>${records.length}</span></div><div class="archive-inspector-section-body">
-        ${records.length ? `<div class="archive-connection-list">${records.slice(0, 4).map(record => `<div class="archive-connection-row"><button class="archive-connection-open" type="button" data-archive-open-connection="${escapeHtml(entityType)}" data-archive-connection-id="${escapeHtml(record.id)}" aria-label="Open ${escapeHtml(config.label(record))}"></button><strong>${escapeHtml(config.label(record))}</strong><span>${escapeHtml(config.meta(record))}</span><button class="archive-connection-unlink" type="button" data-archive-unlink-owner-type="${escapeHtml(ownerType)}" data-archive-unlink-owner-id="${escapeHtml(ownerId)}" data-archive-unlink-type="${escapeHtml(entityType)}" data-archive-unlink-id="${escapeHtml(record.id)}" aria-label="Unlink ${escapeHtml(config.label(record))}">${icon.unlink}</button></div>`).join('')}</div>` : 
-        renderInspectorSectionEmpty(
-          `No ${config.title.toLowerCase()} linked.`
-        )
-        }
-        <button class="button ghost archive-link-section-action" type="button" data-archive-add-connection="${escapeHtml(entityType)}" data-archive-owner-type="${escapeHtml(ownerType)}" data-archive-owner-id="${escapeHtml(ownerId)}">${icon.plus} ${escapeHtml(config.addLabel)}</button>
-      </div></section>`;
     }
 
     function renderArchiveFileInspector(
@@ -123891,166 +124203,40 @@
           source.category
         );
 
-      const body = `
-        <div class="archive-preview">
-          <div class="archive-preview-content">
-            ${icon.archive}
+      const content = `
+        ${renderArchiveSourceSection(
+          'details',
+          'Source details',
+          renderArchiveSourceDetails(
+            source,
+            categoryLabel
+          )
+        )}
 
-            <strong>
-              ${escapeHtml(categoryLabel)}
-            </strong>
-
-            <span>
-              ${escapeHtml(
-                source.providedBy
-                || source.reference
-                || 'Genealogy source record'
-              )}
-            </span>
-          </div>
-        </div>
-
-        <div class="archive-inspector-primary-actions">
-          <button
-            class="button secondary"
-            type="button"
-            data-archive-edit-source="${escapeHtml(source.id)}">
-            Edit source
-          </button>
-
-          <button
-            class="
-              archive-row-icon-button
-              ${source.favorite ? 'active' : ''}
-            "
-            type="button"
-            data-archive-source-favorite="${escapeHtml(source.id)}"
-            aria-label="Toggle source favourite">
-            ${icon.star}
-          </button>
-        </div>
-
-        <section class="archive-inspector-section">
-          <div class="archive-inspector-section-head">
-            <strong>Source details</strong>
-          </div>
-
-          <div class="archive-inspector-section-body">
-            <div class="archive-kv-list">
-              <div class="archive-kv">
-                <span>Category</span>
-                <span>${escapeHtml(categoryLabel)}</span>
-              </div>
-
-              <div class="archive-kv">
-                <span>Obtained from</span>
-                <span>
-                  ${escapeHtml(
-                    source.providedBy
-                    || 'Not specified'
-                  )}
-                </span>
-              </div>
-
-              <div class="archive-kv">
-                <span>Location</span>
-                <span>
-                  ${escapeHtml(
-                    source.location
-                    || 'Not specified'
-                  )}
-                </span>
-              </div>
-
-              <div class="archive-kv">
-                <span>Where can it be found?</span>
-                <span>
-                  ${escapeHtml(
-                    source.reference
-                    || 'Not specified'
-                  )}
-                </span>
-              </div>
-
-              <div class="archive-kv">
-                <span>Website or link</span>
-                <span>
-                  ${escapeHtml(
-                    source.url
-                    || 'Not specified'
-                  )}
-                </span>
-              </div>
-
-              <div class="archive-kv">
-                <span>Date accessed or received</span>
-                <span>
-                  ${
-                    escapeHtml(
-                      source.accessedDate
-                        ? archiveFormatDate(
-                            source.accessedDate
-                          )
-                        : 'Not specified'
-                    )
-                  }
-                </span>
-              </div>
-            </div>
-
-            ${
-              source.notes
-                ? `
-                  <p
-                    style="
-                      margin:var(--space-3) 0 0;
-                      color:var(--text-secondary);
-                      line-height:1.5;
-                    ">
-                    ${escapeHtml(source.notes)}
-                  </p>
-                `
-                : ''
-            }
-          </div>
-        </section>
-
-        ${renderArchiveConnectionSection(
-          'source',
-          source.id,
+        ${renderArchiveSourceConnectionSection(
+          source,
           'file'
         )}
 
-        ${renderArchiveConnectionSection(
-          'source',
-          source.id,
+        ${renderArchiveSourceConnectionSection(
+          source,
           'person'
         )}
 
-        ${renderArchiveConnectionSection(
-          'source',
-          source.id,
+        ${renderArchiveSourceConnectionSection(
+          source,
           'event'
         )}
 
-        ${renderArchiveConnectionSection(
-          'source',
-          source.id,
+        ${renderArchiveSourceConnectionSection(
+          source,
           'note'
         )}
 
-        ${renderArchiveConnectionSection(
-          'source',
-          source.id,
+        ${renderArchiveSourceConnectionSection(
+          source,
           'place'
         )}
-
-        <button
-          class="button danger full"
-          type="button"
-          data-archive-delete-source="${escapeHtml(source.id)}">
-          Delete source permanently
-        </button>
       `;
 
       return renderArchiveInspectorShell({
@@ -124060,8 +124246,10 @@
         subtitle:
           categoryLabel,
 
-        content:
-          body
+        bodyClass:
+          'archive-source-inspector-content',
+
+        content
       });
     }
 
@@ -129753,7 +129941,13 @@
               id
             )
           : null;
-
+      const sourceMenuInInspector =
+        Boolean(
+          source
+          && anchor.closest(
+            '.archive-inspector-toolbar'
+          )
+        );
       const item =
         file
         || folder
@@ -129883,36 +130077,48 @@
       }
 
       if (source) {
-        menu.innerHTML = `
-          <button
-            type="button"
-            role="menuitem"
-            data-archive-item-action="edit">
+        menu.innerHTML =
+          sourceMenuInInspector
+            ? `
+              <button
+                class="danger"
+                type="button"
+                role="menuitem"
+                data-archive-item-action="delete">
 
-            Edit source
-          </button>
+                Delete permanently
+              </button>
+            `
+            : `
+              <button
+                type="button"
+                role="menuitem"
+                data-archive-item-action="edit">
 
-          <button
-            type="button"
-            role="menuitem"
-            data-archive-item-action="favorite">
+                Edit source
+              </button>
 
-            ${
-              source.favorite
-                ? 'Remove from favourites'
-                : 'Add to favourites'
-            }
-          </button>
+              <button
+                type="button"
+                role="menuitem"
+                data-archive-item-action="favorite">
 
-          <button
-            class="danger"
-            type="button"
-            role="menuitem"
-            data-archive-item-action="delete">
+                ${
+                  source.favorite
+                    ? 'Remove from favourites'
+                    : 'Add to favourites'
+                }
+              </button>
 
-            Delete permanently
-          </button>
-        `;
+              <button
+                class="danger"
+                type="button"
+                role="menuitem"
+                data-archive-item-action="delete">
+
+                Delete permanently
+              </button>
+            `;
       }
 
       document.body.appendChild(
