@@ -34752,32 +34752,41 @@
       'Delete source permanently':
         'Удалить источник безвозвратно',
 
-      'Record where files or family-history information came from. Only the title is required.':
-        'Зафиксируйте, откуда получены файлы или сведения по семейной истории. Обязательно только название.',
+      'Record where this file or information came from. Only the source name is required.':
+        'Укажите, откуда получен этот файл или информация. Обязательно только название источника.',
 
-      'Source title':
+      'Source name':
         'Название источника',
 
-      'e.g. Pawford County Archive — parish registers':
-        'Например, Архив округа Поуфорд — приходские реестры',
+      'e.g. Pawford household register':
+        'Например, домовая книга Поуфорда',
 
-      'Choose type':
-        'Выберите тип',
+      'Origin - Where or who did it come from?':
+        'Происхождение - Откуда или от кого это получено?',
 
-      'Archive, website, relative, collection':
-        'Архив, веб-сайт, родственник, коллекция',
+      'Person, archive, website, library, or family collection':
+        'Человек, архив, веб-сайт, библиотека или семейная коллекция',
 
-      'Place or repository location':
-        'Место или расположение хранилища',
+      'Town, archive location, or where the item is kept':
+        'Город, расположение архива или место хранения',
 
-      'Collection, volume, page, call number':
-        'Коллекция, том, страница, шифр',
+      'Where can it be found?':
+        'Где это можно найти?',
 
-      'Accessed date':
-        'Дата обращения',
+      'Collection, folder, volume, page, call number, or item':
+        'Коллекция, папка, том, страница, шифр или единица хранения',
 
-      'Add a short description':
-        'Добавьте краткое описание',
+      'Website or link':
+        'Веб-сайт или ссылка',
+
+      'Date accessed or received':
+        'Дата обращения или получения',
+
+      'Add anything that will help you recognize or find this source again':
+        'Добавьте сведения, которые помогут снова распознать или найти этот источник',
+
+      'Obtained from':
+        'Получено от',
 
       'Save source':
         'Сохранить источник',
@@ -41171,12 +41180,8 @@
         { id: 'archive-old-cattery-burial-index', projectId: 'p1', title: 'Old Cattery burial index', placeId: 'place-old-cattery', dateLabel: '1961-2011', type: 'Burial index' },
         { id: 'archive-fishmarket-row-census-extract', projectId: 'p1', title: 'Fishmarket Row census extract', placeId: 'place-fishmarket-row', dateLabel: '1921', type: 'Census extract' }
       ],
-      sources: [
-        { id: 'source-pawford-register', projectId: 'p1', title: 'Pawford household register', archiveFileId: 'archive-pawford-household-register' },
-        { id: 'source-meowbridge-marriage', projectId: 'p1', title: 'Meowbridge marriage record', archiveFileId: 'archive-meowbridge-marriage-record' },
-        { id: 'source-old-cattery-burial', projectId: 'p1', title: 'Old Cattery burial index', archiveFileId: 'archive-old-cattery-burial-index' },
-        { id: 'source-fishmarket-census', projectId: 'p1', title: 'Fishmarket Row census extract', archiveFileId: 'archive-fishmarket-row-census-extract' }
-      ],
+      sources: [],
+      sourceLinks: [],
       notes: [
       ],
       boards: [
@@ -46013,6 +46018,7 @@
         'archiveFolders',
         'archiveFiles',
         'sources',
+        'sourceLinks',
         'archiveImports',
         'archiveIssues',
         'noteCollections',
@@ -46236,12 +46242,11 @@
         'linkedPlaceIds',
         'linkedEventIds',
         'linkedPhotoIds',
-        'linkedSourceIds',
         'linkedArchiveFileIds',
         'relatedNoteIds'
       ];
 
-      const legacyNoteFields = [
+      const forbiddenNoteFields = [
         'type',
         'status',
         'collectionId',
@@ -46255,6 +46260,7 @@
         'linkedPeople',
         'linkedPlaces',
         'linkedSources',
+        'linkedSourceIds',
         'created',
         'updated',
         'sortRank',
@@ -46596,13 +46602,6 @@
 
         validateNoteReferences(
           note,
-          'linkedSourceIds',
-          sourceById,
-          'source'
-        );
-
-        validateNoteReferences(
-          note,
           'linkedArchiveFileIds',
           archiveFileById,
           'archive file'
@@ -46784,7 +46783,7 @@
           }
         });
 
-        legacyNoteFields.forEach(
+        forbiddenNoteFields.forEach(
           field => {
             if (
               Object.prototype
@@ -46812,6 +46811,7 @@
         'placeSavedFilters',
         'placeIssues',
         'sources',
+        'sourceLinks',
         'archiveFiles',
         'media',
         'albums',
@@ -46824,6 +46824,149 @@
         'notifications',
         'activity'
       ].forEach(seen);
+
+      const legacySourceFields = [
+        'repositoryOwner',
+        'holder',
+        'description',
+        'updated',
+        'linkedPersonIds',
+        'linkedEventIds',
+        'linkedNoteIds',
+        'linkedPlaceIds',
+        'placeIds'
+      ];
+
+      (
+        sampleData.sources || []
+      ).forEach(source => {
+        if (
+          !String(
+            source.title || ''
+          ).trim()
+        ) {
+          warn(
+            `Source ${source.id} has no title`
+          );
+        }
+
+        legacySourceFields.forEach(
+          field => {
+            if (
+              Object.prototype
+                .hasOwnProperty
+                .call(
+                  source,
+                  field
+                )
+            ) {
+              warn(
+                `Source ${source.id} still contains legacy field ${field}`
+              );
+            }
+          }
+        );
+      });
+
+      const sourceLinkKeys =
+        new Set();
+
+      (
+        sampleData.sourceLinks || []
+      ).forEach(link => {
+        const source =
+          sourceById.get(
+            link.sourceId
+          );
+
+        const target =
+          sourceTargetRecord(
+            link.targetType,
+            link.targetId,
+            link.projectId
+          );
+
+        const key =
+          [
+            link.projectId,
+            link.sourceId,
+            link.targetType,
+            link.targetId
+          ].join('|');
+
+        if (!source) {
+          warn(
+            `Source link ${link.id} points to missing source ${link.sourceId}`
+          );
+        }
+
+        if (
+          !SOURCE_LINK_TARGET_TYPES.includes(
+            link.targetType
+          )
+        ) {
+          warn(
+            `Source link ${link.id} has invalid target type ${link.targetType}`
+          );
+        }
+
+        if (!target) {
+          warn(
+            `Source link ${link.id} points to missing ${link.targetType} ${link.targetId}`
+          );
+        }
+
+        if (
+          source
+          && source.projectId
+            !== link.projectId
+        ) {
+          warn(
+            `Source link ${link.id} and source ${source.id} are in different projects`
+          );
+        }
+
+        if (
+          target?.projectId
+          && target.projectId
+            !== link.projectId
+        ) {
+          warn(
+            `Source link ${link.id} and target ${link.targetId} are in different projects`
+          );
+        }
+
+        if (
+          sourceLinkKeys.has(
+            key
+          )
+        ) {
+          warn(
+            `Duplicate Source connection: ${key}`
+          );
+        }
+
+        sourceLinkKeys.add(
+          key
+        );
+      });
+
+      (
+        sampleData.archiveFiles || []
+      ).forEach(file => {
+        if (
+          Object.prototype
+            .hasOwnProperty
+            .call(
+              file,
+              'linkedSourceIds'
+            )
+        ) {
+          warn(
+            `Archive file ${file.id} still contains legacy field linkedSourceIds`
+          );
+        }
+      });
 
       const archiveFileLinkDefinitions = [
         {
@@ -46840,11 +46983,6 @@
           field: 'linkedNoteIds',
           label: 'note',
           records: noteById
-        },
-        {
-          field: 'linkedSourceIds',
-          label: 'source',
-          records: sourceById
         },
         {
           field: 'linkedPlaceIds',
@@ -47086,12 +47224,10 @@
         (person.familyAsChildIds || []).forEach(familyId => { if (!familyIds.has(familyId)) warn(`Person ${person.id} points to missing child family ${familyId}`); });
         (person.attributes || []).forEach(attribute => {
           if (attribute.placeId && !placeIds.has(attribute.placeId)) warn(`Attribute ${attribute.id} points to missing place ${attribute.placeId}`);
-          (attribute.citations || []).forEach(citation => { if (citation.sourceId && !sourceIds.has(citation.sourceId)) warn(`Attribute ${attribute.id} citation points to missing source ${citation.sourceId}`); });
           (attribute.mediaIds || []).forEach(mediaId => { if (!mediaIds.has(mediaId)) warn(`Attribute ${attribute.id} points to missing media ${mediaId}`); });
         });
         (person.events || []).forEach(event => {
           if (event.placeId && !placeIds.has(event.placeId)) warn(`Event ${event.id} points to missing place ${event.placeId}`);
-          (event.citations || []).forEach(citation => { if (citation.sourceId && !sourceIds.has(citation.sourceId)) warn(`Event ${event.id} citation points to missing source ${citation.sourceId}`); });
           (event.mediaIds || []).forEach(mediaId => { if (!mediaIds.has(mediaId)) warn(`Event ${event.id} points to missing media ${mediaId}`); });
         });
         if (
@@ -50419,7 +50555,11 @@
         || (!person.birth?.placeId && !person.birth?.placeText)
       ).length;
       const missingSourceData = projectFiles.filter(file =>
-        !(file.linkedSourceIds || file.sourceIds || []).length
+        !sourceIdsForTarget(
+          'file',
+          file.id,
+          file.projectId
+        ).length
       ).length;
       const unsortedPhotos = projectPhotos.filter(photo => !(photo.albumIds || []).length).length;
       const placeCleanup = projectPlaceRecords.filter(place =>
@@ -73718,6 +73858,10 @@
       if (!validIds.length) return;
 
       const deletedIds = new Set(validIds);
+      removeSourceLinksForTargets(
+        'person',
+        [...deletedIds]
+      );
       const partnerAFields = ['fatherId', 'husbandId', 'partnerAId', 'partner1Id', 'personAId'];
       const partnerBFields = ['motherId', 'wifeId', 'partnerBId', 'partner2Id', 'personBId'];
       const partnerAHints = ['partnerARoleHint', 'partner1RoleHint', 'personARoleHint', 'husbandRoleHint'];
@@ -82929,6 +83073,11 @@
               );
           });
         }
+      );
+
+      removeSourceLinksForTargets(
+        'photo',
+        [...ids]
       );
 
       centralFamilyRecords()
@@ -112472,52 +112621,249 @@
 
     sampleData.sources = [
       {
-        id: 'as1', projectId: 'p1', title: 'Pawford County Archive — parish and household registers',
-        type: 'Archive or repository', repositoryOwner: 'Pawford County Archive', holder: 'Pawford County Archive',
-        location: 'North Yorkshire, England', reference: 'Register collection 12 / household series 3',
-        url: '', accessedDate: '2026-05-24', description: 'County archive material used for Pawford household and parish research.',
-        favorite: true, linkedPersonIds: ['barnaby', 'daisy'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-archive', 'place-pawford'],
-        createdAt: '2026-01-04T10:00:00Z', updatedAt: '2026-06-02T10:00:00Z', updated: 'Jun 2, 2026'
+        id:
+          'as1',
+
+        projectId:
+          'p1',
+
+        title:
+          'Pawford County Archive — parish and household registers',
+
+        type:
+          'Archive or repository',
+
+        providedBy:
+          'Pawford County Archive',
+
+        location:
+          'North Yorkshire, England',
+
+        reference:
+          'Register collection 12 / household series 3',
+
+        url:
+          '',
+
+        accessedDate:
+          '2026-05-24',
+
+        notes:
+          'County archive material used for Pawford household and parish research.',
+
+        favorite:
+          true,
+
+        createdAt:
+          '2026-01-04T10:00:00Z',
+
+        updatedAt:
+          '2026-06-02T10:00:00Z'
       },
+
       {
-        id: 'as2', projectId: 'p1', title: 'Pawford household register continuation, 1947–1952',
-        type: 'Register or record collection', repositoryOwner: 'Pawford County Archive', holder: 'Pawford County Archive',
-        location: 'Pawford, North Yorkshire, England', reference: 'Household series 3, continuation volume',
-        url: '', accessedDate: '2026-05-28', description: 'Continuation volume for Pawford household entries after 1946.',
-        favorite: false, linkedPersonIds: ['luna'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'],
-        createdAt: '2026-02-01T10:00:00Z', updatedAt: '2026-05-28T10:00:00Z', updated: 'May 28, 2026'
+        id:
+          'as2',
+
+        projectId:
+          'p1',
+
+        title:
+          'Pawford household register continuation, 1947–1952',
+
+        type:
+          'Register or record collection',
+
+        providedBy:
+          'Pawford County Archive',
+
+        location:
+          'Pawford, North Yorkshire, England',
+
+        reference:
+          'Household series 3, continuation volume',
+
+        url:
+          '',
+
+        accessedDate:
+          '2026-05-28',
+
+        notes:
+          'Continuation volume for Pawford household entries after 1946.',
+
+        favorite:
+          false,
+
+        createdAt:
+          '2026-02-01T10:00:00Z',
+
+        updatedAt:
+          '2026-05-28T10:00:00Z'
       },
+
       {
-        id: 'as3', projectId: 'p1', title: 'Meowbridge marriage certificate held in family documents',
-        type: 'Family collection', repositoryOwner: 'Whiskerfield family documents', holder: 'Whiskerfield family documents',
-        location: 'Pawford, North Yorkshire, England', reference: 'Certificate folder, item 2',
-        url: '', accessedDate: '', description: 'Original certificate scan retained by the family.',
-        favorite: true, linkedPersonIds: ['barnaby', 'luna'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-meowbridge'],
-        createdAt: '2026-03-01T10:00:00Z', updatedAt: '2026-05-19T10:00:00Z', updated: 'May 19, 2026'
+        id:
+          'as3',
+
+        projectId:
+          'p1',
+
+        title:
+          'Meowbridge marriage certificate held in family documents',
+
+        type:
+          'Family collection',
+
+        providedBy:
+          'Whiskerfield family documents',
+
+        location:
+          'Pawford, North Yorkshire, England',
+
+        reference:
+          'Certificate folder, item 2',
+
+        url:
+          '',
+
+        accessedDate:
+          '',
+
+        notes:
+          'Original certificate scan retained by the family.',
+
+        favorite:
+          true,
+
+        createdAt:
+          '2026-03-01T10:00:00Z',
+
+        updatedAt:
+          '2026-05-19T10:00:00Z'
       },
+
       {
-        id: 'as4', projectId: 'p1', title: 'Interview with Luna Purrington, 2 April 2026',
-        type: 'Interview or correspondence', repositoryOwner: 'Luna Purrington', holder: 'Luna Purrington',
-        location: 'Online interview', reference: 'Audio interview 2026-04-02',
-        url: '', accessedDate: '2026-04-02', description: 'Recorded family-history interview covering stories from 1940 to 1990.',
-        favorite: false, linkedPersonIds: ['luna'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [],
-        createdAt: '2026-04-02T10:00:00Z', updatedAt: '2026-04-05T10:00:00Z', updated: 'Apr 5, 2026'
+        id:
+          'as4',
+
+        projectId:
+          'p1',
+
+        title:
+          'Interview with Luna Purrington, 2 April 2026',
+
+        type:
+          'Interview or correspondence',
+
+        providedBy:
+          'Luna Purrington',
+
+        location:
+          'Online interview',
+
+        reference:
+          'Audio interview 2026-04-02',
+
+        url:
+          '',
+
+        accessedDate:
+          '2026-04-02',
+
+        notes:
+          'Recorded family-history interview covering stories from 1940 to 1990.',
+
+        favorite:
+          false,
+
+        createdAt:
+          '2026-04-02T10:00:00Z',
+
+        updatedAt:
+          '2026-04-05T10:00:00Z'
       },
+
       {
-        id: 'as5', projectId: 'p1', title: 'Whiskerfield family reference collection',
-        type: 'Family collection', repositoryOwner: 'Silver Whiskerfield', holder: 'Silver Whiskerfield',
-        location: 'Pawford, North Yorkshire, England', reference: 'Reference box A',
-        url: '', accessedDate: '', description: 'Mixed family reference material, clippings, and album documentation.',
-        favorite: false, linkedPersonIds: ['silver'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'],
-        createdAt: '2026-03-20T10:00:00Z', updatedAt: '2026-03-29T10:00:00Z', updated: 'Mar 29, 2026'
+        id:
+          'as5',
+
+        projectId:
+          'p1',
+
+        title:
+          'Whiskerfield family reference collection',
+
+        type:
+          'Family collection',
+
+        providedBy:
+          'Silver Whiskerfield',
+
+        location:
+          'Pawford, North Yorkshire, England',
+
+        reference:
+          'Reference box A',
+
+        url:
+          '',
+
+        accessedDate:
+          '',
+
+        notes:
+          'Mixed family reference material, clippings, and album documentation.',
+
+        favorite:
+          false,
+
+        createdAt:
+          '2026-03-20T10:00:00Z',
+
+        updatedAt:
+          '2026-03-29T10:00:00Z'
       },
+
       {
-        id: 'as6', projectId: 'p1', title: 'Regional genealogy database — Pawford records',
-        type: 'Website or database', repositoryOwner: 'Regional genealogy database', holder: 'Regional genealogy database',
-        location: '', reference: 'Pawford record collection, 1900–1950',
-        url: 'https://example.org/pawford-records', accessedDate: '2026-06-01', description: 'Online index and document extracts for the Pawford area.',
-        favorite: false, linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'],
-        createdAt: '2026-06-01T10:00:00Z', updatedAt: '2026-06-01T10:00:00Z', updated: 'Jun 1, 2026'
+        id:
+          'as6',
+
+        projectId:
+          'p1',
+
+        title:
+          'Regional genealogy database — Pawford records',
+
+        type:
+          'Website or database',
+
+        providedBy:
+          'Regional genealogy database',
+
+        location:
+          '',
+
+        reference:
+          'Pawford record collection, 1900–1950',
+
+        url:
+          'https://example.org/pawford-records',
+
+        accessedDate:
+          '2026-06-01',
+
+        notes:
+          'Online index and document extracts for the Pawford area.',
+
+        favorite:
+          false,
+
+        createdAt:
+          '2026-06-01T10:00:00Z',
+
+        updatedAt:
+          '2026-06-01T10:00:00Z'
       }
     ];
 
@@ -112532,55 +112878,55 @@
       {
         id: 'af1', projectId: 'p1', folderId: 'delo44', name: 'pawford_household_register_1946.pdf', kind: 'pdf', type: 'PDF document', mimeType: 'application/pdf', size: '3.2 MB', sizeBytes: 3355443,
         favorite: true, description: 'Household register extract supporting Daisy Milkpaw’s birth and household context.',
-        documentDate: { type: 'Exact date', value: '1946' }, linkedPersonIds: ['daisy'], linkedEventIds: ['event-daisy-birth'], linkedNoteIds: [], linkedPlaceIds: ['place-old-cattery'], placeIds: ['place-old-cattery'], linkedSourceIds: ['as1'],
+        documentDate: { type: 'Exact date', value: '1946' }, linkedPersonIds: ['daisy'], linkedEventIds: ['event-daisy-birth'], linkedNoteIds: [], linkedPlaceIds: ['place-old-cattery'], placeIds: ['place-old-cattery'],
         addedAt: '2026-06-02T09:20:00Z', updatedAt: '2026-06-02T09:20:00Z', added: 'Jun 2, 2026', updated: 'Jun 2, 2026'
       },
       {
         id: 'af2', projectId: 'p1', folderId: 'delo44', name: 'pawford_household_1940_scan.jpg', kind: 'img', type: 'Image', mimeType: 'image/jpeg', size: '4.8 MB', sizeBytes: 5033165,
         favorite: false, description: 'Household scan that may connect members of the Whiskerfield family in Pawford.',
-        documentDate: { type: 'Exact date', value: '1940' }, linkedPersonIds: ['barnaby'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'], linkedSourceIds: ['as1'],
+        documentDate: { type: 'Exact date', value: '1940' }, linkedPersonIds: ['barnaby'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'], 
         addedAt: '2026-06-02T08:40:00Z', updatedAt: '2026-06-02T08:40:00Z', added: 'Jun 2, 2026', updated: 'Jun 2, 2026'
       },
       {
         id: 'af3', projectId: 'p1', folderId: 'delo44', name: 'index_page_044_12.jpg', kind: 'img', type: 'Image', mimeType: 'image/jpeg', size: '1.7 MB', sizeBytes: 1782579,
         favorite: false, description: 'Index page from the Pawford register collection.',
-        documentDate: { type: 'Unknown', value: '' }, linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [], linkedSourceIds: ['as1'],
+        documentDate: { type: 'Unknown', value: '' }, linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [], 
         addedAt: '2026-06-01T14:10:00Z', updatedAt: '2026-06-01T14:10:00Z', added: 'Jun 1, 2026', updated: 'Jun 1, 2026'
       },
       {
         id: 'af4', projectId: 'p1', folderId: 'delo45', name: 'family_register_1951.pdf', kind: 'pdf', type: 'PDF document', mimeType: 'application/pdf', size: '5.1 MB', sizeBytes: 5347738,
         favorite: false, description: 'Continuation register containing entries connected to Luna Purrington’s family.',
-        documentDate: { type: 'Exact date', value: '1951' }, linkedPersonIds: ['luna'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'], linkedSourceIds: ['as2'],
+        documentDate: { type: 'Exact date', value: '1951' }, linkedPersonIds: ['luna'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'], 
         addedAt: '2026-05-28T12:00:00Z', updatedAt: '2026-05-28T12:00:00Z', added: 'May 28, 2026', updated: 'May 28, 2026'
       },
       {
         id: 'af5', projectId: 'p1', folderId: 'certificates', name: 'meowbridge_marriage_record.pdf', kind: 'pdf', type: 'PDF document', mimeType: 'application/pdf', size: '2.1 MB', sizeBytes: 2202009,
         favorite: true, description: 'Marriage certificate linked to the family relationship and Meowbridge.',
-        documentDate: { type: 'Exact date', value: '1989' }, linkedPersonIds: ['barnaby', 'luna'], linkedEventIds: archiveMarriageEventId ? [archiveMarriageEventId] : [], linkedNoteIds: [], linkedPlaceIds: ['place-meowbridge'], placeIds: ['place-meowbridge'], linkedSourceIds: ['as3'],
+        documentDate: { type: 'Exact date', value: '1989' }, linkedPersonIds: ['barnaby', 'luna'], linkedEventIds: archiveMarriageEventId ? [archiveMarriageEventId] : [], linkedNoteIds: [], linkedPlaceIds: ['place-meowbridge'], placeIds: ['place-meowbridge'], 
         addedAt: '2026-05-19T10:00:00Z', updatedAt: '2026-05-19T10:00:00Z', added: 'May 19, 2026', updated: 'May 19, 2026'
       },
       {
         id: 'af6', projectId: 'p1', folderId: 'interviews', name: 'luna_family_memories_2026_04_02.mp3', kind: 'audio', type: 'Audio', mimeType: 'audio/mpeg', size: '28 MB', sizeBytes: 29360128,
         favorite: true, description: 'Recorded oral-history interview with Luna Purrington.',
-        documentDate: { type: 'Exact date', value: '2 Apr 2026' }, linkedPersonIds: ['luna'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [], linkedSourceIds: ['as4'],
+        documentDate: { type: 'Exact date', value: '2 Apr 2026' }, linkedPersonIds: ['luna'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [], 
         addedAt: '2026-04-03T10:00:00Z', updatedAt: '2026-04-05T10:00:00Z', added: 'Apr 3, 2026', updated: 'Apr 5, 2026'
       },
       {
         id: 'af7', projectId: 'p1', folderId: 'albums-origin', name: 'whiskerfield_family_reference_cover.jpg', kind: 'img', type: 'Image', mimeType: 'image/jpeg', size: '2.6 MB', sizeBytes: 2726298,
         favorite: false, description: 'Reference image stored in Archive; it is not duplicated into Albums.',
-        documentDate: { type: 'Unknown', value: '' }, linkedPersonIds: ['silver'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [], linkedSourceIds: ['as5'],
+        documentDate: { type: 'Unknown', value: '' }, linkedPersonIds: ['silver'], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [], 
         addedAt: '2026-03-29T10:00:00Z', updatedAt: '2026-03-29T10:00:00Z', added: 'Mar 29, 2026', updated: 'Mar 29, 2026'
       },
       {
         id: 'af8', projectId: 'p1', folderId: 'unsorted', name: 'scan_0007_unknown_record.jpg', kind: 'img', type: 'Image', mimeType: 'image/jpeg', size: '1.9 MB', sizeBytes: 1992294,
         favorite: false, description: 'Unidentified scan retained for later organization.',
-        documentDate: { type: 'Unknown', value: '' }, linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [], linkedSourceIds: [],
+        documentDate: { type: 'Unknown', value: '' }, linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], placeIds: [],
         addedAt: '2026-06-02T11:00:00Z', updatedAt: '2026-06-02T11:00:00Z', added: 'Jun 2, 2026', updated: 'Jun 2, 2026'
       },
       {
         id: 'af9', projectId: 'p1', folderId: 'inbox', name: 'online_extract_pawford_records.pdf', kind: 'pdf', type: 'PDF document', mimeType: 'application/pdf', size: '900 KB', sizeBytes: 921600,
         favorite: false, description: 'Downloaded extract from the regional Pawford records database.',
-        documentDate: { type: 'Between', value: '1900–1950' }, linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'], linkedSourceIds: ['as6'],
+        documentDate: { type: 'Between', value: '1900–1950' }, linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: ['place-pawford'], placeIds: ['place-pawford'], 
         addedAt: '2026-06-01T10:00:00Z', updatedAt: '2026-06-01T10:00:00Z', added: 'Jun 1, 2026', updated: 'Jun 1, 2026'
       }
     ];
@@ -112623,6 +112969,496 @@
         source.id === id
         && source.projectId === projectId
       ) || null;
+    }
+
+    const SOURCE_LINK_TARGET_TYPES =
+      Object.freeze([
+        'file',
+        'photo',
+        'person',
+        'event',
+        'note',
+        'place'
+      ]);
+
+    function sourceTargetRecord(
+      targetType,
+      targetId,
+      projectId =
+        currentProjectId()
+    ) {
+      if (
+        !SOURCE_LINK_TARGET_TYPES.includes(
+          targetType
+        )
+        || !targetId
+      ) {
+        return null;
+      }
+
+      let record =
+        null;
+
+      if (targetType === 'file') {
+        record =
+          archiveFileById(
+            targetId,
+            projectId
+          );
+      } else if (
+        targetType === 'photo'
+      ) {
+        record =
+          getPhoto(
+            targetId,
+            {
+              projectId
+            }
+          );
+      } else if (
+        targetType === 'person'
+      ) {
+        record =
+          getPerson(
+            targetId
+          );
+      } else if (
+        targetType === 'event'
+      ) {
+        record =
+          (
+            sampleData.events || []
+          ).find(event =>
+            event.id === targetId
+          )
+          || null;
+      } else if (
+        targetType === 'note'
+      ) {
+        record =
+          getNote(
+            targetId,
+            {
+              projectId,
+              includeArchived:
+                true
+            }
+          );
+      } else if (
+        targetType === 'place'
+      ) {
+        record =
+          getPlace(
+            targetId
+          );
+      }
+
+      if (
+        !record
+        || (
+          projectId
+          && record.projectId
+          && record.projectId
+            !== projectId
+        )
+      ) {
+        return null;
+      }
+
+      return record;
+    }
+
+    function sourceLinksForProject(
+      projectId =
+        currentProjectId()
+    ) {
+      return (
+        sampleData.sourceLinks || []
+      ).filter(link =>
+        !projectId
+        || link.projectId
+          === projectId
+      );
+    }
+
+    function sourceLinksForSource(
+      sourceId,
+      targetType = '',
+      projectId =
+        currentProjectId()
+    ) {
+      return sourceLinksForProject(
+        projectId
+      ).filter(link =>
+        link.sourceId === sourceId
+        && (
+          !targetType
+          || link.targetType
+            === targetType
+        )
+      );
+    }
+
+    function sourceLinksForTarget(
+      targetType,
+      targetId,
+      projectId =
+        currentProjectId()
+    ) {
+      return sourceLinksForProject(
+        projectId
+      ).filter(link =>
+        link.targetType === targetType
+        && link.targetId === targetId
+      );
+    }
+
+    function sourceTargetIds(
+      sourceId,
+      targetType,
+      projectId =
+        currentProjectId()
+    ) {
+      return archiveUniqueIds(
+        sourceLinksForSource(
+          sourceId,
+          targetType,
+          projectId
+        ).map(link =>
+          link.targetId
+        )
+      );
+    }
+
+    function sourceIdsForTarget(
+      targetType,
+      targetId,
+      projectId =
+        currentProjectId()
+    ) {
+      return archiveUniqueIds(
+        sourceLinksForTarget(
+          targetType,
+          targetId,
+          projectId
+        ).map(link =>
+          link.sourceId
+        )
+      );
+    }
+
+    function setSourceIdsForTarget(
+      targetType,
+      targetId,
+      nextSourceIds,
+      {
+        projectId =
+          currentProjectId()
+      } = {}
+    ) {
+      const target =
+        sourceTargetRecord(
+          targetType,
+          targetId,
+          projectId
+        );
+
+      if (!target) {
+        return null;
+      }
+
+      const targetProjectId =
+        target.projectId
+        || projectId;
+
+      const normalizedSourceIds =
+        archiveUniqueIds(
+          nextSourceIds
+        );
+
+      const sources =
+        normalizedSourceIds.map(
+          sourceId =>
+            archiveSourceById(
+              sourceId,
+              targetProjectId
+            )
+        );
+
+      if (
+        sources.some(source =>
+          !source
+        )
+      ) {
+        return null;
+      }
+
+      const desiredIds =
+        new Set(
+          normalizedSourceIds
+        );
+
+      const currentLinks =
+        sourceLinksForTarget(
+          targetType,
+          targetId,
+          targetProjectId
+        );
+
+      const affectedSourceIds =
+        new Set([
+          ...currentLinks.map(link =>
+            link.sourceId
+          ),
+          ...normalizedSourceIds
+        ]);
+
+      sampleData.sourceLinks =
+        (
+          sampleData.sourceLinks || []
+        ).filter(link => {
+          const sameTarget =
+            link.projectId
+              === targetProjectId
+            && link.targetType
+              === targetType
+            && link.targetId
+              === targetId;
+
+          return (
+            !sameTarget
+            || desiredIds.has(
+              link.sourceId
+            )
+          );
+        });
+
+      const retainedIds =
+        new Set(
+          sourceIdsForTarget(
+            targetType,
+            targetId,
+            targetProjectId
+          )
+        );
+
+      normalizedSourceIds.forEach(
+        sourceId => {
+          if (
+            retainedIds.has(
+              sourceId
+            )
+          ) {
+            return;
+          }
+
+          sampleData.sourceLinks.push({
+            id:
+              createRuntimeId(
+                'source-link'
+              ),
+
+            projectId:
+              targetProjectId,
+
+            sourceId,
+            targetType,
+            targetId
+          });
+        }
+      );
+
+      const now =
+        new Date().toISOString();
+
+      affectedSourceIds.forEach(
+        sourceId => {
+          const source =
+            archiveSourceById(
+              sourceId,
+              targetProjectId
+            );
+
+          if (source) {
+            source.updatedAt =
+              now;
+          }
+        }
+      );
+
+      target.updatedAt =
+        now;
+
+      if (targetType === 'file') {
+        target.updated =
+          'Just now';
+      }
+
+      return sourceIdsForTarget(
+        targetType,
+        targetId,
+        targetProjectId
+      );
+    }
+
+    function setSourceLink(
+      sourceId,
+      targetType,
+      targetId,
+      shouldLink = true,
+      {
+        projectId =
+          currentProjectId()
+      } = {}
+    ) {
+      const currentIds =
+        sourceIdsForTarget(
+          targetType,
+          targetId,
+          projectId
+        );
+
+      const nextIds =
+        shouldLink
+          ? archiveUniqueIds([
+              ...currentIds,
+              sourceId
+            ])
+          : currentIds.filter(id =>
+              id !== sourceId
+            );
+
+      const savedIds =
+        setSourceIdsForTarget(
+          targetType,
+          targetId,
+          nextIds,
+          {
+            projectId
+          }
+        );
+
+      if (!savedIds) {
+        return false;
+      }
+
+      return shouldLink
+        ? savedIds.includes(
+            sourceId
+          )
+        : !savedIds.includes(
+            sourceId
+          );
+    }
+
+    function removeSourceLinksForSource(
+      sourceId
+    ) {
+      sampleData.sourceLinks =
+        (
+          sampleData.sourceLinks || []
+        ).filter(link =>
+          link.sourceId !== sourceId
+        );
+    }
+
+    function removeSourceLinksForTarget(
+      targetType,
+      targetId
+    ) {
+      sampleData.sourceLinks =
+        (
+          sampleData.sourceLinks || []
+        ).filter(link =>
+          !(
+            link.targetType
+              === targetType
+            && link.targetId
+              === targetId
+          )
+        );
+    }
+
+    function removeSourceLinksForTargets(
+      targetType,
+      targetIds
+    ) {
+      const ids =
+        new Set(
+          targetIds || []
+        );
+
+      sampleData.sourceLinks =
+        (
+          sampleData.sourceLinks || []
+        ).filter(link =>
+          !(
+            link.targetType
+              === targetType
+            && ids.has(
+              link.targetId
+            )
+          )
+        );
+    }
+
+    function pruneInvalidSourceLinks() {
+      const seen =
+        new Set();
+
+      sampleData.sourceLinks =
+        (
+          sampleData.sourceLinks || []
+        ).filter(link => {
+          if (
+            !link
+            || !link.id
+            || !link.projectId
+            || !link.sourceId
+            || !link.targetId
+            || !SOURCE_LINK_TARGET_TYPES
+              .includes(
+                link.targetType
+              )
+          ) {
+            return false;
+          }
+
+          const source =
+            archiveSourceById(
+              link.sourceId,
+              link.projectId
+            );
+
+          const target =
+            sourceTargetRecord(
+              link.targetType,
+              link.targetId,
+              link.projectId
+            );
+
+          const key =
+            [
+              link.projectId,
+              link.sourceId,
+              link.targetType,
+              link.targetId
+            ].join('|');
+
+          if (
+            !source
+            || !target
+            || seen.has(key)
+          ) {
+            return false;
+          }
+
+          seen.add(
+            key
+          );
+
+          return true;
+        });
     }
 
     const ARCHIVE_ROOT_PICKER_VALUE =
@@ -115159,40 +115995,110 @@
       return archiveUniqueIds([...(file.linkedNoteIds || []), ...reciprocal]);
     }
 
-    function archiveNoteIdsForSource(source) {
-      const reciprocal = (sampleData.notes || [])
-        .filter(note => (note.linkedSourceIds || []).includes(source.id))
-        .map(note => note.id);
-      return archiveUniqueIds([...(source.linkedNoteIds || []), ...reciprocal]);
+    function archiveNoteIdsForSource(
+      source
+    ) {
+      return source
+        ? sourceTargetIds(
+            source.id,
+            'note',
+            source.projectId
+          )
+        : [];
     }
 
-    function archiveFilesForSource(sourceId) {
-      return archiveProjectFiles().filter(file => (file.linkedSourceIds || []).includes(sourceId));
+    function archiveFilesForSource(
+      sourceId
+    ) {
+      const source =
+        archiveSourceById(
+          sourceId
+        );
+
+      if (!source) {
+        return [];
+      }
+
+      return sourceTargetIds(
+        source.id,
+        'file',
+        source.projectId
+      )
+        .map(fileId =>
+          archiveFileById(
+            fileId,
+            source.projectId
+          )
+        )
+        .filter(Boolean);
     }
 
-    function archiveConnectionIds(ownerType, ownerId, entityType) {
+    function archiveConnectionIds(
+      ownerType,
+      ownerId,
+      entityType
+    ) {
       if (ownerType === 'file') {
-        const file = archiveFileById(ownerId);
-        if (!file) return [];
-        if (entityType === 'person') return file.linkedPersonIds || [];
-        if (entityType === 'event') return file.linkedEventIds || [];
-        if (entityType === 'note') return archiveNoteIdsForFile(file);
-        if (entityType === 'place') {
-          const placeId = archiveDocumentPlace(file).placeId;
-          return placeId ? [placeId] : [];
+        const file =
+          archiveFileById(
+            ownerId
+          );
+
+        if (!file) {
+          return [];
         }
-        if (entityType === 'source') return file.linkedSourceIds || [];
+
+        if (entityType === 'person') {
+          return file.linkedPersonIds || [];
+        }
+
+        if (entityType === 'event') {
+          return file.linkedEventIds || [];
+        }
+
+        if (entityType === 'note') {
+          return archiveNoteIdsForFile(
+            file
+          );
+        }
+
+        if (entityType === 'place') {
+          const placeId =
+            archiveDocumentPlace(
+              file
+            ).placeId;
+
+          return placeId
+            ? [placeId]
+            : [];
+        }
+
+        if (entityType === 'source') {
+          return sourceIdsForTarget(
+            'file',
+            file.id,
+            file.projectId
+          );
+        }
       }
 
       if (ownerType === 'source') {
-        const source = archiveSourceById(ownerId);
-        if (!source) return [];
-        if (entityType === 'file') return archiveFilesForSource(source.id).map(file => file.id);
-        if (entityType === 'person') return source.linkedPersonIds || [];
-        if (entityType === 'event') return source.linkedEventIds || [];
-        if (entityType === 'note') return archiveNoteIdsForSource(source);
-        if (entityType === 'place') return archiveUniqueIds([...(source.linkedPlaceIds || []), ...(source.placeIds || [])]);
+        const source =
+          archiveSourceById(
+            ownerId
+          );
+
+        if (!source) {
+          return [];
+        }
+
+        return sourceTargetIds(
+          source.id,
+          entityType,
+          source.projectId
+        );
       }
+
       return [];
     }
 
@@ -115230,7 +116136,15 @@
           singular: 'source', title: 'Sources', addLabel: 'Add sources',
           records: archiveProjectSources,
           label: record => record?.title || 'Untitled source',
-          meta: record => [record?.type, record?.repositoryOwner || record?.holder].filter(Boolean).join(' · ') || 'Source record'
+          meta:
+            record =>
+              [
+                record?.type,
+                record?.providedBy
+              ]
+                .filter(Boolean)
+                .join(' · ')
+              || 'Source record'
         },
         file: {
           singular: 'file', title: 'Files', addLabel: 'Add files',
@@ -115252,95 +116166,234 @@
       return null;
     }
 
-    function archiveSyncNoteLink(noteId, entityType, entityId, shouldLink) {
-      const note = typeof getNote === 'function'
-        ? getNote(noteId, { includeArchived: true })
-        : (sampleData.notes || []).find(item => item.id === noteId);
-      if (!note) return;
-      const field = entityType === 'file' ? 'linkedArchiveFileIds' : 'linkedSourceIds';
-      const next = new Set(note[field] || []);
-      if (shouldLink) next.add(entityId); else next.delete(entityId);
-      if (typeof setNoteEntityLinks === 'function') {
-        setNoteEntityLinks(note.id, entityType === 'file' ? 'archiveFile' : 'source', [...next], { projectId: note.projectId });
-      } else {
-        note[field] = [...next];
+    function archiveSyncNoteLink(
+      noteId,
+      entityType,
+      entityId,
+      shouldLink
+    ) {
+      if (entityType !== 'file') {
+        return;
       }
+
+      const note =
+        getNote(
+          noteId,
+          {
+            includeArchived:
+              true
+          }
+        );
+
+      if (!note) {
+        return;
+      }
+
+      const nextIds =
+        new Set(
+          note.linkedArchiveFileIds
+          || []
+        );
+
+      if (shouldLink) {
+        nextIds.add(
+          entityId
+        );
+      } else {
+        nextIds.delete(
+          entityId
+        );
+      }
+
+      setNoteEntityLinks(
+        note.id,
+        'archiveFile',
+        [...nextIds],
+        {
+          projectId:
+            note.projectId
+        }
+      );
     }
 
-    function archiveSetConnection(ownerType, ownerId, entityType, entityId, shouldLink) {
-      const record = archiveConnectionRecord(entityType, entityId);
+    function archiveSetConnection(
+      ownerType,
+      ownerId,
+      entityType,
+      entityId,
+      shouldLink
+    ) {
+      if (
+        ownerType === 'file'
+        && entityType === 'source'
+      ) {
+        const file =
+          archiveFileById(
+            ownerId
+          );
 
-      if (shouldLink && !record) return false;
-
-      if (ownerType === 'file') {
-        const file = archiveFileById(ownerId);
-        if (!file) return false;
-        if (record?.projectId && file.projectId && record.projectId !== file.projectId) return false;
-
-        if (entityType === 'place') {
-          const currentPlaceId = archiveDocumentPlace(file).placeId;
-          if (shouldLink) {
-            archiveApplyDocumentPlace(file, entityId, '');
-          } else if (currentPlaceId === entityId) {
-            archiveApplyDocumentPlace(file, '', '');
-          } else {
-            return false;
-          }
-        } else {
-          const field = ({
-            person: 'linkedPersonIds',
-            event: 'linkedEventIds',
-            note: 'linkedNoteIds',
-            source: 'linkedSourceIds'
-          })[entityType];
-
-          if (!field) return false;
-
-          const ids = new Set(file[field] || []);
-          if (shouldLink) ids.add(entityId); else ids.delete(entityId);
-          file[field] = [...ids];
-
-          if (entityType === 'note') {
-            archiveSyncNoteLink(entityId, 'file', file.id, shouldLink);
-          }
-        }
-
-        file.updatedAt = new Date().toISOString();
-        file.updated = 'Just now';
-        return shouldLink
-          ? archiveConnectionIds('file', file.id, entityType).includes(entityId)
-          : !archiveConnectionIds('file', file.id, entityType).includes(entityId);
+        return Boolean(
+          file
+          && setSourceLink(
+            entityId,
+            'file',
+            file.id,
+            shouldLink,
+            {
+              projectId:
+                file.projectId
+            }
+          )
+        );
       }
 
       if (ownerType === 'source') {
-        const source = archiveSourceById(ownerId);
-        if (!source) return false;
-        if (record?.projectId && source.projectId && record.projectId !== source.projectId) return false;
-        if (entityType === 'file') {
-          const file = archiveFileById(entityId);
-          if (!file) return false;
-          const ids = new Set(file.linkedSourceIds || []);
-          if (shouldLink) ids.add(source.id); else ids.delete(source.id);
-          file.linkedSourceIds = [...ids];
-          file.updatedAt = new Date().toISOString();
-          file.updated = 'Just now';
-          source.updatedAt = new Date().toISOString();
-          source.updated = 'Just now';
-          return true;
+        const source =
+          archiveSourceById(
+            ownerId
+          );
+
+        if (
+          !source
+          || !SOURCE_LINK_TARGET_TYPES
+            .includes(
+              entityType
+            )
+        ) {
+          return false;
         }
-        const field = ({ person: 'linkedPersonIds', event: 'linkedEventIds', note: 'linkedNoteIds', place: 'linkedPlaceIds' })[entityType];
-        if (!field) return false;
-        const ids = new Set(source[field] || []);
-        if (shouldLink) ids.add(entityId); else ids.delete(entityId);
-        source[field] = [...ids];
-        if (entityType === 'note') archiveSyncNoteLink(entityId, 'source', source.id, shouldLink);
-        source.updatedAt = new Date().toISOString();
-        source.updated = 'Just now';
-        return shouldLink
-          ? archiveConnectionIds('source', source.id, entityType).includes(entityId)
-          : !archiveConnectionIds('source', source.id, entityType).includes(entityId);
+
+        return setSourceLink(
+          source.id,
+          entityType,
+          entityId,
+          shouldLink,
+          {
+            projectId:
+              source.projectId
+          }
+        );
       }
-      return false;
+
+      if (ownerType !== 'file') {
+        return false;
+      }
+
+      const file =
+        archiveFileById(
+          ownerId
+        );
+
+      const record =
+        archiveConnectionRecord(
+          entityType,
+          entityId
+        );
+
+      if (
+        !file
+        || (
+          shouldLink
+          && !record
+        )
+        || (
+          record?.projectId
+          && file.projectId
+          && record.projectId
+            !== file.projectId
+        )
+      ) {
+        return false;
+      }
+
+      if (entityType === 'place') {
+        const currentPlaceId =
+          archiveDocumentPlace(
+            file
+          ).placeId;
+
+        if (shouldLink) {
+          archiveApplyDocumentPlace(
+            file,
+            entityId,
+            ''
+          );
+        } else if (
+          currentPlaceId === entityId
+        ) {
+          archiveApplyDocumentPlace(
+            file,
+            '',
+            ''
+          );
+        } else {
+          return false;
+        }
+      } else {
+        const field =
+          ({
+            person:
+              'linkedPersonIds',
+
+            event:
+              'linkedEventIds',
+
+            note:
+              'linkedNoteIds'
+          })[entityType];
+
+        if (!field) {
+          return false;
+        }
+
+        const ids =
+          new Set(
+            file[field] || []
+          );
+
+        if (shouldLink) {
+          ids.add(
+            entityId
+          );
+        } else {
+          ids.delete(
+            entityId
+          );
+        }
+
+        file[field] =
+          [...ids];
+
+        if (entityType === 'note') {
+          archiveSyncNoteLink(
+            entityId,
+            'file',
+            file.id,
+            shouldLink
+          );
+        }
+      }
+
+      file.updatedAt =
+        new Date().toISOString();
+
+      file.updated =
+        'Just now';
+
+      const savedIds =
+        archiveConnectionIds(
+          'file',
+          file.id,
+          entityType
+        );
+
+      return shouldLink
+        ? savedIds.includes(
+            entityId
+          )
+        : !savedIds.includes(
+            entityId
+          );
     }
 
     function archiveSetConnectionsAtomically(
@@ -116233,13 +117286,16 @@
           .join(' ');
 
       const sources =
-        (
-          file.linkedSourceIds
-          || []
+        sourceIdsForTarget(
+          'file',
+          file.id,
+          file.projectId
         )
-          .map(id =>
-            archiveSourceById(id)
-              ?.title
+          .map(sourceId =>
+            archiveSourceById(
+              sourceId,
+              file.projectId
+            )?.title
             || ''
           )
           .join(' ');
@@ -116289,9 +117345,10 @@
           file
         ).length
 
-        || (
-          file.linkedSourceIds
-          || []
+        || sourceIdsForTarget(
+          'file',
+          file.id,
+          file.projectId
         ).length
       );
     }
@@ -116843,11 +117900,10 @@
             [
               source.title,
               source.type,
-              source.repositoryOwner,
-              source.holder,
+              source.providedBy,
               source.location,
               source.reference,
-              source.description
+              source.notes
             ]
               .join(' ')
               .toLowerCase()
@@ -119729,16 +120785,43 @@
       renderArchive();
     }
 
-    function archiveSourceLinkedRecordCount(source) {
-      return archiveUniqueIds([...(source.linkedPersonIds || []), ...(source.linkedEventIds || []), ...archiveNoteIdsForSource(source), ...(source.linkedPlaceIds || [])]).length;
+    function archiveSourceLinkedRecordCount(
+      source
+    ) {
+      if (!source) {
+        return 0;
+      }
+
+      return [
+        'person',
+        'event',
+        'note',
+        'place'
+      ].reduce(
+        (
+          count,
+          targetType
+        ) =>
+          count
+          + sourceTargetIds(
+              source.id,
+              targetType,
+              source.projectId
+            ).length,
+        0
+      );
     }
 
     function renderArchiveSourceTable(sources) {
       return `<div class="archive-table-wrap"><table class="archive-table"><thead><tr>
         <th class="archive-col-name">Source</th><th class="archive-col-type">Type</th><th style="width:90px">Files</th><th style="width:128px">Linked records</th><th class="archive-col-modified">Updated</th><th class="archive-col-favorite" aria-label="Favourite">${icon.star}</th><th class="archive-col-actions"></th>
       </tr></thead><tbody>${sources.map(source => `<tr class="${state.archiveSelectedSourceId === source.id ? 'selected' : ''}" data-archive-source-row="${escapeHtml(source.id)}" tabindex="0">
-        <td><div class="archive-source-title-cell"><strong title="${escapeHtml(source.title)}">${escapeHtml(source.title)}</strong><span>${escapeHtml(source.repositoryOwner || source.holder || source.reference || 'Source record')}</span></div></td>
-        <td><span class="archive-source-type-chip">${escapeHtml(source.type || 'Other')}</span></td><td>${archiveFilesForSource(source.id).length}</td><td>${archiveSourceLinkedRecordCount(source)}</td><td>${escapeHtml(archiveFormatDate(source.updatedAt, source.updated || 'Unknown'))}</td>
+        <td><div class="archive-source-title-cell"><strong title="${escapeHtml(source.title)}">${escapeHtml(source.title)}</strong><span>${escapeHtml(
+          source.providedBy || source.reference || 'Source record'
+        )}</span></div></td>
+        <td><span class="archive-source-type-chip">${escapeHtml(source.type || 'Other')}</span></td><td>${archiveFilesForSource(source.id).length}</td><td>${archiveSourceLinkedRecordCount(source)}</td><td>${escapeHtml(
+          archiveFormatDate(source.updatedAt)
+          )}</td>
         <td style="text-align:center"><button class="archive-row-icon-button ${source.favorite ? 'active' : ''}" type="button" data-archive-source-favorite="${escapeHtml(source.id)}" aria-label="${source.favorite ? 'Remove source from favourites' : 'Add source to favourites'}">${icon.star}</button></td>
         <td><button class="archive-row-icon-button" type="button" data-archive-row-actions="source" data-archive-row-id="${escapeHtml(source.id)}" aria-label="Source actions">${icon.more}</button></td>
       </tr>`).join('')}</tbody></table></div>`;
@@ -121167,9 +122250,10 @@
       readOnly
     ) {
       const sources =
-        (
-          file.linkedSourceIds
-          || []
+        sourceIdsForTarget(
+          'file',
+          file.id,
+          file.projectId
         )
           .map(id =>
             archiveSourceById(
@@ -121537,9 +122621,10 @@
         ).length;
 
       const sourceCount =
-        (
-          file.linkedSourceIds
-          || []
+        sourceIdsForTarget(
+          'file',
+          file.id,
+          file.projectId
         ).length;
 
       const content = `
@@ -121889,11 +122974,48 @@
             'Select or create a source record.'
           )
       });
-      const body = `<div class="archive-preview"><div class="archive-preview-content">${icon.archive}<strong>${escapeHtml(source.type || 'Source')}</strong><span>${escapeHtml(source.repositoryOwner || source.holder || source.reference || 'Genealogy source record')}</span></div></div>
+      const body = `<div class="archive-preview"><div class="archive-preview-content">${icon.archive}<strong>${escapeHtml(source.type || 'Source')}</strong><span>${escapeHtml(
+        source.providedBy || source.reference || 'Genealogy source record')}</span></div></div>
         <div class="archive-inspector-primary-actions"><button class="button secondary" type="button" data-archive-edit-source="${escapeHtml(source.id)}">Edit source</button><button class="archive-row-icon-button ${source.favorite ? 'active' : ''}" type="button" data-archive-source-favorite="${escapeHtml(source.id)}" aria-label="Toggle source favourite">${icon.star}</button></div>
         <section class="archive-inspector-section"><div class="archive-inspector-section-head"><strong>Source details</strong></div><div class="archive-inspector-section-body"><div class="archive-kv-list">
-          <div class="archive-kv"><span>Type</span><span>${escapeHtml(source.type || 'Other')}</span></div><div class="archive-kv"><span>Repository / owner</span><span>${escapeHtml(source.repositoryOwner || source.holder || 'Not specified')}</span></div><div class="archive-kv"><span>Location</span><span>${escapeHtml(source.location || 'Not specified')}</span></div><div class="archive-kv"><span>Reference</span><span>${escapeHtml(source.reference || 'Not specified')}</span></div><div class="archive-kv"><span>Website</span><span>${escapeHtml(source.url || 'Not specified')}</span></div><div class="archive-kv"><span>Accessed</span><span>${escapeHtml(source.accessedDate || 'Not specified')}</span></div>
-        </div>${source.description ? `<p style="margin:var(--space-3) 0 0;color:var(--text-secondary);line-height:1.5">${escapeHtml(source.description)}</p>` : ''}</div></section>
+          <div class="archive-kv">
+            <span>Type</span>
+            <span>${escapeHtml(source.type || 'Other')}</span>
+          </div>
+
+          <div class="archive-kv">
+            <span>Obtained from</span>
+            <span>${escapeHtml(source.providedBy || 'Not specified')}</span>
+          </div>
+
+          <div class="archive-kv">
+            <span>Location</span>
+            <span>${escapeHtml(source.location || 'Not specified')}</span>
+          </div>
+
+          <div class="archive-kv">
+            <span>Where can it be found?</span>
+            <span>${escapeHtml(source.reference || 'Not specified')}</span>
+          </div>
+
+          <div class="archive-kv">
+            <span>Website or link</span>
+            <span>${escapeHtml(source.url || 'Not specified')}</span>
+          </div>
+
+          <div class="archive-kv">
+            <span>Date accessed or received</span>
+            <span>${
+              escapeHtml(
+                source.accessedDate
+                  ? archiveFormatDate(
+                      source.accessedDate
+                    )
+                  : 'Not specified'
+              )
+            }</span>
+          </div>
+        </div>${source.notes ? `<p style="margin:var(--space-3) 0 0;color:var(--text-secondary);line-height:1.5">${escapeHtml(source.notes)}</p>` : ''}</div></section>
         ${renderArchiveConnectionSection('source', source.id, 'file')}
         ${renderArchiveConnectionSection('source', source.id, 'person')}
         ${renderArchiveConnectionSection('source', source.id, 'event')}
@@ -123589,63 +124711,329 @@
           null
       } = {}
     ) {
-      const source = archiveSourceById(sourceId);
-      const editing = Boolean(source);
-      const typeOptions = ARCHIVE_SOURCE_TYPES.map(type => `<option value="${escapeHtml(type)}" ${source?.type === type ? 'selected' : ''}>${escapeHtml(type)}</option>`).join('');
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveSourceModalTitle"><div class="modal-header"><div><h2 id="archiveSourceModalTitle">${editing ? 'Edit source' : 'Add source'}</h2><p>Record where files or family-history information came from. Only the title is required.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><form data-archive-source-form><div class="modal-body form-grid">
-        <div class="field"><label>Source title</label><input data-archive-source-title required value="${escapeHtml(source?.title || '')}" placeholder="e.g. Pawford County Archive — parish registers"></div>
-        <div class="form-row"><div class="field"><label>Source type</label><select class="compact-select" data-archive-source-form-type><option value="">Choose type</option>${typeOptions}</select></div><div class="field"><label>Repository / owner</label><input data-archive-source-owner value="${escapeHtml(source?.repositoryOwner || source?.holder || '')}" placeholder="Archive, website, relative, collection"></div></div>
-        <div class="form-row"><div class="field"><label>Location</label><input data-archive-source-location value="${escapeHtml(source?.location || '')}" placeholder="Place or repository location"></div><div class="field"><label>Reference</label><input data-archive-source-reference value="${escapeHtml(source?.reference || '')}" placeholder="Collection, volume, page, call number"></div></div>
-        <div class="form-row"><div class="field"><label>Website</label><input type="url" data-archive-source-url value="${escapeHtml(source?.url || '')}" placeholder="https://"></div><div class="field"><label>Accessed date</label><input type="date" data-archive-source-accessed value="${escapeHtml(source?.accessedDate || '')}"></div></div>
-        <div class="field"><label>Description</label><textarea data-archive-source-description placeholder="Add a short description">${escapeHtml(source?.description || '')}</textarea></div>
-      </div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">${editing ? 'Save source' : 'Create source'}</button></div></form></div>`);
-      const form = modalBackdrop.querySelector('[data-archive-source-form]');
-      form?.addEventListener('submit', event => {
-        event.preventDefault();
-        const projectId = source?.projectId || requireActiveProjectId();
-        if (!projectId) return;
-        const title = form.querySelector('[data-archive-source-title]').value.trim();
-        if (!title) return;
-        const now = new Date().toISOString();
-        const target = source || {
-          id: `source-${Date.now()}`, projectId, favorite: false,
-          linkedPersonIds: [], linkedEventIds: [], linkedNoteIds: [], linkedPlaceIds: [], createdAt: now
-        };
-        target.title = title;
-        target.type = form.querySelector('[data-archive-source-form-type]').value || 'Other';
-        target.repositoryOwner = form.querySelector('[data-archive-source-owner]').value.trim();
-        target.holder = target.repositoryOwner;
-        target.location = form.querySelector('[data-archive-source-location]').value.trim();
-        target.reference = form.querySelector('[data-archive-source-reference]').value.trim();
-        target.url = form.querySelector('[data-archive-source-url]').value.trim();
-        target.accessedDate = form.querySelector('[data-archive-source-accessed]').value;
-        target.description = form.querySelector('[data-archive-source-description]').value.trim();
-        target.updatedAt = now;
-        target.updated = 'Just now';
-        if (!source) sampleData.sources.unshift(target);
-        const created =
-          !source;
+      const source =
+        archiveSourceById(
+          sourceId
+        );
 
-        if (
-          created
-          && typeof onCreated
-            === 'function'
-        ) {
+      const editing =
+        Boolean(
+          source
+        );
+
+      const typeOptions =
+        ARCHIVE_SOURCE_TYPES
+          .map(type => `
+            <option
+              value="${escapeHtml(type)}"
+              ${
+                source?.type === type
+                  ? 'selected'
+                  : ''
+              }>
+              ${escapeHtml(type)}
+            </option>
+          `)
+          .join('');
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="archiveSourceModalTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="archiveSourceModalTitle">
+                ${
+                  editing
+                    ? 'Edit source'
+                    : 'Add source'
+                }
+              </h2>
+
+              <p>
+                Record where this file or information came from.
+                Only the source name is required.
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="Close">
+              ${icon.close}
+            </button>
+          </div>
+
+          <form data-archive-source-form>
+            <div class="modal-body form-grid">
+
+              <div class="field">
+                <label>Source name</label>
+
+                <input
+                  data-archive-source-title
+                  required
+                  value="${escapeHtml(source?.title || '')}"
+                  placeholder="e.g. Pawford household register">
+              </div>
+
+              <div class="form-row">
+                <div class="field">
+                  <label>Source type</label>
+
+                  <select
+                    class="compact-select"
+                    data-archive-source-form-type>
+
+                    <option value="">
+                      Choose type
+                    </option>
+
+                    ${typeOptions}
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label>
+                    Origin - Where or who did it come from?
+                  </label>
+
+                  <input
+                    data-archive-source-provided-by
+                    value="${escapeHtml(source?.providedBy || '')}"
+                    placeholder="Person, archive, website, library, or family collection">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="field">
+                  <label>Location</label>
+
+                  <input
+                    data-archive-source-location
+                    value="${escapeHtml(source?.location || '')}"
+                    placeholder="Town, archive location, or where the item is kept">
+                </div>
+
+                <div class="field">
+                  <label>Where can it be found?</label>
+
+                  <input
+                    data-archive-source-reference
+                    value="${escapeHtml(source?.reference || '')}"
+                    placeholder="Collection, folder, volume, page, call number, or item">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="field">
+                  <label>Website or link</label>
+
+                  <input
+                    type="url"
+                    data-archive-source-url
+                    value="${escapeHtml(source?.url || '')}"
+                    placeholder="https://">
+                </div>
+
+                <div class="field">
+                  <label>Date accessed or received</label>
+
+                  <input
+                    type="date"
+                    data-archive-source-accessed
+                    value="${escapeHtml(source?.accessedDate || '')}">
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Notes</label>
+
+                <textarea
+                  data-archive-source-notes
+                  placeholder="Add anything that will help you recognize or find this source again">${escapeHtml(source?.notes || '')}</textarea>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                class="button secondary"
+                type="button"
+                data-close>
+                Cancel
+              </button>
+
+              <button
+                class="button primary"
+                type="submit">
+                ${
+                  editing
+                    ? 'Save source'
+                    : 'Create source'
+                }
+              </button>
+            </div>
+          </form>
+        </div>
+      `);
+
+      const form =
+        modalBackdrop.querySelector(
+          '[data-archive-source-form]'
+        );
+
+      form?.addEventListener(
+        'submit',
+        event => {
+          event.preventDefault();
+
+          const projectId =
+            source?.projectId
+            || requireActiveProjectId();
+
+          if (!projectId) {
+            return;
+          }
+
+          const title =
+            form
+              .querySelector(
+                '[data-archive-source-title]'
+              )
+              .value
+              .trim();
+
+          if (!title) {
+            return;
+          }
+
+          const now =
+            new Date().toISOString();
+
+          const target =
+            source
+            || {
+              id:
+                createRuntimeId(
+                  'source'
+                ),
+
+              projectId,
+
+              favorite:
+                false,
+
+              createdAt:
+                now
+            };
+
+          target.title =
+            title;
+
+          target.type =
+            form
+              .querySelector(
+                '[data-archive-source-form-type]'
+              )
+              .value
+            || 'Other';
+
+          target.providedBy =
+            form
+              .querySelector(
+                '[data-archive-source-provided-by]'
+              )
+              .value
+              .trim();
+
+          target.location =
+            form
+              .querySelector(
+                '[data-archive-source-location]'
+              )
+              .value
+              .trim();
+
+          target.reference =
+            form
+              .querySelector(
+                '[data-archive-source-reference]'
+              )
+              .value
+              .trim();
+
+          target.url =
+            form
+              .querySelector(
+                '[data-archive-source-url]'
+              )
+              .value
+              .trim();
+
+          target.accessedDate =
+            form
+              .querySelector(
+                '[data-archive-source-accessed]'
+              )
+              .value;
+
+          target.notes =
+            form
+              .querySelector(
+                '[data-archive-source-notes]'
+              )
+              .value
+              .trim();
+
+          target.updatedAt =
+            now;
+
+          const created =
+            !source;
+
+          if (created) {
+            sampleData.sources.unshift(
+              target
+            );
+          }
+
+          if (
+            created
+            && typeof onCreated
+              === 'function'
+          ) {
+            closeModal();
+
+            onCreated(
+              target
+            );
+
+            return;
+          }
+
+          state.archiveView =
+            'sources';
+
+          state.archiveSelectedSourceId =
+            target.id;
+
+          state.archiveSearch =
+            '';
+
           closeModal();
+          renderArchive();
 
-          onCreated(
-            target
+          showToast(
+            editing
+              ? 'Source updated.'
+              : 'Source created.'
           );
-
-          return;
         }
-        state.archiveView = 'sources';
-        state.archiveSelectedSourceId = target.id;
-        state.archiveSearch = '';
-        closeModal();
-        renderArchive();
-        showToast(editing ? 'Source updated.' : 'Source created.');
-      });
+      );
     }
 
     function openArchiveRenameItemModal(
@@ -127053,6 +128441,10 @@
 
     function deleteArchiveFilesPermanently(fileIds) {
       const ids = new Set(fileIds);
+      removeSourceLinksForTargets(
+        'file',
+        [...ids]
+      );
       (sampleData.notes || []).forEach(note => {
         note.linkedArchiveFileIds = (note.linkedArchiveFileIds || []).filter(id => !ids.has(id));
       });
@@ -127168,8 +128560,9 @@
       if (!source) return;
       openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveDeleteSourceTitle"><div class="modal-header"><div><h2 id="archiveDeleteSourceTitle">Delete source permanently?</h2><p>${escapeHtml(source.title)}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="archive-delete-summary"><strong>The Source record cannot be restored.</strong><span>Its connections will be removed. Linked files, People, Events, Notes, and Places will not be deleted.</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-archive-delete-source-confirm>Delete permanently</button></div></div>`);
       modalBackdrop.querySelector('[data-archive-delete-source-confirm]')?.addEventListener('click', () => {
-        archiveProjectFiles().forEach(file => { file.linkedSourceIds = (file.linkedSourceIds || []).filter(id => id !== source.id); });
-        (sampleData.notes || []).forEach(note => { note.linkedSourceIds = (note.linkedSourceIds || []).filter(id => id !== source.id); });
+        removeSourceLinksForSource(
+          source.id
+        );
         sampleData.sources = (sampleData.sources || []).filter(item => item.id !== source.id);
         state.archiveSelectedSourceId = null;
         closeModal();
@@ -128825,7 +130218,6 @@
         linkedPlaceIds: [],
         linkedEventIds: [],
         linkedPhotoIds: [],
-        linkedSourceIds: [],
         linkedArchiveFileIds: [],
         relatedNoteIds: [],
         createdAt:
@@ -128906,10 +130298,6 @@
 
           linkedPlaceIds: [
             'place-pawford'
-          ],
-
-          linkedSourceIds: [
-            'as1'
           ],
 
           linkedPhotoIds: [
@@ -129006,10 +130394,6 @@
             'place-meowbridge'
           ],
 
-          linkedSourceIds: [
-            'as3'
-          ],
-
           linkedArchiveFileIds: [
             'af5'
           ],
@@ -129090,10 +130474,6 @@
             'place-pawford'
           ],
 
-          linkedSourceIds: [
-            'as1'
-          ],
-
           linkedArchiveFileIds: [
             'af1',
             'af2'
@@ -129143,10 +130523,6 @@
             'place-pawford'
           ],
 
-          linkedSourceIds: [
-            'as5'
-          ],
-
           linkedPhotoIds: [
             'photo-family-table',
             'photo-grandparents-garden'
@@ -129194,10 +130570,6 @@
 
           linkedPlaceIds: [
             'place-pawford'
-          ],
-
-          linkedSourceIds: [
-            'as6'
           ],
 
           linkedArchiveFileIds: [
@@ -129263,10 +130635,6 @@
 
           linkedPlaceIds: [
             'place-fishmarket-row'
-          ],
-
-          linkedSourceIds: [
-            'as6'
           ],
 
           linkedArchiveFileIds: [
@@ -129342,10 +130710,6 @@
 
           linkedEventIds: [
             'event-rel-silver-luna-partner-rel-silver-luna-partner-marriage'
-          ],
-
-          linkedSourceIds: [
-            'as3'
           ],
 
           linkedPhotoIds: [
@@ -129493,10 +130857,6 @@
             'place-meowbridge'
           ],
 
-          linkedSourceIds: [
-            'as4'
-          ],
-
           linkedArchiveFileIds: [
             'af6'
           ],
@@ -129581,11 +130941,6 @@
             'place-pawford'
           ],
 
-          linkedSourceIds: [
-            'as1',
-            'as2'
-          ],
-
           linkedArchiveFileIds: [
             'af1',
             'af4'
@@ -129600,6 +130955,65 @@
       ];
     })();
 
+    sampleData.sourceLinks = [
+      // Source → People
+      ['as1', 'person', 'barnaby'],
+      ['as1', 'person', 'daisy'],
+      ['as2', 'person', 'luna'],
+      ['as3', 'person', 'barnaby'],
+      ['as3', 'person', 'luna'],
+      ['as4', 'person', 'luna'],
+      ['as5', 'person', 'silver'],
+
+      // Source → Places
+      ['as1', 'place', 'place-archive'],
+      ['as1', 'place', 'place-pawford'],
+      ['as2', 'place', 'place-pawford'],
+      ['as3', 'place', 'place-meowbridge'],
+      ['as5', 'place', 'place-pawford'],
+      ['as6', 'place', 'place-pawford'],
+
+      // Source → Archive files
+      ['as1', 'file', 'af1'],
+      ['as1', 'file', 'af2'],
+      ['as1', 'file', 'af3'],
+      ['as2', 'file', 'af4'],
+      ['as3', 'file', 'af5'],
+      ['as4', 'file', 'af6'],
+      ['as5', 'file', 'af7'],
+      ['as6', 'file', 'af9'],
+
+      // Source → Notes
+      ['as1', 'note', 'note-daisy-parentage'],
+      ['as1', 'note', 'note-pawford-household'],
+      ['as1', 'note', 'note-pawford-archive-visit'],
+      ['as2', 'note', 'note-pawford-archive-visit'],
+      ['as3', 'note', 'note-meowbridge-transcription'],
+      ['as3', 'note', 'note-silver-luna-marriage'],
+      ['as4', 'note', 'note-luna-interview'],
+      ['as5', 'note', 'note-whiskerfield-album'],
+      ['as6', 'note', 'note-whiskerfield-surname'],
+      ['as6', 'note', 'note-rupert-death']
+    ].map(
+      (
+        [
+          sourceId,
+          targetType,
+          targetId
+        ],
+        index
+      ) => ({
+        id:
+          `source-link-seed-${index + 1}`,
+
+        projectId:
+          'p1',
+
+        sourceId,
+        targetType,
+        targetId
+      })
+    );
 
     let runtimeIdSequence = 0;
 
@@ -130142,7 +131556,7 @@
 
         source: Object.freeze({
           field:
-            'linkedSourceIds',
+            null,
 
           sectionKey:
             'sources',
@@ -130185,7 +131599,7 @@
           meta:
             record =>
               [
-                record.holder,
+                record.providedBy,
                 record.reference
               ]
                 .filter(Boolean)
@@ -130277,6 +131691,32 @@
       return (
         NOTE_ENTITY_TYPES[type]
         || null
+      );
+    }
+
+    function noteEntityLinkedIds(
+      note,
+      type
+    ) {
+      const config =
+        getNoteEntityConfig(
+          type
+        );
+
+      if (!note || !config) {
+        return [];
+      }
+
+      if (type === 'source') {
+        return sourceIdsForTarget(
+          'note',
+          note.id,
+          note.projectId
+        );
+      }
+
+      return normalizeCentralNoteIdArray(
+        note[config.field] || []
       );
     }
 
@@ -130389,13 +131829,6 @@
           false
       } = {}
     ) {
-      const config =
-        getNoteEntityConfig(type);
-
-      if (!config || !id) {
-        return [];
-      }
-
       const record =
         noteEntityById(
           type,
@@ -130407,13 +131840,18 @@
         return [];
       }
 
-      return getNotesLinkedById(
-        config.field,
-        record.id,
+      return getProjectNotes(
+        projectId,
         {
-          projectId,
           includeArchived
         }
+      ).filter(note =>
+        noteEntityLinkedIds(
+          note,
+          type
+        ).includes(
+          id
+        )
       );
     }
 
@@ -130508,9 +131946,11 @@
         projectId =
           currentProjectId(),
 
-        touchUpdatedAt = true,
+        touchUpdatedAt =
+          true,
 
-        refreshPreview = true
+        refreshPreview =
+          true
       } = {}
     ) {
       const note =
@@ -130518,7 +131958,8 @@
           noteId,
           {
             projectId,
-            includeArchived: true
+            includeArchived:
+              true
           }
         );
 
@@ -130543,15 +131984,16 @@
 
       const nextIds =
         normalizeCentralNoteIdArray(
-          Array.isArray(linkedIds)
-            ? linkedIds
-            : []
+          linkedIds
         ).filter(id =>
           validIds.has(id)
         );
 
       const currentIds =
-        note[config.field] || [];
+        noteEntityLinkedIds(
+          note,
+          type
+        );
 
       const unchanged =
         nextIds.length
@@ -130568,13 +132010,29 @@
         return note;
       }
 
-      note[config.field] =
-        nextIds;
+      if (type === 'source') {
+        const savedIds =
+          setSourceIdsForTarget(
+            'note',
+            note.id,
+            nextIds,
+            {
+              projectId:
+                note.projectId
+            }
+          );
+
+        if (!savedIds) {
+          return null;
+        }
+      } else {
+        note[config.field] =
+          nextIds;
+      }
 
       if (touchUpdatedAt) {
         if (
-          state.activeModule
-            === 'Notes'
+          state.activeModule === 'Notes'
           && state.selectedNoteId
             === note.id
         ) {
@@ -130586,8 +132044,7 @@
           );
         } else {
           note.updatedAt =
-            new Date()
-              .toISOString();
+            new Date().toISOString();
         }
       }
 
@@ -137061,7 +138518,10 @@
       [
         [
           'source',
-          note.linkedSourceIds
+          noteEntityLinkedIds(
+            note,
+            'source'
+          )
         ],
         [
           'archiveFile',
@@ -137250,14 +138710,16 @@
         });
 
       const sourcePersonIds =
-        (
-          file.linkedSourceIds
-          || []
+        sourceIdsForTarget(
+          'file',
+          file.id,
+          file.projectId
         ).flatMap(sourceId =>
-          archiveSourceById(
-            sourceId
-          )?.linkedPersonIds
-          || []
+          sourceTargetIds(
+            sourceId,
+            'person',
+            file.projectId
+          )
         );
 
       return archiveUniqueIds([
@@ -142550,14 +144012,16 @@
       const secondaryPersonIds =
         archiveUniqueIds(
           files.flatMap(file =>
-            (
-              file.linkedSourceIds
-              || []
+            sourceIdsForTarget(
+              'file',
+              file.id,
+              file.projectId
             ).flatMap(sourceId =>
-              archiveSourceById(
-                sourceId
-              )?.linkedPersonIds
-              || []
+              sourceTargetIds(
+                sourceId,
+                'person',
+                file.projectId
+              )
             )
           )
         );
@@ -143050,12 +144514,14 @@
 
         score +=
           notePickerSharedIds(
-            sourceNote[
-              config.field
-            ],
-            candidate[
-              config.field
-            ]
+            noteEntityLinkedIds(
+              sourceNote,
+              type
+            ),
+            noteEntityLinkedIds(
+              candidate,
+              type
+            )
           ).length
           * weight;
       });
@@ -145036,6 +146502,12 @@
       const now =
         new Date().toISOString();
 
+      const copiedSourceIds =
+        noteEntityLinkedIds(
+          note,
+          'source'
+        );
+
       const copy =
         normalizeCentralNoteRecord({
           ...note,
@@ -145116,6 +146588,19 @@
 
       sampleData.notes.unshift(
         copy
+      );
+
+      setNoteEntityLinks(
+        copy.id,
+        'source',
+        copiedSourceIds,
+        {
+          projectId:
+            copy.projectId,
+
+          touchUpdatedAt:
+            false
+        }
       );
 
       state.notesView =
@@ -146447,6 +147932,10 @@
         return;
       }
 
+      removeSourceLinksForTarget(
+        'note',
+        noteId
+      );
       sampleData.notes.splice(
         index,
         1
@@ -147372,9 +148861,6 @@
         linkedPhotoIds:
           [],
 
-        linkedSourceIds:
-          [],
-
         linkedArchiveFileIds:
           [],
 
@@ -147388,19 +148874,6 @@
           now
       };
 
-      if (creationContext) {
-        const config =
-          getNoteEntityConfig(
-            creationContext.type
-          );
-
-        if (config) {
-          record[config.field] = [
-            creationContext.id
-          ];
-        }
-      }
-
       const newNote =
         normalizeCentralNoteRecord(
           record
@@ -147409,6 +148882,23 @@
       sampleData.notes.unshift(
         newNote
       );
+
+      if (creationContext) {
+        setNoteEntityLinks(
+          newNote.id,
+          creationContext.type,
+          [
+            creationContext.id
+          ],
+          {
+            projectId:
+              newNote.projectId,
+
+            touchUpdatedAt:
+              false
+          }
+        );
+      }
 
       if (activate) {
         state.activeModule =
@@ -156978,6 +158468,10 @@
           });
           if (repairedBoardPlace) board.updatedAt = new Date().toISOString();
         });
+        removeSourceLinksForTarget(
+          'place',
+          place.id
+        );
         sampleData.places = sampleData.places.filter(item => item.id !== place.id);
         sampleData.placeIssues = (sampleData.placeIssues || []).filter(issue => issue.placeId !== place.id);
         sampleData.people.forEach(person => [person, person.birth, person.death, ...(person.events || []), ...(person.attributes || [])].filter(Boolean).forEach(record => clearStructuredPlaceReferences(record, place.id)));
@@ -157466,10 +158960,12 @@
       const birthPlace = person.birth?.placeId
         ? getPlaceDisplay(person.birth.placeId)
         : person.birth?.placeText || 'Place unknown';
-      const sourceCount = (sampleData.sources || []).filter(source =>
-        source.projectId === person.projectId
-        && (source.linkedPersonIds || []).includes(person.id)
-      ).length;
+      const sourceCount =
+        sourceIdsForTarget(
+          'person',
+          person.id,
+          person.projectId
+        ).length;
       const noteCount = getNotesForPerson(person.id, { includeArchived: true }).length;
       return `<div class="publish-report-page">
         <h2>${escapeHtml(project.name)}</h2>
@@ -161203,11 +162699,6 @@
           )
         );
 
-      note.linkedSourceIds =
-        normalizeCentralNoteIdArray(
-          note.linkedSourceIds
-        );
-
       note.linkedArchiveFileIds =
         normalizeCentralNoteIdArray(
           note.linkedArchiveFileIds
@@ -161384,6 +162875,12 @@
           : [];
       sampleData.placeIssues = Array.isArray(sampleData.placeIssues) ? sampleData.placeIssues : [];
       sampleData.sources = Array.isArray(sampleData.sources) ? sampleData.sources : [];
+      sampleData.sourceLinks =
+        Array.isArray(
+          sampleData.sourceLinks
+        )
+          ? sampleData.sourceLinks
+          : [];
       sampleData.archiveFiles = Array.isArray(sampleData.archiveFiles) ? sampleData.archiveFiles : [];
       sampleData.notes =
         Array.isArray(
@@ -161424,6 +162921,7 @@
       normalizeEventPlaceAddresses();
       normalizeSampleGenealogyDates();
       sampleData.events = buildSampleEvents();
+      pruneInvalidSourceLinks();
       validateSampleData();
     }
 
