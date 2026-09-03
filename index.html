@@ -35422,6 +35422,11 @@
 
       'Source created.':
         'Источник создан.',
+      'View all sources':
+        'Показать все источники',
+
+      'Connected to':
+        'Связано с',
 
       // ========================================
       // Permanent deletion
@@ -48538,6 +48543,7 @@
       archiveSourceCategoryFilter: 'all',
       archiveSourceConnectionFilter: 'all',
       archiveSourceFavouriteOnly: false,
+      archiveSourceTargetFilter: null,
       archiveInspectorCollapsed: false,
       archiveFileEditing: false,
       archiveFileEditOriginal: null,
@@ -71394,9 +71400,6 @@
                 centralPerson.projectId,
 
               sources,
-
-              limit:
-                3,
 
               emptyText:
                 'No sources linked to this person.'
@@ -115096,6 +115099,184 @@
       );
     }
 
+    function connectedSourceTargetLabel(
+      targetType,
+      target
+    ) {
+      if (!target) {
+        return 'record';
+      }
+
+      if (targetType === 'person') {
+        return (
+          personResourceDisplayName(target)
+          || target.name
+          || 'person'
+        );
+      }
+
+      if (targetType === 'photo') {
+        return (
+          target.title
+          || target.filename
+          || 'photo'
+        );
+      }
+
+      if (targetType === 'file') {
+        return (
+          target.name
+          || target.title
+          || 'file'
+        );
+      }
+
+      if (targetType === 'event') {
+        return (
+          target.title
+          || target.typeLabel
+          || target.type
+          || 'event'
+        );
+      }
+
+      if (targetType === 'note') {
+        return (
+          target.title
+          || 'note'
+        );
+      }
+
+      if (targetType === 'place') {
+        return (
+          placeDisplayText(target)
+          || target.name
+          || 'place'
+        );
+      }
+
+      return (
+        target.title
+        || target.name
+        || 'record'
+      );
+    }
+
+    function currentArchiveSourceTargetFilter() {
+      const filter =
+        state.archiveSourceTargetFilter;
+
+      if (
+        !filter
+        || !SOURCE_LINK_TARGET_TYPES.includes(
+          filter.targetType
+        )
+        || !filter.targetId
+        || filter.projectId
+          !== currentProjectId()
+      ) {
+        return null;
+      }
+
+      const target =
+        sourceTargetRecord(
+          filter.targetType,
+          filter.targetId,
+          filter.projectId
+        );
+
+      return target
+        ? {
+            ...filter,
+            target
+          }
+        : null;
+    }
+
+    function openArchiveSourcesForTarget({
+      targetType,
+      targetId,
+      projectId =
+        currentProjectId()
+    }) {
+      const target =
+        sourceTargetRecord(
+          targetType,
+          targetId,
+          projectId
+        );
+
+      if (!target) {
+        showToast(
+          'The connected record is no longer available.'
+        );
+
+        return;
+      }
+
+      const sourceIds =
+        sourceIdsForTarget(
+          targetType,
+          targetId,
+          projectId
+        );
+
+      const activated =
+        activateProject(
+          projectId,
+          {
+            moduleName:
+              'Archive',
+
+            renderNow:
+              false,
+
+            reset:
+              false
+          }
+        );
+
+      if (!activated) {
+        return;
+      }
+
+      state.archiveView =
+        'sources';
+
+      state.archiveSearch =
+        '';
+
+      state.archiveSourceCategoryFilter =
+        'all';
+
+      state.archiveSourceConnectionFilter =
+        'all';
+
+      state.archiveSourceFavouriteOnly =
+        false;
+
+      state.archiveSourceTargetFilter = {
+        targetType,
+        targetId,
+        projectId
+      };
+
+      state.archiveSelectedSourceId =
+        sourceIds[0]
+        || null;
+
+      state.archiveSelectedFileId =
+        null;
+
+      state.archiveSelectedFileIds =
+        [];
+
+      state.archiveInspectorCollapsed =
+        false;
+
+      render();
+    }
+
     function setSourceIdsForTarget(
       targetType,
       targetId,
@@ -115455,7 +115636,7 @@
 
       render();
     }
-    function renderConnectedSourceList({
+        function renderConnectedSourceList({
       targetType,
       targetId,
 
@@ -115468,9 +115649,6 @@
           targetId,
           projectId
         ),
-
-      limit =
-        4,
 
       emptyText =
         'No sources linked.',
@@ -115486,16 +115664,153 @@
         ).filter(Boolean);
 
       const visibleSources =
-        validSources.slice(
-          0,
-          limit
-        );
+        validSources.slice(0, 4);
 
       if (!visibleSources.length) {
         return renderInspectorSectionEmpty(
           emptyText
         );
       }
+
+      const sourceItems =
+        visibleSources
+          .map(source => {
+            const title =
+              source.title
+              || 'Untitled source';
+
+            const sourceProjectId =
+              source.projectId
+              || projectId;
+
+            const origin =
+              connectedSourceOrigin(
+                source
+              );
+
+            const metadata =
+              connectedSourceDetailMeta(
+                source
+              );
+
+            const mainContent = `
+              <span
+                class="connected-source-icon"
+                aria-hidden="true">
+
+                <span
+                  class="connected-source-icon-record">
+                  ${icon.archive}
+                </span>
+
+                <span
+                  class="connected-source-icon-link">
+                  ${icon.link}
+                </span>
+              </span>
+
+              <span class="connected-source-copy">
+                <strong
+                  class="connected-source-title"
+                  title="${escapeHtml(title)}">
+
+                  ${escapeHtml(title)}
+                </strong>
+
+                <span
+                  class="connected-source-origin"
+                  title="${escapeHtml(origin)}">
+
+                  ${escapeHtml(origin)}
+                </span>
+
+                <span
+                  class="connected-source-meta"
+                  title="${escapeHtml(metadata)}">
+
+                  ${escapeHtml(metadata)}
+                </span>
+              </span>
+            `;
+
+            return `
+              <div
+                class="
+                  relation-row
+                  connected-source-item
+                ">
+
+                ${
+                  readOnly
+                    ? `
+                      <div
+                        class="
+                          relation-row-main
+                          connected-source-main
+                        ">
+
+                        ${mainContent}
+                      </div>
+                    `
+                    : `
+                      <button
+                        class="
+                          relation-row-main
+                          connected-source-main
+                        "
+                        type="button"
+                        data-connected-source-open="${escapeHtml(
+                          source.id
+                        )}"
+                        data-connected-source-project="${escapeHtml(
+                          sourceProjectId
+                        )}"
+                        aria-label="Open source ${escapeHtml(
+                          title
+                        )}">
+
+                        ${mainContent}
+                      </button>
+                    `
+                }
+
+                ${
+                  readOnly
+                    ? ''
+                    : `
+                      <div class="relation-actions">
+                        <button
+                          class="
+                            relation-action-button
+                            danger
+                          "
+                          type="button"
+                          data-connected-source-unlink="${escapeHtml(
+                            source.id
+                          )}"
+                          data-connected-source-target-type="${escapeHtml(
+                            targetType
+                          )}"
+                          data-connected-source-target-id="${escapeHtml(
+                            targetId
+                          )}"
+                          data-connected-source-project="${escapeHtml(
+                            sourceProjectId
+                          )}"
+                          aria-label="Unlink ${escapeHtml(
+                            title
+                          )}"
+                          title="Unlink source">
+
+                          ${icon.unlink}
+                        </button>
+                      </div>
+                    `
+                }
+              </div>
+            `;
+          })
+          .join('');
 
       return `
         <div
@@ -115505,160 +115820,37 @@
           "
           data-connected-source-list>
 
-          ${visibleSources
-            .map(source => {
-              const title =
-                source.title
-                || 'Untitled source';
-
-              const sourceProjectId =
-                source.projectId
-                || projectId;
-
-              const origin =
-                connectedSourceOrigin(
-                  source
-                );
-
-              const metadata =
-                connectedSourceDetailMeta(
-                  source
-                );
-
-              const mainContent = `
-                <span
-                  class="connected-source-icon"
-                  aria-hidden="true">
-
-                  <span
-                    class="connected-source-icon-record">
-                    ${icon.archive}
-                  </span>
-
-                  <span
-                    class="connected-source-icon-link">
-                    ${icon.link}
-                  </span>
-                </span>
-
-                <span class="connected-source-copy">
-                  <strong
-                    class="connected-source-title"
-                    title="${escapeHtml(
-                      title
-                    )}">
-
-                    ${escapeHtml(
-                      title
-                    )}
-                  </strong>
-
-                  <span
-                    class="connected-source-origin"
-                    title="${escapeHtml(
-                      origin
-                    )}">
-
-                    ${escapeHtml(
-                      origin
-                    )}
-                  </span>
-
-                  <span
-                    class="connected-source-meta"
-                    title="${escapeHtml(
-                      metadata
-                    )}">
-
-                    ${escapeHtml(
-                      metadata
-                    )}
-                  </span>
-                </span>
-              `;
-
-              return `
-                <div
-                  class="
-                    relation-row
-                    connected-source-item
-                  ">
-
-                  ${
-                    readOnly
-                      ? `
-                        <div
-                          class="
-                            relation-row-main
-                            connected-source-main
-                          ">
-
-                          ${mainContent}
-                        </div>
-                      `
-                      : `
-                        <button
-                          class="
-                            relation-row-main
-                            connected-source-main
-                          "
-                          type="button"
-                          data-connected-source-open="${escapeHtml(
-                            source.id
-                          )}"
-                          data-connected-source-project="${escapeHtml(
-                            sourceProjectId
-                          )}"
-                          aria-label="Open source ${escapeHtml(
-                            title
-                          )}">
-
-                          ${mainContent}
-                        </button>
-                      `
-                  }
-
-                  ${
-                    readOnly
-                      ? ''
-                      : `
-                        <div class="relation-actions">
-                          <button
-                            class="
-                              relation-action-button
-                              danger
-                            "
-                            type="button"
-                            data-connected-source-unlink="${escapeHtml(
-                              source.id
-                            )}"
-                            data-connected-source-target-type="${escapeHtml(
-                              targetType
-                            )}"
-                            data-connected-source-target-id="${escapeHtml(
-                              targetId
-                            )}"
-                            data-connected-source-project="${escapeHtml(
-                              sourceProjectId
-                            )}"
-                            aria-label="Unlink ${escapeHtml(
-                              title
-                            )}"
-                            title="Unlink source">
-
-                            ${icon.unlink}
-                          </button>
-                        </div>
-                      `
-                  }
-                </div>
-              `;
-            })
-            .join('')}
+          ${sourceItems}
         </div>
+
+        <button
+          class="panel-section-view-all"
+          type="button"
+          data-connected-source-view-all
+          data-connected-source-target-type="${escapeHtml(
+            targetType
+          )}"
+          data-connected-source-target-id="${escapeHtml(
+            targetId
+          )}"
+          data-connected-source-project="${escapeHtml(
+            projectId
+          )}"
+          aria-label="View all ${validSources.length} sources">
+
+          <span>
+            View all sources
+          </span>
+
+          <span
+            class="panel-section-view-all-icon"
+            aria-hidden="true">
+            ${icon.chevron}
+          </span>
+        </button>
       `;
     }
-
+    
     function bindConnectedSourceLinks(
       root,
       {
@@ -115669,7 +115861,31 @@
       if (!root) {
         return;
       }
+      root
+        .querySelectorAll(
+          '[data-connected-source-view-all]'
+        )
+        .forEach(button => {
+          button.addEventListener(
+            'click',
+            () => {
+              openArchiveSourcesForTarget({
+                targetType:
+                  button.dataset
+                    .connectedSourceTargetType,
 
+                targetId:
+                  button.dataset
+                    .connectedSourceTargetId,
+
+                projectId:
+                  button.dataset
+                    .connectedSourceProject
+                  || currentProjectId()
+              });
+            }
+          );
+        });
       root
         .querySelectorAll(
           '[data-connected-source-open]'
@@ -121431,6 +121647,27 @@
       let sources =
         archiveProjectSources();
 
+      const targetFilter =
+        currentArchiveSourceTargetFilter();
+
+      if (targetFilter) {
+        const connectedSourceIds =
+          new Set(
+            sourceIdsForTarget(
+              targetFilter.targetType,
+              targetFilter.targetId,
+              targetFilter.projectId
+            )
+          );
+
+        sources =
+          sources.filter(source =>
+            connectedSourceIds.has(
+              source.id
+            )
+          );
+      }
+
       if (
         state.archiveSourceCategoryFilter
         && state.archiveSourceCategoryFilter
@@ -122220,7 +122457,7 @@
 
                   state.archiveInspectorCollapsed =
                     false;
-
+                  state.archiveSourceTargetFilter = null;
                   ensureArchiveSelection();
                   renderArchive();
                 }
@@ -122285,7 +122522,7 @@
             ) {
               return;
             }
-
+            state.archiveSourceTargetFilter = null;
             state.archiveSourceCategoryFilter =
               value;
 
@@ -123842,6 +124079,9 @@
       }
 
       return [
+        Boolean(
+          currentArchiveSourceTargetFilter()
+        ),
         state.archiveSearchScope
           === 'all',
 
@@ -124426,6 +124666,23 @@
         const filters =
           [];
 
+        const targetFilter =
+          currentArchiveSourceTargetFilter();
+
+        if (targetFilter) {
+          filters.push({
+            key:
+              'sourceTarget',
+
+            label:
+              `${t('Connected to')}: ${
+                connectedSourceTargetLabel(
+                  targetFilter.targetType,
+                  targetFilter.target
+                )
+              }`
+          });
+        }
         if (
           state.archiveSourceCategoryFilter
           && state.archiveSourceCategoryFilter
@@ -124592,6 +124849,17 @@
     function removeArchiveToolbarFilter(
       key
     ) {
+      if (key === 'sourceTarget') {
+        state.archiveSourceTargetFilter =
+          null;
+
+        state.archiveSelectedSourceId =
+          null;
+
+        renderArchive();
+
+        return;
+      }
       if (
         key === 'sourceCategory'
       ) {
@@ -124686,6 +124954,7 @@
           'all';
         state.archiveSourceFavouriteOnly =
           false;
+        state.archiveSourceTargetFilter = null;
         state.archiveSelectedSourceId =
           null;
       } else {
@@ -143135,26 +143404,43 @@
         }`;
 
       const rows =
-        records.length
-          ? (
-              type === 'photo'
-                ? renderNoteLinkedPhotoGrid(
-                    records
-                  )
-                : renderNoteLinkedRecordRows(
-                    type,
-                    config,
-                    records,
-                    note.id
-                  )
-            )
-          : `
-            <span class="notes-section-empty">
-              No ${escapeHtml(
-                config.plural
-              )} linked to this note.
-            </span>
-          `;
+        type === 'source'
+          ? renderConnectedSourceList({
+              targetType:
+                'note',
+
+              targetId:
+                note.id,
+
+              projectId:
+                note.projectId,
+
+              sources:
+                records,
+
+              emptyText:
+                'No sources linked to this note.'
+            })
+          : records.length
+            ? (
+                type === 'photo'
+                  ? renderNoteLinkedPhotoGrid(
+                      records
+                    )
+                  : renderNoteLinkedRecordRows(
+                      type,
+                      config,
+                      records,
+                      note.id
+                    )
+              )
+            : `
+              <span class="notes-section-empty">
+                No ${escapeHtml(
+                  config.plural
+                )} linked to this note.
+              </span>
+            `;
 
       return renderNoteEditorSection({
         id:
@@ -165734,6 +166020,7 @@
       state.archiveSourceCategoryFilter = 'all';
       state.archiveSourceConnectionFilter = 'all';
       state.archiveSourceFavouriteOnly = false;
+      state.archiveSourceTargetFilter = null;
       state.archiveFileEditing = false;
       state.archiveFileEditOriginal = null;
       state.archiveFileEditDraft = null;
