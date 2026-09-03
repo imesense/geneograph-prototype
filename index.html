@@ -20681,6 +20681,28 @@
       gap: var(--space-2);
     }
 
+    .notes-place-search-toolbar {
+      min-width: 0;
+
+      display: grid;
+      grid-template-columns:
+        minmax(0, 1fr)
+        auto;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .notes-place-search-toolbar
+    .search-input {
+      min-width: 0;
+    }
+
+    .notes-place-search-toolbar
+    > .button {
+      min-height: var(--control-height);
+      white-space: nowrap;
+    }
+
     .notes-place-results-heading {
       min-width: 0;
 
@@ -20736,58 +20758,52 @@
     .notes-place-result-meta {
       color: var(--text-tertiary);
     }
+    .notes-place-selected-chip-list {
+      align-items: center;
+    }
 
-    .notes-place-selected-list {
-      min-width: 0;
-      max-height: 176px;
-
-      border:
-        1px solid
-        var(--border-default);
-
-      border-radius:
-        var(--radius-sm);
+    .notes-place-selected-chip {
+      border-color:
+        rgba(
+          76,
+          183,
+          183,
+          .28
+        );
 
       background:
         rgba(
-          0,
-          0,
-          0,
+          76,
+          183,
+          183,
           .08
         );
-
-      overflow-x: hidden;
-      overflow-y: auto;
-
-      overscroll-behavior:
-        contain;
     }
 
-    .notes-place-selected-row {
-      cursor: default;
-    }
+    .notes-place-selected-chip:hover,
+    .notes-place-selected-chip:focus-within {
+      border-color:
+        rgba(
+          76,
+          183,
+          183,
+          .52
+        );
 
-    .notes-place-selected-row:hover {
       background:
-        var(--surface-card-hover);
+        rgba(
+          76,
+          183,
+          183,
+          .13
+        );
     }
 
-    .notes-place-remove {
-      width: 32px;
-      height: 32px;
-      padding: 0;
-      border:
-        1px solid
-        transparent;
-      border-radius:
-        var(--radius-sm);
-      background:
-        transparent;
-      color:
-        var(--text-tertiary);
-      display: grid;
-      place-items: center;
-      cursor: pointer;
+    .notes-place-selected-chip
+    .relation-action-button:hover,
+    .notes-place-selected-chip
+    .relation-action-button:focus-visible {
+      color: #4CB7B7;
     }
 
     .notes-place-remove:hover,
@@ -147945,13 +147961,10 @@
           const places = [
             ...selectedIds
           ]
-            .map(
-              getPlace
-            )
-            .filter(
-              place =>
-                place
-                && !place.deleted
+            .map(getPlace)
+            .filter(place =>
+              place
+              && !place.deleted
             );
 
           if (!places.length) {
@@ -147961,21 +147974,8 @@
           return `
             <div
               class="
-                photo-people-selected-head
-              ">
-
-              <strong>
-                Selected places
-              </strong>
-
-              <span>
-                ${places.length}
-              </span>
-            </div>
-
-            <div
-              class="
-                notes-place-selected-list
+                notes-related-selected-list
+                notes-place-selected-chip-list
               ">
 
               ${places
@@ -147983,53 +147983,37 @@
                   const primaryName =
                     placePrimaryName(
                       place
-                    );
-
-                  const secondaryName =
-                    placeSecondaryName(
-                      place
                     )
-                    || 'No broader place recorded';
+                    || place.name
+                    || 'Unnamed place';
 
                   return `
                     <div
                       class="
-                        photo-people-result
-                        notes-place-selected-row
+                        notes-related-selected-row
+                        notes-place-selected-chip
                       ">
 
-                      ${renderPlaceIcon()}
-
                       <span
-                        class="
-                          photo-people-result-copy
-                        ">
+                        title="${escapeHtml(
+                          primaryName
+                        )}">
 
-                        <strong>
-                          ${escapeHtml(
-                            primaryName
-                          )}
-                        </strong>
-
-                        <span>
-                          ${escapeHtml(
-                            secondaryName
-                          )}
-                        </span>
+                        ${escapeHtml(
+                          primaryName
+                        )}
                       </span>
 
                       <button
-                        class="
-                          notes-place-remove
-                        "
+                        class="relation-action-button"
                         type="button"
                         data-notes-place-remove="${escapeHtml(
                           place.id
                         )}"
                         aria-label="Remove ${escapeHtml(
                           primaryName
-                        )}"
-                        title="Remove place">
+                        )} from selection"
+                        title="Remove from selection">
 
                         ${icon.close}
                       </button>
@@ -148157,18 +148141,6 @@
                     Create a place before
                     linking it.
                   </p>
-
-                  <button
-                    class="
-                      button
-                      primary
-                    "
-                    type="button"
-                    data-notes-place-create>
-
-                    ${icon.plus}
-                    New place
-                  </button>
                 </div>
               </div>
             `;
@@ -148203,7 +148175,6 @@
                     Try another place name
                     or historical name.
                   </p>
-
                   <div
                     class="
                       notes-place-empty-actions
@@ -148217,18 +148188,6 @@
                       type="button"
                       data-notes-place-clear-search>
                       Clear search
-                    </button>
-
-                    <button
-                      class="
-                        button
-                        primary
-                      "
-                      type="button"
-                      data-notes-place-create>
-
-                      ${icon.plus}
-                      New place
                     </button>
                   </div>
                 </div>
@@ -148305,18 +148264,35 @@
                 Find places
               </label>
 
-              <div class="search-input">
-                ${icon.search}
+              <div
+                class="notes-place-search-toolbar">
 
-                <input
-                  id="notesPlacesSearch"
-                  type="search"
-                  value="${escapeHtml(
-                    query
-                  )}"
-                  data-notes-place-search
-                  placeholder="Search by name, broader place, or historical name"
-                  autocomplete="off">
+                <div class="search-input">
+                  ${icon.search}
+
+                  <input
+                    id="notesPlacesSearch"
+                    type="search"
+                    value="${escapeHtml(
+                      query
+                    )}"
+                    data-notes-place-search
+                    placeholder="Search by name, broader place, or historical name"
+                    autocomplete="off">
+                </div>
+
+                <button
+                  class="
+                    button
+                    secondary
+                    compact
+                  "
+                  type="button"
+                  data-notes-place-create>
+
+                  ${icon.plus}
+                  New place
+                </button>
               </div>
             </div>
 
@@ -148351,19 +148327,6 @@
                     data-notes-place-results-meta>
                   </span>
                 </div>
-
-                <button
-                  class="
-                    button
-                    secondary
-                    compact
-                  "
-                  type="button"
-                  data-notes-place-create>
-
-                  ${icon.plus}
-                  New place
-                </button>
               </div>
 
               <div
