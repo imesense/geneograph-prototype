@@ -21520,219 +21520,6 @@
       height: 24px;
     }
 
-    .notes-event-selected-review {
-      min-width: 0;
-
-      border:
-        1px solid
-        rgba(
-          93,
-          173,
-          236,
-          .24
-        );
-
-      border-radius:
-        var(--radius-sm);
-
-      background:
-        rgba(
-          93,
-          173,
-          236,
-          .06
-        );
-    }
-
-    .notes-event-selected-review
-    summary {
-      min-height: 40px;
-
-      padding:
-        8px
-        var(--space-3);
-
-      color:
-        var(--text-secondary);
-
-      display: flex;
-      align-items: center;
-      justify-content:
-        space-between;
-      gap: var(--space-3);
-
-      cursor: pointer;
-    }
-
-    .notes-event-selected-review
-    summary strong {
-      color: #8BC8F5;
-    }
-
-    .notes-event-selected-groups {
-      max-height: 176px;
-
-      padding:
-        0
-        var(--space-3)
-        var(--space-3);
-
-      display: grid;
-      gap: var(--space-3);
-
-      overflow-y: auto;
-    }
-
-    .notes-event-selected-group {
-      min-width: 0;
-
-      display: grid;
-      gap: var(--space-2);
-    }
-
-    .notes-event-selected-person {
-      min-width: 0;
-
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-    }
-
-    .notes-event-selected-person
-    strong {
-      min-width: 0;
-
-      color:
-        var(--text-primary);
-
-      font-size: 12px;
-
-      overflow: hidden;
-      text-overflow:
-        ellipsis;
-      white-space: nowrap;
-    }
-
-    .notes-event-selected-avatar {
-      --person-avatar-width: 26px;
-      --person-avatar-radius: 7px;
-      --person-avatar-font-size: 9px;
-    }
-
-    .notes-event-selected-list {
-      display: grid;
-      gap: 2px;
-    }
-
-    .notes-event-selected-row {
-      min-width: 0;
-      min-height: 34px;
-
-      padding-left: 34px;
-
-      display: grid;
-
-      grid-template-columns:
-        minmax(0, 1fr)
-        30px;
-
-      align-items: center;
-      gap: var(--space-2);
-    }
-
-    .notes-event-selected-copy {
-      min-width: 0;
-
-      display: flex;
-      align-items: baseline;
-      gap: var(--space-2);
-    }
-
-    .notes-event-selected-copy
-    strong,
-    .notes-event-selected-copy
-    span {
-      min-width: 0;
-
-      overflow: hidden;
-      text-overflow:
-        ellipsis;
-      white-space: nowrap;
-    }
-
-    .notes-event-selected-copy
-    strong {
-      color:
-        var(--text-secondary);
-
-      font-size: 12px;
-    }
-
-    .notes-event-selected-copy
-    span {
-      color:
-        var(--text-tertiary);
-
-      font-size: 11px;
-    }
-
-    .notes-event-selected-remove {
-      width: 28px;
-      height: 28px;
-      padding: 0;
-
-      border:
-        1px solid
-        transparent;
-
-      border-radius: 7px;
-
-      background:
-        transparent;
-
-      color:
-        var(--text-tertiary);
-
-      display: grid;
-      place-items: center;
-    }
-
-    .notes-event-selected-remove:hover,
-    .notes-event-selected-remove:focus-visible {
-      border-color:
-        rgba(
-          212,
-          107,
-          107,
-          .35
-        );
-
-      background:
-        rgba(
-          212,
-          107,
-          107,
-          .1
-        );
-
-      color:
-        var(--red);
-    }
-
-    .notes-event-selected-remove:focus-visible {
-      outline:
-        2px solid
-        var(--red);
-
-      outline-offset: 2px;
-    }
-
-    .notes-event-selected-remove
-    svg {
-      width: 14px;
-      height: 14px;
-    }
-
     .notes-event-picker-footer {
       align-items: center;
       justify-content:
@@ -148887,14 +148674,6 @@
       const selectedIds =
         new Set();
 
-      /*
-        Shared Events may appear beneath several
-        People. Remember the Person through whom
-        the Event was selected for the review panel.
-      */
-      const selectionOwnerByEventId =
-        new Map();
-
       let query = '';
       let activePersonId = '';
       let mobilePane = 'people';
@@ -149630,205 +149409,6 @@
           `;
         };
 
-      const selectedEventGroups =
-        () => {
-          const groups =
-            new Map();
-
-          selectedIds.forEach(
-            eventId => {
-              const event =
-                eventsById.get(
-                  eventId
-                );
-
-              if (!event) {
-                return;
-              }
-
-              const validOwnerIds =
-                placeInspectorEventOwnerIds(
-                  event
-                ).filter(personId =>
-                  peopleById.has(
-                    personId
-                  )
-                );
-
-              const ownerId =
-                selectionOwnerByEventId
-                  .get(eventId)
-                || validOwnerIds[0];
-
-              const person =
-                peopleById.get(
-                  ownerId
-                );
-
-              if (!person) {
-                return;
-              }
-
-              if (
-                !groups.has(
-                  person.id
-                )
-              ) {
-                groups.set(
-                  person.id,
-                  {
-                    person,
-                    events: []
-                  }
-                );
-              }
-
-              groups
-                .get(person.id)
-                .events
-                .push(event);
-            }
-          );
-
-          return [
-            ...groups.values()
-          ]
-            .map(group => ({
-              ...group,
-
-              events:
-                group.events
-                  .slice()
-                  .sort(
-                    (
-                      first,
-                      second
-                    ) =>
-                      placeInspectorEventSortValue(
-                        first
-                      )
-                      - placeInspectorEventSortValue(
-                        second
-                      )
-                  )
-            }))
-            .sort(
-              (
-                first,
-                second
-              ) =>
-                personName(
-                  first.person
-                ).localeCompare(
-                  personName(
-                    second.person
-                  )
-                )
-            );
-        };
-
-      const renderSelectedReview =
-        () => {
-          const groups =
-            selectedEventGroups();
-
-          if (!groups.length) {
-            return '';
-          }
-
-          return `
-            <details
-              class="notes-event-selected-review"
-              ${
-                groups.length > 1
-                  ? 'open'
-                  : ''
-              }>
-
-              <summary>
-                <span>
-                  Selected events
-                </span>
-
-                <strong>
-                  ${selectedIds.size}
-                </strong>
-              </summary>
-
-              <div class="notes-event-selected-groups">
-                ${groups
-                  .map(group => `
-                    <section class="notes-event-selected-group">
-                      <div class="notes-event-selected-person">
-                        ${renderPersonAvatar(
-                          group.person,
-                          'notes-event-selected-avatar',
-                          {
-                            element:
-                              'span'
-                          }
-                        )}
-
-                        <strong>
-                          ${escapeHtml(
-                            personName(
-                              group.person
-                            )
-                          )}
-                        </strong>
-                      </div>
-
-                      <div class="notes-event-selected-list">
-                        ${group.events
-                          .map(event => {
-                            const presentation =
-                              placeInspectorEventPresentation(
-                                event,
-                                group.person.id
-                              );
-
-                            return `
-                              <div class="notes-event-selected-row">
-                                <span class="notes-event-selected-copy">
-                                  <strong>
-                                    ${escapeHtml(
-                                      presentation.title
-                                    )}
-                                  </strong>
-
-                                  <span>
-                                    ${escapeHtml(
-                                      presentation.date
-                                      || 'Date unknown'
-                                    )}
-                                  </span>
-                                </span>
-
-                                <button
-                                  class="notes-event-selected-remove"
-                                  type="button"
-                                  data-notes-event-remove="${escapeHtml(
-                                    event.id
-                                  )}"
-                                  aria-label="Remove ${escapeHtml(
-                                    presentation.title
-                                  )} from selection"
-                                  title="Remove from selection">
-                                  ${icon.close}
-                                </button>
-                              </div>
-                            `;
-                          })
-                          .join('')}
-                      </div>
-                    </section>
-                  `)
-                  .join('')}
-              </div>
-            </details>
-          `;
-        };
-
       openModal(`
         <div
           class="
@@ -149928,11 +149508,6 @@
                 aria-label="Person events">
               </section>
             </div>
-
-            <section
-              data-notes-event-selected
-              hidden>
-            </section>
           </div>
 
           <div
@@ -150002,11 +149577,6 @@
           '[data-notes-event-timeline]'
         );
 
-      const selectedHost =
-        modal.querySelector(
-          '[data-notes-event-selected]'
-        );
-
       const countElement =
         modal.querySelector(
           '[data-notes-event-count]'
@@ -150051,18 +149621,6 @@
             renderTimeline(
               person
             );
-        };
-
-      const refreshSelected =
-        () => {
-          const html =
-            renderSelectedReview();
-
-          selectedHost.hidden =
-            !html;
-
-          selectedHost.innerHTML =
-            html;
         };
 
       const refreshFooter =
@@ -150132,7 +149690,6 @@
         );
 
         refreshTimeline();
-        refreshSelected();
         refreshFooter();
 
         localizeUI(
@@ -150179,24 +149736,9 @@
           ].indexOf(input);
 
           if (input.checked) {
-            selectedIds.add(
-              eventId
-            );
-
-            if (activePersonId) {
-              selectionOwnerByEventId.set(
-                eventId,
-                activePersonId
-              );
-            }
+            selectedIds.add(eventId);
           } else {
-            selectedIds.delete(
-              eventId
-            );
-
-            selectionOwnerByEventId.delete(
-              eventId
-            );
+            selectedIds.delete(eventId);
           }
 
           refresh();
@@ -150254,29 +149796,6 @@
                 });
               }
             );
-
-            return;
-          }
-
-          const removeButton =
-            event.target.closest(
-              '[data-notes-event-remove]'
-            );
-
-          if (removeButton) {
-            const eventId =
-              removeButton.dataset
-                .notesEventRemove;
-
-            selectedIds.delete(
-              eventId
-            );
-
-            selectionOwnerByEventId.delete(
-              eventId
-            );
-
-            refresh();
 
             return;
           }
