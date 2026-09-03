@@ -36356,7 +36356,8 @@
 
       'Connected notes':
         'Связанные заметки',
-
+      'Connected sources':
+        'Связанные источники',
       'No dated events recorded.':
         'Датированные события не указаны.',
 
@@ -160921,29 +160922,13 @@
               'sources',
 
             title:
-              'Sources',
+              'Connected sources',
 
             countLabel:
               placeInspectorCountLabel(
                 sources.length,
                 'source'
               ),
-
-            actionHtml:
-              `
-                <button
-                  class="link"
-                  type="button"
-                  data-place-manage-sources="${escapeHtml(
-                    place.id
-                  )}">
-
-                  ${renderPanelButtonLabel(
-                    icon.plus,
-                    'Add source'
-                  )}
-                </button>
-              `,
 
             content:
               renderConnectedSourceList({
@@ -161016,62 +161001,6 @@
             }
         }
       );
-
-      root
-        .querySelector(
-          '[data-place-manage-sources]'
-        )
-        ?.addEventListener(
-          'click',
-          event => {
-            const placeId =
-              event.currentTarget
-                .dataset
-                .placeManageSources;
-
-            const place =
-              getPlace(
-                placeId
-              );
-
-            if (!place) {
-              return;
-            }
-
-            openSourcesForTargetModal({
-              targetType:
-                'place',
-
-              targetId:
-                place.id,
-
-              projectId:
-                place.projectId,
-
-              title:
-                'Add sources',
-
-              subtitle:
-                `Connect existing sources to ${
-                  placePrimaryName(
-                    place
-                  )
-                  || place.name
-                }.`,
-
-              afterSave:
-                () => {
-                  placesInspectorSectionState()
-                    .sources = true;
-
-                  rerenderPlacesInspector({
-                    preserveScroll:
-                      true
-                  });
-                }
-            });
-          }
-        );
       root
         .querySelector(
           '[data-places-inspector-toggle]'
