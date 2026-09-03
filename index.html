@@ -48747,6 +48747,19 @@
           navigationBackStack: [],
           navigationForwardStack: []
         };
+        state.treeProjectViews[projectId] = {
+          focusPersonId: defaultPersonId,
+          ancestorGenerations: 4,
+          descendantGenerations: 3,
+          showCousins: true,
+          recentPersonIds:
+            defaultPersonId
+              ? [defaultPersonId]
+              : [],
+          navigationBackStack: [],
+          navigationForwardStack: [],
+          canvasScroll: null
+        };
       }
 
       const view = state.treeProjectViews[projectId];
@@ -54470,6 +54483,43 @@
       };
     }
 
+    function captureTreeCanvasScroll(
+      projectId =
+        currentFamilyTreeProjectId()
+    ) {
+      if (!projectId) {
+        return null;
+      }
+
+      const scroll =
+        getTreeCanvasScroll();
+
+      if (!scroll) {
+        return null;
+      }
+
+      const view =
+        treeProjectViewState(
+          projectId
+        );
+
+      view.canvasScroll = {
+        left:
+          Math.max(
+            0,
+            Number(scroll.left) || 0
+          ),
+
+        top:
+          Math.max(
+            0,
+            Number(scroll.top) || 0
+          )
+      };
+
+      return view.canvasScroll;
+    }
+
     function restoreTreeCanvasScroll(scroll) {
       if (!scroll) return;
 
@@ -55029,6 +55079,25 @@
         const targetId = state.treeCenterTargetId;
         state.treeCenterTargetId = '';
         requestAnimationFrame(() => centerTreeOnPerson(targetId));
+      }
+      const centerTargetId =
+        state.treeCenterTargetId;
+
+      state.treeCenterTargetId = '';
+
+      if (centerTargetId) {
+        requestAnimationFrame(
+          () =>
+            centerTreeOnPerson(
+              centerTargetId
+            )
+        );
+      } else if (
+        treeViewState.canvasScroll
+      ) {
+        restoreTreeCanvasScroll(
+          treeViewState.canvasScroll
+        );
       }
     }
 
@@ -165733,6 +165802,21 @@
         && (nextModule !== 'Geneograph' || projectChanged)
       ) {
         captureGeneographViewport();
+      }
+
+      const leavingFamilyTree =
+        state.activeModule
+          === 'Family Tree'
+        && (
+          nextModule
+            !== 'Family Tree'
+          || projectChanged
+        );
+
+      if (leavingFamilyTree) {
+        captureTreeCanvasScroll(
+          state.currentProjectId
+        );
       }
 
       closeMenu();
