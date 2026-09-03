@@ -4976,12 +4976,10 @@
     .connected-file-list {
       min-width:
         0;
-
       display:
         grid;
-
       gap:
-        var(--space-2);
+        var(--space-1);
     }
 
     .connected-file-item {
@@ -24143,7 +24141,173 @@
         flex: 1 1 0;
       }
     }
+    /* Shared Add Sources modal */
 
+    .target-source-picker-modal
+    .connected-source-icon-link {
+      border-color: var(--surface-card);
+    }
+
+    .source-picker-choice {
+      flex: 0 0 auto;
+      min-width: 0;
+      min-height: 86px;
+      padding: 10px 14px;
+
+      display: grid;
+      grid-template-columns:
+        42px
+        minmax(0, 1fr)
+        auto
+        18px;
+      align-items: center;
+      gap: var(--space-3);
+
+      box-sizing: border-box;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, .025);
+      color: var(--text-secondary);
+      cursor: pointer;
+
+      transition:
+        border-color var(--ease),
+        background var(--ease);
+    }
+
+    .source-picker-choice:hover {
+      border-color: var(--border-strong);
+      background: var(--surface-card-hover);
+    }
+
+    .source-picker-choice:has(
+      input:focus-visible
+    ) {
+      outline: 2px solid var(--brand-green-300);
+      outline-offset: 2px;
+    }
+
+    .source-picker-choice.already-linked {
+      background: rgba(255, 255, 255, .018);
+      cursor: default;
+    }
+
+    .source-picker-choice.already-linked:hover {
+      border-color: var(--border-default);
+      background: rgba(255, 255, 255, .018);
+    }
+
+    .source-picker-choice-copy {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+    }
+
+    .source-picker-choice-title,
+    .source-picker-choice-origin,
+    .source-picker-choice-meta {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .source-picker-choice-title {
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+    .source-picker-choice-origin {
+      color: var(--text-secondary);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .source-picker-choice-meta {
+      color: var(--text-tertiary);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .source-picker-choice-status {
+      color: var(--text-tertiary);
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .source-picker-choice > input {
+      grid-column: 4;
+      width: 16px;
+      height: 16px;
+      min-height: 16px;
+      padding: 0;
+      margin: 0;
+      accent-color: var(--brand-green-500);
+    }
+
+    .source-picker-selected-list {
+      min-width: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .source-picker-selected-row {
+      min-width: 0;
+      max-width: 100%;
+      min-height: 38px;
+      padding: 4px 6px 4px 10px;
+
+      display: inline-grid;
+      grid-template-columns:
+        minmax(0, 1fr)
+        26px;
+      align-items: center;
+      gap: var(--space-2);
+
+      border: 1px solid rgba(70, 190, 134, .28);
+      border-radius: var(--radius-sm);
+      background: rgba(70, 190, 134, .08);
+    }
+
+    .source-picker-selected-row > span {
+      min-width: 0;
+      overflow: hidden;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 720px) {
+      .target-source-picker-modal
+      .notes-related-toolbar
+      > .button {
+        width: 100%;
+      }
+
+      .source-picker-choice {
+        grid-template-columns:
+          42px
+          minmax(0, 1fr)
+          18px;
+      }
+
+      .source-picker-choice > input {
+        grid-column: 3;
+        grid-row: 1;
+      }
+
+      .source-picker-choice-status {
+        grid-column: 2 / -1;
+        grid-row: 2;
+        justify-self: start;
+      }
+    }
     .archive-move-modal {
       width:
         min(
@@ -27037,6 +27201,228 @@
       line-height: 1.35;
     }
 
+    /* Shared connected Source rows */
+
+    .connected-source-list {
+      gap: 2px;
+    }
+
+    .connected-source-list
+    .relation-row
+    + .relation-row {
+      margin-top: 0;
+    }
+
+    .connected-source-item {
+      background:
+        transparent;
+    }
+
+    .connected-source-main {
+      min-width: 0;
+      min-height: 78px;
+
+      padding:
+        8px
+        10px;
+
+      gap:
+        var(--space-3);
+    }
+
+    .connected-source-main:focus-visible {
+      outline-color:
+        var(--amber);
+    }
+
+    .connected-source-icon {
+      position:
+        relative;
+
+      width:
+        42px;
+
+      height:
+        42px;
+
+      flex:
+        0 0 42px;
+
+      display:
+        grid;
+
+      place-items:
+        center;
+    }
+
+    .connected-source-icon-record {
+      width:
+        38px;
+
+      height:
+        38px;
+
+      display:
+        grid;
+
+      place-items:
+        center;
+
+      border:
+        1px solid
+        rgba(212, 170, 107, .42);
+
+      border-radius:
+        10px;
+
+      background:
+        rgba(212, 170, 107, .12);
+
+      color:
+        var(--amber);
+
+      transition:
+        border-color var(--ease),
+        background var(--ease),
+        transform var(--ease);
+    }
+
+    .connected-source-icon-record
+    svg {
+      width:
+        19px;
+
+      height:
+        19px;
+
+      display:
+        block;
+    }
+
+    .connected-source-icon-link {
+      position:
+        absolute;
+
+      right:
+        0;
+
+      bottom:
+        0;
+
+      width:
+        18px;
+
+      height:
+        18px;
+
+      display:
+        grid;
+
+      place-items:
+        center;
+
+      border:
+        2px solid
+        var(--surface-sidebar);
+
+      border-radius:
+        6px;
+
+      background:
+        var(--amber);
+
+      color:
+        #21180c;
+    }
+
+    .connected-source-icon-link
+    svg {
+      width:
+        10px;
+
+      height:
+        10px;
+
+      display:
+        block;
+    }
+
+    .connected-source-item:hover
+    .connected-source-icon-record,
+    .connected-source-item:focus-within
+    .connected-source-icon-record {
+      border-color:
+        rgba(212, 170, 107, .72);
+
+      background:
+        rgba(212, 170, 107, .18);
+
+      transform:
+        translateY(-1px);
+    }
+
+    .connected-source-copy {
+      min-width:
+        0;
+
+      display:
+        grid;
+
+      gap:
+        2px;
+    }
+
+    .connected-source-title,
+    .connected-source-origin,
+    .connected-source-meta {
+      min-width:
+        0;
+
+      overflow:
+        hidden;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
+    }
+
+    .connected-source-title {
+      color:
+        var(--text-primary);
+
+      font-size:
+        14px;
+
+      font-weight:
+        850;
+
+      line-height:
+        1.35;
+    }
+
+    .connected-source-origin {
+      color:
+        var(--text-secondary);
+
+      font-size:
+        12px;
+
+      line-height:
+        1.35;
+    }
+
+    .connected-source-meta {
+      color:
+        var(--text-tertiary);
+
+      font-size:
+        11px;
+
+      line-height:
+        1.35;
+    }
 
     /* Add related notes modal */
 
@@ -34842,6 +35228,60 @@
 
       'Source record':
         'Запись об источнике',
+
+      'Add sources':
+        'Добавить источники',
+
+      'Selected sources':
+        'Выбранные источники',
+
+      'Suggested sources':
+        'Предложенные источники',
+
+      'Close source picker':
+        'Закрыть выбор источников',
+
+      'Untitled source':
+        'Источник без названия',
+
+      'Origin not specified':
+        'Происхождение не указано',
+
+      'No sources available':
+        'Нет доступных источников',
+
+      'Create a source first, then return here to link it.':
+        'Сначала создайте источник, а затем вернитесь сюда, чтобы связать его.',
+
+      'No sources match this search':
+        'По этому запросу источники не найдены',
+
+      'Try another source name, origin, location, or reference.':
+        'Попробуйте другое название, происхождение, расположение или архивный шифр.',
+
+      'All available sources are linked':
+        'Все доступные источники уже связаны',
+
+      'No additional sources are available for this item.':
+        'Для этого объекта нет дополнительных доступных источников.',
+
+      'All available sources are selected':
+        'Все доступные источники выбраны',
+
+      'Every unlinked source is already in the current selection.':
+        'Все несвязанные источники уже добавлены в текущий выбор.',
+
+      'Source links could not be updated.':
+        'Не удалось обновить связи с источниками.',
+
+      'Source links updated.':
+        'Связи с источниками обновлены.',
+
+      'Source created and linked.':
+        'Источник создан и связан.',
+
+      'Source created, but it could not be linked.':
+        'Источник создан, но связать его не удалось.',
 
       'Add source to favourites':
         'Добавить источник в избранное',
@@ -58125,10 +58565,10 @@
                 projectId,
 
                 title:
-                  'Manage event sources',
+                  'Add sources',
 
                 subtitle:
-                  `Sources connected to ${
+                  `Connect existing sources to ${
                     event.title
                     || 'this event'
                   }.`,
@@ -72881,10 +73321,10 @@
                 centralPerson.projectId,
 
               title:
-                'Manage sources',
+                'Add sources',
 
               subtitle:
-                `Sources connected to ${
+                `Connect existing sources to ${
                   centralPerson.names?.display
                   || 'this person'
                 }.`,
@@ -75143,10 +75583,10 @@
                 centralPerson.projectId,
 
               title:
-                'Manage sources',
+                'Add sources',
 
               subtitle:
-                `Sources connected to ${
+                `Connect existing sources to ${
                   centralPerson.names?.display
                   || 'this person'
                 }.`,
@@ -88087,10 +88527,10 @@
                 photo.projectId,
 
               title:
-                'Manage sources',
+                'Add sources',
 
               subtitle:
-                `Sources connected to ${
+                `Connect existing sources to ${
                   photo.title
                   || photo.filename
                   || 'this photo'
@@ -115053,6 +115493,56 @@
         || 'Source record';
     }
 
+    function connectedSourceOrigin(
+      source
+    ) {
+      return String(
+        source?.providedBy
+        || source?.location
+        || ''
+      ).trim()
+      || 'Origin not specified';
+    }
+
+    function connectedSourceDetailMeta(
+      source
+    ) {
+      const category =
+        localizedSourceCategoryLabel(
+          source?.category,
+          ''
+        );
+
+      const reference =
+        String(
+          source?.reference
+          || ''
+        ).trim();
+
+      const accessed =
+        source?.accessedDate
+          ? `Accessed ${
+              archiveFormatDate(
+                source.accessedDate
+              )
+            }`
+          : '';
+
+      return [
+        category,
+
+        /*
+          Where-found information is more useful in
+          a connected item than the accessed date.
+          Use the date only as a fallback.
+        */
+        reference || accessed
+      ]
+        .filter(Boolean)
+        .join(' · ')
+        || 'Source record';
+    }
+
     function openConnectedSource(
       sourceId,
       projectId =
@@ -115115,18 +115605,32 @@
       targetId,
       projectId =
         currentProjectId(),
+
       sources =
         sourcesForTarget(
           targetType,
           targetId,
           projectId
         ),
-      limit = 4,
+
+      limit =
+        4,
+
       emptyText =
         'No sources linked.'
     }) {
+      const validSources =
+        (
+          Array.isArray(
+            sources
+          )
+            ? sources
+            : []
+        )
+          .filter(Boolean);
+
       const visibleSources =
-        sources.slice(
+        validSources.slice(
           0,
           limit
         );
@@ -115139,71 +115643,134 @@
 
       return `
         <div
-          class="archive-connection-list"
+          class="
+            relationship-list
+            connected-source-list
+          "
           data-connected-source-list>
 
           ${visibleSources
-            .map(source => `
-              <div
-                class="archive-connection-row">
+            .map(source => {
+              const title =
+                source.title
+                || 'Untitled source';
 
-                <button
-                  class="archive-connection-open"
-                  type="button"
-                  data-connected-source-open="${escapeHtml(
-                    source.id
-                  )}"
-                  data-connected-source-project="${escapeHtml(
-                    source.projectId
-                    || projectId
-                  )}"
-                  aria-label="Open ${escapeHtml(
-                    source.title
-                    || 'source'
-                  )}">
-                </button>
+              const sourceProjectId =
+                source.projectId
+                || projectId;
 
-                <strong>
-                  ${escapeHtml(
-                    source.title
-                    || 'Untitled source'
-                  )}
-                </strong>
+              const origin =
+                connectedSourceOrigin(
+                  source
+                );
 
-                <span>
-                  ${escapeHtml(
-                    connectedSourceMeta(
-                      source
-                    )
-                  )}
-                </span>
+              const metadata =
+                connectedSourceDetailMeta(
+                  source
+                );
 
-                <button
-                  class="archive-connection-unlink"
-                  type="button"
-                  data-connected-source-unlink="${escapeHtml(
-                    source.id
-                  )}"
-                  data-connected-source-target-type="${escapeHtml(
-                    targetType
-                  )}"
-                  data-connected-source-target-id="${escapeHtml(
-                    targetId
-                  )}"
-                  data-connected-source-project="${escapeHtml(
-                    source.projectId
-                    || projectId
-                  )}"
-                  aria-label="Unlink ${escapeHtml(
-                    source.title
-                    || 'source'
-                  )}"
-                  title="Unlink source">
+              return `
+                <div
+                  class="
+                    relation-row
+                    connected-source-item
+                  ">
 
-                  ${icon.unlink}
-                </button>
-              </div>
-            `)
+                  <button
+                    class="
+                      relation-row-main
+                      connected-source-main
+                    "
+                    type="button"
+                    data-connected-source-open="${escapeHtml(
+                      source.id
+                    )}"
+                    data-connected-source-project="${escapeHtml(
+                      sourceProjectId
+                    )}"
+                    aria-label="Open source ${escapeHtml(
+                      title
+                    )}">
+
+                    <span
+                      class="connected-source-icon"
+                      aria-hidden="true">
+
+                      <span class="connected-source-icon-record">
+                        ${icon.archive}
+                      </span>
+
+                      <span class="connected-source-icon-link">
+                        ${icon.link}
+                      </span>
+                    </span>
+
+                    <span class="connected-source-copy">
+                      <strong
+                        class="connected-source-title"
+                        title="${escapeHtml(
+                          title
+                        )}">
+
+                        ${escapeHtml(
+                          title
+                        )}
+                      </strong>
+
+                      <span
+                        class="connected-source-origin"
+                        title="${escapeHtml(
+                          origin
+                        )}">
+
+                        ${escapeHtml(
+                          origin
+                        )}
+                      </span>
+
+                      <span
+                        class="connected-source-meta"
+                        title="${escapeHtml(
+                          metadata
+                        )}">
+
+                        ${escapeHtml(
+                          metadata
+                        )}
+                      </span>
+                    </span>
+                  </button>
+
+                  <div class="relation-actions">
+                    <button
+                      class="
+                        relation-action-button
+                        danger
+                      "
+                      type="button"
+                      data-connected-source-unlink="${escapeHtml(
+                        source.id
+                      )}"
+                      data-connected-source-target-type="${escapeHtml(
+                        targetType
+                      )}"
+                      data-connected-source-target-id="${escapeHtml(
+                        targetId
+                      )}"
+                      data-connected-source-project="${escapeHtml(
+                        sourceProjectId
+                      )}"
+                      aria-label="Unlink ${escapeHtml(
+                        title
+                      )}"
+                      title="Unlink source">
+
+                      ${icon.unlink}
+                    </button>
+                  </div>
+                </div>
+              `;
+            })
             .join('')}
         </div>
       `;
@@ -115306,16 +115873,19 @@
           );
         });
     }
-
     function openSourcesForTargetModal({
       targetType,
       targetId,
+
       projectId =
         currentProjectId(),
+
       title =
-        'Manage sources',
+        'Add sources',
+
       subtitle =
-        '',
+        'Connect existing sources to this record.',
+
       afterSave =
         null
     }) {
@@ -115342,31 +115912,399 @@
           )
           .slice()
           .sort((first, second) =>
-            (
+            String(
               first.title || ''
             ).localeCompare(
-              second.title || ''
+              String(
+                second.title || ''
+              )
             )
           );
 
-      const selected =
+      const recordIds =
+        new Set(
+          records.map(source =>
+            source.id
+          )
+        );
+
+      /*
+        Existing connections are protected by this
+        additive modal. They are never removed here.
+      */
+      const existingIds =
         new Set(
           sourceIdsForTarget(
             targetType,
             targetId,
             projectId
+          ).filter(sourceId =>
+            recordIds.has(sourceId)
           )
         );
 
-      let query =
-        '';
+      /*
+        Only newly selected sources belong here.
+        Existing connections do not contribute to
+        the footer count.
+      */
+      const selectedIds =
+        new Set();
+
+      let query = '';
+
+      const normalizeQuery =
+        value =>
+          String(value || '')
+            .trim()
+            .toLocaleLowerCase(
+              state.language === 'ru'
+                ? 'ru'
+                : 'en'
+            );
+
+      const sourceSearchText =
+        source =>
+          [
+            source.title,
+            source.providedBy,
+            source.location,
+            source.reference,
+            localizedSourceCategoryLabel(
+              source.category,
+              ''
+            ),
+            source.notes
+          ]
+            .filter(Boolean)
+            .join(' ')
+            .toLocaleLowerCase(
+              state.language === 'ru'
+                ? 'ru'
+                : 'en'
+            );
+
+      const visibleSources =
+        () => {
+          const normalized =
+            normalizeQuery(query);
+
+          return records
+            .filter(source =>
+              !selectedIds.has(
+                source.id
+              )
+            )
+            .filter(source => {
+              if (normalized) {
+                return sourceSearchText(
+                  source
+                ).includes(normalized);
+              }
+
+              /*
+                Hide existing connections from the
+                default suggestions. A direct search
+                can still reveal them.
+              */
+              return !existingIds.has(
+                source.id
+              );
+            });
+        };
+
+      const sourceCountText =
+        count =>
+          translateDynamicPhrase(
+            `${count} ${
+              count === 1
+                ? 'source'
+                : 'sources'
+            }`
+          );
+
+      const renderChoice =
+        source => {
+          const sourceTitle =
+            source.title
+            || 'Untitled source';
+
+          const alreadyLinked =
+            existingIds.has(
+              source.id
+            );
+
+          return `
+            <label
+              class="
+                source-picker-choice
+                ${
+                  alreadyLinked
+                    ? 'already-linked'
+                    : ''
+                }
+              ">
+
+              <span
+                class="connected-source-icon"
+                aria-hidden="true">
+
+                <span
+                  class="connected-source-icon-record">
+                  ${icon.archive}
+                </span>
+
+                <span
+                  class="connected-source-icon-link">
+                  ${icon.link}
+                </span>
+              </span>
+
+              <span
+                class="source-picker-choice-copy">
+
+                <strong
+                  class="source-picker-choice-title"
+                  title="${escapeHtml(
+                    sourceTitle
+                  )}">
+
+                  ${escapeHtml(
+                    sourceTitle
+                  )}
+                </strong>
+
+                <span
+                  class="source-picker-choice-origin">
+
+                  ${escapeHtml(
+                    connectedSourceOrigin(
+                      source
+                    )
+                  )}
+                </span>
+
+                <span
+                  class="source-picker-choice-meta">
+
+                  ${escapeHtml(
+                    connectedSourceDetailMeta(
+                      source
+                    )
+                  )}
+                </span>
+              </span>
+
+              ${
+                alreadyLinked
+                  ? `
+                    <span
+                      class="source-picker-choice-status">
+                      Already linked
+                    </span>
+                  `
+                  : ''
+              }
+
+              <input
+                type="checkbox"
+                value="${escapeHtml(
+                  source.id
+                )}"
+                data-target-source-choice
+                ${
+                  alreadyLinked
+                    ? 'checked disabled'
+                    : ''
+                }
+                aria-label="${
+                  alreadyLinked
+                    ? `Already linked: ${escapeHtml(
+                        sourceTitle
+                      )}`
+                    : `Select ${escapeHtml(
+                        sourceTitle
+                      )}`
+                }">
+            </label>
+          `;
+        };
+
+      const renderSelectedSources =
+        () => {
+          const selectedSources =
+            [...selectedIds]
+              .map(sourceId =>
+                records.find(source =>
+                  source.id === sourceId
+                )
+              )
+              .filter(Boolean)
+              .sort((first, second) =>
+                String(
+                  first.title || ''
+                ).localeCompare(
+                  String(
+                    second.title || ''
+                  )
+                )
+              );
+
+          if (!selectedSources.length) {
+            return '';
+          }
+
+          return `
+            <div
+              class="notes-related-selected-head">
+              <strong>
+                Selected sources
+              </strong>
+            </div>
+
+            <div
+              class="source-picker-selected-list">
+
+              ${selectedSources
+                .map(source => {
+                  const sourceTitle =
+                    source.title
+                    || 'Untitled source';
+
+                  return `
+                    <div
+                      class="source-picker-selected-row">
+
+                      <span
+                        title="${escapeHtml(
+                          sourceTitle
+                        )}">
+                        ${escapeHtml(
+                          sourceTitle
+                        )}
+                      </span>
+
+                      <button
+                        class="relation-action-button"
+                        type="button"
+                        data-target-source-remove="${escapeHtml(
+                          source.id
+                        )}"
+                        aria-label="Remove ${escapeHtml(
+                          sourceTitle
+                        )} from selection"
+                        title="Remove from selection">
+
+                        ${icon.close}
+                      </button>
+                    </div>
+                  `;
+                })
+                .join('')}
+            </div>
+          `;
+        };
+
+      const renderEmptyState =
+        () => {
+          const normalized =
+            normalizeQuery(query);
+
+          if (!records.length) {
+            return `
+              <div class="notes-related-empty">
+                <strong>
+                  No sources available
+                </strong>
+
+                <span>
+                  Create a source first, then return
+                  here to link it.
+                </span>
+              </div>
+            `;
+          }
+
+          if (normalized) {
+            return `
+              <div class="notes-related-empty">
+                <strong>
+                  No sources match this search
+                </strong>
+
+                <span>
+                  Try another source name, origin,
+                  location, or reference.
+                </span>
+
+                <button
+                  class="button secondary"
+                  type="button"
+                  data-target-source-clear-search>
+                  Clear search
+                </button>
+              </div>
+            `;
+          }
+
+          const unlinkedSources =
+            records.filter(source =>
+              !existingIds.has(
+                source.id
+              )
+            );
+
+          if (!unlinkedSources.length) {
+            return `
+              <div class="notes-related-empty">
+                <strong>
+                  All available sources are linked
+                </strong>
+
+                <span>
+                  No additional sources are available
+                  for this item.
+                </span>
+              </div>
+            `;
+          }
+
+          if (
+            unlinkedSources.every(source =>
+              selectedIds.has(
+                source.id
+              )
+            )
+          ) {
+            return `
+              <div class="notes-related-empty">
+                <strong>
+                  All available sources are selected
+                </strong>
+
+                <span>
+                  Every unlinked source is already in
+                  the current selection.
+                </span>
+              </div>
+            `;
+          }
+
+          return `
+            <div class="notes-related-empty">
+              <strong>
+                No sources available
+              </strong>
+            </div>
+          `;
+        };
 
       openModal(`
         <div
           class="
             modal
             notes-related-modal
-            archive-link-picker-modal
+            target-source-picker-modal
           "
           role="dialog"
           aria-modal="true"
@@ -115379,10 +116317,7 @@
               </h2>
 
               <p>
-                ${escapeHtml(
-                  subtitle
-                  || 'Choose the sources connected to this record.'
-                )}
+                ${escapeHtml(subtitle)}
               </p>
             </div>
 
@@ -115390,53 +116325,101 @@
               class="close-button"
               type="button"
               data-close
-              aria-label="Close">
+              aria-label="Close source picker">
+
               ${icon.close}
             </button>
           </div>
 
-          <div class="modal-body form-grid">
-            <div class="archive-link-picker-toolbar">
-              <label
+          <div
+            class="
+              modal-body
+              notes-related-modal-body
+            ">
+
+            <section
+              class="notes-related-picker-view">
+
+              <div
+                class="notes-related-toolbar">
+
+                <label
+                  class="app-search-field"
+                  aria-label="Search sources">
+
+                  ${icon.search}
+
+                  <input
+                    type="search"
+                    autocomplete="off"
+                    data-target-source-search
+                    placeholder="Search sources...">
+                </label>
+
+                <button
+                  class="button secondary"
+                  type="button"
+                  data-target-source-create>
+
+                  ${icon.plus}
+                  Create source
+                </button>
+              </div>
+
+              <section
                 class="
-                  app-search-field
-                  archive-link-picker-search
+                  notes-related-selected-panel
+                  target-source-selected-panel
                 "
-                aria-label="Search sources">
+                data-target-source-selected
+                hidden>
+              </section>
 
-                ${icon.search}
+              <section
+                class="notes-related-results-panel">
 
-                <input
-                  type="search"
-                  data-target-source-search
-                  placeholder="Search sources..."
-                  autocomplete="off">
-              </label>
+                <div
+                  class="notes-related-results-head">
 
-              <button
-                class="button secondary"
-                type="button"
-                data-target-source-create>
+                  <div>
+                    <strong
+                      data-target-source-results-title>
+                      Suggested sources
+                    </strong>
 
-                ${icon.plus}
-                Create source
-              </button>
-            </div>
+                    <span
+                      data-target-source-results-meta>
+                    </span>
+                  </div>
+                </div>
 
-            <div
-              class="archive-modal-list"
-              data-target-source-results>
-            </div>
+                <div
+                  class="
+                    notes-related-results
+                    source-picker-results
+                  "
+                  data-target-source-results>
+                </div>
+              </section>
+            </section>
           </div>
 
-          <div class="modal-footer">
+          <div
+            class="
+              modal-footer
+              notes-related-footer
+            ">
+
             <span
-              class="archive-link-picker-status"
+              class="notes-related-selection-count"
               data-target-source-count
               aria-live="polite">
+              0 sources selected
             </span>
 
-            <div class="archive-modal-actions">
+            <div
+              class="notes-related-footer-actions">
+
               <button
                 class="button secondary"
                 type="button"
@@ -115447,8 +116430,9 @@
               <button
                 class="button primary"
                 type="button"
-                data-target-source-save>
-                Save links
+                data-target-source-save
+                disabled>
+                Add sources
               </button>
             </div>
           </div>
@@ -115457,136 +116441,157 @@
 
       const modal =
         modalBackdrop.querySelector(
-          '.archive-link-picker-modal'
+          '.target-source-picker-modal'
         );
 
-      const results =
-        modal?.querySelector(
+      if (!modal) {
+        return;
+      }
+
+      const searchInput =
+        modal.querySelector(
+          '[data-target-source-search]'
+        );
+
+      const selectedHost =
+        modal.querySelector(
+          '[data-target-source-selected]'
+        );
+
+      const resultsHost =
+        modal.querySelector(
           '[data-target-source-results]'
         );
 
-      const count =
-        modal?.querySelector(
+      const resultsTitle =
+        modal.querySelector(
+          '[data-target-source-results-title]'
+        );
+
+      const resultsMeta =
+        modal.querySelector(
+          '[data-target-source-results-meta]'
+        );
+
+      const countElement =
+        modal.querySelector(
           '[data-target-source-count]'
         );
 
-      const updateCount = () => {
-        if (!count) {
-          return;
-        }
-
-        count.textContent =
-          `${selected.size} ${
-            selected.size === 1
-              ? 'source'
-              : 'sources'
-          } selected`;
-      };
-
-      const renderChoices = () => {
-        if (!results) {
-          return;
-        }
-
-        const normalizedQuery =
-          query.trim().toLocaleLowerCase(
-            state.language === 'ru'
-              ? 'ru'
-              : 'en'
-          );
-
-        const visible =
-          records.filter(source => {
-            if (!normalizedQuery) {
-              return true;
-            }
-
-            return [
-              source.title,
-              connectedSourceMeta(
-                source
-              ),
-              source.location,
-              source.notes
-            ]
-              .filter(Boolean)
-              .join(' ')
-              .toLocaleLowerCase(
-                state.language === 'ru'
-                  ? 'ru'
-                  : 'en'
-              )
-              .includes(
-                normalizedQuery
-              );
-          });
-
-        results.innerHTML =
-          visible.length
-            ? visible
-                .map(source => `
-                  <label
-                    class="archive-modal-choice">
-
-                    <input
-                      type="checkbox"
-                      data-target-source-choice
-                      value="${escapeHtml(
-                        source.id
-                      )}"
-                      ${
-                        selected.has(
-                          source.id
-                        )
-                          ? 'checked'
-                          : ''
-                      }>
-
-                    <span
-                      class="archive-modal-choice-copy">
-
-                      <strong>
-                        ${escapeHtml(
-                          source.title
-                          || 'Untitled source'
-                        )}
-                      </strong>
-
-                      <span>
-                        ${escapeHtml(
-                          connectedSourceMeta(
-                            source
-                          )
-                        )}
-                      </span>
-                    </span>
-                  </label>
-                `)
-                .join('')
-            : `
-              <div class="archive-section-empty">
-                No matching sources.
-              </div>
-            `;
-
-        updateCount();
-      };
-
-      modal
-        ?.querySelector(
-          '[data-target-source-search]'
-        )
-        ?.addEventListener(
-          'input',
-          event => {
-            query =
-              event.currentTarget.value;
-
-            renderChoices();
-          }
+      const saveButton =
+        modal.querySelector(
+          '[data-target-source-save]'
         );
 
-      modal?.addEventListener(
+      const refresh =
+        () => {
+          const visible =
+            visibleSources();
+
+          const normalized =
+            normalizeQuery(query);
+
+          resultsTitle.textContent =
+            t(
+              normalized
+                ? 'Search results'
+                : 'Suggested sources'
+            );
+
+          const availableCount =
+            visible.filter(source =>
+              !existingIds.has(
+                source.id
+              )
+            ).length;
+
+          resultsMeta.textContent =
+            state.language === 'ru'
+              ? `Доступно: ${
+                  sourceCountText(
+                    availableCount
+                  )
+                } · Уже связано: ${
+                  sourceCountText(
+                    existingIds.size
+                  )
+                }`
+              : `${
+                  sourceCountText(
+                    availableCount
+                  )
+                } available · ${
+                  sourceCountText(
+                    existingIds.size
+                  )
+                } already linked`;
+
+          resultsHost.innerHTML =
+            visible.length
+              ? visible
+                  .map(renderChoice)
+                  .join('')
+              : renderEmptyState();
+
+          const selectedHtml =
+            renderSelectedSources();
+
+          selectedHost.hidden =
+            !selectedHtml;
+
+          selectedHost.innerHTML =
+            selectedHtml;
+
+          const selectedCount =
+            selectedIds.size;
+
+          countElement.textContent =
+            `${selectedCount} ${
+              selectedCount === 1
+                ? 'source'
+                : 'sources'
+            } selected`;
+
+          saveButton.disabled =
+            selectedCount === 0;
+
+          saveButton.textContent =
+            selectedCount === 0
+              ? t('Add sources')
+              : selectedCount === 1
+                ? t('Add source')
+                : state.language === 'ru'
+                  ? `Добавить ${
+                      sourceCountText(
+                        selectedCount
+                      )
+                    }`
+                  : `Add ${
+                      sourceCountText(
+                        selectedCount
+                      )
+                    }`;
+
+          localizeUI(
+            modal,
+            {
+              suppressObserverReplay:
+                true
+            }
+          );
+        };
+
+      searchInput.addEventListener(
+        'input',
+        event => {
+          query =
+            event.currentTarget.value;
+
+          refresh();
+        }
+      );
+
+      modal.addEventListener(
         'change',
         event => {
           const input =
@@ -115594,87 +116599,133 @@
               '[data-target-source-choice]'
             );
 
-          if (!input) {
+          if (
+            !input
+            || input.disabled
+          ) {
             return;
           }
 
           if (input.checked) {
-            selected.add(
+            selectedIds.add(
               input.value
             );
           } else {
-            selected.delete(
+            selectedIds.delete(
               input.value
             );
           }
 
-          updateCount();
+          refresh();
+        }
+      );
+
+      modal.addEventListener(
+        'click',
+        event => {
+          const removeButton =
+            event.target.closest(
+              '[data-target-source-remove]'
+            );
+
+          if (removeButton) {
+            selectedIds.delete(
+              removeButton.dataset
+                .targetSourceRemove
+            );
+
+            refresh();
+            return;
+          }
+
+          const clearButton =
+            event.target.closest(
+              '[data-target-source-clear-search]'
+            );
+
+          if (clearButton) {
+            query = '';
+            searchInput.value = '';
+
+            refresh();
+
+            searchInput.focus({
+              preventScroll: true
+            });
+          }
+        }
+      );
+
+      saveButton.addEventListener(
+        'click',
+        () => {
+          if (!selectedIds.size) {
+            return;
+          }
+
+          const nextSourceIds =
+            archiveUniqueIds([
+              ...existingIds,
+              ...selectedIds
+            ]);
+
+          const savedIds =
+            setSourceIdsForTarget(
+              targetType,
+              targetId,
+              nextSourceIds,
+              {
+                projectId
+              }
+            );
+
+          const savedSet =
+            new Set(
+              savedIds || []
+            );
+
+          const savedCorrectly =
+            Array.isArray(savedIds)
+            && nextSourceIds.every(
+              sourceId =>
+                savedSet.has(
+                  sourceId
+                )
+            );
+
+          if (!savedCorrectly) {
+            showToast(
+              'Source links could not be updated.'
+            );
+
+            return;
+          }
+
+          closeModal();
+
+          if (
+            typeof afterSave
+              === 'function'
+          ) {
+            afterSave();
+          }
+
+          showToast(
+            'Source links updated.'
+          );
         }
       );
 
       modal
-        ?.querySelector(
-          '[data-target-source-save]'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            const savedIds =
-              setSourceIdsForTarget(
-                targetType,
-                targetId,
-                [...selected],
-                {
-                  projectId
-                }
-              );
-
-            const savedSet =
-              new Set(
-                savedIds || []
-              );
-
-            const savedCorrectly =
-              Array.isArray(savedIds)
-              && savedSet.size
-                === selected.size
-              && [...selected].every(
-                sourceId =>
-                  savedSet.has(
-                    sourceId
-                  )
-              );
-
-            if (!savedCorrectly) {
-              showToast(
-                'Source links could not be updated.'
-              );
-
-              return;
-            }
-
-            closeModal();
-
-            if (
-              typeof afterSave
-                === 'function'
-            ) {
-              afterSave();
-            }
-
-            showToast(
-              'Source links updated.'
-            );
-          }
-        );
-
-      modal
-        ?.querySelector(
+        .querySelector(
           '[data-target-source-create]'
         )
-        ?.addEventListener(
+        .addEventListener(
           'click',
           () => {
+            const pendingSourceIds =
+              [...selectedIds];
+
             closeModal();
 
             openArchiveSourceModal(
@@ -115682,25 +116733,40 @@
               {
                 onCreated:
                   createdSource => {
+                    const nextSourceIds =
+                      archiveUniqueIds([
+                        ...existingIds,
+                        ...pendingSourceIds,
+                        createdSource.id
+                      ]);
+
                     const savedIds =
                       setSourceIdsForTarget(
                         targetType,
                         targetId,
-                        [
-                          ...selected,
-                          createdSource.id
-                        ],
+                        nextSourceIds,
                         {
                           projectId
                         }
                       );
 
-                    if (
-                      !savedIds
-                      || !savedIds.includes(
-                        createdSource.id
+                    const savedSet =
+                      new Set(
+                        savedIds || []
+                      );
+
+                    const savedCorrectly =
+                      Array.isArray(
+                        savedIds
                       )
-                    ) {
+                      && nextSourceIds.every(
+                        sourceId =>
+                          savedSet.has(
+                            sourceId
+                          )
+                      );
+
+                    if (!savedCorrectly) {
                       showToast(
                         'Source created, but it could not be linked.'
                       );
@@ -115724,17 +116790,12 @@
           }
         );
 
-      renderChoices();
+      refresh();
 
       requestAnimationFrame(() => {
-        modal
-          ?.querySelector(
-            '[data-target-source-search]'
-          )
-          ?.focus({
-            preventScroll:
-              true
-          });
+        searchInput.focus({
+          preventScroll: true
+        });
       });
     }
 
@@ -120697,6 +121758,66 @@
       renderArchiveMain();
     }
 
+    function renderArchivePreservingSourceInspectorScroll() {
+      if (
+        state.archiveView !== 'sources'
+        || !state.archiveSelectedSourceId
+      ) {
+        renderArchive();
+        return;
+      }
+
+      const sourceId =
+        state.archiveSelectedSourceId;
+
+      const currentScroller =
+        main.querySelector(
+          '.archive-inspector-scroll'
+        );
+
+      const previousScrollTop =
+        currentScroller?.scrollTop
+        || 0;
+
+      renderArchive();
+
+      requestAnimationFrame(() => {
+        /*
+          Do not restore an old position if rendering
+          changed the selected Source or left Sources.
+        */
+        if (
+          state.archiveView !== 'sources'
+          || state.archiveSelectedSourceId
+            !== sourceId
+        ) {
+          return;
+        }
+
+        const nextScroller =
+          main.querySelector(
+            '.archive-inspector-scroll'
+          );
+
+        if (!nextScroller) {
+          return;
+        }
+
+        const maximumScrollTop =
+          Math.max(
+            0,
+            nextScroller.scrollHeight
+              - nextScroller.clientHeight
+          );
+
+        nextScroller.scrollTop =
+          Math.min(
+            previousScrollTop,
+            maximumScrollTop
+          );
+      });
+    }
+
     function renderArchiveSidebarNavItem(
       id,
       label,
@@ -125628,19 +126749,89 @@
         return '';
       }
 
-      if (!records.length) {
+      const validRecords =
+        (
+          Array.isArray(
+            records
+          )
+            ? records
+            : []
+        )
+          .filter(Boolean);
+
+      if (!validRecords.length) {
         return renderInspectorSectionEmpty(
           `No ${config.title.toLowerCase()} linked.`
         );
       }
 
+      /*
+        Preserve the current Source inspector
+        limit of four visible connected items.
+      */
+      const visibleRecords =
+        validRecords.slice(
+          0,
+          4
+        );
+
+      const openAttributes =
+        recordId => `
+          data-archive-open-connection="${escapeHtml(
+            entityType
+          )}"
+          data-archive-connection-id="${escapeHtml(
+            recordId
+          )}"
+        `;
+
+      const removeAttributes =
+        recordId => `
+          data-archive-unlink-owner-type="source"
+          data-archive-unlink-owner-id="${escapeHtml(
+            source.id
+          )}"
+          data-archive-unlink-type="${escapeHtml(
+            entityType
+          )}"
+          data-archive-unlink-id="${escapeHtml(
+            recordId
+          )}"
+        `;
+
+      const renderRelationRemoveAction =
+        (
+          recordId,
+          label
+        ) => `
+          <div class="relation-actions">
+            <button
+              class="
+                relation-action-button
+                danger
+              "
+              type="button"
+              ${removeAttributes(
+                recordId
+              )}
+              aria-label="Remove ${escapeHtml(
+                label
+              )} from source"
+              title="Remove link">
+
+              ${icon.close}
+            </button>
+          </div>
+        `;
+
+      /*
+        Notes uses the shared connected-file
+        component for linked Archive files.
+      */
       if (entityType === 'file') {
         return renderConnectedFileList({
           files:
-            records,
-
-          limit:
-            4,
+            visibleRecords,
 
           contextType:
             'source',
@@ -125653,70 +126844,413 @@
         });
       }
 
+      /*
+        Reuse the Notes linked-photo grid.
+      */
+      if (entityType === 'photo') {
+        return `
+          <div
+            class="
+              connected-photo-grid
+              notes-linked-photo-grid
+            ">
+
+            ${visibleRecords
+              .map(photo => {
+                const label =
+                  config.label(
+                    photo
+                  );
+
+                return `
+                  <div
+                    class="
+                      notes-linked-photo-item
+                      person-connected-photo-item
+                    ">
+
+                    <button
+                      class="connected-photo-button"
+                      type="button"
+                      ${openAttributes(
+                        photo.id
+                      )}
+                      title="${escapeHtml(
+                        label
+                      )}"
+                      aria-label="Open ${escapeHtml(
+                        label
+                      )} in Albums">
+
+                      ${renderPhotoThumbnail(
+                        photo,
+                        {
+                          label
+                        }
+                      )}
+                    </button>
+
+                    <button
+                      class="
+                        connected-note-unlink
+                        connected-photo-unlink
+                      "
+                      type="button"
+                      ${removeAttributes(
+                        photo.id
+                      )}
+                      aria-label="Unlink ${escapeHtml(
+                        label
+                      )} from source"
+                      title="Unlink photo">
+
+                      ${icon.unlink}
+                    </button>
+                  </div>
+                `;
+              })
+              .join('')}
+          </div>
+        `;
+      }
+
+      /*
+        Reuse the person rows from the
+        Notes right-side panel.
+      */
+      if (entityType === 'person') {
+        return `
+          <div
+            class="
+              relationship-list
+              notes-people-list
+            ">
+
+            ${visibleRecords
+              .map(person => {
+                const name =
+                  person.names?.display
+                  || person.name
+                  || 'Unnamed person';
+
+                const dates =
+                  albumPhotoPersonDates(
+                    person
+                  )
+                  || config.meta(
+                    person
+                  );
+
+                return `
+                  <div class="relation-row">
+                    <button
+                      class="relation-row-main"
+                      type="button"
+                      ${openAttributes(
+                        person.id
+                      )}
+                      aria-label="Open profile for ${escapeHtml(
+                        name
+                      )}">
+
+                      ${renderPersonAvatar(
+                        person,
+                        'small-avatar',
+                        {
+                          element:
+                            'span'
+                        }
+                      )}
+
+                      <span class="relation-row-copy">
+                        <strong>
+                          ${escapeHtml(
+                            name
+                          )}
+                        </strong>
+
+                        <span>
+                          ${escapeHtml(
+                            dates
+                          )}
+                        </span>
+                      </span>
+                    </button>
+
+                    ${renderRelationRemoveAction(
+                      person.id,
+                      name
+                    )}
+                  </div>
+                `;
+              })
+              .join('')}
+          </div>
+        `;
+      }
+
+      /*
+        renderEventRelationItem() is already
+        shared by Notes and Archive.
+      */
+      if (entityType === 'event') {
+        return `
+          <div
+            class="
+              relationship-list
+              notes-event-list
+            ">
+
+            ${visibleRecords
+              .map(event =>
+                renderEventRelationItem({
+                  event,
+
+                  openAttributes:
+                    openAttributes(
+                      event.id
+                    ),
+
+                  removeAttributes:
+                    removeAttributes(
+                      event.id
+                    ),
+
+                  removeContextLabel:
+                    'source'
+                })
+              )
+              .join('')}
+          </div>
+        `;
+      }
+
+      /*
+        Related-note rows already have a
+        reusable renderer.
+      */
+      if (entityType === 'note') {
+        return `
+          <div
+            class="
+              relationship-list
+              notes-related-list
+            ">
+
+            ${visibleRecords
+              .map(note =>
+                renderRelatedNoteRelationItem({
+                  note,
+
+                  openAttributes:
+                    openAttributes(
+                      note.id
+                    ),
+
+                  removeAttributes:
+                    removeAttributes(
+                      note.id
+                    ),
+
+                  removeContextLabel:
+                    'source'
+                })
+              )
+              .join('')}
+          </div>
+        `;
+      }
+
+      /*
+        Reuse the full place presentation
+        from the Notes inspector.
+      */
+      if (entityType === 'place') {
+        return `
+          <div
+            class="
+              relationship-list
+              notes-place-list
+            ">
+
+            ${visibleRecords
+              .map(place => {
+                const primaryName =
+                  placePrimaryName(
+                    place
+                  )
+                  || place.name
+                  || 'Unnamed place';
+
+                const secondaryName =
+                  placeSecondaryName(
+                    place
+                  )
+                  || 'No broader place recorded';
+
+                const connectionCounts =
+                  getPlaceConnectionCounts(
+                    place.id,
+                    {
+                      projectId:
+                        place.projectId
+                        || currentProjectId()
+                    }
+                  );
+
+                const connectionTotal =
+                  Object.values(
+                    connectionCounts
+                  ).reduce(
+                    (
+                      total,
+                      count
+                    ) =>
+                      total
+                      + Number(
+                          count || 0
+                        ),
+                    0
+                  );
+
+                const connectionLabel =
+                  `${connectionTotal} ${
+                    connectionTotal === 1
+                      ? 'connected record'
+                      : 'connected records'
+                  }`;
+
+                const metadata =
+                  placeHasCoordinates(
+                    place
+                  )
+                    ? connectionLabel
+                    : `${connectionLabel} · No map position`;
+
+                return `
+                  <div
+                    class="
+                      relation-row
+                      notes-place-item
+                    ">
+
+                    <button
+                      class="
+                        relation-row-main
+                        notes-place-main
+                      "
+                      type="button"
+                      ${openAttributes(
+                        place.id
+                      )}
+                      aria-label="Open ${escapeHtml(
+                        primaryName
+                      )} in Places">
+
+                      <span
+                        class="notes-place-icon"
+                        aria-hidden="true">
+
+                        ${icon.mapPin}
+                      </span>
+
+                      <span class="notes-place-copy">
+                        <strong>
+                          ${escapeHtml(
+                            primaryName
+                          )}
+                        </strong>
+
+                        <span class="notes-place-secondary">
+                          ${escapeHtml(
+                            secondaryName
+                          )}
+                        </span>
+
+                        <span class="notes-place-meta">
+                          ${escapeHtml(
+                            metadata
+                          )}
+                        </span>
+                      </span>
+                    </button>
+
+                    ${renderRelationRemoveAction(
+                      place.id,
+                      primaryName
+                    )}
+                  </div>
+                `;
+              })
+              .join('')}
+          </div>
+        `;
+      }
+
+      /*
+        Safe fallback for any connection type
+        added to the Source inspector later.
+      */
       return `
-        <div class="archive-connection-list">
-          ${records
-            .slice(
-              0,
-              4
-            )
-            .map(record => `
-              <div class="archive-connection-row">
-                <button
-                  class="archive-connection-open"
-                  type="button"
-                  data-archive-open-connection="${escapeHtml(
-                    entityType
-                  )}"
-                  data-archive-connection-id="${escapeHtml(
-                    record.id
-                  )}"
-                  aria-label="Open ${escapeHtml(
-                    config.label(
-                      record
-                    )
-                  )}">
-                </button>
+        <div class="notes-linked-list">
+          ${visibleRecords
+            .map(record => {
+              const label =
+                config.label(
+                  record
+                );
 
-                <strong>
-                  ${escapeHtml(
-                    config.label(
-                      record
-                    )
-                  )}
-                </strong>
+              const metadata =
+                config.meta(
+                  record
+                );
 
-                <span>
-                  ${escapeHtml(
-                    config.meta(
-                      record
-                    )
-                  )}
-                </span>
+              return `
+                <div class="notes-linked-row">
+                  <button
+                    class="notes-linked-main"
+                    type="button"
+                    ${openAttributes(
+                      record.id
+                    )}
+                    aria-label="Open ${escapeHtml(
+                      label
+                    )}">
 
-                <button
-                  class="archive-connection-unlink"
-                  type="button"
-                  data-archive-unlink-owner-type="source"
-                  data-archive-unlink-owner-id="${escapeHtml(
-                    source.id
-                  )}"
-                  data-archive-unlink-type="${escapeHtml(
-                    entityType
-                  )}"
-                  data-archive-unlink-id="${escapeHtml(
-                    record.id
-                  )}"
-                  aria-label="Unlink ${escapeHtml(
-                    config.label(
-                      record
-                    )
-                  )}">
+                    <strong>
+                      ${escapeHtml(
+                        label
+                      )}
+                    </strong>
 
-                  ${icon.unlink}
-                </button>
-              </div>
-            `)
+                    <span>
+                      ${escapeHtml(
+                        metadata
+                      )}
+                    </span>
+                  </button>
+
+                  <div class="notes-linked-actions">
+                    <button
+                      class="
+                        notes-linked-action
+                        danger
+                      "
+                      type="button"
+                      ${removeAttributes(
+                        record.id
+                      )}
+                      aria-label="Remove ${escapeHtml(
+                        label
+                      )} from source"
+                      title="Remove link">
+
+                      ${icon.close}
+                    </button>
+                  </div>
+                </div>
+              `;
+            })
             .join('')}
         </div>
       `;
@@ -125979,9 +127513,7 @@
           },
 
         afterSave:
-          () => {
-            renderArchive();
-          },
+          renderArchivePreservingSourceInspectorScroll,
 
         successMessage:
           count =>
@@ -131811,7 +133343,7 @@
           },
 
         afterSave:
-          renderArchive,
+          renderArchivePreservingSourceInspectorScroll,
 
         successMessage:
           'Linked people updated.'
@@ -132000,7 +133532,7 @@
           },
 
         afterSave:
-          renderArchive,
+          renderArchivePreservingSourceInspectorScroll,
 
         successMessage:
           count =>
@@ -132170,10 +133702,157 @@
           },
 
         afterSave:
-          renderArchive,
+          renderArchivePreservingSourceInspectorScroll,
 
         successMessage:
           'Notes linked to source.'
+      });
+    }
+
+    function openArchiveSourcePhotosModal(
+      sourceId
+    ) {
+      const source =
+        archiveSourceById(
+          sourceId
+        );
+
+      if (!source) {
+        showToast(
+          'The source is no longer available.'
+        );
+
+        return;
+      }
+
+      const projectId =
+        source.projectId
+        || currentProjectId();
+
+      const initialPhotoIds =
+        sourceTargetIds(
+          source.id,
+          'photo',
+          projectId
+        );
+
+      openPhotoLinkModal({
+        projectId,
+
+        title:
+          'Add photos to source',
+
+        description:
+          `Selected and uploaded photos will be linked to ${
+            source.title
+            || 'Untitled source'
+          }.`,
+
+        ownerLabel:
+          'this source',
+
+        initiallyLinkedPhotoIds:
+          initialPhotoIds,
+
+        uploadDraftIdPrefix:
+          'source-photo-upload-draft',
+
+        uploadedPhotoIdPrefix:
+          `photo-source-${source.id}`,
+
+        onSave:
+          addedIds => {
+            const currentSource =
+              archiveSourceById(
+                source.id,
+                projectId
+              );
+
+            if (!currentSource) {
+              return false;
+            }
+
+            const currentIds =
+              new Set(
+                sourceTargetIds(
+                  currentSource.id,
+                  'photo',
+                  projectId
+                )
+              );
+
+            const photoIdsToAdd =
+              archiveUniqueIds(
+                addedIds
+              ).filter(photoId =>
+                !currentIds.has(
+                  photoId
+                )
+              );
+
+            const writes =
+              photoIdsToAdd.map(
+                photoId => ({
+                  ownerType:
+                    'source',
+
+                  ownerId:
+                    currentSource.id,
+
+                  entityType:
+                    'photo',
+
+                  entityId:
+                    photoId,
+
+                  shouldLink:
+                    true
+                })
+              );
+
+            const committed =
+              archiveSetConnectionsAtomically(
+                writes
+              );
+
+            if (!committed.ok) {
+              return false;
+            }
+
+            const savedIds =
+              new Set(
+                sourceTargetIds(
+                  currentSource.id,
+                  'photo',
+                  projectId
+                )
+              );
+
+            const savedCorrectly =
+              addedIds.every(
+                photoId =>
+                  savedIds.has(
+                    photoId
+                  )
+              );
+
+            return {
+              ...committed,
+              ok:
+                savedCorrectly
+            };
+          },
+
+        afterSave:
+          renderArchivePreservingSourceInspectorScroll,
+
+        successMessage:
+          count =>
+            `${count} ${
+              count === 1
+                ? 'photo'
+                : 'photos'
+            } added to source.`
       });
     }
 
@@ -132272,7 +133951,7 @@
           suggestedPlaceIds,
 
           renderContext:
-            renderArchive,
+            renderArchivePreservingSourceInspectorScroll,
 
           onSave:
             nextPlaceIds => {
@@ -132398,7 +134077,7 @@
             },
 
           afterSave:
-            renderArchive,
+            renderArchivePreservingSourceInspectorScroll,
 
           successMessage:
             'Place links updated.'
@@ -132602,7 +134281,13 @@
 
           closeModal();
 
-          renderArchive();
+          if (
+            ownerType === 'source'
+          ) {
+            renderArchivePreservingSourceInspectorScroll();
+          } else {
+            renderArchive();
+          }
 
           showToast(
             `${addedCount} ${
@@ -132877,8 +134562,19 @@
         }
 
         closeModal();
-        renderArchive();
-        showToast('Link removed.');
+
+        if (
+          ownerType === 'source'
+          && state.archiveView === 'sources'
+        ) {
+          renderArchivePreservingSourceInspectorScroll();
+        } else {
+          renderArchive();
+        }
+
+        showToast(
+          'Link removed.'
+        );
       });
     }
 
@@ -133626,7 +135322,7 @@
                 return;
               }
 
-              renderArchiveMain();
+              renderArchivePreservingSourceInspectorScroll();
             }
         }
       );
@@ -134468,6 +136164,15 @@
               if (
                 ownerType === 'source'
               ) {
+                if (
+                  entityType === 'photo'
+                ) {
+                  openArchiveSourcePhotosModal(
+                    ownerId
+                  );
+
+                  return;
+                }
                 if (
                   entityType === 'person'
                 ) {
@@ -144340,31 +146045,69 @@
       );
     }
 
-    function openNotesPhotosModal() {
-      const note =
-        selectedNote();
+    function openPhotoLinkModal({
+      projectId =
+        currentProjectId(),
 
-      if (!note) {
+      title =
+        'Add photos',
+
+      description =
+        '',
+
+      ownerLabel =
+        'this item',
+
+      initiallyLinkedPhotoIds =
+        [],
+
+      uploadDraftIdPrefix =
+        'linked-photo-upload-draft',
+
+      uploadedPhotoIdPrefix =
+        'photo-link',
+
+      onSave =
+        null,
+
+      afterSave =
+        () => {},
+
+      successMessage =
+        count =>
+          `${count} ${
+            count === 1
+              ? 'photo'
+              : 'photos'
+          } added.`
+    } = {}) {
+      if (
+        !projectId
+        || typeof onSave !== 'function'
+      ) {
         return;
       }
 
       const initiallyLinkedIds =
         new Set(
-          getPhotosForNote(
-            note.id,
-            {
-              projectId:
-                note.projectId
-            }
-          ).map(photo =>
-            photo.id
+          archiveUniqueIds(
+            initiallyLinkedPhotoIds
+          ).filter(photoId =>
+            Boolean(
+              getPhoto(
+                photoId,
+                {
+                  projectId
+                }
+              )
+            )
           )
         );
 
       const picker = {
         sourceTab:
           getProjectPhotos(
-            note.projectId
+            projectId
           ).length
             ? 'project'
             : 'upload',
@@ -144417,8 +146160,7 @@
           id:
             draft.id,
 
-          projectId:
-            note.projectId,
+          projectId,
 
           kind:
             'photo',
@@ -144495,8 +146237,9 @@
             .toLowerCase();
 
         return getProjectPhotos(
-          note.projectId
+          projectId
         )
+
           .filter(photo =>
             !query
             || photoSearchText(
@@ -144577,7 +146320,7 @@
               aria-pressed="${selected}"
               aria-label="${escapeHtml(
                 alreadyLinked
-                  ? `${title} is already linked to this note`
+                  ? `${title} is already linked to ${ownerLabel}`
                   : `${
                       selected
                         ? 'Deselect'
@@ -144642,7 +146385,7 @@
         () => {
           const allPhotos =
             getProjectPhotos(
-              note.projectId
+              projectId
             );
 
           const photos =
@@ -145120,7 +146863,7 @@
                           file,
                           {
                             idPrefix:
-                              'note-photo-upload-draft'
+                              uploadDraftIdPrefix
                           }
                         ),
 
@@ -145173,13 +146916,12 @@
 
       const commit = () => {
         if (
-          picker.uploadDrafts
-            .some(
-              draft =>
-                !photoUploadDraftIsValid(
-                  draft
-                )
-            )
+          picker.uploadDrafts.some(
+            draft =>
+              !photoUploadDraftIsValid(
+                draft
+              )
+          )
         ) {
           picker.uploadErrors = [
             'One or more uploaded photos are no longer valid. Remove them and choose the files again.'
@@ -145199,8 +146941,7 @@
             getPhoto(
               photoId,
               {
-                projectId:
-                  note.projectId
+                projectId
               }
             )
           )
@@ -145213,8 +146954,7 @@
           picker.uploadDrafts
             .map(draft =>
               createMediaFromPhotoUpload({
-                projectId:
-                  note.projectId,
+                projectId,
 
                 draft,
 
@@ -145222,65 +146962,87 @@
                   [],
 
                 idPrefix:
-                  `photo-note-${note.id}`
+                  uploadedPhotoIdPrefix
               })
             )
             .filter(Boolean);
 
-        const addedIds = [
-          ...projectPhotoIds,
-          ...uploadedPhotos.map(
-            photo =>
-              photo.id
-          )
-        ];
+        const addedIds =
+          archiveUniqueIds([
+            ...projectPhotoIds,
+
+            ...uploadedPhotos.map(
+              photo =>
+                photo.id
+            )
+          ]);
 
         if (!addedIds.length) {
           return;
         }
 
-        const currentNote =
-          getNote(
-            note.id,
-            {
-              projectId:
-                note.projectId,
-
-              includeArchived:
-                true
-            }
+        const saved =
+          onSave(
+            addedIds
           );
 
-        setNotePhotoLinks(
-          note.id,
-          [
-            ...(
-              currentNote
-                ?.linkedPhotoIds
-              || []
-            ),
-            ...addedIds
-          ],
-          {
-            projectId:
-              note.projectId
-          }
-        );
+        const saveFailed =
+          saved === false
+          || saved == null
+          || (
+            typeof saved === 'object'
+            && saved.ok === false
+          );
+
+        if (saveFailed) {
+          /*
+            Uploaded photos were created before the
+            connection write. Remove them if that write
+            fails, preventing orphaned media records.
+          */
+          const uploadedIds =
+            new Set(
+              uploadedPhotos.map(
+                photo =>
+                  photo.id
+              )
+            );
+
+          sampleData.media =
+            sampleData.media.filter(
+              photo =>
+                !uploadedIds.has(
+                  photo.id
+                )
+            );
+
+          showToast(
+            'Photos could not be linked.'
+          );
+
+          return;
+        }
 
         closeModal({
           force:
             true
         });
 
-        renderNotesPreservingInteraction();
+        afterSave();
 
-        showToast(
-          `${addedIds.length} ${
-            addedIds.length === 1
-              ? 'photo'
-              : 'photos'
-          } added to note.`
-        );
+        const message =
+          typeof successMessage
+            === 'function'
+              ? successMessage(
+                  addedIds.length
+                )
+              : successMessage;
+
+        if (message) {
+          showToast(
+            message
+          );
+        }
       };
 
       const bindModal = () => {
@@ -145599,16 +147361,15 @@
             <div class="modal-header">
               <div>
                 <h2 id="notesPhotosAdderTitle">
-                  Add photos to note
+                  ${escapeHtml(
+                    title
+                  )}
                 </h2>
 
                 <p>
-                  Selected and uploaded photos
-                  will be linked to
                   ${escapeHtml(
-                    note.title
-                    || 'Untitled note'
-                  )}.
+                    description
+                  )}
                 </p>
               </div>
 
@@ -145677,9 +147438,8 @@
                     : renderUploadPanel()
                 }
               </div>
-
-              ${renderFooter()}
             </div>
+           ${renderFooter()}
           </div>
         `);
 
@@ -145687,6 +147447,113 @@
       }
 
       renderModal();
+    }
+
+    function openNotesPhotosModal() {
+      const note =
+        selectedNote();
+
+      if (!note) {
+        return;
+      }
+
+      openPhotoLinkModal({
+        projectId:
+          note.projectId,
+
+        title:
+          'Add photos to note',
+
+        description:
+          `Selected and uploaded photos will be linked to ${
+            note.title
+            || 'Untitled note'
+          }.`,
+
+        ownerLabel:
+          'this note',
+
+        initiallyLinkedPhotoIds:
+          getPhotosForNote(
+            note.id,
+            {
+              projectId:
+                note.projectId
+            }
+          ).map(photo =>
+            photo.id
+          ),
+
+        uploadDraftIdPrefix:
+          'note-photo-upload-draft',
+
+        uploadedPhotoIdPrefix:
+          `photo-note-${note.id}`,
+
+        onSave:
+          addedIds => {
+            const currentNote =
+              getNote(
+                note.id,
+                {
+                  projectId:
+                    note.projectId,
+
+                  includeArchived:
+                    true
+                }
+              );
+
+            if (!currentNote) {
+              return false;
+            }
+
+            const nextIds =
+              archiveUniqueIds([
+                ...(
+                  currentNote
+                    .linkedPhotoIds
+                  || []
+                ),
+
+                ...addedIds
+              ]);
+
+            const savedNote =
+              setNotePhotoLinks(
+                currentNote.id,
+                nextIds,
+                {
+                  projectId:
+                    currentNote.projectId
+                }
+              );
+
+            return Boolean(
+              savedNote
+            )
+            && addedIds.every(
+              photoId =>
+                (
+                  savedNote.linkedPhotoIds
+                  || []
+                ).includes(
+                  photoId
+                )
+            );
+          },
+
+        afterSave:
+          renderNotesPreservingInteraction,
+
+        successMessage:
+          count =>
+            `${count} ${
+              count === 1
+                ? 'photo'
+                : 'photos'
+            } added to note.`
+      });
     }
 
     function openNotesPlacesModal(
@@ -159723,10 +161590,10 @@
                 place.projectId,
 
               title:
-                'Manage sources',
+                'Add sources',
 
               subtitle:
-                `Sources connected to ${
+                `Connect existing sources to ${
                   placePrimaryName(
                     place
                   )
