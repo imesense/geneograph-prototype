@@ -39422,6 +39422,33 @@
           }`;
         };
 
+      // Project insights: translate descriptions for any count.
+      repl(
+        /\b(\d+)\s+(?:person is|people are)\s+missing birth details\.$/i,
+        (_, count) =>
+          `Неполные сведения о рождении: ${
+            translateCountPhrase(`${count} people`)
+          }.`
+      );
+
+      repl(
+        /\b(\d+)\s+archive\s+(?:file is|files are)\s+missing source information\.$/i,
+        (_, count) =>
+          `Архивные файлы без источника: ${formatNumber(count)}.`
+      );
+
+      repl(
+        /\b(\d+)\s+(?:photo is|photos are)\s+not assigned to an album\.$/i,
+        (_, count) =>
+          `Фото вне альбомов: ${formatNumber(count)}.`
+      );
+
+      repl(
+        /\b(\d+)\s+(?:place needs|places need)\s+review\.$/i,
+        (_, count) =>
+          `Места для проверки: ${formatNumber(count)}.`
+      );
+
       const countNouns =
         'people|person|places|place|stops|stop|photos|photo|albums|album|files|file|notes|note|events|event|sources|source|questions|question|projects|project|objects|object|boards|board|connections|connection|relationships|relationship|items|item|names|name|years|year|records|record|collections|collection|subfolders|subfolder';
 
@@ -49521,6 +49548,45 @@
       });
     }
 
+    function treeParentFamilyContext(people, families, personId) {
+      const personIds = new Set(
+        (people || []).map(person => person.id)
+      );
+      const parentIds = new Set();
+      const ownFamilyIds = new Set();
+
+      (families || []).forEach(family => {
+        if (!(family.children || []).includes(personId)) return;
+
+        ownFamilyIds.add(family.id);
+
+        [family.left, family.right].forEach(id => {
+          if (id && personIds.has(id)) parentIds.add(id);
+        });
+      });
+
+      // Expand only through this person's recorded parents.
+      // Newly discovered partners do not expand the scope again.
+      const relatedFamilies = (families || []).filter(family =>
+        ownFamilyIds.has(family.id)
+        || [family.left, family.right].some(id =>
+          id && parentIds.has(id)
+        )
+      );
+
+      const siblingIds = new Set(
+        relatedFamilies
+          .flatMap(family => family.children || [])
+          .filter(id => id !== personId && personIds.has(id))
+      );
+
+      return {
+        parentIds,
+        families: relatedFamilies,
+        siblingIds
+      };
+    }
+
     function deriveTreeBranchRoles(
       people,
       families,
@@ -49588,11 +49654,11 @@
           .filter(Boolean)
       ]);
       const focusPartnerIds = new Set(partnerIdsByPerson.get(focusPersonId) || []);
-      const directSiblingIds = new Set(
-        (parentFamiliesByChild.get(focusPersonId) || [])
-          .flatMap(family => family.children || [])
-          .filter(id => id !== focusPersonId && projectPersonIds.has(id))
-      );
+      const directSiblingIds = treeParentFamilyContext(
+        people,
+        families,
+        focusPersonId
+      ).siblingIds;
       const householdSiblingIds = new Set(
         [...directSiblingIds].filter(personId =>
           (childFamiliesByParent.get(personId) || []).some(family => {
@@ -49618,17 +49684,11 @@
         if (!visibleIds.has(id)) placeholderPersonIds.delete(id);
       });
 
-      const focusActionPersonIds = new Set([
-        ...directAncestorIds,
-        ...directDescendantIds,
-        ...focusPartnerIds,
-        ...householdSiblingIds,
-        ...visibleRelativePartnerIds
-      ]);
-      focusActionPersonIds.delete(focusPersonId);
-      [...focusActionPersonIds].forEach(id => {
-        if (!visibleIds.has(id)) focusActionPersonIds.delete(id);
-      });
+      // Every visible person can become the focus.
+      // The current focus already has its in-card focus badge.
+      const focusActionPersonIds = new Set(
+        [...visibleIds].filter(id => id !== focusPersonId)
+      );
 
       const parentPresenceByPerson = new Map();
       placeholderPersonIds.forEach(personId => {
@@ -49722,12 +49782,19 @@
       });
 
       if (ancestorGenerations > 0) {
-        const focusSiblingIds = new Set(
-          (parentFamiliesByChild.get(focusPersonId) || [])
-            .flatMap(family => family.children || [])
-            .filter(id => id !== focusPersonId && peopleById.has(id))
+        const parentContext = treeParentFamilyContext(
+          people,
+          families,
+          focusPersonId
         );
-        focusSiblingIds.forEach(siblingId => {
+
+        // These children are siblings in the focused person's generation.
+        // They remain visible even when descendantGenerations is zero.
+        parentContext.families.forEach(family => {
+          includeFamily(family);
+        });
+
+        parentContext.siblingIds.forEach(siblingId => {
           (childFamiliesByParent.get(siblingId) || []).forEach(family => {
             const hasPartner = [family.left, family.right]
               .some(id => id && id !== siblingId && peopleById.has(id));
@@ -52515,6 +52582,76 @@
             : personMembers;
       }
 
+      function orderFamilyBlockMembers(people, fathers, mothers) {
+        const preferred = [
+          ...fathers,
+          ...orderPartnerPath(people),
+          ...mothers
+        ];
+
+        if (!people.length || !(fathers.length + mothers.length)) {
+          return preferred;
+        }
+
+        const personMembers = new Map(
+          people.map(member => [member.id, member])
+        );
+        const neighbours = new Map(
+          preferred.map(member => [member, new Set()])
+        );
+
+        const connect = (left, right) => {
+          if (!left || !right || left === right) return;
+
+          neighbours.get(left).add(right);
+          neighbours.get(right).add(left);
+        };
+
+        families.forEach(family => {
+          connect(
+            personMembers.get(family.left),
+            personMembers.get(family.right)
+          );
+        });
+
+        [...fathers, ...mothers].forEach(member => {
+          const family = parentFamilyByChild.get(member.childId);
+          const knownParentId = member.role === 'father'
+            ? family?.right
+            : family?.left;
+
+          connect(member, personMembers.get(knownParentId));
+        });
+
+        // Retain the existing handling for more complex partner networks.
+        if ([...neighbours.values()].some(ids => ids.size > 2)) {
+          return preferred;
+        }
+
+        const start = preferred.find(member =>
+          neighbours.get(member).size === 1
+        );
+
+        if (!start) return preferred;
+
+        const ordered = [];
+        const visited = new Set();
+        let current = start;
+
+        while (current && !visited.has(current)) {
+          visited.add(current);
+          ordered.push(current);
+
+          current = [...neighbours.get(current)].find(member =>
+            !visited.has(member)
+          );
+        }
+
+        return ordered.length === preferred.length
+          ? ordered
+          : preferred;
+      }
+
       /*
       * Establish fixed coordinates inside each rigid block.
       */
@@ -52551,11 +52688,11 @@
                 .localeCompare(String(right.id))
             );
 
-        block.members = [
-          ...fathers,
-          ...orderPartnerPath(people),
-          ...mothers
-        ];
+        block.members = orderFamilyBlockMembers(
+          people,
+          fathers,
+          mothers
+        );
 
         const currentLeft = Math.min(
           ...block.members.map(member =>
@@ -53264,6 +53401,9 @@
             );
           });
 
+        // Also validate the ordering produced by the downward sweep.
+        rememberOrder();
+
         generations
           .slice(0, -1)
           .reverse()
@@ -53273,7 +53413,7 @@
               'up'
             );
           });
-
+          
         const score =
           crossingScore();
         rememberOrder();
@@ -55669,123 +55809,74 @@
         });
       }
 
-      const handledChildren = new Set();
+      const parentFamilyByChild = new Map();
 
-      /*
-      * Render families containing missing-parent placeholders
-      * as child-specific family junctions.
-      */
-      Object.entries(
-        layout.parentPlaceholdersByPerson
-        || {}
-      ).forEach(
-        ([personId, placeholders]) => {
-          const child =
-            treeLayoutNode(
-              layout,
-              personId
-            );
-
-          if (
-            !child
-            || !placeholders?.length
-          ) {
-            return;
+      (layout.families || []).forEach(family => {
+        (family.children || []).forEach(childId => {
+          if (!parentFamilyByChild.has(childId)) {
+            parentFamilyByChild.set(childId, family);
           }
-
-          handledChildren.add(personId);
-
-          const parentFamily =
-            (layout.families || [])
-              .find(family =>
-                family.children
-                  ?.includes(personId)
-              );
-
-          const knownParents =
-            parentFamily
-              ? [
-                  treeLayoutNode(
-                    layout,
-                    parentFamily.left
-                  ),
-                  treeLayoutNode(
-                    layout,
-                    parentFamily.right
-                  )
-                ].filter(Boolean)
-              : [];
-
-          const parentNodes = [
-            ...knownParents,
-            ...placeholders
-          ];
-
-          addDraft({
-            familyId:
-              parentFamily?.id
-              || `missing-parents:${personId}`,
-            role: 'placeholder-descendant',
-            parentNodes,
-            children: [child]
-          });
-        }
-      );
-
-      /*
-      * Render normal family records. Children already handled
-      * by a placeholder-specific family are excluded here.
-      */
-      (layout.families || [])
-        .forEach(family => {
-          const parentNodes = [
-            treeLayoutNode(
-              layout,
-              family.left
-            ),
-            treeLayoutNode(
-              layout,
-              family.right
-            )
-          ].filter(Boolean);
-
-          const children =
-            (family.children || [])
-              .filter(childId =>
-                !handledChildren.has(childId)
-              )
-              .map(childId =>
-                treeLayoutNode(
-                  layout,
-                  childId
-                )
-              )
-              .filter(Boolean);
-
-          if (!parentNodes.length) {
-            return;
-          }
-
-          /*
-          * A childless relationship still needs its partner
-          * connector.
-          */
-          addPartnerConnector(
-            family.id,
-            parentNodes
-          );
-
-          if (!children.length) {
-            return;
-          }
-
-          addDraft({
-            familyId: family.id,
-            role: 'descendant',
-            parentNodes,
-            children
-          });
         });
+      });
+
+      (layout.families || []).forEach(family => {
+        const children = (family.children || [])
+          .map(id => treeLayoutNode(layout, id))
+          .filter(Boolean);
+
+        const knownParents = [family.left, family.right]
+          .map(id => treeLayoutNode(layout, id))
+          .filter(Boolean);
+
+        const placeholders = (family.children || []).flatMap(childId =>
+          parentFamilyByChild.get(childId)?.id === family.id
+            ? layout.parentPlaceholdersByPerson?.[childId] || []
+            : []
+        );
+
+        const parentNodes = [
+          ...new Map(
+            [...knownParents, ...placeholders].map(node => [
+              node.id,
+              node
+            ])
+          ).values()
+        ];
+
+        if (!parentNodes.length) return;
+
+        // Preserve the partner line even for a childless family.
+        addPartnerConnector(family.id, parentNodes);
+
+        if (!children.length) return;
+
+        // Use the same family grouping as the horizontal layout.
+        addDraft({
+          familyId: family.id,
+          role: placeholders.length
+            ? 'placeholder-descendant'
+            : 'descendant',
+          parentNodes,
+          children
+        });
+      });
+
+      // Preserve Add parents controls when no saved parent family exists.
+      Object.entries(
+        layout.parentPlaceholdersByPerson || {}
+      ).forEach(([personId, placeholders]) => {
+        if (parentFamilyByChild.has(personId)) return;
+
+        const child = treeLayoutNode(layout, personId);
+        if (!child || !placeholders.length) return;
+
+        addDraft({
+          familyId: `missing-parents:${personId}`,
+          role: 'placeholder-descendant',
+          parentNodes: placeholders,
+          children: [child]
+        });
+      });
 
       /*
       * Allocate lanes per complete generation band. Placeholder
