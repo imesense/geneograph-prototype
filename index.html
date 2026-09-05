@@ -31121,9 +31121,19 @@
         16px;
     }
   
-    .place-editor-body { gap: var(--space-4); }
+    .place-editor-body { gap: var(--space-5); }
     .place-editor-modal [hidden] { display: none !important; }
-    .place-editor-place-field { position: relative; }
+    .place-editor-place-field {
+      position: relative;
+      display: grid;
+      gap: var(--space-2);
+      min-width: 0;
+    }
+
+    .place-editor-place-field > label,
+    .place-editor-place-field > .place-editor-support {
+      margin: 0;
+    }
     .place-editor-support { margin: 0 0 var(--space-2); color: var(--text-tertiary); font-size: 12px; line-height: 1.45; }
     .place-editor-combobox { position: relative; }
     .place-editor-suggestions {
@@ -31169,17 +31179,210 @@
     .place-editor-suggestion-status button { border: 0; background: transparent; color: var(--green); font-weight: 800; }
     .place-editor-field-error { min-height: 18px; margin-top: 6px; display: block; color: var(--red); font-size: 12px; }
     .place-editor-selection-notice { margin: 0; padding: 9px 11px; border-left: 3px solid var(--green); background: rgba(98,217,154,.08); color: var(--text-secondary); font-size: 12px; }
-    .place-editor-duplicate { padding: 12px; border: 1px solid rgba(221,176,88,.45); border-radius: var(--radius-sm); background: rgba(221,176,88,.08); display: grid; gap: var(--space-3); }
-    .place-editor-duplicate > div:first-child { display: grid; gap: 3px; }
-    .place-editor-duplicate strong { color: var(--text-primary); }
-    .place-editor-duplicate span { color: var(--text-secondary); }
-    .place-editor-duplicate small,
-    .place-editor-duplicate p { margin: 0; color: var(--text-tertiary); font-size: 12px; }
-    .place-editor-duplicate > div:last-child { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-    .place-map-location { padding: 12px; display: flex; align-items: center; gap: var(--space-3); background: var(--surface-card-hover); border: 1px solid var(--border-default); border-radius: var(--radius-sm); }
-    .place-map-location > div:first-child { min-width: 0; margin-right: auto; display: grid; gap: 3px; }
-    .place-map-location span { color: var(--text-tertiary); font-size: 12px; font-variant-numeric: tabular-nums; }
-    .place-map-location-actions { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); }
+    .place-editor-duplicate {
+      position: relative;
+      margin-top: var(--space-1);
+      padding: var(--space-3);
+      border: 0;
+      border-left: 3px solid var(--amber);
+      border-radius: var(--radius-sm);
+      background: rgba(212,170,107,.08);
+
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-2);
+      min-width: 0;
+    }
+
+    .place-duplicate-heading {
+      padding-inline-end: 48px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+
+    .place-duplicate-heading svg {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+      color: var(--amber);
+    }
+
+    .place-duplicate-name {
+      min-width: 0;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .place-editor-duplicate > .place-duplicate-more {
+      position: absolute;
+      inset-block-start: var(--space-2);
+      inset-inline-end: var(--space-2);
+    }
+
+    .place-editor-duplicate p {
+      margin: 0;
+      color: var(--text-tertiary);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .place-editor-duplicate > p {
+      grid-column: 1 / -1;
+    }
+
+    .place-editor-duplicate > p:empty {
+      display: none;
+    }
+
+    .place-duplicate-review {
+      grid-column: 1 / -1;
+      min-width: 0;
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--border-default);
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .place-duplicate-review dl {
+      margin: 0;
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .place-duplicate-review dt {
+      color: var(--text-tertiary);
+      font-size: 12px;
+    }
+
+    .place-duplicate-review dd {
+      margin: 3px 0 0;
+      color: var(--text-secondary);
+      overflow-wrap: anywhere;
+    }
+
+    .place-duplicate-review ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .place-duplicate-review .button {
+      justify-self: start;
+    }
+
+    .place-map-location {
+      min-width: 0;
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .place-map-location > h3 {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: inherit;
+      font-weight: 700;
+    }
+
+    .place-map-location-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .place-map-status {
+      flex: 1 1 200px;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .place-map-status > svg {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 20px;
+      color: var(--text-tertiary);
+    }
+
+    .place-map-status-copy {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .place-map-status-copy strong {
+      color: var(--text-primary);
+    }
+
+    .place-map-status-copy span {
+      color: var(--text-tertiary);
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+
+    .place-map-location-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .place-editor-modal .place-editor-text-action {
+      padding: 8px;
+      border: 0;
+      background: transparent;
+      color: var(--text-secondary);
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .place-editor-modal .place-editor-text-action:hover {
+      color: var(--text-primary);
+      text-decoration: underline;
+    }
+
+    .place-editor-modal .place-editor-text-action:focus-visible {
+      outline: 2px solid var(--brand-green-300);
+      outline-offset: 2px;
+      border-radius: var(--radius-sm);
+    }
+
+    .place-editor-field-error:empty {
+      display: none;
+    }
+
+    /* Keep the header and save actions visible while the fields scroll. */
+    .place-editor-modal {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .place-editor-modal > .modal-header {
+      flex: 0 0 auto;
+    }
+
+    .place-editor-modal #placeForm {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .place-editor-modal .place-editor-body {
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    .place-editor-modal .modal-footer {
+      flex: 0 0 auto;
+      background: var(--surface-card);
+    }
     .places-map-panel.is-picking
       .places-map-navigation-wrap {
       bottom: 88px;
@@ -31332,8 +31535,6 @@
       line-height:
         1.4;
     }
-    .place-editor-danger { border-color: rgba(212,107,107,.35); }
-    .place-editor-danger p { margin: 10px 0; color: var(--text-tertiary); font-size: 12px; line-height: 1.45; }
     .place-delete-confirm { display: grid; gap: var(--space-3); }
     .place-delete-confirm ul { margin: 0; padding-left: 20px; color: var(--text-secondary); display: grid; gap: 7px; line-height: 1.45; }
     @media (max-width: 900px) {
@@ -31423,13 +31624,9 @@
       }
       .places-coordinate-bar { align-items: stretch; flex-wrap: wrap; }
       .places-coordinate-bar > div { flex-basis: 100%; }
-      .place-map-location { align-items: stretch; flex-direction: column; }
-      .place-map-location-actions { justify-content: flex-start; }
       .place-editor-suggestion { grid-template-columns: minmax(0, 1fr); }
       .place-editor-suggestion.manual { grid-template-columns: 20px minmax(0, 1fr); }
       .place-editor-suggestion em { display: none; }
-      .place-editor-duplicate > div:last-child { align-items: stretch; flex-direction: column; }
-      .place-editor-duplicate .button { width: 100%; }
       .places-map-navigation-wrap {
         left: 10px;
         bottom: 10px;
@@ -32671,6 +32868,7 @@
       'Rename': 'Переименовать',
       'Duplicate': 'Создать копию',
       'Delete': 'Удалить',
+      'Unarchive': 'Вернуть из архива',
       'Modified': 'Изменено',
       'Last modified': 'Последнее изменение',
       'Created': 'Создано',
@@ -35319,6 +35517,9 @@
       'Choose a destination folder.':
         'Выберите папку назначения.',
 
+      'Moving':
+        'Перемещение',
+
       'Choose a folder':
         'Выберите папку',
 
@@ -36237,7 +36438,10 @@
         'Точка не выбрана',
 
       'Use map centre':
-        'Использовать центр карты',
+        'Центр карты',
+
+      'Copy':
+        'Копировать',
 
       'Use position':
         'Использовать позицию',
@@ -36425,6 +36629,8 @@
       'No connected notes.':
         'Связанных заметок нет.',
 
+      'No sources linked to this place.': 'Связанных источников нет.',
+
       'Open in Notes':
         'Открыть в Заметках',
 
@@ -36471,6 +36677,24 @@
 
       'Advanced coordinates':
         'Расширенные настройки координат',
+
+      'Place details':
+        'Сведения о месте',
+
+      'Ignore':
+        'Игнорировать',
+
+      'Saved place details':
+        'Сведения о сохранённом месте',
+
+      'Position set':
+        'Позиция указана',
+
+      'No position set':
+        'Позиция не указана',
+
+      'Edit on map':
+        'Изменить на карте',
 
       'Enter decimal degrees. Latitude must be between -90 and 90; longitude must be between -180 and 180.':
         'Введите координаты в десятичных градусах. Широта должна быть от −90 до 90, долгота — от −180 до 180.',
@@ -38210,6 +38434,11 @@
       'Select text before adding a link.': 'Перед добавлением ссылки выделите текст.',
       'Rich text is unavailable. Note opened in plain-text mode.': 'Форматированный текст недоступен. Заметка открыта в режиме обычного текста.',
       'No files linked to this note.': 'С этой заметкой не связано ни одного файла.',
+      'No people linked to this note.': 'С этой заметкой не связано ни одного человека.',
+      'No events linked to this note.': 'С этой заметкой не связано ни одного события.',
+      'No photos linked to this note.': 'С этой заметкой не связано ни одного фото.',
+      'No places linked to this note.': 'С этой заметкой не связано ни одного места.',
+      'No sources linked to this note.': 'С этой заметкой не связано ни одного источника.',
       'Remove photo link': 'Удалить связь с фотографией',
       'Add to collections': 'Добавить в коллекции',
       'Close add to collection dialog': 'Закрыть окно добавления в коллекции',
@@ -38459,6 +38688,20 @@
         few: 'файла',
         many: 'файлов',
         other: 'файла'
+      },
+
+      subfolder: {
+        one: 'вложенная папка',
+        few: 'вложенные папки',
+        many: 'вложенных папок',
+        other: 'вложенной папки'
+      },
+
+      subfolders: {
+        one: 'вложенная папка',
+        few: 'вложенные папки',
+        many: 'вложенных папок',
+        other: 'вложенной папки'
       },
 
       notes: {
@@ -38883,7 +39126,7 @@
       }
 
       return String(text).replace(
-        /(\d[\d\s.,]*)\s+(people|person|places|place|stops|stop|photos|photo|albums|album|files|file|notes|note|events|event|sources|source|questions|question|projects|project|objects|object|boards|board|connections|connection|relationships|relationship|items|item|names|name|years|year|records|record|collections|collection)\b/gi,
+        /(\d[\d\s.,]*)\s+(people|person|places|place|stops|stop|photos|photo|albums|album|files|file|notes|note|events|event|sources|source|questions|question|projects|project|objects|object|boards|board|connections|connection|relationships|relationship|items|item|names|name|years|year|records|record|collections|collection|subfolders|subfolder)\b/gi,
         (
           match,
           rawNumber,
@@ -38939,6 +39182,32 @@
         || core === ''
       ) {
         return core;
+      }
+
+      const folderDropMessage = String(core).trim().match(
+        /^Drop files here to add them to “([\s\S]*)”, or click to choose files\.$/
+      );
+
+      if (folderDropMessage) {
+        const folderName = folderDropMessage[1];
+
+        return `Перетащите файлы сюда, чтобы добавить их в папку «${folderName}», или нажмите, чтобы выбрать файлы.`;
+      }
+
+      const movePlaceInstruction = String(core).trim().match(
+        /^Drag the draft marker or click the map to reposition ([\s\S]+)\.$/
+      );
+
+      if (movePlaceInstruction) {
+        return `Перетащите маркер или нажмите на карту, чтобы изменить положение места «${movePlaceInstruction[1]}».`;
+      }
+
+      const positionPlaceInstruction = String(core).trim().match(
+        /^Click the map to position ([\s\S]+), or use the map centre\.$/
+      );
+
+      if (positionPlaceInstruction) {
+        return `Нажмите на карту, чтобы указать положение места «${positionPlaceInstruction[1]}», или используйте центр карты.`;
       }
 
       let out =
@@ -39155,7 +39424,7 @@
         };
 
       const countNouns =
-        'people|person|places|place|stops|stop|photos|photo|albums|album|files|file|notes|note|events|event|sources|source|questions|question|projects|project|objects|object|boards|board|connections|connection|relationships|relationship|items|item|names|name|years|year|records|record|collections|collection';
+        'people|person|places|place|stops|stop|photos|photo|albums|album|files|file|notes|note|events|event|sources|source|questions|question|projects|project|objects|object|boards|board|connections|connection|relationships|relationship|items|item|names|name|years|year|records|record|collections|collection|subfolders|subfolder';
 
       /*
         Sorting / searching / pagination
@@ -132181,47 +132450,39 @@
 
           if (footerRoot) {
             const buttonLabel =
-              !archiveMoveHasDestination(
-                selectedId
-              )
+              !archiveMoveHasDestination(selectedId)
               || movingFolder
               || files.length === 1
                 ? 'Move here'
-                : `Move ${
-                    stats.movableCount
-                  } files`;
+                : `Move ${stats.movableCount} files`;
 
             footerRoot.innerHTML = `
               <button
-                class="
-                  button
-                  secondary
-                "
+                class="button secondary"
                 type="button"
                 data-close>
-
                 Cancel
               </button>
 
               <button
-                class="
-                  button
-                  primary
-                "
+                class="button primary"
                 type="button"
                 data-archive-move-confirm
-                ${
-                  stats.canMove
-                    ? ''
-                    : 'disabled aria-disabled="true"'
-                }>
-
-                ${escapeHtml(
-                  buttonLabel
-                )}
+                ${stats.canMove ? '' : 'disabled aria-disabled="true"'}>
+                ${escapeHtml(buttonLabel)}
               </button>
             `;
+
+            // The footer is recreated on every render, so bind its new button.
+            footerRoot
+              .querySelector('[data-close]')
+              ?.addEventListener('click', closeModal);
           }
+
+          // Translate after both the folder picker and footer have been rendered.
+          localizeUI(modal, {
+            suppressObserverReplay: true
+          });
 
           requestAnimationFrame(
             () => {
@@ -139489,7 +139750,7 @@
           {
             theme: 'snow',
 
-            placeholder,
+            placeholder: t(placeholder),
 
             bounds,
 
@@ -146036,11 +146297,11 @@
               <div class="notes-related-results-head">
                 <div>
                   <strong
-                    data-notes-place-results-title>
+                    data-notes-people-results-title>
                   </strong>
 
                   <span
-                    data-notes-place-results-meta
+                    data-notes-people-results-meta
                     aria-live="polite">
                   </span>
                 </div>
@@ -155942,10 +156203,14 @@
     }
 
     function updatePlacesMapInstruction(message = '') {
-      const instruction = document.querySelector('[data-places-map-instruction]');
+      const instruction = document.querySelector(
+        '[data-places-map-instruction]'
+      );
+
       if (!instruction) return;
+
       instruction.hidden = !message;
-      instruction.textContent = message;
+      instruction.textContent = translateText(message);
     }
 
     function updatePlacesMapToolControls() {
@@ -164108,8 +164373,7 @@
         dismissedDuplicateId: null,
         disclosures: {
           alternativeNames: alternativeNames.length > 0,
-          coordinates: false,
-          danger: false
+          coordinates: false
         },
         query: existing?.name || '',
         searchTouched: false,
@@ -164191,7 +164455,6 @@
       draft.coordinates = coordinateState.hasCoordinates ? coordinateState.coordinates : null;
       draft.disclosures.alternativeNames = Boolean(root.querySelector('[data-place-alternative-details]')?.open);
       draft.disclosures.coordinates = Boolean(root.querySelector('[data-place-coordinate-details]')?.open);
-      draft.disclosures.danger = Boolean(root.querySelector('[data-place-danger-details]')?.open);
       updatePlaceEditorDraftDirty(draft);
       return draft;
     }
@@ -164422,99 +164685,123 @@
     }
 
     function renderPlaceEditorDuplicateWarning({ force = false } = {}) {
+      if (document.querySelector('[data-place-duplicate-menu]')) {
+        closeMenu();
+      }
       const draft = placeEditorDraft;
       const host = modalBackdrop.querySelector('[data-place-duplicate-warning]');
+
       if (!draft || !host) return null;
+
       const duplicate = findPlaceEditorDuplicate(draft);
-      if (!duplicate || (!force && duplicate.place.id === draft.dismissedDuplicateId)) {
+
+      if (
+        !duplicate
+        || (!force && duplicate.place.id === draft.dismissedDuplicateId)
+      ) {
         host.hidden = true;
         host.innerHTML = '';
         return duplicate;
       }
+
       if (duplicate.alternativeConflict) {
         draft.disclosures.alternativeNames = true;
         const details = modalBackdrop.querySelector('[data-place-alternative-details]');
         if (details) details.open = true;
       }
+
       const reasons = [
         duplicate.exact ? 'The entered name matches this place.' : '',
-        duplicate.alternativeConflict ? 'An alternative name conflicts with this place.' : '',
-        duplicate.similar && !duplicate.exact ? 'The names are very similar.' : '',
+        duplicate.alternativeConflict
+          ? 'An alternative name conflicts with this place.'
+          : '',
+        duplicate.similar && !duplicate.exact
+          ? 'The names are very similar.'
+          : '',
         duplicate.close ? 'The map positions are very close.' : ''
       ].filter(Boolean);
+
+      const place = duplicate.place;
+      const savedText = placeEditorCoordinateTextFromStored(place.coordinates);
+      const savedPosition = readPlaceEditorCoordinateState(
+        savedText.latitude,
+        savedText.longitude
+      );
+
+      const positionText = savedPosition.hasCoordinates
+        ? `${savedPosition.coordinates.lat.toFixed(6)}, ${savedPosition.coordinates.lng.toFixed(6)}`
+        : t('No position set');
+
+      const alternativeNames = placeAlternativeNames(place);
+
       host.hidden = false;
       host.innerHTML = `
-        <div>
-          <strong>
-            Possible duplicate
-          </strong>
-
-          <span>
-            ${escapeHtml(
-              duplicate.place.name
-            )}
-          </span>
-
-          <p>
-            ${escapeHtml(
-              reasons.join(' ')
-            )}
-          </p>
+        <div class="place-duplicate-heading">
+          ${icon.warning}
+          <strong>${escapeHtml(t('Possible duplicate'))}</strong>
         </div>
 
-        <div>
-          <button
-            class="button secondary"
-            type="button"
-            data-place-use-existing="${
-              escapeHtml(
-                duplicate.place.id
-              )
-            }">
-            Use existing place
-          </button>
+        <div class="place-duplicate-name" data-i18n-skip>
+          ${escapeHtml(place.name)}
+        </div>
 
-          ${
-            draft.mode === 'add'
-              ? `
-                <button
-                  class="button primary"
-                  type="button"
-                  data-place-create-another>
-                  Create another place
-                </button>
-              `
-              : ''
-          }
+        <p>${escapeHtml(reasons.map(reason => t(reason)).join(' '))}</p>
 
-          <button
-            class="button ghost"
-            type="button"
-            data-place-continue-editing="${
-              escapeHtml(
-                duplicate.place.id
-              )
-            }">
-            Continue editing
-          </button>
+        <button
+          class="button ghost compact icon-only place-duplicate-more"
+          type="button"
+          data-place-duplicate-more="${escapeHtml(place.id)}"
+          aria-label="${escapeHtml(t('More actions'))}"
+          title="${escapeHtml(t('More actions'))}"
+          aria-haspopup="menu"
+          aria-expanded="false">
+          ${icon.more}
+        </button>
+
+        <div
+          class="place-duplicate-review"
+          id="placeDuplicateReview"
+          hidden>
+
+          <strong>${escapeHtml(t('Saved place details'))}</strong>
+
+          <dl>
+            <div>
+              <dt>${escapeHtml(t('Place'))}</dt>
+              <dd data-i18n-skip>${escapeHtml(place.name)}</dd>
+            </div>
+
+            <div>
+              <dt>${escapeHtml(t('Map location'))}</dt>
+              <dd>${escapeHtml(positionText)}</dd>
+            </div>
+
+            ${alternativeNames.length ? `
+              <div>
+                <dt>${escapeHtml(t('Historical / alternative names'))}</dt>
+                <dd>
+                  <ul data-i18n-skip>
+                    ${alternativeNames.map(name => `
+                      <li>${escapeHtml(name)}</li>
+                    `).join('')}
+                  </ul>
+                </dd>
+              </div>
+            ` : ''}
+          </dl>
+
+          ${draft.mode === 'add' ? `
+            <button
+              class="button secondary compact"
+              type="button"
+              data-place-use-existing="${escapeHtml(place.id)}">
+              ${escapeHtml(t('Use existing place'))}
+            </button>
+          ` : ''}
         </div>
       `;
 
-      /*
-       * The duplicate warning is rendered after
-       * openModal() has localized the initial modal.
-       *
-       * Restrict localization to the warning itself.
-       * This deliberately excludes the editable place
-       * name and alternative-name textarea.
-       */
-      localizeUI(
-        host,
-        {
-          suppressObserverReplay:
-            true
-        }
-      );
+      localizeUI(host, { suppressObserverReplay: true });
       return duplicate;
     }
 
@@ -164531,67 +164818,76 @@
 
     function updatePlaceEditorCoordinateUi({ formatValues = false } = {}) {
       const draft = placeEditorDraft;
-      const latitudeInput = modalBackdrop.querySelector('#placeLatitudeInput');
-      const longitudeInput = modalBackdrop.querySelector('#placeLongitudeInput');
+      const root = modalBackdrop.querySelector('[data-place-editor]');
+      const latitudeInput = root?.querySelector('#placeLatitudeInput');
+      const longitudeInput = root?.querySelector('#placeLongitudeInput');
+
       if (!draft || !latitudeInput || !longitudeInput) return null;
-      const result = readPlaceEditorCoordinateState(latitudeInput.value, longitudeInput.value);
+
+      const result = readPlaceEditorCoordinateState(
+        latitudeInput.value,
+        longitudeInput.value
+      );
+
       if (formatValues) {
         if (result.latitude.valid) latitudeInput.value = result.latitude.formatted;
         if (result.longitude.valid) longitudeInput.value = result.longitude.formatted;
       }
-      draft.coordinateText = { latitude: latitudeInput.value, longitude: longitudeInput.value };
-      draft.coordinates = result.hasCoordinates ? result.coordinates : null;
-      latitudeInput.setAttribute('aria-invalid', String(result.hasAnyValue && (result.latitude.empty || !result.latitude.valid)));
-      longitudeInput.setAttribute('aria-invalid', String(result.hasAnyValue && (result.longitude.empty || !result.longitude.valid)));
-      const error = modalBackdrop.querySelector('#placeCoordinateError');
-      if (error) error.textContent = result.message;
-      const copy = modalBackdrop.querySelector('[data-place-copy-coordinates]');
-      if (copy) copy.disabled = !result.hasCoordinates;
-      const remove = modalBackdrop.querySelector('[data-place-remove-position]');
-      if (remove) remove.hidden = !result.hasAnyValue;
-      const choose =
-        modalBackdrop.querySelector(
-          '[data-place-choose-map]'
-        );
 
+      draft.coordinateText = {
+        latitude: latitudeInput.value,
+        longitude: longitudeInput.value
+      };
+      draft.coordinates = result.hasCoordinates ? result.coordinates : null;
+
+      latitudeInput.setAttribute('aria-invalid', String(
+        result.hasAnyValue && (result.latitude.empty || !result.latitude.valid)
+      ));
+      longitudeInput.setAttribute('aria-invalid', String(
+        result.hasAnyValue && (result.longitude.empty || !result.longitude.valid)
+      ));
+
+      const error = root.querySelector('#placeCoordinateError');
+      if (error) error.textContent = translateText(result.message || '');
+
+      const copy = root.querySelector('[data-place-copy-coordinates]');
+      if (copy) copy.disabled = !result.hasCoordinates;
+
+      const remove = root.querySelector('[data-place-remove-position]');
+      if (remove) remove.hidden = !result.hasAnyValue;
+
+      const choose = root.querySelector('[data-place-choose-map]');
       if (choose) {
-        choose.textContent =
-          translateText(
-            result.hasCoordinates
-              ? 'Edit position'
-              : 'Choose on map'
-          );
+        choose.textContent = t(
+          result.hasCoordinates ? 'Edit on map' : 'Choose on map'
+        );
       }
 
-      const summary =
-        modalBackdrop.querySelector(
-          '[data-place-map-summary]'
-        );
-
-      if (summary) {
-        const summaryText =
+      const status = root.querySelector('[data-place-map-status]');
+      if (status) {
+        status.textContent = t(
           result.hasCoordinates
-            ? `Mapped at ${
-                result.coordinates.lat
-                  .toFixed(6)
-              }, ${
-                result.coordinates.lng
-                  .toFixed(6)
-              }`
+            ? 'Position set'
             : result.hasAnyValue
               ? 'Coordinates need attention'
-              : 'Not on map';
-
-        summary.textContent =
-          translateText(
-            summaryText
-          );
+              : 'No position set'
+        );
       }
-      const details = modalBackdrop.querySelector('[data-place-coordinate-details]');
+
+      const summary = root.querySelector('[data-place-map-summary]');
+      if (summary) {
+        summary.hidden = !result.hasCoordinates;
+        summary.textContent = result.hasCoordinates
+          ? `${result.coordinates.lat.toFixed(6)}, ${result.coordinates.lng.toFixed(6)}`
+          : '';
+      }
+
+      const details = root.querySelector('[data-place-coordinate-details]');
       if (!result.valid && details) {
         details.open = true;
         draft.disclosures.coordinates = true;
       }
+
       updatePlaceEditorDraftDirty(draft);
       return result;
     }
@@ -164814,44 +165110,240 @@
     }
 
     function renderPlaceEditorModal(draft) {
-      const coordinateState = readPlaceEditorCoordinateState(draft.coordinateText.latitude, draft.coordinateText.longitude);
-      const mapSummary = coordinateState.hasCoordinates
-        ? `Mapped at ${coordinateState.coordinates.lat.toFixed(6)}, ${coordinateState.coordinates.lng.toFixed(6)}`
-        : coordinateState.hasAnyValue ? 'Coordinates need attention' : 'Not on map';
-      const alternativeCount = normalizePlaceAlternativeNames(draft.alternativeNames, draft.name).length;
-      return `<div class="modal place-editor-modal" role="dialog" aria-modal="true" aria-labelledby="placeModalTitle" data-place-editor>
-        <div class="modal-header"><div><h2 id="placeModalTitle">${draft.mode === 'edit' ? 'Edit place' : 'Add place'}</h2><p>Names and map position are saved together only when you confirm.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div>
-        <form id="placeForm" novalidate>
-          <div class="modal-body form-grid place-editor-body">
-            <div class="field full place-editor-place-field">
-              <label for="placeNameInput">Place</label>
-              <p class="place-editor-support" id="placeNameSupport">Search existing places or map results, or enter a historical place name manually.</p>
-              <div class="place-editor-combobox" data-place-editor-combobox>
-                <input id="placeNameInput" value="${escapeHtml(draft.name)}" placeholder="e.g. Pawford, North Yorkshire, England" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="placeEditorSuggestions" aria-describedby="placeNameSupport placeNameError" aria-invalid="false" autocomplete="off">
-                <div class="place-editor-suggestions" id="placeEditorSuggestions" role="listbox" aria-label="Place suggestions" hidden></div>
-              </div>
-              <span class="place-editor-field-error" id="placeNameError" role="alert"></span>
+      const coordinateState = readPlaceEditorCoordinateState(
+        draft.coordinateText.latitude,
+        draft.coordinateText.longitude
+      );
+
+      const alternativeCount = normalizePlaceAlternativeNames(
+        draft.alternativeNames,
+        draft.name
+      ).length;
+
+      return `
+        <div
+          class="modal place-editor-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="placeModalTitle"
+          data-place-editor>
+
+          <div class="modal-header">
+            <div>
+              <h2 id="placeModalTitle">
+                ${escapeHtml(t(draft.mode === 'edit' ? 'Edit place' : 'Add place'))}
+              </h2>
+              <p>
+                ${escapeHtml(t('Names and map position are saved together only when you confirm.'))}
+              </p>
             </div>
-            <div class="place-editor-duplicate" data-place-duplicate-warning hidden></div>
-            <p class="place-editor-selection-notice" data-place-selection-notice hidden></p>
-            <section class="place-map-location full" aria-label="Map location"><div><strong>Map location</strong><span data-place-map-summary>${escapeHtml(mapSummary)}</span></div><div class="place-map-location-actions"><button class="button secondary" type="button" data-place-choose-map>${coordinateState.hasCoordinates ? 'Edit position' : 'Choose on map'}</button><button class="button ghost" type="button" data-place-remove-position ${coordinateState.hasAnyValue ? '' : 'hidden'}>Remove position</button></div></section>
-            <details class="field full places-editor-disclosure" data-place-alternative-details ${draft.disclosures.alternativeNames ? 'open' : ''}>
-              <summary><span class="places-editor-disclosure-summary-label">Historical / alternative names<span data-place-alternative-count>${alternativeCount ? ` · ${alternativeCount}` : ''}</span></span><span class="places-editor-disclosure-chevron" aria-hidden="true">${icon.chevron}</span></summary>
-              <p class="place-editor-support">Enter one full historical or alternative place name per line.</p>
-              <label for="placeAlternativeNamesInput">Alternative names</label>
-              <textarea id="placeAlternativeNamesInput">${escapeHtml(draft.alternativeNames.join('\n'))}</textarea>
-            </details>
-            <details class="field full places-editor-disclosure" data-place-coordinate-details ${draft.disclosures.coordinates || !coordinateState.valid ? 'open' : ''}>
-              <summary><span class="places-editor-disclosure-summary-label">Advanced coordinates</span><span class="places-editor-disclosure-chevron" aria-hidden="true">${icon.chevron}</span></summary>
-              <p class="place-coordinate-help" id="placeCoordinateHelp">Enter decimal degrees. Latitude must be between -90 and 90; longitude must be between -180 and 180.</p>
-              <div class="place-coordinate-fields"><label for="placeLatitudeInput">Latitude<input id="placeLatitudeInput" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" maxlength="24" value="${escapeHtml(draft.coordinateText.latitude)}" placeholder="53.959400" aria-describedby="placeCoordinateHelp placeCoordinateError"></label><label for="placeLongitudeInput">Longitude<input id="placeLongitudeInput" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" maxlength="24" value="${escapeHtml(draft.coordinateText.longitude)}" placeholder="-1.082000" aria-describedby="placeCoordinateHelp placeCoordinateError"></label><button class="place-coordinate-copy-button" type="button" data-place-copy-coordinates aria-label="Copy coordinates" title="Copy coordinates" ${coordinateState.hasCoordinates ? '' : 'disabled'}>${icon.copy}</button></div>
-              <span class="place-coordinate-error" id="placeCoordinateError" role="alert" aria-live="polite"></span>
-            </details>
-            ${draft.mode === 'edit' ? `<details class="field full places-editor-disclosure place-editor-danger" data-place-danger-details ${draft.disclosures.danger ? 'open' : ''}><summary><span class="places-editor-disclosure-summary-label">Delete place</span><span class="places-editor-disclosure-chevron" aria-hidden="true">${icon.chevron}</span></summary><p>Deleting this place clears its structured links but keeps connected research records.</p><button class="button danger" type="button" data-place-delete-from-editor>Delete place</button></details>` : ''}
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="${escapeHtml(t('Close'))}">
+              ${icon.close}
+            </button>
           </div>
-          <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">${draft.mode === 'edit' ? 'Save changes' : 'Create place'}</button></div>
-        </form>
-      </div>`;
+
+          <form id="placeForm" novalidate>
+            <div class="modal-body form-grid place-editor-body">
+
+              <div class="field full place-editor-place-field">
+                <label for="placeNameInput">${escapeHtml(t('Place'))}</label>
+
+                <p class="place-editor-support" id="placeNameSupport">
+                  ${escapeHtml(t('Search existing places or map results, or enter a historical place name manually.'))}
+                </p>
+
+                <div class="place-editor-combobox" data-place-editor-combobox>
+                  <input
+                    id="placeNameInput"
+                    value="${escapeHtml(draft.name)}"
+                    placeholder="${escapeHtml(t('e.g. Pawford, North Yorkshire, England'))}"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded="false"
+                    aria-controls="placeEditorSuggestions"
+                    aria-describedby="placeNameSupport placeNameError"
+                    aria-invalid="false"
+                    autocomplete="off">
+
+                  <div
+                    class="place-editor-suggestions"
+                    id="placeEditorSuggestions"
+                    role="listbox"
+                    aria-label="${escapeHtml(t('Place suggestions'))}"
+                    hidden>
+                  </div>
+                </div>
+
+                <span
+                  class="place-editor-field-error"
+                  id="placeNameError"
+                  role="alert"></span>
+
+                <div
+                  class="place-editor-duplicate"
+                  data-place-duplicate-warning
+                  hidden>
+                </div>
+              </div>
+
+              <p
+                class="place-editor-selection-notice full"
+                data-place-selection-notice
+                hidden>
+              </p>
+
+              <section
+                class="place-map-location full"
+                aria-labelledby="placeMapLocationHeading">
+
+                <h3 id="placeMapLocationHeading">
+                  ${escapeHtml(t('Map location'))}
+                </h3>
+
+                <div class="place-map-location-row">
+                  <div class="place-map-status">
+                    ${icon.mapPin}
+
+                    <div class="place-map-status-copy">
+                      <strong data-place-map-status></strong>
+                      <span data-place-map-summary hidden></span>
+                    </div>
+                  </div>
+
+                  <div class="place-map-location-actions">
+                    <button
+                      class="button secondary compact"
+                      type="button"
+                      data-place-choose-map>
+                      ${escapeHtml(t(
+                        coordinateState.hasCoordinates
+                          ? 'Edit on map'
+                          : 'Choose on map'
+                      ))}
+                    </button>
+
+                    <button
+                      class="place-editor-text-action"
+                      type="button"
+                      data-place-remove-position
+                      ${coordinateState.hasAnyValue ? '' : 'hidden'}>
+                      ${escapeHtml(t('Remove position'))}
+                    </button>
+                  </div>
+                </div>
+
+                <details
+                  class="field full places-editor-disclosure"
+                  data-place-coordinate-details
+                  ${draft.disclosures.coordinates || !coordinateState.valid ? 'open' : ''}>
+
+                  <summary>
+                    <span class="places-editor-disclosure-summary-label">
+                      ${escapeHtml(t('Advanced coordinates'))}
+                    </span>
+                    <span class="places-editor-disclosure-chevron" aria-hidden="true">
+                      ${icon.chevron}
+                    </span>
+                  </summary>
+
+                  <p class="place-coordinate-help" id="placeCoordinateHelp">
+                    ${escapeHtml(t('Enter decimal degrees. Latitude must be between -90 and 90; longitude must be between -180 and 180.'))}
+                  </p>
+
+                  <div class="place-coordinate-fields">
+                    <label for="placeLatitudeInput">
+                      ${escapeHtml(t('Latitude'))}
+                      <input
+                        id="placeLatitudeInput"
+                        type="text"
+                        inputmode="decimal"
+                        autocomplete="off"
+                        spellcheck="false"
+                        maxlength="24"
+                        value="${escapeHtml(draft.coordinateText.latitude)}"
+                        placeholder="53.959400"
+                        aria-describedby="placeCoordinateHelp placeCoordinateError">
+                    </label>
+
+                    <label for="placeLongitudeInput">
+                      ${escapeHtml(t('Longitude'))}
+                      <input
+                        id="placeLongitudeInput"
+                        type="text"
+                        inputmode="decimal"
+                        autocomplete="off"
+                        spellcheck="false"
+                        maxlength="24"
+                        value="${escapeHtml(draft.coordinateText.longitude)}"
+                        placeholder="-1.082000"
+                        aria-describedby="placeCoordinateHelp placeCoordinateError">
+                    </label>
+
+                    <button
+                      class="place-coordinate-copy-button"
+                      type="button"
+                      data-place-copy-coordinates
+                      aria-label="${escapeHtml(t('Copy coordinates'))}"
+                      title="${escapeHtml(t('Copy coordinates'))}"
+                      ${coordinateState.hasCoordinates ? '' : 'disabled'}>
+                      ${icon.copy}
+                    </button>
+                  </div>
+
+                  <span
+                    class="place-coordinate-error"
+                    id="placeCoordinateError"
+                    role="alert"
+                    aria-live="polite"></span>
+                </details>
+              </section>
+
+              <details
+                class="field full places-editor-disclosure"
+                data-place-alternative-details
+                ${draft.disclosures.alternativeNames ? 'open' : ''}>
+
+                <summary>
+                  <span class="places-editor-disclosure-summary-label">
+                    ${escapeHtml(t('Historical / alternative names'))}
+                    <span data-place-alternative-count>
+                      ${alternativeCount ? ` · ${alternativeCount}` : ''}
+                    </span>
+                  </span>
+                  <span class="places-editor-disclosure-chevron" aria-hidden="true">
+                    ${icon.chevron}
+                  </span>
+                </summary>
+
+                <p class="place-editor-support">
+                  ${escapeHtml(t('Enter one full historical or alternative place name per line.'))}
+                </p>
+
+                <label for="placeAlternativeNamesInput">
+                  ${escapeHtml(t('Alternative names'))}
+                </label>
+                <textarea id="placeAlternativeNamesInput">${escapeHtml(
+                  draft.alternativeNames.join('\n')
+                )}</textarea>
+              </details>
+
+            </div>
+
+            <div class="modal-footer">
+              <button class="button secondary" type="button" data-close>
+                ${escapeHtml(t('Cancel'))}
+              </button>
+              <button class="button primary" type="submit">
+                ${escapeHtml(t(draft.mode === 'edit' ? 'Save changes' : 'Create place'))}
+              </button>
+            </div>
+          </form>
+        </div>
+      `;
     }
 
     function startPlaceEditorMapSelection() {
@@ -164871,6 +165363,127 @@
         if (draft.mode === 'edit') enterPlacesMapMoveMode(draft.placeId);
         else enterPlacesMapAddMode();
       }));
+    }
+
+    function openPlaceDuplicateMenu(anchor, placeId) {
+      const root = anchor.closest('[data-place-editor]');
+      const draft = placeEditorDraft;
+
+      if (!root || !draft) return;
+
+      if (
+        document.querySelector('[data-place-duplicate-menu]')
+        && menuLifecycleAnchor === anchor
+      ) {
+        closeMenu();
+        return;
+      }
+
+      closeMenu();
+
+      const menu = document.createElement('div');
+      menu.id = 'projectMenu';
+      menu.className = 'menu-popover';
+      menu.dataset.placeDuplicateMenu = '';
+      menu.setAttribute('role', 'menu');
+      menu.setAttribute('aria-label', t('More actions'));
+
+      menu.innerHTML = `
+        <button
+          type="button"
+          role="menuitem"
+          data-duplicate-action="details">
+          ${escapeHtml(t('Place details'))}
+        </button>
+
+        <button
+          type="button"
+          role="menuitem"
+          data-duplicate-action="ignore">
+          ${escapeHtml(t('Ignore'))}
+        </button>
+      `;
+
+      // Keep the menu inside the modal's focus boundary,
+      // but outside its scrolling content.
+      modalBackdrop.appendChild(menu);
+
+      const rect = anchor.getBoundingClientRect();
+      const menuRect = menu.getBoundingClientRect();
+
+      const left = Math.max(
+        12,
+        Math.min(rect.right - menuRect.width,
+          window.innerWidth - menuRect.width - 12)
+      );
+
+      const preferredTop = rect.bottom + 6;
+      const top = preferredTop + menuRect.height <= window.innerHeight - 12
+        ? preferredTop
+        : Math.max(12, rect.top - menuRect.height - 6);
+
+      menu.style.left = `${left}px`;
+      menu.style.top = `${top}px`;
+
+      anchor.setAttribute('aria-expanded', 'true');
+      bindMenuLifecycle(anchor);
+
+      menu.addEventListener('click', event => {
+        const action = event.target.closest('[data-duplicate-action]')
+          ?.dataset.duplicateAction;
+
+        if (!action) return;
+
+        closeMenu();
+
+        if (!root.isConnected || placeEditorDraft !== draft) return;
+
+        if (action === 'details') {
+          const panel = root.querySelector('#placeDuplicateReview');
+          if (panel) panel.hidden = !panel.hidden;
+
+          anchor.focus({ preventScroll: true });
+          return;
+        }
+
+        if (action === 'ignore') {
+          draft.dismissedDuplicateId = placeId;
+          draft.existingCandidateId = null;
+          draft.duplicateOverride = true;
+
+          renderPlaceEditorDuplicateWarning();
+
+          root.querySelector('[data-place-choose-map]')?.focus({
+            preventScroll: true
+          });
+        }
+      });
+
+      const items = [...menu.querySelectorAll('[role="menuitem"]')];
+
+      menu.addEventListener('keydown', event => {
+        const index = items.indexOf(document.activeElement);
+        let next;
+
+        if (event.key === 'ArrowDown') next = (index + 1) % items.length;
+        else if (event.key === 'ArrowUp') {
+          next = (index - 1 + items.length) % items.length;
+        } else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = items.length - 1;
+        else if (event.key === 'Tab') {
+          event.preventDefault();
+          closeMenu();
+          anchor.focus({ preventScroll: true });
+          return;
+        } else {
+          return;
+        }
+
+        event.preventDefault();
+        items[next].focus({ preventScroll: true });
+      });
+
+      items[0]?.focus({ preventScroll: true });
     }
 
     function bindPlaceEditor() {
@@ -164987,7 +165600,6 @@
       root.querySelectorAll('details').forEach(details => details.addEventListener('toggle', () => {
         if (details.matches('[data-place-alternative-details]')) draft.disclosures.alternativeNames = details.open;
         if (details.matches('[data-place-coordinate-details]')) draft.disclosures.coordinates = details.open;
-        if (details.matches('[data-place-danger-details]')) draft.disclosures.danger = details.open;
       }));
       ['#placeLatitudeInput', '#placeLongitudeInput'].forEach(selector => {
         root.querySelector(selector)?.addEventListener('input', () => {
@@ -165013,33 +165625,37 @@
       root.querySelector('[data-place-remove-position]')?.addEventListener('click', () => {
         root.querySelector('#placeLatitudeInput').value = '';
         root.querySelector('#placeLongitudeInput').value = '';
+
         draft.selectedSuggestion = null;
         draft.duplicateOverride = false;
         draft.dismissedDuplicateId = null;
+
         updatePlaceEditorSelectionNotice();
         updatePlaceEditorCoordinateUi();
+        renderPlaceEditorDuplicateWarning();
+
+        root.querySelector('[data-place-choose-map]')?.focus({
+          preventScroll: true
+        });
       });
       root.querySelector('[data-place-choose-map]')?.addEventListener('click', startPlaceEditorMapSelection);
       root.querySelector('[data-place-duplicate-warning]')?.addEventListener('click', event => {
-        const existingId = event.target.closest('[data-place-use-existing]')?.dataset.placeUseExisting;
-        if (existingId) useExistingPlaceFromEditor(existingId);
-        if (event.target.closest('[data-place-create-another]')) {
-          draft.duplicateOverride = true;
-          commitPlaceEditorDraft({ allowDuplicate: true });
+        const moreButton = event.target.closest('[data-place-duplicate-more]');
+
+        if (moreButton) {
+          openPlaceDuplicateMenu(
+            moreButton,
+            moreButton.dataset.placeDuplicateMore
+          );
+          return;
         }
-        const continueId = event.target.closest('[data-place-continue-editing]')?.dataset.placeContinueEditing;
-        if (continueId) {
-          draft.dismissedDuplicateId = continueId;
-          draft.existingCandidateId = null;
-          draft.duplicateOverride = true;
-          renderPlaceEditorDuplicateWarning();
-          input.focus();
+
+        const existingId = event.target.closest('[data-place-use-existing]')
+          ?.dataset.placeUseExisting;
+
+        if (existingId && draft.mode === 'add') {
+          useExistingPlaceFromEditor(existingId);
         }
-      });
-      root.querySelector('[data-place-delete-from-editor]')?.addEventListener('click', () => {
-        const placeId = draft.placeId;
-        syncPlaceEditorDraftFromModal();
-        openDeletePlaceModal(placeId, { returnToEditor: true });
       });
       root.querySelector('#placeForm')?.addEventListener('submit', event => {
         event.preventDefault();
@@ -167485,6 +168101,16 @@
 
       if (event.key === 'Escape') {
         event.preventDefault();
+
+        if (modalBackdrop.querySelector('[data-place-duplicate-menu]')) {
+          const anchor = menuLifecycleAnchor;
+
+          event.stopPropagation();
+          closeMenu();
+          anchor?.focus({ preventScroll: true });
+          return;
+        }
+
         closeModal();
         return;
       }
@@ -167919,6 +168545,9 @@
     }
 
     function closeModal(options = {}) {
+      if (document.querySelector('[data-place-duplicate-menu]')) {
+        closeMenu();
+      }
       const {
         force = false,
         preservePlaceEditor = false
