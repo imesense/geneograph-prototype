@@ -29043,7 +29043,7 @@
       padding: 8px 10px;
       display: grid;
       grid-template-columns:
-        36px
+        45px
         minmax(0, 1fr)
         auto;
       align-items: center;
@@ -29083,11 +29083,10 @@
       outline-offset: 2px;
     }
 
-    .places-route-popup-avatar {
-      width: 36px;
-      height: 36px;
-      flex: 0 0 36px;
-      font-size: 11px;
+    .person-avatar.places-route-popup-avatar {
+      --person-avatar-width: 45px;
+      --person-avatar-height: 45px;
+      --person-avatar-font-size: 11px;
     }
 
     .places-route-popup-subject-copy,
@@ -29170,7 +29169,7 @@
       padding: 8px 10px;
       display: grid;
       grid-template-columns:
-        36px
+        45px
         minmax(0, 1fr)
         24px;
       align-items: center;
@@ -35643,6 +35642,9 @@
       'View all sources':
         'Показать все источники',
 
+      'View all files': 'Показать все файлы',
+      'View all notes': 'Показать все заметки',
+
       'Remove the connection between “{source}” and “{record}”?':
         'Удалить связь между «{source}» и «{record}»?',
 
@@ -36207,6 +36209,9 @@
       'Places view mode':
         'Режим отображения мест',
 
+      'Unlink file from place?': 'Удалить связь с файлом?',
+      'Unlink note from place?': 'Удалить связь с заметкой?',
+
       'Map view':
         'Карта',
 
@@ -36608,7 +36613,7 @@
       'Other events':
         'Другие события',
 
-      'Show all events':
+      'View all events':
         'Показать все события',
 
       'Show less':
@@ -36623,16 +36628,10 @@
       'No connected files.':
         'Связанных файлов нет.',
 
-      'Open in Archive':
-        'Открыть в Архиве',
-
       'No connected notes.':
         'Связанных заметок нет.',
 
       'No sources linked to this place.': 'Связанных источников нет.',
-
-      'Open in Notes':
-        'Открыть в Заметках',
 
       // ========================================
       // Place actions
@@ -160914,7 +160913,7 @@
               "
               type="button"
               data-place-events-toggle>
-              <span>${showAll ? 'Show less' : 'Show all events'}</span>
+              <span>${showAll ? 'Show less' : 'View all events'}</span>
               <span class="panel-section-view-all-icon" aria-hidden="true">${icon.chevron}</span>
             </button>
           `
@@ -161159,7 +161158,7 @@
           data-place-view-all-files>
 
           <span>
-            Open in Archive
+            View all files
           </span>
 
           <span
@@ -161220,7 +161219,7 @@
           type="button"
           data-place-view-all-notes>
 
-          <span>Open in Notes</span>
+          <span>View all notes</span>
 
           <span
             class="
