@@ -20703,13 +20703,6 @@
       white-space: nowrap;
     }
 
-    .notes-place-results-heading {
-      min-width: 0;
-
-      display: grid;
-      gap: 2px;
-    }
-
     .notes-place-result-icon {
       width: 44px;
       height: 44px;
@@ -34925,6 +34918,28 @@
       'Create linked note':
         'Создать связанную заметку',
 
+      'No photos linked.': 'Нет связанных фото',
+      'Unlink person?':
+        'Удалить связь с человеком?',
+
+      'Unlink event?':
+        'Удалить связь с событием?',
+
+      'Unlink note?':
+        'Удалить связь с заметкой?',
+
+      'Unlink place?':
+        'Удалить связь с местом?',
+
+      'Unlink photo?':
+        'Удалить связь с фотографией?',
+
+      'Unlink source?':
+        'Удалить связь с источником?',
+
+      'Only the connection will be removed.':
+        'Будет удалена только связь.',
+
       // ========================================
       // Filters
       // ========================================
@@ -35299,6 +35314,8 @@
       'Move file':
         'Переместить файл',
 
+      'Move': 'Переместить',
+
       'Choose a destination folder.':
         'Выберите папку назначения.',
 
@@ -35424,6 +35441,21 @@
         'Источник создан.',
       'View all sources':
         'Показать все источники',
+
+      'Remove the connection between “{source}” and “{record}”?':
+        'Удалить связь между «{source}» и «{record}»?',
+
+      'Only this connection will be removed. Both records and their other connections will remain in the project.':
+        'Будет удалена только эта связь. Обе записи и их остальные связи сохранятся в проекте.',
+
+      'The source or connected record is no longer available.':
+        'Источник или связанная запись больше недоступны.',
+
+      'The source link could not be removed.':
+        'Не удалось удалить связь с источником.',
+
+      'Source unlinked.':
+        'Связь с источником удалена.',
 
       'Connected to':
         'Связано с',
@@ -38188,6 +38220,20 @@
       'Close add places dialog': 'Закрыть окно добавления мест',
       'Search by name, broader place, or historical name': 'Поиск по названию, более широкому месту или историческому названию',
       'Suggested places': 'Предлагаемые места',
+      '{count} place available':
+        'Доступно мест: {count}',
+
+      '{count} places available':
+        'Доступно мест: {count}',
+
+      '{count} match':
+        'Найдено: {count}',
+
+      '{count} matches':
+        'Найдено: {count}',
+
+      '{count} already connected':
+        'Уже связано: {count}',
       'Place links updated.': 'Связи с местами обновлены.',
       'Close add events dialog': 'Закрыть окно добавления событий',
       'No events were linked.': 'События не были связаны.',
@@ -115850,128 +115896,219 @@
         </button>
       `;
     }
-    
+
+    function openConnectedSourceUnlinkConfirm({
+      sourceId,
+      targetType,
+      targetId,
+      projectId = currentProjectId(),
+      onUnlinked = null
+    }) {
+      const source =
+        archiveSourceById(sourceId, projectId);
+
+      const target =
+        sourceTargetRecord(
+          targetType,
+          targetId,
+          projectId
+        );
+
+      if (!source || !target) {
+        showToast(
+          t('The source or connected record is no longer available.')
+        );
+        return;
+      }
+
+      const sourceLabel =
+        source.title || t('Untitled source');
+
+      const targetLabel =
+        connectedSourceTargetLabel(targetType, target);
+
+      const question = t(
+        'Remove the connection between “{source}” and “{record}”?'
+      ).replace(
+        /\{source\}|\{record\}/g,
+        token =>
+          token === '{source}'
+            ? sourceLabel
+            : targetLabel
+      );
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="connectedSourceUnlinkTitle"
+          aria-describedby="connectedSourceUnlinkQuestion">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="connectedSourceUnlinkTitle">
+                ${escapeHtml(t('Unlink source?'))}
+              </h2>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="${escapeHtml(t('Close'))}">
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <p id="connectedSourceUnlinkQuestion">
+              ${escapeHtml(question)}
+            </p>
+
+            <div class="unlink-relationship-warning">
+              <span>
+                ${escapeHtml(t(
+                  'Only this connection will be removed. Both records and their other connections will remain in the project.'
+                ))}
+              </span>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+              ${escapeHtml(t('Cancel'))}
+            </button>
+
+            <button
+              class="button danger"
+              type="button"
+              data-connected-source-confirm-unlink>
+              ${escapeHtml(t('Unlink'))}
+            </button>
+          </div>
+        </div>
+      `);
+
+      const confirmButton =
+        modalBackdrop.querySelector(
+          '[data-connected-source-confirm-unlink]'
+        );
+
+      confirmButton?.addEventListener('click', () => {
+        // Recheck the records before committing the change.
+        const currentSource =
+          archiveSourceById(sourceId, projectId);
+
+        const currentTarget =
+          sourceTargetRecord(
+            targetType,
+            targetId,
+            projectId
+          );
+
+        if (!currentSource || !currentTarget) {
+          showToast(t(
+            'The source or connected record is no longer available.'
+          ));
+          return;
+        }
+
+        confirmButton.disabled = true;
+
+        const removed = setSourceLink(
+          sourceId,
+          targetType,
+          targetId,
+          false,
+          { projectId }
+        );
+
+        if (!removed) {
+          confirmButton.disabled = false;
+          showToast(t(
+            'The source link could not be removed.'
+          ));
+          return;
+        }
+
+        closeModal();
+
+        if (typeof onUnlinked === 'function') {
+          onUnlinked({
+            sourceId,
+            targetType,
+            targetId,
+            projectId
+          });
+        }
+
+        showToast(t('Source unlinked.'));
+      });
+    }
+
     function bindConnectedSourceLinks(
       root,
-      {
-        onUnlinked =
-          null
-      } = {}
+      { onUnlinked = null } = {}
     ) {
       if (!root) {
         return;
       }
-      root
-        .querySelectorAll(
-          '[data-connected-source-view-all]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              openArchiveSourcesForTarget({
-                targetType:
-                  button.dataset
-                    .connectedSourceTargetType,
 
-                targetId:
-                  button.dataset
-                    .connectedSourceTargetId,
+      root.querySelectorAll(
+        '[data-connected-source-view-all]'
+      ).forEach(button => {
+        button.addEventListener('click', () => {
+          openArchiveSourcesForTarget({
+            targetType:
+              button.dataset.connectedSourceTargetType,
+            targetId:
+              button.dataset.connectedSourceTargetId,
+            projectId:
+              button.dataset.connectedSourceProject
+              || currentProjectId()
+          });
+        });
+      });
 
-                projectId:
-                  button.dataset
-                    .connectedSourceProject
-                  || currentProjectId()
-              });
-            }
+      root.querySelectorAll(
+        '[data-connected-source-open]'
+      ).forEach(button => {
+        button.addEventListener('click', () => {
+          openConnectedSource(
+            button.dataset.connectedSourceOpen,
+            button.dataset.connectedSourceProject
+              || currentProjectId()
           );
         });
-      root
-        .querySelectorAll(
-          '[data-connected-source-open]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              openConnectedSource(
-                button.dataset
-                  .connectedSourceOpen,
+      });
 
-                button.dataset
-                  .connectedSourceProject
-                  || currentProjectId()
-              );
-            }
-          );
+      root.querySelectorAll(
+        '[data-connected-source-unlink]'
+      ).forEach(button => {
+        button.addEventListener('click', event => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          openConnectedSourceUnlinkConfirm({
+            sourceId:
+              button.dataset.connectedSourceUnlink,
+            targetType:
+              button.dataset.connectedSourceTargetType,
+            targetId:
+              button.dataset.connectedSourceTargetId,
+            projectId:
+              button.dataset.connectedSourceProject
+              || currentProjectId(),
+            onUnlinked
+          });
         });
-
-      root
-        .querySelectorAll(
-          '[data-connected-source-unlink]'
-        )
-        .forEach(button => {
-          button.addEventListener(
-            'click',
-            event => {
-              event.preventDefault();
-              event.stopPropagation();
-
-              const sourceId =
-                button.dataset
-                  .connectedSourceUnlink;
-
-              const targetType =
-                button.dataset
-                  .connectedSourceTargetType;
-
-              const targetId =
-                button.dataset
-                  .connectedSourceTargetId;
-
-              const projectId =
-                button.dataset
-                  .connectedSourceProject
-                  || currentProjectId();
-
-              const removed =
-                setSourceLink(
-                  sourceId,
-                  targetType,
-                  targetId,
-                  false,
-                  {
-                    projectId
-                  }
-                );
-
-              if (!removed) {
-                showToast(
-                  'The source link could not be removed.'
-                );
-
-                return;
-              }
-
-              if (
-                typeof onUnlinked
-                  === 'function'
-              ) {
-                onUnlinked({
-                  sourceId,
-                  targetType,
-                  targetId,
-                  projectId
-                });
-              }
-
-              showToast(
-                'Source unlinked.'
-              );
-            }
-          );
-        });
+      });
     }
+
     function openSourcesForTargetModal({
       targetType,
       targetId,
@@ -127465,7 +127602,21 @@
           source,
           entityType
         );
-
+      const countLabel =
+        state.language === 'ru'
+        && entityType === 'photo'
+          ? `${
+              RU_NUMBER_FORMATTER.format(
+                records.length
+              )
+            } фото`
+          : translateText(
+              `${records.length} ${
+                records.length === 1
+                  ? config.singular
+                  : config.title.toLowerCase()
+              }`
+            );
       return renderArchiveSourceSection(
         entityType,
         config.title,
@@ -127478,13 +127629,7 @@
           source,
           entityType
         ),
-        translateText(
-          `${records.length} ${
-            records.length === 1
-              ? config.singular
-              : config.title.toLowerCase()
-          }`
-        )
+        countLabel
       );
     }
 
@@ -134767,43 +134912,186 @@
         });
     }
 
-    function openArchiveUnlinkConfirm({ ownerType, ownerId, entityType, entityId }) {
-      const config = archiveEntityConfig(entityType);
-      const record = archiveConnectionRecord(entityType, entityId);
-      if (!config || !record) return;
-      openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveUnlinkTitle"><div class="modal-header"><div><h2 id="archiveUnlinkTitle">Unlink ${escapeHtml(config.singular)}?</h2><p>${escapeHtml(config.label(record))}</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div><div class="modal-body"><div class="unlink-relationship-warning"><strong>The linked record will not be deleted. </strong><span>Only this connection will be removed. The file, source, and genealogy record will remain available.</span></div></div><div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-archive-unlink-confirm>Unlink</button></div></div>`);
-      modalBackdrop.querySelector('[data-archive-unlink-confirm]')?.addEventListener('click', () => {
-        if (
-          !archiveSetConnection(
-            ownerType,
-            ownerId,
-            entityType,
-            entityId,
-            false
-          )
-        ) {
-          showToast(
-            'The link could not be removed.'
-          );
-
-          return;
-        }
-
-        closeModal();
-
-        if (
-          ownerType === 'source'
-          && state.archiveView === 'sources'
-        ) {
-          renderArchivePreservingSourceInspectorScroll();
-        } else {
-          renderArchive();
-        }
-
-        showToast(
-          'Link removed.'
+    function openArchiveUnlinkConfirm({
+      ownerType,
+      ownerId,
+      entityType,
+      entityId
+    }) {
+      const config =
+        archiveEntityConfig(
+          entityType
         );
-      });
+
+      const record =
+        archiveConnectionRecord(
+          entityType,
+          entityId
+        );
+
+      const owner =
+        ownerType === 'source'
+          ? archiveSourceById(
+              ownerId
+            )
+          : ownerType === 'file'
+            ? archiveFileById(
+                ownerId
+              )
+            : null;
+
+      if (
+        !config
+        || !record
+        || !owner
+      ) {
+        return;
+      }
+
+      const recordLabel =
+        config.label(record);
+
+      const ownerLabel =
+        ownerType === 'source'
+          ? (
+              owner.title
+              || 'Untitled source'
+            )
+          : (
+              owner.name
+              || owner.title
+              || 'Untitled file'
+            );
+
+      const ownerKind =
+        ownerType === 'source'
+          ? 'source'
+          : 'file';
+
+      const relationshipCopy =
+        state.language === 'ru'
+          ? `Связь между «${recordLabel}» и ${
+              ownerType === 'source'
+                ? 'источником'
+                : 'файлом'
+            } «${ownerLabel}» будет удалена. Обе записи останутся в проекте.`
+          : `“${recordLabel}” will no longer be linked to the ${ownerKind} “${ownerLabel}”. Neither record will be deleted.`;
+
+      openModal(`
+        <div
+          class="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="archiveUnlinkTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="archiveUnlinkTitle">
+                ${escapeHtml(
+                  t(
+                    `Unlink ${config.singular}?`
+                  )
+                )}
+              </h2>
+
+              <p>
+                ${escapeHtml(
+                  recordLabel
+                )}
+              </p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="${escapeHtml(
+                t('Close')
+              )}">
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <div class="unlink-relationship-warning">
+              <strong>
+                ${escapeHtml(
+                  t(
+                    'Only the connection will be removed.'
+                  )
+                )}
+              </strong>
+
+              <span>
+                ${escapeHtml(
+                  relationshipCopy
+                )}
+              </span>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+              ${escapeHtml(
+                t('Cancel')
+              )}
+            </button>
+
+            <button
+              class="button danger"
+              type="button"
+              data-archive-unlink-confirm>
+              ${escapeHtml(
+                t('Unlink')
+              )}
+            </button>
+          </div>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelector(
+          '[data-archive-unlink-confirm]'
+        )
+        ?.addEventListener(
+          'click',
+          () => {
+            if (
+              !archiveSetConnection(
+                ownerType,
+                ownerId,
+                entityType,
+                entityId,
+                false
+              )
+            ) {
+              showToast(
+                'The link could not be removed.'
+              );
+
+              return;
+            }
+
+            closeModal();
+
+            if (
+              ownerType === 'source'
+              && state.archiveView
+                === 'sources'
+            ) {
+              renderArchivePreservingSourceInspectorScroll();
+            } else {
+              renderArchive();
+            }
+
+            showToast(
+              'Link removed.'
+            );
+          }
+        );
     }
 
     function deleteArchiveFilesPermanently(fileIds) {
@@ -145745,14 +146033,17 @@
 
             <section class="photo-people-results-panel">
 
-              <div class="photo-people-results-head">
-                <strong
-                  data-notes-people-results-title>
-                </strong>
+              <div class="notes-related-results-head">
+                <div>
+                  <strong
+                    data-notes-place-results-title>
+                  </strong>
 
-                <span
-                  data-notes-people-results-meta>
-                </span>
+                  <span
+                    data-notes-place-results-meta
+                    aria-live="polite">
+                  </span>
+                </div>
               </div>
 
               <div
@@ -148581,45 +148872,72 @@
           );
         };
 
-      const refreshResults =
-        () => {
-          const places =
-            visiblePlaces();
+      const refreshResults = () => {
+        const places =
+          visiblePlaces();
 
-          const queryActive =
-            Boolean(
-              normalizePlaceLookupText(
-                query
+        const queryActive =
+          Boolean(
+            normalizePlaceLookupText(query)
+          );
+
+        // Saved connections, independent of draft selections.
+        const connectedCount =
+          [...initialSelectedIds]
+            .filter(validPlace)
+            .length;
+
+        const availableLabel =
+          queryActive
+            ? (
+                places.length === 1
+                  ? '{count} match'
+                  : '{count} matches'
               )
-            );
+            : (
+                places.length === 1
+                  ? '{count} place available'
+                  : '{count} places available'
+              );
 
-          resultsTitle.textContent =
+        resultsTitle.textContent =
+          t(
             queryActive
               ? 'Search results'
-              : 'Suggested places';
-
-          resultsMeta.textContent =
-            queryActive
-              ? `${places.length} ${
-                  places.length === 1
-                    ? 'match'
-                    : 'matches'
-                }`
-              : `${places.length} ${
-                  places.length === 1
-                    ? 'place available'
-                    : 'places available'
-                }`;
-
-          resultsHost.innerHTML =
-            renderResults(
-              places
-            );
-
-          localizeUI(
-            resultsHost
+              : 'Suggested places'
           );
-        };
+
+        const numberFormatter =
+          new Intl.NumberFormat(
+            state.language === 'ru'
+              ? 'ru-RU'
+              : 'en-US'
+          );
+
+        const availableText =
+          t(availableLabel).replace(
+            '{count}',
+            numberFormatter.format(
+              places.length
+            )
+          );
+
+        const connectedText =
+          t('{count} already connected').replace(
+            '{count}',
+            numberFormatter.format(
+              connectedCount
+            )
+          );
+
+        resultsMeta.textContent =
+          `${availableText} · ${connectedText}`;
+
+        resultsHost.innerHTML =
+          renderResults(places);
+
+        localizeUI(resultsHost);
+      };
 
       const refreshFooter =
         () => {
