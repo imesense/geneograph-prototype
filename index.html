@@ -1822,23 +1822,6 @@
         #F2AEAE;
     }
 
-    .app-chip--sources {
-      --app-chip-border:
-        rgba(184, 148, 99, .38);
-
-      --app-chip-background:
-        rgba(92, 70, 43, .3);
-
-      --app-chip-color:
-        #D8BC96;
-
-      --app-chip-on-accent-border:
-        rgba(184, 148, 99, .48);
-
-      --app-chip-on-accent-color:
-        #E1C7A4;
-    }
-
     .app-chip--files {
       --app-chip-border:
         rgba(212, 170, 107, .32);
@@ -11421,12 +11404,27 @@
       overscroll-behavior: contain;
       scrollbar-gutter: stable;
     }
-
     .profile-resource-card--archive
     .connected-file-list {
+      width: 100%;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-content: start;
       gap: 0;
     }
 
+    .profile-resource-card--archive
+    .connected-file-item {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .profile-resource-card--archive
+    .connected-file-main {
+      width: 100%;
+      min-width: 0;
+    }
     .profile-file-row {
       padding: 5px 8px;
       display: grid;
@@ -57185,11 +57183,13 @@
       return person && getPerson(person.id) ? person.id : null;
     }
 
+    const CONNECTED_NOTES_PREVIEW_LIMIT = 3;
+
     const PERSON_PANEL_PREVIEW_LIMITS =
       Object.freeze({
         photos: 3,
         archive: 3,
-        notes: 2
+        notes: CONNECTED_NOTES_PREVIEW_LIMIT
       });
 
     function personResourceDisplayName(person) {
@@ -57876,19 +57876,6 @@
           person.id
         ).length;
 
-      const centralPerson =
-        getPerson(
-          person.id
-        );
-
-      const sourceCount =
-        centralPerson
-          ? sourcesForTarget(
-              'person',
-              centralPerson.id,
-              centralPerson.projectId
-            ).length
-          : 0;
       const viewState = treeProjectViewState();
       const isFocusPerson = viewState.focusPersonId === person.id;
 
@@ -58019,27 +58006,6 @@
                 noteCount === 1
                   ? 'note'
                   : 'notes'
-              }
-            </button>
-            <button
-              class="
-                app-chip
-                app-chip--sources
-              "
-              type="button"
-              data-person-chip-section="sources"
-              aria-controls="section-sources"
-              aria-label="Show ${sourceCount} ${
-                sourceCount === 1
-                  ? 'source'
-                  : 'sources'
-              }">
-
-              ${sourceCount}
-              ${
-                sourceCount === 1
-                  ? 'source'
-                  : 'sources'
               }
             </button>
           </div>
@@ -71856,20 +71822,13 @@
           ${renderProfileConnectedPhotos(
             person
           )}
-
           ${renderProfileConnectedFiles(
             person
           )}
-
           ${renderProfileConnectedNotes(
             person
           )}
-
           ${renderProfileConnectedPlaces(
-            person
-          )}
-
-          ${renderProfileConnectedSources(
             person
           )}
         </section>
@@ -76487,19 +76446,28 @@
       bindToasts(root);
     }
 
+    function connectedSourceFilterOptions() {
+      return archiveProjectSources()
+        .map(source => ({
+          value: source.id,
+          label: source.title || source.id
+        }))
+        .sort((a, b) =>
+          a.label.localeCompare(
+            b.label,
+            state.language === 'ru' ? 'ru' : 'en'
+          )
+        );
+    }
+
     // ---------- Canonical Albums module ----------
 
     const defaultAlbumFilters =
       Object.freeze({
-        personId:
-          '',
-
-        placeId:
-          '',
-
-        dateRange:
-          '',
-
+        personId: '',
+        placeId: '',
+        dateRange: '',
+        sourceId: '',
         favouriteOnly:
           false
       });
@@ -76714,6 +76682,16 @@
 
     const albumsFilterSchema =
       Object.freeze([
+        Object.freeze({
+          key: 'sourceId',
+          label: 'Source',
+          control: 'combobox',
+          multiple: false,
+          layout: 'full',
+          placeholder: 'Search sources...',
+          defaultValue: '',
+          getOptions: connectedSourceFilterOptions
+        }),
         Object.freeze({
           key:
             'personId',
@@ -80003,7 +79981,18 @@
       const filters =
         state.albumsFilters
         || defaultAlbumFilters;
+      if (filters.sourceId) {
+        const linkedPhotoIds = new Set(
+          archiveSourceConnectionRecords(
+            archiveSourceById(filters.sourceId),
+            'photo'
+          ).map(photo => photo.id)
+        );
 
+        photos = photos.filter(photo =>
+          linkedPhotoIds.has(photo.id)
+        );
+      }
       if (
         filters.personId === 'none'
       ) {
@@ -82484,18 +82473,59 @@
       `;
     }
 
+    function renderConnectedNotesFooter({
+      contextType,
+      contextId,
+      count
+    }) {
+      if (!contextId || !count) return '';
+
+      const label = translateText(
+        `View all ${count} ${count === 1 ? 'note' : 'notes'}`
+      );
+
+      return `
+        <div class="panel-section-footer">
+          <button
+            class="panel-section-view-all"
+            type="button"
+            data-connected-notes-view-all
+            data-notes-context-type="${escapeHtml(contextType)}"
+            data-notes-context-id="${escapeHtml(contextId)}">
+
+            <span>${escapeHtml(label)}</span>
+
+            <span
+              class="panel-section-view-all-icon"
+              aria-hidden="true">
+              ${icon.chevron}
+            </span>
+          </button>
+        </div>
+      `;
+    }
+
+    function bindConnectedNotesFooters(root) {
+      root?.querySelectorAll('[data-connected-notes-view-all]')
+        .forEach(button => {
+          button.onclick = event => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            openNotesForContext(
+              button.dataset.notesContextType,
+              button.dataset.notesContextId
+            );
+          };
+        });
+    }
+
     function renderAlbumsPhotoNotes(
       photo,
-      notes = getNotesForPhoto(
-        photo.id,
-        {
-          projectId:
-            photo.projectId,
-
-          includeArchived:
-            false
-        }
-      )
+      notes = getNotesForPhoto(photo.id, {
+        projectId: photo.projectId,
+        includeArchived: false
+      })
     ) {
       if (!notes.length) {
         return renderInspectorSectionEmpty(
@@ -82503,21 +82533,23 @@
         );
       }
 
-      return renderConnectedNoteList({
+      const items = renderConnectedNoteList({
         notes,
-
-        contextType:
-          'photo',
-
-        contextId:
-          photo.id,
-
-        emptyText:
-          'No notes linked to this photo.',
-
-        allowUnlink:
-          true
+        contextType: 'photo',
+        contextId: photo.id,
+        emptyText: 'No notes linked to this photo.',
+        allowUnlink: true
       });
+
+      return `
+        ${items}
+
+        ${renderConnectedNotesFooter({
+          contextType: 'photo',
+          contextId: photo.id,
+          count: notes.length
+        })}
+      `;
     }
 
     function openAlbumsPhotoNotesModal(
@@ -82971,7 +83003,13 @@
         || defaultAlbumFilters;
 
       const chips = [];
-
+      if (filters.sourceId) {
+        chips.push([
+          'sourceId',
+          archiveSourceById(filters.sourceId)?.title
+            || translateText('Source')
+        ]);
+      }
       if (filters.personId) {
         chips.push([
           'personId',
@@ -88289,6 +88327,7 @@
     }
 
     function bindAlbumsControls() {
+      bindConnectedNotesFooters(main);
       bindToasts(main);
       bindGenealogyDateFields(main);
       bindPlaceComboboxes(main);
@@ -116219,40 +116258,30 @@
 
       return `
         <div
-          class="
-            relationship-list
-            connected-source-list
-          "
+          class="relationship-list connected-source-list"
           data-connected-source-list>
-
           ${sourceItems}
         </div>
 
-        <button
-          class="panel-section-view-all"
-          type="button"
-          data-connected-source-view-all
-          data-connected-source-target-type="${escapeHtml(
-            targetType
-          )}"
-          data-connected-source-target-id="${escapeHtml(
-            targetId
-          )}"
-          data-connected-source-project="${escapeHtml(
-            projectId
-          )}"
-          aria-label="View all ${validSources.length} sources">
+        <div class="panel-section-footer">
+          <button
+            class="panel-section-view-all"
+            type="button"
+            data-connected-source-view-all
+            data-connected-source-target-type="${escapeHtml(targetType)}"
+            data-connected-source-target-id="${escapeHtml(targetId)}"
+            data-connected-source-project="${escapeHtml(projectId)}"
+            aria-label="View all ${validSources.length} sources">
 
-          <span>
-            View all sources
-          </span>
+            <span>View all sources</span>
 
-          <span
-            class="panel-section-view-all-icon"
-            aria-hidden="true">
-            ${icon.chevron}
-          </span>
-        </button>
+            <span
+              class="panel-section-view-all-icon"
+              aria-hidden="true">
+              ${icon.chevron}
+            </span>
+          </button>
+        </div>
       `;
     }
 
@@ -117882,29 +117911,20 @@
 
     const defaultArchiveFileFilters =
       Object.freeze({
-        scope:
-          'all',
-
-        fileType:
-          'all',
-
-        connections:
-          'all',
-
+        scope: 'all',
+        fileType: 'all',
+        connections: 'all',
+        sourceId: '',
         personIds:
           Object.freeze([]),
-
         placeIds:
           Object.freeze([]),
-
         documentYears:
           Object.freeze({
             mode:
               '',
-
             from:
               '',
-
             to:
               ''
           }),
@@ -118072,6 +118092,16 @@
 
     const archiveFileFilterSchema =
       Object.freeze([
+        Object.freeze({
+          key: 'sourceId',
+          label: 'Source',
+          control: 'combobox',
+          multiple: false,
+          layout: 'full',
+          placeholder: 'Search sources...',
+          defaultValue: '',
+          getOptions: connectedSourceFilterOptions
+        }),
         Object.freeze({
           key:
             'scope',
@@ -121721,6 +121751,13 @@
       filters,
       query
     ) {
+      if (
+        filters.sourceId
+        && !archiveFilesForSource(filters.sourceId)
+          .some(linkedFile => linkedFile.id === file.id)
+      ) {
+        return false;
+      }
       if (
         query
         && !archiveSearchText(
@@ -127151,14 +127188,8 @@
         .filter(Boolean);
     }
 
-    function renderArchiveFileNotes(
-      file,
-      readOnly
-    ) {
-      const notes =
-        archiveFileNoteRecords(
-          file
-        );
+    function renderArchiveFileNotes(file, readOnly) {
+      const notes = archiveFileNoteRecords(file);
 
       if (!notes.length) {
         return renderInspectorSectionEmpty(
@@ -127166,46 +127197,37 @@
         );
       }
 
+      const items = notes.slice(0, CONNECTED_NOTES_PREVIEW_LIMIT).map(note =>
+        renderRelatedNoteRelationItem({
+          note,
+
+          openAttributes: `
+            data-archive-open-connection="note"
+            data-archive-connection-id="${escapeHtml(note.id)}"
+          `,
+
+          removeAttributes: `
+            data-archive-unlink-owner-type="file"
+            data-archive-unlink-owner-id="${escapeHtml(file.id)}"
+            data-archive-unlink-type="note"
+            data-archive-unlink-id="${escapeHtml(note.id)}"
+          `,
+
+          removeContextLabel: 'file',
+          readOnly
+        })
+      ).join('');
+
       return `
-        <div
-          class="
-            relationship-list
-            notes-related-list
-          ">
-
-          ${notes
-            .map(note =>
-              renderRelatedNoteRelationItem({
-                note,
-
-                openAttributes:
-                  `
-                    data-archive-open-connection="note"
-                    data-archive-connection-id="${escapeHtml(
-                      note.id
-                    )}"
-                  `,
-
-                removeAttributes:
-                  `
-                    data-archive-unlink-owner-type="file"
-                    data-archive-unlink-owner-id="${escapeHtml(
-                      file.id
-                    )}"
-                    data-archive-unlink-type="note"
-                    data-archive-unlink-id="${escapeHtml(
-                      note.id
-                    )}"
-                  `,
-
-                removeContextLabel:
-                  'file',
-
-                readOnly
-              })
-            )
-            .join('')}
+        <div class="relationship-list notes-related-list">
+          ${items}
         </div>
+
+        ${renderConnectedNotesFooter({
+          contextType: 'archiveFile',
+          contextId: file.id,
+          count: notes.length
+        })}
       `;
     }
 
@@ -127327,10 +127349,10 @@
       title,
       content,
       actionHtml = '',
-      meta = ''
+      meta = '',
+      footerHtml = ''
     ) {
-      const stateKey =
-        `source-${sectionId}`;
+      const stateKey = `source-${sectionId}`;
 
       return renderInspectorSection(
         stateKey,
@@ -127339,24 +127361,12 @@
         content,
         actionHtml,
         {
-          inlineAction:
-            Boolean(
-              actionHtml
-            ),
-
-          alwaysShowAction:
-            true,
-
-          open:
-            archiveInspectorSectionIsOpen(
-              stateKey
-            ),
-
-          toggleAttribute:
-            'data-archive-section-toggle',
-
-          sectionId:
-            `archive-source-section-${sectionId}`
+          inlineAction: Boolean(actionHtml),
+          alwaysShowAction: true,
+          open: archiveInspectorSectionIsOpen(stateKey),
+          toggleAttribute: 'data-archive-section-toggle',
+          sectionId: `archive-source-section-${sectionId}`,
+          footerHtml
         }
       );
     }
@@ -127452,15 +127462,16 @@
         );
       }
 
-      /*
-        Preserve the current Source inspector
-        limit of four visible connected items.
-      */
-      const visibleRecords =
-        validRecords.slice(
-          0,
-          4
-        );
+      const previewLimits = {
+        photo: PERSON_PANEL_PREVIEW_LIMITS.photos,
+        file: PERSON_PANEL_PREVIEW_LIMITS.archive,
+        note: CONNECTED_NOTES_PREVIEW_LIMIT
+      };
+
+      const visibleRecords = validRecords.slice(
+        0,
+        previewLimits[entityType] ?? 4
+      );
 
       const openAttributes =
         recordId => `
@@ -127943,6 +127954,37 @@
       `;
     }
 
+    function renderSourceConnectionViewAll(source, entityType, count) {
+      const labels = {
+        photo: ['photo', 'photos'],
+        file: ['file', 'files'],
+        note: ['note', 'notes']
+      };
+
+      const nouns = labels[entityType];
+
+      if (!source?.id || !count || !nouns) return '';
+
+      const label = translateText(
+        `View all ${count} ${count === 1 ? nouns[0] : nouns[1]}`
+      );
+
+      return `
+        <button
+          class="panel-section-view-all"
+          type="button"
+          data-source-connected-view-all="${escapeHtml(entityType)}"
+          data-source-connected-owner="${escapeHtml(source.id)}">
+          <span>${escapeHtml(label)}</span>
+          <span
+            class="panel-section-view-all-icon"
+            aria-hidden="true">
+            ${icon.chevron}
+          </span>
+        </button>
+      `;
+    }
+
     function renderArchiveSourceConnectionSection(
       source,
       entityType
@@ -127988,8 +128030,13 @@
           source,
           entityType
         ),
-        countLabel
-      );
+        countLabel,
+        renderSourceConnectionViewAll(
+          source,
+          entityType,
+          records.length
+        )
+        );
     }
 
     function renderArchiveSourceDetails(
@@ -128624,41 +128671,15 @@
         ${renderArchiveSourceSection(
           'details',
           'Source details',
-          renderArchiveSourceDetails(
-            source,
-            categoryLabel
-          )
+          renderArchiveSourceDetails(source, categoryLabel)
         )}
 
-        ${renderArchiveSourceConnectionSection(
-          source,
-          'file'
-        )}
-
-        ${renderArchiveSourceConnectionSection(
-          source,
-          'photo'
-        )}
-
-        ${renderArchiveSourceConnectionSection(
-          source,
-          'person'
-        )}
-
-        ${renderArchiveSourceConnectionSection(
-          source,
-          'event'
-        )}
-
-        ${renderArchiveSourceConnectionSection(
-          source,
-          'note'
-        )}
-
-        ${renderArchiveSourceConnectionSection(
-          source,
-          'place'
-        )}
+        ${renderArchiveSourceConnectionSection(source, 'person')}
+        ${renderArchiveSourceConnectionSection(source, 'event')}
+        ${renderArchiveSourceConnectionSection(source, 'photo')}
+        ${renderArchiveSourceConnectionSection(source, 'file')}
+        ${renderArchiveSourceConnectionSection(source, 'note')}
+        ${renderArchiveSourceConnectionSection(source, 'place')}
       `;
 
       return renderArchiveInspectorShell({
@@ -136172,9 +136193,74 @@
       );
     }
 
+    function openSourceConnectedItems(sourceId, entityType) {
+      const source = archiveSourceById(sourceId);
+      if (!source) return;
+
+      if (entityType === 'note') {
+        openNotesForContext('source', source.id);
+        return;
+      }
+
+      const records = archiveSourceConnectionRecords(
+        source,
+        entityType
+      );
+
+      if (entityType === 'photo') {
+        state.activeModule = 'Albums';
+        state.albumsView = 'all';
+        state.activeAlbumId = null;
+
+        state.albumsFilters = {
+          ...defaultAlbumFilters,
+          sourceId: source.id
+        };
+
+        state.albumsSearch = '';
+        state.selectedPhotoIds = [];
+        state.selectedPhotoId = records[0]?.id || null;
+        state.albumsDetailCollapsed = false;
+
+        resetAlbumsPage();
+        render();
+        return;
+      }
+
+      if (entityType === 'file') {
+        openArchiveLocation({
+          view: 'files',
+          folderId: null,
+          search: '',
+          fileFilters: {
+            ...defaultArchiveFileFilters,
+            sourceId: source.id
+          },
+          filterPresentation: 'flat',
+          filterScopeFolderId: null,
+          selectedFileId: records[0]?.id || null,
+          inspectorCollapsed: true
+        });
+      }
+    }
+
     function bindArchiveControls() {
       const root = main.querySelector('.archive-shell');
       if (!root) return;
+      root
+        .querySelectorAll('[data-source-connected-view-all]')
+        .forEach(button => {
+          button.onclick = event => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            openSourceConnectedItems(
+              button.dataset.sourceConnectedOwner,
+              button.dataset.sourceConnectedViewAll
+            );
+          };
+        });
+      bindConnectedNotesFooters(root);
       bindConnectedFileLinks(
         root,
         {
@@ -141826,8 +141912,7 @@
 
       contextId = '',
 
-      limit =
-        notes.length,
+      limit = CONNECTED_NOTES_PREVIEW_LIMIT,
 
       emptyText =
         'No connected notes.',
@@ -141835,11 +141920,10 @@
       allowUnlink =
         true
     }) {
-      const visible =
-        notes.slice(
-          0,
-          limit
-        );
+      const visible = notes.slice(
+        0,
+        Math.min(limit, CONNECTED_NOTES_PREVIEW_LIMIT)
+      );
 
       if (!visible.length) {
         return `
@@ -144426,6 +144510,7 @@
                 notes-related-list
               ">
               ${related
+                .slice(0, CONNECTED_NOTES_PREVIEW_LIMIT)
                 .map(item =>
                   renderRelatedNoteRelationItem({
                     note:
@@ -160340,7 +160425,7 @@
         eventsPerPerson: 3,
         photos: 3,
         files: 3,
-        notes: 3
+        notes: CONNECTED_NOTES_PREVIEW_LIMIT
       });
 
     function placesInspectorSectionState() {
