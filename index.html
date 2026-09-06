@@ -5447,21 +5447,31 @@
     }
 
     .connected-files-archive-panel {
-      height:
-        100%;
+      height: 100%;
+      min-height: 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
 
-      min-height:
-        0;
+    .connected-files-archive-panel
+    > .notes-related-selected-panel {
+      flex: 0 0 auto;
+      max-height: 100px;
+      overflow-y: auto;
+    }
 
-      display:
-        grid;
+    .connected-files-archive-panel
+    > .notes-related-results-panel {
+      flex: 1 1 0;
+      min-height: 0;
+    }
 
-      grid-template-rows:
-        auto
-        minmax(0, 1fr);
-
-      gap:
-        var(--space-3);
+    .connected-files-modal
+    .notes-related-selected-row {
+      border-color: var(--border-default);
+      background: var(--surface-card);
     }
 
     .connected-files-search {
@@ -5521,11 +5531,7 @@
       display:
         grid;
 
-      grid-template-columns:
-        18px
-        34px
-        minmax(0, 1fr)
-        auto;
+      grid-template-columns: 42px minmax(0, 1fr) 18px;
 
       align-items:
         center;
@@ -5539,6 +5545,28 @@
       transition:
         border-color var(--ease),
         background var(--ease);
+    }
+
+    .connected-files-choice > .albums-select-checkbox {
+      margin: 0;
+      justify-self: end;
+    }
+
+    .connected-files-choice:focus-within {
+      border-color: var(--brand-green-300);
+    }
+
+    .connected-files-modal .modal-header,
+    .connected-files-modal .modal-footer {
+      min-width: 0;
+    }
+
+    .connected-files-modal .modal-header > div {
+      min-width: 0;
+    }
+
+    .connected-files-modal .modal-header h2 {
+      overflow-wrap: anywhere;
     }
 
     .connected-files-choice:hover {
@@ -128825,6 +128853,14 @@
           ? 'archive'
           : 'new';
 
+      const compactTitle = translateText('Add files');
+      const contextTitle = String(title || '').trim();
+
+      const compactSubtitle =
+        contextTitle && contextTitle !== 'Add files'
+          ? `${translateText(contextTitle)}. ${translateText(subtitle)}`
+          : translateText(subtitle);
+
       modalOpener(`
         <div
           class="
@@ -128840,16 +128876,11 @@
             <div>
               <h2
                 id="connectedFilesTitle">
-
-                ${escapeHtml(
-                  title
-                )}
+                ${escapeHtml(compactTitle)}
               </h2>
 
               <p>
-                ${escapeHtml(
-                  subtitle
-                )}
+                ${escapeHtml(compactSubtitle)}
               </p>
             </div>
 
@@ -128906,39 +128937,40 @@
             </div>
 
             <section
-              class="
-                connected-files-panel
-                connected-files-archive-panel
-              "
+              class="connected-files-panel connected-files-archive-panel"
               data-connected-files-panel="archive"
-              ${
-                sourceTab === 'archive'
-                  ? ''
-                  : 'hidden'
-              }>
+              ${sourceTab === 'archive' ? '' : 'hidden'}>
 
               <label
-                class="
-                  app-search-field
-                  connected-files-search
-                "
-                aria-label="Search Archive files">
-
+                class="app-search-field connected-files-search"
+                aria-label="${escapeHtml(translateText('Search files'))}">
                 ${icon.search}
-
                 <input
                   type="search"
                   data-connected-files-search
-                  placeholder="Search files"
+                  placeholder="${escapeHtml(translateText('Search files'))}"
                   autocomplete="off">
               </label>
 
-              <div
-                class="
-                  connected-files-results
-                "
-                data-connected-files-results>
-              </div>
+              <section
+                class="notes-related-selected-panel"
+                data-connected-files-selected
+                hidden>
+              </section>
+
+              <section class="notes-related-results-panel">
+                <div class="notes-related-results-head">
+                  <div>
+                    <strong data-connected-files-results-title></strong>
+                    <span data-connected-files-results-meta></span>
+                  </div>
+                </div>
+
+                <div
+                  class="connected-files-results"
+                  data-connected-files-results>
+                </div>
+              </section>
             </section>
 
             <section
@@ -129070,286 +129102,188 @@
           '[data-connected-files-dropzone]'
         );
 
-      const visibleFiles =
-        () => {
-          const normalizedQuery =
-            query
-              .trim()
-              .toLowerCase();
+      const pickerText = (english, russian) =>
+        state.language === 'ru' ? russian : english;
 
-          return allFiles
-            .filter(file =>
-              !normalizedQuery
-              || connectedFilePickerSearchText(
-                file
-              ).includes(
-                normalizedQuery
-              )
+      const selectedHost = modal.querySelector(
+        '[data-connected-files-selected]'
+      );
+
+      const resultsTitle = modal.querySelector(
+        '[data-connected-files-results-title]'
+      );
+
+      const resultsMeta = modal.querySelector(
+        '[data-connected-files-results-meta]'
+      );
+
+      const fileLabel = file =>
+        file.name || file.title || pickerText(
+          'Untitled file',
+          'Файл без названия'
+        );
+
+      const visibleFiles = () => {
+        const normalizedQuery = query.trim().toLowerCase();
+
+        return allFiles
+          .filter(file => !existingIds.has(file.id))
+          .filter(file =>
+            !normalizedQuery
+            || connectedFilePickerSearchText(file)
+              .includes(normalizedQuery)
+          )
+          .sort((a, b) =>
+            fileLabel(a).localeCompare(
+              fileLabel(b),
+              state.language === 'ru' ? 'ru' : 'en'
             )
-            .slice()
-            .sort(
-              (
-                first,
-                second
-              ) =>
-                Number(
-                  existingIds.has(
-                    first.id
-                  )
-                )
-                - Number(
-                    existingIds.has(
-                      second.id
-                    )
-                  )
-                || String(
-                    first.name
-                    || ''
-                  ).localeCompare(
-                    String(
-                      second.name
-                      || ''
-                    )
-                  )
-            );
-        };
+          );
+      };
 
-      const renderChoice =
-        file => {
-          const alreadyLinked =
-            existingIds.has(
-              file.id
-            );
+      const renderChoice = file => {
+        const selected = selectedIds.has(file.id);
+        const name = fileLabel(file);
+        const path = archiveFolderPath(file.folderId);
 
-          const selected =
-            selectedIds.has(
-              file.id
-            );
+        return `
+          <label class="connected-files-choice ${
+            selected ? 'is-selected' : ''
+          }">
+            ${archiveFileIcon(file)}
 
-          const title =
-            file.name
-            || file.title
-            || 'Untitled file';
+            <span class="connected-files-choice-copy">
+              <strong title="${escapeHtml(name)}">
+                ${escapeHtml(name)}
+              </strong>
 
-          const path =
-            archiveFolderPath(
-              file.folderId
-            );
-
-          return `
-            <label
-              class="
-                connected-files-choice
-
-                ${
-                  selected
-                    ? 'is-selected'
-                    : ''
-                }
-
-                ${
-                  alreadyLinked
-                    ? 'is-existing'
-                    : ''
-                }
-              ">
-
-              <input
-                class="
-                  albums-select-checkbox
-                "
-                type="checkbox"
-                data-connected-files-choice
-                value="${escapeHtml(
-                  file.id
-                )}"
-                ${
-                  alreadyLinked
-                    ? 'checked disabled'
-                    : selected
-                      ? 'checked'
-                      : ''
-                }
-                aria-label="${escapeHtml(
-                  alreadyLinked
-                    ? `${title} is already linked`
-                    : `${
-                        selected
-                          ? 'Deselect'
-                          : 'Select'
-                      } ${title}`
-                )}">
-
-              ${archiveFileIcon(
-                file
-              )}
-
-              <span
-                class="
-                  connected-files-choice-copy
-                ">
-
-                <strong>
-                  ${escapeHtml(
-                    title
-                  )}
-                </strong>
-
-                <span
-                  class="
-                    connected-files-choice-meta
-                  ">
-
-                  ${escapeHtml(
-                    connectedFileMeta(
-                      file
-                    )
-                  )}
-                </span>
-
-                <span
-                  class="
-                    connected-files-choice-path
-                  ">
-
-                  ${escapeHtml(
-                    path
-                  )}
-                </span>
+              <span class="connected-files-choice-meta">
+                ${escapeHtml(translateText(connectedFileMeta(file)))}
               </span>
 
               <span
-                class="
-                  connected-files-choice-status
-                ">
-
-                ${
-                  alreadyLinked
-                    ? 'Already linked'
-                    : selected
-                      ? icon.check
-                      : ''
-                }
+                class="connected-files-choice-path"
+                title="${escapeHtml(path)}">
+                ${escapeHtml(path)}
               </span>
-            </label>
-          `;
-        };
+            </span>
 
-      const renderResults =
-        () => {
-          if (!resultsHost) {
-            return;
-          }
+            <input
+              class="albums-select-checkbox"
+              type="checkbox"
+              data-connected-files-choice
+              value="${escapeHtml(file.id)}"
+              ${selected ? 'checked' : ''}
+              aria-label="${escapeHtml(
+                pickerText('Select file: ', 'Выбрать файл: ') + name
+              )}">
+          </label>
+        `;
+      };
 
-          const files =
-            visibleFiles();
+      const renderSelectedFiles = () => {
+        if (!selectedHost) return;
 
-          if (!allFiles.length) {
-            resultsHost.innerHTML = `
-              <div
-                class="
-                  connected-files-empty
-                ">
+        const selected = allFiles.filter(file =>
+          selectedIds.has(file.id)
+        );
 
-                <div
-                  class="
-                    connected-files-empty-content
-                  ">
+        selectedHost.hidden = selected.length === 0;
 
-                  <strong>
-                    No Archive files yet
-                  </strong>
+        selectedHost.innerHTML = selected.length
+          ? `
+            <div class="notes-related-selected-list">
+              ${selected.map(file => {
+                const name = fileLabel(file);
+                const removeLabel = pickerText(
+                  'Remove from selection',
+                  'Убрать из выбранного'
+                );
 
-                  <p>
-                    Add a file to Archive before
-                    linking it to this record.
-                  </p>
-
-                  <button
-                    class="
-                      button
-                      primary
-                    "
-                    type="button"
-                    data-connected-files-show-new>
-
-                    Add new file
-                  </button>
-                </div>
-              </div>
-            `;
-
-            return;
-          }
-
-          if (!files.length) {
-            resultsHost.innerHTML = `
-              <div
-                class="
-                  connected-files-empty
-                ">
-
-                <div
-                  class="
-                    connected-files-empty-content
-                  ">
-
-                  <strong>
-                    No files match this search.
-                  </strong>
-
-                  <div
-                    class="
-                      connected-files-empty-actions
-                    ">
-
+                return `
+                  <div class="notes-related-selected-row">
+                    <span title="${escapeHtml(name)}">
+                      ${escapeHtml(name)}
+                    </span>
                     <button
-                      class="
-                        button
-                        secondary
-                      "
+                      class="relation-action-button"
                       type="button"
-                      data-connected-files-clear-search>
-
-                      Clear search
-                    </button>
-
-                    <button
-                      class="
-                        button
-                        primary
-                      "
-                      type="button"
-                      data-connected-files-show-new>
-
-                      Add new file
+                      data-connected-files-remove="${escapeHtml(file.id)}"
+                      title="${escapeHtml(removeLabel)}"
+                      aria-label="${escapeHtml(`${removeLabel}: ${name}`)}">
+                      ${icon.close}
                     </button>
                   </div>
-                </div>
-              </div>
-            `;
+                `;
+              }).join('')}
+            </div>
+          `
+          : '';
+      };
 
-            return;
-          }
+      const renderResults = () => {
+        if (!resultsHost) return;
 
+        const scrollTop = resultsHost.scrollTop;
+        const files = visibleFiles();
+        const searching = Boolean(query.trim());
+
+        resultsTitle.textContent = searching
+          ? pickerText('Search results', 'Результаты поиска')
+          : pickerText('Suggested files', 'Предлагаемые файлы');
+
+        resultsMeta.textContent = pickerText(
+          `${files.length} ${
+            files.length === 1 ? 'file' : 'files'
+          } available · ${existingIds.size} already linked`,
+          `Доступно файлов: ${files.length} · Уже связано: ${existingIds.size}`
+        );
+
+        renderSelectedFiles();
+
+        if (files.length) {
           resultsHost.innerHTML = `
-            <div
-              class="
-                connected-files-choice-list
-              ">
-
-              ${files
-                .map(
-                  renderChoice
-                )
-                .join('')}
+            <div class="connected-files-choice-list">
+              ${files.map(renderChoice).join('')}
             </div>
           `;
+        } else {
+          const message = !allFiles.length
+            ? pickerText(
+                'No Archive files yet. Open Add new to add files.',
+                'В архиве пока нет файлов. Откройте вкладку «Добавить новые».'
+              )
+            : searching
+              ? pickerText(
+                  'No files match this search.',
+                  'По вашему запросу файлы не найдены.'
+                )
+              : pickerText(
+                  'All available files are already linked.',
+                  'Все доступные файлы уже связаны.'
+                );
 
-          localizeUI(
-            resultsHost
-          );
-        };
+          resultsHost.innerHTML = `
+            <div class="connected-files-empty">
+              <div class="connected-files-empty-content">
+                <strong>${escapeHtml(message)}</strong>
+                ${searching ? `
+                  <button
+                    class="button secondary"
+                    type="button"
+                    data-connected-files-clear-search>
+                    ${escapeHtml(
+                      pickerText('Clear search', 'Очистить поиск')
+                    )}
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        }
+
+        resultsHost.scrollTop = scrollTop;
+      };
 
       const refreshFooter =
         () => {
@@ -129377,7 +129311,19 @@
               );
           }
         };
+      modal.addEventListener('click', event => {
+        const button = event.target.closest(
+          '[data-connected-files-remove]'
+        );
 
+        if (!button) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        selectedIds.delete(button.dataset.connectedFilesRemove);
+        refreshSelection();
+      });
       const refreshSelection =
         () => {
           renderResults();
