@@ -94147,6 +94147,170 @@
       render();
     }
 
+    function deleteGeneographBoard(
+      boardId,
+      projectId = currentProjectId()
+    ) {
+      // Recheck the project and record when confirmation is submitted.
+      if (projectId !== currentProjectId()) return false;
+
+      const board = getGeneographBoard(boardId, { projectId });
+      if (!board) return false;
+
+      const index = sampleData.boards.findIndex(item =>
+        item.id === boardId && item.projectId === projectId
+      );
+
+      if (index < 0) return false;
+
+      const ownsEditorState =
+        state.selectedGeneoBoardId === boardId
+        || geneoCanvasRuntime.boardId === boardId;
+
+      if (ownsEditorState) {
+        // Cancel pending editor interactions before removing the canvas.
+        cancelGeneographPencilStroke();
+        cancelGeneographConnectionDraft();
+        geneoPointerState = null;
+
+        state.selectedGeneoBoardId = null;
+        state.selectedGeneoNodeId = null;
+        state.selectedGeneoNodeIds = [];
+        state.selectedGeneoConnectionId = null;
+        state.selectedGeneoConnectionIds = [];
+        state.selectedGeneoWaypointIndex = null;
+        state.geneoInlineEditNodeId = null;
+        state.geneoLayerRename = null;
+        state.geneoTool = 'pan';
+
+        geneoCanvasRuntime = createGeneoCanvasRuntime(null);
+        geneoPaintRuntime = createGeneoPaintRuntime();
+      }
+
+      if (
+        ownsEditorState
+        || geneoHistoryRuntime.boardId === boardId
+      ) {
+        geneoHistoryRuntime = {
+          boardId: null,
+          undo: [],
+          redo: []
+        };
+      }
+
+      clearGeneographViewport(boardId);
+
+      // Remove the canvas container, not the records it references.
+      sampleData.boards.splice(index, 1);
+
+      return true;
+    }
+
+    function openDeleteGeneographBoardConfirm(boardId) {
+      const projectId = currentProjectId();
+      const board = getGeneographBoard(boardId, { projectId });
+
+      if (!board) return;
+
+      const ru = state.language === 'ru';
+
+      const title = ru
+        ? 'Удалить холст?'
+        : 'Delete canvas?';
+
+      const boardTitle =
+        localizedDataFieldValue(board.title)
+        || (ru ? 'Холст без названия' : 'Untitled canvas');
+
+      const explanation = ru
+        ? 'Холст, его расположение объектов и содержимое, созданное только на этом холсте, будут удалены. Связанные записи проекта и другие холсты сохранятся.'
+        : 'This canvas, its object layout, and content created only on this canvas will be deleted. Linked project records and other canvases will remain.';
+
+      const warning = ru
+        ? 'Это действие невозможно отменить.'
+        : 'This action cannot be undone.';
+
+      openModal(`
+        <div
+          class="modal"
+          data-i18n-skip
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="deleteGeneographBoardTitle">
+
+          <div class="modal-header">
+            <div>
+              <h2 id="deleteGeneographBoardTitle">
+                ${escapeHtml(title)}
+              </h2>
+              <p>${escapeHtml(boardTitle)}</p>
+            </div>
+
+            <button
+              class="close-button"
+              type="button"
+              data-close
+              aria-label="${ru ? 'Закрыть' : 'Close'}">
+              ${icon.close}
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <p>${escapeHtml(explanation)}</p>
+            <p><strong>${escapeHtml(warning)}</strong></p>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="button secondary"
+              type="button"
+              data-close>
+              ${ru ? 'Отмена' : 'Cancel'}
+            </button>
+
+            <button
+              class="button danger"
+              type="button"
+              data-confirm-geneo-board-delete>
+              ${ru ? 'Удалить холст' : 'Delete canvas'}
+            </button>
+          </div>
+        </div>
+      `);
+
+      modalBackdrop
+        .querySelector('[data-confirm-geneo-board-delete]')
+        ?.addEventListener('click', event => {
+          const button = event.currentTarget;
+          button.disabled = true;
+
+          const deleted = deleteGeneographBoard(
+            boardId,
+            projectId
+          );
+
+          closeModal();
+
+          if (!deleted) {
+            showToast(
+              ru
+                ? 'Холст недоступен. Обновите список и повторите попытку.'
+                : 'The canvas is unavailable. Refresh the list and try again.'
+            );
+            return;
+          }
+
+          // Keep the current collection/filter context.
+          // Empty collections remain available.
+          state.geneoView = 'home';
+          renderGeneographHome();
+
+          showToast(
+            ru ? 'Холст удалён.' : 'Canvas deleted.'
+          );
+        }, { once: true });
+    }
+
     function openGeneographBoardMenu(
       id,
       anchor
@@ -94295,7 +94459,10 @@
 
             return;
           }
-
+          if (action === 'delete') {
+            openDeleteGeneographBoardConfirm(board.id);
+            return;
+          }
           showToast(
             `${
               capitalize(
