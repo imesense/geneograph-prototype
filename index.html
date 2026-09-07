@@ -2058,6 +2058,13 @@
     .modal-header h2 { margin: 0 0 4px; font-size: 22px; }
     .modal-header p { margin: 0; color: var(--text-secondary); }
     .modal-body { padding: var(--space-6); }
+    .project-delete-warning {
+      margin: 0;
+      color: var(--text-primary);
+      font-size: 14px;
+      line-height: 1.5;
+      font-weight: 600;
+    }
     .modal-footer { padding: var(--space-4) var(--space-6) var(--space-6); border-top: 1px solid var(--border-default); display: flex; justify-content: flex-end; gap: var(--space-3); }
     .close-button {
       width: 36px;
@@ -12046,67 +12053,35 @@
     }
 
     .geneo-board-collections {
-      min-height:
-        24px;
-      margin-bottom:
-        10px;
-      display:
-        flex;
-      align-items:
-        center;
-      flex-wrap:
-        wrap;
-      gap:
-        6px;
+      min-width: 0;
+      min-height: 24px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
     }
 
     .geneo-board-collection-chip {
-      max-width:
-        150px;
+      box-sizing: border-box;
+      flex: 0 0 auto;
+      min-width: 0;
+      max-width: 100%;
+      min-height: 24px;
 
-      min-height:
-        24px;
+      padding: 0 8px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, .055);
+      color: var(--text-secondary);
 
-      padding:
-        0 8px;
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
 
-      border-radius:
-        5px;
-
-      background:
-        rgba(
-          255,
-          255,
-          255,
-          .055
-        );
-
-      color:
-        var(--text-secondary);
-
-      display:
-        inline-flex;
-
-      align-items:
-        center;
-
-      overflow:
-        hidden;
-
-      font-size:
-        11px;
-
-      font-weight:
-        750;
-
-      line-height:
-        1;
-
-      text-overflow:
-        ellipsis;
-
-      white-space:
-        nowrap;
+      font-size: 11px;
+      font-weight: 750;
+      line-height: 24px;
     }
 
     .geneo-board-collection-chip.no-collection {
@@ -58872,10 +58847,9 @@
       return PARENT_CHILD_RELATIONSHIP_TYPES
         .map(value => `
           <option
-            value="${escapeHtml(localizedDataFieldValue(value))}"
-            data-source-value="${escapeHtml(value)}"
+            value="${escapeHtml(value)}"
             ${value === active ? 'selected' : ''}>
-            ${escapeHtml(value)}
+            ${escapeHtml(translateText(value))}
           </option>
         `)
         .join('');
@@ -64611,12 +64585,18 @@
               syncFamilyPartnerAliases(family);
             }
           } else {
-            const value =
-              normalizeParentChildRelationshipType(
-                modalBackdrop.querySelector(
-                  '#relationshipEditParentChildType'
-                )?.value
+            const value = modalBackdrop.querySelector(
+              '#relationshipEditParentChildType'
+            )?.value;
+
+            if (!PARENT_CHILD_RELATIONSHIP_TYPES.includes(value)) {
+              showToast(
+                state.language === 'ru'
+                  ? 'Выберите тип связи между родителем и ребёнком.'
+                  : 'Choose a parent–child relationship type.'
               );
+              return;
+            }
 
             const key = parentChildRelationshipKey(
               context.parentId,
@@ -85021,117 +85001,118 @@
         });
     }
 
-    function removePhotoPersonTag(
-      photoId,
-      personId
-    ) {
-      const photo =
-        getPhoto(photoId);
+    function openPhotoUnlinkConfirm({
+      photo,
+      contextLabel,
+      primaryPhoto = false,
+      onConfirm
+    }) {
+      if (!photo || typeof onConfirm !== 'function') return;
 
-      const person =
-        getPerson(personId);
+      const ru = state.language === 'ru';
+      const photoLabel =
+        photo.title || photo.filename || photo.name
+        || (ru ? 'Фото без названия' : 'Untitled photo');
 
-      if (!photo || !person) {
-        return;
-      }
+      const title = ru ? 'Отвязать фото?' : 'Unlink photo?';
 
-      const remove = () => {
-        const removed =
-          setPhotoPersonIds(
-            photo.id,
-            (photo.personIds || [])
-              .filter(id =>
-                id !== personId
-              ),
-            {
-              rerender: false
-            }
-          );
+      const message = ru
+        ? `Связь фото с «${contextLabel}» будет удалена. Фото останется в альбомах, а остальные связи сохранятся.`
+        : `This photo will no longer be linked to “${contextLabel}”. It will remain in Albums and keep its other connections.`;
 
-        if (!removed) {
-          return;
-        }
-
-        renderAfterPersonConnectedResourcesChanged();
-
-        showToast(
-          'Person tag removed.'
-        );
-      };
-
-      if (
-        person.primaryPhotoId
-          !== photo.id
-      ) {
-        remove();
-        return;
-      }
+      const primaryMessage = ru
+        ? 'Это фото также перестанет быть основным фото человека.'
+        : 'This will also clear the person’s primary photo.';
 
       openModal(`
         <div
           class="modal"
           role="dialog"
           aria-modal="true"
-          aria-labelledby="removePrimaryTagTitle">
+          aria-labelledby="photoUnlinkTitle">
 
           <div class="modal-header">
             <div>
-              <h2 id="removePrimaryTagTitle">
-                Remove primary photo tag?
-              </h2>
-
-              <p>
-                ${escapeHtml(
-                  person.names?.display
-                  || 'Person'
-                )}
-              </p>
+              <h2 id="photoUnlinkTitle">${escapeHtml(title)}</h2>
+              <p>${escapeHtml(photoLabel)}</p>
             </div>
 
             <button
               class="close-button"
               type="button"
-              data-close>
+              data-close
+              aria-label="${escapeHtml(ru ? 'Закрыть' : 'Close')}">
               ${icon.close}
             </button>
           </div>
 
           <div class="modal-body">
-            <p>
-              This photo is the person's primary photo.
-              Removing the tag will clear the primary photo.
-            </p>
+            <p>${escapeHtml(message)}</p>
+            ${primaryPhoto
+              ? `<p><strong>${escapeHtml(primaryMessage)}</strong></p>`
+              : ''}
           </div>
 
           <div class="modal-footer">
-            <button
-              class="button secondary"
-              type="button"
-              data-close>
-              Cancel
+            <button class="button secondary" type="button" data-close>
+              ${ru ? 'Отмена' : 'Cancel'}
             </button>
 
             <button
               class="button danger"
               type="button"
-              data-remove-primary-tag>
-              Remove tag
+              data-confirm-photo-unlink>
+              ${ru ? 'Отвязать' : 'Unlink'}
             </button>
           </div>
         </div>
       `);
 
       modalBackdrop
-        .querySelector(
-          '[data-remove-primary-tag]'
-        )
-        ?.addEventListener(
-          'click',
-          () => {
-            closeModal();
-            remove();
-          }
-        );
+        .querySelector('[data-confirm-photo-unlink]')
+        ?.addEventListener('click', event => {
+          event.currentTarget.disabled = true;
+          closeModal();
+          onConfirm();
+        }, { once: true });
+    }
+
+    function removePhotoPersonTag(photoId, personId) {
+      const photo = getPhoto(photoId);
+      const person = getPerson(personId);
+
+      if (!photo || !person) return;
+
+      openPhotoUnlinkConfirm({
+        photo,
+
+        contextLabel:
+          person.names?.display
+          || person.name
+          || (state.language === 'ru' ? 'Человек' : 'Person'),
+
+        primaryPhoto: person.primaryPhotoId === photo.id,
+
+        onConfirm: () => {
+          const currentPhoto = getPhoto(photoId);
+          const currentPerson = getPerson(personId);
+
+          if (!currentPhoto || !currentPerson) return;
+
+          const removed = setPhotoPersonIds(
+            currentPhoto.id,
+            (currentPhoto.personIds || []).filter(
+              id => id !== personId
+            ),
+            { rerender: false }
+          );
+
+          if (!removed) return;
+
+          renderAfterPersonConnectedResourcesChanged();
+          showToast('Person tag removed.');
+        }
+      });
     }
 
     function toggleAlbumPhotoFavourite(
@@ -92137,12 +92118,13 @@
                 class="
                   geneo-board-collection-chip
                 "
-                title="${escapeHtml(
-                  collection.name
-                )}">
-
+                title="
                 ${escapeHtml(
-                  collection.name
+                  localizedDataFieldValue(collection.name)
+                )}
+                ">
+                ${escapeHtml(
+                  localizedDataFieldValue(collection.name)
                 )}
               </span>
             `)
@@ -92480,6 +92462,22 @@
       );
     }
 
+    function geneographCanvasCountLabel(count) {
+      if (state.language !== 'ru') {
+        return `${count} ${count === 1 ? 'canvas' : 'canvases'}`;
+      }
+
+      const form = new Intl.PluralRules('ru').select(count);
+      const noun = {
+        one: 'холст',
+        few: 'холста',
+        many: 'холстов',
+        other: 'холста'
+      }[form];
+
+      return `${count} ${noun}`;
+    }
+
     function renderGeneographCollectionChoiceRows(
       projectId,
       selectedCollectionIds,
@@ -92504,6 +92502,8 @@
             return `
               ${collection.name || ''}
               ${collection.description || ''}
+              ${localizedDataFieldValue(collection.name || '')}
+              ${localizedDataFieldValue(collection.description || '')}
             `
               .toLowerCase()
               .includes(
@@ -92628,8 +92628,8 @@
 
                 <strong>
                   ${escapeHtml(
-                    collection.name
-                    || 'Untitled collection'
+                    localizedDataFieldValue(collection.name)
+                    || translateText('Untitled collection')
                   )}
                 </strong>
 
@@ -92637,10 +92637,9 @@
                   class="
                     album-picker-description
                   ">
-
                   ${escapeHtml(
-                    collection.description
-                    || 'No description'
+                    localizedDataFieldValue(collection.description)
+                    || translateText('No description')
                   )}
                 </span>
 
@@ -92648,13 +92647,7 @@
                   class="
                     album-picker-meta
                   ">
-
-                  ${boardCount}
-                  ${
-                    boardCount === 1
-                      ? 'board'
-                      : 'boards'
-                  }
+                  ${escapeHtml(geneographCanvasCountLabel(boardCount))}
                 </span>
               </span>
 
@@ -92987,6 +92980,8 @@
             return `
               ${collection.name || ''}
               ${collection.description || ''}
+              ${localizedDataFieldValue(collection.name || '')}
+              ${localizedDataFieldValue(collection.description || '')}
             `
               .toLowerCase()
               .includes(
@@ -92995,29 +92990,22 @@
           });
         };
 
-      const updateResultsMeta =
-        () => {
-          const visible =
-            visibleCollections();
+        const updateResultsMeta = () => {
+          const count = visibleCollections().length;
+          const selected = selectedCollectionIds.size;
 
           if (resultsTitle) {
-            resultsTitle.textContent =
-              query.trim()
-                ? 'Search results'
-                : 'All collections';
+            resultsTitle.textContent = translateText(
+              query.trim() ? 'Search results' : 'All collections'
+            );
           }
 
           if (resultsMeta) {
-            resultsMeta.textContent =
-              `${
-                visible.length
-              } ${
-                visible.length === 1
-                  ? 'collection'
-                  : 'collections'
-              } · ${
-                selectedCollectionIds.size
-              } selected`;
+            resultsMeta.textContent = state.language === 'ru'
+              ? `Коллекций: ${count} · Выбрано: ${selected}`
+              : `${count} ${
+                  count === 1 ? 'collection' : 'collections'
+                } · ${selected} selected`;
           }
         };
 
@@ -93034,6 +93022,7 @@
               query
             );
 
+          localizeUI(resultsHost);
           updateResultsMeta();
         };
 
@@ -93634,88 +93623,71 @@
               true
           }
         );
+      const ru = state.language === 'ru';
 
-      const boardLabel =
-        affectedBoards.length === 1
-          ? 'board'
-          : 'boards';
+      const title = ru
+        ? 'Удалить коллекцию?'
+        : 'Delete collection?';
+
+      const description = ru
+        ? 'Коллекция будет удалена. Холсты и их связи с другими коллекциями сохранятся.'
+        : 'The collection will be deleted. Its canvases and their links to other collections will remain.';
+
+      const impact = ru
+        ? 'Будет удалена только связь с этой коллекцией. Данные холстов сохранятся.'
+        : 'Only membership in this collection will be removed. Canvas data will remain unchanged.';
+
+      const collectionLabel =
+        localizedDataFieldValue(collection.name)
+        || (ru ? 'Коллекция без названия' : 'Untitled collection');
 
       openModal(`
         <div
           class="modal"
+          data-i18n-skip
           role="dialog"
           aria-modal="true"
           aria-labelledby="deleteGeneographCollectionTitle">
 
           <div class="modal-header">
             <div>
-              <h2
-                id="deleteGeneographCollectionTitle">
-
-                Delete collection?
+              <h2 id="deleteGeneographCollectionTitle">
+                ${escapeHtml(title)}
               </h2>
-
-              <p>
-                The collection will be removed.
-                Boards and their other collection
-                memberships will remain.
-              </p>
+              <p>${escapeHtml(description)}</p>
             </div>
 
             <button
-              class="
-                close-button
-              "
+              class="close-button"
               type="button"
               data-close
-              aria-label="Close">
-
+              aria-label="${ru ? 'Закрыть' : 'Close'}">
               ${icon.close}
             </button>
           </div>
 
           <div class="modal-body">
-            <div
-              class="
-                notes-evidence-card
-              ">
-
-              <strong>
+            <div class="notes-evidence-card">
+              <strong>${escapeHtml(collectionLabel)}</strong>
+              <p>
                 ${escapeHtml(
-                  collection.name
+                  geneographCanvasCountLabel(affectedBoards.length)
                 )}
-              </strong>
-
-              <span>
-                ${affectedBoards.length}
-                ${boardLabel} will keep their
-                board data; only this collection
-                membership will be removed.
-              </span>
+              </p>
+              <p>${escapeHtml(impact)}</p>
             </div>
           </div>
 
           <div class="modal-footer">
-            <button
-              class="
-                button
-                secondary
-              "
-              type="button"
-              data-close>
-
-              Cancel
+            <button class="button secondary" type="button" data-close>
+              ${ru ? 'Отмена' : 'Cancel'}
             </button>
 
             <button
-              class="
-                button
-                danger
-              "
+              class="button danger"
               type="button"
               id="geneographConfirmDeleteCollection">
-
-              Delete collection
+              ${ru ? 'Удалить коллекцию' : 'Delete collection'}
             </button>
           </div>
         </div>
@@ -152323,23 +152295,34 @@
               query
             );
 
-          resultsTitle.textContent =
-            normalized
-              ? 'Search results'
-              : 'Suggested notes';
+          resultsTitle.textContent = translateText(
+            normalized ? 'Search results' : 'Suggested notes'
+          );
 
-          resultsMeta.textContent =
-            `${visible.length} ${
-              visible.length === 1
-                ? normalized
-                  ? 'match'
-                  : 'note available'
-                : normalized
-                  ? 'matches'
-                  : 'notes available'
-            } · ${
-              existingIds.size
-            } ${existingMetaLabel}`;
+          if (state.language === 'ru') {
+            const availability = normalized
+              ? `Найдено заметок: ${visible.length}`
+              : `Доступно заметок: ${visible.length}`;
+
+            const connectionStatus =
+              existingMetaLabel === 'already related'
+                ? 'Уже связанных'
+                : 'Уже добавленных';
+
+            resultsMeta.textContent =
+              `${availability} · ${connectionStatus}: ${existingIds.size}`;
+          } else {
+            const availability = normalized
+              ? `${visible.length} ${
+                  visible.length === 1 ? 'match' : 'matches'
+                }`
+              : `${visible.length} ${
+                  visible.length === 1 ? 'note' : 'notes'
+                } available`;
+
+            resultsMeta.textContent =
+              `${availability} · ${existingIds.size} ${existingMetaLabel}`;
+          }
 
           resultsHost.innerHTML =
             visible.length
@@ -152599,10 +152582,14 @@
           'Add related notes',
 
         description:
-          `Link notes to “${
-            note.title
-            || 'Untitled note'
-          }”.`,
+          state.language === 'ru'
+            ? `Добавьте связанные заметки к «${
+                localizedDataFieldValue(note.title)
+                || 'Заметка без названия'
+              }».`
+            : `Link notes to “${
+                note.title || 'Untitled note'
+              }”.`,
 
         helperText:
           'The relationship will appear in both notes.',
@@ -154417,48 +154404,51 @@
         });
 
       main
-        .querySelectorAll(
-          '[data-note-linked-remove]'
-        )
+        .querySelectorAll('[data-note-linked-remove]')
         .forEach(button => {
-          button.addEventListener(
-            'click',
-            () => {
-              const type =
-                button.dataset
-                  .noteLinkedType;
-              const id =
-                button.dataset
-                  .noteLinkedId;
-              const config =
-                getNoteEntityConfig(type);
+          button.addEventListener('click', event => {
+            event.preventDefault();
+            event.stopPropagation();
 
-              if (!config) {
-                return;
-              }
+            const type = button.dataset.noteLinkedType;
+            const id = button.dataset.noteLinkedId;
+            const config = getNoteEntityConfig(type);
 
+            if (!config) return;
+
+            const unlink = () => {
               setNoteEntityLinks(
                 note.id,
                 type,
-                noteEntityLinkedIds(
-                  note,
-                  type
-                ).filter(
-                  linkedId =>
-                    linkedId !== id
+                noteEntityLinkedIds(note, type).filter(
+                  linkedId => linkedId !== id
                 ),
-                {
-                  projectId:
-                    note.projectId
-                }
+                { projectId: note.projectId }
               );
 
               renderNotesPreservingInteraction();
-              showToast(
-                'Link removed.'
-              );
+              showToast('Link removed.');
+            };
+
+            if (type === 'photo') {
+              const photo = getPhoto(id);
+              if (!photo) return;
+
+              openPhotoUnlinkConfirm({
+                photo,
+                contextLabel:
+                  note.title
+                  || (state.language === 'ru'
+                    ? 'Заметка без названия'
+                    : 'Untitled note'),
+                onConfirm: unlink
+              });
+
+              return;
             }
-          );
+
+            unlink();
+          });
         });
 
       main
@@ -167801,7 +167791,9 @@
       if (!project) return;
       openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteProjectTitle">
         <div class="modal-header"><div><h2 id="deleteProjectTitle">Delete project?</h2><p>Delete ${escapeHtml(project.name)} and all people, relationships, media, and research records owned by this project.</p></div><button class="close-button" type="button" data-close aria-label="Close">${icon.close}</button></div>
-        <div class="modal-body"><div class="panel-muted">This action cannot be undone.</div></div>
+        <div class="modal-body">
+          <p class="project-delete-warning">This action cannot be undone.</p>
+        </div>
         <div class="modal-footer"><button class="button secondary" type="button" data-close>Cancel</button><button class="button danger" type="button" data-confirm-project-delete>Delete project</button></div>
       </div>`);
       bindProjectActionModalReturnFocus(anchor);
