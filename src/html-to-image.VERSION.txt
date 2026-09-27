@@ -1,0 +1,4 @@
+html-to-image 1.11.13
+Source: https://github.com/bubkoo/html-to-image/tree/v1.11.13
+Browser bundle: dist/html-to-image.js from the published npm package
+License: MIT (see html-to-image.LICENSE.txt)

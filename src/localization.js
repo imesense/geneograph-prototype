@@ -1223,6 +1223,33 @@ const RU_UI_GENEO = {
     'Export board':
         'Экспортировать холст',
 
+    'Preparing PNG…':
+        'Подготовка PNG…',
+
+    'PNG download started.':
+        'Загрузка PNG началась.',
+
+    'PNG exported at reduced resolution.':
+        'PNG экспортирован с уменьшенным разрешением.',
+
+    'Add visible objects before exporting this board.':
+        'Добавьте видимые объекты перед экспортом холста.',
+
+    'A required board image or the logo is unavailable. Check the asset and try again.':
+        'Не удалось загрузить изображение холста или логотип. Проверьте файл и повторите попытку.',
+
+    'This browser blocks local image access for PNG export. Serve the prototype locally and try again.':
+        'Браузер блокирует доступ к локальным изображениям при экспорте PNG. Запустите прототип через локальный сервер и повторите попытку.',
+
+    'This board is too large to export as one PNG.':
+        'Этот холст слишком велик для экспорта в один PNG.',
+
+    'The PNG could not be created. Try again or use a smaller board.':
+        'Не удалось создать PNG. Повторите попытку или уменьшите холст.',
+
+    'Created with GeneoGraph':
+        'Создано в GeneoGraph',
+
     'Fit board':
         'Вместить холст',
 

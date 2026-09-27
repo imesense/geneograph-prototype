@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Geneograph PNG export checks</title>
+        <style>
+            body {
+                margin: 24px;
+                background: #0b0f0e;
+                color: #eaf5f0;
+                font: 15px/1.5 system-ui, sans-serif;
+            }
+            button {
+                padding: 10px 16px;
+                background: #2fae74;
+                border: 0;
+                color: #07110c;
+                font: inherit;
+                font-weight: 700;
+                cursor: pointer;
+            }
+            button:focus-visible {
+                outline: 2px solid #d9e5e1;
+                outline-offset: 3px;
+            }
+            iframe {
+                position: fixed;
+                left: -100000px;
+                width: 1800px;
+                height: 1000px;
+                border: 0;
+            }
+            .pass { color: #62d99a; }
+            .fail { color: #ff9b9b; }
+        </style>
+    </head>
+    <body>
+        <h1>Geneograph PNG export checks</h1>
+        <p>Serve the repository root over HTTP, then open this page. Checks use only in-memory demo data.</p>
+        <button id="run" type="button">Run checks</button>
+        <ol id="results" aria-live="polite"></ol>
+        <iframe id="prototype" title="Prototype under test" src="../src/index.html"></iframe>
+        <script src="geneograph-export.js" defer></script>
+    </body>
+</html>

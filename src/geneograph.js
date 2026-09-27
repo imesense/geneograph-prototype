@@ -5567,9 +5567,7 @@ function activateGeneographConnectionTool()
 
 function exportGeneographBoard()
 {
-    showToast(
-        'Export Geneograph board'
-    );
+    runGeneographPngExport();
 }
 
 function renderGeneoToolbarObjectButton(
